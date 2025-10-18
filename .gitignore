@@ -1,0 +1,108 @@
+# ============================================
+# EDUTRACK LMS - GIT IGNORE
+# ============================================
+
+# Environment & Config
+.env
+.env.local
+.env.production
+config/local.php
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Composer
+/vendor/
+composer.lock
+composer.phar
+
+# NPM & Node
+/node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Logs
+/storage/logs/*.log
+/storage/logs/*.txt
+*.log
+
+# Cache
+/storage/cache/*
+!/storage/cache/.gitkeep
+
+# Sessions
+/storage/sessions/*
+!/storage/sessions/.gitkeep
+
+# Uploads (but keep directory structure)
+/public/uploads/courses/thumbnails/*
+!/public/uploads/courses/thumbnails/.gitkeep
+/public/uploads/courses/resources/*
+!/public/uploads/courses/resources/.gitkeep
+/public/uploads/users/avatars/*
+!/public/uploads/users/avatars/.gitkeep
+/public/uploads/assignments/submissions/*
+!/public/uploads/assignments/submissions/.gitkeep
+/public/uploads/certificates/generated/*
+!/public/uploads/certificates/generated/.gitkeep
+/public/uploads/payments/proofs/*
+!/public/uploads/payments/proofs/.gitkeep
+
+# Certificates
+/storage/certificates/*.pdf
+
+# Backup Files
+*.sql
+*.backup
+*.bak
+*.tmp
+backups/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# PHP
+/phpunit.xml
+/.phpunit.result.cache
+/php_errors.log
+
+# Security
+*.pem
+*.key
+*.crt
+*.p12
+secrets.txt
+
+# Test Coverage
+/coverage/
+/.phpunit.cache
+
+# Build Files
+/dist/
+/build/
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+
+# Documentation (if auto-generated)
+/docs/api/
+
+# Keep empty directories
+!.gitkeep
