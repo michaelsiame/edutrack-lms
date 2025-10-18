@@ -1,0 +1,441 @@
+/**
+ * Learning Interface Styles
+ * Styles for the course learning page
+ */
+
+/* Base Learning Layout */
+.learning-container {
+    display: flex;
+    height: calc(100vh - 60px);
+    background-color: #111827;
+}
+
+/* Video Container */
+#video-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+}
+
+#video-container iframe,
+#video-container video {
+    width: 100%;
+    height: 100%;
+}
+
+/* Custom Video Controls */
+.video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#video-container:hover .video-controls {
+    opacity: 1;
+}
+
+.video-progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+}
+
+.video-progress-fill {
+    height: 100%;
+    background-color: #2E70DA;
+    border-radius: 2px;
+    transition: width 0.1s linear;
+}
+
+.video-progress-buffer {
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+}
+
+/* Sidebar Styles */
+#curriculum-sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: #374151 #1f2937;
+}
+
+#curriculum-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+#curriculum-sidebar::-webkit-scrollbar-track {
+    background: #1f2937;
+}
+
+#curriculum-sidebar::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 3px;
+}
+
+#curriculum-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #4b5563;
+}
+
+/* Module Section */
+.module-section {
+    border-bottom: 1px solid #374151;
+}
+
+.module-toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.module-lessons {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.module-lessons.expanded {
+    max-height: 1000px;
+}
+
+/* Lesson Item Hover */
+.module-lessons a {
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.module-lessons a:hover {
+    background-color: #1f2937;
+    border-left-color: #2E70DA;
+}
+
+/* Current Lesson Highlight */
+.module-lessons a.current-lesson {
+    background-color: #1f2937;
+    border-left-color: #2E70DA;
+}
+
+/* Lesson Status Icons */
+.lesson-status-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lesson-completed .lesson-status-icon {
+    color: #10b981;
+}
+
+.lesson-current .lesson-status-icon {
+    color: #2E70DA;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Notes Section */
+#notes-section {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#lesson-notes {
+    resize: vertical;
+    font-family: inherit;
+}
+
+#lesson-notes:focus {
+    outline: none;
+}
+
+/* Lesson Controls Bar */
+.lesson-controls {
+    background-color: #1f2937;
+    border-top: 1px solid #374151;
+}
+
+/* Mark Complete Button */
+#mark-complete-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+#mark-complete-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+#mark-complete-btn:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Attachments Grid */
+.attachments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.attachment-card {
+    background-color: #1f2937;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: all 0.2s ease;
+}
+
+.attachment-card:hover {
+    background-color: #374151;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+/* Prose Styles for Article Content */
+.prose-invert {
+    color: #e5e7eb;
+}
+
+.prose-invert h1,
+.prose-invert h2,
+.prose-invert h3 {
+    color: #ffffff;
+}
+
+.prose-invert a {
+    color: #60a5fa;
+}
+
+.prose-invert a:hover {
+    color: #93c5fd;
+}
+
+.prose-invert code {
+    background-color: #1f2937;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    color: #f472b6;
+}
+
+.prose-invert pre {
+    background-color: #1f2937;
+    border: 1px solid #374151;
+}
+
+/* Loading Spinner */
+.lesson-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: #111827;
+}
+
+.spinner {
+    border: 3px solid #374151;
+    border-top: 3px solid #2E70DA;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mobile Sidebar */
+@media (max-width: 1023px) {
+    #curriculum-sidebar.fixed {
+        width: 320px;
+        max-width: 90vw;
+    }
+    
+    #sidebar-overlay {
+        backdrop-filter: blur(2px);
+    }
+}
+
+/* Course Progress Bar in Header */
+.course-progress-mini {
+    width: 120px;
+    height: 6px;
+    background-color: #374151;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.course-progress-mini .fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2E70DA, #60a5fa);
+    transition: width 0.5s ease;
+}
+
+/* Lesson Navigation Buttons */
+.lesson-nav-button {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    color: #9ca3af;
+}
+
+.lesson-nav-button:hover {
+    color: #ffffff;
+    background-color: #374151;
+}
+
+.lesson-nav-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Tooltips */
+.tooltip {
+    position: relative;
+}
+
+.tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    padding: 0.5rem 0.75rem;
+    background-color: #1f2937;
+    color: #ffffff;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.tooltip:hover::after {
+    opacity: 1;
+}
+
+/* Keyboard Shortcuts Hint */
+.keyboard-hint {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background-color: #1f2937;
+    color: #9ca3af;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 50;
+}
+
+.keyboard-hint.show {
+    opacity: 1;
+}
+
+.keyboard-hint kbd {
+    background-color: #374151;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    font-size: 0.875rem;
+}
+
+/* Fullscreen Mode */
+.fullscreen-mode {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-color: #000;
+}
+
+.fullscreen-mode #video-container {
+    height: 100vh;
+}
+
+/* Completion Celebration */
+.completion-confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Focus Styles */
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid #2E70DA;
+    outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+    #curriculum-sidebar,
+    .lesson-controls,
+    header {
+        display: none !important;
+    }
+    
+    .prose-invert {
+        color: #000;
+    }
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection */
+::selection {
+    background-color: #2E70DA;
+    color: #ffffff;
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
