@@ -1,376 +1,347 @@
 <?php
 /**
  * Email Class
- * Send templated emails
+ * Handles email sending with templates
  */
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
 class Email {
+    private $mailer;
+    private $from;
+    private $fromName;
     
-    private static $from;
-    private static $fromName;
-    
-    /**
-     * Initialize email settings
-     */
-    public static function init() {
-        self::$from = config('mail.from_address', SITE_EMAIL);
-        self::$fromName = config('mail.from_name', APP_NAME);
+    public function __construct() {
+        $this->mailer = new PHPMailer(true);
+        
+        // Server settings
+        $this->mailer->isSMTP();
+        $this->mailer->Host = getenv('MAIL_HOST') ?: 'smtp.gmail.com';
+        $this->mailer->SMTPAuth = true;
+        $this->mailer->Username = getenv('MAIL_USERNAME');
+        $this->mailer->Password = getenv('MAIL_PASSWORD');
+        $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $this->mailer->Port = getenv('MAIL_PORT') ?: 587;
+        
+        // From
+        $this->from = getenv('MAIL_FROM_ADDRESS') ?: getenv('MAIL_USERNAME');
+        $this->fromName = getenv('MAIL_FROM_NAME') ?: APP_NAME;
+        
+        $this->mailer->setFrom($this->from, $this->fromName);
+        $this->mailer->isHTML(true);
     }
     
     /**
      * Send email
-     * 
-     * @param string $to Recipient email
-     * @param string $template Template name
-     * @param array $data Template data
-     * @return bool
      */
-    public static function send($to, $template, $data = []) {
-        self::init();
-        
-        $subject = self::getSubject($template, $data);
-        $body = self::getBody($template, $data);
-        
-        return self::sendMail($to, $subject, $body);
-    }
-    
-    /**
-     * Get email subject
-     */
-    private static function getSubject($template, $data) {
-        $subjects = [
-            'welcome' => 'Welcome to ' . APP_NAME,
-            'enrollment-confirmation' => 'Enrollment Confirmation - ' . ($data['course_title'] ?? 'Course'),
-            'payment-success' => 'Payment Successful - ' . ($data['course_title'] ?? 'Course'),
-            'payment-receipt' => 'Payment Receipt - ' . ($data['reference'] ?? ''),
-            'certificate-issued' => 'Your Certificate is Ready!',
-            'password-reset' => 'Password Reset Request',
-            'course-completed' => 'Congratulations on Completing ' . ($data['course_title'] ?? 'the Course'),
-            'assignment-graded' => 'Your Assignment Has Been Graded',
-            'new-announcement' => 'New Announcement: ' . ($data['title'] ?? ''),
-        ];
-        
-        return $subjects[$template] ?? APP_NAME . ' Notification';
-    }
-    
-    /**
-     * Get email body
-     */
-    private static function getBody($template, $data) {
-        $templatePath = SRC_PATH . '/mail/' . $template . '.php';
-        
-        if (file_exists($templatePath)) {
-            ob_start();
-            extract($data);
-            include $templatePath;
-            return ob_get_clean();
-        }
-        
-        return self::getDefaultTemplate($template, $data);
-    }
-    
-    /**
-     * Get default template (fallback)
-     */
-    private static function getDefaultTemplate($template, $data) {
-        $message = '';
-        
-        switch ($template) {
-            case 'welcome':
-                $message = self::welcomeTemplate($data);
-                break;
-            case 'enrollment-confirmation':
-                $message = self::enrollmentTemplate($data);
-                break;
-            case 'payment-success':
-                $message = self::paymentSuccessTemplate($data);
-                break;
-            case 'certificate-issued':
-                $message = self::certificateTemplate($data);
-                break;
-            case 'password-reset':
-                $message = self::passwordResetTemplate($data);
-                break;
-            case 'course-completed':
-                $message = self::courseCompletedTemplate($data);
-                break;
-            default:
-                $message = self::genericTemplate($data);
-        }
-        
-        return self::wrapInLayout($message);
-    }
-    
-    /**
-     * Welcome email template
-     */
-    private static function welcomeTemplate($data) {
-        $name = $data['name'] ?? 'Student';
-        $loginUrl = url('login.php');
-        $coursesUrl = url('courses.php');
-        
-        return <<<HTML
-        <h2 style="color: #2E70DA;">Welcome to {$GLOBALS['config']['name']}!</h2>
-        <p>Dear {$name},</p>
-        <p>Thank you for joining {$GLOBALS['config']['name']}. We're excited to have you as part of our learning community!</p>
-        <p>Your account has been successfully created. You can now:</p>
-        <ul>
-            <li>Browse our TEVETA-certified courses</li>
-            <li>Enroll in courses and start learning</li>
-            <li>Track your progress and earn certificates</li>
-            <li>Connect with instructors and fellow students</li>
-        </ul>
-        <p style="text-align: center; margin: 30px 0;">
-            <a href="{$loginUrl}" style="background-color: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Login to Your Account</a>
-        </p>
-        <p style="text-align: center;">
-            <a href="{$coursesUrl}" style="color: #2E70DA;">Browse Courses</a>
-        </p>
-        <p>If you have any questions, feel free to contact us at {$GLOBALS['config']['site']['email']}.</p>
-HTML;
-    }
-    
-    /**
-     * Enrollment confirmation template
-     */
-    private static function enrollmentTemplate($data) {
-        $name = $data['name'] ?? 'Student';
-        $courseTitle = $data['course_title'] ?? 'Course';
-        $courseUrl = $data['course_url'] ?? url();
-        
-        return <<<HTML
-        <h2 style="color: #2E70DA;">Enrollment Confirmed!</h2>
-        <p>Dear {$name},</p>
-        <p>Congratulations! You have been successfully enrolled in:</p>
-        <div style="background-color: #f5f5f5; padding: 20px; border-left: 4px solid #2E70DA; margin: 20px 0;">
-            <h3 style="margin: 0; color: #333;">{$courseTitle}</h3>
-        </div>
-        <p>You can now access all course materials, lessons, and resources.</p>
-        <p style="text-align: center; margin: 30px 0;">
-            <a href="{$courseUrl}" style="background-color: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Start Learning Now</a>
-        </p>
-        <p>Happy learning!</p>
-HTML;
-    }
-    
-    /**
-     * Payment success template
-     */
-    private static function paymentSuccessTemplate($data) {
-        $name = $data['name'] ?? 'Student';
-        $courseTitle = $data['course_title'] ?? 'Course';
-        $amount = $data['amount'] ?? 'Amount';
-        $reference = $data['reference'] ?? 'N/A';
-        $courseUrl = $data['course_url'] ?? url();
-        
-        return <<<HTML
-        <h2 style="color: #10B981;">Payment Successful!</h2>
-        <p>Dear {$name},</p>
-        <p>Your payment has been successfully processed. Thank you for your purchase!</p>
-        <div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
-            <table style="width: 100%;">
-                <tr>
-                    <td style="padding: 8px;"><strong>Course:</strong></td>
-                    <td style="padding: 8px;">{$courseTitle}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 8px;"><strong>Amount:</strong></td>
-                    <td style="padding: 8px;">{$amount}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 8px;"><strong>Reference:</strong></td>
-                    <td style="padding: 8px;">{$reference}</td>
-                </tr>
-            </table>
-        </div>
-        <p>You now have full access to the course and all its materials.</p>
-        <p style="text-align: center; margin: 30px 0;">
-            <a href="{$courseUrl}" style="background-color: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Access Course</a>
-        </p>
-HTML;
-    }
-    
-    /**
-     * Certificate issued template
-     */
-    private static function certificateTemplate($data) {
-        $name = $data['name'] ?? 'Student';
-        $courseTitle = $data['course_title'] ?? 'Course';
-        $certificateUrl = $data['certificate_url'] ?? url();
-        
-        return <<<HTML
-        <h2 style="color: #F6B745;">🎓 Your Certificate is Ready!</h2>
-        <p>Dear {$name},</p>
-        <p>Congratulations on successfully completing <strong>{$courseTitle}</strong>!</p>
-        <p>Your TEVETA-certified certificate is now available for download.</p>
-        <p style="text-align: center; margin: 30px 0;">
-            <a href="{$certificateUrl}" style="background-color: #F6B745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Download Certificate</a>
-        </p>
-        <p>This certificate can be verified online and demonstrates your achievement in completing this course.</p>
-        <p>Keep up the great work!</p>
-HTML;
-    }
-    
-    /**
-     * Password reset template
-     */
-    private static function passwordResetTemplate($data) {
-        $name = $data['name'] ?? 'User';
-        $resetUrl = $data['reset_url'] ?? url();
-        
-        return <<<HTML
-        <h2 style="color: #2E70DA;">Password Reset Request</h2>
-        <p>Dear {$name},</p>
-        <p>We received a request to reset your password. Click the button below to create a new password:</p>
-        <p style="text-align: center; margin: 30px 0;">
-            <a href="{$resetUrl}" style="background-color: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
-        </p>
-        <p>This link will expire in 1 hour for security reasons.</p>
-        <p>If you didn't request this, please ignore this email and your password will remain unchanged.</p>
-HTML;
-    }
-    
-    /**
-     * Course completed template
-     */
-    private static function courseCompletedTemplate($data) {
-        $name = $data['name'] ?? 'Student';
-        $courseTitle = $data['course_title'] ?? 'Course';
-        $score = $data['score'] ?? 0;
-        
-        return <<<HTML
-        <h2 style="color: #10B981;">🎉 Congratulations!</h2>
-        <p>Dear {$name},</p>
-        <p>You have successfully completed <strong>{$courseTitle}</strong>!</p>
-        <p>Final Score: <strong>{$score}%</strong></p>
-        <p>Your certificate is being processed and will be available shortly.</p>
-        <p>Keep learning and growing with us!</p>
-HTML;
-    }
-    
-    /**
-     * Generic template
-     */
-    private static function genericTemplate($data) {
-        $message = $data['message'] ?? 'You have a new notification.';
-        return "<p>{$message}</p>";
-    }
-    
-    /**
-     * Wrap content in email layout
-     */
-    private static function wrapInLayout($content) {
-        $logoUrl = url('assets/images/logo.png');
-        $year = date('Y');
-        $siteUrl = url();
-        
-        return <<<HTML
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{$GLOBALS['config']['name']}</title>
-</head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
-        <tr>
-            <td align="center">
-                <table width="600" cellpadding="0" cellspacing="0" style="background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    
-                    <!-- Header -->
-                    <tr>
-                        <td style="background-color: #2E70DA; padding: 30px; text-align: center;">
-                            <h1 style="margin: 0; color: white; font-size: 24px;">{$GLOBALS['config']['name']}</h1>
-                            <p style="margin: 5px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">TEVETA Certified Training</p>
-                        </td>
-                    </tr>
-                    
-                    <!-- Content -->
-                    <tr>
-                        <td style="padding: 40px 30px;">
-                            {$content}
-                        </td>
-                    </tr>
-                    
-                    <!-- Footer -->
-                    <tr>
-                        <td style="background-color: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e0e0e0;">
-                            <p style="margin: 0; color: #666; font-size: 14px;">
-                                <strong>{$GLOBALS['config']['name']}</strong><br>
-                                {$GLOBALS['config']['site']['address']}<br>
-                                {$GLOBALS['config']['site']['phone']} | {$GLOBALS['config']['site']['email']}
-                            </p>
-                            <p style="margin: 15px 0 0 0; color: #999; font-size: 12px;">
-                                © {$year} {$GLOBALS['config']['name']}. All rights reserved.<br>
-                                <a href="{$siteUrl}" style="color: #2E70DA; text-decoration: none;">Visit Website</a>
-                            </p>
-                        </td>
-                    </tr>
-                    
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-</html>
-HTML;
-    }
-    
-    /**
-     * Send mail using PHP mail() or SMTP
-     */
-    private static function sendMail($to, $subject, $body) {
-        $headers = [
-            'MIME-Version: 1.0',
-            'Content-type: text/html; charset=utf-8',
-            'From: ' . self::$fromName . ' <' . self::$from . '>',
-            'Reply-To: ' . self::$from,
-            'X-Mailer: PHP/' . phpversion()
-        ];
-        
-        // Check if using SMTP
-        if (config('mail.driver') == 'smtp') {
-            return self::sendSMTP($to, $subject, $body);
-        }
-        
-        // Use PHP mail()
-        return mail($to, $subject, $body, implode("\r\n", $headers));
-    }
-    
-    /**
-     * Send via SMTP
-     */
-    private static function sendSMTP($to, $subject, $body) {
-        // This would use PHPMailer or similar
-        // For now, falling back to mail()
-        
+    public function send($to, $subject, $body, $attachments = []) {
         try {
-            // If PHPMailer is available
-            if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
-                $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-                
-                $mail->isSMTP();
-                $mail->Host = config('mail.host');
-                $mail->SMTPAuth = true;
-                $mail->Username = config('mail.username');
-                $mail->Password = config('mail.password');
-                $mail->SMTPSecure = config('mail.encryption', 'tls');
-                $mail->Port = config('mail.port', 587);
-                
-                $mail->setFrom(self::$from, self::$fromName);
-                $mail->addAddress($to);
-                $mail->isHTML(true);
-                $mail->Subject = $subject;
-                $mail->Body = $body;
-                
-                return $mail->send();
+            $this->mailer->addAddress($to);
+            $this->mailer->Subject = $subject;
+            $this->mailer->Body = $this->wrapTemplate($body, $subject);
+            $this->mailer->AltBody = strip_tags($body);
+            
+            // Add attachments
+            foreach ($attachments as $attachment) {
+                if (file_exists($attachment)) {
+                    $this->mailer->addAttachment($attachment);
+                }
             }
+            
+            $result = $this->mailer->send();
+            
+            // Clear recipients for next email
+            $this->mailer->clearAddresses();
+            $this->mailer->clearAttachments();
+            
+            return $result;
         } catch (Exception $e) {
-            error_log('Email error: ' . $e->getMessage());
+            error_log("Email Error: {$this->mailer->ErrorInfo}");
             return false;
         }
+    }
+    
+    /**
+     * Send welcome email
+     */
+    public function sendWelcome($user) {
+        $subject = "Welcome to " . APP_NAME;
         
-        return false;
+        $body = "
+        <h2>Welcome to " . APP_NAME . ", " . htmlspecialchars($user['first_name']) . "!</h2>
+        <p>Thank you for joining our learning community. We're excited to have you here!</p>
+        
+        <div style='background: #f5f5f5; padding: 20px; margin: 20px 0; border-left: 4px solid #2E70DA;'>
+            <h3>Get Started:</h3>
+            <ul style='margin: 10px 0; padding-left: 20px;'>
+                <li>Browse our TEVETA-certified courses</li>
+                <li>Complete your profile</li>
+                <li>Start learning and earn certificates</li>
+            </ul>
+        </div>
+        
+        <p style='text-align: center; margin: 30px 0;'>
+            <a href='" . url('courses.php') . "' style='background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                Browse Courses
+            </a>
+        </p>
+        
+        <p>If you have any questions, feel free to contact us at " . SITE_EMAIL . "</p>
+        
+        <p>Happy learning!<br>The " . APP_NAME . " Team</p>
+        ";
+        
+        return $this->send($user['email'], $subject, $body);
+    }
+    
+    /**
+     * Send enrollment confirmation
+     */
+    public function sendEnrollmentConfirmation($user, $course) {
+        $subject = "Enrolled in " . $course->getTitle();
+        
+        $body = "
+        <h2>Congratulations, " . htmlspecialchars($user['first_name']) . "!</h2>
+        <p>You have successfully enrolled in <strong>" . htmlspecialchars($course->getTitle()) . "</strong>.</p>
+        
+        <div style='background: #f5f5f5; padding: 20px; margin: 20px 0;'>
+            <h3>Course Details:</h3>
+            <p><strong>Title:</strong> " . htmlspecialchars($course->getTitle()) . "</p>
+            <p><strong>Level:</strong> " . ucfirst($course->getLevel()) . "</p>
+            <p><strong>Duration:</strong> " . ($course->getDurationHours() ?? 'Self-paced') . " hours</p>
+            " . ($course->isTeveta() ? "<p><strong>TEVETA Certified:</strong> Yes ✓</p>" : "") . "
+        </div>
+        
+        <p style='text-align: center; margin: 30px 0;'>
+            <a href='" . url('learn.php?course=' . $course->getSlug()) . "' style='background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                Start Learning Now
+            </a>
+        </p>
+        
+        <p>Happy learning!</p>
+        ";
+        
+        return $this->send($user['email'], $subject, $body);
+    }
+    
+    /**
+     * Send payment confirmation
+     */
+    public function sendPaymentConfirmation($user, $payment) {
+        $subject = "Payment Confirmation - " . $payment->getCourseTitle();
+        
+        $body = "
+        <h2>Payment Confirmed!</h2>
+        <p>Dear " . htmlspecialchars($user['first_name']) . ",</p>
+        <p>Your payment has been successfully processed and confirmed.</p>
+        
+        <div style='background: #f5f5f5; padding: 20px; margin: 20px 0; border-left: 4px solid #10B981;'>
+            <h3>Payment Details:</h3>
+            <p><strong>Transaction ID:</strong> " . htmlspecialchars($payment->getTransactionId()) . "</p>
+            <p><strong>Course:</strong> " . htmlspecialchars($payment->getCourseTitle()) . "</p>
+            <p><strong>Amount:</strong> " . CURRENCY_SYMBOL . number_format($payment->getAmount(), 2) . "</p>
+            <p><strong>Payment Method:</strong> " . ucfirst($payment->getPaymentMethod()) . "</p>
+            <p><strong>Date:</strong> " . date('F j, Y g:i A', strtotime($payment->getPaidAt())) . "</p>
+        </div>
+        
+        <p>You can now access your course and start learning.</p>
+        
+        <p style='text-align: center; margin: 30px 0;'>
+            <a href='" . url('my-courses.php') . "' style='background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                Go to My Courses
+            </a>
+        </p>
+        
+        <p>Thank you for your purchase!</p>
+        ";
+        
+        return $this->send($user['email'], $subject, $body);
+    }
+    
+    /**
+     * Send certificate issued notification
+     */
+    public function sendCertificateIssued($user, $certificate) {
+        $subject = "Your TEVETA Certificate is Ready!";
+        
+        $body = "
+        <h2>Congratulations, " . htmlspecialchars($user['first_name']) . "!</h2>
+        <p>You have successfully completed <strong>" . htmlspecialchars($certificate->getCourseTitle()) . "</strong> and earned your TEVETA-certified certificate!</p>
+        
+        <div style='background: #f5f5f5; padding: 20px; margin: 20px 0; border-left: 4px solid #F6B745;'>
+            <h3>Certificate Details:</h3>
+            <p><strong>Certificate Number:</strong> " . htmlspecialchars($certificate->getCertificateNumber()) . "</p>
+            <p><strong>Verification Code:</strong> " . htmlspecialchars($certificate->getVerificationCode()) . "</p>
+            <p><strong>Final Grade:</strong> " . round($certificate->getFinalGrade(), 1) . "%</p>
+            <p><strong>Issued:</strong> " . date('F j, Y', strtotime($certificate->getIssuedAt())) . "</p>
+        </div>
+        
+        <p>Your certificate is attached to this email. You can also download it anytime from your dashboard.</p>
+        
+        <p style='text-align: center; margin: 30px 0;'>
+            <a href='" . url('my-certificates.php') . "' style='background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                View My Certificates
+            </a>
+        </p>
+        
+        <p>To verify your certificate online, visit:<br>
+        <a href='" . url('verify-certificate.php?code=' . $certificate->getVerificationCode()) . "'>" . url('verify-certificate.php?code=' . $certificate->getVerificationCode()) . "</a></p>
+        
+        <p>Congratulations on your achievement!</p>
+        ";
+        
+        return $this->send($user['email'], $subject, $body);
+    }
+    
+    /**
+     * Send password reset email
+     */
+    public function sendPasswordReset($user, $resetToken) {
+        $subject = "Reset Your Password";
+        
+        $resetUrl = url('reset-password.php?token=' . $resetToken);
+        
+        $body = "
+        <h2>Password Reset Request</h2>
+        <p>Hi " . htmlspecialchars($user['first_name']) . ",</p>
+        <p>We received a request to reset your password. Click the button below to create a new password:</p>
+        
+        <p style='text-align: center; margin: 30px 0;'>
+            <a href='" . $resetUrl . "' style='background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                Reset Password
+            </a>
+        </p>
+        
+        <p>Or copy and paste this link into your browser:<br>
+        <a href='" . $resetUrl . "'>" . $resetUrl . "</a></p>
+        
+        <p><strong>This link will expire in 1 hour.</strong></p>
+        
+        <p>If you didn't request this password reset, please ignore this email or contact us if you have concerns.</p>
+        ";
+        
+        return $this->send($user['email'], $subject, $body);
+    }
+    
+    /**
+     * Send assignment graded notification
+     */
+    public function sendAssignmentGraded($user, $submission) {
+        $assignment = $submission->getAssignment();
+        $subject = "Assignment Graded: " . $assignment->getTitle();
+        
+        $body = "
+        <h2>Your Assignment Has Been Graded</h2>
+        <p>Hi " . htmlspecialchars($user['first_name']) . ",</p>
+        <p>Your instructor has graded your assignment submission.</p>
+        
+        <div style='background: #f5f5f5; padding: 20px; margin: 20px 0;'>
+            <h3>Grading Details:</h3>
+            <p><strong>Assignment:</strong> " . htmlspecialchars($assignment->getTitle()) . "</p>
+            <p><strong>Course:</strong> " . htmlspecialchars($assignment->getCourseTitle()) . "</p>
+            <p><strong>Score:</strong> " . $submission->getPoints() . " / " . $assignment->getMaxPoints() . "</p>
+            " . ($submission->getFeedback() ? "<p><strong>Feedback:</strong><br>" . nl2br(htmlspecialchars($submission->getFeedback())) . "</p>" : "") . "
+        </div>
+        
+        <p style='text-align: center; margin: 30px 0;'>
+            <a href='" . url('assignment-result.php?id=' . $submission->getId()) . "' style='background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                View Detailed Results
+            </a>
+        </p>
+        ";
+        
+        return $this->send($user['email'], $subject, $body);
+    }
+    
+    /**
+     * Send course completion notification
+     */
+    public function sendCourseCompleted($user, $course) {
+        $subject = "Congratulations! Course Completed: " . $course->getTitle();
+        
+        $body = "
+        <h2>🎉 Congratulations, " . htmlspecialchars($user['first_name']) . "!</h2>
+        <p>You have successfully completed <strong>" . htmlspecialchars($course->getTitle()) . "</strong>!</p>
+        
+        <div style='background: linear-gradient(135deg, #2E70DA 0%, #10B981 100%); padding: 30px; margin: 20px 0; border-radius: 10px; color: white; text-align: center;'>
+            <h3 style='color: white; margin: 0;'>Course Completed!</h3>
+            <p style='font-size: 18px; margin: 10px 0;'>" . htmlspecialchars($course->getTitle()) . "</p>
+        </div>
+        
+        " . ($course->hasCertificate() ? "
+        <p>Your TEVETA certificate is being generated and will be sent to you shortly.</p>
+        " : "") . "
+        
+        <p style='text-align: center; margin: 30px 0;'>
+            <a href='" . url('my-courses.php') . "' style='background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                Explore More Courses
+            </a>
+        </p>
+        
+        <p>Keep up the great work!</p>
+        ";
+        
+        return $this->send($user['email'], $subject, $body);
+    }
+    
+    /**
+     * Wrap content in email template
+     */
+    private function wrapTemplate($content, $subject) {
+        return "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>" . htmlspecialchars($subject) . "</title>
+        </head>
+        <body style='margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;'>
+            <table width='100%' cellpadding='0' cellspacing='0' style='background-color: #f4f4f4; padding: 20px 0;'>
+                <tr>
+                    <td align='center'>
+                        <table width='600' cellpadding='0' cellspacing='0' style='background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);'>
+                            <!-- Header -->
+                            <tr>
+                                <td style='background: linear-gradient(135deg, #2E70DA 0%, #1E5FBD 100%); padding: 30px; text-align: center;'>
+                                    <h1 style='color: white; margin: 0; font-size: 28px;'>" . APP_NAME . "</h1>
+                                    <p style='color: #F6B745; margin: 5px 0 0 0; font-size: 14px;'>TEVETA Certified Training</p>
+                                </td>
+                            </tr>
+                            
+                            <!-- Content -->
+                            <tr>
+                                <td style='padding: 40px 30px;'>
+                                    $content
+                                </td>
+                            </tr>
+                            
+                            <!-- Footer -->
+                            <tr>
+                                <td style='background-color: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e9ecef;'>
+                                    <p style='margin: 0 0 10px 0; font-size: 14px; color: #6c757d;'>
+                                        " . APP_NAME . "<br>
+                                        " . SITE_ADDRESS . "<br>
+                                        " . SITE_PHONE . " | " . SITE_EMAIL . "
+                                    </p>
+                                    <p style='margin: 10px 0 0 0; font-size: 12px; color: #adb5bd;'>
+                                        © " . date('Y') . " " . APP_NAME . ". All rights reserved.
+                                    </p>
+                                    <p style='margin: 10px 0 0 0; font-size: 12px;'>
+                                        <a href='" . url() . "' style='color: #2E70DA; text-decoration: none;'>Visit Website</a> |
+                                        <a href='" . url('contact.php') . "' style='color: #2E70DA; text-decoration: none;'>Contact Us</a>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
+        ";
     }
 }

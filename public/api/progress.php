@@ -1,136 +1,154 @@
 <?php
 /**
- * Progress API
- * Handle progress tracking requests
+ * API: Progress Tracking
+ * GET /api/progress.php - Get progress
+ * POST /api/progress.php - Update progress
  */
+
+header('Content-Type: application/json');
 
 require_once '../../src/includes/config.php';
 require_once '../../src/includes/database.php';
 require_once '../../src/includes/functions.php';
-require_once '../../src/includes/auth.php';
 require_once '../../src/classes/Progress.php';
-require_once '../../src/classes/Enrollment.php';
+require_once '../../src/classes/Course.php';
+require_once '../../src/classes/Lesson.php';
 
-header('Content-Type: application/json');
-
-// Must be logged in
+// Check authentication
 if (!isLoggedIn()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit;
 }
 
+$progress = new Progress();
 $userId = $_SESSION['user_id'];
-$method = $_SERVER['REQUEST_METHOD'];
 
-// GET - Retrieve progress
-if ($method === 'GET') {
+// GET: Retrieve progress
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $courseId = $_GET['course_id'] ?? null;
     $lessonId = $_GET['lesson_id'] ?? null;
     
-    $progress = new Progress();
+    if ($courseId) {
+        // Get course progress
+        $courseProgress = $progress->getCourseProgress($userId, $courseId);
+        $lessonsProgress = $progress->getCourseLessonsProgress($userId, $courseId);
+        
+        echo json_encode([
+            'success' => true,
+            'course_progress' => $courseProgress,
+            'lessons_progress' => $lessonsProgress
+        ]);
+        exit;
+    }
     
     if ($lessonId) {
         // Get lesson progress
-        $data = $progress->getLessonProgress($userId, $lessonId);
-        echo json_encode(['success' => true, 'progress' => $data]);
-    } elseif ($courseId) {
-        // Get course progress
-        $data = $progress->getCourseProgress($userId, $courseId);
-        echo json_encode(['success' => true, 'progress' => $data]);
-    } else {
-        // Get user stats
-        $data = $progress->getUserStats($userId);
-        echo json_encode(['success' => true, 'stats' => $data]);
+        $lessonProgress = $progress->getLessonProgress($userId, $lessonId);
+        
+        echo json_encode([
+            'success' => true,
+            'lesson_progress' => $lessonProgress
+        ]);
+        exit;
     }
+    
+    // Get all user progress
+    $userProgress = $progress->getUserProgress($userId);
+    
+    echo json_encode([
+        'success' => true,
+        'progress' => $userProgress
+    ]);
     exit;
 }
 
-// POST - Update progress
-if ($method === 'POST') {
+// POST: Update progress
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     
     if (!$input) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Invalid input']);
-        exit;
+        $input = $_POST;
     }
     
     $action = $input['action'] ?? null;
-    $courseId = $input['course_id'] ?? null;
     $lessonId = $input['lesson_id'] ?? null;
+    $courseId = $input['course_id'] ?? null;
     
-    if (!$courseId || !$lessonId) {
+    if (!$lessonId) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Missing course or lesson ID']);
+        echo json_encode(['success' => false, 'error' => 'Lesson ID is required']);
         exit;
     }
     
-    // Verify enrollment
-    if (!Enrollment::isEnrolled($userId, $courseId)) {
+    // Verify lesson exists
+    $lesson = Lesson::find($lessonId);
+    if (!$lesson) {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'error' => 'Lesson not found']);
+        exit;
+    }
+    
+    // Verify user is enrolled
+    require_once '../../src/classes/Enrollment.php';
+    if (!Enrollment::isEnrolled($userId, $lesson->getCourseId())) {
         http_response_code(403);
-        echo json_encode(['success' => false, 'error' => 'Not enrolled in course']);
+        echo json_encode(['success' => false, 'error' => 'Not enrolled in this course']);
         exit;
     }
     
-    $progress = new Progress();
+    $result = false;
     
     switch ($action) {
-        case 'mark_complete':
-            // Mark lesson as complete
-            $result = $progress->markLessonComplete($userId, $courseId, $lessonId);
+        case 'start':
+            // Mark lesson as started
+            $result = $progress->startLesson($userId, $lessonId);
+            $message = 'Lesson started';
+            break;
             
-            if ($result) {
-                // Get updated progress
-                $courseProgress = $progress->getCourseProgress($userId, $courseId);
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Lesson marked as complete',
-                    'progress_percentage' => $courseProgress['progress_percentage'] ?? 0
-                ]);
-            } else {
-                http_response_code(500);
-                echo json_encode(['success' => false, 'error' => 'Failed to mark complete']);
+        case 'complete':
+            // Mark lesson as completed
+            $result = $progress->completeLesson($userId, $lessonId);
+            $message = 'Lesson completed';
+            
+            // Get updated course progress
+            $courseProgress = $progress->getCourseProgress($userId, $lesson->getCourseId());
+            
+            echo json_encode([
+                'success' => true,
+                'message' => $message,
+                'course_progress' => $courseProgress,
+                'course_completed' => $courseProgress['is_completed']
+            ]);
+            exit;
+            
+        case 'update_time':
+            // Update time spent
+            $seconds = (int)($input['seconds'] ?? 0);
+            if ($seconds > 0) {
+                $result = $progress->updateTimeSpent($userId, $lessonId, $seconds);
+                $message = 'Time updated';
             }
-            break;
-            
-        case 'update_progress':
-            // Update video progress
-            $progressSeconds = $input['progress_seconds'] ?? 0;
-            $lastPosition = $input['last_position'] ?? 0;
-            
-            $data = [
-                'progress_seconds' => $progressSeconds,
-                'last_position' => $lastPosition,
-                'completed' => 0
-            ];
-            
-            $result = $progress->updateLessonProgress($userId, $courseId, $lessonId, $data);
-            
-            echo json_encode([
-                'success' => $result,
-                'message' => $result ? 'Progress updated' : 'Failed to update progress'
-            ]);
-            break;
-            
-        case 'add_time':
-            // Add time spent
-            $seconds = $input['seconds'] ?? 0;
-            $result = $progress->addTimeSpent($userId, $courseId, $seconds);
-            
-            echo json_encode([
-                'success' => $result,
-                'message' => $result ? 'Time tracked' : 'Failed to track time'
-            ]);
             break;
             
         default:
             http_response_code(400);
             echo json_encode(['success' => false, 'error' => 'Invalid action']);
+            exit;
     }
     
+    if ($result) {
+        echo json_encode([
+            'success' => true,
+            'message' => $message ?? 'Progress updated'
+        ]);
+    } else {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Failed to update progress']);
+    }
     exit;
 }
 
+// Method not allowed
 http_response_code(405);
 echo json_encode(['success' => false, 'error' => 'Method not allowed']);

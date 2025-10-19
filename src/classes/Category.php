@@ -22,11 +22,11 @@ class Category {
      */
     private function load() {
         $sql = "SELECT c.*,
-                (SELECT COUNT(*) FROM courses WHERE category_id = c.id AND status = 'published') as course_count
+                (SELECT COUNT(*) FROM courses WHERE category_id = c.id) as course_count
                 FROM categories c
-                WHERE c.id = :id";
+                WHERE c.id = ?";
         
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $this->data = $this->db->query($sql, [$this->id])->fetch();
     }
     
     /**
@@ -49,85 +49,87 @@ class Category {
      */
     public static function findBySlug($slug) {
         $db = Database::getInstance();
-        $sql = "SELECT id FROM categories WHERE slug = :slug";
-        $result = $db->query($sql, ['slug' => $slug])->fetch();
+        $sql = "SELECT id FROM categories WHERE slug = ?";
+        $id = $db->fetchColumn($sql, [$slug]);
         
-        if ($result) {
-            return new self($result['id']);
-        }
-        return null;
+        return $id ? new self($id) : null;
     }
     
     /**
      * Get all categories
      */
-    public static function all($includeEmpty = false) {
+    public static function all($options = []) {
         $db = Database::getInstance();
         
         $sql = "SELECT c.*,
                 (SELECT COUNT(*) FROM courses WHERE category_id = c.id AND status = 'published') as course_count
                 FROM categories c";
         
-        if (!$includeEmpty) {
-            $sql .= " HAVING course_count > 0";
+        $where = [];
+        $params = [];
+        
+        // Filter by active status
+        if (isset($options['active_only']) && $options['active_only']) {
+            $where[] = "c.is_active = 1";
+        }
+        
+        if (!empty($where)) {
+            $sql .= " WHERE " . implode(' AND ', $where);
         }
         
         $sql .= " ORDER BY c.order_index ASC, c.name ASC";
+        
+        if (isset($options['limit'])) {
+            $sql .= " LIMIT " . (int)$options['limit'];
+        }
+        
+        return $db->query($sql, $params)->fetchAll();
+    }
+    
+    /**
+     * Get active categories with published courses
+     */
+    public static function getActiveWithCourses() {
+        $db = Database::getInstance();
+        $sql = "SELECT c.*,
+                COUNT(co.id) as course_count
+                FROM categories c
+                LEFT JOIN courses co ON c.id = co.category_id AND co.status = 'published'
+                WHERE c.is_active = 1
+                GROUP BY c.id
+                HAVING course_count > 0
+                ORDER BY c.order_index ASC, c.name ASC";
         
         return $db->query($sql)->fetchAll();
     }
     
     /**
-     * Get active categories (with courses)
-     */
-    public static function active() {
-        return self::all(false);
-    }
-    
-    /**
-     * Get popular categories
-     */
-    public static function popular($limit = 8) {
-        $db = Database::getInstance();
-        
-        $sql = "SELECT c.*,
-                COUNT(co.id) as course_count
-                FROM categories c
-                JOIN courses co ON c.id = co.category_id
-                WHERE co.status = 'published'
-                GROUP BY c.id
-                ORDER BY course_count DESC
-                LIMIT :limit";
-        
-        return $db->query($sql, ['limit' => $limit])->fetchAll();
-    }
-    
-    /**
-     * Create category
+     * Create new category
      */
     public static function create($data) {
         $db = Database::getInstance();
         
-        // Generate slug
-        if (empty($data['slug'])) {
-            $data['slug'] = self::generateSlug($data['name']);
-        }
-        
-        $sql = "INSERT INTO categories (name, slug, description, icon, color, order_index)
-                VALUES (:name, :slug, :description, :icon, :color, :order_index)";
+        $sql = "INSERT INTO categories (
+            name, slug, description, icon, color, 
+            is_active, order_index
+        ) VALUES (
+            ?, ?, ?, ?, ?, ?, ?
+        )";
         
         $params = [
-            'name' => $data['name'],
-            'slug' => $data['slug'],
-            'description' => $data['description'] ?? '',
-            'icon' => $data['icon'] ?? 'fa-folder',
-            'color' => $data['color'] ?? '#2E70DA',
-            'order_index' => $data['order_index'] ?? 0
+            $data['name'],
+            $data['slug'] ?? slugify($data['name']),
+            $data['description'] ?? '',
+            $data['icon'] ?? 'fa-folder',
+            $data['color'] ?? '#2E70DA',
+            $data['is_active'] ?? 1,
+            $data['order_index'] ?? 0
         ];
         
         if ($db->query($sql, $params)) {
             return $db->lastInsertId();
         }
+        
         return false;
     }
     
@@ -135,23 +137,33 @@ class Category {
      * Update category
      */
     public function update($data) {
-        $sql = "UPDATE categories SET
-                name = :name,
-                slug = :slug,
-                description = :description,
-                icon = :icon,
-                color = :color,
-                order_index = :order_index,
-                updated_at = NOW()
-                WHERE id = :id";
+        $allowed = ['name', 'slug', 'description', 'icon', 'color', 'is_active', 'order_index'];
         
-        $params = array_merge($data, ['id' => $this->id]);
+        $updates = [];
+        $params = [];
         
-        if ($this->db->query($sql, $params)) {
-            $this->load();
-            return true;
+        foreach ($allowed as $field) {
+            if (isset($data[$field])) {
+                $updates[] = "$field = ?";
+                $params[] = $data[$field];
+            }
         }
-        return false;
+        
+        if (empty($updates)) {
+            return false;
+        }
+        
+        $params[] = $this->id;
+        
+        $sql = "UPDATE categories SET " . implode(', ', $updates) . " WHERE id = ?";
+        
+        $result = $this->db->query($sql, $params);
+        
+        if ($result) {
+            $this->load();
+        }
+        
+        return $result;
     }
     
     /**
@@ -163,59 +175,56 @@ class Category {
             return false; // Cannot delete category with courses
         }
         
-        $sql = "DELETE FROM categories WHERE id = :id";
-        return $this->db->query($sql, ['id' => $this->id]);
+        $sql = "DELETE FROM categories WHERE id = ?";
+        return $this->db->query($sql, [$this->id]);
     }
     
     /**
      * Get category courses
      */
-    public function getCourses($filters = []) {
-        $filters['category_id'] = $this->id;
+    public function getCourses($status = null) {
         require_once __DIR__ . '/Course.php';
-        return Course::all($filters);
+        
+        $options = ['category_id' => $this->id];
+        
+        if ($status) {
+            $options['status'] = $status;
+        }
+        
+        return Course::all($options);
     }
     
     /**
-     * Generate unique slug
+     * Getters
      */
-    private static function generateSlug($name) {
-        $db = Database::getInstance();
-        $slug = slugify($name);
-        $originalSlug = $slug;
-        $counter = 1;
-        
-        while (true) {
-            $sql = "SELECT id FROM categories WHERE slug = :slug";
-            $result = $db->query($sql, ['slug' => $slug])->fetch();
-            
-            if (!$result) {
-                break;
-            }
-            
-            $slug = $originalSlug . '-' . $counter;
-            $counter++;
-        }
-        
-        return $slug;
-    }
-    
-    // Getters
     public function getId() { return $this->data['id'] ?? null; }
     public function getName() { return $this->data['name'] ?? ''; }
     public function getSlug() { return $this->data['slug'] ?? ''; }
     public function getDescription() { return $this->data['description'] ?? ''; }
     public function getIcon() { return $this->data['icon'] ?? 'fa-folder'; }
     public function getColor() { return $this->data['color'] ?? '#2E70DA'; }
+    public function isActive() { return $this->data['is_active'] == 1; }
     public function getOrderIndex() { return $this->data['order_index'] ?? 0; }
     public function getCourseCount() { return $this->data['course_count'] ?? 0; }
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }
     public function getUpdatedAt() { return $this->data['updated_at'] ?? null; }
     
     /**
-     * Get category URL
+     * Get as array
      */
-    public function getUrl() {
-        return url('courses.php?category=' . $this->getSlug());
+    public function toArray() {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'slug' => $this->getSlug(),
+            'description' => $this->getDescription(),
+            'icon' => $this->getIcon(),
+            'color' => $this->getColor(),
+            'is_active' => $this->isActive(),
+            'order_index' => $this->getOrderIndex(),
+            'course_count' => $this->getCourseCount(),
+            'created_at' => $this->getCreatedAt(),
+            'updated_at' => $this->getUpdatedAt()
+        ];
     }
 }

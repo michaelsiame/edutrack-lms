@@ -1,20 +1,19 @@
 <?php
 /**
- * Quiz API
- * Handle quiz operations
+ * API: Quiz Management
+ * GET /api/quiz.php - Get quiz details
+ * POST /api/quiz.php - Submit quiz attempt
  */
+
+header('Content-Type: application/json');
 
 require_once '../../src/includes/config.php';
 require_once '../../src/includes/database.php';
 require_once '../../src/includes/functions.php';
-require_once '../../src/includes/auth.php';
 require_once '../../src/classes/Quiz.php';
 require_once '../../src/classes/Question.php';
-require_once '../../src/classes/Enrollment.php';
 
-header('Content-Type: application/json');
-
-// Must be logged in
+// Check authentication
 if (!isLoggedIn()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
@@ -22,176 +21,206 @@ if (!isLoggedIn()) {
 }
 
 $userId = $_SESSION['user_id'];
-$method = $_SERVER['REQUEST_METHOD'];
 
-// GET - Retrieve quiz data
-if ($method === 'GET') {
+// GET: Retrieve quiz
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $quizId = $_GET['quiz_id'] ?? null;
-    $attemptId = $_GET['attempt_id'] ?? null;
-    
-    if ($attemptId) {
-        // Get attempt details
-        $db = Database::getInstance();
-        $sql = "SELECT * FROM quiz_attempts WHERE id = :id AND user_id = :user_id";
-        $attempt = $db->query($sql, ['id' => $attemptId, 'user_id' => $userId])->fetch();
-        
-        if (!$attempt) {
-            http_response_code(404);
-            echo json_encode(['success' => false, 'error' => 'Attempt not found']);
-            exit;
-        }
-        
-        // Get answers if completed
-        if ($attempt['status'] == 'completed') {
-            $sql = "SELECT qa.*, qq.question_text, qq.question_type, qq.options, qq.correct_answer, qq.explanation
-                    FROM quiz_answers qa
-                    JOIN quiz_questions qq ON qa.question_id = qq.id
-                    WHERE qa.attempt_id = :attempt_id";
-            $answers = $db->query($sql, ['attempt_id' => $attemptId])->fetchAll();
-            $attempt['answers'] = $answers;
-        }
-        
-        echo json_encode(['success' => true, 'attempt' => $attempt]);
-        exit;
-    }
-    
-    if ($quizId) {
-        // Get quiz details
-        $quiz = Quiz::find($quizId);
-        if (!$quiz) {
-            http_response_code(404);
-            echo json_encode(['success' => false, 'error' => 'Quiz not found']);
-            exit;
-        }
-        
-        // Check enrollment
-        if (!Enrollment::isEnrolled($userId, $quiz->getCourseId())) {
-            http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Not enrolled in course']);
-            exit;
-        }
-        
-        // Get questions
-        $questions = $quiz->getQuestions();
-        
-        // Hide correct answers until after submission
-        foreach ($questions as &$question) {
-            unset($question['correct_answer']);
-        }
-        
-        // Get user's attempts
-        $attempts = $quiz->getUserAttempts($userId);
-        
-        echo json_encode([
-            'success' => true,
-            'quiz' => [
-                'id' => $quiz->getId(),
-                'title' => $quiz->getTitle(),
-                'description' => $quiz->getDescription(),
-                'passing_score' => $quiz->getPassingScore(),
-                'time_limit' => $quiz->getTimeLimit(),
-                'max_attempts' => $quiz->getMaxAttempts(),
-                'question_count' => count($questions)
-            ],
-            'questions' => $questions,
-            'attempts' => $attempts,
-            'can_attempt' => $quiz->canUserTake($userId),
-            'has_passed' => $quiz->hasUserPassed($userId)
-        ]);
-        exit;
-    }
-    
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Missing quiz or attempt ID']);
-    exit;
-}
-
-// POST - Start or submit quiz
-if ($method === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true);
-    
-    if (!$input) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Invalid input']);
-        exit;
-    }
-    
-    $action = $input['action'] ?? null;
-    $quizId = $input['quiz_id'] ?? null;
     
     if (!$quizId) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Missing quiz ID']);
+        echo json_encode(['success' => false, 'error' => 'Quiz ID is required']);
         exit;
     }
     
     $quiz = Quiz::find($quizId);
-    if (!$quiz) {
+    
+    if (!$quiz || !$quiz->exists()) {
         http_response_code(404);
         echo json_encode(['success' => false, 'error' => 'Quiz not found']);
         exit;
     }
     
-    // Check enrollment
+    // Verify enrollment
+    require_once '../../src/classes/Enrollment.php';
     if (!Enrollment::isEnrolled($userId, $quiz->getCourseId())) {
         http_response_code(403);
-        echo json_encode(['success' => false, 'error' => 'Not enrolled in course']);
+        echo json_encode(['success' => false, 'error' => 'Not enrolled in this course']);
         exit;
     }
     
-    switch ($action) {
-        case 'start':
-            // Start new attempt
-            if (!$quiz->canUserTake($userId)) {
-                http_response_code(403);
-                echo json_encode(['success' => false, 'error' => 'Maximum attempts reached']);
-                exit;
-            }
-            
-            $attemptId = $quiz->startAttempt($userId);
-            if ($attemptId) {
-                echo json_encode([
-                    'success' => true,
-                    'attempt_id' => $attemptId,
-                    'message' => 'Quiz started'
-                ]);
-            } else {
-                http_response_code(500);
-                echo json_encode(['success' => false, 'error' => 'Failed to start quiz']);
-            }
-            break;
-            
-        case 'submit':
-            // Submit quiz answers
-            $attemptId = $input['attempt_id'] ?? null;
-            $answers = $input['answers'] ?? [];
-            
-            if (!$attemptId) {
-                http_response_code(400);
-                echo json_encode(['success' => false, 'error' => 'Missing attempt ID']);
-                exit;
-            }
-            
-            $result = $quiz->submitAttempt($attemptId, $answers);
-            if ($result) {
-                echo json_encode([
-                    'success' => true,
-                    'result' => $result,
-                    'message' => $result['passed'] ? 'Congratulations! You passed!' : 'You did not pass. Please try again.'
-                ]);
-            } else {
-                http_response_code(500);
-                echo json_encode(['success' => false, 'error' => 'Failed to submit quiz']);
-            }
-            break;
-            
-        default:
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Invalid action']);
+    // Get questions
+    $questions = Question::getByQuiz($quizId);
+    
+    // Remove correct answers from questions
+    $questionsForDisplay = array_map(function($q) {
+        unset($q['correct_answer']);
+        return $q;
+    }, $questions);
+    
+    // Get user's previous attempts
+    $attempts = $quiz->getUserAttempts($userId);
+    
+    // Check if user can attempt
+    $canAttempt = true;
+    $attemptsLeft = null;
+    
+    if ($quiz->getMaxAttempts() > 0) {
+        $attemptsLeft = $quiz->getMaxAttempts() - count($attempts);
+        $canAttempt = $attemptsLeft > 0;
     }
     
+    echo json_encode([
+        'success' => true,
+        'quiz' => [
+            'id' => $quiz->getId(),
+            'title' => $quiz->getTitle(),
+            'description' => $quiz->getDescription(),
+            'time_limit' => $quiz->getTimeLimit(),
+            'passing_score' => $quiz->getPassingScore(),
+            'max_attempts' => $quiz->getMaxAttempts(),
+            'total_questions' => count($questions),
+            'total_points' => array_sum(array_column($questions, 'points'))
+        ],
+        'questions' => $questionsForDisplay,
+        'attempts' => $attempts,
+        'can_attempt' => $canAttempt,
+        'attempts_left' => $attemptsLeft
+    ]);
     exit;
 }
 
+// POST: Submit quiz attempt
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    
+    if (!$input) {
+        $input = $_POST;
+    }
+    
+    $quizId = $input['quiz_id'] ?? null;
+    $answers = $input['answers'] ?? [];
+    
+    if (!$quizId) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Quiz ID is required']);
+        exit;
+    }
+    
+    if (empty($answers)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'No answers provided']);
+        exit;
+    }
+    
+    $quiz = Quiz::find($quizId);
+    
+    if (!$quiz || !$quiz->exists()) {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'error' => 'Quiz not found']);
+        exit;
+    }
+    
+    // Verify enrollment
+    require_once '../../src/classes/Enrollment.php';
+    if (!Enrollment::isEnrolled($userId, $quiz->getCourseId())) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Not enrolled in this course']);
+        exit;
+    }
+    
+    // Check if user can attempt
+    $attempts = $quiz->getUserAttempts($userId);
+    
+    if ($quiz->getMaxAttempts() > 0 && count($attempts) >= $quiz->getMaxAttempts()) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Maximum attempts reached']);
+        exit;
+    }
+    
+    // Get questions
+    $questions = Question::getByQuiz($quizId);
+    
+    // Calculate score
+    $totalPoints = 0;
+    $earnedPoints = 0;
+    $correctAnswers = 0;
+    $results = [];
+    
+    foreach ($questions as $question) {
+        $questionId = $question['id'];
+        $points = $question['points'];
+        $totalPoints += $points;
+        
+        $userAnswer = $answers[$questionId] ?? null;
+        $correctAnswer = $question['correct_answer'];
+        $isCorrect = false;
+        
+        if ($question['question_type'] === 'multiple_choice' || $question['question_type'] === 'true_false') {
+            $isCorrect = $userAnswer === $correctAnswer;
+        } elseif ($question['question_type'] === 'short_answer') {
+            // Case-insensitive comparison, trim whitespace
+            $isCorrect = strcasecmp(trim($userAnswer), trim($correctAnswer)) === 0;
+        }
+        
+        if ($isCorrect) {
+            $earnedPoints += $points;
+            $correctAnswers++;
+        }
+        
+        $results[] = [
+            'question_id' => $questionId,
+            'question' => $question['question_text'],
+            'user_answer' => $userAnswer,
+            'correct_answer' => $correctAnswer,
+            'is_correct' => $isCorrect,
+            'points' => $points,
+            'earned_points' => $isCorrect ? $points : 0
+        ];
+    }
+    
+    $score = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100, 2) : 0;
+    $passed = $score >= $quiz->getPassingScore();
+    
+    // Save attempt
+    $attemptId = $quiz->saveAttempt([
+        'user_id' => $userId,
+        'score' => $score,
+        'total_points' => $totalPoints,
+        'earned_points' => $earnedPoints,
+        'answers' => json_encode($answers),
+        'results' => json_encode($results),
+        'passed' => $passed ? 1 : 0
+    ]);
+    
+    if (!$attemptId) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Failed to save quiz attempt']);
+        exit;
+    }
+    
+    // Update course progress if quiz passed
+    if ($passed && $quiz->getLessonId()) {
+        require_once '../../src/classes/Progress.php';
+        $progress = new Progress();
+        $progress->completeLesson($userId, $quiz->getLessonId());
+    }
+    
+    echo json_encode([
+        'success' => true,
+        'attempt_id' => $attemptId,
+        'score' => $score,
+        'total_points' => $totalPoints,
+        'earned_points' => $earnedPoints,
+        'correct_answers' => $correctAnswers,
+        'total_questions' => count($questions),
+        'passed' => $passed,
+        'passing_score' => $quiz->getPassingScore(),
+        'results' => $results,
+        'message' => $passed ? 'Congratulations! You passed the quiz.' : 'You did not pass. Please try again.'
+    ]);
+    exit;
+}
+
+// Method not allowed
 http_response_code(405);
 echo json_encode(['success' => false, 'error' => 'Method not allowed']);

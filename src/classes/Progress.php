@@ -1,7 +1,7 @@
 <?php
 /**
  * Progress Class
- * Tracks user progress through courses
+ * Handles student course progress tracking
  */
 
 class Progress {
@@ -12,315 +12,377 @@ class Progress {
     }
     
     /**
-     * Get user's course progress
+     * Get user's progress for a course
+     * 
+     * @param int $userId User ID
+     * @param int $courseId Course ID
+     * @return array Progress data
      */
     public function getCourseProgress($userId, $courseId) {
-        $sql = "SELECT 
-            e.progress_percentage,
-            e.total_time_spent,
-            e.last_accessed_at,
-            COUNT(DISTINCT lp.lesson_id) as completed_lessons,
-            (SELECT COUNT(*) FROM lessons l 
-             JOIN modules m ON l.module_id = m.id 
-             WHERE m.course_id = :course_id) as total_lessons
-            FROM enrollments e
-            LEFT JOIN lesson_progress lp ON e.user_id = lp.user_id 
-                AND e.course_id = lp.course_id AND lp.completed = 1
-            WHERE e.user_id = :user_id AND e.course_id = :course_id
-            GROUP BY e.id";
+        // Get total lessons
+        $totalLessons = $this->db->fetchColumn("
+            SELECT COUNT(*) 
+            FROM lessons l
+            JOIN modules m ON l.module_id = m.id
+            WHERE m.course_id = ?
+        ", [$courseId]);
         
-        return $this->db->query($sql, [
-            'user_id' => $userId,
-            'course_id' => $courseId
-        ])->fetch();
+        // Get completed lessons
+        $completedLessons = $this->db->fetchColumn("
+            SELECT COUNT(DISTINCT lp.lesson_id)
+            FROM lesson_progress lp
+            JOIN lessons l ON lp.lesson_id = l.id
+            JOIN modules m ON l.module_id = m.id
+            WHERE lp.user_id = ? AND m.course_id = ? AND lp.completed = 1
+        ", [$userId, $courseId]);
+        
+        // Get quiz attempts
+        $quizAttempts = $this->db->fetchColumn("
+            SELECT COUNT(*) 
+            FROM quiz_attempts qa
+            JOIN quizzes q ON qa.quiz_id = q.id
+            WHERE qa.user_id = ? AND q.course_id = ?
+        ", [$userId, $courseId]);
+        
+        // Get average quiz score
+        $avgQuizScore = $this->db->fetchColumn("
+            SELECT AVG(qa.score)
+            FROM quiz_attempts qa
+            JOIN quizzes q ON qa.quiz_id = q.id
+            WHERE qa.user_id = ? AND q.course_id = ?
+        ", [$userId, $courseId]) ?? 0;
+        
+        // Calculate percentage
+        $percentage = $totalLessons > 0 ? round(($completedLessons / $totalLessons) * 100, 2) : 0;
+        
+        // Get last accessed
+        $lastAccessed = $this->db->fetchColumn("
+            SELECT MAX(lp.last_accessed)
+            FROM lesson_progress lp
+            JOIN lessons l ON lp.lesson_id = l.id
+            JOIN modules m ON l.module_id = m.id
+            WHERE lp.user_id = ? AND m.course_id = ?
+        ", [$userId, $courseId]);
+        
+        // Get time spent (in seconds)
+        $timeSpent = $this->db->fetchColumn("
+            SELECT SUM(lp.time_spent)
+            FROM lesson_progress lp
+            JOIN lessons l ON lp.lesson_id = l.id
+            JOIN modules m ON l.module_id = m.id
+            WHERE lp.user_id = ? AND m.course_id = ?
+        ", [$userId, $courseId]) ?? 0;
+        
+        return [
+            'total_lessons' => $totalLessons,
+            'completed_lessons' => $completedLessons,
+            'percentage' => $percentage,
+            'quiz_attempts' => $quizAttempts,
+            'avg_quiz_score' => round($avgQuizScore, 2),
+            'last_accessed' => $lastAccessed,
+            'time_spent' => $timeSpent,
+            'time_spent_formatted' => $this->formatTimeSpent($timeSpent),
+            'is_completed' => $percentage >= 100
+        ];
     }
     
     /**
-     * Get all completed lessons for user in course
-     */
-    public function getCompletedLessons($userId, $courseId) {
-        $sql = "SELECT lesson_id, completed_at 
-                FROM lesson_progress 
-                WHERE user_id = :user_id AND course_id = :course_id AND completed = 1";
-        
-        return $this->db->query($sql, [
-            'user_id' => $userId,
-            'course_id' => $courseId
-        ])->fetchAll();
-    }
-    
-    /**
-     * Get lesson progress
+     * Get user's lesson progress
+     * 
+     * @param int $userId User ID
+     * @param int $lessonId Lesson ID
+     * @return array|null
      */
     public function getLessonProgress($userId, $lessonId) {
         $sql = "SELECT * FROM lesson_progress 
-                WHERE user_id = :user_id AND lesson_id = :lesson_id";
-        
-        return $this->db->query($sql, [
-            'user_id' => $userId,
-            'lesson_id' => $lessonId
-        ])->fetch();
+                WHERE user_id = ? AND lesson_id = ?";
+        return $this->db->query($sql, [$userId, $lessonId])->fetch();
     }
     
     /**
-     * Update lesson progress
+     * Mark lesson as started
+     * 
+     * @param int $userId User ID
+     * @param int $lessonId Lesson ID
+     * @return bool
      */
-    public function updateLessonProgress($userId, $courseId, $lessonId, $data) {
-        $sql = "INSERT INTO lesson_progress (
-            user_id, course_id, lesson_id, progress_seconds, 
-            last_position, completed, completed_at
-        ) VALUES (
-            :user_id, :course_id, :lesson_id, :progress_seconds,
-            :last_position, :completed, :completed_at
-        ) ON DUPLICATE KEY UPDATE
-            progress_seconds = VALUES(progress_seconds),
-            last_position = VALUES(last_position),
-            completed = VALUES(completed),
-            completed_at = VALUES(completed_at),
-            updated_at = NOW()";
+    public function startLesson($userId, $lessonId) {
+        // Check if progress exists
+        $existing = $this->getLessonProgress($userId, $lessonId);
         
-        $params = [
-            'user_id' => $userId,
-            'course_id' => $courseId,
-            'lesson_id' => $lessonId,
-            'progress_seconds' => $data['progress_seconds'] ?? 0,
-            'last_position' => $data['last_position'] ?? 0,
-            'completed' => $data['completed'] ?? 0,
-            'completed_at' => $data['completed'] ? date('Y-m-d H:i:s') : null
-        ];
-        
-        if ($this->db->query($sql, $params)) {
-            // Recalculate course progress
-            $this->recalculateCourseProgress($userId, $courseId);
-            return true;
+        if ($existing) {
+            // Update last accessed
+            $sql = "UPDATE lesson_progress 
+                    SET last_accessed = NOW() 
+                    WHERE user_id = ? AND lesson_id = ?";
+            return $this->db->query($sql, [$userId, $lessonId]);
+        } else {
+            // Create new progress record
+            $sql = "INSERT INTO lesson_progress (user_id, lesson_id, started_at, last_accessed) 
+                    VALUES (?, ?, NOW(), NOW())";
+            return $this->db->query($sql, [$userId, $lessonId]);
         }
+    }
+    
+    /**
+     * Mark lesson as completed
+     * 
+     * @param int $userId User ID
+     * @param int $lessonId Lesson ID
+     * @return bool
+     */
+    public function completeLesson($userId, $lessonId) {
+        $existing = $this->getLessonProgress($userId, $lessonId);
+        
+        if ($existing) {
+            if ($existing['completed']) {
+                return true; // Already completed
+            }
+            
+            $sql = "UPDATE lesson_progress 
+                    SET completed = 1, completed_at = NOW(), last_accessed = NOW() 
+                    WHERE user_id = ? AND lesson_id = ?";
+            $result = $this->db->query($sql, [$userId, $lessonId]);
+            
+            // Check if course is now complete
+            $this->checkCourseCompletion($userId, $lessonId);
+            
+            return $result;
+        } else {
+            $sql = "INSERT INTO lesson_progress 
+                    (user_id, lesson_id, completed, started_at, completed_at, last_accessed) 
+                    VALUES (?, ?, 1, NOW(), NOW(), NOW())";
+            $result = $this->db->query($sql, [$userId, $lessonId]);
+            
+            $this->checkCourseCompletion($userId, $lessonId);
+            
+            return $result;
+        }
+    }
+    
+    /**
+     * Update time spent on lesson
+     * 
+     * @param int $userId User ID
+     * @param int $lessonId Lesson ID
+     * @param int $seconds Time spent in seconds
+     * @return bool
+     */
+    public function updateTimeSpent($userId, $lessonId, $seconds) {
+        $existing = $this->getLessonProgress($userId, $lessonId);
+        
+        if ($existing) {
+            $sql = "UPDATE lesson_progress 
+                    SET time_spent = time_spent + ?, last_accessed = NOW() 
+                    WHERE user_id = ? AND lesson_id = ?";
+            return $this->db->query($sql, [$seconds, $userId, $lessonId]);
+        }
+        
         return false;
     }
     
     /**
-     * Mark lesson as complete
-     */
-    public function markLessonComplete($userId, $courseId, $lessonId) {
-        return $this->updateLessonProgress($userId, $courseId, $lessonId, [
-            'completed' => 1,
-            'progress_seconds' => 0,
-            'last_position' => 0
-        ]);
-    }
-    
-    /**
-     * Recalculate course progress percentage
-     */
-    public function recalculateCourseProgress($userId, $courseId) {
-        // Get total and completed lessons
-        $sql = "SELECT 
-            COUNT(DISTINCT l.id) as total_lessons,
-            COUNT(DISTINCT CASE WHEN lp.completed = 1 THEN lp.lesson_id END) as completed_lessons
-            FROM lessons l
-            JOIN modules m ON l.module_id = m.id
-            LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = :user_id
-            WHERE m.course_id = :course_id";
-        
-        $result = $this->db->query($sql, [
-            'user_id' => $userId,
-            'course_id' => $courseId
-        ])->fetch();
-        
-        $totalLessons = $result['total_lessons'] ?? 0;
-        $completedLessons = $result['completed_lessons'] ?? 0;
-        
-        if ($totalLessons == 0) {
-            return 0;
-        }
-        
-        $percentage = ($completedLessons / $totalLessons) * 100;
-        
-        // Update enrollment
-        $sql = "UPDATE enrollments 
-                SET progress_percentage = :percentage,
-                    enrollment_status = CASE WHEN :percentage >= 100 THEN 'completed' ELSE enrollment_status END,
-                    completed_at = CASE WHEN :percentage >= 100 THEN NOW() ELSE completed_at END
-                WHERE user_id = :user_id AND course_id = :course_id";
-        
-        $this->db->query($sql, [
-            'percentage' => $percentage,
-            'user_id' => $userId,
-            'course_id' => $courseId
-        ]);
-        
-        return $percentage;
-    }
-    
-    /**
-     * Update last accessed time
-     */
-    public function updateLastAccessed($userId, $courseId) {
-        $sql = "UPDATE enrollments 
-                SET last_accessed_at = NOW() 
-                WHERE user_id = :user_id AND course_id = :course_id";
-        
-        return $this->db->query($sql, [
-            'user_id' => $userId,
-            'course_id' => $courseId
-        ]);
-    }
-    
-    /**
-     * Add time spent
-     */
-    public function addTimeSpent($userId, $courseId, $seconds) {
-        $sql = "UPDATE enrollments 
-                SET total_time_spent = total_time_spent + :seconds 
-                WHERE user_id = :user_id AND course_id = :course_id";
-        
-        return $this->db->query($sql, [
-            'seconds' => $seconds,
-            'user_id' => $userId,
-            'course_id' => $courseId
-        ]);
-    }
-    
-    /**
-     * Get user's current lesson in course
+     * Get current lesson (last accessed or first incomplete)
+     * 
+     * @param int $userId User ID
+     * @param int $courseId Course ID
+     * @return Lesson|null
      */
     public function getCurrentLesson($userId, $courseId) {
-        // Get last accessed incomplete lesson
+        // Try to get last accessed lesson
         $sql = "SELECT l.id
-                FROM lessons l
+                FROM lesson_progress lp
+                JOIN lessons l ON lp.lesson_id = l.id
                 JOIN modules m ON l.module_id = m.id
-                LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = :user_id
-                WHERE m.course_id = :course_id
-                AND (lp.completed IS NULL OR lp.completed = 0)
-                ORDER BY m.order_index ASC, l.order_index ASC
+                WHERE lp.user_id = ? AND m.course_id = ?
+                ORDER BY lp.last_accessed DESC
                 LIMIT 1";
         
-        $result = $this->db->query($sql, [
-            'user_id' => $userId,
-            'course_id' => $courseId
-        ])->fetch();
+        $lessonId = $this->db->fetchColumn($sql, [$userId, $courseId]);
         
-        if ($result) {
+        if ($lessonId) {
             require_once __DIR__ . '/Lesson.php';
-            return Lesson::find($result['id']);
+            return Lesson::find($lessonId);
         }
         
-        // If all complete, return first lesson
+        // Get first lesson
         $sql = "SELECT l.id
                 FROM lessons l
                 JOIN modules m ON l.module_id = m.id
-                WHERE m.course_id = :course_id
+                WHERE m.course_id = ?
                 ORDER BY m.order_index ASC, l.order_index ASC
                 LIMIT 1";
         
-        $result = $this->db->query($sql, ['course_id' => $courseId])->fetch();
+        $lessonId = $this->db->fetchColumn($sql, [$courseId]);
         
-        if ($result) {
+        if ($lessonId) {
             require_once __DIR__ . '/Lesson.php';
-            return Lesson::find($result['id']);
+            return Lesson::find($lessonId);
         }
         
         return null;
     }
     
     /**
-     * Get module progress
+     * Get next incomplete lesson
+     * 
+     * @param int $userId User ID
+     * @param int $courseId Course ID
+     * @return Lesson|null
      */
-    public function getModuleProgress($userId, $moduleId) {
-        $sql = "SELECT 
-            COUNT(DISTINCT l.id) as total_lessons,
-            COUNT(DISTINCT CASE WHEN lp.completed = 1 THEN lp.lesson_id END) as completed_lessons
+    public function getNextLesson($userId, $courseId) {
+        $sql = "SELECT l.id
+                FROM lessons l
+                JOIN modules m ON l.module_id = m.id
+                LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = ?
+                WHERE m.course_id = ? AND (lp.completed IS NULL OR lp.completed = 0)
+                ORDER BY m.order_index ASC, l.order_index ASC
+                LIMIT 1";
+        
+        $lessonId = $this->db->fetchColumn($sql, [$userId, $courseId]);
+        
+        if ($lessonId) {
+            require_once __DIR__ . '/Lesson.php';
+            return Lesson::find($lessonId);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Update last accessed time
+     * 
+     * @param int $userId User ID
+     * @param int $courseId Course ID
+     * @return bool
+     */
+    public function updateLastAccessed($userId, $courseId) {
+        // Update enrollment
+        $sql = "UPDATE enrollments 
+                SET last_accessed = NOW() 
+                WHERE user_id = ? AND course_id = ?";
+        return $this->db->query($sql, [$userId, $courseId]);
+    }
+    
+    /**
+     * Check if course is complete and update enrollment status
+     * 
+     * @param int $userId User ID
+     * @param int $lessonId Lesson ID (to get course)
+     * @return bool
+     */
+    private function checkCourseCompletion($userId, $lessonId) {
+        // Get course ID
+        $courseId = $this->db->fetchColumn("
+            SELECT m.course_id 
             FROM lessons l
-            LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = :user_id
-            WHERE l.module_id = :module_id";
-        
-        $result = $this->db->query($sql, [
-            'user_id' => $userId,
-            'module_id' => $moduleId
-        ])->fetch();
-        
-        $total = $result['total_lessons'] ?? 0;
-        $completed = $result['completed_lessons'] ?? 0;
-        
-        return [
-            'total' => $total,
-            'completed' => $completed,
-            'percentage' => $total > 0 ? round(($completed / $total) * 100) : 0
-        ];
-    }
-    
-    /**
-     * Get user's learning statistics
-     */
-    public function getUserStats($userId) {
-        $sql = "SELECT 
-            COUNT(DISTINCT e.course_id) as total_courses,
-            SUM(CASE WHEN e.enrollment_status = 'completed' THEN 1 ELSE 0 END) as completed_courses,
-            SUM(e.total_time_spent) as total_time_spent,
-            COUNT(DISTINCT lp.lesson_id) as total_lessons_completed
-            FROM enrollments e
-            LEFT JOIN lesson_progress lp ON e.user_id = lp.user_id AND lp.completed = 1
-            WHERE e.user_id = :user_id";
-        
-        return $this->db->query($sql, ['user_id' => $userId])->fetch();
-    }
-    
-    /**
-     * Get recent activity
-     */
-    public function getRecentActivity($userId, $limit = 10) {
-        $sql = "SELECT 
-            lp.lesson_id,
-            lp.completed,
-            lp.completed_at,
-            lp.updated_at,
-            l.title as lesson_title,
-            c.title as course_title,
-            c.slug as course_slug
-            FROM lesson_progress lp
-            JOIN lessons l ON lp.lesson_id = l.id
             JOIN modules m ON l.module_id = m.id
-            JOIN courses c ON m.course_id = c.id
-            WHERE lp.user_id = :user_id
-            ORDER BY lp.updated_at DESC
-            LIMIT :limit";
+            WHERE l.id = ?
+        ", [$lessonId]);
         
-        return $this->db->query($sql, [
-            'user_id' => $userId,
-            'limit' => $limit
-        ])->fetchAll();
+        if (!$courseId) {
+            return false;
+        }
+        
+        $progress = $this->getCourseProgress($userId, $courseId);
+        
+        if ($progress['percentage'] >= 100) {
+            // Mark enrollment as completed
+            $sql = "UPDATE enrollments 
+                    SET enrollment_status = 'completed', completed_at = NOW() 
+                    WHERE user_id = ? AND course_id = ? AND enrollment_status != 'completed'";
+            
+            $updated = $this->db->query($sql, [$userId, $courseId]);
+            
+            if ($updated) {
+                // Trigger certificate generation
+                require_once __DIR__ . '/Certificate.php';
+                Certificate::generate($userId, $courseId);
+            }
+            
+            return true;
+        }
+        
+        return false;
     }
     
     /**
-     * Get learning streak (consecutive days)
+     * Get all user's progress across all courses
+     * 
+     * @param int $userId User ID
+     * @return array
      */
-    public function getLearningStreak($userId) {
-        $sql = "SELECT DATE(updated_at) as activity_date 
-                FROM lesson_progress 
-                WHERE user_id = :user_id 
-                GROUP BY DATE(updated_at)
-                ORDER BY activity_date DESC";
+    public function getUserProgress($userId) {
+        $sql = "SELECT 
+                    e.course_id,
+                    c.title,
+                    c.slug,
+                    c.thumbnail,
+                    e.enrolled_at,
+                    e.last_accessed,
+                    e.enrollment_status
+                FROM enrollments e
+                JOIN courses c ON e.course_id = c.id
+                WHERE e.user_id = ?
+                ORDER BY e.last_accessed DESC";
         
-        $dates = $this->db->query($sql, ['user_id' => $userId])->fetchAll();
+        $enrollments = $this->db->query($sql, [$userId])->fetchAll();
         
-        if (empty($dates)) {
-            return 0;
+        $result = [];
+        foreach ($enrollments as $enrollment) {
+            $progress = $this->getCourseProgress($userId, $enrollment['course_id']);
+            $result[] = array_merge($enrollment, $progress);
         }
         
-        $streak = 1;
-        $currentDate = new DateTime($dates[0]['activity_date']);
+        return $result;
+    }
+    
+    /**
+     * Format time spent in human-readable format
+     * 
+     * @param int $seconds Time in seconds
+     * @return string
+     */
+    private function formatTimeSpent($seconds) {
+        if ($seconds < 60) {
+            return $seconds . 's';
+        } elseif ($seconds < 3600) {
+            return floor($seconds / 60) . 'm';
+        } else {
+            $hours = floor($seconds / 3600);
+            $minutes = floor(($seconds % 3600) / 60);
+            return $hours . 'h ' . $minutes . 'm';
+        }
+    }
+    
+    /**
+     * Get lesson progress for all lessons in a course
+     * 
+     * @param int $userId User ID
+     * @param int $courseId Course ID
+     * @return array Lesson ID => progress data
+     */
+    public function getCourseLessonsProgress($userId, $courseId) {
+        $sql = "SELECT 
+                    l.id,
+                    lp.completed,
+                    lp.time_spent,
+                    lp.last_accessed,
+                    lp.started_at,
+                    lp.completed_at
+                FROM lessons l
+                JOIN modules m ON l.module_id = m.id
+                LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = ?
+                WHERE m.course_id = ?
+                ORDER BY m.order_index, l.order_index";
         
-        for ($i = 1; $i < count($dates); $i++) {
-            $prevDate = new DateTime($dates[$i]['activity_date']);
-            $diff = $currentDate->diff($prevDate)->days;
-            
-            if ($diff == 1) {
-                $streak++;
-                $currentDate = $prevDate;
-            } else {
-                break;
-            }
+        $results = $this->db->query($sql, [$userId, $courseId])->fetchAll();
+        
+        $progress = [];
+        foreach ($results as $row) {
+            $progress[$row['id']] = $row;
         }
         
-        return $streak;
+        return $progress;
     }
 }
