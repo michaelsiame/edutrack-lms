@@ -47,7 +47,7 @@ class Question {
         $db = Database::getInstance();
         $sql = "SELECT * FROM quiz_questions 
                 WHERE quiz_id = :quiz_id 
-                ORDER BY order_index ASC";
+                ORDER BY display_order ASC";
         
         return $db->query($sql, ['quiz_id' => $quizId])->fetchAll();
     }

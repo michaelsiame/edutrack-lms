@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
 $lessons = $db->fetchAll("
     SELECT l.id, l.title, m.title as module_title
     FROM lessons l
-    JOIN modules m ON l.module_id = m.id
+    JOIN course_modules m ON l.module_id = m.id
     WHERE m.course_id = ?
     ORDER BY m.order_index, l.order_index
 ", [$course->getId()]);

@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' || $verificationCode || $certificateNum
             FROM certificates c
             JOIN users u ON c.user_id = u.id
             JOIN courses co ON c.course_id = co.id
-            LEFT JOIN categories cat ON co.category_id = cat.id
+            LEFT JOIN course_categories cat ON co.category_id = cat.id
             LEFT JOIN users i ON co.instructor_id = i.id
             WHERE {$whereClause}
             LIMIT 1

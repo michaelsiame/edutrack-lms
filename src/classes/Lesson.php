@@ -24,7 +24,7 @@ class Lesson {
         $sql = "SELECT l.*, m.title as module_title, m.course_id, 
                 c.title as course_title, c.slug as course_slug
                 FROM lessons l
-                JOIN modules m ON l.module_id = m.id
+                JOIN course_modules m ON l.module_id = m.id
                 JOIN courses c ON m.course_id = c.id
                 WHERE l.id = :id";
         
@@ -53,7 +53,7 @@ class Lesson {
         $db = Database::getInstance();
         $sql = "SELECT * FROM lessons 
                 WHERE module_id = :module_id 
-                ORDER BY order_index ASC";
+                ORDER BY display_order ASC";
         return $db->query($sql, ['module_id' => $moduleId])->fetchAll();
     }
     
@@ -64,9 +64,9 @@ class Lesson {
         $db = Database::getInstance();
         $sql = "SELECT l.*, m.title as module_title, m.order_index as module_order
                 FROM lessons l
-                JOIN modules m ON l.module_id = m.id
+                JOIN course_modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
-                ORDER BY m.order_index ASC, l.order_index ASC";
+                ORDER BY m.display_order ASC, l.display_order ASC";
         return $db->query($sql, ['course_id' => $courseId])->fetchAll();
     }
     
@@ -152,12 +152,12 @@ class Lesson {
     public function getNext() {
         $sql = "SELECT l.id
                 FROM lessons l
-                JOIN modules m ON l.module_id = m.id
+                JOIN course_modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
-                AND (m.order_index > (SELECT m2.order_index FROM modules m2 WHERE m2.id = :module_id)
-                     OR (m.order_index = (SELECT m2.order_index FROM modules m2 WHERE m2.id = :module_id) 
+                AND (m.order_index > (SELECT m2.order_index FROM course_modules m2 WHERE m2.id = :module_id)
+                     OR (m.order_index = (SELECT m2.order_index FROM course_modules m2 WHERE m2.id = :module_id) 
                          AND l.order_index > :order_index))
-                ORDER BY m.order_index ASC, l.order_index ASC
+                ORDER BY m.display_order ASC, l.display_order ASC
                 LIMIT 1";
         
         $result = $this->db->query($sql, [
@@ -175,10 +175,10 @@ class Lesson {
     public function getPrevious() {
         $sql = "SELECT l.id
                 FROM lessons l
-                JOIN modules m ON l.module_id = m.id
+                JOIN course_modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
-                AND (m.order_index < (SELECT m2.order_index FROM modules m2 WHERE m2.id = :module_id)
-                     OR (m.order_index = (SELECT m2.order_index FROM modules m2 WHERE m2.id = :module_id) 
+                AND (m.order_index < (SELECT m2.order_index FROM course_modules m2 WHERE m2.id = :module_id)
+                     OR (m.order_index = (SELECT m2.order_index FROM course_modules m2 WHERE m2.id = :module_id) 
                          AND l.order_index < :order_index))
                 ORDER BY m.order_index DESC, l.order_index DESC
                 LIMIT 1";

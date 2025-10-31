@@ -337,7 +337,7 @@ require_once '../src/templates/header.php';
                             // Get lessons for this module
                             $db = Database::getInstance();
                             $lessons = $db->query(
-                                "SELECT * FROM lessons WHERE module_id = :module_id ORDER BY order_index ASC",
+                                "SELECT * FROM lessons WHERE module_id = :module_id ORDER BY display_order ASC",
                                 ['module_id' => $module['id']]
                             )->fetchAll();
                             ?>

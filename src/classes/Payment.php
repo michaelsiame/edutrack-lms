@@ -148,6 +148,60 @@ class Payment {
         }
         return false;
     }
+    /**
+ * Get all payments with optional filters
+ */
+public static function all($options = []) {
+    $db = Database::getInstance();
+    
+    $sql = "SELECT p.*, u.first_name, u.last_name, u.email,
+            c.title as course_title, c.slug as course_slug
+            FROM payments p
+            JOIN users u ON p.user_id = u.id
+            LEFT JOIN courses c ON p.course_id = c.id
+            WHERE 1=1";
+    
+    $params = [];
+    
+    // Apply filters
+    if (isset($options['status'])) {
+        $sql .= " AND p.status = :status";
+        $params['status'] = $options['status'];
+    }
+    
+    if (isset($options['user_id'])) {
+        $sql .= " AND p.user_id = :user_id";
+        $params['user_id'] = $options['user_id'];
+    }
+    
+    if (isset($options['course_id'])) {
+        $sql .= " AND p.course_id = :course_id";
+        $params['course_id'] = $options['course_id'];
+    }
+    
+    if (isset($options['payment_method'])) {
+        $sql .= " AND p.payment_method = :payment_method";
+        $params['payment_method'] = $options['payment_method'];
+    }
+    
+    // Apply ordering
+    if (isset($options['order'])) {
+        $sql .= " ORDER BY p." . $options['order'];
+    } else {
+        $sql .= " ORDER BY p.created_at DESC";
+    }
+    
+    // Apply limit
+    if (isset($options['limit'])) {
+        $sql .= " LIMIT " . intval($options['limit']);
+        
+        if (isset($options['offset'])) {
+            $sql .= " OFFSET " . intval($options['offset']);
+        }
+    }
+    
+    return $db->query($sql, $params)->fetchAll();
+}
     
     /**
      * Mark as successful

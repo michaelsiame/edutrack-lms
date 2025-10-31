@@ -49,7 +49,7 @@ if ($method === 'GET') {
         $sql = "SELECT ln.*, l.title as lesson_title 
                 FROM lesson_notes ln
                 JOIN lessons l ON ln.lesson_id = l.id
-                JOIN modules m ON l.module_id = m.id
+                JOIN course_modules m ON l.module_id = m.id
                 WHERE ln.user_id = :user_id AND m.course_id = :course_id
                 ORDER BY ln.updated_at DESC";
         

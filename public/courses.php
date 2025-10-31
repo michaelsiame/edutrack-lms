@@ -9,6 +9,8 @@ require_once '../src/includes/database.php';
 require_once '../src/includes/functions.php';
 require_once '../src/classes/Course.php';
 require_once '../src/classes/Category.php';
+require_once '../src/templates/alerts.php';
+
 
 // Get filters from URL
 $category_slug = $_GET['category'] ?? null;
@@ -28,6 +30,7 @@ $filters = [
     'offset' => $offset
 ];
 
+$category = null;
 // Category filter
 if ($category_slug) {
     $category = Category::findBySlug($category_slug);

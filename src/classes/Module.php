@@ -23,7 +23,7 @@ class Module {
     private function load() {
         $sql = "SELECT m.*, c.title as course_title, c.slug as course_slug,
                 (SELECT COUNT(*) FROM lessons WHERE module_id = m.id) as lesson_count
-                FROM modules m
+                FROM course_modules m
                 JOIN courses c ON m.course_id = c.id
                 WHERE m.id = :id";
         
@@ -52,9 +52,9 @@ class Module {
         $db = Database::getInstance();
         $sql = "SELECT m.*,
                 (SELECT COUNT(*) FROM lessons WHERE module_id = m.id) as lesson_count
-                FROM modules m
+                FROM course_modules m
                 WHERE m.course_id = :course_id
-                ORDER BY m.order_index ASC";
+                ORDER BY m.display_order ASC";
         
         return $db->query($sql, ['course_id' => $courseId])->fetchAll();
     }
@@ -122,7 +122,7 @@ class Module {
         $this->db->query($sql, ['id' => $this->id]);
         
         // Delete module
-        $sql = "DELETE FROM modules WHERE id = :id";
+        $sql = "DELETE FROM course_modules WHERE id = :id";
         return $this->db->query($sql, ['id' => $this->id]);
     }
     

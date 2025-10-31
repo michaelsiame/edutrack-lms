@@ -19,7 +19,7 @@ if ($lessonId) {
     // Preview specific lesson
     $lesson = $db->query("SELECT l.*, m.course_id, c.title as course_title, c.slug as course_slug
                           FROM lessons l
-                          JOIN modules m ON l.module_id = m.id
+                          JOIN course_modules m ON l.module_id = m.id
                           JOIN courses c ON m.course_id = c.id
                           WHERE l.id = :id AND l.is_preview = 1",
                           ['id' => $lessonId])->fetch();
@@ -41,9 +41,9 @@ if ($lessonId) {
     
     $lesson = $db->query("SELECT l.*, m.course_id
                           FROM lessons l
-                          JOIN modules m ON l.module_id = m.id
+                          JOIN course_modules m ON l.module_id = m.id
                           WHERE m.course_id = :course_id AND l.is_preview = 1
-                          ORDER BY m.order_index ASC, l.order_index ASC
+                          ORDER BY m.display_order ASC, l.display_order ASC
                           LIMIT 1",
                           ['course_id' => $course->getId()])->fetch();
     
@@ -181,7 +181,7 @@ require_once '../src/templates/header.php';
                         $modules = $course->getModules();
                         foreach ($modules as $module):
                             $moduleLessons = $db->query(
-                                "SELECT * FROM lessons WHERE module_id = :module_id ORDER BY order_index ASC",
+                                "SELECT * FROM lessons WHERE module_id = :module_id ORDER BY display_order ASC",
                                 ['module_id' => $module['id']]
                             )->fetchAll();
                         ?>

@@ -25,7 +25,7 @@ class Assignment {
                 c.title as course_title
                 FROM assignments a
                 LEFT JOIN lessons l ON a.lesson_id = l.id
-                LEFT JOIN modules m ON l.module_id = m.id
+                LEFT JOIN course_modules m ON l.module_id = m.id
                 LEFT JOIN courses c ON m.course_id = c.id
                 WHERE a.id = :id";
         
@@ -55,7 +55,7 @@ class Assignment {
         $sql = "SELECT a.*, l.title as lesson_title
                 FROM assignments a
                 JOIN lessons l ON a.lesson_id = l.id
-                JOIN modules m ON l.module_id = m.id
+                JOIN course_modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
                 ORDER BY a.due_date ASC";
         

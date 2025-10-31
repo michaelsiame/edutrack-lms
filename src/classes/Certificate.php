@@ -4,7 +4,7 @@
  * Handles TEVETA certificate generation and management
  */
 
-require_once __DIR__ . '/../vendor/autoload.php'; // For TCPDF
+require_once  '../../vendor/autoload.php'; // For TCPDF
 
 use TCPDF;
 

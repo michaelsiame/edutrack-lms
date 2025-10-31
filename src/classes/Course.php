@@ -24,10 +24,10 @@ class Course {
         $sql = "SELECT c.*, cat.name as category_name, cat.slug as category_slug,
                 u.first_name as instructor_first_name, u.last_name as instructor_last_name,
                 (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
-                (SELECT AVG(rating) FROM reviews WHERE course_id = c.id) as avg_rating,
-                (SELECT COUNT(*) FROM reviews WHERE course_id = c.id) as total_reviews
+                (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id) as avg_rating,
+                (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) as total_reviews
                 FROM courses c
-                LEFT JOIN categories cat ON c.category_id = cat.id
+                LEFT JOIN course_categories cat ON c.category_id = cat.id
                 LEFT JOIN users u ON c.instructor_id = u.id
                 WHERE c.id = :id";
         
@@ -72,10 +72,10 @@ class Course {
         $sql = "SELECT c.*, cat.name as category_name, cat.slug as category_slug,
                 u.first_name as instructor_first_name, u.last_name as instructor_last_name,
                 (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
-                (SELECT AVG(rating) FROM reviews WHERE course_id = c.id) as avg_rating,
-                (SELECT COUNT(*) FROM reviews WHERE course_id = c.id) as total_reviews
+                (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id) as avg_rating,
+                (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) as total_reviews
                 FROM courses c
-                LEFT JOIN categories cat ON c.category_id = cat.id
+                LEFT JOIN course_categories cat ON c.category_id = cat.id
                 LEFT JOIN users u ON c.instructor_id = u.id
                 WHERE 1=1";
         
@@ -159,10 +159,10 @@ class Course {
                 COUNT(e.id) as total_students,
                 AVG(r.rating) as avg_rating
                 FROM courses c
-                LEFT JOIN categories cat ON c.category_id = cat.id
+                LEFT JOIN course_categories cat ON c.category_id = cat.id
                 LEFT JOIN users u ON c.instructor_id = u.id
                 LEFT JOIN enrollments e ON c.id = e.course_id
-                LEFT JOIN reviews r ON c.id = r.course_id
+                LEFT JOIN course_reviews r ON c.id = r.course_id
                 WHERE c.status = 'published'
                 GROUP BY c.id
                 ORDER BY total_students DESC, avg_rating DESC
@@ -300,9 +300,9 @@ class Course {
      * Get course modules
      */
     public function getModules() {
-        $sql = "SELECT * FROM modules 
+        $sql = "SELECT * FROM course_modules 
                 WHERE course_id = :course_id 
-                ORDER BY order_index ASC";
+                ORDER BY display_order ASC";
         return $this->db->query($sql, ['course_id' => $this->id])->fetchAll();
     }
     
@@ -312,9 +312,9 @@ class Course {
     public function getLessons() {
         $sql = "SELECT l.*, m.title as module_title 
                 FROM lessons l
-                JOIN modules m ON l.module_id = m.id
+                JOIN course_modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
-                ORDER BY m.order_index ASC, l.order_index ASC";
+                ORDER BY m.display_order ASC, l.display_order ASC";
         return $this->db->query($sql, ['course_id' => $this->id])->fetchAll();
     }
     
@@ -324,7 +324,7 @@ class Course {
     public function getTotalLessons() {
         $sql = "SELECT COUNT(l.id) as total
                 FROM lessons l
-                JOIN modules m ON l.module_id = m.id
+                JOIN course_modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id";
         $result = $this->db->query($sql, ['course_id' => $this->id])->fetch();
         return $result['total'];
@@ -335,7 +335,7 @@ class Course {
      */
     public function getReviews($limit = null) {
         $sql = "SELECT r.*, u.first_name, u.last_name, up.avatar
-                FROM reviews r
+                FROM course_reviews r
                 JOIN users u ON r.user_id = u.id
                 LEFT JOIN user_profiles up ON u.id = up.user_id
                 WHERE r.course_id = :course_id AND r.status = 'approved'
@@ -361,7 +361,7 @@ class Course {
                 SUM(CASE WHEN rating = 3 THEN 1 ELSE 0 END) as three_star,
                 SUM(CASE WHEN rating = 2 THEN 1 ELSE 0 END) as two_star,
                 SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as one_star
-                FROM reviews 
+                FROM course_reviews 
                 WHERE course_id = :course_id AND status = 'approved'";
         
         return $this->db->query($sql, ['course_id' => $this->id])->fetch();
@@ -444,7 +444,9 @@ class Course {
     public function getDuration() { return $this->data['duration'] ?? 0; }
     public function getLanguage() { return $this->data['language'] ?? 'English'; }
     public function getStatus() { return $this->data['status'] ?? 'draft'; }
-    public function isTeveta() { return $this->data['teveta_accredited'] == 1; }
+    public function isTeveta() {
+    return isset($this->data['is_teveta_certified']) && $this->data['is_teveta_certified'] == 1;
+}
     public function getTevetaCourseCode() { return $this->data['teveta_course_code'] ?? ''; }
     public function hasCertificate() { return $this->data['certificate_available'] == 1; }
     public function isFeatured() { return $this->data['featured'] == 1; }

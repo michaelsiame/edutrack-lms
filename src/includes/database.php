@@ -139,19 +139,27 @@ class Database {
      * Update records
      */
     public function update($table, $data, $where, $whereParams = []) {
-        $setParts = [];
-        foreach (array_keys($data) as $column) {
-            $setParts[] = "{$column} = :{$column}";
-        }
-        $setClause = implode(', ', $setParts);
-        
-        $sql = "UPDATE {$table} SET {$setClause} WHERE {$where}";
-        
-        $params = array_merge($data, $whereParams);
-        $stmt = $this->query($sql, $params);
-        
-        return $stmt->rowCount();
+    $setParts = [];
+    $params = [];
+    
+    // Build SET clause with positional parameters
+    $index = 1;
+    foreach ($data as $column => $value) {
+        $setParts[] = "{$column} = ?";
+        $params[] = $value;
     }
+    $setClause = implode(', ', $setParts);
+    
+    // Add WHERE parameters
+    foreach ($whereParams as $param) {
+        $params[] = $param;
+    }
+    
+    $sql = "UPDATE {$table} SET {$setClause} WHERE {$where}";
+    $stmt = $this->query($sql, $params);
+    
+    return $stmt->rowCount();
+}
     
     /**
      * Delete records
