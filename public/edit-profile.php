@@ -4,8 +4,12 @@
  * Edit Profile Page
  */
 
-require_once '../src/middleware/authenticate.php';
-require_once '../src/classes/User.php';
+require_once '../src/bootstrap.php';
+
+// Ensure user is authenticated
+if (!isLoggedIn()) {
+    redirect('login.php');
+}
 
 // Get current user
 $user = User::current();

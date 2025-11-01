@@ -4,47 +4,88 @@
  * Student Dashboard
  */
 
-require_once '../src/middleware/authenticate.php';
-require_once '../src/classes/User.php';
+require_once '../src/bootstrap.php';
+
+// Ensure user is authenticated
+if (!isLoggedIn()) {
+    redirect('login.php');
+}
 
 // Get current user
 $user = User::current();
+$userId = $user->getId();
 
-// Get dashboard statistics
+// Get comprehensive dashboard statistics using Statistics class
+$studentStats = Statistics::getStudentStats($userId);
+
+// Build stats array for display
 $stats = [
-    'active_courses' => $user->getActiveEnrollmentsCount(),
-    'completed_courses' => $user->getCompletedCoursesCount(),
-    'total_time' => $user->getTotalTimeSpent(),
-    'certificates' => count($user->getCertificates())
+    'active_courses' => $studentStats['in_progress_courses'],
+    'completed_courses' => $studentStats['completed_courses'],
+    'total_courses' => $studentStats['enrolled_courses'],
+    'certificates' => $studentStats['total_certificates'],
+    'avg_progress' => $studentStats['avg_progress'],
+    'avg_quiz_score' => $studentStats['avg_quiz_score'],
+    'assignments_submitted' => $studentStats['assignments_submitted']
 ];
 
-// Get recent enrollments
-$recentEnrollments = $user->getEnrollments();
-$recentEnrollments = array_slice($recentEnrollments, 0, 4);
+// Get recent enrollments with course details
+$recentEnrollments = $db->fetchAll("
+    SELECT e.*, c.title, c.slug, c.thumbnail, c.description,
+           e.last_accessed, e.progress_percentage
+    FROM enrollments e
+    JOIN courses c ON e.course_id = c.id
+    WHERE e.user_id = ? AND e.status = 'active'
+    ORDER BY e.last_accessed DESC, e.enrolled_at DESC
+    LIMIT 4
+", [$userId]);
 
-// Get upcoming deadlines (assignments/quizzes)
-try {
-    $upcomingDeadlines = $db->fetchAll("
-        SELECT a.*, c.title as course_title, c.slug as course_slug
-        FROM assignments a
-        JOIN courses c ON a.course_id = c.id
-        JOIN enrollments e ON e.course_id = c.id
-        WHERE e.user_id = ? 
-        AND a.status = 'published'
-        AND a.due_date > NOW()
-        AND a.due_date < DATE_ADD(NOW(), INTERVAL 7 DAY)
-        AND a.id NOT IN (
-            SELECT assignment_id FROM assignment_submissions WHERE user_id = ?
-        )
-        ORDER BY a.due_date ASC
-        LIMIT 5
-    ", [$user->getId(), $user->getId()]);
-} catch (Exception $e) {
-    $upcomingDeadlines = [];
-}
+// Get upcoming deadlines (assignments due in next 7 days)
+$upcomingDeadlines = $db->fetchAll("
+    SELECT a.*, c.title as course_title, c.slug as course_slug
+    FROM assignments a
+    JOIN courses c ON a.course_id = c.id
+    JOIN enrollments e ON e.course_id = c.id
+    WHERE e.user_id = ?
+    AND a.status = 'published'
+    AND a.due_date > NOW()
+    AND a.due_date < DATE_ADD(NOW(), INTERVAL 7 DAY)
+    AND a.id NOT IN (
+        SELECT assignment_id FROM assignment_submissions WHERE user_id = ?
+    )
+    ORDER BY a.due_date ASC
+    LIMIT 5
+", [$userId, $userId]);
 
-// Get recent activity
-$recentActivity = $user->getRecentActivity(5);
+// Get unread notifications
+$unreadNotifications = $db->fetchAll("
+    SELECT * FROM notifications
+    WHERE user_id = ? AND is_read = 0
+    ORDER BY created_at DESC
+    LIMIT 5
+", [$userId]);
+
+// Get recent quiz attempts
+$recentQuizzes = $db->fetchAll("
+    SELECT qa.*, q.title as quiz_title, c.title as course_title, c.slug as course_slug
+    FROM quiz_attempts qa
+    JOIN quizzes q ON qa.quiz_id = q.id
+    JOIN courses c ON q.course_id = c.id
+    WHERE qa.user_id = ?
+    ORDER BY qa.completed_at DESC
+    LIMIT 3
+", [$userId]);
+
+// Get recent graded assignments
+$recentGradedAssignments = $db->fetchAll("
+    SELECT asub.*, a.title as assignment_title, c.title as course_title, c.slug as course_slug
+    FROM assignment_submissions asub
+    JOIN assignments a ON asub.assignment_id = a.id
+    JOIN courses c ON a.course_id = c.id
+    WHERE asub.user_id = ? AND asub.status = 'graded'
+    ORDER BY asub.graded_at DESC
+    LIMIT 3
+", [$userId]);
 
 $page_title = "Dashboard - Edutrack";
 require_once '../src/templates/header.php';
@@ -55,9 +96,27 @@ require_once '../src/templates/header.php';
         
         <!-- Welcome Section -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Welcome back, <?= sanitize($user->first_name) ?>! 👋</h1>
+            <h1 class="text-3xl font-bold text-gray-900">Welcome back, <?= sanitize($user->first_name) ?>!</h1>
             <p class="text-gray-600 mt-2">Here's what's happening with your learning journey today.</p>
         </div>
+
+        <!-- Unread Notifications Alert -->
+        <?php if (!empty($unreadNotifications)): ?>
+        <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-bell text-blue-600 mr-3 text-xl"></i>
+                    <div>
+                        <h3 class="font-semibold text-blue-900">You have <?= count($unreadNotifications) ?> unread notification<?= count($unreadNotifications) > 1 ? 's' : '' ?></h3>
+                        <p class="text-sm text-blue-700 mt-1"><?= sanitize($unreadNotifications[0]['title']) ?></p>
+                    </div>
+                </div>
+                <a href="#notifications-section" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                    View all <i class="fas fa-arrow-down ml-1"></i>
+                </a>
+            </div>
+        </div>
+        <?php endif; ?>
         
         <!-- Statistics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -97,21 +156,25 @@ require_once '../src/templates/header.php';
                 </div>
             </div>
             
-            <!-- Learning Time -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-secondary-500">
+            <!-- Average Progress -->
+            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Learning Time</p>
+                        <p class="text-sm font-medium text-gray-600">Avg Progress</p>
                         <p class="text-3xl font-bold text-gray-900 mt-2">
-                            <?= $stats['total_time'] > 60 ? round($stats['total_time'] / 60, 1) . 'h' : $stats['total_time'] . 'm' ?>
+                            <?= round($stats['avg_progress']) ?>%
                         </p>
                     </div>
-                    <div class="bg-secondary-100 rounded-full p-3">
-                        <i class="fas fa-clock text-secondary-600 text-2xl"></i>
+                    <div class="bg-yellow-100 rounded-full p-3">
+                        <i class="fas fa-chart-line text-yellow-600 text-2xl"></i>
                     </div>
                 </div>
                 <div class="mt-4">
-                    <span class="text-sm text-gray-500">Keep learning!</span>
+                    <!-- Mini progress bar -->
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-yellow-500 h-2 rounded-full transition-all"
+                             style="width: <?= round($stats['avg_progress']) ?>%"></div>
+                    </div>
                 </div>
             </div>
             
@@ -199,7 +262,10 @@ require_once '../src/templates/header.php';
                 <?php if (!empty($upcomingDeadlines)): ?>
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-xl font-bold text-gray-900">Upcoming Deadlines</h2>
+                        <h2 class="text-xl font-bold text-gray-900">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                            Upcoming Deadlines
+                        </h2>
                     </div>
                     <div class="divide-y divide-gray-200">
                         <?php foreach ($upcomingDeadlines as $deadline): ?>
@@ -222,6 +288,145 @@ require_once '../src/templates/header.php';
                                             <?= timeAgo($deadline['due_date']) ?>
                                         </p>
                                     </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- Recent Quiz Scores -->
+                <?php if (!empty($recentQuizzes)): ?>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-900">
+                            <i class="fas fa-question-circle text-blue-500 mr-2"></i>
+                            Recent Quiz Results
+                        </h2>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        <?php foreach ($recentQuizzes as $quiz): ?>
+                            <?php
+                                $scorePercentage = ($quiz['score'] / $quiz['total_score']) * 100;
+                                $scoreClass = $scorePercentage >= 80 ? 'text-green-600' : ($scorePercentage >= 60 ? 'text-yellow-600' : 'text-red-600');
+                            ?>
+                            <div class="p-4 hover:bg-gray-50">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-gray-900">
+                                            <?= sanitize($quiz['quiz_title']) ?>
+                                        </h4>
+                                        <p class="text-sm text-gray-600">
+                                            <?= sanitize($quiz['course_title']) ?>
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            <i class="fas fa-clock mr-1"></i>
+                                            <?= timeAgo($quiz['completed_at']) ?>
+                                        </p>
+                                    </div>
+                                    <div class="text-right ml-4">
+                                        <p class="text-2xl font-bold <?= $scoreClass ?>">
+                                            <?= round($scorePercentage) ?>%
+                                        </p>
+                                        <p class="text-xs text-gray-500">
+                                            <?= $quiz['score'] ?> / <?= $quiz['total_score'] ?> points
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- Recent Graded Assignments -->
+                <?php if (!empty($recentGradedAssignments)): ?>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-900">
+                            <i class="fas fa-file-alt text-green-500 mr-2"></i>
+                            Recent Assignment Grades
+                        </h2>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        <?php foreach ($recentGradedAssignments as $assignment): ?>
+                            <?php
+                                $scorePercentage = ($assignment['points_earned'] / $assignment['max_points']) * 100;
+                                $gradeClass = $scorePercentage >= 80 ? 'text-green-600' : ($scorePercentage >= 60 ? 'text-yellow-600' : 'text-red-600');
+                            ?>
+                            <div class="p-4 hover:bg-gray-50">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-gray-900">
+                                            <?= sanitize($assignment['assignment_title']) ?>
+                                        </h4>
+                                        <p class="text-sm text-gray-600">
+                                            <?= sanitize($assignment['course_title']) ?>
+                                        </p>
+                                        <?php if ($assignment['feedback']): ?>
+                                            <p class="text-sm text-gray-700 mt-2 italic">
+                                                "<?= sanitize(substr($assignment['feedback'], 0, 100)) ?><?= strlen($assignment['feedback']) > 100 ? '...' : '' ?>"
+                                            </p>
+                                        <?php endif; ?>
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            <i class="fas fa-clock mr-1"></i>
+                                            Graded <?= timeAgo($assignment['graded_at']) ?>
+                                        </p>
+                                    </div>
+                                    <div class="text-right ml-4">
+                                        <p class="text-2xl font-bold <?= $gradeClass ?>">
+                                            <?= round($scorePercentage) ?>%
+                                        </p>
+                                        <p class="text-xs text-gray-500">
+                                            <?= $assignment['points_earned'] ?> / <?= $assignment['max_points'] ?> points
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- Notifications Section -->
+                <?php if (!empty($unreadNotifications)): ?>
+                <div id="notifications-section" class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                        <h2 class="text-xl font-bold text-gray-900">
+                            <i class="fas fa-bell text-blue-500 mr-2"></i>
+                            Notifications
+                        </h2>
+                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                            <?= count($unreadNotifications) ?> new
+                        </span>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        <?php foreach ($unreadNotifications as $notification): ?>
+                            <div class="p-4 hover:bg-gray-50 transition">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 bg-<?= sanitize($notification['color']) ?>-100 rounded-full flex items-center justify-center">
+                                            <i class="<?= sanitize($notification['icon']) ?> text-<?= sanitize($notification['color']) ?>-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-3 flex-1">
+                                        <h4 class="font-semibold text-gray-900">
+                                            <?= sanitize($notification['title']) ?>
+                                        </h4>
+                                        <p class="text-sm text-gray-600 mt-1">
+                                            <?= sanitize($notification['message']) ?>
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            <i class="fas fa-clock mr-1"></i>
+                                            <?= timeAgo($notification['created_at']) ?>
+                                        </p>
+                                    </div>
+                                    <?php if ($notification['link']): ?>
+                                        <a href="<?= url($notification['link']) ?>"
+                                           class="ml-4 text-primary-600 hover:text-primary-700">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </a>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -285,25 +490,38 @@ require_once '../src/templates/header.php';
                     </div>
                 </div>
                 
-                <!-- Recent Activity -->
-                <?php if (!empty($recentActivity)): ?>
+                <!-- Learning Stats Card -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-bold text-gray-900">Recent Activity</h2>
+                        <h2 class="text-lg font-bold text-gray-900">Learning Stats</h2>
                     </div>
-                    <div class="p-4 space-y-3">
-                        <?php foreach (array_slice($recentActivity, 0, 5) as $activity): ?>
-                            <div class="flex items-start space-x-3 text-sm">
-                                <i class="fas fa-circle text-primary-600 text-xs mt-1"></i>
-                                <div>
-                                    <p class="text-gray-700"><?= sanitize($activity['description']) ?></p>
-                                    <p class="text-xs text-gray-500"><?= timeAgo($activity['created_at']) ?></p>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                    <div class="p-4 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Quiz Average</span>
+                            <span class="text-lg font-bold text-primary-600">
+                                <?= round($stats['avg_quiz_score']) ?>%
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Assignments Submitted</span>
+                            <span class="text-lg font-bold text-green-600">
+                                <?= $stats['assignments_submitted'] ?>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Total Courses</span>
+                            <span class="text-lg font-bold text-gray-900">
+                                <?= $stats['total_courses'] ?>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Completion Rate</span>
+                            <span class="text-lg font-bold text-purple-600">
+                                <?= $stats['total_courses'] > 0 ? round(($stats['completed_courses'] / $stats['total_courses']) * 100) : 0 ?>%
+                            </span>
+                        </div>
                     </div>
                 </div>
-                <?php endif; ?>
             </div>
         </div>
     </div>

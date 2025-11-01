@@ -4,18 +4,26 @@
  * View Profile Page
  */
 
-require_once '../src/middleware/authenticate.php';
-require_once '../src/classes/User.php';
+require_once '../src/bootstrap.php';
+
+// Ensure user is authenticated
+if (!isLoggedIn()) {
+    redirect('login.php');
+}
 
 // Get current user
 $user = User::current();
+$userId = $user->getId();
 
-// Get user statistics
+// Get user statistics from Statistics class
+$studentStats = Statistics::getStudentStats($userId);
+
 $stats = [
-    'active_courses' => $user->getActiveEnrollmentsCount(),
-    'completed_courses' => $user->getCompletedCoursesCount(),
-    'total_time' => $user->getTotalTimeSpent(),
-    'certificates' => count($user->getCertificates()),
+    'active_courses' => $studentStats['in_progress_courses'],
+    'completed_courses' => $studentStats['completed_courses'],
+    'total_courses' => $studentStats['enrolled_courses'],
+    'certificates' => $studentStats['total_certificates'],
+    'avg_quiz_score' => $studentStats['avg_quiz_score'],
     'member_since' => formatDate($user->created_at, 'F Y')
 ];
 
@@ -84,11 +92,11 @@ require_once '../src/templates/header.php';
                 <p class="text-sm text-gray-600">Certificates</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-4 text-center">
-                <i class="fas fa-clock text-secondary-600 text-3xl mb-2"></i>
+                <i class="fas fa-question-circle text-blue-600 text-3xl mb-2"></i>
                 <p class="text-2xl font-bold text-gray-900">
-                    <?= $stats['total_time'] > 60 ? round($stats['total_time'] / 60) . 'h' : $stats['total_time'] . 'm' ?>
+                    <?= round($stats['avg_quiz_score']) ?>%
                 </p>
-                <p class="text-sm text-gray-600">Learning Time</p>
+                <p class="text-sm text-gray-600">Quiz Average</p>
             </div>
         </div>
         
