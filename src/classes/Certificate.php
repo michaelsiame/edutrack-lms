@@ -4,9 +4,7 @@
  * Handles TEVETA certificate generation and management
  */
 
-require_once  '../../vendor/autoload.php'; // For TCPDF
-
-use TCPDF;
+require_once '../../vendor/autoload.php'; // For TCPDF
 
 class Certificate {
     private $db;
@@ -102,42 +100,34 @@ class Certificate {
         }
         
         // Verify course completion
-        require_once __DIR__ . '/Progress.php';
-        $progress = new Progress();
-        $courseProgress = $progress->getCourseProgress($userId, $courseId);
+        require_once __DIR__ . '/Enrollment.php';
+        $enrollment = Enrollment::getByUserAndCourse($userId, $courseId);
         
-        if ($courseProgress['percentage'] < 100) {
-            return false; // Course not completed
+        if (!$enrollment || $enrollment['progress'] < 100) {
+            return false;
         }
         
-        // Generate unique certificate number and verification code
-        $certificateNumber = self::generateCertificateNumber();
-        $verificationCode = self::generateVerificationCode();
+        // Generate certificate number and verification code
+        $certNumber = self::generateCertificateNumber();
+        $verifyCode = self::generateVerificationCode();
         
-        // Get final grade (average of all quiz scores)
-        $finalGrade = $db->fetchColumn("
-            SELECT AVG(qa.score)
-            FROM quiz_attempts qa
-            JOIN quizzes q ON qa.quiz_id = q.id
-            WHERE qa.user_id = ? AND q.course_id = ?
-        ", [$userId, $courseId]) ?? 0;
-        
+        // Create certificate record
         $sql = "INSERT INTO certificates (
             user_id, course_id, certificate_number, verification_code,
-            final_grade, issued_at
+            final_score, issued_at
         ) VALUES (?, ?, ?, ?, ?, NOW())";
         
-        if ($db->query($sql, [$userId, $courseId, $certificateNumber, $verificationCode, $finalGrade])) {
-            $certificateId = $db->lastInsertId();
-            $certificate = new self($certificateId);
-            
-            // Generate PDF
-            $certificate->generatePDF();
-            
-            // Send email notification
-            $certificate->sendEmail();
-            
-            return $certificate;
+        $params = [
+            $userId,
+            $courseId,
+            $certNumber,
+            $verifyCode,
+            $enrollment['final_score'] ?? 0
+        ];
+        
+        if ($db->query($sql, $params)) {
+            $certId = $db->lastInsertId();
+            return new self($certId);
         }
         
         return false;
@@ -145,10 +135,10 @@ class Certificate {
     
     /**
      * Generate unique certificate number
-     * Format: TEVETA-YYYY-MM-XXXXX
      */
     private static function generateCertificateNumber() {
-        $prefix = 'TEVETA-' . date('Y-m');
+        // Format: EDUTRACK-YYYYMM-00001
+        $prefix = 'EDUTRACK-' . date('Ym');
         
         $db = Database::getInstance();
         $lastNumber = $db->fetchColumn("
@@ -184,7 +174,7 @@ class Certificate {
             return false;
         }
         
-        // Create new PDF document
+        // Create new PDF document (note: TCPDF class is available globally after require_once)
         $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
         
         // Set document information
@@ -216,198 +206,94 @@ class Certificate {
         $pdf->Rect(12, 12, 273, 186);
         
         // Logo (if exists)
-        $logoPath = PUBLIC_PATH . '/assets/images/teveta-logo.png';
+        $logoPath = PUBLIC_PATH . '/assets/images/logo.png';
         if (file_exists($logoPath)) {
-            $pdf->Image($logoPath, 125, 20, 40);
+            $pdf->Image($logoPath, 25, 20, 30);
         }
         
-        // Title
-        $pdf->SetY(45);
+        // TEVETA Logo (if exists)
+        $tevataLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.png';
+        if (file_exists($tevataLogoPath)) {
+            $pdf->Image($tevataLogoPath, 242, 20, 30);
+        }
+        
+        // Add content...
         $pdf->SetFont('helvetica', 'B', 24);
-        $pdf->SetTextColor($primaryBlue[0], $primaryBlue[1], $primaryBlue[2]);
+        $pdf->SetTextColor(46, 112, 218);
+        $pdf->SetY(35);
+        $pdf->Cell(0, 10, 'EDUTRACK COMPUTER TRAINING COLLEGE', 0, 1, 'C');
+        
+        $pdf->SetFont('helvetica', '', 10);
+        $pdf->SetTextColor(100, 100, 100);
+        $pdf->Cell(0, 5, 'TEVETA Registered Institution', 0, 1, 'C');
+        
+        // Certificate Title
+        $pdf->SetY(60);
+        $pdf->SetFont('helvetica', 'B', 36);
+        $pdf->SetTextColor(246, 183, 69);
         $pdf->Cell(0, 15, 'CERTIFICATE OF COMPLETION', 0, 1, 'C');
         
-        // TEVETA Badge
-        $pdf->SetFont('helvetica', 'B', 10);
-        $pdf->SetTextColor($accentGold[0], $accentGold[1], $accentGold[2]);
-        $pdf->Cell(0, 8, 'TEVETA CERTIFIED TRAINING', 0, 1, 'C');
-        
-        // Student name
-        $pdf->SetY(75);
-        $pdf->SetFont('helvetica', '', 12);
+        // Student Name
+        $pdf->SetY(85);
+        $pdf->SetFont('helvetica', 'B', 28);
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->Cell(0, 8, 'This is to certify that', 0, 1, 'C');
+        $studentName = $this->data['first_name'] . ' ' . $this->data['last_name'];
+        $pdf->Cell(0, 12, strtoupper($studentName), 0, 1, 'C');
         
-        $pdf->SetFont('helvetica', 'B', 20);
-        $pdf->SetTextColor($primaryBlue[0], $primaryBlue[1], $primaryBlue[2]);
-        $pdf->Cell(0, 12, strtoupper($this->getStudentName()), 0, 1, 'C');
-        
-        // Course info
+        // Course Title
         $pdf->SetY(105);
-        $pdf->SetFont('helvetica', '', 12);
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->Cell(0, 8, 'has successfully completed the course', 0, 1, 'C');
+        $pdf->SetFont('helvetica', 'B', 18);
+        $pdf->SetTextColor(46, 112, 218);
+        $pdf->Cell(0, 10, $this->data['course_title'], 0, 1, 'C');
         
-        $pdf->SetFont('helvetica', 'B', 16);
-        $pdf->SetTextColor($primaryBlue[0], $primaryBlue[1], $primaryBlue[2]);
-        $pdf->Cell(0, 10, $this->getCourseTitle(), 0, 1, 'C');
-        
-        // Duration and grade
+        // Details
+        $pdf->SetY(120);
         $pdf->SetFont('helvetica', '', 11);
-        $pdf->SetTextColor(0, 0, 0);
-        $durationText = 'Duration: ' . ($this->data['duration_hours'] ?? 'N/A') . ' hours';
-        $gradeText = 'Final Grade: ' . round($this->getFinalGrade(), 1) . '%';
-        $pdf->Cell(0, 8, $durationText . '  |  ' . $gradeText, 0, 1, 'C');
+        $pdf->SetTextColor(100, 100, 100);
+        $completionDate = date('F j, Y', strtotime($this->data['issued_at']));
+        $pdf->Cell(0, 6, 'Completed on ' . $completionDate, 0, 1, 'C');
         
-        // Issue date
-        $pdf->SetY(140);
-        $pdf->Cell(0, 8, 'Issued on ' . date('F j, Y', strtotime($this->getIssuedAt())), 0, 1, 'C');
-        
-        // Certificate number and verification
-        $pdf->SetY(160);
-        $pdf->SetFont('helvetica', '', 9);
-        $pdf->Cell(135, 6, 'Certificate No: ' . $this->getCertificateNumber(), 0, 0, 'L');
-        $pdf->Cell(135, 6, 'Verification Code: ' . $this->getVerificationCode(), 0, 1, 'R');
-        
-        // Signatures
-        $pdf->SetY(170);
-        
-        // Director signature
-        $pdf->SetFont('helvetica', 'B', 11);
-        $pdf->Cell(135, 6, '________________________', 0, 0, 'C');
-        $pdf->Cell(135, 6, '________________________', 0, 1, 'C');
-        
-        $pdf->SetFont('helvetica', '', 9);
-        $pdf->Cell(135, 5, 'Director', 0, 0, 'C');
-        $pdf->Cell(135, 5, 'Instructor', 0, 1, 'C');
-        
-        $pdf->Cell(135, 5, 'Edutrack Computer Training College', 0, 0, 'C');
-        $instructorName = ($this->data['instructor_fname'] ?? '') . ' ' . ($this->data['instructor_lname'] ?? '');
-        $pdf->Cell(135, 5, $instructorName, 0, 1, 'C');
+        // Certificate Number
+        $pdf->SetY(130);
+        $pdf->SetFont('helvetica', 'I', 9);
+        $pdf->Cell(0, 5, 'Certificate No: ' . $this->data['certificate_number'], 0, 1, 'C');
         
         // Verification URL
-        $pdf->SetY(195);
+        $verifyUrl = url('verify-certificate.php?code=' . $this->data['verification_code']);
         $pdf->SetFont('helvetica', 'I', 8);
-        $pdf->SetTextColor(100, 100, 100);
-        $verifyUrl = url('verify-certificate.php?code=' . $this->getVerificationCode());
-        $pdf->Cell(0, 5, 'Verify this certificate at: ' . $verifyUrl, 0, 1, 'C');
+        $pdf->Cell(0, 5, 'Verify at: ' . $verifyUrl, 0, 1, 'C');
         
-        // Save PDF
-        $filename = 'certificate_' . $this->getCertificateNumber() . '.pdf';
+        // Output PDF
+        $filename = 'certificate-' . $this->data['certificate_number'] . '.pdf';
         $filepath = STORAGE_PATH . '/certificates/' . $filename;
         
-        // Ensure directory exists
-        if (!file_exists(STORAGE_PATH . '/certificates')) {
-            mkdir(STORAGE_PATH . '/certificates', 0777, true);
+        // Create directory if not exists
+        if (!is_dir(STORAGE_PATH . '/certificates')) {
+            mkdir(STORAGE_PATH . '/certificates', 0755, true);
         }
         
         $pdf->Output($filepath, 'F');
         
-        // Update database with PDF filename
-        $sql = "UPDATE certificates SET pdf_file = ? WHERE id = ?";
-        $this->db->query($sql, [$filename, $this->id]);
-        
-        // Reload data
-        $this->load();
-        
         return $filepath;
     }
     
-    /**
-     * Send certificate email
-     */
-    public function sendEmail() {
-        if (!$this->exists()) {
-            return false;
-        }
-        
-        require_once __DIR__ . '/Email.php';
-        
-        $email = new Email();
-        $pdfPath = $this->getPDFPath();
-        
-        $subject = 'Congratulations! Your TEVETA Certificate is Ready';
-        
-        $body = "
-        <h2>Congratulations, {$this->getStudentName()}!</h2>
-        <p>You have successfully completed <strong>{$this->getCourseTitle()}</strong> and earned your TEVETA-certified certificate!</p>
-        
-        <div style='background: #f5f5f5; padding: 20px; margin: 20px 0; border-left: 4px solid #2E70DA;'>
-            <p><strong>Certificate Number:</strong> {$this->getCertificateNumber()}</p>
-            <p><strong>Verification Code:</strong> {$this->getVerificationCode()}</p>
-            <p><strong>Final Grade:</strong> " . round($this->getFinalGrade(), 1) . "%</p>
-            <p><strong>Issued:</strong> " . date('F j, Y', strtotime($this->getIssuedAt())) . "</p>
-        </div>
-        
-        <p>Your certificate is attached to this email. You can also download it anytime from your dashboard.</p>
-        
-        <p>To verify your certificate, visit: " . url('verify-certificate.php?code=' . $this->getVerificationCode()) . "</p>
-        
-        <p>Share your achievement on social media!</p>
-        
-        <p>Keep learning with Edutrack!</p>
-        ";
-        
-        return $email->send(
-            $this->data['email'],
-            $subject,
-            $body,
-            $pdfPath ? [$pdfPath] : []
-        );
-    }
-    
-    /**
-     * Revoke certificate
-     */
-    public function revoke($reason = '') {
-        $sql = "UPDATE certificates 
-                SET revoked = 1, revoked_at = NOW(), revoke_reason = ? 
-                WHERE id = ?";
-        
-        $result = $this->db->query($sql, [$reason, $this->id]);
-        
-        if ($result) {
-            $this->load();
-        }
-        
-        return $result;
-    }
-    
-    /**
-     * Get PDF path
-     */
-    public function getPDFPath() {
-        if ($this->data['pdf_file']) {
-            $path = STORAGE_PATH . '/certificates/' . $this->data['pdf_file'];
-            return file_exists($path) ? $path : null;
-        }
-        return null;
-    }
-    
-    /**
-     * Get PDF URL (for download)
-     */
-    public function getPDFUrl() {
-        if ($this->data['pdf_file']) {
-            return url('download-certificate.php?id=' . $this->id);
-        }
-        return null;
-    }
-    
-    /**
-     * Getters
-     */
+    // Getters
     public function getId() { return $this->data['id'] ?? null; }
     public function getUserId() { return $this->data['user_id'] ?? null; }
     public function getCourseId() { return $this->data['course_id'] ?? null; }
     public function getCertificateNumber() { return $this->data['certificate_number'] ?? ''; }
     public function getVerificationCode() { return $this->data['verification_code'] ?? ''; }
-    public function getFinalGrade() { return $this->data['final_grade'] ?? 0; }
+    public function getFinalScore() { return $this->data['final_score'] ?? 0; }
     public function getIssuedAt() { return $this->data['issued_at'] ?? null; }
-    public function isRevoked() { return $this->data['revoked'] == 1; }
-    public function getRevokedAt() { return $this->data['revoked_at'] ?? null; }
-    public function getRevokeReason() { return $this->data['revoke_reason'] ?? ''; }
-    public function getStudentName() { return ($this->data['first_name'] ?? '') . ' ' . ($this->data['last_name'] ?? ''); }
+    public function getStudentName() { 
+        return trim(($this->data['first_name'] ?? '') . ' ' . ($this->data['last_name'] ?? ''));
+    }
     public function getCourseTitle() { return $this->data['course_title'] ?? ''; }
-    public function getPDFFile() { return $this->data['pdf_file'] ?? null; }
+    public function getInstructorName() {
+        return trim(($this->data['instructor_fname'] ?? '') . ' ' . ($this->data['instructor_lname'] ?? ''));
+    }
+    
+    public function __get($key) {
+        return $this->data[$key] ?? null;
+    }
 }

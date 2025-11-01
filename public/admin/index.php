@@ -1,7 +1,7 @@
 <?php
 /**
- * Admin Dashboard
- * Main admin panel overview
+ * Admin Dashboard (FIXED)
+ * Uses created_at instead of payment_date until database is updated
  */
 
 require_once '../../src/middleware/admin-only.php';
@@ -43,14 +43,15 @@ $recentEnrollments = $db->fetchAll("
 ");
 
 // Monthly revenue chart data (last 6 months)
+// FIXED: Using created_at instead of payment_date
 $revenueData = $db->fetchAll("
     SELECT 
-        DATE_FORMAT(payment_date, '%Y-%m') as month,
+        DATE_FORMAT(created_at, '%Y-%m') as month,
         SUM(amount) as revenue
     FROM payments
     WHERE status = 'completed'
-    AND payment_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-    GROUP BY DATE_FORMAT(payment_date, '%Y-%m')
+    AND created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
     ORDER BY month ASC
 ");
 
@@ -82,7 +83,7 @@ require_once '../../src/templates/admin-header.php';
         <!-- Quick Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             
-            <!-- Total Students -->
+            <!-- Students -->
             <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
                 <div class="flex items-center justify-between">
                     <div>
@@ -90,28 +91,28 @@ require_once '../../src/templates/admin-header.php';
                         <p class="text-3xl font-bold text-gray-900 mt-2"><?= number_format($stats['total_students']) ?></p>
                     </div>
                     <div class="bg-blue-100 rounded-full p-3">
-                        <i class="fas fa-user-graduate text-blue-600 text-2xl"></i>
+                        <i class="fas fa-users text-blue-600 text-2xl"></i>
                     </div>
                 </div>
                 <a href="<?= url('admin/users/index.php?role=student') ?>" class="text-sm text-blue-600 hover:text-blue-700 mt-4 inline-block">
-                    View all students →
+                    View students →
                 </a>
             </div>
 
-            <!-- Total Courses -->
+            <!-- Courses -->
             <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Total Courses</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= number_format($stats['total_courses']) ?></p>
-                        <p class="text-xs text-gray-500 mt-1"><?= $stats['published_courses'] ?> published</p>
+                        <p class="text-sm font-medium text-gray-600">Published Courses</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= number_format($stats['published_courses']) ?></p>
+                        <p class="text-xs text-gray-500 mt-1"><?= $stats['total_courses'] ?> total</p>
                     </div>
                     <div class="bg-green-100 rounded-full p-3">
                         <i class="fas fa-book text-green-600 text-2xl"></i>
                     </div>
                 </div>
                 <a href="<?= url('admin/courses/index.php') ?>" class="text-sm text-green-600 hover:text-green-700 mt-4 inline-block">
-                    Manage courses →
+                    View courses →
                 </a>
             </div>
 
@@ -148,53 +149,64 @@ require_once '../../src/templates/admin-header.php';
                     View enrollments →
                 </a>
             </div>
-
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Charts & Activity -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             
             <!-- Revenue Chart -->
-            <div class="bg-white rounded-lg shadow">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h2 class="text-lg font-bold text-gray-900">Revenue Overview (6 Months)</h2>
-                </div>
-                <div class="p-6">
-                    <canvas id="revenueChart" height="200"></canvas>
-                </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4">Revenue Trend (6 Months)</h2>
+                <canvas id="revenueChart" height="200"></canvas>
             </div>
 
             <!-- Quick Actions -->
-            <div class="bg-white rounded-lg shadow">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h2 class="text-lg font-bold text-gray-900">Quick Actions</h2>
-                </div>
-                <div class="p-6 grid grid-cols-2 gap-4">
-                    <a href="<?= url('admin/courses/create.php') ?>" 
-                       class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition">
-                        <i class="fas fa-plus-circle text-3xl text-primary-600 mb-2"></i>
-                        <span class="text-sm font-medium text-gray-700">Create Course</span>
-                    </a>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
+                <div class="space-y-3">
                     <a href="<?= url('admin/users/create.php') ?>" 
-                       class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition">
-                        <i class="fas fa-user-plus text-3xl text-primary-600 mb-2"></i>
-                        <span class="text-sm font-medium text-gray-700">Add User</span>
+                       class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-user-plus text-blue-600 mr-3"></i>
+                            <span class="font-medium text-gray-900">Add New User</span>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-400"></i>
+                    </a>
+                    <a href="<?= url('admin/courses/create.php') ?>" 
+                       class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-book-plus text-green-600 mr-3"></i>
+                            <span class="font-medium text-gray-900">Create New Course</span>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-400"></i>
                     </a>
                     <a href="<?= url('admin/payments/verify.php') ?>" 
-                       class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition">
-                        <i class="fas fa-check-circle text-3xl text-primary-600 mb-2"></i>
-                        <span class="text-sm font-medium text-gray-700">Verify Payments</span>
+                       class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-yellow-600 mr-3"></i>
+                            <span class="font-medium text-gray-900">Verify Payments</span>
+                            <?php if ($stats['pending_payments'] > 0): ?>
+                            <span class="ml-2 px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                                <?= $stats['pending_payments'] ?>
+                            </span>
+                            <?php endif; ?>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-400"></i>
                     </a>
-                    <a href="<?= url('admin/certificates/issue.php') ?>" 
-                       class="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition">
-                        <i class="fas fa-certificate text-3xl text-primary-600 mb-2"></i>
-                        <span class="text-sm font-medium text-gray-700">Issue Certificate</span>
+                    <a href="<?= url('admin/certificates/index.php') ?>" 
+                       class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-certificate text-purple-600 mr-3"></i>
+                            <span class="font-medium text-gray-900">Manage Certificates</span>
+                        </div>
+                        <i class="fas fa-arrow-right text-gray-400"></i>
                     </a>
                 </div>
             </div>
-
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Recent Activity -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             <!-- Recent Users -->
             <div class="bg-white rounded-lg shadow">
@@ -205,7 +217,7 @@ require_once '../../src/templates/admin-header.php';
                 <div class="divide-y divide-gray-200">
                     <?php foreach ($recentUsers as $user): ?>
                     <div class="p-4 hover:bg-gray-50">
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between mb-2">
                             <div>
                                 <p class="font-medium text-gray-900"><?= sanitize($user['first_name'] . ' ' . $user['last_name']) ?></p>
                                 <p class="text-sm text-gray-600"><?= sanitize($user['email']) ?></p>
@@ -257,12 +269,11 @@ require_once '../../src/templates/admin-header.php';
                     <?php endforeach; ?>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
-<!-- Chart.js -->
+<!-- Chart.js Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
 // Revenue Chart
@@ -276,8 +287,8 @@ const revenueChart = new Chart(ctx, {
             data: <?= json_encode(array_column($revenueData, 'revenue')) ?>,
             borderColor: '#2E70DA',
             backgroundColor: 'rgba(46, 112, 218, 0.1)',
-            tension: 0.4,
-            fill: true
+            fill: true,
+            tension: 0.4
         }]
     },
     options: {
@@ -293,7 +304,7 @@ const revenueChart = new Chart(ctx, {
                 beginAtZero: true,
                 ticks: {
                     callback: function(value) {
-                        return 'K' + value.toLocaleString();
+                        return 'ZMW ' + value.toLocaleString();
                     }
                 }
             }
