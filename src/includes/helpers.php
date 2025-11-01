@@ -81,20 +81,22 @@ function getGravatar($email, $size = 80) {
 }
 
 /**
- * CSRF Token Field
- * 
+ * CSRF functions moved to security.php to avoid duplication
+ * These are now aliases for backward compatibility
+ */
+
+/**
+ * CSRF Token Field (alias for security.php function)
+ *
  * @return string CSRF input field HTML
  */
 function csrfField() {
-    if (!isset($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return '<input type="hidden" name="csrf_token" value="' . $_SESSION['csrf_token'] . '">';
+    return csrfTokenField();
 }
 
 /**
- * Validate CSRF Token
- * 
+ * Validate CSRF Token (alias for security.php function)
+ *
  * @return bool
  */
 function validateCSRF() {
