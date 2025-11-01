@@ -4,10 +4,7 @@
  * Handle assignment operations
  */
 
-require_once '../../src/includes/config.php';
-require_once '../../src/includes/database.php';
-require_once '../../src/includes/functions.php';
-require_once '../../src/includes/auth.php';
+require_once '../../src/bootstrap.php';
 require_once '../../src/classes/Assignment.php';
 require_once '../../src/classes/Submission.php';
 require_once '../../src/classes/FileUpload.php';

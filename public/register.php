@@ -4,9 +4,7 @@
  * Registration Page
  */
 
-require_once '../src/includes/config.php';
-require_once '../src/includes/database.php';
-require_once '../src/includes/auth.php';
+require_once '../src/bootstrap.php';
 
 // Redirect if already logged in
 if (isLoggedIn()) {

@@ -3,8 +3,9 @@
  * Instructor Courses Management
  */
 
-require_once '../../../src/middleware/instructor-only.php';
-require_once '../../../src/classes/Course.php';
+require_once '../../src/middleware/instructor-only.php';
+require_once '../../src/classes/Course.php';
+require_once '../../src/classes/Statistics.php';
 
 $user = User::current();
 $instructorId = $user->getId();
@@ -12,21 +13,18 @@ $instructorId = $user->getId();
 // Get instructor's courses
 $courses = Course::all(['instructor_id' => $instructorId]);
 
-// Get statistics
+// Get statistics using Statistics class
+$instructorStats = Statistics::getInstructorStats($instructorId);
+
 $stats = [
-    'total' => count($courses),
-    'published' => count(array_filter($courses, fn($c) => $c['status'] == 'published')),
-    'draft' => count(array_filter($courses, fn($c) => $c['status'] == 'draft')),
-    'total_students' => $db->fetchColumn("
-        SELECT COUNT(DISTINCT e.user_id)
-        FROM enrollments e
-        JOIN courses c ON e.course_id = c.id
-        WHERE c.instructor_id = ?
-    ", [$instructorId])
+    'total' => $instructorStats['total_courses'],
+    'published' => $instructorStats['published_courses'],
+    'draft' => $instructorStats['total_courses'] - $instructorStats['published_courses'],
+    'total_students' => $instructorStats['total_students']
 ];
 
 $page_title = 'My Courses - Instructor';
-require_once '../../../src/templates/instructor-header.php';
+require_once '../../src/templates/instructor-header.php';
 ?>
 
 <div class="min-h-screen bg-gray-50">
@@ -174,4 +172,4 @@ require_once '../../../src/templates/instructor-header.php';
     </div>
 </div>
 
-<?php require_once '../../../src/templates/instructor-footer.php'; ?>
+<?php require_once '../../src/templates/instructor-footer.php'; ?>

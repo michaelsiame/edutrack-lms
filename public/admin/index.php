@@ -5,55 +5,38 @@
  */
 
 require_once '../../src/middleware/admin-only.php';
-require_once '../../src/classes/User.php';
-require_once '../../src/classes/Course.php';
+require_once '../../src/classes/Statistics.php';
 require_once '../../src/classes/Payment.php';
-require_once '../../src/classes/Certificate.php';
 
-// Get dashboard statistics
+// Get dashboard statistics using Statistics class
+$dashboardStats = Statistics::getAdminDashboard();
+
 $stats = [
-    'total_students' => $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'student'"),
-    'total_instructors' => $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'instructor'"),
-    'total_courses' => $db->fetchColumn("SELECT COUNT(*) FROM courses"),
-    'published_courses' => $db->fetchColumn("SELECT COUNT(*) FROM courses WHERE status = 'published'"),
-    'total_enrollments' => $db->fetchColumn("SELECT COUNT(*) FROM enrollments"),
-    'active_enrollments' => $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'active'"),
-    'completed_enrollments' => $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'completed'"),
-    'total_certificates' => $db->fetchColumn("SELECT COUNT(*) FROM certificates"),
-    'pending_payments' => $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE status = 'pending'"),
-    'total_revenue' => $db->fetchColumn("SELECT SUM(amount) FROM payments WHERE status = 'completed'") ?? 0,
+    'total_students' => $dashboardStats['users']['students'],
+    'total_instructors' => $dashboardStats['users']['instructors'],
+    'total_courses' => $dashboardStats['courses']['total'],
+    'published_courses' => $dashboardStats['courses']['published'],
+    'total_enrollments' => $dashboardStats['enrollments']['total'],
+    'active_enrollments' => $dashboardStats['enrollments']['active'],
+    'completed_enrollments' => $dashboardStats['enrollments']['completed'],
+    'total_certificates' => $dashboardStats['certificates']['total'],
+    'pending_payments' => $dashboardStats['revenue']['pending_payments'],
+    'total_revenue' => $dashboardStats['revenue']['total'],
 ];
 
 // Recent activity
 $recentUsers = $db->fetchAll("
-    SELECT id, first_name, last_name, email, role, created_at 
-    FROM users 
-    ORDER BY created_at DESC 
+    SELECT id, first_name, last_name, email, role, created_at
+    FROM users
+    ORDER BY created_at DESC
     LIMIT 5
 ");
 
-$recentPayments = Payment::all(['limit' => 5, 'order' => 'created_at DESC']);
-$recentEnrollments = $db->fetchAll("
-    SELECT e.*, u.first_name, u.last_name, c.title as course_title
-    FROM enrollments e
-    JOIN users u ON e.user_id = u.id
-    JOIN courses c ON e.course_id = c.id
-    ORDER BY e.enrolled_at DESC
-    LIMIT 5
-");
+$recentPayments = Statistics::getRecentPayments(5);
+$recentEnrollments = Statistics::getRecentEnrollments(5);
 
 // Monthly revenue chart data (last 6 months)
-// FIXED: Using created_at instead of payment_date
-$revenueData = $db->fetchAll("
-    SELECT 
-        DATE_FORMAT(created_at, '%Y-%m') as month,
-        SUM(amount) as revenue
-    FROM payments
-    WHERE status = 'completed'
-    AND created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-    ORDER BY month ASC
-");
+$revenueData = Statistics::getRevenueByPeriod(6);
 
 $page_title = 'Admin Dashboard';
 require_once '../../src/templates/admin-header.php';

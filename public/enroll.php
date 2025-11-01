@@ -4,10 +4,7 @@
  * Handles course enrollment process
  */
 
-require_once '../src/includes/config.php';
-require_once '../src/includes/database.php';
-require_once '../src/includes/functions.php';
-require_once '../src/includes/auth.php';
+require_once '../src/bootstrap.php';
 require_once '../src/classes/Course.php';
 require_once '../src/classes/Enrollment.php';
 

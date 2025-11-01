@@ -4,10 +4,7 @@
  * Handle lesson notes
  */
 
-require_once '../../src/includes/config.php';
-require_once '../../src/includes/database.php';
-require_once '../../src/includes/functions.php';
-require_once '../../src/includes/auth.php';
+require_once '../../src/bootstrap.php';
 
 header('Content-Type: application/json');
 

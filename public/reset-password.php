@@ -4,9 +4,7 @@
  * Reset Password Page
  */
 
-require_once '../src/includes/config.php';
-require_once '../src/includes/database.php';
-require_once '../src/includes/auth.php';
+require_once '../src/bootstrap.php';
 
 // Get token from URL
 $token = $_GET['token'] ?? '';
