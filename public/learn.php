@@ -419,6 +419,83 @@ $page_title = $course['title'] . " - Learn";
                         </div>
                     <?php endif; ?>
 
+                    <!-- Lesson Notes -->
+                    <div class="bg-yellow-50 rounded-lg p-6 mb-6" x-data="notesManager(<?= $currentLesson['id'] ?>)">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-bold text-gray-900 flex items-center">
+                                <i class="fas fa-sticky-note text-yellow-600 mr-2"></i>
+                                My Notes
+                            </h2>
+                            <button @click="showNoteForm = !showNoteForm"
+                                    class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition text-sm font-medium">
+                                <i class="fas fa-plus mr-2"></i>Add Note
+                            </button>
+                        </div>
+
+                        <!-- Add Note Form -->
+                        <div x-show="showNoteForm" x-collapse class="mb-4">
+                            <textarea x-model="newNoteText"
+                                      rows="3"
+                                      placeholder="Type your note here..."
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500"></textarea>
+                            <div class="flex space-x-2 mt-2">
+                                <button @click="saveNote"
+                                        class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition text-sm">
+                                    <i class="fas fa-save mr-1"></i>Save
+                                </button>
+                                <button @click="showNoteForm = false; newNoteText = ''"
+                                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition text-sm">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Notes List -->
+                        <div x-show="notes.length > 0" class="space-y-3">
+                            <template x-for="note in notes" :key="note.id">
+                                <div class="bg-white rounded-md p-4 shadow-sm border-l-4 border-yellow-500">
+                                    <div x-show="editingNoteId !== note.id">
+                                        <p class="text-gray-700 whitespace-pre-wrap" x-text="note.note_text"></p>
+                                        <div class="flex items-center justify-between mt-3">
+                                            <span class="text-xs text-gray-500" x-text="formatDate(note.created_at)"></span>
+                                            <div class="flex space-x-2">
+                                                <button @click="startEdit(note)"
+                                                        class="text-blue-600 hover:text-blue-800 text-sm">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button @click="deleteNote(note.id)"
+                                                        class="text-red-600 hover:text-red-800 text-sm">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div x-show="editingNoteId === note.id">
+                                        <textarea x-model="editNoteText"
+                                                  rows="3"
+                                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500"></textarea>
+                                        <div class="flex space-x-2 mt-2">
+                                            <button @click="updateNote(note.id)"
+                                                    class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition text-sm">
+                                                Save
+                                            </button>
+                                            <button @click="editingNoteId = null; editNoteText = ''"
+                                                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition text-sm">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div x-show="notes.length === 0 && !showNoteForm" class="text-center py-6">
+                            <i class="fas fa-sticky-note text-gray-300 text-4xl mb-3"></i>
+                            <p class="text-gray-500 text-sm">No notes yet. Click "Add Note" to start taking notes!</p>
+                        </div>
+                    </div>
+
                     <!-- Navigation Buttons -->
                     <div class="flex items-center justify-between pt-6 border-t border-gray-200">
                         <?php if ($prevLesson): ?>
@@ -490,6 +567,133 @@ function toggleLessonComplete(lessonId, action) {
         }
     })
     .catch(error => console.error('Error:', error));
+}
+
+// Notes Manager using Alpine.js
+function notesManager(lessonId) {
+    return {
+        notes: [],
+        newNoteText: '',
+        showNoteForm: false,
+        editingNoteId: null,
+        editNoteText: '',
+
+        init() {
+            this.loadNotes();
+        },
+
+        loadNotes() {
+            fetch('<?= url('api/lesson-notes.php') ?>?lesson_id=' + lessonId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.notes = data.notes;
+                    }
+                })
+                .catch(error => console.error('Error loading notes:', error));
+        },
+
+        saveNote() {
+            if (!this.newNoteText.trim()) {
+                alert('Please enter a note');
+                return;
+            }
+
+            fetch('<?= url('api/lesson-notes.php') ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    lesson_id: lessonId,
+                    note_text: this.newNoteText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.notes.unshift(data.note);
+                    this.newNoteText = '';
+                    this.showNoteForm = false;
+                }
+            })
+            .catch(error => console.error('Error saving note:', error));
+        },
+
+        startEdit(note) {
+            this.editingNoteId = note.id;
+            this.editNoteText = note.note_text;
+        },
+
+        updateNote(noteId) {
+            if (!this.editNoteText.trim()) {
+                alert('Note cannot be empty');
+                return;
+            }
+
+            fetch('<?= url('api/lesson-notes.php') ?>', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    note_id: noteId,
+                    note_text: this.editNoteText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const index = this.notes.findIndex(n => n.id == noteId);
+                    if (index !== -1) {
+                        this.notes[index] = data.note;
+                    }
+                    this.editingNoteId = null;
+                    this.editNoteText = '';
+                }
+            })
+            .catch(error => console.error('Error updating note:', error));
+        },
+
+        deleteNote(noteId) {
+            if (!confirm('Are you sure you want to delete this note?')) {
+                return;
+            }
+
+            fetch('<?= url('api/lesson-notes.php') ?>', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    note_id: noteId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.notes = this.notes.filter(n => n.id != noteId);
+                }
+            })
+            .catch(error => console.error('Error deleting note:', error));
+        },
+
+        formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return diffMins + ' min' + (diffMins > 1 ? 's' : '') + ' ago';
+            if (diffHours < 24) return diffHours + ' hour' + (diffHours > 1 ? 's' : '') + ' ago';
+            if (diffDays < 7) return diffDays + ' day' + (diffDays > 1 ? 's' : '') + ' ago';
+
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+    };
 }
 </script>
 
