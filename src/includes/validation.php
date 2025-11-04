@@ -435,11 +435,174 @@ function validationError($errors, $field) {
 
 /**
  * Check if field has error
- * 
+ *
  * @param array $errors Errors array
  * @param string $field Field name
  * @return bool
  */
 function hasError($errors, $field) {
     return isset($errors[$field]);
+}
+
+/**
+ * Validate password strength
+ *
+ * Requirements:
+ * - Minimum 8 characters
+ * - At least one uppercase letter
+ * - At least one lowercase letter
+ * - At least one number
+ * - At least one special character
+ *
+ * @param string $password Password to validate
+ * @param bool $requireComplexity Whether to enforce complexity rules
+ * @return array ['valid' => bool, 'errors' => array]
+ */
+function validatePassword($password, $requireComplexity = true) {
+    $errors = [];
+
+    // Minimum length
+    if (strlen($password) < 8) {
+        $errors[] = 'Password must be at least 8 characters long';
+    }
+
+    if ($requireComplexity) {
+        // Check for uppercase letter
+        if (!preg_match('/[A-Z]/', $password)) {
+            $errors[] = 'Password must contain at least one uppercase letter';
+        }
+
+        // Check for lowercase letter
+        if (!preg_match('/[a-z]/', $password)) {
+            $errors[] = 'Password must contain at least one lowercase letter';
+        }
+
+        // Check for number
+        if (!preg_match('/[0-9]/', $password)) {
+            $errors[] = 'Password must contain at least one number';
+        }
+
+        // Check for special character
+        if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+            $errors[] = 'Password must contain at least one special character';
+        }
+    }
+
+    // Check for common weak passwords
+    $commonPasswords = [
+        'password', '12345678', 'qwerty', 'abc123', 'password123',
+        'admin', 'letmein', 'welcome', 'monkey', '1234567890'
+    ];
+
+    if (in_array(strtolower($password), $commonPasswords)) {
+        $errors[] = 'Password is too common. Please choose a stronger password';
+    }
+
+    return [
+        'valid' => empty($errors),
+        'errors' => $errors
+    ];
+}
+
+/**
+ * Validate file upload
+ *
+ * @param array $file $_FILES array element
+ * @param array $options Validation options
+ * @return array ['valid' => bool, 'errors' => array]
+ */
+function validateFileUpload($file, array $options = []) {
+    $errors = [];
+
+    // Default options
+    $maxSize = $options['max_size'] ?? 10485760; // 10MB default
+    $allowedTypes = $options['allowed_types'] ?? [];
+    $allowedMimes = $options['allowed_mimes'] ?? [];
+
+    // Check if file was uploaded
+    if (!isset($file['error']) || is_array($file['error'])) {
+        $errors[] = 'Invalid file upload';
+        return ['valid' => false, 'errors' => $errors];
+    }
+
+    // Check for upload errors
+    switch ($file['error']) {
+        case UPLOAD_ERR_OK:
+            break;
+        case UPLOAD_ERR_INI_SIZE:
+        case UPLOAD_ERR_FORM_SIZE:
+            $errors[] = 'File size exceeds limit';
+            break;
+        case UPLOAD_ERR_PARTIAL:
+            $errors[] = 'File upload was not completed';
+            break;
+        case UPLOAD_ERR_NO_FILE:
+            $errors[] = 'No file was uploaded';
+            break;
+        default:
+            $errors[] = 'File upload error occurred';
+            break;
+    }
+
+    if (!empty($errors)) {
+        return ['valid' => false, 'errors' => $errors];
+    }
+
+    // Check file size
+    if ($file['size'] > $maxSize) {
+        $errors[] = 'File size must not exceed ' . formatFileSize($maxSize);
+    }
+
+    // Check file extension
+    if (!empty($allowedTypes)) {
+        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($extension, $allowedTypes)) {
+            $errors[] = 'File type not allowed. Allowed types: ' . implode(', ', $allowedTypes);
+        }
+    }
+
+    // CRITICAL: Check actual MIME type, not just extension
+    if (!empty($allowedMimes)) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+
+        if (!in_array($mimeType, $allowedMimes)) {
+            $errors[] = 'File type not allowed (MIME type validation failed)';
+        }
+    }
+
+    // Additional security: Check for PHP files disguised as other types
+    $fileContents = file_get_contents($file['tmp_name'], false, null, 0, 256);
+    if (preg_match('/<\?php/i', $fileContents)) {
+        $errors[] = 'File contains potentially malicious content';
+    }
+
+    return [
+        'valid' => empty($errors),
+        'errors' => $errors
+    ];
+}
+
+/**
+ * Sanitize filename for safe storage
+ *
+ * @param string $filename Original filename
+ * @return string Sanitized filename
+ */
+function sanitizeFilename($filename) {
+    // Get extension
+    $extension = pathinfo($filename, PATHINFO_EXTENSION);
+    $basename = pathinfo($filename, PATHINFO_FILENAME);
+
+    // Remove any special characters, keep only alphanumeric, dash, underscore
+    $basename = preg_replace('/[^a-zA-Z0-9\-_]/', '_', $basename);
+
+    // Limit length
+    $basename = substr($basename, 0, 100);
+
+    // Add timestamp to make it unique
+    $basename .= '_' . time();
+
+    return $basename . '.' . $extension;
 }

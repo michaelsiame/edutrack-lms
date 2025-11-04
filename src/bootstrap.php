@@ -38,6 +38,9 @@ if (!defined('CONFIG_PATH')) {
     define('CONFIG_PATH', ROOT_PATH . '/config');
 }
 
+// Set security headers FIRST (before any output)
+require_once SRC_PATH . '/includes/security-headers.php';
+
 // Load core includes in order of dependency
 require_once SRC_PATH . '/includes/config.php';      // Configuration & constants
 require_once SRC_PATH . '/includes/database.php';    // Database connection
