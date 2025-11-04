@@ -43,7 +43,7 @@ return [
     
     // Site Information
     'site' => [
-        'email' => getenv('SITE_EMAIL') ?: 'info@edutrack.zm',
+        'email' => getenv('SITE_EMAIL') ?: '',
         'phone' => getenv('SITE_PHONE') ?: '+260-XXX-XXX-XXX',
         'address' => getenv('SITE_ADDRESS') ?: 'Lusaka, Zambia',
         'currency' => getenv('CURRENCY') ?: 'ZMW',
