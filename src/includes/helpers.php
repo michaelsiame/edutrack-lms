@@ -226,20 +226,8 @@ function jsonError($message, $code = 400) {
     ], $code);
 }
 
-/**
- * Get client IP address
- *
- * @return string IP address
- */
-function getClientIP() {
-    $keys = ['HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'];
-    foreach ($keys as $key) {
-        if (isset($_SERVER[$key])) {
-            return $_SERVER[$key];
-        }
-    }
-    return 'UNKNOWN';
-}
+// NOTE: getClientIP() removed - duplicate of getClientIp() in functions.php
+// PHP function names are case-insensitive, so getClientIP and getClientIp conflict
 
 /**
  * Check if request is mobile
