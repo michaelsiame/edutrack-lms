@@ -50,6 +50,7 @@ require_once SRC_PATH . '/includes/functions.php';   // Core helper functions
 require_once SRC_PATH . '/includes/helpers.php';     // Additional helpers
 require_once SRC_PATH . '/includes/auth.php';        // Authentication functions
 require_once SRC_PATH . '/includes/email.php';       // Email helper functions
+require_once SRC_PATH . '/templates/alerts.php';     // Alert & notification components
 
 // Auto-load commonly used classes
 spl_autoload_register(function ($class) {
@@ -84,6 +85,9 @@ ini_set('max_execution_time', '300');
 
 // Initialize database connection (singleton)
 $db = Database::getInstance();
+
+// Create global $pdo for backward compatibility with legacy code
+$pdo = $db->getConnection();
 
 // Generate CSRF token if not exists
 if (empty($_SESSION['csrf_token'])) {
