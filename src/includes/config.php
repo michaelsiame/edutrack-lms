@@ -11,13 +11,25 @@ if (!defined('EDUTRACK_INIT')) {
 
 // NOTE: session_start() has been moved down
 
-// Define base paths
-define('ROOT_PATH', dirname(__DIR__, 2));
-define('SRC_PATH', ROOT_PATH . '/src');
-define('PUBLIC_PATH', ROOT_PATH . '/public');
-define('STORAGE_PATH', ROOT_PATH . '/storage');
-define('CONFIG_PATH', ROOT_PATH . '/config');
-define('UPLOAD_PATH', PUBLIC_PATH . '/uploads');
+// Define base paths (check if already defined by bootstrap)
+if (!defined('ROOT_PATH')) {
+    define('ROOT_PATH', dirname(__DIR__, 2));
+}
+if (!defined('SRC_PATH')) {
+    define('SRC_PATH', ROOT_PATH . '/src');
+}
+if (!defined('PUBLIC_PATH')) {
+    define('PUBLIC_PATH', ROOT_PATH . '/public');
+}
+if (!defined('STORAGE_PATH')) {
+    define('STORAGE_PATH', ROOT_PATH . '/storage');
+}
+if (!defined('CONFIG_PATH')) {
+    define('CONFIG_PATH', ROOT_PATH . '/config');
+}
+if (!defined('UPLOAD_PATH')) {
+    define('UPLOAD_PATH', PUBLIC_PATH . '/uploads');
+}
 
 // Load environment variables
 $envFile = ROOT_PATH . '/.env';
@@ -221,11 +233,6 @@ function checkMaintenanceMode() {
         exit;
     }
 }
-
-// Auto-load required files
-require_once SRC_PATH . '/includes/functions.php';
-require_once SRC_PATH . '/includes/security.php';
-require_once SRC_PATH . '/includes/validation.php';
 
 // Make configuration globally available
 $GLOBALS['config'] = $appConfig;
