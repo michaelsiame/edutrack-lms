@@ -60,6 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 // Handle POST requests - Create note
 elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Verify CSRF token
+    $csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_GET['csrf_token'] ?? null;
+    if (!$csrfToken || !verifyCsrfToken($csrfToken)) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'CSRF token validation failed']);
+        exit;
+    }
+
     $input = json_decode(file_get_contents('php://input'), true);
 
     $lessonId = $input['lesson_id'] ?? null;
@@ -87,7 +95,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $db->execute("
+        $db->query("
             INSERT INTO lesson_notes (user_id, lesson_id, note_text, created_at, updated_at)
             VALUES (?, ?, ?, NOW(), NOW())
         ", [$userId, $lessonId, $noteText]);
@@ -110,6 +118,14 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Handle PUT requests - Update note
 elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+    // Verify CSRF token
+    $csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_GET['csrf_token'] ?? null;
+    if (!$csrfToken || !verifyCsrfToken($csrfToken)) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'CSRF token validation failed']);
+        exit;
+    }
+
     $input = json_decode(file_get_contents('php://input'), true);
 
     $noteId = $input['note_id'] ?? null;
@@ -133,7 +149,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     }
 
     try {
-        $db->execute("
+        $db->query("
             UPDATE lesson_notes
             SET note_text = ?, updated_at = NOW()
             WHERE id = ?
@@ -155,6 +171,14 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
 
 // Handle DELETE requests - Delete note
 elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    // Verify CSRF token
+    $csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_GET['csrf_token'] ?? null;
+    if (!$csrfToken || !verifyCsrfToken($csrfToken)) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'CSRF token validation failed']);
+        exit;
+    }
+
     $input = json_decode(file_get_contents('php://input'), true);
     $noteId = $input['note_id'] ?? $_GET['note_id'] ?? null;
 
@@ -176,7 +200,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     }
 
     try {
-        $db->execute("DELETE FROM lesson_notes WHERE id = ?", [$noteId]);
+        $db->query("DELETE FROM lesson_notes WHERE id = ?", [$noteId]);
 
         echo json_encode([
             'success' => true,

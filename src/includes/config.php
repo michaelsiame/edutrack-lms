@@ -113,13 +113,8 @@ if (!is_dir($sessionPath)) {
 }
 ini_set('session.save_path', $sessionPath);
 
-// --- CORRECTED SECTION ---
-// Now that all session settings are configured, start the session.
-if (session_status() === PHP_SESSION_NONE) {
-    session_name($appConfig['session']['name']); // It's good practice to set a custom session name
-    session_start();
-}
-// --- END OF CORRECTION ---
+// NOTE: Session start is handled by bootstrap.php (line 60-62)
+// Do not start session here to avoid "Session already started" warnings
 
 /**
  * Get configuration value

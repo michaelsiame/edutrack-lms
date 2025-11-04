@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_assignment']))
             try {
                 if ($assignment['submission_id']) {
                     // Update existing submission
-                    $db->execute("
+                    $db->query("
                         UPDATE assignment_submissions
                         SET submission_text = ?,
                             file_path = COALESCE(?, file_path),
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_assignment']))
                     ", [$submissionText, $filePath, $assignment['submission_id']]);
                 } else {
                     // Create new submission
-                    $db->execute("
+                    $db->query("
                         INSERT INTO assignment_submissions (user_id, assignment_id, submission_text, file_path, status, submitted_at, created_at)
                         VALUES (?, ?, ?, ?, 'submitted', NOW(), NOW())
                     ", [$userId, $assignmentId, $submissionText, $filePath]);

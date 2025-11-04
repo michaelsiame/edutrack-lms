@@ -455,5 +455,5 @@ function secureSession() {
     }
 }
 
-// Initialize secure session
-secureSession();
+// NOTE: secureSession() should be called manually after session_start()
+// Not auto-called here to avoid being called before session exists

@@ -87,13 +87,15 @@ function registerUser($data) {
  */
 function loginUser($email, $password, $remember = false) {
     global $db;
-    
-    error_log("=== LOGIN ATTEMPT START ===");
-    error_log("Email: " . $email);
-    
+
+    if (APP_DEBUG) {
+        error_log("=== LOGIN ATTEMPT START ===");
+        error_log("Email: " . $email);
+    }
+
     // Check rate limiting
     if (!checkLoginAttempts($email)) {
-        error_log("Rate limit exceeded for: " . $email);
+        if (APP_DEBUG) error_log("Rate limit exceeded for: " . $email);
         return [
             'success' => false,
             'message' => 'Too many failed login attempts. Please try again in 15 minutes.'
@@ -102,47 +104,47 @@ function loginUser($email, $password, $remember = false) {
     
     try {
         // Get user by email
-        error_log("Querying database for user...");
+        if (APP_DEBUG) error_log("Querying database for user...");
         $user = $db->fetchOne("SELECT * FROM users WHERE email = ?", [$email]);
-        error_log("User found: " . ($user ? 'YES' : 'NO'));
-        
-        if ($user) {
+        if (APP_DEBUG) error_log("User found: " . ($user ? 'YES' : 'NO'));
+
+        if ($user && APP_DEBUG) {
             error_log("User ID: " . $user['id']);
             error_log("User status: " . $user['status']);
             error_log("Password hash exists: " . (!empty($user['password_hash']) ? 'YES' : 'NO'));
         }
-        
+
         if (!$user) {
-            error_log("User NOT found in database");
+            if (APP_DEBUG) error_log("User NOT found in database");
             return [
                 'success' => false,
                 'message' => 'Invalid email or password'
             ];
         }
-        
+
         // Verify password
-        error_log("Verifying password...");
+        if (APP_DEBUG) error_log("Verifying password...");
         $passwordValid = verifyPassword($password, $user['password_hash']);
-        error_log("Password valid: " . ($passwordValid ? 'YES' : 'NO'));
-        
+        if (APP_DEBUG) error_log("Password valid: " . ($passwordValid ? 'YES' : 'NO'));
+
         if (!$passwordValid) {
-            error_log("Password verification FAILED");
+            if (APP_DEBUG) error_log("Password verification FAILED");
             return [
                 'success' => false,
                 'message' => 'Invalid email or password'
             ];
         }
-        
+
         // Check if account is active
         if ($user['status'] !== 'active') {
-            error_log("Account not active: " . $user['status']);
+            if (APP_DEBUG) error_log("Account not active: " . $user['status']);
             return [
                 'success' => false,
                 'message' => 'Your account has been suspended. Please contact support.'
             ];
         }
-        
-        error_log("All checks passed, creating session...");
+
+        if (APP_DEBUG) error_log("All checks passed, creating session...");
         
         // Check if password needs rehashing
         if (needsRehash($user['password_hash'])) {
@@ -155,25 +157,27 @@ function loginUser($email, $password, $remember = false) {
         
         // Create session
         createUserSession($user, $remember);
-        error_log("Session created successfully");
-        
+        if (APP_DEBUG) error_log("Session created successfully");
+
         // Update last login
         $db->update('users', ['last_login' => date('Y-m-d H:i:s')], 'id = ?', [$user['id']]);
-        
+
         // Log activity
         logActivity("User logged in: {$email}", 'info');
-        
-        error_log("=== LOGIN SUCCESS ===");
-        
+
+        if (APP_DEBUG) error_log("=== LOGIN SUCCESS ===");
+
         return [
             'success' => true,
             'message' => 'Login successful!',
             'redirect' => getRedirectUrl($user['role'])
         ];
-        
+
     } catch (Exception $e) {
-        error_log("LOGIN EXCEPTION: " . $e->getMessage());
-        error_log("Stack trace: " . $e->getTraceAsString());
+        if (APP_DEBUG) {
+            error_log("LOGIN EXCEPTION: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+        }
         logActivity("Login error: " . $e->getMessage(), 'error');
         return [
             'success' => false,
@@ -356,8 +360,8 @@ function requestPasswordReset($email) {
             'password_reset_expires' => $expiresAt
         ], 'id = ?', [$user['id']]);
         
-        // Send reset email
-        sendPasswordResetEmail($user['email'], $user['first_name'], $resetToken);
+        // Send reset email (uses email.php function)
+        sendPasswordResetEmail($user, $resetToken);
         
         // Log activity
         logActivity("Password reset requested: {$email}", 'info');
@@ -474,73 +478,7 @@ function sendVerificationEmail($email, $name, $token) {
 }
 
 /**
- * Send password reset email
- * 
- * @param string $email Email address
- * @param string $name User name
- * @param string $token Reset token
+ * NOTE: sendEmail(), sendWelcomeEmail(), and sendPasswordResetEmail()
+ * are now provided by email.php which uses the Email class with PHPMailer.
+ * These duplicate functions have been removed to prevent fatal errors.
  */
-function sendPasswordResetEmail($email, $name, $token) {
-    $resetUrl = url("reset-password.php?token={$token}");
-    
-    $subject = "Reset Your Password - " . APP_NAME;
-    
-    ob_start();
-    include SRC_PATH . '/mail/reset-password.php';
-    $message = ob_get_clean();
-    
-    sendEmail($email, $subject, $message);
-}
-
-/**
- * Send welcome email
- * 
- * @param string $email Email address
- * @param string $name User name
- */
-function sendWelcomeEmail($email, $name) {
-    $subject = "Welcome to " . APP_NAME;
-    
-    ob_start();
-    include SRC_PATH . '/mail/welcome.php';
-    $message = ob_get_clean();
-    
-    sendEmail($email, $subject, $message);
-}
-
-/**
- * Send email
- * 
- * @param string $to Recipient email
- * @param string $subject Email subject
- * @param string $message Email message (HTML)
- */
-function sendEmail($to, $subject, $message) {
-    if (!env('MAIL_ENABLED', false)) {
-        logActivity("Email not sent (disabled): {$to} - {$subject}", 'info');
-        return false;
-    }
-    
-    try {
-        $headers = [
-            'MIME-Version: 1.0',
-            'Content-type: text/html; charset=UTF-8',
-            'From: ' . env('MAIL_FROM_NAME') . ' <' . env('MAIL_FROM_ADDRESS') . '>',
-            'Reply-To: ' . env('MAIL_FROM_ADDRESS'),
-            'X-Mailer: PHP/' . phpversion()
-        ];
-        
-        $result = mail($to, $subject, $message, implode("\r\n", $headers));
-        
-        if ($result) {
-            logActivity("Email sent: {$to} - {$subject}", 'info');
-        } else {
-            logActivity("Email failed: {$to} - {$subject}", 'error');
-        }
-        
-        return $result;
-    } catch (Exception $e) {
-        logActivity("Email error: " . $e->getMessage(), 'error');
-        return false;
-    }
-}
