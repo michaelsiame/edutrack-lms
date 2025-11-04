@@ -20,6 +20,14 @@ $userId = $user->getId();
 
 // Handle POST requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Verify CSRF token for state-changing operations
+    $csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_GET['csrf_token'] ?? null;
+    if (!$csrfToken || !verifyCsrfToken($csrfToken)) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'CSRF token validation failed']);
+        exit;
+    }
+
     $input = json_decode(file_get_contents('php://input'), true);
 
     $lessonId = $input['lesson_id'] ?? null;
@@ -58,14 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($progress) {
                 // Update existing record
-                $db->execute("
+                $db->query("
                     UPDATE lesson_progress
                     SET status = 'completed', completed_at = NOW()
                     WHERE user_id = ? AND lesson_id = ?
                 ", [$userId, $lessonId]);
             } else {
                 // Create new progress record
-                $db->execute("
+                $db->query("
                     INSERT INTO lesson_progress (user_id, lesson_id, status, completed_at, created_at)
                     VALUES (?, ?, 'completed', NOW(), NOW())
                 ", [$userId, $lessonId]);
@@ -73,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } elseif ($action === 'uncomplete') {
             // Mark as in progress or delete
-            $db->execute("
+            $db->query("
                 UPDATE lesson_progress
                 SET status = 'in_progress', completed_at = NULL
                 WHERE user_id = ? AND lesson_id = ?
@@ -87,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ", [$userId, $lessonId]);
 
             if (!$progress) {
-                $db->execute("
+                $db->query("
                     INSERT INTO lesson_progress (user_id, lesson_id, status, created_at)
                     VALUES (?, ?, 'in_progress', NOW())
                 ", [$userId, $lessonId]);
@@ -160,7 +168,7 @@ function updateCourseProgress($userId, $courseId) {
     $progressPercentage = ($completedLessons / $totalLessons) * 100;
 
     // Update enrollment
-    $db->execute("
+    $db->query("
         UPDATE enrollments
         SET progress_percentage = ?
         WHERE user_id = ? AND course_id = ?
@@ -175,7 +183,7 @@ function updateCourseProgress($userId, $courseId) {
 
         if ($enrollment && $enrollment['status'] !== 'completed') {
             // Mark enrollment as completed
-            $db->execute("
+            $db->query("
                 UPDATE enrollments
                 SET status = 'completed', completed_at = NOW()
                 WHERE user_id = ? AND course_id = ?
@@ -192,7 +200,7 @@ function updateCourseProgress($userId, $courseId) {
                 $certificateNumber = 'EDTK-' . strtoupper(substr(md5($userId . $courseId . time()), 0, 12));
 
                 // Issue certificate
-                $db->execute("
+                $db->query("
                     INSERT INTO certificates (user_id, course_id, certificate_number, issued_at, created_at)
                     VALUES (?, ?, ?, NOW(), NOW())
                 ", [$userId, $courseId, $certificateNumber]);

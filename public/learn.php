@@ -174,7 +174,7 @@ if ($currentLesson) {
 }
 
 // Update last accessed
-$db->execute("
+$db->query("
     UPDATE enrollments
     SET last_accessed = NOW()
     WHERE id = ?

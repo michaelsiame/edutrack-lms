@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
 
     // Save quiz attempt
     try {
-        $db->execute("
+        $db->query("
             INSERT INTO quiz_attempts (user_id, quiz_id, score, total_score, total_questions, correct_answers, time_spent, completed_at, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
         ", [$userId, $quizId, $scorePercentage, 100, $totalQuestions, $correctAnswers, $timeSpent]);
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
 
             $isCorrect = $correctOption && $userAnswer == $correctOption['id'];
 
-            $db->execute("
+            $db->query("
                 INSERT INTO quiz_attempt_answers (attempt_id, question_id, selected_option_id, is_correct, created_at)
                 VALUES (?, ?, ?, ?, NOW())
             ", [$attemptId, $questionId, $userAnswer, $isCorrect ? 1 : 0]);

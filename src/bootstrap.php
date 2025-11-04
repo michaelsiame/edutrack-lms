@@ -61,8 +61,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Set default timezone
-date_default_timezone_set(TIMEZONE ?? 'UTC');
+// Set default timezone (APP_TIMEZONE is defined in config.php)
+date_default_timezone_set(APP_TIMEZONE ?? 'UTC');
 
 // Set error reporting based on environment
 if (APP_ENV === 'production') {
