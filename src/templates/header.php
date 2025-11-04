@@ -8,6 +8,7 @@
 if (!defined('EDUTRACK_INIT')) {
     require_once dirname(__DIR__) . '/includes/config.php';
     require_once dirname(__DIR__) . '/includes/database.php';
+    require_once dirname(__DIR__) . '/includes/functions.php';  // Load functions for sanitize()
 }
 
 // Set page title

@@ -1,8 +1,14 @@
 <?php
-require_once '../src/templates/header.php';
-require_once '../src/includes/functions.php';
+/**
+ * Home Page
+ * Main landing page for Edutrack LMS
+ */
+
+require_once '../src/bootstrap.php';
 
 $page_title = "Home - Edutrack Computer Training College";
+
+require_once '../src/templates/header.php';
 ?>
 
 <?php

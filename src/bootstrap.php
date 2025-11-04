@@ -86,6 +86,9 @@ ini_set('max_execution_time', '300');
 // Initialize database connection (singleton)
 $db = Database::getInstance();
 
+// Create global $pdo for backward compatibility with legacy code
+$pdo = $db->getConnection();
+
 // Generate CSRF token if not exists
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
