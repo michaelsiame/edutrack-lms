@@ -2,75 +2,14 @@
 /**
  * Additional Helper Functions
  * Utility functions for the application
+ *
+ * Note: Duplicate functions that exist in functions.php have been removed
+ * to avoid redeclaration errors. This file now only contains unique helpers.
  */
-
-/**
- * Format file size
- * 
- * @param int $bytes File size in bytes
- * @return string Formatted file size
- */
-function formatFileSize($bytes) {
-    if ($bytes >= 1073741824) {
-        return number_format($bytes / 1073741824, 2) . ' GB';
-    } elseif ($bytes >= 1048576) {
-        return number_format($bytes / 1048576, 2) . ' MB';
-    } elseif ($bytes >= 1024) {
-        return number_format($bytes / 1024, 2) . ' KB';
-    } else {
-        return $bytes . ' bytes';
-    }
-}
-
-/**
- * Time ago helper
- * 
- * @param string $datetime Datetime string
- * @return string Time ago format
- */
-function timeAgo($datetime) {
-    $timestamp = strtotime($datetime);
-    $diff = time() - $timestamp;
-    
-    if ($diff < 60) {
-        return 'just now';
-    } elseif ($diff < 3600) {
-        $mins = floor($diff / 60);
-        return $mins . ' minute' . ($mins > 1 ? 's' : '') . ' ago';
-    } elseif ($diff < 86400) {
-        $hours = floor($diff / 3600);
-        return $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
-    } elseif ($diff < 604800) {
-        $days = floor($diff / 86400);
-        return $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
-    } elseif ($diff < 2592000) {
-        $weeks = floor($diff / 604800);
-        return $weeks . ' week' . ($weeks > 1 ? 's' : '') . ' ago';
-    } elseif ($diff < 31536000) {
-        $months = floor($diff / 2592000);
-        return $months . ' month' . ($months > 1 ? 's' : '') . ' ago';
-    } else {
-        $years = floor($diff / 31536000);
-        return $years . ' year' . ($years > 1 ? 's' : '') . ' ago';
-    }
-}
-
-/**
- * Get course thumbnail URL
- * 
- * @param string|null $thumbnail Thumbnail path
- * @return string Thumbnail URL
- */
-function courseThumbnail($thumbnail) {
-    if ($thumbnail && file_exists(PUBLIC_PATH . '/uploads/' . $thumbnail)) {
-        return url('uploads/' . $thumbnail);
-    }
-    return url('assets/images/default-course.jpg');
-}
 
 /**
  * Get user avatar URL (Gravatar)
- * 
+ *
  * @param string $email User email
  * @param int $size Avatar size
  * @return string Avatar URL
@@ -81,66 +20,8 @@ function getGravatar($email, $size = 80) {
 }
 
 /**
- * CSRF functions moved to security.php to avoid duplication
- * These are now aliases for backward compatibility
- */
-
-/**
- * CSRF Token Field (alias for security.php function)
- *
- * @return string CSRF input field HTML
- */
-function csrfField() {
-    return csrfTokenField();
-}
-
-/**
- * Validate CSRF Token (alias for security.php function)
- *
- * @return bool
- */
-function validateCSRF() {
-    $token = $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? null;
-    
-    if (!$token || !isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
-        http_response_code(403);
-        die('CSRF token validation failed');
-    }
-    
-    return true;
-}
-
-/**
- * Truncate text
- * 
- * @param string $text Text to truncate
- * @param int $length Maximum length
- * @param string $suffix Suffix to append
- * @return string Truncated text
- */
-function truncate($text, $length = 100, $suffix = '...') {
-    if (strlen($text) <= $length) {
-        return $text;
-    }
-    return substr($text, 0, $length) . $suffix;
-}
-
-/**
- * Slugify text
- * 
- * @param string $text Text to slugify
- * @return string Slugified text
- */
-function slugify($text) {
-    $text = strtolower($text);
-    $text = preg_replace('/[^a-z0-9]+/', '-', $text);
-    $text = trim($text, '-');
-    return $text;
-}
-
-/**
  * Format duration (minutes to hours:minutes)
- * 
+ *
  * @param int $minutes Duration in minutes
  * @return string Formatted duration
  */
@@ -155,7 +36,7 @@ function formatDuration($minutes) {
 
 /**
  * Check if video URL is YouTube
- * 
+ *
  * @param string $url Video URL
  * @return bool
  */
@@ -165,7 +46,7 @@ function isYouTube($url) {
 
 /**
  * Get YouTube video ID from URL
- * 
+ *
  * @param string $url YouTube URL
  * @return string|null Video ID
  */
@@ -176,7 +57,7 @@ function getYouTubeId($url) {
 
 /**
  * Check if video URL is Vimeo
- * 
+ *
  * @param string $url Video URL
  * @return bool
  */
@@ -186,7 +67,7 @@ function isVimeo($url) {
 
 /**
  * Get Vimeo video ID from URL
- * 
+ *
  * @param string $url Vimeo URL
  * @return string|null Video ID
  */
@@ -197,7 +78,7 @@ function getVimeoId($url) {
 
 /**
  * Get video embed HTML
- * 
+ *
  * @param string $url Video URL
  * @return string Embed HTML
  */
@@ -215,7 +96,7 @@ function getVideoEmbed($url) {
 
 /**
  * Calculate reading time
- * 
+ *
  * @param string $text Text content
  * @return int Reading time in minutes
  */
@@ -227,7 +108,7 @@ function readingTime($text) {
 
 /**
  * Generate random string
- * 
+ *
  * @param int $length String length
  * @return string Random string
  */
@@ -237,7 +118,7 @@ function randomString($length = 32) {
 
 /**
  * Check if user owns resource
- * 
+ *
  * @param int $resourceUserId Resource owner ID
  * @return bool
  */
@@ -246,20 +127,8 @@ function ownsResource($resourceUserId) {
 }
 
 /**
- * Format date
- * 
- * @param string $date Date string
- * @param string $format Date format
- * @return string Formatted date
- */
-function formatDate($date, $format = 'M d, Y') {
-    if (!$date) return '';
-    return date($format, strtotime($date));
-}
-
-/**
  * Check if date is past
- * 
+ *
  * @param string $date Date string
  * @return bool
  */
@@ -269,7 +138,7 @@ function isPast($date) {
 
 /**
  * Check if date is future
- * 
+ *
  * @param string $date Date string
  * @return bool
  */
@@ -279,7 +148,7 @@ function isFuture($date) {
 
 /**
  * Get percentage
- * 
+ *
  * @param float $value Current value
  * @param float $total Total value
  * @param int $decimals Decimal places
@@ -292,7 +161,7 @@ function percentage($value, $total, $decimals = 0) {
 
 /**
  * Array get with default
- * 
+ *
  * @param array $array Array
  * @param string $key Key
  * @param mixed $default Default value
@@ -304,7 +173,7 @@ function array_get($array, $key, $default = null) {
 
 /**
  * Pluralize word
- * 
+ *
  * @param int $count Count
  * @param string $singular Singular form
  * @param string|null $plural Plural form
@@ -319,7 +188,7 @@ function pluralize($count, $singular, $plural = null) {
 
 /**
  * JSON response
- * 
+ *
  * @param array $data Response data
  * @param int $code HTTP status code
  */
@@ -332,7 +201,7 @@ function jsonResponse($data, $code = 200) {
 
 /**
  * Success JSON response
- * 
+ *
  * @param mixed $data Response data
  * @param string $message Success message
  */
@@ -346,7 +215,7 @@ function jsonSuccess($data = null, $message = 'Success') {
 
 /**
  * Error JSON response
- * 
+ *
  * @param string $message Error message
  * @param int $code HTTP status code
  */
@@ -358,20 +227,8 @@ function jsonError($message, $code = 400) {
 }
 
 /**
- * Dump and die (for debugging)
- * 
- * @param mixed $var Variable to dump
- */
-function dd($var) {
-    echo '<pre>';
-    var_dump($var);
-    echo '</pre>';
-    die();
-}
-
-/**
  * Get client IP address
- * 
+ *
  * @return string IP address
  */
 function getClientIP() {
@@ -386,7 +243,7 @@ function getClientIP() {
 
 /**
  * Check if request is mobile
- * 
+ *
  * @return bool
  */
 function isMobile() {
