@@ -381,47 +381,13 @@ function cleanFilename($filename) {
 }
 
 /**
- * Validate file upload
- * 
- * @param array $file $_FILES array element
- * @param array $allowedTypes Allowed file extensions
- * @param int $maxSize Maximum file size in bytes
- * @return array ['valid' => bool, 'error' => string]
+ * NOTE: validateFileUpload() has been moved to validation.php
+ * The new version includes comprehensive security checks:
+ * - MIME type verification (not just extension)
+ * - PHP code injection detection
+ * - More flexible options array
+ * Use: validateFileUpload($file, ['allowed_types' => [], 'allowed_mimes' => [], 'max_size' => ...])
  */
-function validateFileUpload($file, $allowedTypes, $maxSize = null) {
-    if (!isset($file['error']) || is_array($file['error'])) {
-        return ['valid' => false, 'error' => 'Invalid file upload'];
-    }
-    
-    // Check for upload errors
-    if ($file['error'] !== UPLOAD_ERR_OK) {
-        $errors = [
-            UPLOAD_ERR_INI_SIZE => 'File exceeds upload_max_filesize',
-            UPLOAD_ERR_FORM_SIZE => 'File exceeds MAX_FILE_SIZE',
-            UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
-            UPLOAD_ERR_NO_FILE => 'No file was uploaded',
-            UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
-            UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
-            UPLOAD_ERR_EXTENSION => 'File upload stopped by extension',
-        ];
-        
-        return ['valid' => false, 'error' => $errors[$file['error']] ?? 'Unknown upload error'];
-    }
-    
-    // Check file size
-    $maxSize = $maxSize ?? config('upload.max_size');
-    if ($file['size'] > $maxSize) {
-        return ['valid' => false, 'error' => 'File size exceeds maximum allowed: ' . formatFileSize($maxSize)];
-    }
-    
-    // Check file type
-    $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-    if (!in_array($extension, $allowedTypes)) {
-        return ['valid' => false, 'error' => 'File type not allowed. Allowed types: ' . implode(', ', $allowedTypes)];
-    }
-    
-    return ['valid' => true, 'error' => ''];
-}
 
 /**
  * Secure session initialization
