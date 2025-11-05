@@ -15,9 +15,8 @@ if (!$studentId) {
 
 // Get student details
 $student = $db->fetchOne("
-    SELECT u.*, up.phone, up.address, up.city, up.country, up.bio
+    SELECT u.*
     FROM users u
-    LEFT JOIN user_profiles up ON u.id = up.user_id
     WHERE u.id = ? AND u.role = 'student'
 ", [$studentId]);
 
@@ -170,27 +169,11 @@ require_once '../../../src/templates/admin-header.php';
                             <p class="text-sm text-gray-600">Email</p>
                             <p class="text-gray-900 font-medium"><?= htmlspecialchars($student['email']) ?></p>
                         </div>
-                        <?php if ($student['phone']): ?>
                         <div>
-                            <p class="text-sm text-gray-600">Phone</p>
-                            <p class="text-gray-900 font-medium"><?= htmlspecialchars($student['phone']) ?></p>
+                            <p class="text-sm text-gray-600">Status</p>
+                            <p class="text-gray-900 font-medium"><?= ucfirst($student['status']) ?></p>
                         </div>
-                        <?php endif; ?>
-                        <?php if ($student['city'] || $student['country']): ?>
-                        <div>
-                            <p class="text-sm text-gray-600">Location</p>
-                            <p class="text-gray-900 font-medium">
-                                <?= htmlspecialchars(($student['city'] ? $student['city'] . ', ' : '') . ($student['country'] ?? '')) ?>
-                            </p>
-                        </div>
-                        <?php endif; ?>
                     </div>
-                    <?php if ($student['bio']): ?>
-                    <div class="mt-4">
-                        <p class="text-sm text-gray-600">Bio</p>
-                        <p class="text-gray-900 mt-1"><?= nl2br(htmlspecialchars($student['bio'])) ?></p>
-                    </div>
-                    <?php endif; ?>
                 </div>
             </div>
 

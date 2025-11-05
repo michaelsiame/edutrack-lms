@@ -40,12 +40,10 @@ $offset = ($page - 1) * $perPage;
 
 // Build query
 $sql = "SELECT u.*,
-        up.phone, up.address, up.city, up.country,
         COUNT(DISTINCT e.id) as enrollment_count,
         COUNT(DISTINCT CASE WHEN e.status = 'completed' THEN e.id END) as completed_courses,
         SUM(CASE WHEN p.status = 'completed' THEN p.amount ELSE 0 END) as total_spent
         FROM users u
-        LEFT JOIN user_profiles up ON u.id = up.user_id
         LEFT JOIN enrollments e ON u.id = e.user_id
         LEFT JOIN payments p ON u.id = p.user_id
         WHERE u.role = 'student'";
