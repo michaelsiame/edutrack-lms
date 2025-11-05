@@ -13,6 +13,7 @@ require_once dirname(__DIR__) . '/includes/security-headers.php';
 require_once dirname(__DIR__) . '/includes/config.php';
 require_once dirname(__DIR__) . '/includes/database.php';
 require_once dirname(__DIR__) . '/includes/functions.php';
+require_once dirname(__DIR__) . '/includes/helpers.php';
 require_once dirname(__DIR__) . '/includes/auth.php';
 
 // Start session if not already started
