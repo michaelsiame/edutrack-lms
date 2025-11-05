@@ -79,6 +79,32 @@ class Email {
     }
 
     /**
+     * Static helper to send email (for backward compatibility)
+     *
+     * @param string $to Recipient email
+     * @param string $subject Email subject or template name
+     * @param string|array $body Email body HTML or template data
+     * @param array $attachments File paths for attachments
+     * @return bool Success status
+     */
+    public static function sendMail($to, $subject, $body = '', $attachments = []) {
+        $emailInstance = new self();
+
+        // If body is an array, it might be template data - for now just ignore it
+        // Future enhancement: implement template system
+        if (is_array($body)) {
+            // Build a simple email body from the data
+            $htmlBody = "<h2>Notification</h2>";
+            foreach ($body as $key => $value) {
+                $htmlBody .= "<p><strong>" . htmlspecialchars(ucwords(str_replace('_', ' ', $key))) . ":</strong> " . htmlspecialchars($value) . "</p>";
+            }
+            $body = $htmlBody;
+        }
+
+        return $emailInstance->send($to, $subject, $body, $attachments);
+    }
+
+    /**
      * Send email
      *
      * @param string $to Recipient email
