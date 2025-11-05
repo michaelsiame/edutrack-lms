@@ -1,12 +1,12 @@
 <?php
 /**
  * About Us Page
- * Information about Edutrack Computer Training College
+ * Information about Edutrack computer training college
  */
 
 require_once '../src/bootstrap.php';
 
-$page_title = "About Us - Edutrack Computer Training College";
+$page_title = "About Us - Edutrack computer training college";
 
 require_once '../src/templates/header.php';
 ?>
@@ -64,7 +64,7 @@ require_once '../src/templates/header.php';
         <div class="max-w-4xl mx-auto text-center mb-12">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
             <p class="text-lg text-gray-700 leading-relaxed">
-                Edutrack Computer Training College was founded with a simple yet powerful vision: to bridge the digital
+                Edutrack computer training college was founded with a simple yet powerful vision: to bridge the digital
                 skills gap in Zambia and empower individuals with the technical knowledge needed to thrive in the modern workplace.
             </p>
         </div>
@@ -163,7 +163,7 @@ require_once '../src/templates/header.php';
                 <div class="flex-1">
                     <h2 class="text-3xl font-bold text-gray-900 mb-4">TEVETA Accredited Institution</h2>
                     <p class="text-lg text-gray-700 mb-4">
-                        Edutrack Computer Training College is proud to be registered and accredited by the Technical Education,
+                        Edutrack computer training college is proud to be registered and accredited by the Technical Education,
                         Vocational and Entrepreneurship Training Authority (TEVETA). This accreditation ensures that our training
                         programs meet national standards and that our graduates receive government-recognized certificates.
                     </p>
@@ -310,7 +310,7 @@ require_once '../src/templates/header.php';
             Ready to Start Your Learning Journey?
         </h2>
         <p class="text-xl text-primary-100 mb-8 max-w-3xl mx-auto">
-            Join thousands of students who have transformed their careers with Edutrack Computer Training College
+            Join thousands of students who have transformed their careers with Edutrack computer training college
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="courses.php"

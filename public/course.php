@@ -41,7 +41,7 @@ if (!$course) {
 $isEnrolled = false;
 $enrollment = null;
 if (isLoggedIn()) {
-    $userId = getCurrentUserId();
+    $userId = $_SESSION['user_id'];
     $enrollment = $db->fetchOne("
         SELECT * FROM enrollments
         WHERE user_id = ? AND course_id = ?
@@ -84,7 +84,7 @@ $relatedCourses = $db->fetchAll("
     LIMIT 3
 ", [$course['category_id'], $courseId]);
 
-$page_title = sanitize($course['title']) . ' - Edutrack Computer Training College';
+$page_title = sanitize($course['title']) . ' - Edutrack computer training college';
 
 require_once '../src/templates/header.php';
 ?>

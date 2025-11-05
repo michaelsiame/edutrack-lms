@@ -196,7 +196,7 @@ require_once '../src/templates/header.php';
 <script>
 function shareCertificate(certificateNumber) {
     const verifyUrl = '<?= url('certificate-verify.php?number=') ?>' + encodeURIComponent(certificateNumber);
-    const shareText = `I've earned a new certificate from Edutrack Computer Training College! Verify it here: ${verifyUrl}`;
+    const shareText = `I've earned a new certificate from Edutrack computer training college! Verify it here: ${verifyUrl}`;
 
     if (navigator.share) {
         navigator.share({

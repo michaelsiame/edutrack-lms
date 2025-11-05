@@ -52,14 +52,14 @@ return [
         'banks' => [
             [
                 'name' => 'Zanaco',
-                'account_name' => 'Edutrack Computer Training College',
+                'account_name' => 'Edutrack computer training college',
                 'account_number' => '1234567890',
                 'branch' => 'Cairo Road Branch',
                 'swift_code' => 'ZANAZMLX'
             ],
             [
                 'name' => 'FNB',
-                'account_name' => 'Edutrack Computer Training College',
+                'account_name' => 'Edutrack computer training college',
                 'account_number' => '62345678901',
                 'branch' => 'Lusaka Main',
                 'swift_code' => 'FIRNZMLX'
@@ -89,7 +89,7 @@ return [
         'auto_generate' => true,
         'send_email' => true,
         'include_logo' => true,
-        'footer_text' => 'Thank you for choosing Edutrack Computer Training College'
+        'footer_text' => 'Thank you for choosing Edutrack computer training college'
     ],
     
     // Security

@@ -179,7 +179,7 @@ class Certificate {
         
         // Set document information
         $pdf->SetCreator('Edutrack LMS');
-        $pdf->SetAuthor('Edutrack Computer Training College');
+        $pdf->SetAuthor('Edutrack computer training college');
         $pdf->SetTitle('Certificate of Completion');
         
         // Remove default header/footer

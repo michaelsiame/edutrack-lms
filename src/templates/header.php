@@ -1,6 +1,6 @@
 <?php
 /**
- * Edutrack Computer Training College
+ * Edutrack computer training college
  * Main Site Header Template
  */
 
@@ -12,7 +12,7 @@ if (!defined('EDUTRACK_INIT')) {
 }
 
 // Set page title
-$page_title = $page_title ?? 'Edutrack Computer Training College - TEVETA Certified';
+$page_title = $page_title ?? 'Edutrack computer training college - TEVETA Certified';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,9 +23,9 @@ $page_title = $page_title ?? 'Edutrack Computer Training College - TEVETA Certif
     <title><?= sanitize($page_title) ?></title>
     
     <!-- Meta Tags -->
-    <meta name="description" content="Edutrack Computer Training College - TEVETA registered institution offering quality computer training in Zambia. Transform your future with industry-recognized certification programs.">
+    <meta name="description" content="Edutrack computer training college - TEVETA registered institution offering quality computer training in Zambia. Transform your future with industry-recognized certification programs.">
     <meta name="keywords" content="computer training, TEVETA, Zambia, courses, certification, web development, digital marketing, Lusaka">
-    <meta name="author" content="Edutrack Computer Training College">
+    <meta name="author" content="Edutrack computer training college">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">

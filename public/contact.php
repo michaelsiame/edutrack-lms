@@ -6,7 +6,7 @@
 
 require_once '../src/bootstrap.php';
 
-$page_title = "Contact Us - Edutrack Computer Training College";
+$page_title = "Contact Us - Edutrack computer training college";
 
 // Handle form submission
 $formSubmitted = false;
@@ -125,7 +125,7 @@ require_once '../src/templates/header.php';
                         <div class="ml-4">
                             <h3 class="text-lg font-bold text-gray-900 mb-2">Visit Us</h3>
                             <p class="text-gray-600">
-                                Edutrack Computer Training College<br>
+                                Edutrack computer training college<br>
                                 Lusaka, Zambia
                             </p>
                         </div>
