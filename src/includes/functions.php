@@ -23,8 +23,43 @@ function e($string) {
 }
 
 /**
+ * Set flash message
+ *
+ * @param string $message Message to display
+ * @param string $type Message type (success, error, warning, info)
+ */
+function setFlashMessage($message, $type = 'info') {
+    $_SESSION[$type] = $message;
+}
+
+/**
+ * Get flash message and clear it
+ *
+ * @param string $type Message type
+ * @return string|null
+ */
+function getFlashMessage($type = 'success') {
+    if (isset($_SESSION[$type])) {
+        $message = $_SESSION[$type];
+        unset($_SESSION[$type]);
+        return $message;
+    }
+    return null;
+}
+
+/**
+ * Check if flash message exists
+ *
+ * @param string $type Message type
+ * @return bool
+ */
+function hasFlashMessage($type = 'success') {
+    return isset($_SESSION[$type]);
+}
+
+/**
  * Format currency
- * 
+ *
  * @param float $amount Amount to format
  * @param bool $includeSymbol Include currency symbol
  * @return string
