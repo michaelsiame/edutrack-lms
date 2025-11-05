@@ -4,7 +4,11 @@
  * Handles TEVETA certificate generation and management
  */
 
-require_once '../../vendor/autoload.php'; // For TCPDF
+// Conditionally load TCPDF if vendor/autoload.php exists
+$vendorPath = dirname(__DIR__, 2) . '/vendor/autoload.php';
+if (file_exists($vendorPath)) {
+    require_once $vendorPath;
+}
 
 class Certificate {
     private $db;
@@ -173,8 +177,14 @@ class Certificate {
         if (!$this->exists()) {
             return false;
         }
-        
-        // Create new PDF document (note: TCPDF class is available globally after require_once)
+
+        // Check if TCPDF is available
+        if (!class_exists('TCPDF')) {
+            error_log('TCPDF library not available. Run: composer install');
+            return false;
+        }
+
+        // Create new PDF document
         $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
         
         // Set document information
