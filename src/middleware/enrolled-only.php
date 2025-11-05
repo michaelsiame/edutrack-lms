@@ -1,6 +1,6 @@
 <?php
 /**
- * Edutrack Computer Training College
+ * Edutrack computer training college
  * Enrolled Only Middleware
  * 
  * Require user to be enrolled in a specific course

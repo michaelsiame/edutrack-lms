@@ -1,6 +1,6 @@
 <?php
 /**
- * Edutrack Computer Training College
+ * Edutrack computer training college
  * Input Validation Functions
  */
 

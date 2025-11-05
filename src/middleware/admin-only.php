@@ -1,6 +1,6 @@
 <?php
 /**
- * Edutrack Computer Training College
+ * Edutrack computer training college
  * Admin Only Middleware
  *
  * Require user to be admin

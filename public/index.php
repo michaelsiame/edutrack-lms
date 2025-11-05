@@ -6,7 +6,7 @@
 
 require_once '../src/bootstrap.php';
 
-$page_title = "Home - Edutrack Computer Training College";
+$page_title = "Home - Edutrack computer training college";
 
 require_once '../src/templates/header.php';
 ?>
@@ -71,7 +71,7 @@ try {
             </div>
             <h1 class="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
                 Transform Your Future with
-                <span class="block text-yellow-400 mt-2">Edutrack Computer Training College</span>
+                <span class="block text-yellow-400 mt-2">Edutrack computer training college</span>
             </h1>
             <p class="text-xl md:text-2xl text-primary-100 mb-8 max-w-3xl mx-auto leading-relaxed">
                 Zambia's premier TEVETA-certified computer training institution. Join thousands of students mastering industry-relevant skills with government-recognized certification programs.
@@ -343,7 +343,7 @@ try {
 <section class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Edutrack Computer Training College?</h2>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Edutrack computer training college?</h2>
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">
                 As a TEVETA-registered institution, we're committed to excellence in computer training and career development
             </p>
@@ -554,7 +554,7 @@ try {
             
             // Optional: Redirect to course or show success modal
             setTimeout(() => {
-                alert('Enrollment successful! Welcome to Edutrack Computer Training College. You can now start learning this TEVETA-certified course.');
+                alert('Enrollment successful! Welcome to Edutrack computer training college. You can now start learning this TEVETA-certified course.');
                 // window.location.href = `course.php?id=${courseId}`;
             }, 1000);
         }, 2000);

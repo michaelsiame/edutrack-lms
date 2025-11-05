@@ -1,13 +1,13 @@
 <?php
 /**
- * Edutrack Computer Training College
+ * Edutrack computer training college
  * Application Configuration
  */
 
 return [
     
     // Application Information
-    'name' => getenv('APP_NAME') ?: 'Edutrack Computer Training College',
+    'name' => getenv('APP_NAME') ?: 'Edutrack computer training college',
     // 'url' => getenv('APP_URL') ?: 'http://localhost:8000',
     'url' => getenv('APP_URL') ?: 'http://localhost/edutrack-lms/public/',
     'env' => getenv('APP_ENV') ?: 'production',
@@ -36,7 +36,7 @@ return [
     'teveta' => [
         'enabled' => true,
         'institution_code' => getenv('TEVETA_INSTITUTION_CODE') ?: 'TEVETA/XXX/2024',
-        'institution_name' => getenv('TEVETA_INSTITUTION_NAME') ?: 'Edutrack Computer Training College',
+        'institution_name' => getenv('TEVETA_INSTITUTION_NAME') ?: 'Edutrack computer training college',
         'registration_url' => getenv('TEVETA_REGISTRATION_URL') ?: 'https://www.teveta.org.zm',
         'verified' => filter_var(getenv('TEVETA_VERIFIED'), FILTER_VALIDATE_BOOLEAN),
     ],

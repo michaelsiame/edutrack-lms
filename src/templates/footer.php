@@ -1,6 +1,6 @@
 <?php
 /**
- * Edutrack Computer Training College
+ * Edutrack computer training college
  * Main Site Footer Template
  */
 ?>
@@ -176,7 +176,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="text-sm text-gray-400 mb-4 md:mb-0">
-                    <p>&copy; <?= date('Y') ?> Edutrack Computer Training College. All rights reserved.</p>
+                    <p>&copy; <?= date('Y') ?> Edutrack computer training college. All rights reserved.</p>
                     <p class="text-xs mt-1">TEVETA Registered Institution - <?= TEVETA_CODE ?></p>
                 </div>
                 <div class="flex items-center space-x-4 text-sm">

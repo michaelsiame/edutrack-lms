@@ -24,7 +24,7 @@
                             <h2 style="color: #111827; margin: 0 0 20px 0; font-size: 24px;">Hello <?= sanitize($name) ?>!</h2>
                             
                             <p style="color: #374151; line-height: 1.6; margin: 0 0 20px 0;">
-                                Thank you for registering with <strong>Edutrack Computer Training College</strong>. 
+                                Thank you for registering with <strong>Edutrack computer training college</strong>. 
                                 We're excited to have you join our community of learners!
                             </p>
                             

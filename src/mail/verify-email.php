@@ -20,7 +20,7 @@
                             <h2 style="color: #111827; margin: 0 0 20px 0;">Hello <?= sanitize($name) ?>!</h2>
                             
                             <p style="color: #374151; line-height: 1.6; margin: 0 0 20px 0;">
-                                Thank you for registering with Edutrack Computer Training College. 
+                                Thank you for registering with Edutrack computer training college. 
                                 Please verify your email address to activate your account.
                             </p>
                             

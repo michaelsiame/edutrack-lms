@@ -1,6 +1,6 @@
 <?php
 /**
- * Edutrack Computer Training College
+ * Edutrack computer training college
  * Login Page
  */
 
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$page_title = "Login - Edutrack Computer Training College";
+$page_title = "Login - Edutrack computer training college";
 require_once '../src/templates/header.php';
 ?>
 

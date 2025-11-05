@@ -6,7 +6,7 @@
 
 require_once '../src/bootstrap.php';
 
-$page_title = "Browse Courses - Edutrack Computer Training College";
+$page_title = "Browse Courses - Edutrack computer training college";
 
 // Get search and filter parameters
 $search = $_GET['search'] ?? '';
