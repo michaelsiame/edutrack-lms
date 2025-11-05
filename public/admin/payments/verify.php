@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ]);
             
             // Send confirmation email
-            Email::send($payment->getUserEmail(), 'payment-success', [
+            Email::sendMail($payment->getUserEmail(), 'Payment Approved - Enrollment Confirmed', [
                 'name' => $payment->getUserName(),
                 'course_title' => $payment->getCourseTitle(),
                 'amount' => formatCurrency($payment->getAmount()),
