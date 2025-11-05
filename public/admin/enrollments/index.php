@@ -14,7 +14,38 @@ $page = max(1, (int)($_GET['page'] ?? 1));
 $perPage = 20;
 $offset = ($page - 1) * $perPage;
 
-// Build query
+// Build WHERE clause
+$where = "WHERE 1=1";
+$params = [];
+
+if ($courseId) {
+    $where .= " AND e.course_id = ?";
+    $params[] = $courseId;
+}
+
+if ($status) {
+    $where .= " AND e.status = ?";
+    $params[] = $status;
+}
+
+if ($search) {
+    $where .= " AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR c.title LIKE ?)";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+}
+
+// Get total count (simplified query without all the columns)
+$countSql = "SELECT COUNT(DISTINCT e.id)
+             FROM enrollments e
+             JOIN courses c ON e.course_id = c.id
+             JOIN users u ON e.user_id = u.id
+             $where";
+$totalEnrollments = (int) $db->fetchColumn($countSql, $params);
+$totalPages = ceil($totalEnrollments / $perPage);
+
+// Build main query
 $sql = "SELECT e.*,
         c.title as course_title, c.slug as course_slug,
         u.first_name, u.last_name, u.email,
@@ -23,32 +54,7 @@ $sql = "SELECT e.*,
         JOIN courses c ON e.course_id = c.id
         JOIN users u ON e.user_id = u.id
         LEFT JOIN payments p ON e.id = p.enrollment_id
-        WHERE 1=1";
-
-$params = [];
-
-if ($courseId) {
-    $sql .= " AND e.course_id = ?";
-    $params[] = $courseId;
-}
-
-if ($status) {
-    $sql .= " AND e.status = ?";
-    $params[] = $status;
-}
-
-if ($search) {
-    $sql .= " AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR c.title LIKE ?)";
-    $params[] = "%$search%";
-    $params[] = "%$search%";
-    $params[] = "%$search%";
-    $params[] = "%$search%";
-}
-
-// Get total count
-$countSql = "SELECT COUNT(*) FROM ($sql) as count_table";
-$totalEnrollments = (int) $db->fetchColumn($countSql, $params);
-$totalPages = ceil($totalEnrollments / $perPage);
+        $where";
 
 // Get enrollments
 $sql .= " ORDER BY e.enrolled_at DESC LIMIT ? OFFSET ?";

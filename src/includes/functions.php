@@ -290,8 +290,18 @@ function flash($key, $message = null, $type = 'info') {
 }
 
 /**
+ * Check if flash message exists
+ *
+ * @param string $key Message key
+ * @return bool
+ */
+function hasFlash($key = 'message') {
+    return isset($_SESSION['flash'][$key]);
+}
+
+/**
  * Get flash message and display HTML
- * 
+ *
  * @param string $key Message key
  * @return string
  */

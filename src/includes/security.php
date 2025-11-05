@@ -66,8 +66,15 @@ function requireCsrfToken() {
 }
 
 /**
+ * Alias for requireCsrfToken()
+ */
+function validateCSRF() {
+    requireCsrfToken();
+}
+
+/**
  * Hash password
- * 
+ *
  * @param string $password Plain text password
  * @return string
  */

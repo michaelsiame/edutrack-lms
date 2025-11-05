@@ -23,9 +23,9 @@ class Category {
     private function load() {
         $sql = "SELECT c.*,
                 (SELECT COUNT(*) FROM courses WHERE category_id = c.id) as course_count
-                FROM course_categories c
+                FROM categories c
                 WHERE c.id = ?";
-        
+
         $this->data = $this->db->query($sql, [$this->id])->fetch();
     }
     
@@ -49,9 +49,9 @@ class Category {
      */
     public static function findBySlug($slug) {
         $db = Database::getInstance();
-        $sql = "SELECT id FROM course_categories WHERE slug = ?";
+        $sql = "SELECT id FROM categories WHERE slug = ?";
         $id = $db->fetchColumn($sql, [$slug]);
-        
+
         return $id ? new self($id) : null;
     }
     
@@ -60,29 +60,24 @@ class Category {
      */
     public static function all($options = []) {
         $db = Database::getInstance();
-        
+
         $sql = "SELECT c.*,
                 (SELECT COUNT(*) FROM courses WHERE category_id = c.id AND status = 'published') as course_count
-                FROM course_categories c";
-        
+                FROM categories c";
+
         $where = [];
         $params = [];
-        
-        // Filter by active status
-        if (isset($options['active_only']) && $options['active_only']) {
-            $where[] = "c.is_active = 1";
-        }
-        
+
         if (!empty($where)) {
             $sql .= " WHERE " . implode(' AND ', $where);
         }
-        
-        $sql .= " ORDER BY c.display_order ASC, c.name ASC";
-        
+
+        $sql .= " ORDER BY c.name ASC";
+
         if (isset($options['limit'])) {
             $sql .= " LIMIT " . (int)$options['limit'];
         }
-        
+
         return $db->query($sql, $params)->fetchAll();
     }
     
@@ -93,53 +88,47 @@ class Category {
         $db = Database::getInstance();
         $sql = "SELECT c.*,
                 COUNT(co.id) as course_count
-                FROM course_categories c
+                FROM categories c
                 LEFT JOIN courses co ON c.id = co.category_id AND co.status = 'published'
-                WHERE c.is_active = 1
                 GROUP BY c.id
                 HAVING course_count > 0
-                ORDER BY c.display_order ASC, c.name ASC";
-        
+                ORDER BY c.name ASC";
+
         return $db->query($sql)->fetchAll();
     }
     
     public static function active() {
-    $db = Database::getInstance();
-    $sql = "SELECT c.*, 
-            (SELECT COUNT(*) FROM courses WHERE category_id = c.id AND status = 'published') as course_count
-            FROM course_categories c 
-            WHERE status = 'active' 
-            ORDER BY display_order ASC";
-    return $db->query($sql)->fetchAll();
-}
+        $db = Database::getInstance();
+        $sql = "SELECT c.*,
+                (SELECT COUNT(*) FROM courses WHERE category_id = c.id AND status = 'published') as course_count
+                FROM categories c
+                ORDER BY c.name ASC";
+        return $db->query($sql)->fetchAll();
+    }
 
     /**
      * Create new category
      */
     public static function create($data) {
         $db = Database::getInstance();
-        
-        $sql = "INSERT INTO course_categories (
-            name, slug, description, icon, color, 
-            is_active, order_index
+
+        $sql = "INSERT INTO categories (
+            name, slug, description, icon, created_at, updated_at
         ) VALUES (
-            ?, ?, ?, ?, ?, ?, ?
+            ?, ?, ?, ?, NOW(), NOW()
         )";
-        
+
         $params = [
             $data['name'],
-            $data['slug'] ?? slugify($data['name']),
+            $data['slug'] ?? strtolower(preg_replace('/[^a-z0-9]+/i', '-', $data['name'])),
             $data['description'] ?? '',
-            $data['icon'] ?? 'fa-folder',
-            $data['color'] ?? '#2E70DA',
-            $data['is_active'] ?? 1,
-            $data['order_index'] ?? 0
+            $data['icon'] ?? 'fa-folder'
         ];
-        
+
         if ($db->query($sql, $params)) {
             return $db->lastInsertId();
         }
-        
+
         return false;
     }
     
@@ -147,32 +136,33 @@ class Category {
      * Update category
      */
     public function update($data) {
-        $allowed = ['name', 'slug', 'description', 'icon', 'color', 'is_active', 'order_index'];
-        
+        $allowed = ['name', 'slug', 'description', 'icon'];
+
         $updates = [];
         $params = [];
-        
+
         foreach ($allowed as $field) {
             if (isset($data[$field])) {
                 $updates[] = "$field = ?";
                 $params[] = $data[$field];
             }
         }
-        
+
         if (empty($updates)) {
             return false;
         }
-        
+
+        $updates[] = "updated_at = NOW()";
         $params[] = $this->id;
-        
-        $sql = "UPDATE course_categories SET " . implode(', ', $updates) . " WHERE id = ?";
-        
+
+        $sql = "UPDATE categories SET " . implode(', ', $updates) . " WHERE id = ?";
+
         $result = $this->db->query($sql, $params);
-        
+
         if ($result) {
             $this->load();
         }
-        
+
         return $result;
     }
     
