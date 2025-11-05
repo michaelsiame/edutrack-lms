@@ -265,20 +265,6 @@ function requireAuth($redirectUrl = null) {
 }
 
 /**
- * Require specific role
- * 
- * @param string|array $roles Required role(s)
- */
-function requireRole($roles) {
-    requireAuth();
-    
-    if (!hasRole($roles)) {
-        http_response_code(403);
-        die('Access Denied: You do not have permission to access this page.');
-    }
-}
-
-/**
  * Flash message helper
  * 
  * @param string $key Message key
