@@ -260,38 +260,57 @@ require_once '../../src/templates/admin-header.php';
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
 // Revenue Chart
-const ctx = document.getElementById('revenueChart').getContext('2d');
-const revenueChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: <?= json_encode(array_column($revenueData, 'month')) ?>,
-        datasets: [{
-            label: 'Revenue (ZMW)',
-            data: <?= json_encode(array_column($revenueData, 'revenue')) ?>,
-            borderColor: '#2E70DA',
-            backgroundColor: 'rgba(46, 112, 218, 0.1)',
-            fill: true,
-            tension: 0.4
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    callback: function(value) {
-                        return 'ZMW ' + value.toLocaleString();
+document.addEventListener('DOMContentLoaded', function() {
+    const chartElement = document.getElementById('revenueChart');
+    if (!chartElement) {
+        console.error('Revenue chart element not found');
+        return;
+    }
+
+    try {
+        const ctx = chartElement.getContext('2d');
+        const revenueData = <?= json_encode($revenueData ?? []) ?>;
+
+        if (!revenueData || revenueData.length === 0) {
+            console.warn('No revenue data available');
+            return;
+        }
+
+        const revenueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: revenueData.map(d => d.month || ''),
+                datasets: [{
+                    label: 'Revenue (ZMW)',
+                    data: revenueData.map(d => parseFloat(d.revenue) || 0),
+                    borderColor: '#2E70DA',
+                    backgroundColor: 'rgba(46, 112, 218, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'ZMW ' + value.toLocaleString();
+                            }
+                        }
                     }
                 }
             }
-        }
+        });
+    } catch (error) {
+        console.error('Error initializing revenue chart:', error);
     }
 });
 </script>
