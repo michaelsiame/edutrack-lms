@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             SELECT ln.*
             FROM lesson_notes ln
             JOIN lessons l ON ln.lesson_id = l.id
-            JOIN modules m ON l.module_id = m.id
+            JOIN course_modules m ON l.module_id = m.id
             JOIN enrollments e ON m.course_id = e.course_id
             WHERE ln.user_id = ? AND ln.lesson_id = ? AND e.user_id = ?
             ORDER BY ln.created_at DESC
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             SELECT ln.*, l.title as lesson_title, c.title as course_title
             FROM lesson_notes ln
             JOIN lessons l ON ln.lesson_id = l.id
-            JOIN modules m ON l.module_id = m.id
+            JOIN course_modules m ON l.module_id = m.id
             JOIN courses c ON m.course_id = c.id
             WHERE ln.user_id = ?
             ORDER BY ln.created_at DESC
@@ -83,7 +83,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lesson = $db->fetchOne("
         SELECT l.*, m.course_id
         FROM lessons l
-        JOIN modules m ON l.module_id = m.id
+        JOIN course_modules m ON l.module_id = m.id
         JOIN enrollments e ON m.course_id = e.course_id
         WHERE l.id = ? AND e.user_id = ?
     ", [$lessonId, $userId]);

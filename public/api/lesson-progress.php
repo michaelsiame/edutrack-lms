@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lesson = $db->fetchOne("
         SELECT l.*, m.course_id
         FROM lessons l
-        JOIN modules m ON l.module_id = m.id
+        JOIN course_modules m ON l.module_id = m.id
         JOIN enrollments e ON m.course_id = e.course_id
         WHERE l.id = ? AND e.user_id = ?
     ", [$lessonId, $userId]);
@@ -147,7 +147,7 @@ function updateCourseProgress($userId, $courseId) {
     $totalLessons = (int) $db->fetchColumn("
         SELECT COUNT(DISTINCT l.id)
         FROM lessons l
-        JOIN modules m ON l.module_id = m.id
+        JOIN course_modules m ON l.module_id = m.id
         WHERE m.course_id = ?
     ", [$courseId]);
 
@@ -160,7 +160,7 @@ function updateCourseProgress($userId, $courseId) {
         SELECT COUNT(DISTINCT lp.lesson_id)
         FROM lesson_progress lp
         JOIN lessons l ON lp.lesson_id = l.id
-        JOIN modules m ON l.module_id = m.id
+        JOIN course_modules m ON l.module_id = m.id
         WHERE lp.user_id = ? AND lp.status = 'completed' AND m.course_id = ?
     ", [$userId, $courseId]);
 
