@@ -58,17 +58,17 @@ if (PHP_VERSION_ID >= 70300) {
     session_set_cookie_params([
         'lifetime' => 0,
         'path' => '/',
-        'domain' => $_SERVER['HTTP_HOST'] ?? '',
+        'domain' => '', // Empty string for current domain (works better with localhost)
         'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
         'httponly' => true,
-        'samesite' => 'Strict'
+        'samesite' => 'Lax' // Changed from Strict to Lax to allow redirects
     ]);
 } else {
     // Fallback for older PHP versions
     session_set_cookie_params(
         0, // lifetime
         '/', // path
-        $_SERVER['HTTP_HOST'] ?? '', // domain
+        '', // domain - empty for current domain
         isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on', // secure
         true // httponly
     );

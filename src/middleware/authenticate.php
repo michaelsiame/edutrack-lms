@@ -6,11 +6,19 @@
  * Require user to be logged in
  */
 
+// Load security headers first (sets session cookie params)
+require_once dirname(__DIR__) . '/includes/security-headers.php';
+
 // Load dependencies
 require_once dirname(__DIR__) . '/includes/config.php';
 require_once dirname(__DIR__) . '/includes/database.php';
 require_once dirname(__DIR__) . '/includes/functions.php';
 require_once dirname(__DIR__) . '/includes/auth.php';
+
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Check if user is logged in
 if (!isLoggedIn()) {
