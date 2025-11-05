@@ -48,7 +48,7 @@ $modules = $db->fetchAll("
     SELECT m.*,
            COUNT(DISTINCT l.id) as lesson_count,
            COUNT(DISTINCT lp.lesson_id) as completed_lessons
-    FROM modules m
+    FROM course_modules m
     LEFT JOIN lessons l ON m.id = l.module_id
     LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id
         AND lp.user_id = ? AND lp.status = 'completed'
@@ -102,13 +102,13 @@ if ($lessonId) {
                m.title as module_title,
                m.id as module_id
         FROM lessons l
-        JOIN modules m ON l.module_id = m.id
+        JOIN course_modules m ON l.module_id = m.id
         LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = ?
         WHERE l.id = ? AND m.course_id = ?
     ", [$userId, $lessonId, $courseId]);
 
     if ($currentLesson) {
-        $currentModule = $db->fetchOne("SELECT * FROM modules WHERE id = ?", [$currentLesson['module_id']]);
+        $currentModule = $db->fetchOne("SELECT * FROM course_modules WHERE id = ?", [$currentLesson['module_id']]);
     }
 }
 

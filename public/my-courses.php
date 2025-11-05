@@ -36,7 +36,7 @@ $enrollments = $db->fetchAll("
     FROM enrollments e
     JOIN courses c ON e.course_id = c.id
     LEFT JOIN users u ON c.instructor_id = u.id
-    LEFT JOIN modules m ON c.id = m.course_id
+    LEFT JOIN course_modules m ON c.id = m.course_id
     LEFT JOIN lessons l ON m.id = l.module_id
     LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = e.user_id AND lp.status = 'completed'
     LEFT JOIN assignments a ON c.id = a.course_id AND a.status = 'published'

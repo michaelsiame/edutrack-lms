@@ -64,20 +64,20 @@ class Module {
      */
     public static function create($data) {
         $db = Database::getInstance();
-        
-        $sql = "INSERT INTO modules (
+
+        $sql = "INSERT INTO course_modules (
             course_id, title, description, order_index
         ) VALUES (
             :course_id, :title, :description, :order_index
         )";
-        
+
         $params = [
             'course_id' => $data['course_id'],
             'title' => $data['title'],
             'description' => $data['description'] ?? '',
             'order_index' => $data['order_index'] ?? 0
         ];
-        
+
         if ($db->query($sql, $params)) {
             return $db->lastInsertId();
         }
@@ -103,9 +103,9 @@ class Module {
         if (empty($updates)) {
             return false;
         }
-        
-        $sql = "UPDATE modules SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE id = :id";
-        
+
+        $sql = "UPDATE course_modules SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE id = :id";
+
         if ($this->db->query($sql, $params)) {
             $this->load();
             return true;
