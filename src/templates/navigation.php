@@ -8,7 +8,7 @@
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
-<nav class="bg-white shadow-md sticky top-0 z-50">
+<nav class="bg-white shadow-md sticky top-0 z-50" x-data="{ mobileMenuOpen: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
             
@@ -98,18 +98,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </div>
     
     <!-- Mobile Menu -->
-    <div x-show="mobileMenuOpen" x-cloak class="md:hidden bg-white border-t">
+    <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false" x-cloak class="md:hidden bg-white border-t">
         <div class="px-2 pt-2 pb-3 space-y-1">
-            <a href="<?= url() ?>" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'index.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
+            <a href="<?= url() ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'index.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 Home
             </a>
-            <a href="<?= url('courses.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'courses.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
+            <a href="<?= url('courses.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'courses.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 Courses
             </a>
-            <a href="<?= url('about.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'about.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
+            <a href="<?= url('about.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'about.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 About Us
             </a>
-            <a href="<?= url('contact.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'contact.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
+            <a href="<?= url('contact.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'contact.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 Contact
             </a>
             
@@ -124,37 +124,37 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </div>
                     
                     <?php if (hasRole('admin')): ?>
-                        <a href="<?= url('admin/index.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
+                        <a href="<?= url('admin/index.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
                             <i class="fas fa-tachometer-alt mr-2"></i> Admin Panel
                         </a>
                     <?php elseif (hasRole('instructor')): ?>
-                        <a href="<?= url('instructor/index.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
+                        <a href="<?= url('instructor/index.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
                             <i class="fas fa-chalkboard-teacher mr-2"></i> Instructor Panel
                         </a>
                     <?php endif; ?>
-                    
-                    <a href="<?= url('dashboard.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
+
+                    <a href="<?= url('dashboard.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
                         <i class="fas fa-th-large mr-2"></i> Dashboard
                     </a>
-                    <a href="<?= url('my-courses.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
+                    <a href="<?= url('my-courses.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
                         <i class="fas fa-book mr-2"></i> My Courses
                     </a>
-                    <a href="<?= url('my-certificates.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
+                    <a href="<?= url('my-certificates.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
                         <i class="fas fa-certificate mr-2"></i> Certificates
                     </a>
-                    <a href="<?= url('profile.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
+                    <a href="<?= url('profile.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
                         <i class="fas fa-user mr-2"></i> Profile
                     </a>
-                    <a href="<?= url('logout.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-gray-50">
+                    <a href="<?= url('logout.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-gray-50">
                         <i class="fas fa-sign-out-alt mr-2"></i> Logout
                     </a>
                 </div>
             <?php else: ?>
                 <div class="border-t pt-4 mt-4 space-y-2">
-                    <a href="<?= url('login.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium text-primary-600 hover:bg-primary-50">
+                    <a href="<?= url('login.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-primary-600 hover:bg-primary-50">
                         <i class="fas fa-sign-in-alt mr-2"></i> Login
                     </a>
-                    <a href="<?= url('register.php') ?>" class="block px-3 py-2 rounded-md text-base font-medium bg-secondary-500 text-gray-900 hover:bg-secondary-600">
+                    <a href="<?= url('register.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium bg-secondary-500 text-gray-900 hover:bg-secondary-600">
                         <i class="fas fa-user-plus mr-2"></i> Register
                     </a>
                 </div>
@@ -165,11 +165,3 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 <!-- Alpine.js for dropdown functionality -->
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<script>
-    // Initialize mobile menu state
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('navigation', () => ({
-            mobileMenuOpen: false
-        }))
-    })
-</script>

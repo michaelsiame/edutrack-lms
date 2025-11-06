@@ -48,6 +48,21 @@ $enrollments = $db->fetchAll("
     ORDER BY e.last_accessed DESC, e.enrolled_at DESC
 ", $params);
 
+// Get module completion for each enrollment
+foreach ($enrollments as &$enrollment) {
+    $enrollment['modules'] = $db->fetchAll("
+        SELECT m.id, m.title,
+               COUNT(DISTINCT l.id) as total_lessons,
+               COUNT(DISTINCT lp.lesson_id) as completed_lessons
+        FROM course_modules m
+        LEFT JOIN lessons l ON m.id = l.module_id
+        LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = ? AND lp.status = 'completed'
+        WHERE m.course_id = ?
+        GROUP BY m.id
+        ORDER BY m.display_order ASC
+    ", [$userId, $enrollment['course_id']]);
+}
+
 // Count by status
 $counts = [
     'all' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE user_id = ?", [$userId]),
@@ -176,6 +191,37 @@ require_once '../src/templates/header.php';
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Module Progress Indicators -->
+                            <?php if (!empty($enrollment['modules'])): ?>
+                            <div class="mb-4">
+                                <div class="text-xs font-medium text-gray-700 mb-2">Module Progress:</div>
+                                <div class="flex flex-wrap gap-1">
+                                    <?php foreach ($enrollment['modules'] as $module):
+                                        $moduleProgress = $module['total_lessons'] > 0 ? ($module['completed_lessons'] / $module['total_lessons']) * 100 : 0;
+                                        $isCompleted = $moduleProgress == 100;
+                                    ?>
+                                        <div class="group relative">
+                                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all
+                                                <?= $isCompleted ? 'bg-green-500 text-white' : ($moduleProgress > 0 ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600') ?>">
+                                                <?php if ($isCompleted): ?>
+                                                    <i class="fas fa-check"></i>
+                                                <?php else: ?>
+                                                    <?= round($moduleProgress) ?>
+                                                <?php endif; ?>
+                                            </div>
+                                            <!-- Tooltip -->
+                                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-10">
+                                                <?= htmlspecialchars($module['title']) ?>
+                                                <br>
+                                                <span class="font-bold"><?= $module['completed_lessons'] ?>/<?= $module['total_lessons'] ?> lessons</span>
+                                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-4 border-transparent border-t-gray-900"></div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <?php endif; ?>
 
                             <!-- Last Activity -->
                             <div class="text-xs text-gray-500 mb-4 flex items-center">

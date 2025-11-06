@@ -73,7 +73,7 @@ try {
     $fileSize = 0;
 
     if (!empty($_FILES['submission_file']['name']) && $_FILES['submission_file']['error'] == 0) {
-        $uploadDir = '../../public/uploads/assignments/submissions/';
+        $uploadDir = __DIR__ . '/../uploads/assignments/submissions/';
 
         // Create directory if it doesn't exist
         if (!file_exists($uploadDir)) {
