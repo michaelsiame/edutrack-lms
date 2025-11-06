@@ -212,15 +212,15 @@ require_once '../src/templates/header.php';
                     </div>
                     <div class="p-6 space-y-4">
                         <?php foreach ($recentEnrollments as $enrollment): ?>
-                            <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:border-primary-300 transition">
-                                <img src="<?= courseThumbnail($enrollment['thumbnail']) ?>" 
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-primary-300 transition">
+                                <img src="<?= courseThumbnail($enrollment['thumbnail']) ?>"
                                      alt="<?= sanitize($enrollment['title']) ?>"
-                                     class="w-20 h-20 object-cover rounded">
+                                     class="w-full sm:w-20 h-32 sm:h-20 object-cover rounded">
                                 <div class="flex-1">
                                     <h3 class="font-semibold text-gray-900 mb-1">
                                         <?= sanitize($enrollment['title']) ?>
                                     </h3>
-                                    <div class="flex items-center space-x-4 text-sm text-gray-600">
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600">
                                         <span>
                                             <i class="fas fa-chart-line text-primary-500 mr-1"></i>
                                             <?= round($enrollment['progress_percentage']) ?>% complete
@@ -238,8 +238,8 @@ require_once '../src/templates/header.php';
                                              style="width: <?= round($enrollment['progress_percentage']) ?>%"></div>
                                     </div>
                                 </div>
-                                <a href="<?= url('learn.php?course=' . $enrollment['slug']) ?>" 
-                                   class="btn-primary px-4 py-2 rounded-md whitespace-nowrap">
+                                <a href="<?= url('learn.php?course=' . $enrollment['slug']) ?>"
+                                   class="btn-primary px-4 py-2 rounded-md w-full sm:w-auto text-center">
                                     Continue
                                 </a>
                             </div>
