@@ -60,24 +60,24 @@
                     <i class="fas fa-chevron-down text-xs transition-transform" :class="open ? 'rotate-180' : ''"></i>
                 </button>
                 <div x-show="open" x-cloak class="ml-6 mt-1 space-y-1">
-                    <a href="<?= url('instructor/courses/index.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">All Courses</a>
+                    <a href="<?= url('instructor/courses.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">All Courses</a>
                     <a href="<?= url('instructor/courses/create.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Create Course</a>
                 </div>
             </div>
             
-            <a href="<?= url('instructor/students/index.php') ?>" class="flex items-center px-4 py-3 text-sm rounded-lg hover:bg-gray-800">
+            <a href="<?= url('instructor/students.php') ?>" class="flex items-center px-4 py-3 text-sm rounded-lg hover:bg-gray-800">
                 <i class="fas fa-users w-6"></i><span>Students</span>
             </a>
-            
-            <a href="<?= url('instructor/assignments/index.php') ?>" class="flex items-center px-4 py-3 text-sm rounded-lg hover:bg-gray-800">
+
+            <a href="<?= url('instructor/assignments.php') ?>" class="flex items-center px-4 py-3 text-sm rounded-lg hover:bg-gray-800">
                 <i class="fas fa-clipboard-list w-6"></i><span>Assignments</span>
             </a>
-            
-            <a href="<?= url('instructor/quizzes/index.php') ?>" class="flex items-center px-4 py-3 text-sm rounded-lg hover:bg-gray-800">
+
+            <a href="<?= url('instructor/quizzes.php') ?>" class="flex items-center px-4 py-3 text-sm rounded-lg hover:bg-gray-800">
                 <i class="fas fa-question-circle w-6"></i><span>Quizzes</span>
             </a>
-            
-            <a href="<?= url('instructor/analytics/index.php') ?>" class="flex items-center px-4 py-3 text-sm rounded-lg hover:bg-gray-800">
+
+            <a href="<?= url('instructor/analytics.php') ?>" class="flex items-center px-4 py-3 text-sm rounded-lg hover:bg-gray-800">
                 <i class="fas fa-chart-bar w-6"></i><span>Analytics</span>
             </a>
             
