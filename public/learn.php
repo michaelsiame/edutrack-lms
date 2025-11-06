@@ -68,7 +68,7 @@ try {
             LEFT JOIN lessons l ON m.id = l.module_id
             WHERE m.course_id = ?
             GROUP BY m.id
-            ORDER BY m.order_index ASC, m.id ASC
+            ORDER BY m.display_order ASC, m.id ASC
         ", [$courseId]);
 
         // Get lessons for each module
@@ -77,7 +77,7 @@ try {
                 SELECT l.*
                 FROM lessons l
                 WHERE l.module_id = ?
-                ORDER BY l.order_index ASC, l.id ASC
+                ORDER BY l.display_order ASC, l.id ASC
             ", [$module['id']]);
         }
     } catch (Exception $e) {
@@ -93,6 +93,9 @@ try {
     // Get current lesson details
     $currentLesson = null;
     $currentModule = null;
+    $previousLesson = null;
+    $nextLesson = null;
+
     if ($lessonId) {
         try {
             $currentLesson = $db->fetchOne("
@@ -106,6 +109,28 @@ try {
 
             if ($currentLesson) {
                 $currentModule = $db->fetchOne("SELECT * FROM course_modules WHERE id = ?", [$currentLesson['module_id']]);
+
+                // Get all lessons in order to find previous and next
+                $allLessons = $db->fetchAll("
+                    SELECT l.id, l.title, m.display_order as module_order, l.display_order as lesson_order
+                    FROM lessons l
+                    JOIN course_modules m ON l.module_id = m.id
+                    WHERE m.course_id = ?
+                    ORDER BY m.display_order ASC, l.display_order ASC
+                ", [$courseId]);
+
+                // Find current lesson index and get prev/next
+                foreach ($allLessons as $index => $lesson) {
+                    if ($lesson['id'] == $lessonId) {
+                        if ($index > 0) {
+                            $previousLesson = $allLessons[$index - 1];
+                        }
+                        if ($index < count($allLessons) - 1) {
+                            $nextLesson = $allLessons[$index + 1];
+                        }
+                        break;
+                    }
+                }
             }
         } catch (Exception $e) {
             error_log("Learn.php Error - Current lesson query: " . $e->getMessage());
@@ -180,12 +205,22 @@ require_once '../src/templates/header.php';
 
                             <?php if (!empty($lessonsGrouped[$module['id']])): ?>
                             <ul class="space-y-2 ml-4">
-                                <?php foreach ($lessonsGrouped[$module['id']] as $lesson): ?>
+                                <?php foreach ($lessonsGrouped[$module['id']] as $lesson):
+                                    $icon = 'fa-play-circle';
+                                    if ($lesson['lesson_type'] == 'text') $icon = 'fa-file-alt';
+                                    elseif ($lesson['lesson_type'] == 'quiz') $icon = 'fa-question-circle';
+                                    elseif ($lesson['lesson_type'] == 'assignment') $icon = 'fa-tasks';
+                                ?>
                                 <li>
                                     <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $lesson['id']) ?>"
-                                       class="flex items-center text-sm <?= $lessonId == $lesson['id'] ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' ?>">
-                                        <i class="fas fa-play-circle mr-2"></i>
-                                        <?= htmlspecialchars($lesson['title']) ?>
+                                       class="flex items-center justify-between text-sm <?= $lessonId == $lesson['id'] ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' ?>">
+                                        <span class="flex items-center">
+                                            <i class="fas <?= $icon ?> mr-2"></i>
+                                            <?= htmlspecialchars($lesson['title']) ?>
+                                        </span>
+                                        <?php if ($lesson['duration_minutes']): ?>
+                                        <span class="text-xs text-gray-500"><?= $lesson['duration_minutes'] ?>m</span>
+                                        <?php endif; ?>
                                     </a>
                                 </li>
                                 <?php endforeach; ?>
@@ -212,11 +247,11 @@ require_once '../src/templates/header.php';
                     </div>
 
                     <div class="p-6">
-                        <?php if ($currentLesson['type'] == 'video' && $currentLesson['content_url']): ?>
+                        <?php if ($currentLesson['lesson_type'] == 'video' && $currentLesson['video_url']): ?>
                         <!-- Video Player -->
                         <div class="aspect-video bg-black rounded-lg mb-6">
                             <iframe width="100%" height="100%"
-                                    src="<?= htmlspecialchars($currentLesson['content_url']) ?>"
+                                    src="https://www.youtube.com/embed/<?= htmlspecialchars($currentLesson['video_url']) ?>"
                                     frameborder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowfullscreen
@@ -241,16 +276,34 @@ require_once '../src/templates/header.php';
 
                     <!-- Lesson Navigation -->
                     <div class="p-6 border-t bg-gray-50">
-                        <div class="flex justify-between">
-                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                        <div class="flex justify-between items-center">
+                            <?php if ($previousLesson): ?>
+                            <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $previousLesson['id']) ?>"
+                               class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">
                                 <i class="fas fa-arrow-left mr-2"></i>Previous Lesson
-                            </button>
-                            <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                                Mark as Complete
-                            </button>
-                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                            </a>
+                            <?php else: ?>
+                            <div></div>
+                            <?php endif; ?>
+
+                            <form method="POST" action="<?= url('actions/mark-lesson-complete.php') ?>" class="inline">
+                                <input type="hidden" name="course_id" value="<?= $courseId ?>">
+                                <input type="hidden" name="lesson_id" value="<?= $lessonId ?>">
+                                <input type="hidden" name="redirect" value="<?= urlencode('learn.php?course=' . $courseSlug . '&lesson=' . $lessonId) ?>">
+                                <?= csrfField() ?>
+                                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                                    <i class="fas fa-check mr-2"></i>Mark as Complete
+                                </button>
+                            </form>
+
+                            <?php if ($nextLesson): ?>
+                            <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $nextLesson['id']) ?>"
+                               class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
                                 Next Lesson<i class="fas fa-arrow-right ml-2"></i>
-                            </button>
+                            </a>
+                            <?php else: ?>
+                            <div></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
