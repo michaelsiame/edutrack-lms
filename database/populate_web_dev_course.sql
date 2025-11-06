@@ -2,10 +2,10 @@
 -- EDUTRACK LMS - Certificate in Web Development
 -- Complete Course Data Population
 -- ============================================
--- This script populates the course with modules, lessons, quizzes, assignments, and resources
+-- This script populates the course with modules, lessons, quizzes, and assignments
 -- Run this in phpMyAdmin after confirming the course exists
 
--- Get the course ID (adjust if needed)
+-- Get the course ID
 SET @course_id = (SELECT id FROM courses WHERE slug = 'certificate-in-web-development' LIMIT 1);
 
 -- If course doesn't exist, show error
@@ -15,16 +15,38 @@ SELECT CASE
 END AS status;
 
 -- ============================================
--- MODULE 1: HTML Fundamentals
+-- MODULES
 -- ============================================
-INSERT INTO course_modules (course_id, title, description, order_index, created_at, updated_at) VALUES
-(@course_id, 'HTML Fundamentals', 'Learn the building blocks of web pages with HTML. Master semantic markup, forms, and document structure.', 1, NOW(), NOW());
 
+-- Module 1: HTML Fundamentals
+INSERT INTO course_modules (course_id, title, description, display_order, duration_minutes, is_preview) VALUES
+(@course_id, 'HTML Fundamentals', 'Learn the building blocks of web pages with HTML. Master semantic markup, forms, and document structure.', 1, 90, 1);
 SET @module1_id = LAST_INSERT_ID();
 
--- Module 1 Lessons
-INSERT INTO lessons (module_id, title, description, content, type, content_url, duration_minutes, order_index, is_preview, created_at, updated_at) VALUES
-(@module1_id, 'Introduction to HTML', 'Understanding HTML and its role in web development',
+-- Module 2: CSS Styling
+INSERT INTO course_modules (course_id, title, description, display_order, duration_minutes, is_preview) VALUES
+(@course_id, 'CSS Styling', 'Transform your web pages with CSS. Learn layouts, responsive design, and modern styling techniques.', 2, 120, 0);
+SET @module2_id = LAST_INSERT_ID();
+
+-- Module 3: JavaScript Fundamentals
+INSERT INTO course_modules (course_id, title, description, display_order, duration_minutes, is_preview) VALUES
+(@course_id, 'JavaScript Fundamentals', 'Add interactivity to your websites with JavaScript. Learn programming basics and DOM manipulation.', 3, 150, 0);
+SET @module3_id = LAST_INSERT_ID();
+
+-- Module 4: Responsive Web Design Project
+INSERT INTO course_modules (course_id, title, description, display_order, duration_minutes, is_preview) VALUES
+(@course_id, 'Responsive Web Design Project', 'Apply everything you learned to build a complete responsive portfolio website from scratch.', 4, 180, 0);
+SET @module4_id = LAST_INSERT_ID();
+
+-- ============================================
+-- LESSONS
+-- ============================================
+
+-- MODULE 1: HTML Fundamentals (5 lessons)
+INSERT INTO lessons (module_id, course_id, title, description, content, lesson_type, video_url, video_duration_seconds, video_platform, display_order, duration_minutes, is_preview, is_mandatory) VALUES
+
+-- Lesson 1: Introduction to HTML
+(@module1_id, @course_id, 'Introduction to HTML', 'Understanding HTML and its role in web development',
 '<h3>What is HTML?</h3>
 <p>HTML (HyperText Markup Language) is the standard markup language for creating web pages. It describes the structure and content of web pages using elements and tags.</p>
 <h3>Key Concepts:</h3>
@@ -36,173 +58,167 @@ INSERT INTO lessons (module_id, title, description, content, type, content_url, 
 </ul>
 <h3>Why Learn HTML?</h3>
 <p>HTML is the foundation of all websites. Every web developer must master HTML to build modern, accessible web applications.</p>',
-'video', 'https://www.youtube.com/embed/qz0aGYrrlhU', 15, 1, 1, NOW(), NOW()),
+'video', 'qz0aGYrrlhU', 900, 'youtube', 1, 15, 1, 1),
 
-(@module1_id, 'HTML Document Structure', 'Learn about the basic structure of an HTML document',
+-- Lesson 2: HTML Document Structure
+(@module1_id, @course_id, 'HTML Document Structure', 'Learn about the basic structure of an HTML document',
 '<h3>Basic HTML Document Structure</h3>
 <pre><code>&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;My First Web Page&lt;/title&gt;
+    &lt;title&gt;Page Title&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;h1&gt;Welcome to My Website&lt;/h1&gt;
-    &lt;p&gt;This is a paragraph.&lt;/p&gt;
+    &lt;h1&gt;My First Heading&lt;/h1&gt;
+    &lt;p&gt;My first paragraph.&lt;/p&gt;
 &lt;/body&gt;
-&lt;/html&gt;</code></pre>
+&lt;/html&gt;
+</code></pre>
 <h3>Key Elements:</h3>
 <ul>
-<li><strong>&lt;!DOCTYPE html&gt;</strong> - Document type declaration</li>
+<li><strong>&lt;!DOCTYPE html&gt;</strong> - Declares HTML5 document</li>
 <li><strong>&lt;html&gt;</strong> - Root element</li>
 <li><strong>&lt;head&gt;</strong> - Metadata container</li>
 <li><strong>&lt;body&gt;</strong> - Visible content</li>
 </ul>',
-'video', 'https://www.youtube.com/embed/UB1O30fR-EE', 20, 2, 1, NOW(), NOW()),
+'video', 'UB1O30fR-EE', 720, 'youtube', 2, 12, 1, 1),
 
-(@module1_id, 'HTML Text Elements', 'Working with headings, paragraphs, and text formatting',
-'<h3>Text Elements in HTML</h3>
-<p>HTML provides various elements for structuring and formatting text content.</p>
-<h4>Headings:</h4>
-<pre><code>&lt;h1&gt;Main Heading&lt;/h1&gt;
-&lt;h2&gt;Sub Heading&lt;/h2&gt;
-&lt;h3&gt;Section Heading&lt;/h3&gt;</code></pre>
-<h4>Text Formatting:</h4>
+-- Lesson 3: Common HTML Elements
+(@module1_id, @course_id, 'Common HTML Elements', 'Master headings, paragraphs, lists, and formatting',
+'<h3>Text Elements</h3>
 <ul>
-<li><strong>&lt;strong&gt;</strong> - Important text (bold)</li>
-<li><strong>&lt;em&gt;</strong> - Emphasized text (italic)</li>
-<li><strong>&lt;mark&gt;</strong> - Highlighted text</li>
-<li><strong>&lt;small&gt;</strong> - Smaller text</li>
+<li><strong>Headings:</strong> &lt;h1&gt; to &lt;h6&gt;</li>
+<li><strong>Paragraphs:</strong> &lt;p&gt;</li>
+<li><strong>Line Breaks:</strong> &lt;br&gt;</li>
+<li><strong>Bold:</strong> &lt;strong&gt; or &lt;b&gt;</li>
+<li><strong>Italic:</strong> &lt;em&gt; or &lt;i&gt;</li>
+</ul>
+<h3>Lists</h3>
+<ul>
+<li><strong>Unordered Lists:</strong> &lt;ul&gt; with &lt;li&gt;</li>
+<li><strong>Ordered Lists:</strong> &lt;ol&gt; with &lt;li&gt;</li>
+<li><strong>Description Lists:</strong> &lt;dl&gt;, &lt;dt&gt;, &lt;dd&gt;</li>
 </ul>',
-'video', 'https://www.youtube.com/embed/MDLn5-zSQQI', 25, 3, 0, NOW(), NOW()),
+'video', 'kUMe1FH4CHE', 840, 'youtube', 3, 14, 0, 1),
 
-(@module1_id, 'HTML Lists and Links', 'Creating lists and hyperlinks',
-'<h3>HTML Lists</h3>
-<h4>Unordered List:</h4>
-<pre><code>&lt;ul&gt;
-    &lt;li&gt;Item 1&lt;/li&gt;
-    &lt;li&gt;Item 2&lt;/li&gt;
-&lt;/ul&gt;</code></pre>
-<h4>Ordered List:</h4>
-<pre><code>&lt;ol&gt;
-    &lt;li&gt;First&lt;/li&gt;
-    &lt;li&gt;Second&lt;/li&gt;
-&lt;/ol&gt;</code></pre>
-<h3>Hyperlinks</h3>
+-- Lesson 4: Links and Navigation
+(@module1_id, @course_id, 'Links and Navigation', 'Create hyperlinks and navigation menus',
+'<h3>Creating Links</h3>
 <pre><code>&lt;a href="https://example.com"&gt;Visit Example&lt;/a&gt;
+&lt;a href="about.html"&gt;About Page&lt;/a&gt;
 &lt;a href="#section"&gt;Jump to Section&lt;/a&gt;
-&lt;a href="mailto:email@example.com"&gt;Email Us&lt;/a&gt;</code></pre>',
-'video', 'https://www.youtube.com/embed/2T1JofmYR0k', 20, 4, 0, NOW(), NOW()),
+&lt;a href="mailto:info@example.com"&gt;Email Us&lt;/a&gt;
+</code></pre>
+<h3>Link Attributes:</h3>
+<ul>
+<li><strong>href</strong> - Destination URL</li>
+<li><strong>target</strong> - Where to open (_blank, _self)</li>
+<li><strong>title</strong> - Tooltip text</li>
+<li><strong>rel</strong> - Relationship (nofollow, noopener)</li>
+</ul>',
+'video', 'PlxWf493en4', 660, 'youtube', 4, 11, 0, 1),
 
-(@module1_id, 'HTML Forms Basics', 'Introduction to HTML forms and input elements',
-'<h3>HTML Forms</h3>
-<p>Forms allow users to input data that can be sent to a server for processing.</p>
+-- Lesson 5: HTML Forms Basics
+(@module1_id, @course_id, 'HTML Forms Basics', 'Create interactive forms to collect user input',
+'<h3>Form Elements</h3>
 <pre><code>&lt;form action="/submit" method="POST"&gt;
     &lt;label for="name"&gt;Name:&lt;/label&gt;
-    &lt;input type="text" id="name" name="name" required&gt;
+    &lt;input type="text" id="name" name="name"&gt;
 
     &lt;label for="email"&gt;Email:&lt;/label&gt;
-    &lt;input type="email" id="email" name="email" required&gt;
+    &lt;input type="email" id="email" name="email"&gt;
 
     &lt;button type="submit"&gt;Submit&lt;/button&gt;
-&lt;/form&gt;</code></pre>
-<h4>Common Input Types:</h4>
+&lt;/form&gt;
+</code></pre>
+<h3>Input Types:</h3>
 <ul>
-<li>text, email, password</li>
-<li>number, tel, url</li>
-<li>checkbox, radio</li>
-<li>date, time, file</li>
+<li>text, email, password, number</li>
+<li>checkbox, radio, file</li>
+<li>date, time, color</li>
 </ul>',
-'video', 'https://www.youtube.com/embed/fNcJuPIZ2WE', 30, 5, 0, NOW(), NOW());
+'video', 'fNcJuPIZ2WE', 1020, 'youtube', 5, 17, 0, 1);
 
--- ============================================
--- MODULE 2: CSS Styling
--- ============================================
-INSERT INTO course_modules (course_id, title, description, order_index, created_at, updated_at) VALUES
-(@course_id, 'CSS Styling', 'Master CSS to style and layout your web pages. Learn selectors, properties, flexbox, and responsive design.', 2, NOW(), NOW());
+-- MODULE 2: CSS Styling (5 lessons)
+INSERT INTO lessons (module_id, course_id, title, description, content, lesson_type, video_url, video_duration_seconds, video_platform, display_order, duration_minutes, is_preview, is_mandatory) VALUES
 
-SET @module2_id = LAST_INSERT_ID();
-
--- Module 2 Lessons
-INSERT INTO lessons (module_id, title, description, content, type, content_url, duration_minutes, order_index, is_preview, created_at, updated_at) VALUES
-(@module2_id, 'Introduction to CSS', 'Understanding CSS and how it styles HTML',
+-- Lesson 6: Introduction to CSS
+(@module2_id, @course_id, 'Introduction to CSS', 'Learn how CSS transforms HTML into beautiful designs',
 '<h3>What is CSS?</h3>
 <p>CSS (Cascading Style Sheets) is used to style and layout web pages. It controls colors, fonts, spacing, and positioning.</p>
 <h3>Three Ways to Add CSS:</h3>
-<ol>
-<li><strong>Inline CSS:</strong> <code>style="color: red;"</code></li>
-<li><strong>Internal CSS:</strong> <code>&lt;style&gt;</code> tag in head</li>
-<li><strong>External CSS:</strong> Separate .css file (recommended)</li>
-</ol>
-<pre><code>&lt;link rel="stylesheet" href="styles.css"&gt;</code></pre>',
-'video', 'https://www.youtube.com/embed/yfoY53QXEnI', 18, 1, 0, NOW(), NOW()),
-
-(@module2_id, 'CSS Selectors', 'Learn different types of CSS selectors',
-'<h3>CSS Selectors</h3>
-<h4>Basic Selectors:</h4>
-<pre><code>/* Element selector */
-p { color: blue; }
-
-/* Class selector */
-.highlight { background: yellow; }
-
-/* ID selector */
-#header { font-size: 24px; }
-
-/* Universal selector */
-* { margin: 0; padding: 0; }</code></pre>
-<h4>Combinators:</h4>
 <ul>
-<li>Descendant: <code>div p</code></li>
-<li>Child: <code>div > p</code></li>
-<li>Adjacent sibling: <code>h1 + p</code></li>
-</ul>',
-'video', 'https://www.youtube.com/embed/l1mER1bV0N0', 25, 2, 0, NOW(), NOW()),
-
-(@module2_id, 'CSS Box Model', 'Understanding margin, padding, border, and content',
-'<h3>The CSS Box Model</h3>
-<p>Every HTML element is a box consisting of:</p>
-<ul>
-<li><strong>Content</strong> - The actual content (text, images)</li>
-<li><strong>Padding</strong> - Space around content (inside border)</li>
-<li><strong>Border</strong> - Border around padding</li>
-<li><strong>Margin</strong> - Space outside border</li>
+<li><strong>Inline:</strong> &lt;p style="color: red;"&gt;Text&lt;/p&gt;</li>
+<li><strong>Internal:</strong> &lt;style&gt; in &lt;head&gt;</li>
+<li><strong>External:</strong> &lt;link rel="stylesheet" href="style.css"&gt;</li>
 </ul>
+<h3>CSS Syntax:</h3>
+<pre><code>selector {
+    property: value;
+}
+</code></pre>',
+'video', 'yfoY53QXEnI', 900, 'youtube', 1, 15, 0, 1),
+
+-- Lesson 7: CSS Selectors
+(@module2_id, @course_id, 'CSS Selectors', 'Target HTML elements with precision',
+'<h3>Basic Selectors</h3>
+<ul>
+<li><strong>Element:</strong> p { color: blue; }</li>
+<li><strong>Class:</strong> .header { font-size: 24px; }</li>
+<li><strong>ID:</strong> #main { width: 100%; }</li>
+<li><strong>Universal:</strong> * { margin: 0; }</li>
+</ul>
+<h3>Combinators</h3>
+<ul>
+<li><strong>Descendant:</strong> div p { }</li>
+<li><strong>Child:</strong> div > p { }</li>
+<li><strong>Adjacent:</strong> h1 + p { }</li>
+</ul>',
+'video', 'l1mER1bV0N0', 960, 'youtube', 2, 16, 0, 1),
+
+-- Lesson 8: Box Model
+(@module2_id, @course_id, 'CSS Box Model', 'Understand margins, borders, padding, and content',
+'<h3>The Box Model</h3>
+<p>Every HTML element is a box with four layers:</p>
+<ol>
+<li><strong>Content</strong> - The actual content (text, images)</li>
+<li><strong>Padding</strong> - Space between content and border</li>
+<li><strong>Border</strong> - Line around padding</li>
+<li><strong>Margin</strong> - Space outside the border</li>
+</ol>
 <pre><code>.box {
     width: 300px;
     padding: 20px;
     border: 2px solid black;
     margin: 10px;
-}</code></pre>',
-'video', 'https://www.youtube.com/embed/rIO5326FgPE', 22, 3, 0, NOW(), NOW()),
+}
+</code></pre>',
+'video', 'rIO5326FgPE', 780, 'youtube', 3, 13, 0, 1),
 
-(@module2_id, 'Flexbox Layout', 'Modern CSS layout with Flexbox',
-'<h3>CSS Flexbox</h3>
-<p>Flexbox is a powerful layout system for creating responsive designs.</p>
+-- Lesson 9: Flexbox Layout
+(@module2_id, @course_id, 'Flexbox Layout', 'Create flexible responsive layouts easily',
+'<h3>Flexbox Basics</h3>
 <pre><code>.container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     gap: 20px;
 }
-
-.item {
-    flex: 1;
-}</code></pre>
-<h4>Key Properties:</h4>
+</code></pre>
+<h3>Main Properties:</h3>
 <ul>
-<li><code>display: flex</code> - Enable flexbox</li>
-<li><code>flex-direction</code> - row or column</li>
-<li><code>justify-content</code> - Horizontal alignment</li>
-<li><code>align-items</code> - Vertical alignment</li>
+<li><strong>justify-content:</strong> Horizontal alignment</li>
+<li><strong>align-items:</strong> Vertical alignment</li>
+<li><strong>flex-direction:</strong> row, column</li>
+<li><strong>flex-wrap:</strong> wrap, nowrap</li>
+<li><strong>gap:</strong> Space between items</li>
 </ul>',
-'video', 'https://www.youtube.com/embed/fYq5PXgSsbE', 30, 4, 0, NOW(), NOW()),
+'video', 'JJSoEo8JSnc', 1200, 'youtube', 4, 20, 0, 1),
 
-(@module2_id, 'Responsive Design', 'Making websites work on all devices',
-'<h3>Responsive Web Design</h3>
-<p>Create websites that adapt to different screen sizes.</p>
-<h4>Media Queries:</h4>
+-- Lesson 10: Responsive Design Basics
+(@module2_id, @course_id, 'Responsive Design Basics', 'Make websites work on all screen sizes',
+'<h3>Media Queries</h3>
 <pre><code>/* Mobile First */
 .container {
     width: 100%;
@@ -220,157 +236,155 @@ p { color: blue; }
     .container {
         width: 1140px;
     }
-}</code></pre>',
-'video', 'https://www.youtube.com/embed/srvUrASNj0s', 28, 5, 0, NOW(), NOW());
-
--- ============================================
--- MODULE 3: JavaScript Fundamentals
--- ============================================
-INSERT INTO course_modules (course_id, title, description, order_index, created_at, updated_at) VALUES
-(@course_id, 'JavaScript Fundamentals', 'Learn programming with JavaScript. Master variables, functions, DOM manipulation, and events.', 3, NOW(), NOW());
-
-SET @module3_id = LAST_INSERT_ID();
-
--- Module 3 Lessons
-INSERT INTO lessons (module_id, title, description, content, type, content_url, duration_minutes, order_index, is_preview, created_at, updated_at) VALUES
-(@module3_id, 'Introduction to JavaScript', 'Understanding JavaScript and its role in web development',
-'<h3>What is JavaScript?</h3>
-<p>JavaScript is a programming language that adds interactivity and dynamic behavior to websites.</p>
-<h3>What Can JavaScript Do?</h3>
+}
+</code></pre>
+<h3>Responsive Units:</h3>
 <ul>
-<li>Respond to user interactions (clicks, typing)</li>
-<li>Manipulate HTML and CSS dynamically</li>
-<li>Validate form inputs</li>
-<li>Make API calls and fetch data</li>
-<li>Create animations and effects</li>
-</ul>
-<pre><code>// Your first JavaScript
-console.log("Hello, World!");
-alert("Welcome to JavaScript!");</code></pre>',
-'video', 'https://www.youtube.com/embed/W6NZfCO5SIk', 20, 1, 0, NOW(), NOW()),
-
-(@module3_id, 'Variables and Data Types', 'Working with variables and different data types',
-'<h3>JavaScript Variables</h3>
-<pre><code>// Variable declarations
-let name = "John";
-const age = 25;
-var city = "Lusaka"; // old way
-
-// Data Types
-let string = "Hello";
-let number = 42;
-let boolean = true;
-let array = [1, 2, 3];
-let object = { name: "John", age: 25 };
-let nullValue = null;
-let undefinedValue;</code></pre>
-<h4>Naming Rules:</h4>
-<ul>
-<li>Start with letter, _, or $</li>
-<li>Case-sensitive</li>
-<li>Use camelCase convention</li>
+<li><strong>%</strong> - Percentage</li>
+<li><strong>em/rem</strong> - Relative to font size</li>
+<li><strong>vw/vh</strong> - Viewport width/height</li>
 </ul>',
-'video', 'https://www.youtube.com/embed/edlFjlzxkSI', 25, 2, 0, NOW(), NOW()),
+'video', 'srvUrASNj0s', 1080, 'youtube', 5, 18, 0, 1);
 
-(@module3_id, 'Functions in JavaScript', 'Creating and using functions',
-'<h3>JavaScript Functions</h3>
-<h4>Function Declaration:</h4>
+-- MODULE 3: JavaScript Fundamentals (5 lessons)
+INSERT INTO lessons (module_id, course_id, title, description, content, lesson_type, video_url, video_duration_seconds, video_platform, display_order, duration_minutes, is_preview, is_mandatory) VALUES
+
+-- Lesson 11: Introduction to JavaScript
+(@module3_id, @course_id, 'Introduction to JavaScript', 'Your first steps into programming',
+'<h3>What is JavaScript?</h3>
+<p>JavaScript is a programming language that adds interactivity to websites. It runs in the browser and can respond to user actions.</p>
+<h3>Adding JavaScript:</h3>
+<pre><code>&lt;script&gt;
+    console.log("Hello, World!");
+&lt;/script&gt;
+
+&lt;script src="app.js"&gt;&lt;/script&gt;
+</code></pre>
+<h3>Your First Code:</h3>
+<pre><code>alert("Welcome to JavaScript!");
+console.log("This appears in the console");
+</code></pre>',
+'video', 'W6NZfCO5SIk', 1200, 'youtube', 1, 20, 0, 1),
+
+-- Lesson 12: Variables and Data Types
+(@module3_id, @course_id, 'Variables and Data Types', 'Store and work with different types of data',
+'<h3>Variables</h3>
+<pre><code>let name = "John";
+const age = 25;
+var city = "New York"; // Old way
+
+let isStudent = true;
+let score = 95.5;
+</code></pre>
+<h3>Data Types:</h3>
+<ul>
+<li><strong>String:</strong> "text", \'text\'</li>
+<li><strong>Number:</strong> 42, 3.14</li>
+<li><strong>Boolean:</strong> true, false</li>
+<li><strong>Array:</strong> [1, 2, 3]</li>
+<li><strong>Object:</strong> {name: "John"}</li>
+</ul>',
+'video', 'edlFjlzxkSI', 960, 'youtube', 2, 16, 0, 1),
+
+-- Lesson 13: Functions and Events
+(@module3_id, @course_id, 'Functions and Events', 'Create reusable code and respond to user actions',
+'<h3>Functions</h3>
 <pre><code>function greet(name) {
     return "Hello, " + name + "!";
 }
 
-console.log(greet("Sarah")); // Hello, Sarah!</code></pre>
-<h4>Arrow Functions (Modern):</h4>
-<pre><code>const add = (a, b) => a + b;
-const multiply = (x, y) => {
-    return x * y;
-};
+const result = greet("Sarah");
+console.log(result); // "Hello, Sarah!"
+</code></pre>
+<h3>Events</h3>
+<pre><code>&lt;button onclick="handleClick()"&gt;Click Me&lt;/button&gt;
 
-console.log(add(5, 3)); // 8</code></pre>',
-'video', 'https://www.youtube.com/embed/N8ap4k_1QEQ', 28, 3, 0, NOW(), NOW()),
-
-(@module3_id, 'DOM Manipulation', 'Interacting with HTML using JavaScript',
-'<h3>Document Object Model (DOM)</h3>
-<p>The DOM is a programming interface for HTML documents.</p>
-<pre><code>// Selecting elements
-const heading = document.getElementById("title");
-const buttons = document.querySelectorAll(".btn");
-
-// Changing content
-heading.textContent = "New Title";
-heading.innerHTML = "&lt;strong&gt;Bold Title&lt;/strong&gt;";
-
-// Changing styles
-heading.style.color = "blue";
-heading.style.fontSize = "32px";
-
-// Adding classes
-heading.classList.add("highlight");
-heading.classList.remove("old-class");
-heading.classList.toggle("active");</code></pre>',
-'video', 'https://www.youtube.com/embed/5fb2aPlgoys', 30, 4, 0, NOW(), NOW()),
-
-(@module3_id, 'Event Handling', 'Responding to user interactions',
-'<h3>JavaScript Events</h3>
-<p>Events allow JavaScript to react to user actions.</p>
-<pre><code>// Click event
-document.getElementById("btn").addEventListener("click", function() {
+&lt;script&gt;
+function handleClick() {
     alert("Button clicked!");
-});
+}
+&lt;/script&gt;
+</code></pre>',
+'video', 'N8ap4k_1QEQ', 1080, 'youtube', 3, 18, 0, 1),
 
-// Form submit
-document.getElementById("form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    console.log("Form submitted");
-});
+-- Lesson 14: DOM Manipulation
+(@module3_id, @course_id, 'DOM Manipulation', 'Change HTML and CSS with JavaScript',
+'<h3>Selecting Elements</h3>
+<pre><code>// By ID
+const heading = document.getElementById("title");
 
-// Input change
-document.getElementById("input").addEventListener("input", (e) => {
-    console.log(e.target.value);
-});</code></pre>
-<h4>Common Events:</h4>
+// By Class
+const items = document.getElementsByClassName("item");
+
+// By CSS Selector
+const button = document.querySelector(".btn");
+const allButtons = document.querySelectorAll(".btn");
+</code></pre>
+<h3>Modifying Elements</h3>
+<pre><code>heading.textContent = "New Title";
+heading.style.color = "blue";
+heading.classList.add("active");
+</code></pre>',
+'video', 'y17RuWkWdn8', 1200, 'youtube', 4, 20, 0, 1),
+
+-- Lesson 15: Form Validation
+(@module3_id, @course_id, 'Form Validation with JavaScript', 'Validate user input before submission',
+'<h3>Basic Validation</h3>
+<pre><code>function validateForm() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (email === "") {
+        alert("Email is required");
+        return false;
+    }
+
+    if (password.length < 8) {
+        alert("Password must be at least 8 characters");
+        return false;
+    }
+
+    return true;
+}
+</code></pre>
+<h3>Email Validation:</h3>
+<pre><code>const emailPattern = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+if (!emailPattern.test(email)) {
+    alert("Invalid email format");
+}
+</code></pre>',
+'video', 'In0nB0ABaUk', 900, 'youtube', 5, 15, 0, 1);
+
+-- MODULE 4: Responsive Web Design Project (5 lessons)
+INSERT INTO lessons (module_id, course_id, title, description, content, lesson_type, video_url, video_duration_seconds, video_platform, display_order, duration_minutes, is_preview, is_mandatory) VALUES
+
+-- Lesson 16: Project Planning
+(@module4_id, @course_id, 'Project Planning and Design', 'Plan your portfolio website structure',
+'<h3>Project Overview</h3>
+<p>You will build a complete responsive portfolio website that showcases your skills and projects.</p>
+<h3>Required Sections:</h3>
 <ul>
-<li>click, dblclick</li>
-<li>submit, change, input</li>
-<li>mouseover, mouseout</li>
-<li>keydown, keyup, keypress</li>
-</ul>',
-'video', 'https://www.youtube.com/embed/XF1_MlZ5l6M', 32, 5, 0, NOW(), NOW());
-
--- ============================================
--- MODULE 4: Responsive Web Design Project
--- ============================================
-INSERT INTO course_modules (course_id, title, description, order_index, created_at, updated_at) VALUES
-(@course_id, 'Responsive Web Design Project', 'Apply your HTML, CSS, and JavaScript skills to build a complete responsive website.', 4, NOW(), NOW());
-
-SET @module4_id = LAST_INSERT_ID();
-
--- Module 4 Lessons
-INSERT INTO lessons (module_id, title, description, content, type, content_url, duration_minutes, order_index, is_preview, created_at, updated_at) VALUES
-(@module4_id, 'Project Planning', 'Planning your website project',
-'<h3>Project: Personal Portfolio Website</h3>
-<p>Build a responsive portfolio website showcasing your skills.</p>
-<h4>Features to Include:</h4>
-<ul>
-<li>Hero section with introduction</li>
-<li>About section</li>
-<li>Skills/Services section</li>
-<li>Portfolio/Projects gallery</li>
-<li>Contact form</li>
-<li>Responsive navigation</li>
+<li>Header with Navigation</li>
+<li>Hero Section with Introduction</li>
+<li>About Me Section</li>
+<li>Skills Section</li>
+<li>Projects Gallery</li>
+<li>Contact Form</li>
+<li>Footer</li>
 </ul>
-<h4>Planning Steps:</h4>
+<h3>Planning Steps:</h3>
 <ol>
-<li>Sketch wireframes</li>
-<li>Choose color scheme</li>
-<li>Gather content (text, images)</li>
-<li>Plan page structure</li>
+<li>Sketch wireframes for mobile and desktop</li>
+<li>Choose a color scheme (3-4 colors)</li>
+<li>Select fonts (heading and body)</li>
+<li>Plan content for each section</li>
+<li>Create folder structure</li>
 </ol>',
-'text', NULL, 15, 1, 0, NOW(), NOW()),
+'text', NULL, 0, NULL, 1, 30, 0, 1),
 
-(@module4_id, 'Building the HTML Structure', 'Creating semantic HTML structure',
+-- Lesson 17: Building the Structure
+(@module4_id, @course_id, 'Building HTML Structure', 'Create semantic HTML for your portfolio',
 '<h3>HTML Structure</h3>
-<p>Create a well-structured HTML foundation for your portfolio.</p>
 <pre><code>&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
@@ -380,336 +394,408 @@ INSERT INTO lessons (module_id, title, description, content, type, content_url, 
     &lt;link rel="stylesheet" href="style.css"&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;nav&gt;&lt;!-- Navigation --&gt;&lt;/nav&gt;
-    &lt;header&gt;&lt;!-- Hero section --&gt;&lt;/header&gt;
-    &lt;section id="about"&gt;&lt;!-- About --&gt;&lt;/section&gt;
-    &lt;section id="skills"&gt;&lt;!-- Skills --&gt;&lt;/section&gt;
-    &lt;section id="projects"&gt;&lt;!-- Projects --&gt;&lt;/section&gt;
-    &lt;section id="contact"&gt;&lt;!-- Contact --&gt;&lt;/section&gt;
-    &lt;footer&gt;&lt;!-- Footer --&gt;&lt;/footer&gt;
+    &lt;header&gt;
+        &lt;nav&gt;&lt;/nav&gt;
+    &lt;/header&gt;
+
+    &lt;main&gt;
+        &lt;section id="hero"&gt;&lt;/section&gt;
+        &lt;section id="about"&gt;&lt;/section&gt;
+        &lt;section id="skills"&gt;&lt;/section&gt;
+        &lt;section id="projects"&gt;&lt;/section&gt;
+        &lt;section id="contact"&gt;&lt;/section&gt;
+    &lt;/main&gt;
+
+    &lt;footer&gt;&lt;/footer&gt;
+    &lt;script src="app.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</code></pre>',
-'video', 'https://www.youtube.com/embed/ldwlOzRvYOU', 35, 2, 0, NOW(), NOW()),
+&lt;/html&gt;
+</code></pre>',
+'text', NULL, 0, NULL, 2, 45, 0, 1),
 
-(@module4_id, 'Styling with CSS', 'Adding styles and layout',
-'<h3>CSS Styling</h3>
-<p>Make your portfolio visually appealing with CSS.</p>
-<h4>Key Techniques:</h4>
-<ul>
-<li>CSS Variables for color scheme</li>
-<li>Flexbox for layout</li>
-<li>Grid for project gallery</li>
-<li>Smooth scrolling</li>
-<li>Hover effects and transitions</li>
-</ul>
-<pre><code>:root {
-    --primary-color: #2E70DA;
-    --secondary-color: #F6B745;
-    --dark: #1a1a1a;
-    --light: #f5f5f5;
-}
-
+-- Lesson 18: Styling the Design
+(@module4_id, @course_id, 'Styling with CSS', 'Apply styles to create a beautiful design',
+'<h3>CSS Organization</h3>
+<pre><code>/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    font-family: "Arial", sans-serif;
-    line-height: 1.6;
-}</code></pre>',
-'video', 'https://www.youtube.com/embed/sXnFmIYUFl4', 40, 3, 0, NOW(), NOW()),
+/* Variables */
+:root {
+    --primary-color: #2563eb;
+    --text-dark: #1f2937;
+    --text-light: #6b7280;
+}
 
-(@module4_id, 'Adding Interactivity', 'JavaScript functionality',
-'<h3>JavaScript Interactivity</h3>
-<p>Add dynamic features to enhance user experience.</p>
-<h4>Features to Implement:</h4>
-<ul>
-<li>Mobile menu toggle</li>
-<li>Smooth scroll to sections</li>
-<li>Form validation</li>
-<li>Project filtering</li>
-<li>Scroll animations</li>
-</ul>
-<pre><code>// Mobile menu toggle
-const menuBtn = document.getElementById("menu-toggle");
+/* Header Styles */
+header {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+}
+
+/* Responsive Grid */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+</code></pre>',
+'text', NULL, 0, NULL, 3, 60, 0, 1),
+
+-- Lesson 19: Adding Interactivity
+(@module4_id, @course_id, 'JavaScript Interactivity', 'Add dynamic features to your portfolio',
+'<h3>Key Features to Add:</h3>
+<ol>
+<li><strong>Mobile Navigation Toggle</strong>
+<pre><code>const menuBtn = document.querySelector(".menu-btn");
 const nav = document.querySelector("nav");
 
 menuBtn.addEventListener("click", () => {
     nav.classList.toggle("active");
 });
-
-// Smooth scroll
-document.querySelectorAll(\'a[href^="#"]\').forEach(anchor => {
+</code></pre>
+</li>
+<li><strong>Smooth Scrolling</strong>
+<pre><code>document.querySelectorAll(\'a[href^="#"]\').forEach(anchor => {
     anchor.addEventListener("click", function(e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute("href"));
         target.scrollIntoView({ behavior: "smooth" });
     });
-});</code></pre>',
-'video', 'https://www.youtube.com/embed/3PHXvlpOkf4', 35, 4, 0, NOW(), NOW()),
+});
+</code></pre>
+</li>
+<li><strong>Form Validation</strong> - Validate contact form before submission</li>
+<li><strong>Scroll Animations</strong> - Fade in sections as user scrolls</li>
+</ol>',
+'text', NULL, 0, NULL, 4, 45, 0, 1),
 
-(@module4_id, 'Testing and Deployment', 'Testing and publishing your website',
-'<h3>Testing Your Website</h3>
-<h4>Testing Checklist:</h4>
+-- Lesson 20: Testing and Deployment
+(@module4_id, @course_id, 'Final Testing and Deployment', 'Test and publish your portfolio',
+'<h3>Testing Checklist</h3>
 <ul>
-<li>Test on different browsers (Chrome, Firefox, Safari)</li>
-<li>Test on different devices (mobile, tablet, desktop)</li>
-<li>Check all links work</li>
-<li>Validate HTML and CSS</li>
-<li>Test form submission</li>
-<li>Check loading speed</li>
+<li>✓ Test on multiple browsers (Chrome, Firefox, Safari)</li>
+<li>✓ Test on mobile devices and tablets</li>
+<li>✓ Check all links work correctly</li>
+<li>✓ Validate HTML and CSS</li>
+<li>✓ Test form submission</li>
+<li>✓ Check loading speed</li>
+<li>✓ Ensure images are optimized</li>
 </ul>
 <h3>Deployment Options</h3>
 <ol>
 <li><strong>GitHub Pages</strong> - Free hosting for static sites</li>
-<li><strong>Netlify</strong> - Easy deployment with continuous integration</li>
-<li><strong>Vercel</strong> - Modern hosting platform</li>
+<li><strong>Netlify</strong> - Easy drag-and-drop deployment</li>
+<li><strong>Vercel</strong> - Fast and simple deployment</li>
 </ol>
-<p>Congratulations! You have completed your first web development project!</p>',
-'video', 'https://www.youtube.com/embed/QyFcl_Fba-k', 25, 5, 0, NOW(), NOW());
+<h3>After Deployment:</h3>
+<ul>
+<li>Share your portfolio URL</li>
+<li>Add it to your resume</li>
+<li>Update regularly with new projects</li>
+</ul>',
+'text', NULL, 0, NULL, 5, 30, 0, 1);
 
 -- ============================================
 -- QUIZZES
 -- ============================================
 
 -- Quiz 1: HTML Fundamentals Quiz
-INSERT INTO quizzes (course_id, title, description, passing_score, time_limit, max_attempts, status, created_at, updated_at) VALUES
-(@course_id, 'HTML Fundamentals Quiz', 'Test your knowledge of HTML basics', 70, 20, 3, 'published', NOW(), NOW());
-
+INSERT INTO quizzes (course_id, lesson_id, title, description, quiz_type, time_limit_minutes, passing_score, max_attempts, status) VALUES
+(@course_id, NULL, 'HTML Fundamentals Quiz', 'Test your understanding of HTML basics and document structure', 'graded', 20, 70.00, 3, 'published');
 SET @quiz1_id = LAST_INSERT_ID();
 
--- Quiz 1 Questions
-INSERT INTO quiz_questions (quiz_id, question, question_type, points, order_index, created_at, updated_at) VALUES
-(@quiz1_id, 'What does HTML stand for?', 'multiple_choice', 5, 1, NOW(), NOW()),
-(@quiz1_id, 'Which HTML element is used for the largest heading?', 'multiple_choice', 5, 2, NOW(), NOW()),
-(@quiz1_id, 'What is the correct HTML element for inserting a line break?', 'multiple_choice', 5, 3, NOW(), NOW()),
-(@quiz1_id, 'Which attribute is used to provide alternative text for an image?', 'multiple_choice', 5, 4, NOW(), NOW()),
-(@quiz1_id, 'What is the purpose of the <head> element in HTML?', 'multiple_choice', 5, 5, NOW(), NOW());
-
--- Quiz 1 Answers
-SET @q1 = (SELECT id FROM quiz_questions WHERE quiz_id = @quiz1_id ORDER BY order_index LIMIT 0,1);
-SET @q2 = (SELECT id FROM quiz_questions WHERE quiz_id = @quiz1_id ORDER BY order_index LIMIT 1,1);
-SET @q3 = (SELECT id FROM quiz_questions WHERE quiz_id = @quiz1_id ORDER BY order_index LIMIT 2,1);
-SET @q4 = (SELECT id FROM quiz_questions WHERE quiz_id = @quiz1_id ORDER BY order_index LIMIT 3,1);
-SET @q5 = (SELECT id FROM quiz_questions WHERE quiz_id = @quiz1_id ORDER BY order_index LIMIT 4,1);
-
-INSERT INTO quiz_answers (question_id, answer, is_correct, order_index, created_at, updated_at) VALUES
-(@q1, 'HyperText Markup Language', 1, 1, NOW(), NOW()),
-(@q1, 'HighText Machine Language', 0, 2, NOW(), NOW()),
-(@q1, 'Home Tool Markup Language', 0, 3, NOW(), NOW()),
-(@q1, 'Hyperlinks and Text Markup Language', 0, 4, NOW(), NOW()),
-
-(@q2, '<h1>', 1, 1, NOW(), NOW()),
-(@q2, '<heading>', 0, 2, NOW(), NOW()),
-(@q2, '<h6>', 0, 3, NOW(), NOW()),
-(@q2, '<head>', 0, 4, NOW(), NOW()),
-
-(@q3, '<br>', 1, 1, NOW(), NOW()),
-(@q3, '<break>', 0, 2, NOW(), NOW()),
-(@q3, '<lb>', 0, 3, NOW(), NOW()),
-(@q3, '<newline>', 0, 4, NOW(), NOW()),
-
-(@q4, 'alt', 1, 1, NOW(), NOW()),
-(@q4, 'title', 0, 2, NOW(), NOW()),
-(@q4, 'src', 0, 3, NOW(), NOW()),
-(@q4, 'desc', 0, 4, NOW(), NOW()),
-
-(@q5, 'To contain metadata about the document', 1, 1, NOW(), NOW()),
-(@q5, 'To display the main content', 0, 2, NOW(), NOW()),
-(@q5, 'To create navigation links', 0, 3, NOW(), NOW()),
-(@q5, 'To add scripts', 0, 4, NOW(), NOW());
-
 -- Quiz 2: CSS Styling Quiz
-INSERT INTO quizzes (course_id, title, description, passing_score, time_limit, max_attempts, status, created_at, updated_at) VALUES
-(@course_id, 'CSS Styling Quiz', 'Test your CSS knowledge', 70, 20, 3, 'published', NOW(), NOW());
-
+INSERT INTO quizzes (course_id, lesson_id, title, description, quiz_type, time_limit_minutes, passing_score, max_attempts, status) VALUES
+(@course_id, NULL, 'CSS Styling Quiz', 'Test your knowledge of CSS selectors, box model, and layouts', 'graded', 20, 70.00, 3, 'published');
 SET @quiz2_id = LAST_INSERT_ID();
 
--- Quiz 2 Questions
-INSERT INTO quiz_questions (quiz_id, question, question_type, points, order_index, created_at, updated_at) VALUES
-(@quiz2_id, 'What does CSS stand for?', 'multiple_choice', 5, 1, NOW(), NOW()),
-(@quiz2_id, 'Which property is used to change the background color?', 'multiple_choice', 5, 2, NOW(), NOW()),
-(@quiz2_id, 'How do you select an element with id "header" in CSS?', 'multiple_choice', 5, 3, NOW(), NOW()),
-(@quiz2_id, 'Which CSS property controls the text size?', 'multiple_choice', 5, 4, NOW(), NOW()),
-(@quiz2_id, 'What is the correct CSS syntax for making all <p> elements bold?', 'multiple_choice', 5, 5, NOW(), NOW());
+-- ============================================
+-- QUIZ QUESTIONS - HTML Quiz
+-- ============================================
+
+INSERT INTO quiz_questions (quiz_id, question_type, question_text, points, display_order) VALUES
+(@quiz1_id, 'multiple_choice', 'What does HTML stand for?', 5.00, 1);
+SET @q1 = LAST_INSERT_ID();
+
+INSERT INTO quiz_questions (quiz_id, question_type, question_text, points, display_order) VALUES
+(@quiz1_id, 'multiple_choice', 'Which HTML element is used for the largest heading?', 5.00, 2);
+SET @q2 = LAST_INSERT_ID();
+
+INSERT INTO quiz_questions (quiz_id, question_type, question_text, points, display_order) VALUES
+(@quiz1_id, 'multiple_choice', 'What is the correct HTML for creating a hyperlink?', 5.00, 3);
+SET @q3 = LAST_INSERT_ID();
+
+INSERT INTO quiz_questions (quiz_id, question_type, question_text, points, display_order) VALUES
+(@quiz1_id, 'multiple_choice', 'Which HTML element defines the document type?', 5.00, 4);
+SET @q4 = LAST_INSERT_ID();
+
+INSERT INTO quiz_questions (quiz_id, question_type, question_text, points, display_order) VALUES
+(@quiz1_id, 'multiple_choice', 'What is the correct HTML for making a text input field?', 5.00, 5);
+SET @q5 = LAST_INSERT_ID();
+
+-- ============================================
+-- QUIZ ANSWERS - HTML Quiz
+-- ============================================
+
+-- Question 1 answers
+INSERT INTO quiz_answers (question_id, answer_text, is_correct, display_order) VALUES
+(@q1, 'HyperText Markup Language', 1, 1),
+(@q1, 'HighText Machine Language', 0, 2),
+(@q1, 'HyperTool Multi Language', 0, 3),
+(@q1, 'Home Tool Markup Language', 0, 4);
+
+-- Question 2 answers
+INSERT INTO quiz_answers (question_id, answer_text, is_correct, display_order) VALUES
+(@q2, '<heading>', 0, 1),
+(@q2, '<h1>', 1, 2),
+(@q2, '<h6>', 0, 3),
+(@q2, '<head>', 0, 4);
+
+-- Question 3 answers
+INSERT INTO quiz_answers (question_id, answer_text, is_correct, display_order) VALUES
+(@q3, '<a url="http://example.com">Example</a>', 0, 1),
+(@q3, '<a href="http://example.com">Example</a>', 1, 2),
+(@q3, '<link>http://example.com</link>', 0, 3),
+(@q3, '<a>http://example.com</a>', 0, 4);
+
+-- Question 4 answers
+INSERT INTO quiz_answers (question_id, answer_text, is_correct, display_order) VALUES
+(@q4, '<!DOCTYPE html>', 1, 1),
+(@q4, '<doctype html>', 0, 2),
+(@q4, '<document>', 0, 3),
+(@q4, '<!DOCTYPE>', 0, 4);
+
+-- Question 5 answers
+INSERT INTO quiz_answers (question_id, answer_text, is_correct, display_order) VALUES
+(@q5, '<input type="text">', 1, 1),
+(@q5, '<textinput type="text">', 0, 2),
+(@q5, '<input type="textfield">', 0, 3),
+(@q5, '<textfield>', 0, 4);
+
+-- ============================================
+-- QUIZ QUESTIONS - CSS Quiz
+-- ============================================
+
+INSERT INTO quiz_questions (quiz_id, question_type, question_text, points, display_order) VALUES
+(@quiz2_id, 'multiple_choice', 'What does CSS stand for?', 5.00, 1);
+SET @q6 = LAST_INSERT_ID();
+
+INSERT INTO quiz_questions (quiz_id, question_type, question_text, points, display_order) VALUES
+(@quiz2_id, 'multiple_choice', 'Which property is used to change the background color?', 5.00, 2);
+SET @q7 = LAST_INSERT_ID();
+
+INSERT INTO quiz_questions (quiz_id, question_type, question_text, points, display_order) VALUES
+(@quiz2_id, 'multiple_choice', 'How do you select an element with id "header" in CSS?', 5.00, 3);
+SET @q8 = LAST_INSERT_ID();
+
+INSERT INTO quiz_questions (quiz_id, question_type, question_text, points, display_order) VALUES
+(@quiz2_id, 'multiple_choice', 'Which CSS property controls the text size?', 5.00, 4);
+SET @q9 = LAST_INSERT_ID();
+
+INSERT INTO quiz_questions (quiz_id, question_type, question_text, points, display_order) VALUES
+(@quiz2_id, 'multiple_choice', 'What are the four layers of the CSS box model (from inside to outside)?', 5.00, 5);
+SET @q10 = LAST_INSERT_ID();
+
+-- ============================================
+-- QUIZ ANSWERS - CSS Quiz
+-- ============================================
+
+-- Question 6 answers
+INSERT INTO quiz_answers (question_id, answer_text, is_correct, display_order) VALUES
+(@q6, 'Cascading Style Sheets', 1, 1),
+(@q6, 'Creative Style System', 0, 2),
+(@q6, 'Computer Style Sheets', 0, 3),
+(@q6, 'Colorful Style Sheets', 0, 4);
+
+-- Question 7 answers
+INSERT INTO quiz_answers (question_id, answer_text, is_correct, display_order) VALUES
+(@q7, 'bgcolor', 0, 1),
+(@q7, 'background-color', 1, 2),
+(@q7, 'color-background', 0, 3),
+(@q7, 'bg-color', 0, 4);
+
+-- Question 8 answers
+INSERT INTO quiz_answers (question_id, answer_text, is_correct, display_order) VALUES
+(@q8, '.header', 0, 1),
+(@q8, '#header', 1, 2),
+(@q8, 'header', 0, 3),
+(@q8, '*header', 0, 4);
+
+-- Question 9 answers
+INSERT INTO quiz_answers (question_id, answer_text, is_correct, display_order) VALUES
+(@q9, 'text-size', 0, 1),
+(@q9, 'font-size', 1, 2),
+(@q9, 'text-style', 0, 3),
+(@q9, 'font-style', 0, 4);
+
+-- Question 10 answers
+INSERT INTO quiz_answers (question_id, answer_text, is_correct, display_order) VALUES
+(@q10, 'Content, Padding, Border, Margin', 1, 1),
+(@q10, 'Margin, Border, Padding, Content', 0, 2),
+(@q10, 'Content, Border, Padding, Margin', 0, 3),
+(@q10, 'Padding, Content, Margin, Border', 0, 4);
 
 -- ============================================
 -- ASSIGNMENTS
 -- ============================================
 
--- Assignment 1: HTML Structure Assignment
-INSERT INTO assignments (course_id, title, description, instructions, points, due_days, status, created_at, updated_at) VALUES
-(@course_id, 'Create a Personal Bio Page',
-'Build a simple HTML page with your personal information',
+-- Assignment 1: Personal Bio Page
+INSERT INTO assignments (course_id, lesson_id, title, description, instructions, max_points, passing_score, due_date, status) VALUES
+(@course_id, 5, 'Create a Personal Bio Page', 'Build a simple HTML page with your personal information',
 '<h3>Assignment Instructions:</h3>
-<p>Create an HTML page that includes the following:</p>
 <ol>
-<li>A proper HTML5 document structure with DOCTYPE, html, head, and body tags</li>
-<li>A heading with your name (use h1 tag)</li>
-<li>A paragraph describing yourself and your interests</li>
-<li>An unordered list of your hobbies</li>
-<li>An ordered list of your educational background</li>
-<li>At least 2 external links to your social media or websites</li>
-<li>An email link to your email address</li>
-</ol>
-<h3>Submission Requirements:</h3>
+<li>Create an HTML file named <code>bio.html</code></li>
+<li>Include a proper HTML5 document structure</li>
+<li>Add the following sections:
 <ul>
-<li>Submit your HTML file named "bio.html"</li>
-<li>Ensure your code is properly indented and commented</li>
-<li>Test your page in a browser before submitting</li>
+<li>A heading with your name</li>
+<li>A paragraph about yourself</li>
+<li>An unordered list of your hobbies</li>
+<li>An ordered list of your top 3 skills</li>
+<li>A link to your favorite website</li>
+</ul>
+</li>
+<li>Use semantic HTML elements where appropriate</li>
+<li>Ensure all HTML validates correctly</li>
+</ol>
+<h3>Grading Criteria:</h3>
+<ul>
+<li>Correct document structure (20 points)</li>
+<li>All required sections included (40 points)</li>
+<li>Proper use of HTML elements (30 points)</li>
+<li>Code quality and organization (10 points)</li>
+</ul>',
+100.00, 70.00, DATE_ADD(NOW(), INTERVAL 7 DAY), 'published');
+
+-- Assignment 2: Style Your Bio Page
+INSERT INTO assignments (course_id, lesson_id, title, description, instructions, max_points, passing_score, due_date, status) VALUES
+(@course_id, 10, 'Style Your Bio Page with CSS', 'Add beautiful styling to your HTML bio page',
+'<h3>Assignment Instructions:</h3>
+<ol>
+<li>Create a CSS file named <code>style.css</code> and link it to your bio.html</li>
+<li>Apply the following styles:
+<ul>
+<li>Set a custom font family</li>
+<li>Add background color to the page</li>
+<li>Style the heading with a different color and larger size</li>
+<li>Add padding and margin to create whitespace</li>
+<li>Style the lists with custom colors</li>
+<li>Make the link change color on hover</li>
+</ul>
+</li>
+<li>Use CSS classes for reusable styles</li>
+<li>Ensure the page is visually appealing</li>
+</ol>
+<h3>Grading Criteria:</h3>
+<ul>
+<li>External CSS file properly linked (10 points)</li>
+<li>All required styles applied (50 points)</li>
+<li>Good use of colors and spacing (20 points)</li>
+<li>Overall design and aesthetics (20 points)</li>
+</ul>',
+100.00, 70.00, DATE_ADD(NOW(), INTERVAL 14 DAY), 'published');
+
+-- Assignment 3: Interactive Contact Form
+INSERT INTO assignments (course_id, lesson_id, title, description, instructions, max_points, passing_score, due_date, status) VALUES
+(@course_id, 15, 'Create an Interactive Contact Form', 'Build a contact form with JavaScript validation',
+'<h3>Assignment Instructions:</h3>
+<ol>
+<li>Create a contact form with the following fields:
+<ul>
+<li>Name (text input, required)</li>
+<li>Email (email input, required)</li>
+<li>Subject (text input, required)</li>
+<li>Message (textarea, required)</li>
+<li>Submit button</li>
+</ul>
+</li>
+<li>Add JavaScript validation that:
+<ul>
+<li>Checks all fields are filled</li>
+<li>Validates email format</li>
+<li>Shows error messages for invalid inputs</li>
+<li>Prevents form submission if validation fails</li>
+<li>Shows a success message on valid submission</li>
+</ul>
+</li>
+<li>Style the form to be user-friendly and attractive</li>
+</ol>
+<h3>Grading Criteria:</h3>
+<ul>
+<li>Form structure and HTML (20 points)</li>
+<li>JavaScript validation logic (40 points)</li>
+<li>Error handling and messages (20 points)</li>
+<li>Form styling and usability (20 points)</li>
+</ul>',
+100.00, 70.00, DATE_ADD(NOW(), INTERVAL 21 DAY), 'published');
+
+-- Assignment 4: Final Portfolio Project
+INSERT INTO assignments (course_id, lesson_id, title, description, instructions, max_points, passing_score, due_date, status) VALUES
+(@course_id, 20, 'Build Your Portfolio Website', 'Create a complete responsive portfolio website',
+'<h3>Final Project Requirements:</h3>
+<ol>
+<li><strong>Required Sections:</strong>
+<ul>
+<li>Header with navigation menu</li>
+<li>Hero section with introduction</li>
+<li>About me section</li>
+<li>Skills section (display at least 6 skills)</li>
+<li>Projects section (showcase at least 3 projects)</li>
+<li>Contact form (with validation)</li>
+<li>Footer with social links</li>
+</ul>
+</li>
+<li><strong>Technical Requirements:</strong>
+<ul>
+<li>Fully responsive design (mobile, tablet, desktop)</li>
+<li>Semantic HTML5 elements</li>
+<li>External CSS with organized structure</li>
+<li>JavaScript for interactivity (menu toggle, smooth scroll, form validation)</li>
+<li>Clean, well-commented code</li>
+</ul>
+</li>
+<li><strong>Design Requirements:</strong>
+<ul>
+<li>Professional and cohesive design</li>
+<li>Consistent color scheme</li>
+<li>Good typography and spacing</li>
+<li>Optimized images</li>
+</ul>
+</li>
+</ol>
+<h3>Submission:</h3>
+<p>Submit a ZIP file containing all HTML, CSS, JavaScript files, and images. Include a README file with:</p>
+<ul>
+<li>Brief description of your portfolio</li>
+<li>Technologies used</li>
+<li>Any special features you implemented</li>
+<li>Instructions for viewing your site</li>
 </ul>
 <h3>Grading Criteria:</h3>
 <ul>
-<li>Proper HTML structure (30 points)</li>
-<li>All required elements present (40 points)</li>
-<li>Code quality and organization (20 points)</li>
-<li>Creativity and content (10 points)</li>
+<li>Completeness - All sections included (30 points)</li>
+<li>Responsiveness - Works on all devices (20 points)</li>
+<li>Code Quality - Clean, organized code (20 points)</li>
+<li>Design - Professional appearance (20 points)</li>
+<li>Functionality - All features work correctly (10 points)</li>
 </ul>',
-100, 7, 'published', NOW(), NOW());
-
--- Assignment 2: CSS Styling Assignment
-INSERT INTO assignments (course_id, title, description, instructions, points, due_days, status, created_at, updated_at) VALUES
-(@course_id, 'Style Your Bio Page with CSS',
-'Add CSS styling to your HTML bio page',
-'<h3>Assignment Instructions:</h3>
-<p>Take your bio.html page from the previous assignment and style it with CSS:</p>
-<ol>
-<li>Create an external CSS file named "style.css"</li>
-<li>Link the CSS file to your HTML page</li>
-<li>Apply the following styles:
-    <ul>
-    <li>Set a background color for the page</li>
-    <li>Choose a custom font family</li>
-    <li>Style your heading with a different color and font size</li>
-    <li>Add padding and margin to your content</li>
-    <li>Style your lists with custom list markers</li>
-    <li>Add hover effects to your links</li>
-    <li>Center your content on the page</li>
-    </ul>
-</li>
-<li>Use at least 3 different types of CSS selectors (element, class, ID)</li>
-</ol>
-<h3>Bonus Challenge (10 extra points):</h3>
-<ul>
-<li>Make your page responsive using media queries</li>
-<li>Add CSS transitions or animations</li>
-</ul>',
-100, 7, 'published', NOW(), NOW());
-
--- Assignment 3: JavaScript Interactive Assignment
-INSERT INTO assignments (course_id, title, description, instructions, points, due_days, status, created_at, updated_at) VALUES
-(@course_id, 'Add Interactivity with JavaScript',
-'Create an interactive contact form with JavaScript validation',
-'<h3>Assignment Instructions:</h3>
-<p>Build a contact form with JavaScript validation:</p>
-<ol>
-<li>Create an HTML form with the following fields:
-    <ul>
-    <li>Name (required)</li>
-    <li>Email (required, must be valid email)</li>
-    <li>Phone number (optional)</li>
-    <li>Message (required, minimum 20 characters)</li>
-    <li>Submit button</li>
-    </ul>
-</li>
-<li>Write JavaScript to validate the form:
-    <ul>
-    <li>Prevent form submission if fields are invalid</li>
-    <li>Show error messages for invalid fields</li>
-    <li>Email must contain @ and .</li>
-    <li>Message must be at least 20 characters</li>
-    <li>Show success message when form is valid</li>
-    </ul>
-</li>
-<li>Add event listeners for form submission and input validation</li>
-<li>Style the form with CSS</li>
-</ol>
-<h3>Files to Submit:</h3>
-<ul>
-<li>contact.html</li>
-<li>style.css</li>
-<li>script.js</li>
-</ul>',
-150, 10, 'published', NOW(), NOW());
-
--- Assignment 4: Final Project
-INSERT INTO assignments (course_id, title, description, instructions, points, due_days, status, created_at, updated_at) VALUES
-(@course_id, 'Build a Complete Portfolio Website',
-'Create a fully responsive portfolio website showcasing all your skills',
-'<h3>Final Project: Portfolio Website</h3>
-<p>Build a complete, responsive portfolio website that demonstrates everything you have learned.</p>
-
-<h3>Required Sections:</h3>
-<ol>
-<li><strong>Navigation Bar</strong> - Sticky header with links to all sections</li>
-<li><strong>Hero Section</strong> - Welcome message with your name and title</li>
-<li><strong>About Section</strong> - Information about yourself</li>
-<li><strong>Skills Section</strong> - Display your technical skills</li>
-<li><strong>Projects Section</strong> - Showcase at least 3 projects with images</li>
-<li><strong>Contact Section</strong> - Contact form with validation</li>
-<li><strong>Footer</strong> - Copyright and social media links</li>
-</ol>
-
-<h3>Technical Requirements:</h3>
-<ul>
-<li>Semantic HTML5 elements</li>
-<li>External CSS file with organized styles</li>
-<li>Responsive design (mobile, tablet, desktop)</li>
-<li>JavaScript for interactivity (menu, smooth scroll, form validation)</li>
-<li>Clean, well-commented code</li>
-<li>Cross-browser compatibility</li>
-</ul>
-
-<h3>Grading Breakdown (200 points):</h3>
-<ul>
-<li>HTML Structure & Semantics: 40 points</li>
-<li>CSS Styling & Design: 50 points</li>
-<li>Responsive Design: 40 points</li>
-<li>JavaScript Functionality: 40 points</li>
-<li>Code Quality: 20 points</li>
-<li>Creativity & Polish: 10 points</li>
-</ul>
-
-<h3>Submission:</h3>
-<p>Submit a ZIP file containing all your project files, or provide a link to your hosted website (GitHub Pages, Netlify, etc.)</p>',
-200, 14, 'published', NOW(), NOW());
+150.00, 70.00, DATE_ADD(NOW(), INTERVAL 30 DAY), 'published');
 
 -- ============================================
--- COURSE RESOURCES
+-- COMPLETION MESSAGE
 -- ============================================
 
--- Note: This table may not exist, check your schema
--- If resources table exists, uncomment below:
-
-/*
-INSERT INTO course_resources (course_id, title, description, type, file_url, created_at, updated_at) VALUES
-(@course_id, 'HTML Cheat Sheet', 'Quick reference for HTML elements and attributes', 'pdf', 'https://htmlcheatsheet.com/pdf/html-cheat-sheet.pdf', NOW(), NOW()),
-(@course_id, 'CSS Properties Reference', 'Complete guide to CSS properties', 'pdf', 'https://cssreference.io', NOW(), NOW()),
-(@course_id, 'JavaScript Basics Handbook', 'Comprehensive JavaScript reference guide', 'pdf', 'https://javascript.info', NOW(), NOW()),
-(@course_id, 'Web Development Tools', 'List of essential tools for web developers', 'link', 'https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/What_software_do_I_need', NOW(), NOW()),
-(@course_id, 'Color Picker Tool', 'Tool for choosing color schemes', 'link', 'https://coolors.co', NOW(), NOW()),
-(@course_id, 'Free Images Repository', 'Free stock photos for your projects', 'link', 'https://unsplash.com', NOW(), NOW()),
-(@course_id, 'Font Awesome Icons', 'Free icon library', 'link', 'https://fontawesome.com', NOW(), NOW()),
-(@course_id, 'VS Code Setup Guide', 'How to set up your development environment', 'video', 'https://www.youtube.com/embed/fnPhJHN0jTE', NOW(), NOW());
-*/
-
--- ============================================
--- VERIFICATION QUERIES
--- ============================================
-
--- Check what was created
-SELECT 'Modules Created:' AS info, COUNT(*) AS count FROM course_modules WHERE course_id = @course_id
-UNION ALL
-SELECT 'Lessons Created:', COUNT(*) FROM lessons l JOIN course_modules m ON l.module_id = m.id WHERE m.course_id = @course_id
-UNION ALL
-SELECT 'Quizzes Created:', COUNT(*) FROM quizzes WHERE course_id = @course_id
-UNION ALL
-SELECT 'Quiz Questions:', COUNT(*) FROM quiz_questions qq JOIN quizzes q ON qq.quiz_id = q.id WHERE q.course_id = @course_id
-UNION ALL
-SELECT 'Assignments Created:', COUNT(*) FROM assignments WHERE course_id = @course_id;
-
--- Success message
-SELECT '✓ Course data populated successfully!' AS result,
-       'You can now test the full student learning experience!' AS message;
+SELECT '✓ Course data populated successfully!' AS result;
+SELECT CONCAT('Course ID: ', @course_id) AS course_info;
+SELECT CONCAT('Modules: ', COUNT(*)) AS module_count FROM course_modules WHERE course_id = @course_id;
+SELECT CONCAT('Lessons: ', COUNT(*)) AS lesson_count FROM lessons WHERE course_id = @course_id;
+SELECT CONCAT('Quizzes: ', COUNT(*)) AS quiz_count FROM quizzes WHERE course_id = @course_id;
+SELECT CONCAT('Assignments: ', COUNT(*)) AS assignment_count FROM assignments WHERE course_id = @course_id;
