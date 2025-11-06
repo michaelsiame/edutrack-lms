@@ -47,39 +47,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // If no errors, process the message
         if (empty($errors)) {
-            // Save to database or send email
-            $db = Database::getInstance();
-
             try {
-                // You could save to a contacts table or send email
-                // For now, we'll log it
-                if (defined('APP_DEBUG') && APP_DEBUG) {
-                    error_log("Contact form submission from: $name ($email) - Subject: $subject");
+                // Save to database
+                $db = Database::getInstance();
+
+                // Store in contacts table if it exists
+                try {
+                    $db->query("
+                        INSERT INTO contacts (name, email, phone, subject, message, created_at)
+                        VALUES (?, ?, ?, ?, ?, NOW())
+                    ", [$name, $email, $phone, $subject, $message]);
+                } catch (Exception $e) {
+                    // Table might not exist, just log
+                    error_log("Could not save contact to database: " . $e->getMessage());
                 }
 
-                // Send notification email to admin
-                $adminEmail = defined('ADMIN_EMAIL') ? ADMIN_EMAIL : 'info@edutrack.zm';
+                // Send notification email to admin using Email class
+                $adminEmail = SITE_EMAIL;
 
+                $emailSubject = "New Contact Form: $subject";
                 $emailBody = "
-New contact form submission:
+                    <h2>New Contact Form Submission</h2>
+                    <p><strong>From:</strong> $name ($email)</p>
+                    <p><strong>Phone:</strong> " . ($phone ?: 'Not provided') . "</p>
+                    <p><strong>Subject:</strong> $subject</p>
+                    <hr>
+                    <h3>Message:</h3>
+                    <p>" . nl2br(htmlspecialchars($message)) . "</p>
+                    <hr>
+                    <p><small>Sent from IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'Unknown') . "</small></p>
+                ";
 
-Name: $name
-Email: $email
-Phone: $phone
-Subject: $subject
+                // Send email
+                Email::sendMail($adminEmail, $emailSubject, $emailBody);
 
-Message:
-$message
+                // Send confirmation email to user
+                $userEmailBody = "
+                    <h2>Thank you for contacting Edutrack!</h2>
+                    <p>Dear $name,</p>
+                    <p>We have received your message and will get back to you as soon as possible.</p>
+                    <h3>Your Message:</h3>
+                    <p><strong>Subject:</strong> $subject</p>
+                    <p>" . nl2br(htmlspecialchars($message)) . "</p>
+                    <hr>
+                    <p>If you have any urgent concerns, please call us at " . SITE_PHONE . "</p>
+                    <p>Best regards,<br>Edutrack Team</p>
+                ";
 
-Sent from: " . ($_SERVER['REMOTE_ADDR'] ?? 'Unknown');
-
-                // Try to send email
-                if (function_exists('mail')) {
-                    mail($adminEmail, "Contact Form: $subject", $emailBody, "From: $email\r\nReply-To: $email");
-                }
+                Email::sendMail($email, "We received your message - Edutrack", $userEmailBody);
 
                 $formSubmitted = true;
-                $_SESSION['success'] = 'Thank you for contacting us! We\'ll get back to you soon.';
+                flash('success', 'Thank you for contacting us! We\'ll get back to you soon.', 'success');
 
             } catch (Exception $e) {
                 $errors[] = 'Failed to send message. Please try again.';
@@ -125,8 +143,8 @@ require_once '../src/templates/header.php';
                         <div class="ml-4">
                             <h3 class="text-lg font-bold text-gray-900 mb-2">Visit Us</h3>
                             <p class="text-gray-600">
-                                Edutrack computer training college<br>
-                                Lusaka, Zambia
+                                <?= SITE_NAME ?><br>
+                                <?= defined('SITE_ADDRESS') ? SITE_ADDRESS : 'Lusaka, Zambia' ?>
                             </p>
                         </div>
                     </div>
@@ -143,7 +161,9 @@ require_once '../src/templates/header.php';
                         <div class="ml-4">
                             <h3 class="text-lg font-bold text-gray-900 mb-2">Call Us</h3>
                             <p class="text-gray-600">
-                                +260 XXX XXX XXX<br>
+                                <a href="tel:<?= SITE_PHONE ?>" class="text-primary-600 hover:text-primary-700">
+                                    <?= SITE_PHONE ?>
+                                </a><br>
                                 Mon-Fri 8:00 AM - 5:00 PM
                             </p>
                         </div>
@@ -161,8 +181,8 @@ require_once '../src/templates/header.php';
                         <div class="ml-4">
                             <h3 class="text-lg font-bold text-gray-900 mb-2">Email Us</h3>
                             <p class="text-gray-600">
-                                <a href="mailto:info@edutrack.zm" class="text-primary-600 hover:text-primary-700">
-                                    info@edutrack.zm
+                                <a href="mailto:<?= SITE_EMAIL ?>" class="text-primary-600 hover:text-primary-700">
+                                    <?= SITE_EMAIL ?>
                                 </a><br>
                                 We'll respond within 24 hours
                             </p>
@@ -174,18 +194,26 @@ require_once '../src/templates/header.php';
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Follow Us</h3>
                     <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition">
+                        <?php if (config('social.facebook')): ?>
+                        <a href="<?= config('social.facebook') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white hover:bg-blue-500 transition">
+                        <?php endif; ?>
+                        <?php if (config('social.twitter')): ?>
+                        <a href="<?= config('social.twitter') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white hover:bg-blue-500 transition">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition">
+                        <?php endif; ?>
+                        <?php if (config('social.youtube')): ?>
+                        <a href="<?= config('social.youtube') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition">
                             <i class="fab fa-youtube"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white hover:bg-blue-800 transition">
+                        <?php endif; ?>
+                        <?php if (config('social.linkedin')): ?>
+                        <a href="<?= config('social.linkedin') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white hover:bg-blue-800 transition">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
