@@ -58,6 +58,8 @@ try {
     // Try to get modules and lessons (with error handling)
     $modules = [];
     $lessonsGrouped = [];
+    $quizzes = [];
+    $assignments = [];
 
     try {
         // Get all modules with their lessons
@@ -80,6 +82,33 @@ try {
                 ORDER BY l.display_order ASC, l.id ASC
             ", [$module['id']]);
         }
+
+        // Get quizzes for this course
+        $quizzes = $db->fetchAll("
+            SELECT q.*,
+                   COUNT(DISTINCT qa.id) as attempt_count,
+                   MAX(qa.percentage) as best_score,
+                   MAX(qa.passed) as has_passed
+            FROM quizzes q
+            LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.user_id = ?
+            WHERE q.course_id = ? AND q.status = 'published'
+            GROUP BY q.id
+            ORDER BY q.created_at ASC
+        ", [$userId, $courseId]);
+
+        // Get assignments for this course
+        $assignments = $db->fetchAll("
+            SELECT a.*,
+                   COUNT(DISTINCT s.id) as submission_count,
+                   MAX(s.score) as best_score,
+                   MAX(s.status) as submission_status
+            FROM assignments a
+            LEFT JOIN assignment_submissions s ON a.id = s.assignment_id AND s.user_id = ?
+            WHERE a.course_id = ? AND a.status = 'published'
+            GROUP BY a.id
+            ORDER BY a.created_at ASC
+        ", [$userId, $courseId]);
+
     } catch (Exception $e) {
         error_log("Learn.php Error - Modules/Lessons query: " . $e->getMessage());
         // Continue with empty arrays
@@ -230,6 +259,70 @@ require_once '../src/templates/header.php';
                             <?php endif; ?>
                         </div>
                         <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Quizzes Section -->
+                    <?php if (!empty($quizzes)): ?>
+                    <div class="p-4 border-t bg-blue-50">
+                        <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+                            <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                            Quizzes
+                        </h3>
+                        <ul class="space-y-2 ml-4">
+                            <?php foreach ($quizzes as $quiz): ?>
+                            <li>
+                                <a href="<?= url('take-quiz.php?quiz_id=' . $quiz['id']) ?>"
+                                   class="flex items-center justify-between text-sm text-gray-700 hover:text-blue-600">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-clipboard-list mr-2"></i>
+                                        <?= htmlspecialchars($quiz['title']) ?>
+                                    </span>
+                                    <?php if ($quiz['has_passed']): ?>
+                                    <span class="text-xs text-green-600">
+                                        <i class="fas fa-check-circle"></i> <?= round($quiz['best_score']) ?>%
+                                    </span>
+                                    <?php elseif ($quiz['attempt_count'] > 0): ?>
+                                    <span class="text-xs text-orange-600">
+                                        <?= $quiz['attempt_count'] ?> attempt(s)
+                                    </span>
+                                    <?php endif; ?>
+                                </a>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Assignments Section -->
+                    <?php if (!empty($assignments)): ?>
+                    <div class="p-4 border-t bg-green-50">
+                        <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+                            <i class="fas fa-tasks text-green-600 mr-2"></i>
+                            Assignments
+                        </h3>
+                        <ul class="space-y-2 ml-4">
+                            <?php foreach ($assignments as $assignment): ?>
+                            <li>
+                                <a href="<?= url('assignment.php?id=' . $assignment['id']) ?>"
+                                   class="flex items-center justify-between text-sm text-gray-700 hover:text-green-600">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-file-alt mr-2"></i>
+                                        <?= htmlspecialchars($assignment['title']) ?>
+                                    </span>
+                                    <?php if ($assignment['submission_status'] == 'graded'): ?>
+                                    <span class="text-xs text-green-600">
+                                        <i class="fas fa-check-circle"></i> <?= round($assignment['best_score']) ?>
+                                    </span>
+                                    <?php elseif ($assignment['submission_count'] > 0): ?>
+                                    <span class="text-xs text-blue-600">
+                                        <i class="fas fa-clock"></i> Submitted
+                                    </span>
+                                    <?php endif; ?>
+                                </a>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
                     </div>
                     <?php endif; ?>
                 </div>
