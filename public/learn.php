@@ -58,6 +58,8 @@ try {
     // Try to get modules and lessons (with error handling)
     $modules = [];
     $lessonsGrouped = [];
+    $quizzes = [];
+    $assignments = [];
 
     try {
         // Get all modules with their lessons
@@ -68,7 +70,7 @@ try {
             LEFT JOIN lessons l ON m.id = l.module_id
             WHERE m.course_id = ?
             GROUP BY m.id
-            ORDER BY m.order_index ASC, m.id ASC
+            ORDER BY m.display_order ASC, m.id ASC
         ", [$courseId]);
 
         // Get lessons for each module
@@ -77,9 +79,36 @@ try {
                 SELECT l.*
                 FROM lessons l
                 WHERE l.module_id = ?
-                ORDER BY l.order_index ASC, l.id ASC
+                ORDER BY l.display_order ASC, l.id ASC
             ", [$module['id']]);
         }
+
+        // Get quizzes for this course
+        $quizzes = $db->fetchAll("
+            SELECT q.*,
+                   COUNT(DISTINCT qa.id) as attempt_count,
+                   MAX(qa.percentage) as best_score,
+                   MAX(qa.passed) as has_passed
+            FROM quizzes q
+            LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.user_id = ?
+            WHERE q.course_id = ? AND q.status = 'published'
+            GROUP BY q.id
+            ORDER BY q.created_at ASC
+        ", [$userId, $courseId]);
+
+        // Get assignments for this course
+        $assignments = $db->fetchAll("
+            SELECT a.*,
+                   COUNT(DISTINCT s.id) as submission_count,
+                   MAX(s.score) as best_score,
+                   MAX(s.status) as submission_status
+            FROM assignments a
+            LEFT JOIN assignment_submissions s ON a.id = s.assignment_id AND s.user_id = ?
+            WHERE a.course_id = ? AND a.status = 'published'
+            GROUP BY a.id
+            ORDER BY a.created_at ASC
+        ", [$userId, $courseId]);
+
     } catch (Exception $e) {
         error_log("Learn.php Error - Modules/Lessons query: " . $e->getMessage());
         // Continue with empty arrays
@@ -93,6 +122,9 @@ try {
     // Get current lesson details
     $currentLesson = null;
     $currentModule = null;
+    $previousLesson = null;
+    $nextLesson = null;
+
     if ($lessonId) {
         try {
             $currentLesson = $db->fetchOne("
@@ -106,6 +138,28 @@ try {
 
             if ($currentLesson) {
                 $currentModule = $db->fetchOne("SELECT * FROM course_modules WHERE id = ?", [$currentLesson['module_id']]);
+
+                // Get all lessons in order to find previous and next
+                $allLessons = $db->fetchAll("
+                    SELECT l.id, l.title, m.display_order as module_order, l.display_order as lesson_order
+                    FROM lessons l
+                    JOIN course_modules m ON l.module_id = m.id
+                    WHERE m.course_id = ?
+                    ORDER BY m.display_order ASC, l.display_order ASC
+                ", [$courseId]);
+
+                // Find current lesson index and get prev/next
+                foreach ($allLessons as $index => $lesson) {
+                    if ($lesson['id'] == $lessonId) {
+                        if ($index > 0) {
+                            $previousLesson = $allLessons[$index - 1];
+                        }
+                        if ($index < count($allLessons) - 1) {
+                            $nextLesson = $allLessons[$index + 1];
+                        }
+                        break;
+                    }
+                }
             }
         } catch (Exception $e) {
             error_log("Learn.php Error - Current lesson query: " . $e->getMessage());
@@ -180,12 +234,22 @@ require_once '../src/templates/header.php';
 
                             <?php if (!empty($lessonsGrouped[$module['id']])): ?>
                             <ul class="space-y-2 ml-4">
-                                <?php foreach ($lessonsGrouped[$module['id']] as $lesson): ?>
+                                <?php foreach ($lessonsGrouped[$module['id']] as $lesson):
+                                    $icon = 'fa-play-circle';
+                                    if ($lesson['lesson_type'] == 'text') $icon = 'fa-file-alt';
+                                    elseif ($lesson['lesson_type'] == 'quiz') $icon = 'fa-question-circle';
+                                    elseif ($lesson['lesson_type'] == 'assignment') $icon = 'fa-tasks';
+                                ?>
                                 <li>
                                     <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $lesson['id']) ?>"
-                                       class="flex items-center text-sm <?= $lessonId == $lesson['id'] ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' ?>">
-                                        <i class="fas fa-play-circle mr-2"></i>
-                                        <?= htmlspecialchars($lesson['title']) ?>
+                                       class="flex items-center justify-between text-sm <?= $lessonId == $lesson['id'] ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' ?>">
+                                        <span class="flex items-center">
+                                            <i class="fas <?= $icon ?> mr-2"></i>
+                                            <?= htmlspecialchars($lesson['title']) ?>
+                                        </span>
+                                        <?php if ($lesson['duration_minutes']): ?>
+                                        <span class="text-xs text-gray-500"><?= $lesson['duration_minutes'] ?>m</span>
+                                        <?php endif; ?>
                                     </a>
                                 </li>
                                 <?php endforeach; ?>
@@ -195,6 +259,70 @@ require_once '../src/templates/header.php';
                             <?php endif; ?>
                         </div>
                         <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Quizzes Section -->
+                    <?php if (!empty($quizzes)): ?>
+                    <div class="p-4 border-t bg-blue-50">
+                        <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+                            <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                            Quizzes
+                        </h3>
+                        <ul class="space-y-2 ml-4">
+                            <?php foreach ($quizzes as $quiz): ?>
+                            <li>
+                                <a href="<?= url('take-quiz.php?quiz_id=' . $quiz['id']) ?>"
+                                   class="flex items-center justify-between text-sm text-gray-700 hover:text-blue-600">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-clipboard-list mr-2"></i>
+                                        <?= htmlspecialchars($quiz['title']) ?>
+                                    </span>
+                                    <?php if ($quiz['has_passed']): ?>
+                                    <span class="text-xs text-green-600">
+                                        <i class="fas fa-check-circle"></i> <?= round($quiz['best_score']) ?>%
+                                    </span>
+                                    <?php elseif ($quiz['attempt_count'] > 0): ?>
+                                    <span class="text-xs text-orange-600">
+                                        <?= $quiz['attempt_count'] ?> attempt(s)
+                                    </span>
+                                    <?php endif; ?>
+                                </a>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Assignments Section -->
+                    <?php if (!empty($assignments)): ?>
+                    <div class="p-4 border-t bg-green-50">
+                        <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+                            <i class="fas fa-tasks text-green-600 mr-2"></i>
+                            Assignments
+                        </h3>
+                        <ul class="space-y-2 ml-4">
+                            <?php foreach ($assignments as $assignment): ?>
+                            <li>
+                                <a href="<?= url('assignment.php?id=' . $assignment['id']) ?>"
+                                   class="flex items-center justify-between text-sm text-gray-700 hover:text-green-600">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-file-alt mr-2"></i>
+                                        <?= htmlspecialchars($assignment['title']) ?>
+                                    </span>
+                                    <?php if ($assignment['submission_status'] == 'graded'): ?>
+                                    <span class="text-xs text-green-600">
+                                        <i class="fas fa-check-circle"></i> <?= round($assignment['best_score']) ?>
+                                    </span>
+                                    <?php elseif ($assignment['submission_count'] > 0): ?>
+                                    <span class="text-xs text-blue-600">
+                                        <i class="fas fa-clock"></i> Submitted
+                                    </span>
+                                    <?php endif; ?>
+                                </a>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -212,11 +340,11 @@ require_once '../src/templates/header.php';
                     </div>
 
                     <div class="p-6">
-                        <?php if ($currentLesson['type'] == 'video' && $currentLesson['content_url']): ?>
+                        <?php if ($currentLesson['lesson_type'] == 'video' && $currentLesson['video_url']): ?>
                         <!-- Video Player -->
                         <div class="aspect-video bg-black rounded-lg mb-6">
                             <iframe width="100%" height="100%"
-                                    src="<?= htmlspecialchars($currentLesson['content_url']) ?>"
+                                    src="https://www.youtube.com/embed/<?= htmlspecialchars($currentLesson['video_url']) ?>"
                                     frameborder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowfullscreen
@@ -241,16 +369,34 @@ require_once '../src/templates/header.php';
 
                     <!-- Lesson Navigation -->
                     <div class="p-6 border-t bg-gray-50">
-                        <div class="flex justify-between">
-                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                        <div class="flex justify-between items-center">
+                            <?php if ($previousLesson): ?>
+                            <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $previousLesson['id']) ?>"
+                               class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">
                                 <i class="fas fa-arrow-left mr-2"></i>Previous Lesson
-                            </button>
-                            <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                                Mark as Complete
-                            </button>
-                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                            </a>
+                            <?php else: ?>
+                            <div></div>
+                            <?php endif; ?>
+
+                            <form method="POST" action="<?= url('actions/mark-lesson-complete.php') ?>" class="inline">
+                                <input type="hidden" name="course_id" value="<?= $courseId ?>">
+                                <input type="hidden" name="lesson_id" value="<?= $lessonId ?>">
+                                <input type="hidden" name="redirect" value="<?= urlencode('learn.php?course=' . $courseSlug . '&lesson=' . $lessonId) ?>">
+                                <?= csrfField() ?>
+                                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                                    <i class="fas fa-check mr-2"></i>Mark as Complete
+                                </button>
+                            </form>
+
+                            <?php if ($nextLesson): ?>
+                            <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $nextLesson['id']) ?>"
+                               class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
                                 Next Lesson<i class="fas fa-arrow-right ml-2"></i>
-                            </button>
+                            </a>
+                            <?php else: ?>
+                            <div></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
