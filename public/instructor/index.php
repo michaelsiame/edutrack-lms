@@ -218,11 +218,16 @@ require_once '../../src/templates/instructor-header.php';
                                 </div>
                             </div>
                             <div class="flex gap-2 w-full sm:w-auto">
-                                <a href="<?= url('instructor/course-edit.php?id=' . $course['id']) ?>"
+                                <a href="<?= url('instructor/courses/edit.php?id=' . $course['id']) ?>"
                                    class="flex-1 sm:flex-initial text-center px-4 py-2 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition text-sm font-medium">
                                     <i class="fas fa-edit mr-1"></i>Edit
                                 </a>
+                                <a href="<?= url('instructor/courses/modules.php?id=' . $course['id']) ?>"
+                                   class="flex-1 sm:flex-initial text-center px-4 py-2 bg-purple-50 text-purple-600 rounded-md hover:bg-purple-100 transition text-sm font-medium">
+                                    <i class="fas fa-list mr-1"></i>Content
+                                </a>
                                 <a href="<?= url('course.php?slug=' . $course['slug']) ?>"
+                                   target="_blank"
                                    class="flex-1 sm:flex-initial text-center px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition text-sm font-medium">
                                     <i class="fas fa-eye mr-1"></i>View
                                 </a>
