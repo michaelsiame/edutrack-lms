@@ -5,6 +5,7 @@
  */
 
 require_once '../src/bootstrap.php';
+require_once '../src/classes/Review.php';
 
 // Get course ID from URL
 $courseId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -61,18 +62,27 @@ $modules = $db->fetchAll("
     ORDER BY cm.display_order ASC
 ", [$courseId]);
 
-// Get course reviews
-$reviews = $db->fetchAll("
-    SELECT cr.*,
-           CONCAT(u.first_name, ' ', u.last_name) as reviewer_name,
-           up.avatar
-    FROM course_reviews cr
-    JOIN users u ON cr.user_id = u.id
-    LEFT JOIN user_profiles up ON u.id = up.user_id
-    WHERE cr.course_id = ? AND cr.status = 'approved'
-    ORDER BY cr.created_at DESC
-    LIMIT 10
-", [$courseId]);
+// Get course reviews using Review class
+$reviewObjects = Review::getCourseReviews($courseId, ['status' => 'approved', 'limit' => 10]);
+
+// Convert to array format for template compatibility
+$reviews = [];
+foreach ($reviewObjects as $review) {
+    $reviews[] = [
+        'id' => $review->getId(),
+        'rating' => $review->getRating(),
+        'review_title' => $review->getReviewTitle(),
+        'review_text' => $review->getReviewText(),
+        'reviewer_name' => $review->getUserName(),
+        'avatar' => $review->getUserAvatar(),
+        'created_at' => $review->getCreatedAt(),
+        'helpful_count' => $review->getHelpfulCount(),
+        'is_featured' => $review->isFeatured()
+    ];
+}
+
+// Get review statistics
+$reviewStats = Review::getCourseStats($courseId);
 
 // Get related courses (same category)
 $relatedCourses = $db->fetchAll("

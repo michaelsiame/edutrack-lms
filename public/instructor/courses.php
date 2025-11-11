@@ -149,7 +149,7 @@ require_once '../../src/templates/instructor-header.php';
 
                             <!-- Actions -->
                             <div class="flex items-center justify-between space-x-2">
-                                <a href="<?= url('instructor/courses/edit.php?id=' . $course['id']) ?>"
+                                <a href="<?= url('instructor/course-edit.php?id=' . $course['id']) ?>"
                                    class="flex-1 btn btn-primary btn-sm">
                                     <i class="fas fa-edit mr-1"></i> Edit
                                 </a>

@@ -7,6 +7,7 @@
 require_once '../src/middleware/authenticate.php';
 require_once '../src/classes/Course.php';
 require_once '../src/classes/Enrollment.php';
+require_once '../src/classes/Review.php';
 
 $courseId = $_GET['course_id'] ?? null;
 
@@ -29,53 +30,66 @@ if (!$enrollment) {
 }
 
 // Check if already reviewed
-$existingReview = $db->fetchOne(
-    "SELECT * FROM reviews WHERE user_id = ? AND course_id = ?",
-    [currentUserId(), $courseId]
-);
+$existingReview = Review::getUserReview(currentUserId(), $courseId);
+$existingReviewData = null;
+if ($existingReview) {
+    $existingReviewData = [
+        'id' => $existingReview->getId(),
+        'rating' => $existingReview->getRating(),
+        'review_text' => $existingReview->getReviewText(),
+        'created_at' => $existingReview->getCreatedAt()
+    ];
+}
 
 // Handle review submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     validateCSRF();
-    
+
     $rating = (int)($_POST['rating'] ?? 0);
     $reviewText = trim($_POST['review_text'] ?? '');
-    
+    $reviewTitle = trim($_POST['review_title'] ?? '');
+    $instructorRating = isset($_POST['instructor_rating']) ? (float)$_POST['instructor_rating'] : null;
+    $contentRating = isset($_POST['content_rating']) ? (float)$_POST['content_rating'] : null;
+    $valueRating = isset($_POST['value_rating']) ? (float)$_POST['value_rating'] : null;
+
     if ($rating < 1 || $rating > 5) {
         flash('message', 'Please select a rating between 1 and 5 stars', 'error');
     } elseif (empty($reviewText)) {
         flash('message', 'Please write a review', 'error');
     } else {
-        if ($existingReview) {
-            // Update existing review
-            $sql = "UPDATE reviews SET rating = ?, review_text = ?, updated_at = NOW() WHERE id = ?";
-            $db->query($sql, [$rating, $reviewText, $existingReview['id']]);
-            $message = 'Your review has been updated!';
-        } else {
-            // Create new review
-            $sql = "INSERT INTO reviews (user_id, course_id, rating, review_text, status) 
-                    VALUES (?, ?, ?, ?, 'approved')";
-            $db->query($sql, [currentUserId(), $courseId, $rating, $reviewText]);
-            $message = 'Thank you for your review!';
+        try {
+            if ($existingReview) {
+                // Update existing review
+                $existingReview->update([
+                    'rating' => $rating,
+                    'review_title' => $reviewTitle,
+                    'review_text' => $reviewText,
+                    'instructor_rating' => $instructorRating,
+                    'content_rating' => $contentRating,
+                    'value_rating' => $valueRating
+                ]);
+                $message = 'Your review has been updated!';
+            } else {
+                // Create new review
+                Review::create([
+                    'course_id' => $courseId,
+                    'user_id' => currentUserId(),
+                    'rating' => $rating,
+                    'review_title' => $reviewTitle,
+                    'review_text' => $reviewText,
+                    'instructor_rating' => $instructorRating,
+                    'content_rating' => $contentRating,
+                    'value_rating' => $valueRating,
+                    'status' => 'approved' // Auto-approve for now
+                ]);
+                $message = 'Thank you for your review!';
+            }
+
+            flash('message', $message, 'success');
+            redirect('course.php?slug=' . $course->getSlug());
+        } catch (Exception $e) {
+            flash('message', $e->getMessage(), 'error');
         }
-        
-        // Update course rating
-        $avgRating = $db->fetchColumn(
-            "SELECT AVG(rating) FROM reviews WHERE course_id = ? AND status = 'approved'",
-            [$courseId]
-        );
-        $ratingCount = $db->fetchColumn(
-            "SELECT COUNT(*) FROM reviews WHERE course_id = ? AND status = 'approved'",
-            [$courseId]
-        );
-        
-        $db->query(
-            "UPDATE courses SET rating_avg = ?, rating_count = ? WHERE id = ?",
-            [$avgRating, $ratingCount, $courseId]
-        );
-        
-        flash('message', $message, 'success');
-        redirect('course.php?slug=' . $course->getSlug());
     }
 }
 
@@ -102,10 +116,10 @@ require_once '../src/templates/header.php';
         <!-- Review Form -->
         <div class="bg-white rounded-lg shadow-md p-8">
             <h1 class="text-2xl font-bold text-gray-900 mb-6">
-                <?= $existingReview ? 'Update Your Review' : 'Write a Review' ?>
+                <?= $existingReviewData ? 'Update Your Review' : 'Write a Review' ?>
             </h1>
             
-            <?php if ($existingReview): ?>
+            <?php if ($existingReviewData): ?>
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                 <p class="text-blue-800 text-sm">
                     <i class="fas fa-info-circle mr-2"></i>
@@ -122,7 +136,7 @@ require_once '../src/templates/header.php';
                     <label class="block text-lg font-medium text-gray-900 mb-3">
                         How would you rate this course?
                     </label>
-                    <div class="flex items-center space-x-2" x-data="{ rating: <?= $existingReview['rating'] ?? 0 ?>, hover: 0 }">
+                    <div class="flex items-center space-x-2" x-data="{ rating: <?= $existingReviewData['rating'] ?? 0 ?>, hover: 0 }">
                         <?php for ($i = 1; $i <= 5; $i++): ?>
                         <button type="button" 
                                 @click="rating = <?= $i ?>"
@@ -145,7 +159,7 @@ require_once '../src/templates/header.php';
                     </label>
                     <textarea name="review_text" rows="6" required
                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                              placeholder="What did you like about this course? What could be improved?"><?= sanitize($existingReview['review_text'] ?? '') ?></textarea>
+                              placeholder="What did you like about this course? What could be improved?"><?= sanitize($existingReviewData['review_text'] ?? '') ?></textarea>
                     <p class="text-sm text-gray-500 mt-2">
                         Your review will help other students decide if this course is right for them.
                     </p>
@@ -168,10 +182,10 @@ require_once '../src/templates/header.php';
                        class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
                         Cancel
                     </a>
-                    <button type="submit" 
+                    <button type="submit"
                             class="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700">
                         <i class="fas fa-paper-plane mr-2"></i>
-                        <?= $existingReview ? 'Update Review' : 'Submit Review' ?>
+                        <?= $existingReviewData ? 'Update Review' : 'Submit Review' ?>
                     </button>
                 </div>
                 
@@ -179,18 +193,18 @@ require_once '../src/templates/header.php';
         </div>
         
         <!-- Previous Review (if updating) -->
-        <?php if ($existingReview): ?>
+        <?php if ($existingReviewData): ?>
         <div class="mt-6 bg-white rounded-lg shadow-md p-6">
             <h3 class="font-bold text-gray-900 mb-4">Your Current Review</h3>
             <div class="flex items-center mb-3">
                 <?php for ($i = 1; $i <= 5; $i++): ?>
-                    <i class="fas fa-star <?= $i <= $existingReview['rating'] ? 'text-yellow-400' : 'text-gray-300' ?>"></i>
+                    <i class="fas fa-star <?= $i <= $existingReviewData['rating'] ? 'text-yellow-400' : 'text-gray-300' ?>"></i>
                 <?php endfor; ?>
                 <span class="ml-2 text-sm text-gray-600">
-                    <?= timeAgo($existingReview['created_at']) ?>
+                    <?= timeAgo($existingReviewData['created_at']) ?>
                 </span>
             </div>
-            <p class="text-gray-700"><?= nl2br(sanitize($existingReview['review_text'])) ?></p>
+            <p class="text-gray-700"><?= nl2br(sanitize($existingReviewData['review_text'])) ?></p>
         </div>
         <?php endif; ?>
         
