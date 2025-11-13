@@ -100,6 +100,9 @@ require_once '../src/templates/header.php';
             <p class="text-gray-600 mt-2">Here's what's happening with your learning journey today.</p>
         </div>
 
+        <!-- Announcements -->
+        <?php include '../src/templates/announcements.php'; ?>
+
         <!-- Unread Notifications Alert -->
         <?php if (!empty($unreadNotifications)): ?>
         <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md">

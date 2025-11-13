@@ -91,6 +91,9 @@ require_once '../../src/templates/instructor-header.php';
             <p class="text-gray-600 mt-2">Here's what's happening with your courses today.</p>
         </div>
 
+        <!-- Announcements -->
+        <?php include '../../src/templates/announcements.php'; ?>
+
         <!-- Quick Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- Total Courses -->
