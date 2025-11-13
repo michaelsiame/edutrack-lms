@@ -259,28 +259,34 @@ class Course {
      * Update course
      */
     public function update($data) {
-        $sql = "UPDATE courses SET
-            title = :title,
-            slug = :slug,
-            description = :description,
-            short_description = :short_description,
-            what_you_will_learn = :what_you_will_learn,
-            requirements = :requirements,
-            category_id = :category_id,
-            level = :level,
-            price = :price,
-            duration = :duration,
-            language = :language,
-            status = :status,
-            teveta_accredited = :teveta_accredited,
-            teveta_course_code = :teveta_course_code,
-            certificate_available = :certificate_available,
-            featured = :featured,
-            updated_at = NOW()
-            WHERE id = :id";
-        
-        $params = array_merge($data, ['id' => $this->id]);
-        
+        $fields = [];
+        $params = [];
+
+        // Build dynamic update query based on provided data
+        $allowedFields = [
+            'title', 'slug', 'description', 'short_description', 'what_you_will_learn',
+            'requirements', 'category_id', 'level', 'price', 'duration', 'duration_hours',
+            'language', 'status', 'teveta_accredited', 'teveta_course_code',
+            'certificate_available', 'featured', 'promo_video_url', 'prerequisites',
+            'learning_outcomes', 'target_audience', 'thumbnail'
+        ];
+
+        foreach ($allowedFields as $field) {
+            if (array_key_exists($field, $data)) {
+                $fields[] = "$field = :$field";
+                $params[$field] = $data[$field];
+            }
+        }
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        $fields[] = "updated_at = NOW()";
+        $params['id'] = $this->id;
+
+        $sql = "UPDATE courses SET " . implode(', ', $fields) . " WHERE id = :id";
+
         if ($this->db->query($sql, $params)) {
             $this->load(); // Reload data
             return true;
@@ -457,6 +463,11 @@ class Course {
     public function isPublished() { return $this->getStatus() == 'published'; }
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }
     public function getUpdatedAt() { return $this->data['updated_at'] ?? null; }
+    public function getDurationHours() { return $this->data['duration_hours'] ?? 0; }
+    public function getPromoVideoUrl() { return $this->data['promo_video_url'] ?? ''; }
+    public function getPrerequisites() { return $this->data['prerequisites'] ?? ''; }
+    public function getLearningOutcomes() { return $this->data['learning_outcomes'] ?? ''; }
+    public function getTargetAudience() { return $this->data['target_audience'] ?? ''; }
     
     /**
      * Get formatted price

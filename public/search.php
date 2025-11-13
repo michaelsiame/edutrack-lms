@@ -24,11 +24,14 @@ $sql = "SELECT c.*,
                cc.name as category_name,
                cc.color as category_color,
                CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
-               COUNT(DISTINCT e.id) as enrolled_students
+               COUNT(DISTINCT e.id) as enrolled_students,
+               COALESCE(AVG(cr.rating), 0) as avg_rating,
+               COUNT(DISTINCT cr.id) as total_reviews
         FROM courses c
         JOIN course_categories cc ON c.category_id = cc.id
         JOIN users u ON c.instructor_id = u.id
         LEFT JOIN enrollments e ON c.id = e.course_id
+        LEFT JOIN course_reviews cr ON c.id = cr.course_id AND cr.status = 'approved'
         WHERE c.status = 'published'";
 
 $params = [];
@@ -50,7 +53,7 @@ if ($category) {
 
 // Level filter
 if ($level) {
-    $sql .= " AND c.course_level = ?";
+    $sql .= " AND c.level = ?";
     $params[] = $level;
 }
 
@@ -64,13 +67,19 @@ if ($priceMax !== null) {
     $params[] = $priceMax;
 }
 
-// Rating filter
+// Rating filter (applied after GROUP BY via HAVING)
+$ratingFilter = null;
 if ($rating) {
-    $sql .= " AND c.rating_average >= ?";
-    $params[] = $rating;
+    $ratingFilter = $rating;
 }
 
 $sql .= " GROUP BY c.id";
+
+// Rating filter (using HAVING since it's an aggregate)
+if ($ratingFilter) {
+    $sql .= " HAVING avg_rating >= ?";
+    $params[] = $ratingFilter;
+}
 
 // Sorting
 switch ($sortBy) {
@@ -81,10 +90,10 @@ switch ($sortBy) {
         $sql .= " ORDER BY c.price DESC";
         break;
     case 'rating':
-        $sql .= " ORDER BY c.rating_average DESC, c.rating_count DESC";
+        $sql .= " ORDER BY avg_rating DESC, total_reviews DESC";
         break;
     case 'popular':
-        $sql .= " ORDER BY enrolled_students DESC, c.rating_average DESC";
+        $sql .= " ORDER BY enrolled_students DESC, avg_rating DESC";
         break;
     case 'newest':
         $sql .= " ORDER BY c.created_at DESC";
@@ -93,10 +102,10 @@ switch ($sortBy) {
     default:
         if (!empty($query)) {
             // Order by title match first, then rating
-            $sql .= " ORDER BY (c.title LIKE ?) DESC, c.rating_average DESC";
+            $sql .= " ORDER BY (c.title LIKE ?) DESC, avg_rating DESC";
             $params[] = '%' . $query . '%';
         } else {
-            $sql .= " ORDER BY c.rating_average DESC, c.rating_count DESC";
+            $sql .= " ORDER BY avg_rating DESC, total_reviews DESC";
         }
         break;
 }
@@ -286,12 +295,12 @@ require_once '../src/templates/header.php';
                                                   style="background-color: <?= $course['category_color'] ?>10; color: <?= $course['category_color'] ?>">
                                                 <?= sanitize($course['category_name']) ?>
                                             </span>
-                                            <span><i class="fas fa-signal mr-1"></i><?= ucfirst($course['course_level']) ?></span>
-                                            <?php if ($course['rating_average'] > 0): ?>
+                                            <span><i class="fas fa-signal mr-1"></i><?= ucfirst($course['level']) ?></span>
+                                            <?php if ($course['avg_rating'] > 0): ?>
                                                 <span class="flex items-center">
                                                     <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                                    <?= number_format($course['rating_average'], 1) ?>
-                                                    <span class="text-gray-500 ml-1">(<?= $course['rating_count'] ?>)</span>
+                                                    <?= number_format($course['avg_rating'], 1) ?>
+                                                    <span class="text-gray-500 ml-1">(<?= $course['total_reviews'] ?>)</span>
                                                 </span>
                                             <?php endif; ?>
                                             <span><i class="fas fa-users mr-1"></i><?= number_format($course['enrolled_students']) ?> students</span>

@@ -22,7 +22,7 @@ if (!$course) {
 }
 
 // Check if user is enrolled
-$enrollment = Enrollment::getUserEnrollment(currentUserId(), $courseId);
+$enrollment = Enrollment::findByUserAndCourse(currentUserId(), $courseId);
 
 if (!$enrollment) {
     flash('message', 'You must be enrolled in this course to leave a review', 'error');
