@@ -1053,7 +1053,19 @@ INSERT INTO Lessons (module_id, title, content, lesson_type, duration_minutes, d
 (3, 'If-Else Statements', 'Conditional logic and decision making', 'Video', 30, 1, FALSE, 15),
 (3, 'For Loops', 'Iterating over sequences with for loops', 'Video', 35, 2, FALSE, 15),
 (3, 'While Loops', 'Using while loops for repeated execution', 'Reading', 25, 3, FALSE, 15),
-(3, 'Control Flow Quiz', 'Test your understanding of control flow', 'Quiz', 30, 4, FALSE, 25);
+(3, 'Control Flow Quiz', 'Test your understanding of control flow', 'Quiz', 30, 4, FALSE, 25),
+
+-- Module 7: HTML5 Fundamentals (Web Development course)
+(7, 'Introduction to HTML5', 'Overview of HTML5 and its new features', 'Video', 25, 1, TRUE, 10),
+(7, 'HTML Document Structure', 'Understanding the basic structure of an HTML document', 'Video', 30, 2, TRUE, 10),
+(7, 'Semantic HTML Elements', 'Using semantic tags like header, nav, article, section', 'Reading', 35, 3, FALSE, 15),
+(7, 'Forms and Input Elements', 'Creating forms with various input types', 'Video', 40, 4, FALSE, 15),
+
+-- Module 8: CSS3 Styling (Web Development course)
+(8, 'CSS Basics and Selectors', 'Introduction to CSS syntax and selectors', 'Video', 30, 1, FALSE, 15),
+(8, 'Box Model and Layout', 'Understanding the CSS box model', 'Video', 35, 2, FALSE, 15),
+(8, 'Flexbox Layout', 'Modern layout with Flexbox', 'Reading', 40, 3, FALSE, 20),
+(8, 'Responsive Design with Media Queries', 'Creating responsive layouts', 'Video', 45, 4, FALSE, 20);
 
 -- ----------------------------------------------------------------------------
 -- Populate Assignments (Sample assignments)
