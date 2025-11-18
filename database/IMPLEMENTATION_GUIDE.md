@@ -28,6 +28,14 @@ mysql -u your_username -p edutrack_lms < database/hotfix_user_status.sql
 
 This normalizes status values from `'Active'` to `'active'`.
 
+#### Fix 3: Missing Role Column
+If you get "Undefined array key 'role'" error:
+```bash
+mysql -u your_username -p edutrack_lms < database/hotfix_add_role_column.sql
+```
+
+This adds the `role` column and populates it based on user type (admin/instructor/student).
+
 ### Step 2: Apply Compatibility Fixes
 
 Run the corrected compatibility fix script on your existing database:
@@ -424,7 +432,24 @@ mysql -u your_username -p edutrack_lms < database/hotfix_user_status.sql
 
 This converts all status values to lowercase (`'Active'` → `'active'`, `'Inactive'` → `'inactive'`, `'Suspended'` → `'suspended'`).
 
-### Issue 3: Foreign Key Constraints Fail
+### Issue 3: Undefined array key "role" on Login
+
+**Error:** `PHP Warning: Undefined array key "role" in auth.php on line 231`
+
+**Cause:** Users table is missing the `role` column that auth.php expects for session creation.
+
+**Solution:** Run the role column hotfix:
+```bash
+mysql -u your_username -p edutrack_lms < database/hotfix_add_role_column.sql
+```
+
+This adds the `role` column with ENUM('admin', 'instructor', 'student') and automatically populates it:
+- Admin users (email contains 'admin' or username is 'admin') → `'admin'`
+- Users in instructors table → `'instructor'`
+- Users in students table → `'student'`
+- Default → `'student'`
+
+### Issue 4: Foreign Key Constraints Fail
 
 **Error:** `Cannot add or update a child row: a foreign key constraint fails`
 
@@ -432,13 +457,13 @@ This converts all status values to lowercase (`'Active'` → `'active'`, `'Inact
 1. Complete schema first (creates all tables)
 2. Compatibility fix second (modifies structure)
 
-### Issue 4: Column 'X' doesn't exist
+### Issue 5: Column 'X' doesn't exist
 
 **Error:** `Unknown column 'category_name' in 'field list'`
 
 **Solution:** Run the compatibility fix script. This means the schema has the new structure but the fix wasn't applied.
 
-### Issue 5: Table names case-sensitive
+### Issue 6: Table names case-sensitive
 
 **Error:** `Table 'edutrack_lms.Users' doesn't exist`
 
@@ -446,7 +471,7 @@ This converts all status values to lowercase (`'Active'` → `'active'`, `'Inact
 - On Linux/Unix: MySQL is case-sensitive. Use lowercase table names.
 - Run compatibility fix to rename all tables to lowercase.
 
-### Issue 6: Duplicate column errors
+### Issue 7: Duplicate column errors
 
 **Error:** `Duplicate column name 'instructor_id'`
 
