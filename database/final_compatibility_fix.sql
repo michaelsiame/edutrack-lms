@@ -14,10 +14,9 @@ ALTER TABLE course_categories
 CHANGE COLUMN category_name name VARCHAR(100) NOT NULL;
 
 -- ----------------------------------------------------------------------------
--- FIX 2: Rename users.password_hash to password
+-- FIX 2: REMOVED - password_hash is correct, application uses password_hash
 -- ----------------------------------------------------------------------------
-ALTER TABLE users
-CHANGE COLUMN password_hash password VARCHAR(255) NOT NULL;
+-- The application code consistently uses 'password_hash' so no rename needed
 
 -- ----------------------------------------------------------------------------
 -- FIX 3: Rename courses.difficulty_level to level
