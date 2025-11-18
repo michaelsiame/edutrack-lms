@@ -10,9 +10,19 @@ This guide explains how to implement the complete EduTrack LMS database schema a
 
 If you already have a database with some tables, use this approach:
 
-### Step 1: Apply Compatibility Fixes
+### Step 1: Apply Hotfix (If You Already Ran the Old Fix)
 
-Run the compatibility fix script on your existing database:
+**⚠️ IMPORTANT:** If you've already run an older version of `final_compatibility_fix.sql` and are getting login errors, run this first:
+
+```bash
+mysql -u your_username -p edutrack_lms < database/hotfix_password_column.sql
+```
+
+This fixes the incorrectly renamed `password` column back to `password_hash`.
+
+### Step 2: Apply Compatibility Fixes
+
+Run the corrected compatibility fix script on your existing database:
 
 ```bash
 mysql -u your_username -p edutrack_lms < database/final_compatibility_fix.sql
@@ -110,12 +120,12 @@ ALTER TABLE course_categories
 CHANGE COLUMN category_name name VARCHAR(100) NOT NULL;
 ```
 
-#### Fix #2: User Authentication
+#### Fix #2: User Authentication (REMOVED)
 ```sql
--- Application expects: users.password
+-- This fix was REMOVED - it was incorrect!
+-- Application expects: users.password_hash
 -- Schema has: users.password_hash
-ALTER TABLE users
-CHANGE COLUMN password_hash password VARCHAR(255) NOT NULL;
+-- NO CHANGE NEEDED - column name is correct as-is
 ```
 
 #### Fix #3: Course Difficulty
@@ -380,7 +390,20 @@ foreach ($enrollments as $enrollment) {
 
 ## Common Issues and Solutions
 
-### Issue 1: Foreign Key Constraints Fail
+### Issue 1: Undefined array key "password_hash" on Login
+
+**Error:** `PHP Warning: Undefined array key "password_hash" in auth.php on line 127`
+
+**Cause:** You ran an old version of `final_compatibility_fix.sql` that incorrectly renamed the column to `password`.
+
+**Solution:** Run the hotfix immediately:
+```bash
+mysql -u your_username -p edutrack_lms < database/hotfix_password_column.sql
+```
+
+This will rename the `password` column back to `password_hash` which the application expects.
+
+### Issue 2: Foreign Key Constraints Fail
 
 **Error:** `Cannot add or update a child row: a foreign key constraint fails`
 
@@ -388,13 +411,13 @@ foreach ($enrollments as $enrollment) {
 1. Complete schema first (creates all tables)
 2. Compatibility fix second (modifies structure)
 
-### Issue 2: Column 'X' doesn't exist
+### Issue 3: Column 'X' doesn't exist
 
 **Error:** `Unknown column 'category_name' in 'field list'`
 
 **Solution:** Run the compatibility fix script. This means the schema has the new structure but the fix wasn't applied.
 
-### Issue 3: Table names case-sensitive
+### Issue 4: Table names case-sensitive
 
 **Error:** `Table 'edutrack_lms.Users' doesn't exist`
 
@@ -402,7 +425,7 @@ foreach ($enrollments as $enrollment) {
 - On Linux/Unix: MySQL is case-sensitive. Use lowercase table names.
 - Run compatibility fix to rename all tables to lowercase.
 
-### Issue 4: Duplicate column errors
+### Issue 5: Duplicate column errors
 
 **Error:** `Duplicate column name 'instructor_id'`
 
