@@ -223,7 +223,7 @@ function currentUserId() {
 
 /**
  * Get current user role
- * 
+ *
  * @return string|null
  */
 function currentUserRole() {
@@ -231,8 +231,40 @@ function currentUserRole() {
 }
 
 /**
+ * Get user role from database
+ *
+ * @param int $userId User ID
+ * @return string Role name (admin, instructor, student)
+ */
+function getUserRole($userId) {
+    global $db;
+
+    $roleData = $db->fetchOne("
+        SELECT r.role_name
+        FROM user_roles ur
+        JOIN roles r ON ur.role_id = r.id
+        WHERE ur.user_id = ?
+        LIMIT 1
+    ", [$userId]);
+
+    if ($roleData) {
+        $roleName = strtolower(str_replace(' ', '_', $roleData['role_name']));
+        // Map role names to expected values
+        if (strpos($roleName, 'admin') !== false) {
+            return 'admin';
+        } elseif (strpos($roleName, 'instructor') !== false) {
+            return 'instructor';
+        } elseif (strpos($roleName, 'student') !== false) {
+            return 'student';
+        }
+    }
+
+    return 'student'; // Default
+}
+
+/**
  * Check if current user has role
- * 
+ *
  * @param string|array $roles Role(s) to check
  * @return bool
  */
@@ -240,13 +272,13 @@ function hasRole($roles) {
     if (!isLoggedIn()) {
         return false;
     }
-    
+
     $userRole = currentUserRole();
-    
+
     if (is_array($roles)) {
         return in_array($userRole, $roles);
     }
-    
+
     return $userRole === $roles;
 }
 

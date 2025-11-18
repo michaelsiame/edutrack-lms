@@ -28,21 +28,30 @@ function registerUser($data) {
         // Generate verification token
         $verificationToken = generateToken();
         
-        // Prepare user data
+        // Prepare user data (without role - handled separately in user_roles table)
         $userData = [
             'email' => $data['email'],
             'password_hash' => $passwordHash,
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'phone' => $data['phone'] ?? null,
-            'role' => $data['role'] ?? 'student',
             'status' => 'active',
             'email_verified' => false,
             'email_verification_token' => $verificationToken
         ];
-        
+
         // Insert user
         $userId = $db->insert('users', $userData);
+
+        // Assign role to user via user_roles table
+        $roleName = ucfirst($data['role'] ?? 'student'); // Convert to proper case (student -> Student)
+        $role = $db->fetchOne("SELECT id FROM roles WHERE role_name = ?", [$roleName]);
+        if ($role) {
+            $db->insert('user_roles', [
+                'user_id' => $userId,
+                'role_id' => $role['id']
+            ]);
+        }
         
         // Create user profile
         $db->insert('user_profiles', [
@@ -121,6 +130,35 @@ function loginUser($email, $password, $remember = false) {
                 'message' => 'Invalid email or password'
             ];
         }
+
+        // Fetch user's role from User_Roles and Roles tables
+        $roleData = $db->fetchOne("
+            SELECT r.role_name
+            FROM user_roles ur
+            JOIN roles r ON ur.role_id = r.id
+            WHERE ur.user_id = ?
+            LIMIT 1
+        ", [$user['id']]);
+
+        // Convert role name to lowercase simple format (Admin -> admin, Instructor -> instructor, etc.)
+        if ($roleData) {
+            $roleName = strtolower(str_replace(' ', '_', $roleData['role_name']));
+            // Map role names to expected values
+            if (strpos($roleName, 'admin') !== false) {
+                $user['role'] = 'admin';
+            } elseif (strpos($roleName, 'instructor') !== false) {
+                $user['role'] = 'instructor';
+            } elseif (strpos($roleName, 'student') !== false) {
+                $user['role'] = 'student';
+            } else {
+                $user['role'] = 'student'; // Default to student
+            }
+        } else {
+            // No role found, default to student
+            $user['role'] = 'student';
+        }
+
+        if (APP_DEBUG) error_log("User role determined: " . $user['role']);
 
         // Verify password
         if (APP_DEBUG) error_log("Verifying password...");
