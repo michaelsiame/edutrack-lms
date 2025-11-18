@@ -202,6 +202,31 @@ ALTER TABLE courses
 MODIFY COLUMN status ENUM('draft', 'published', 'archived', 'under review') DEFAULT 'draft';
 
 -- ----------------------------------------------------------------------------
+-- FIX 13: Add role column to users table
+-- ----------------------------------------------------------------------------
+
+-- Add role column
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS role ENUM('admin', 'instructor', 'student') DEFAULT 'student' AFTER phone;
+
+-- Populate role based on email and related tables
+UPDATE users SET role = 'admin'
+WHERE email LIKE '%admin%' OR username = 'admin';
+
+UPDATE users u
+INNER JOIN instructors i ON u.id = i.user_id
+SET u.role = 'instructor';
+
+UPDATE users u
+INNER JOIN students s ON u.id = s.user_id
+SET u.role = 'student'
+WHERE u.role IS NULL OR u.role = 'student';
+
+-- Add index for performance
+ALTER TABLE users
+ADD INDEX IF NOT EXISTS idx_role (role);
+
+-- ----------------------------------------------------------------------------
 -- VERIFICATION QUERIES
 -- ----------------------------------------------------------------------------
 
