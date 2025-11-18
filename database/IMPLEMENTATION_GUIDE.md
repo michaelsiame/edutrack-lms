@@ -10,15 +10,23 @@ This guide explains how to implement the complete EduTrack LMS database schema a
 
 If you already have a database with some tables, use this approach:
 
-### Step 1: Apply Hotfix (If You Already Ran the Old Fix)
+### Step 1: Apply Hotfixes (If Needed)
 
-**⚠️ IMPORTANT:** If you've already run an older version of `final_compatibility_fix.sql` and are getting login errors, run this first:
+**⚠️ IMPORTANT:** If you're experiencing login issues, run these hotfixes:
 
+#### Fix 1: Password Column Issue
+If you get "Undefined array key 'password_hash'" error:
 ```bash
 mysql -u your_username -p edutrack_lms < database/hotfix_password_column.sql
 ```
 
-This fixes the incorrectly renamed `password` column back to `password_hash`.
+#### Fix 2: Account Suspended Issue
+If you get "Your account has been suspended" for active accounts:
+```bash
+mysql -u your_username -p edutrack_lms < database/hotfix_user_status.sql
+```
+
+This normalizes status values from `'Active'` to `'active'`.
 
 ### Step 2: Apply Compatibility Fixes
 
@@ -403,7 +411,20 @@ mysql -u your_username -p edutrack_lms < database/hotfix_password_column.sql
 
 This will rename the `password` column back to `password_hash` which the application expects.
 
-### Issue 2: Foreign Key Constraints Fail
+### Issue 2: "Your account has been suspended" for Active Users
+
+**Error:** Login shows "Your account has been suspended. Please contact support." for active accounts
+
+**Cause:** Database has status values like `'Active'` but auth.php checks for `'active'` (lowercase).
+
+**Solution:** Run the status hotfix:
+```bash
+mysql -u your_username -p edutrack_lms < database/hotfix_user_status.sql
+```
+
+This converts all status values to lowercase (`'Active'` → `'active'`, `'Inactive'` → `'inactive'`, `'Suspended'` → `'suspended'`).
+
+### Issue 3: Foreign Key Constraints Fail
 
 **Error:** `Cannot add or update a child row: a foreign key constraint fails`
 
@@ -411,13 +432,13 @@ This will rename the `password` column back to `password_hash` which the applica
 1. Complete schema first (creates all tables)
 2. Compatibility fix second (modifies structure)
 
-### Issue 3: Column 'X' doesn't exist
+### Issue 4: Column 'X' doesn't exist
 
 **Error:** `Unknown column 'category_name' in 'field list'`
 
 **Solution:** Run the compatibility fix script. This means the schema has the new structure but the fix wasn't applied.
 
-### Issue 4: Table names case-sensitive
+### Issue 5: Table names case-sensitive
 
 **Error:** `Table 'edutrack_lms.Users' doesn't exist`
 
@@ -425,7 +446,7 @@ This will rename the `password` column back to `password_hash` which the applica
 - On Linux/Unix: MySQL is case-sensitive. Use lowercase table names.
 - Run compatibility fix to rename all tables to lowercase.
 
-### Issue 5: Duplicate column errors
+### Issue 6: Duplicate column errors
 
 **Error:** `Duplicate column name 'instructor_id'`
 
