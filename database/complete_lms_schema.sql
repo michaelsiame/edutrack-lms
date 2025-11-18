@@ -1027,7 +1027,7 @@ INSERT INTO Modules (course_id, title, description, display_order, duration_minu
 (5, 'File Handling and Exceptions', 'Reading/writing files and error handling', 6, 360, TRUE);
 
 -- Sample modules for Web Development (course_id 7)
-INSERT INTO Modules (course_id, title, description, display_order, duration_minutes) VALUES
+INSERT INTO Modules (course_id, title, description, display_order, duration_minutes, is_published) VALUES
 (7, 'HTML5 Fundamentals', 'Introduction to HTML5 structure, elements, and semantic markup', 1, 400, TRUE),
 (7, 'CSS3 Styling', 'Styling web pages with CSS3, layouts, and responsive design', 2, 480, TRUE),
 (7, 'JavaScript Basics', 'JavaScript fundamentals, DOM manipulation, and events', 3, 540, TRUE),
