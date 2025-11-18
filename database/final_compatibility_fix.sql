@@ -186,7 +186,15 @@ CREATE TABLE IF NOT EXISTS course_reviews (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------------------------------------------------------
--- FIX 11: Update courses table - lowercase status values
+-- FIX 11: Update users table - lowercase status values
+-- ----------------------------------------------------------------------------
+
+UPDATE users SET status = LOWER(status);
+ALTER TABLE users
+MODIFY COLUMN status ENUM('active', 'inactive', 'suspended') DEFAULT 'active';
+
+-- ----------------------------------------------------------------------------
+-- FIX 12: Update courses table - lowercase status values
 -- ----------------------------------------------------------------------------
 
 UPDATE courses SET status = LOWER(status);
