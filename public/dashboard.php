@@ -16,7 +16,20 @@ $user = User::current();
 $userId = $user->getId();
 
 // Get comprehensive dashboard statistics using Statistics class
-$studentStats = Statistics::getStudentStats($userId);
+try {
+    $studentStats = Statistics::getStudentStats($userId);
+} catch (Exception $e) {
+    // If Statistics class or tables don't exist, use default values
+    $studentStats = [
+        'in_progress_courses' => 0,
+        'completed_courses' => 0,
+        'enrolled_courses' => 0,
+        'total_certificates' => 0,
+        'avg_progress' => 0,
+        'avg_quiz_score' => 0,
+        'assignments_submitted' => 0
+    ];
+}
 
 // Build stats array for display
 $stats = [
@@ -30,62 +43,82 @@ $stats = [
 ];
 
 // Get recent enrollments with course details
-$recentEnrollments = $db->fetchAll("
-    SELECT e.*, c.title, c.slug, c.thumbnail, c.description,
-           e.last_accessed, e.progress_percentage
-    FROM enrollments e
-    JOIN courses c ON e.course_id = c.id
-    WHERE e.user_id = ? AND e.status = 'active'
-    ORDER BY e.last_accessed DESC, e.enrolled_at DESC
-    LIMIT 4
-", [$userId]);
+try {
+    $recentEnrollments = $db->fetchAll("
+        SELECT e.*, c.title, c.slug, c.thumbnail, c.description,
+               e.last_accessed, e.progress_percentage
+        FROM enrollments e
+        JOIN courses c ON e.course_id = c.id
+        WHERE e.user_id = ? AND e.enrollment_status IN ('Enrolled', 'In Progress')
+        ORDER BY e.last_accessed DESC, e.enrolled_at DESC
+        LIMIT 4
+    ", [$userId]);
+} catch (Exception $e) {
+    $recentEnrollments = [];
+}
 
 // Get upcoming deadlines (assignments due in next 7 days)
-$upcomingDeadlines = $db->fetchAll("
-    SELECT a.*, c.title as course_title, c.slug as course_slug
-    FROM assignments a
-    JOIN courses c ON a.course_id = c.id
-    JOIN enrollments e ON e.course_id = c.id
-    WHERE e.user_id = ?
-    AND a.status = 'published'
-    AND a.due_date > NOW()
-    AND a.due_date < DATE_ADD(NOW(), INTERVAL 7 DAY)
-    AND a.id NOT IN (
-        SELECT assignment_id FROM assignment_submissions WHERE user_id = ?
-    )
-    ORDER BY a.due_date ASC
-    LIMIT 5
-", [$userId, $userId]);
+try {
+    $upcomingDeadlines = $db->fetchAll("
+        SELECT a.*, c.title as course_title, c.slug as course_slug
+        FROM assignments a
+        JOIN courses c ON a.course_id = c.id
+        JOIN enrollments e ON e.course_id = c.id
+        WHERE e.user_id = ?
+        AND a.status = 'published'
+        AND a.due_date > NOW()
+        AND a.due_date < DATE_ADD(NOW(), INTERVAL 7 DAY)
+        AND a.id NOT IN (
+            SELECT assignment_id FROM assignment_submissions WHERE user_id = ?
+        )
+        ORDER BY a.due_date ASC
+        LIMIT 5
+    ", [$userId, $userId]);
+} catch (Exception $e) {
+    $upcomingDeadlines = [];
+}
 
 // Get unread notifications
-$unreadNotifications = $db->fetchAll("
-    SELECT * FROM notifications
-    WHERE user_id = ? AND is_read = 0
-    ORDER BY created_at DESC
-    LIMIT 5
-", [$userId]);
+try {
+    $unreadNotifications = $db->fetchAll("
+        SELECT * FROM notifications
+        WHERE user_id = ? AND is_read = 0
+        ORDER BY created_at DESC
+        LIMIT 5
+    ", [$userId]);
+} catch (Exception $e) {
+    $unreadNotifications = [];
+}
 
 // Get recent quiz attempts
-$recentQuizzes = $db->fetchAll("
-    SELECT qa.*, q.title as quiz_title, c.title as course_title, c.slug as course_slug
-    FROM quiz_attempts qa
-    JOIN quizzes q ON qa.quiz_id = q.id
-    JOIN courses c ON q.course_id = c.id
-    WHERE qa.user_id = ?
-    ORDER BY qa.completed_at DESC
-    LIMIT 3
-", [$userId]);
+try {
+    $recentQuizzes = $db->fetchAll("
+        SELECT qa.*, q.title as quiz_title, c.title as course_title, c.slug as course_slug
+        FROM quiz_attempts qa
+        JOIN quizzes q ON qa.quiz_id = q.id
+        JOIN courses c ON q.course_id = c.id
+        WHERE qa.user_id = ?
+        ORDER BY qa.completed_at DESC
+        LIMIT 3
+    ", [$userId]);
+} catch (Exception $e) {
+    $recentQuizzes = [];
+}
 
 // Get recent graded assignments
-$recentGradedAssignments = $db->fetchAll("
-    SELECT asub.*, a.title as assignment_title, c.title as course_title, c.slug as course_slug
-    FROM assignment_submissions asub
-    JOIN assignments a ON asub.assignment_id = a.id
-    JOIN courses c ON a.course_id = c.id
-    WHERE asub.user_id = ? AND asub.status = 'graded'
-    ORDER BY asub.graded_at DESC
-    LIMIT 3
-", [$userId]);
+try {
+    $recentGradedAssignments = $db->fetchAll("
+        SELECT asub.*, a.title as assignment_title, c.title as course_title, c.slug as course_slug
+        FROM assignment_submissions asub
+        JOIN assignments a ON asub.assignment_id = a.id
+        JOIN courses c ON a.course_id = c.id
+        WHERE asub.user_id = ? AND asub.status = 'graded'
+        ORDER BY asub.graded_at DESC
+        LIMIT 3
+    ", [$userId]);
+} catch (Exception $e) {
+    $recentGradedAssignments = [];
+}
 
 $page_title = "Dashboard - Edutrack";
 require_once '../src/templates/header.php';
