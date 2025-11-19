@@ -1,0 +1,353 @@
+================================================================================
+EDUTRACK LMS - CODEBASE COMPREHENSIVE AUDIT SUMMARY
+Generated: 2025-11-19
+================================================================================
+
+QUICK STATS:
+- Total PHP Files: 149
+- Database Tables Referenced: 22 actively used
+- Schema Tables Defined: 35+
+- Duplicate Files Found: 3 major duplicates
+- Incomplete Stubs: 6 API files
+- Development Tools (should remove): 3 files
+
+================================================================================
+KEY DOCUMENTS CREATED FOR YOU:
+================================================================================
+
+1. CODEBASE_AUDIT_DETAILED.md (11 sections, comprehensive)
+   Location: /home/user/edutrack-lms/CODEBASE_AUDIT_DETAILED.md
+   Contents: Complete directory structure, file organization, duplicates, 
+             table references, recommendations
+
+2. DATABASE_TABLE_REFERENCE.md (quick lookup guide)
+   Location: /home/user/edutrack-lms/DATABASE_TABLE_REFERENCE.md
+   Contents: Table list, dependency map, file-to-table mapping, SQL queries
+
+3. This Summary File
+   Location: /home/user/edutrack-lms/CODEBASE_SUMMARY.txt
+
+================================================================================
+CRITICAL FINDINGS - ACTION REQUIRED:
+================================================================================
+
+HIGH PRIORITY:
+1. Duplicate API Files - Remove one of each:
+   - /home/user/edutrack-lms/public/api/auth.php (483 lines)
+   - /home/user/edutrack-lms/public/api/v1/auth.php (483 lines)
+   
+   - /home/user/edutrack-lms/public/api/notifications.php (288 lines)
+   - /home/user/edutrack-lms/public/api/v1/notifications.php (288 lines)
+
+2. Incomplete API Stubs - Complete or Remove:
+   - /home/user/edutrack-lms/public/api/quiz.php (9 lines)
+   - /home/user/edutrack-lms/public/api/progress.php (9 lines)
+   - /home/user/edutrack-lms/public/api/courses.php (8 lines)
+   - /home/user/edutrack-lms/public/api/enroll.php (8 lines)
+   - /home/user/edutrack-lms/public/api/upload.php (8 lines)
+   - /home/user/edutrack-lms/public/api/payment-callback.php (6 lines)
+
+3. Development Tools - Remove Before Production:
+   - /home/user/edutrack-lms/public/admin/debug.php
+   - /home/user/edutrack-lms/public/admin/test-page.php
+   - /home/user/edutrack-lms/public/admin/simple-test.php
+
+4. Naming Typo - Fix:
+   - /home/user/edutrack-lms/public/api/assigment.php → assignment.php
+
+MEDIUM PRIORITY:
+5. Notes API Confusion - Consolidate:
+   - /home/user/edutrack-lms/public/api/notes.php (137 lines)
+   - /home/user/edutrack-lms/public/api/lesson-notes.php (219 lines)
+
+6. Database AUTO_INCREMENT - Fix applied:
+   - Run: mysql -u root -p edutrack_lms < /home/user/edutrack-lms/database/fix_autoincrement.sql
+
+================================================================================
+DATABASE TABLES ACTIVELY USED IN CODE (22 tables):
+================================================================================
+
+USERS (3 tables):
+├── users                      @ /src/classes/User.php, /public/api/auth.php
+├── user_profiles              @ /src/classes/User.php
+└── roles                       @ /public/api/auth.php
+
+COURSES (5 tables):
+├── courses                     @ /src/classes/Course.php
+├── course_categories           @ /src/classes/Category.php
+├── course_modules              @ /src/classes/Module.php
+├── lessons                     @ /src/classes/Lesson.php
+└── course_reviews              @ /src/classes/Review.php
+
+ENROLLMENT (4 tables):
+├── enrollments                 @ /src/classes/Enrollment.php
+├── lesson_progress             @ /src/classes/Progress.php
+├── activity_logs               @ /src/classes/Enrollment.php
+└── certificates                @ /src/classes/Certificate.php
+
+ASSESSMENTS (5 tables):
+├── assignments                 @ /src/classes/Assignment.php
+├── assignment_submissions      @ /src/classes/Submission.php
+├── quizzes                     @ /src/classes/Quiz.php
+├── quiz_questions              @ /src/classes/Question.php
+└── quiz_attempts               @ /src/classes/Quiz.php
+
+COMMUNICATION (3 tables):
+├── announcements               @ /src/classes/Announcement.php
+├── notifications               @ /src/classes/Notification.php
+└── lesson_notes                @ /public/api/lesson-notes.php
+
+PAYMENTS (2 tables):
+├── payments                    @ /src/classes/Payment.php
+└── invoices                    @ /src/classes/Invoice.php
+
+SYSTEM (1 table):
+└── email_queue                 @ /src/includes/email.php
+
+================================================================================
+FILE ORGANIZATION BY ABSOLUTE PATH:
+================================================================================
+
+CONFIG FILES (4):
+/home/user/edutrack-lms/config/app.php
+/home/user/edutrack-lms/config/database.php
+/home/user/edutrack-lms/config/mail.php
+/home/user/edutrack-lms/config/payment.php
+
+CORE SYSTEM (11):
+/home/user/edutrack-lms/src/bootstrap.php (661 lines)
+/home/user/edutrack-lms/src/includes/auth.php (521 lines)
+/home/user/edutrack-lms/src/includes/database.php
+/home/user/edutrack-lms/src/includes/config.php
+/home/user/edutrack-lms/src/includes/security.php (431 lines)
+/home/user/edutrack-lms/src/includes/validation.php (607 lines)
+/home/user/edutrack-lms/src/includes/functions.php (556 lines)
+/home/user/edutrack-lms/src/includes/helpers.php
+/home/user/edutrack-lms/src/includes/email.php (374 lines)
+/home/user/edutrack-lms/src/includes/access-control.php
+/home/user/edutrack-lms/src/includes/security-headers.php
+
+BUSINESS LOGIC CLASSES (21):
+/home/user/edutrack-lms/src/classes/User.php (460 lines)
+/home/user/edutrack-lms/src/classes/Course.php (501 lines)
+/home/user/edutrack-lms/src/classes/Module.php
+/home/user/edutrack-lms/src/classes/Lesson.php
+/home/user/edutrack-lms/src/classes/Assignment.php
+/home/user/edutrack-lms/src/classes/Submission.php
+/home/user/edutrack-lms/src/classes/Quiz.php (407 lines)
+/home/user/edutrack-lms/src/classes/Question.php
+/home/user/edutrack-lms/src/classes/Enrollment.php (393 lines)
+/home/user/edutrack-lms/src/classes/Progress.php (387 lines)
+/home/user/edutrack-lms/src/classes/Certificate.php
+/home/user/edutrack-lms/src/classes/CertificateGenerator.php
+/home/user/edutrack-lms/src/classes/Category.php
+/home/user/edutrack-lms/src/classes/Announcement.php (396 lines)
+/home/user/edutrack-lms/src/classes/Review.php (487 lines)
+/home/user/edutrack-lms/src/classes/Payment.php (491 lines)
+/home/user/edutrack-lms/src/classes/Invoice.php
+/home/user/edutrack-lms/src/classes/Notification.php
+/home/user/edutrack-lms/src/classes/Email.php (374 lines)
+/home/user/edutrack-lms/src/classes/FileUpload.php
+/home/user/edutrack-lms/src/classes/Statistics.php (449 lines)
+
+API ENDPOINTS (17 files):
+/home/user/edutrack-lms/public/api/index.php (62 lines)
+/home/user/edutrack-lms/public/api/auth.php (483 lines) [DUPLICATE]
+/home/user/edutrack-lms/public/api/v1/auth.php (483 lines) [DUPLICATE]
+/home/user/edutrack-lms/public/api/assigment.php (253 lines) [TYPO]
+/home/user/edutrack-lms/public/api/quiz.php (9 lines) [STUB]
+/home/user/edutrack-lms/public/api/courses.php (8 lines) [STUB]
+/home/user/edutrack-lms/public/api/enroll.php (8 lines) [STUB]
+/home/user/edutrack-lms/public/api/progress.php (9 lines) [STUB]
+/home/user/edutrack-lms/public/api/upload.php (8 lines) [STUB]
+/home/user/edutrack-lms/public/api/payment.php (172 lines)
+/home/user/edutrack-lms/public/api/payment-callback.php (6 lines) [STUB]
+/home/user/edutrack-lms/public/api/notifications.php (288 lines) [DUPLICATE]
+/home/user/edutrack-lms/public/api/v1/notifications.php (288 lines) [DUPLICATE]
+/home/user/edutrack-lms/public/api/lesson-notes.php (219 lines)
+/home/user/edutrack-lms/public/api/lesson-progress.php (216 lines)
+/home/user/edutrack-lms/public/api/notes.php (137 lines)
+/home/user/edutrack-lms/public/api/v1/index.php (76 lines)
+
+ADMIN INTERFACE (33 files):
+/home/user/edutrack-lms/public/admin/index.php
+/home/user/edutrack-lms/public/admin/login.php
+/home/user/edutrack-lms/public/admin/debug.php [DELETE]
+/home/user/edutrack-lms/public/admin/test-page.php [DELETE]
+/home/user/edutrack-lms/public/admin/simple-test.php [DELETE]
+/home/user/edutrack-lms/public/admin/fix-check.php
+/home/user/edutrack-lms/public/admin/check-structure.php
+
+/home/user/edutrack-lms/public/admin/courses/index.php
+/home/user/edutrack-lms/public/admin/courses/create.php
+/home/user/edutrack-lms/public/admin/courses/edit.php
+/home/user/edutrack-lms/public/admin/courses/delete.php
+/home/user/edutrack-lms/public/admin/courses/modules.php
+
+/home/user/edutrack-lms/public/admin/students/index.php
+/home/user/edutrack-lms/public/admin/students/view.php
+/home/user/edutrack-lms/public/admin/students/enrollments.php
+
+/home/user/edutrack-lms/public/admin/instructors/index.php
+/home/user/edutrack-lms/public/admin/instructors/create.php
+/home/user/edutrack-lms/public/admin/instructors/edit.php
+
+/home/user/edutrack-lms/public/admin/announcements/index.php
+/home/user/edutrack-lms/public/admin/announcements/create.php
+/home/user/edutrack-lms/public/admin/announcements/edit.php
+
+/home/user/edutrack-lms/public/admin/categories/index.php
+/home/user/edutrack-lms/public/admin/categories/create.php
+/home/user/edutrack-lms/public/admin/categories/edit.php
+
+/home/user/edutrack-lms/public/admin/payments/index.php
+/home/user/edutrack-lms/public/admin/payments/reports.php
+/home/user/edutrack-lms/public/admin/payments/verify.php
+
+/home/user/edutrack-lms/public/admin/enrollments/index.php
+
+/home/user/edutrack-lms/public/admin/certificates/index.php
+/home/user/edutrack-lms/public/admin/certificates/issue.php
+/home/user/edutrack-lms/public/admin/certificates/templates.php
+
+/home/user/edutrack-lms/public/admin/reviews/index.php
+
+/home/user/edutrack-lms/public/admin/settings/index.php
+/home/user/edutrack-lms/public/admin/settings/email.php
+/home/user/edutrack-lms/public/admin/settings/payment-methods.php
+
+/home/user/edutrack-lms/public/admin/users/index.php
+/home/user/edutrack-lms/public/admin/users/create.php
+
+/home/user/edutrack-lms/public/admin/reports/index.php
+/home/user/edutrack-lms/public/admin/reports/enrollments.php
+/home/user/edutrack-lms/public/admin/reports/revenue.php
+
+MIDDLEWARE (4):
+/home/user/edutrack-lms/src/middleware/authenticate.php
+/home/user/edutrack-lms/src/middleware/admin-only.php
+/home/user/edutrack-lms/src/middleware/instructor-only.php
+/home/user/edutrack-lms/src/middleware/enrolled-only.php
+
+TEMPLATES (12):
+/home/user/edutrack-lms/src/templates/header.php
+/home/user/edutrack-lms/src/templates/footer.php
+/home/user/edutrack-lms/src/templates/admin-header.php
+/home/user/edutrack-lms/src/templates/admin-footer.php
+/home/user/edutrack-lms/src/templates/admin-sidebar.php
+/home/user/edutrack-lms/src/templates/instructor-header.php
+/home/user/edutrack-lms/src/templates/instructor-footer.php
+/home/user/edutrack-lms/src/templates/navigation.php
+/home/user/edutrack-lms/src/templates/sidebar.php
+/home/user/edutrack-lms/src/templates/alerts.php
+/home/user/edutrack-lms/src/templates/announcements.php
+
+EMAIL TEMPLATES (6):
+/home/user/edutrack-lms/src/mail/welcome.php
+/home/user/edutrack-lms/src/mail/verify-email.php
+/home/user/edutrack-lms/src/mail/enrollment-confirm.php
+/home/user/edutrack-lms/src/mail/reset-password.php
+/home/user/edutrack-lms/src/mail/payment-received.php
+/home/user/edutrack-lms/src/mail/certificate-issued.php
+
+MAIN PAGES (45+):
+/home/user/edutrack-lms/public/index.php (661 lines)
+/home/user/edutrack-lms/public/login.php
+/home/user/edutrack-lms/public/register.php
+/home/user/edutrack-lms/public/dashboard.php (565 lines)
+/home/user/edutrack-lms/public/courses.php
+/home/user/edutrack-lms/public/course.php (483 lines)
+/home/user/edutrack-lms/public/course-preview.php
+/home/user/edutrack-lms/public/lesson.php
+/home/user/edutrack-lms/public/learn.php (423 lines)
+/home/user/edutrack-lms/public/quiz.php
+/home/user/edutrack-lms/public/assignment.php
+/home/user/edutrack-lms/public/take-quiz.php
+/home/user/edutrack-lms/public/quiz-result.php
+/home/user/edutrack-lms/public/checkout.php (419 lines)
+/home/user/edutrack-lms/public/enroll.php
+/home/user/edutrack-lms/public/edit-profile.php (514 lines)
+/home/user/edutrack-lms/public/verify-email.php
+/home/user/edutrack-lms/public/forgot-password.php
+/home/user/edutrack-lms/public/reset-password.php
+/home/user/edutrack-lms/public/my-courses.php
+/home/user/edutrack-lms/public/my-certificates.php
+/home/user/edutrack-lms/public/certificate-verify.php
+/home/user/edutrack-lms/public/verify-certificate.php
+/home/user/edutrack-lms/public/download-certificate.php
+/home/user/edutrack-lms/public/review-course.php
+/home/user/edutrack-lms/public/course-discussions.php (367 lines)
+/home/user/edutrack-lms/public/contact.php (363 lines)
+/home/user/edutrack-lms/public/search.php
+/home/user/edutrack-lms/public/about.php
+/home/user/edutrack-lms/public/profile.php
+/home/user/edutrack-lms/public/payment-success.php
+/home/user/edutrack-lms/public/payment-failed.php
+/home/user/edutrack-lms/public/test-email.php
+/home/user/edutrack-lms/public/test-setup.php
+
+ACTION HANDLERS (3):
+/home/user/edutrack-lms/public/actions/mark-lesson-complete.php
+/home/user/edutrack-lms/public/actions/submit-assignment.php
+/home/user/edutrack-lms/public/actions/submit-quiz.php
+
+STUDENT INTERFACE (5):
+/home/user/edutrack-lms/public/student/assignments.php
+/home/user/edutrack-lms/public/student/quizzes.php
+/home/user/edutrack-lms/public/student/quiz-results.php
+/home/user/edutrack-lms/public/student/submit-assignment.php
+/home/user/edutrack-lms/public/student/take-quiz.php
+
+INSTRUCTOR INTERFACE (6):
+/home/user/edutrack-lms/public/instructor/index.php
+/home/user/edutrack-lms/public/instructor/courses.php
+/home/user/edutrack-lms/public/instructor/course-edit.php
+/home/user/edutrack-lms/public/instructor/assignments.php
+/home/user/edutrack-lms/public/instructor/analytics.php
+/home/user/edutrack-lms/public/instructor/students.php
+
+DATABASE FILES (11 SQL files):
+/home/user/edutrack-lms/database/complete_lms_schema.sql [MAIN SCHEMA]
+/home/user/edutrack-lms/database/course_management_schema.sql
+/home/user/edutrack-lms/database/add_advanced_tables.sql
+/home/user/edutrack-lms/database/schema_compatibility_fix.sql
+/home/user/edutrack-lms/database/final_compatibility_fix.sql
+/home/user/edutrack-lms/database/fix_autoincrement.sql [IMPORTANT]
+/home/user/edutrack-lms/database/hotfix_add_role_column.sql
+/home/user/edutrack-lms/database/hotfix_password_column.sql
+/home/user/edutrack-lms/database/hotfix_user_status.sql
+/home/user/edutrack-lms/database/populate_web_dev_course.sql
+/home/user/edutrack-lms/database/verify_database.sql
+
+DATABASE MIGRATIONS (5):
+/home/user/edutrack-lms/database/migrations/README.md
+/home/user/edutrack-lms/database/migrations/README_APPLY_CATEGORIES.md
+/home/user/edutrack-lms/database/migrations/create_categories_table.sql
+/home/user/edutrack-lms/database/migrations/add_status_column_to_enrollments.sql
+/home/user/edutrack-lms/database/migrations/APPLY_THIS_FIX.sql
+
+DATABASE DOCS (7):
+/home/user/edutrack-lms/database/README_SCHEMA.md
+/home/user/edutrack-lms/database/COMPLETE_SCHEMA_README.md
+/home/user/edutrack-lms/database/DATABASE_STATUS.md
+/home/user/edutrack-lms/database/IMPLEMENTATION_GUIDE.md
+/home/user/edutrack-lms/database/NEXT_STEPS.md
+/home/user/edutrack-lms/database/FINAL_SETUP_GUIDE.md
+/home/user/edutrack-lms/database/ROLE_STRUCTURE_GUIDE.md
+
+TESTS (2):
+/home/user/edutrack-lms/tests/CourseTest.php
+/home/user/edutrack-lms/tests/UserTest.php
+
+================================================================================
+NEXT STEPS FOR SCHEMA ALIGNMENT AUDIT:
+================================================================================
+
+1. Review CODEBASE_AUDIT_DETAILED.md for full details
+2. Review DATABASE_TABLE_REFERENCE.md for quick lookups
+3. Fix identified issues in order of priority
+4. Run SQL verification queries from DATABASE_TABLE_REFERENCE.md
+5. Test all functionality after changes
+6. Remove development tools before production deployment
+
+================================================================================

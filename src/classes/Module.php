@@ -23,7 +23,7 @@ class Module {
     private function load() {
         $sql = "SELECT m.*, c.title as course_title, c.slug as course_slug,
                 (SELECT COUNT(*) FROM lessons WHERE module_id = m.id) as lesson_count
-                FROM course_modules m
+                FROM modules m
                 JOIN courses c ON m.course_id = c.id
                 WHERE m.id = :id";
         
@@ -52,7 +52,7 @@ class Module {
         $db = Database::getInstance();
         $sql = "SELECT m.*,
                 (SELECT COUNT(*) FROM lessons WHERE module_id = m.id) as lesson_count
-                FROM course_modules m
+                FROM modules m
                 WHERE m.course_id = :course_id
                 ORDER BY m.display_order ASC";
         
@@ -65,7 +65,7 @@ class Module {
     public static function create($data) {
         $db = Database::getInstance();
 
-        $sql = "INSERT INTO course_modules (
+        $sql = "INSERT INTO modules (
             course_id, title, description, order_index
         ) VALUES (
             :course_id, :title, :description, :order_index
@@ -104,7 +104,7 @@ class Module {
             return false;
         }
 
-        $sql = "UPDATE course_modules SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE id = :id";
+        $sql = "UPDATE modules SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE id = :id";
 
         if ($this->db->query($sql, $params)) {
             $this->load();
@@ -122,7 +122,7 @@ class Module {
         $this->db->query($sql, ['id' => $this->id]);
         
         // Delete module
-        $sql = "DELETE FROM course_modules WHERE id = :id";
+        $sql = "DELETE FROM modules WHERE id = :id";
         return $this->db->query($sql, ['id' => $this->id]);
     }
     

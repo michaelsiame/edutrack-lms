@@ -23,7 +23,7 @@ class Progress {
         $totalLessons = $this->db->fetchColumn("
             SELECT COUNT(*) 
             FROM lessons l
-            JOIN course_modules m ON l.module_id = m.id
+            JOIN modules m ON l.module_id = m.id
             WHERE m.course_id = ?
         ", [$courseId]);
         
@@ -32,7 +32,7 @@ class Progress {
             SELECT COUNT(DISTINCT lp.lesson_id)
             FROM lesson_progress lp
             JOIN lessons l ON lp.lesson_id = l.id
-            JOIN course_modules m ON l.module_id = m.id
+            JOIN modules m ON l.module_id = m.id
             WHERE lp.user_id = ? AND m.course_id = ? AND lp.completed = 1
         ", [$userId, $courseId]);
         
@@ -60,7 +60,7 @@ class Progress {
             SELECT MAX(lp.last_accessed)
             FROM lesson_progress lp
             JOIN lessons l ON lp.lesson_id = l.id
-            JOIN course_modules m ON l.module_id = m.id
+            JOIN modules m ON l.module_id = m.id
             WHERE lp.user_id = ? AND m.course_id = ?
         ", [$userId, $courseId]);
         
@@ -69,7 +69,7 @@ class Progress {
             SELECT SUM(lp.time_spent)
             FROM lesson_progress lp
             JOIN lessons l ON lp.lesson_id = l.id
-            JOIN course_modules m ON l.module_id = m.id
+            JOIN modules m ON l.module_id = m.id
             WHERE lp.user_id = ? AND m.course_id = ?
         ", [$userId, $courseId]) ?? 0;
         
@@ -193,7 +193,7 @@ class Progress {
         $sql = "SELECT l.id
                 FROM lesson_progress lp
                 JOIN lessons l ON lp.lesson_id = l.id
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 WHERE lp.user_id = ? AND m.course_id = ?
                 ORDER BY lp.last_accessed DESC
                 LIMIT 1";
@@ -208,7 +208,7 @@ class Progress {
         // Get first lesson
         $sql = "SELECT l.id
                 FROM lessons l
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 WHERE m.course_id = ?
                 ORDER BY m.display_order ASC, l.display_order ASC
                 LIMIT 1";
@@ -233,7 +233,7 @@ class Progress {
     public function getNextLesson($userId, $courseId) {
         $sql = "SELECT l.id
                 FROM lessons l
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = ?
                 WHERE m.course_id = ? AND (lp.completed IS NULL OR lp.completed = 0)
                 ORDER BY m.display_order ASC, l.display_order ASC
@@ -276,7 +276,7 @@ class Progress {
         $courseId = $this->db->fetchColumn("
             SELECT m.course_id 
             FROM lessons l
-            JOIN course_modules m ON l.module_id = m.id
+            JOIN modules m ON l.module_id = m.id
             WHERE l.id = ?
         ", [$lessonId]);
         
@@ -371,10 +371,10 @@ class Progress {
                     lp.started_at,
                     lp.completed_at
                 FROM lessons l
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = ?
                 WHERE m.course_id = ?
-                ORDER BY m.order_index, l.order_index";
+                ORDER BY m.display_order, l.display_order";
         
         $results = $this->db->query($sql, [$userId, $courseId])->fetchAll();
         

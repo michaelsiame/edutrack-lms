@@ -23,7 +23,7 @@ class Category {
     private function load() {
         $sql = "SELECT c.*,
                 (SELECT COUNT(*) FROM courses WHERE category_id = c.id) as course_count
-                FROM categories c
+                FROM course_categories c
                 WHERE c.id = ?";
 
         $this->data = $this->db->query($sql, [$this->id])->fetch();
@@ -49,7 +49,7 @@ class Category {
      */
     public static function findBySlug($slug) {
         $db = Database::getInstance();
-        $sql = "SELECT id FROM categories WHERE slug = ?";
+        $sql = "SELECT id FROM course_categories WHERE slug = ?";
         $id = $db->fetchColumn($sql, [$slug]);
 
         return $id ? new self($id) : null;
@@ -63,7 +63,7 @@ class Category {
 
         $sql = "SELECT c.*,
                 (SELECT COUNT(*) FROM courses WHERE category_id = c.id AND status = 'published') as course_count
-                FROM categories c";
+                FROM course_categories c";
 
         $where = [];
         $params = [];
@@ -88,7 +88,7 @@ class Category {
         $db = Database::getInstance();
         $sql = "SELECT c.*,
                 COUNT(co.id) as course_count
-                FROM categories c
+                FROM course_categories c
                 LEFT JOIN courses co ON c.id = co.category_id AND co.status = 'published'
                 GROUP BY c.id
                 HAVING course_count > 0
@@ -101,7 +101,7 @@ class Category {
         $db = Database::getInstance();
         $sql = "SELECT c.*,
                 (SELECT COUNT(*) FROM courses WHERE category_id = c.id AND status = 'published') as course_count
-                FROM categories c
+                FROM course_categories c
                 ORDER BY c.name ASC";
         return $db->query($sql)->fetchAll();
     }
@@ -112,7 +112,7 @@ class Category {
     public static function create($data) {
         $db = Database::getInstance();
 
-        $sql = "INSERT INTO categories (
+        $sql = "INSERT INTO course_categories (
             name, slug, description, icon, created_at, updated_at
         ) VALUES (
             ?, ?, ?, ?, NOW(), NOW()
@@ -155,7 +155,7 @@ class Category {
         $updates[] = "updated_at = NOW()";
         $params[] = $this->id;
 
-        $sql = "UPDATE categories SET " . implode(', ', $updates) . " WHERE id = ?";
+        $sql = "UPDATE course_categories SET " . implode(', ', $updates) . " WHERE id = ?";
 
         $result = $this->db->query($sql, $params);
 

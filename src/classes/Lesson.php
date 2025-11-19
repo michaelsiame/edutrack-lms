@@ -24,7 +24,7 @@ class Lesson {
         $sql = "SELECT l.*, m.title as module_title, m.course_id, 
                 c.title as course_title, c.slug as course_slug
                 FROM lessons l
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 JOIN courses c ON m.course_id = c.id
                 WHERE l.id = :id";
         
@@ -62,9 +62,9 @@ class Lesson {
      */
     public static function getByCourse($courseId) {
         $db = Database::getInstance();
-        $sql = "SELECT l.*, m.title as module_title, m.order_index as module_order
+        $sql = "SELECT l.*, m.title as module_title, m.display_order as module_order
                 FROM lessons l
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
                 ORDER BY m.display_order ASC, l.display_order ASC";
         return $db->query($sql, ['course_id' => $courseId])->fetchAll();
@@ -79,11 +79,11 @@ class Lesson {
         $sql = "INSERT INTO lessons (
             module_id, title, slug, description, lesson_type,
             video_url, video_duration, content, attachments,
-            order_index, is_preview, duration
+            display_order, is_preview, duration
         ) VALUES (
             :module_id, :title, :slug, :description, :lesson_type,
             :video_url, :video_duration, :content, :attachments,
-            :order_index, :is_preview, :duration
+            :display_order, :is_preview, :duration
         )";
         
         $params = [
@@ -96,7 +96,7 @@ class Lesson {
             'video_duration' => $data['video_duration'] ?? null,
             'content' => $data['content'] ?? '',
             'attachments' => $data['attachments'] ?? null,
-            'order_index' => $data['order_index'] ?? 0,
+            'display_order' => $data['display_order'] ?? 0,
             'is_preview' => $data['is_preview'] ?? 0,
             'duration' => $data['duration'] ?? 0
         ];
@@ -112,7 +112,7 @@ class Lesson {
      */
     public function update($data) {
         $allowed = ['title', 'slug', 'description', 'lesson_type', 'video_url', 
-                   'video_duration', 'content', 'attachments', 'order_index', 
+                   'video_duration', 'content', 'attachments', 'display_order', 
                    'is_preview', 'duration'];
         
         $updates = [];
@@ -152,18 +152,18 @@ class Lesson {
     public function getNext() {
         $sql = "SELECT l.id
                 FROM lessons l
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
-                AND (m.order_index > (SELECT m2.order_index FROM course_modules m2 WHERE m2.id = :module_id)
-                     OR (m.order_index = (SELECT m2.order_index FROM course_modules m2 WHERE m2.id = :module_id) 
-                         AND l.order_index > :order_index))
+                AND (m.display_order > (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id)
+                     OR (m.display_order = (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id) 
+                         AND l.display_order > :display_order))
                 ORDER BY m.display_order ASC, l.display_order ASC
                 LIMIT 1";
         
         $result = $this->db->query($sql, [
             'course_id' => $this->getCourseId(),
             'module_id' => $this->getModuleId(),
-            'order_index' => $this->getOrderIndex()
+            'display_order' => $this->getOrderIndex()
         ])->fetch();
         
         return $result ? self::find($result['id']) : null;
@@ -175,18 +175,18 @@ class Lesson {
     public function getPrevious() {
         $sql = "SELECT l.id
                 FROM lessons l
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
-                AND (m.order_index < (SELECT m2.order_index FROM course_modules m2 WHERE m2.id = :module_id)
-                     OR (m.order_index = (SELECT m2.order_index FROM course_modules m2 WHERE m2.id = :module_id) 
-                         AND l.order_index < :order_index))
-                ORDER BY m.order_index DESC, l.order_index DESC
+                AND (m.display_order < (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id)
+                     OR (m.display_order = (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id) 
+                         AND l.display_order < :display_order))
+                ORDER BY m.display_order DESC, l.display_order DESC
                 LIMIT 1";
         
         $result = $this->db->query($sql, [
             'course_id' => $this->getCourseId(),
             'module_id' => $this->getModuleId(),
-            'order_index' => $this->getOrderIndex()
+            'display_order' => $this->getOrderIndex()
         ])->fetch();
         
         return $result ? self::find($result['id']) : null;
@@ -312,7 +312,7 @@ class Lesson {
     public function getVideoDuration() { return $this->data['video_duration'] ?? 0; }
     public function getContent() { return $this->data['content'] ?? ''; }
     public function getAttachmentsData() { return $this->data['attachments'] ?? null; }
-    public function getOrderIndex() { return $this->data['order_index'] ?? 0; }
+    public function getOrderIndex() { return $this->data['display_order'] ?? 0; }
     public function isPreview() { return $this->data['is_preview'] == 1; }
     public function getDuration() { return $this->data['duration'] ?? 0; }
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }

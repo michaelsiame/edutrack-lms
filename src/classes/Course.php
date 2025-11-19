@@ -306,7 +306,7 @@ class Course {
      * Get course modules
      */
     public function getModules() {
-        $sql = "SELECT * FROM course_modules 
+        $sql = "SELECT * FROM modules 
                 WHERE course_id = :course_id 
                 ORDER BY display_order ASC";
         return $this->db->query($sql, ['course_id' => $this->id])->fetchAll();
@@ -318,7 +318,7 @@ class Course {
     public function getLessons() {
         $sql = "SELECT l.*, m.title as module_title 
                 FROM lessons l
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
                 ORDER BY m.display_order ASC, l.display_order ASC";
         return $this->db->query($sql, ['course_id' => $this->id])->fetchAll();
@@ -330,7 +330,7 @@ class Course {
     public function getTotalLessons() {
         $sql = "SELECT COUNT(l.id) as total
                 FROM lessons l
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id";
         $result = $this->db->query($sql, ['course_id' => $this->id])->fetch();
         return $result['total'];

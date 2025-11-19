@@ -25,7 +25,7 @@ class Quiz {
                 c.title as course_title
                 FROM quizzes q
                 LEFT JOIN lessons l ON q.lesson_id = l.id
-                LEFT JOIN course_modules m ON l.module_id = m.id
+                LEFT JOIN modules m ON l.module_id = m.id
                 LEFT JOIN courses c ON m.course_id = c.id
                 WHERE q.id = :id";
         
@@ -55,7 +55,7 @@ class Quiz {
         $sql = "SELECT q.*, l.title as lesson_title
                 FROM quizzes q
                 JOIN lessons l ON q.lesson_id = l.id
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
                 ORDER BY q.created_at DESC";
         
