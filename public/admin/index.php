@@ -4,46 +4,122 @@
  * Uses created_at instead of payment_date until database is updated
  */
 
-require_once '../../src/middleware/admin-only.php';
-require_once '../../src/classes/Statistics.php';
-require_once '../../src/classes/Payment.php';
+// Enable error display for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../../logs/admin_debug.log');
 
-// Get dashboard statistics using Statistics class
-$dashboardStats = Statistics::getAdminDashboard();
+// Create logs directory if it doesn't exist
+$logDir = __DIR__ . '/../../logs';
+if (!is_dir($logDir)) {
+    mkdir($logDir, 0755, true);
+}
 
-$stats = [
-    'total_students' => $dashboardStats['users']['students'],
-    'total_instructors' => $dashboardStats['users']['instructors'],
-    'total_courses' => $dashboardStats['courses']['total'],
-    'published_courses' => $dashboardStats['courses']['published'],
-    'total_enrollments' => $dashboardStats['enrollments']['total'],
-    'active_enrollments' => $dashboardStats['enrollments']['active'],
-    'completed_enrollments' => $dashboardStats['enrollments']['completed'],
-    'total_certificates' => $dashboardStats['certificates']['total'],
-    'pending_payments' => $dashboardStats['revenue']['pending_payments'],
-    'total_revenue' => $dashboardStats['revenue']['total'],
-];
+// Debug logging function
+function debugLog($message, $data = null) {
+    $logFile = __DIR__ . '/../../logs/admin_debug.log';
+    $timestamp = date('Y-m-d H:i:s');
+    $logMessage = "[$timestamp] $message";
+    if ($data !== null) {
+        $logMessage .= "\n" . print_r($data, true);
+    }
+    $logMessage .= "\n";
+    file_put_contents($logFile, $logMessage, FILE_APPEND);
 
-// Recent activity
-$db = Database::getInstance();
-$recentUsers = $db->fetchAll("
-    SELECT u.id, u.first_name, u.last_name, u.email, u.created_at,
-           COALESCE(r.role_name, 'Student') as role
-    FROM users u
-    LEFT JOIN user_roles ur ON u.id = ur.user_id
-    LEFT JOIN roles r ON ur.role_id = r.id
-    ORDER BY u.created_at DESC
-    LIMIT 5
-");
+    // Also echo to browser for immediate feedback
+    echo "<!-- DEBUG: $message -->\n";
+    if ($data !== null) {
+        echo "<!-- DATA: " . htmlspecialchars(print_r($data, true)) . " -->\n";
+    }
+}
 
-$recentPayments = Statistics::getRecentPayments(5);
-$recentEnrollments = Statistics::getRecentEnrollments(5);
+debugLog("=== ADMIN DASHBOARD LOADING START ===");
 
-// Monthly revenue chart data (last 6 months)
-$revenueData = Statistics::getRevenueByPeriod(6);
+try {
+    debugLog("Loading middleware...");
+    require_once '../../src/middleware/admin-only.php';
+    debugLog("Middleware loaded successfully");
 
-$page_title = 'Admin Dashboard';
-require_once '../../src/templates/admin-header.php';
+    debugLog("Loading Statistics class...");
+    require_once '../../src/classes/Statistics.php';
+    debugLog("Statistics class loaded");
+
+    debugLog("Loading Payment class...");
+    require_once '../../src/classes/Payment.php';
+    debugLog("Payment class loaded");
+
+    // Get dashboard statistics using Statistics class
+    debugLog("Fetching admin dashboard stats...");
+    $dashboardStats = Statistics::getAdminDashboard();
+    debugLog("Dashboard stats retrieved", $dashboardStats);
+
+    $stats = [
+        'total_students' => $dashboardStats['users']['students'],
+        'total_instructors' => $dashboardStats['users']['instructors'],
+        'total_courses' => $dashboardStats['courses']['total'],
+        'published_courses' => $dashboardStats['courses']['published'],
+        'total_enrollments' => $dashboardStats['enrollments']['total'],
+        'active_enrollments' => $dashboardStats['enrollments']['active'],
+        'completed_enrollments' => $dashboardStats['enrollments']['completed'],
+        'total_certificates' => $dashboardStats['certificates']['total'],
+        'pending_payments' => $dashboardStats['revenue']['pending_payments'],
+        'total_revenue' => $dashboardStats['revenue']['total'],
+    ];
+    debugLog("Stats array created", $stats);
+
+    // Recent activity
+    debugLog("Getting database instance...");
+    $db = Database::getInstance();
+    debugLog("Database instance obtained");
+
+    debugLog("Fetching recent users...");
+    $recentUsers = $db->fetchAll("
+        SELECT u.id, u.first_name, u.last_name, u.email, u.created_at,
+               COALESCE(r.role_name, 'Student') as role
+        FROM users u
+        LEFT JOIN user_roles ur ON u.id = ur.user_id
+        LEFT JOIN roles r ON ur.role_id = r.id
+        ORDER BY u.created_at DESC
+        LIMIT 5
+    ");
+    debugLog("Recent users fetched: " . count($recentUsers) . " users");
+
+    debugLog("Fetching recent payments...");
+    $recentPayments = Statistics::getRecentPayments(5);
+    debugLog("Recent payments fetched: " . count($recentPayments) . " payments");
+
+    debugLog("Fetching recent enrollments...");
+    $recentEnrollments = Statistics::getRecentEnrollments(5);
+    debugLog("Recent enrollments fetched: " . count($recentEnrollments) . " enrollments");
+
+    // Monthly revenue chart data (last 6 months)
+    debugLog("Fetching revenue data...");
+    $revenueData = Statistics::getRevenueByPeriod(6);
+    debugLog("Revenue data fetched: " . count($revenueData) . " months");
+
+    debugLog("Loading admin header...");
+    $page_title = 'Admin Dashboard';
+    require_once '../../src/templates/admin-header.php';
+    debugLog("Admin header loaded");
+
+} catch (Exception $e) {
+    debugLog("FATAL ERROR: " . $e->getMessage());
+    debugLog("Stack trace", $e->getTraceAsString());
+
+    // Display error to user
+    echo "<div style='background: #fee; border: 2px solid #f00; padding: 20px; margin: 20px; font-family: monospace;'>";
+    echo "<h1 style='color: #c00;'>Admin Dashboard Error</h1>";
+    echo "<p><strong>Error:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<p><strong>File:</strong> " . htmlspecialchars($e->getFile()) . "</p>";
+    echo "<p><strong>Line:</strong> " . $e->getLine() . "</p>";
+    echo "<h3>Stack Trace:</h3>";
+    echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
+    echo "<h3>Debug Log Location:</h3>";
+    echo "<p>" . __DIR__ . '/../../logs/admin_debug.log' . "</p>";
+    echo "</div>";
+    exit;
+}
 ?>
 
 <div class="min-h-screen bg-gray-50">

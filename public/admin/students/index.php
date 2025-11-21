@@ -41,13 +41,14 @@ $offset = ($page - 1) * $perPage;
 // Build query
 $sql = "SELECT u.*,
         COUNT(DISTINCT e.id) as enrollment_count,
-        COUNT(DISTINCT CASE WHEN e.status = 'completed' THEN e.id END) as completed_courses,
-        SUM(CASE WHEN p.status = 'completed' THEN p.amount ELSE 0 END) as total_spent
+        COUNT(DISTINCT CASE WHEN e.enrollment_status = 'completed' THEN e.id END) as completed_courses,
+        SUM(CASE WHEN p.payment_status = 'Completed' THEN p.amount ELSE 0 END) as total_spent
         FROM users u
         INNER JOIN user_roles ur ON u.id = ur.user_id
         INNER JOIN roles r ON ur.role_id = r.id
+        LEFT JOIN students s ON u.id = s.user_id
         LEFT JOIN enrollments e ON u.id = e.user_id
-        LEFT JOIN payments p ON u.id = p.user_id
+        LEFT JOIN payments p ON s.id = p.student_id
         WHERE r.role_name = 'Student'";
 
 $params = [];

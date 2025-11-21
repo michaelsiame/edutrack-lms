@@ -48,12 +48,13 @@ $perPage = 20;
 $offset = ($page - 1) * $perPage;
 
 // Build query
-$sql = "SELECT c.*, 
+$sql = "SELECT c.*,
         u.first_name, u.last_name, u.email,
         co.title as course_title
         FROM certificates c
-        JOIN users u ON c.user_id = u.id
-        JOIN courses co ON c.course_id = co.id
+        JOIN enrollments e ON c.enrollment_id = e.id
+        JOIN users u ON e.user_id = u.id
+        JOIN courses co ON e.course_id = co.id
         WHERE 1=1";
 
 $params = [];
@@ -68,7 +69,7 @@ if ($search) {
 }
 
 if ($courseId) {
-    $sql .= " AND c.course_id = ?";
+    $sql .= " AND e.course_id = ?";
     $params[] = $courseId;
 }
 

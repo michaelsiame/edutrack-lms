@@ -182,15 +182,15 @@ require_once '../../../src/templates/admin-header.php';
     <!-- Quick Issue (Recently Completed) -->
     <?php
     $recentlyCompleted = $db->fetchAll("
-        SELECT e.user_id, e.course_id, 
+        SELECT e.id as enrollment_id, e.user_id, e.course_id,
                u.first_name, u.last_name,
                c.title as course_title
         FROM enrollments e
         JOIN users u ON e.user_id = u.id
         JOIN courses c ON e.course_id = c.id
-        LEFT JOIN certificates cert ON cert.user_id = e.user_id AND cert.course_id = e.course_id
+        LEFT JOIN certificates cert ON cert.enrollment_id = e.id
         WHERE e.enrollment_status = 'completed'
-        AND cert.id IS NULL
+        AND cert.certificate_id IS NULL
         ORDER BY e.completed_at DESC
         LIMIT 10
     ");

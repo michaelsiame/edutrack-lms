@@ -24,7 +24,7 @@ if ($courseId) {
 }
 
 if ($status) {
-    $where .= " AND e.status = ?";
+    $where .= " AND e.enrollment_status = ?";
     $params[] = $status;
 }
 
@@ -65,9 +65,9 @@ $enrollments = $db->fetchAll($sql, $params);
 // Get statistics
 $stats = [
     'total' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments"),
-    'active' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE status = 'active'"),
-    'completed' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE status = 'completed'"),
-    'dropped' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE status = 'dropped'"),
+    'active' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'active'"),
+    'completed' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'completed'"),
+    'dropped' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'dropped'"),
 ];
 
 // Get courses for filter

@@ -187,7 +187,7 @@ class Statistics {
             FROM payments p
             JOIN students s ON p.student_id = s.id
             JOIN users u ON s.user_id = u.id
-            JOIN courses c ON p.course_id = c.id
+            LEFT JOIN courses c ON p.course_id = c.id
             ORDER BY p.created_at DESC
             LIMIT ?
         ", [$limit]);

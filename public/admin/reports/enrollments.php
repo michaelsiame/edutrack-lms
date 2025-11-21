@@ -34,7 +34,7 @@ if ($courseId) {
 }
 
 if ($status) {
-    $sql .= " AND e.status = ?";
+    $sql .= " AND e.enrollment_status = ?";
     $params[] = $status;
 }
 
@@ -53,9 +53,9 @@ $enrollments = $db->fetchAll($sql, $params);
 $summaryParams = [$startDate . ' 00:00:00', $endDate . ' 23:59:59'];
 $summary = [
     'total' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrolled_at BETWEEN ? AND ?", $summaryParams),
-    'active' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrolled_at BETWEEN ? AND ? AND status = 'active'", $summaryParams),
-    'completed' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrolled_at BETWEEN ? AND ? AND status = 'completed'", $summaryParams),
-    'dropped' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrolled_at BETWEEN ? AND ? AND status = 'dropped'", $summaryParams),
+    'active' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrolled_at BETWEEN ? AND ? AND enrollment_status = 'active'", $summaryParams),
+    'completed' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrolled_at BETWEEN ? AND ? AND enrollment_status = 'completed'", $summaryParams),
+    'dropped' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrolled_at BETWEEN ? AND ? AND enrollment_status = 'dropped'", $summaryParams),
 ];
 
 // Get courses for filter

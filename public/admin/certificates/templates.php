@@ -44,17 +44,18 @@ $settings = $_SESSION['certificate_settings'] ?? [
 $stats = [
     'total_issued' => (int) $db->fetchColumn("SELECT COUNT(*) FROM certificates"),
     'this_month' => (int) $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE issued_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"),
-    'pending' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE status = 'completed' AND id NOT IN (SELECT enrollment_id FROM certificates WHERE enrollment_id IS NOT NULL)"),
+    'pending' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'completed' AND id NOT IN (SELECT enrollment_id FROM certificates WHERE enrollment_id IS NOT NULL)"),
 ];
 
 // Get recent certificates
 $recentCertificates = $db->fetchAll("
-    SELECT c.*, 
+    SELECT c.*,
            u.first_name, u.last_name,
            co.title as course_title
     FROM certificates c
-    JOIN users u ON c.user_id = u.id
-    JOIN courses co ON c.course_id = co.id
+    JOIN enrollments e ON c.enrollment_id = e.id
+    JOIN users u ON e.user_id = u.id
+    JOIN courses co ON e.course_id = co.id
     ORDER BY c.issued_at DESC
     LIMIT 10
 ");
