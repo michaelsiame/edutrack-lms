@@ -4,6 +4,7 @@
  * View detailed information about a specific student
  */
 
+require_once '../../../src/includes/admin-debug.php';
 require_once '../../../src/middleware/admin-only.php';
 
 $studentId = $_GET['id'] ?? null;

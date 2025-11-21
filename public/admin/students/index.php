@@ -4,6 +4,7 @@
  * View and manage all students
  */
 
+require_once '../../../src/includes/admin-debug.php';
 require_once '../../../src/middleware/admin-only.php';
 
 // Handle student actions

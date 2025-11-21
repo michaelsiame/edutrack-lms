@@ -4,6 +4,7 @@
  * Configure general application settings
  */
 
+require_once '../../../src/includes/admin-debug.php';
 require_once '../../../src/middleware/admin-only.php';
 
 $success = false;

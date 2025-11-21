@@ -4,6 +4,7 @@
  * Create a new user account
  */
 
+require_once '../../../src/includes/admin-debug.php';
 require_once '../../../src/middleware/admin-only.php';
 
 // Handle form submission

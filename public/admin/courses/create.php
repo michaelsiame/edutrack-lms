@@ -3,6 +3,7 @@
  * Admin Create Course
  */
 
+require_once '../../../src/includes/admin-debug.php';
 require_once '../../../src/middleware/admin-only.php';
 require_once '../../../src/classes/Course.php';
 require_once '../../../src/classes/Category.php';

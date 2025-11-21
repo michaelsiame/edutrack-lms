@@ -4,6 +4,7 @@
  * View and manage all course enrollments
  */
 
+require_once '../../../src/includes/admin-debug.php';
 require_once '../../../src/middleware/admin-only.php';
 
 // Filters
