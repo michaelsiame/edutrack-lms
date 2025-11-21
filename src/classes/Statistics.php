@@ -185,7 +185,8 @@ class Statistics {
                    u.first_name, u.last_name, u.email,
                    c.title as course_title
             FROM payments p
-            JOIN users u ON p.user_id = u.id
+            JOIN students s ON p.student_id = s.id
+            JOIN users u ON s.user_id = u.id
             JOIN courses c ON p.course_id = c.id
             ORDER BY p.created_at DESC
             LIMIT ?
@@ -340,9 +341,11 @@ class Statistics {
             [$studentId]
         );
 
-        // Total certificates
+        // Total certificates (certificates are linked via enrollments)
         $stats['total_certificates'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM certificates WHERE user_id = ?",
+            "SELECT COUNT(*) FROM certificates c
+             JOIN enrollments e ON c.enrollment_id = e.id
+             WHERE e.user_id = ?",
             [$studentId]
         );
 
@@ -352,21 +355,27 @@ class Statistics {
             [$studentId]
         );
 
-        // Total quiz attempts
+        // Total quiz attempts (using student_id from students table)
         $stats['total_quiz_attempts'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM quiz_attempts WHERE user_id = ?",
+            "SELECT COUNT(*) FROM quiz_attempts qa
+             JOIN students s ON qa.student_id = s.id
+             WHERE s.user_id = ?",
             [$studentId]
         );
 
-        // Average quiz score
+        // Average quiz score (using student_id from students table)
         $stats['avg_quiz_score'] = (float) $db->fetchColumn(
-            "SELECT AVG(score) FROM quiz_attempts WHERE user_id = ?",
+            "SELECT AVG(score) FROM quiz_attempts qa
+             JOIN students s ON qa.student_id = s.id
+             WHERE s.user_id = ?",
             [$studentId]
         );
 
-        // Total assignments submitted
+        // Total assignments submitted (using student_id from students table)
         $stats['assignments_submitted'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM assignment_submissions WHERE user_id = ?",
+            "SELECT COUNT(*) FROM assignment_submissions asub
+             JOIN students s ON asub.student_id = s.id
+             WHERE s.user_id = ?",
             [$studentId]
         );
 
@@ -453,13 +462,13 @@ class Statistics {
                    COUNT(DISTINCT e.course_id) as courses_enrolled,
                    COUNT(DISTINCT c.id) as courses_completed,
                    AVG(e.progress_percentage) as avg_progress,
-                   COUNT(DISTINCT cert.id) as certificates_earned
+                   COUNT(DISTINCT cert.certificate_id) as certificates_earned
             FROM users u
             INNER JOIN user_roles ur ON u.id = ur.user_id
             INNER JOIN roles r ON ur.role_id = r.id
             LEFT JOIN enrollments e ON u.id = e.user_id
             LEFT JOIN enrollments c ON u.id = c.user_id AND c.status = 'completed'
-            LEFT JOIN certificates cert ON u.id = cert.user_id
+            LEFT JOIN certificates cert ON c.id = cert.enrollment_id
             WHERE r.role_name = 'Student'
             GROUP BY u.id
             ORDER BY certificates_earned DESC, avg_progress DESC
