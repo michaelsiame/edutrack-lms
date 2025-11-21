@@ -44,9 +44,11 @@ $sql = "SELECT u.*,
         COUNT(DISTINCT CASE WHEN e.status = 'completed' THEN e.id END) as completed_courses,
         SUM(CASE WHEN p.status = 'completed' THEN p.amount ELSE 0 END) as total_spent
         FROM users u
+        INNER JOIN user_roles ur ON u.id = ur.user_id
+        INNER JOIN roles r ON ur.role_id = r.id
         LEFT JOIN enrollments e ON u.id = e.user_id
         LEFT JOIN payments p ON u.id = p.user_id
-        WHERE u.role = 'student'";
+        WHERE r.role_name = 'Student'";
 
 $params = [];
 
@@ -76,11 +78,30 @@ $params[] = $offset;
 $students = $db->fetchAll($sql, $params);
 
 // Get statistics
+require_once '../../../src/classes/Statistics.php';
 $stats = [
-    'total' => (int) $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'student'"),
-    'active' => (int) $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'student' AND status = 'active'"),
-    'inactive' => (int) $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'student' AND status = 'inactive'"),
-    'suspended' => (int) $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'student' AND status = 'suspended'"),
+    'total' => Statistics::getTotalStudents(),
+    'active' => (int) $db->fetchColumn("
+        SELECT COUNT(DISTINCT u.id)
+        FROM users u
+        INNER JOIN user_roles ur ON u.id = ur.user_id
+        INNER JOIN roles r ON ur.role_id = r.id
+        WHERE r.role_name = 'Student' AND u.status = 'active'
+    "),
+    'inactive' => (int) $db->fetchColumn("
+        SELECT COUNT(DISTINCT u.id)
+        FROM users u
+        INNER JOIN user_roles ur ON u.id = ur.user_id
+        INNER JOIN roles r ON ur.role_id = r.id
+        WHERE r.role_name = 'Student' AND u.status = 'inactive'
+    "),
+    'suspended' => (int) $db->fetchColumn("
+        SELECT COUNT(DISTINCT u.id)
+        FROM users u
+        INNER JOIN user_roles ur ON u.id = ur.user_id
+        INNER JOIN roles r ON ur.role_id = r.id
+        WHERE r.role_name = 'Student' AND u.status = 'suspended'
+    "),
 ];
 
 $page_title = 'Manage Students';

@@ -82,11 +82,12 @@ $params[] = $offset;
 $users = $db->fetchAll($sql, $params);
 
 // Get stats
+require_once '../../../src/classes/Statistics.php';
 $stats = [
     'total' => $db->fetchColumn("SELECT COUNT(*) FROM users"),
-    'students' => $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'student'"),
-    'instructors' => $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'instructor'"),
-    'admins' => $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'admin'"),
+    'students' => Statistics::getTotalStudents(),
+    'instructors' => Statistics::getTotalInstructors(),
+    'admins' => Statistics::getTotalAdmins(),
 ];
 
 $page_title = 'Manage Users';

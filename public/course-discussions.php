@@ -92,12 +92,15 @@ if ($lessonFilter) {
 $whereClause = 'WHERE ' . implode(' AND ', $where);
 
 $discussions = $db->fetchAll("
-    SELECT d.*, 
-           u.first_name, u.last_name, u.email, u.role,
+    SELECT d.*,
+           u.first_name, u.last_name, u.email,
+           COALESCE(r.role_name, 'Student') as role,
            l.title as lesson_title,
            (SELECT COUNT(*) FROM discussions WHERE parent_id = d.id) as reply_count
     FROM discussions d
     JOIN users u ON d.user_id = u.id
+    LEFT JOIN user_roles ur ON u.id = ur.user_id
+    LEFT JOIN roles r ON ur.role_id = r.id
     LEFT JOIN lessons l ON d.lesson_id = l.id
     {$whereClause}
     ORDER BY d.is_pinned DESC, d.created_at DESC
@@ -251,9 +254,12 @@ require_once '../src/templates/header.php';
                 <div id="replies-<?= $discussion['id'] ?>" class="hidden border-t border-gray-200">
                     <?php
                     $replies = $db->fetchAll("
-                        SELECT d.*, u.first_name, u.last_name, u.email, u.role
+                        SELECT d.*, u.first_name, u.last_name, u.email,
+                               COALESCE(r.role_name, 'Student') as role
                         FROM discussions d
                         JOIN users u ON d.user_id = u.id
+                        LEFT JOIN user_roles ur ON u.id = ur.user_id
+                        LEFT JOIN roles r ON ur.role_id = r.id
                         WHERE d.parent_id = ?
                         ORDER BY d.created_at ASC
                     ", [$discussion['id']]);

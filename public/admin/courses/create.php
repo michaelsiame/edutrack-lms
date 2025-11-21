@@ -102,7 +102,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Get categories and instructors
 $categories = Category::all();
-$instructors = $db->fetchAll("SELECT id, first_name, last_name, email FROM users WHERE role IN ('instructor', 'admin') ORDER BY first_name");
+$instructors = $db->fetchAll("
+    SELECT DISTINCT u.id, u.first_name, u.last_name, u.email
+    FROM users u
+    INNER JOIN user_roles ur ON u.id = ur.user_id
+    INNER JOIN roles r ON ur.role_id = r.id
+    WHERE r.role_name IN ('Instructor', 'Admin', 'Super Admin')
+    ORDER BY u.first_name
+");
 
 $page_title = 'Create Course';
 require_once '../../../src/templates/admin-header.php';

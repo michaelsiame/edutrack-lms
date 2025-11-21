@@ -26,9 +26,12 @@ $stats = [
 
 // Recent activity
 $recentUsers = $db->fetchAll("
-    SELECT id, first_name, last_name, email, role, created_at
-    FROM users
-    ORDER BY created_at DESC
+    SELECT u.id, u.first_name, u.last_name, u.email, u.created_at,
+           COALESCE(r.role_name, 'Student') as role
+    FROM users u
+    LEFT JOIN user_roles ur ON u.id = ur.user_id
+    LEFT JOIN roles r ON ur.role_id = r.id
+    ORDER BY u.created_at DESC
     LIMIT 5
 ");
 

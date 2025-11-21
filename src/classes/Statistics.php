@@ -23,7 +23,13 @@ class Statistics {
      */
     public static function getTotalStudents() {
         $db = self::getDb();
-        return (int) $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'student'");
+        return (int) $db->fetchColumn("
+            SELECT COUNT(DISTINCT u.id)
+            FROM users u
+            INNER JOIN user_roles ur ON u.id = ur.user_id
+            INNER JOIN roles r ON ur.role_id = r.id
+            WHERE r.role_name = 'Student'
+        ");
     }
 
     /**
@@ -31,7 +37,13 @@ class Statistics {
      */
     public static function getTotalInstructors() {
         $db = self::getDb();
-        return (int) $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'instructor'");
+        return (int) $db->fetchColumn("
+            SELECT COUNT(DISTINCT u.id)
+            FROM users u
+            INNER JOIN user_roles ur ON u.id = ur.user_id
+            INNER JOIN roles r ON ur.role_id = r.id
+            WHERE r.role_name = 'Instructor'
+        ");
     }
 
     /**
@@ -39,7 +51,13 @@ class Statistics {
      */
     public static function getTotalAdmins() {
         $db = self::getDb();
-        return (int) $db->fetchColumn("SELECT COUNT(*) FROM users WHERE role = 'admin'");
+        return (int) $db->fetchColumn("
+            SELECT COUNT(DISTINCT u.id)
+            FROM users u
+            INNER JOIN user_roles ur ON u.id = ur.user_id
+            INNER JOIN roles r ON ur.role_id = r.id
+            WHERE r.role_name IN ('Admin', 'Super Admin')
+        ");
     }
 
     /**
@@ -437,10 +455,12 @@ class Statistics {
                    AVG(e.progress_percentage) as avg_progress,
                    COUNT(DISTINCT cert.id) as certificates_earned
             FROM users u
+            INNER JOIN user_roles ur ON u.id = ur.user_id
+            INNER JOIN roles r ON ur.role_id = r.id
             LEFT JOIN enrollments e ON u.id = e.user_id
             LEFT JOIN enrollments c ON u.id = c.user_id AND c.status = 'completed'
             LEFT JOIN certificates cert ON u.id = cert.user_id
-            WHERE u.role = 'student'
+            WHERE r.role_name = 'Student'
             GROUP BY u.id
             ORDER BY certificates_earned DESC, avg_progress DESC
             LIMIT ?

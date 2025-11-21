@@ -17,7 +17,9 @@ if (!$studentId) {
 $student = $db->fetchOne("
     SELECT u.*
     FROM users u
-    WHERE u.id = ? AND u.role = 'student'
+    INNER JOIN user_roles ur ON u.id = ur.user_id
+    INNER JOIN roles r ON ur.role_id = r.id
+    WHERE u.id = ? AND r.role_name = 'Student'
 ", [$studentId]);
 
 if (!$student) {

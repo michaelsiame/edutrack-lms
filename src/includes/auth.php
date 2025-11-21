@@ -266,7 +266,7 @@ function createUserSession($user, $remember = false) {
     $_SESSION['user_email'] = $user['email'];
     $_SESSION['user_first_name'] = $user['first_name'];
     $_SESSION['user_last_name'] = $user['last_name'];
-    $_SESSION['user_role'] = $user['role'];
+    $_SESSION['user_role'] = getUserRole($user['id']); // Use getUserRole() instead of $user['role']
     $_SESSION['user_status'] = $user['status'];
     $_SESSION['email_verified'] = $user['email_verified'];
     
