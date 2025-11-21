@@ -105,7 +105,7 @@ class Statistics {
      */
     public static function getActiveEnrollments() {
         $db = self::getDb();
-        return (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE status = 'active'");
+        return (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'active'");
     }
 
     /**
@@ -113,7 +113,7 @@ class Statistics {
      */
     public static function getCompletedEnrollments() {
         $db = self::getDb();
-        return (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE status = 'completed'");
+        return (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'completed'");
     }
 
     /**
@@ -209,13 +209,13 @@ class Statistics {
 
         // Active students
         $stats['active_students'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE course_id = ? AND status = 'active'",
+            "SELECT COUNT(*) FROM enrollments WHERE course_id = ? AND enrollment_status = 'active'",
             [$courseId]
         );
 
         // Completed students
         $stats['completed_students'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE course_id = ? AND status = 'completed'",
+            "SELECT COUNT(*) FROM enrollments WHERE course_id = ? AND enrollment_status = 'completed'",
             [$courseId]
         );
 
@@ -331,13 +331,13 @@ class Statistics {
 
         // Completed courses
         $stats['completed_courses'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND status = 'completed'",
+            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'completed'",
             [$studentId]
         );
 
         // In progress courses
         $stats['in_progress_courses'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND status = 'active'",
+            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'active'",
             [$studentId]
         );
 
@@ -467,7 +467,7 @@ class Statistics {
             INNER JOIN user_roles ur ON u.id = ur.user_id
             INNER JOIN roles r ON ur.role_id = r.id
             LEFT JOIN enrollments e ON u.id = e.user_id
-            LEFT JOIN enrollments c ON u.id = c.user_id AND c.status = 'completed'
+            LEFT JOIN enrollments c ON u.id = c.user_id AND c.enrollment_status = 'completed'
             LEFT JOIN certificates cert ON c.id = cert.enrollment_id
             WHERE r.role_name = 'Student'
             GROUP BY u.id
