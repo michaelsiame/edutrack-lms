@@ -39,7 +39,7 @@ if ($secret !== 'fix2024') {
 
         // Check if roles exist
         echo "<h2>1. Checking Roles Table</h2>";
-        $roles = $db->fetchAll("SELECT role_id, role_name FROM Roles ORDER BY role_id");
+        $roles = $db->fetchAll("SELECT id, role_name FROM roles ORDER BY id");
 
         if (empty($roles)) {
             echo "<p class='error'>ERROR: No roles found! Seeding roles...</p>";
@@ -54,28 +54,28 @@ if ($secret !== 'fix2024') {
             ];
 
             foreach ($rolesToAdd as $index => $roleData) {
-                $db->query("INSERT INTO Roles (role_id, role_name, description, permissions) VALUES (?, ?, ?, ?)
+                $db->query("INSERT INTO roles (id, role_name, description, permissions) VALUES (?, ?, ?, ?)
                            ON DUPLICATE KEY UPDATE role_name=role_name",
                            [$index + 1, $roleData[0], $roleData[1], $roleData[2]]);
             }
 
             echo "<p class='success'>✓ Roles seeded</p>";
-            $roles = $db->fetchAll("SELECT role_id, role_name FROM Roles ORDER BY role_id");
+            $roles = $db->fetchAll("SELECT id, role_name FROM roles ORDER BY id");
         }
 
         echo "<p>Found " . count($roles) . " roles:</p><ul>";
         foreach ($roles as $role) {
-            echo "<li>{$role['role_name']} (ID: {$role['role_id']})</li>";
+            echo "<li>{$role['role_name']} (ID: {$role['id']})</li>";
         }
         echo "</ul>";
 
         // Check users without roles
         echo "<h2>2. Checking Users Without Roles</h2>";
         $usersWithoutRoles = $db->fetchAll("
-            SELECT u.user_id, u.email, u.first_name, u.last_name
-            FROM Users u
-            LEFT JOIN User_Roles ur ON u.user_id = ur.user_id
-            WHERE ur.user_role_id IS NULL
+            SELECT u.id, u.email, u.first_name, u.last_name
+            FROM users u
+            LEFT JOIN user_roles ur ON u.id = ur.user_id
+            WHERE ur.id IS NULL
         ");
 
         if (empty($usersWithoutRoles)) {
@@ -95,13 +95,13 @@ if ($secret !== 'fix2024') {
                 }
 
                 // Get role ID
-                $role = $db->fetchOne("SELECT role_id FROM Roles WHERE role_name = ?", [$roleName]);
+                $role = $db->fetchOne("SELECT id FROM roles WHERE role_name = ?", [$roleName]);
 
                 if ($role) {
                     // Assign role
-                    $db->insert('User_Roles', [
-                        'user_id' => $user['user_id'],
-                        'role_id' => $role['role_id']
+                    $db->insert('user_roles', [
+                        'user_id' => $user['id'],
+                        'role_id' => $role['id']
                     ]);
                     echo " <span class='success'>→ Assigned: {$roleName}</span>";
                 } else {
@@ -116,10 +116,10 @@ if ($secret !== 'fix2024') {
         echo "<h2>3. Final Summary</h2>";
         $summary = $db->fetchAll("
             SELECT r.role_name, COUNT(ur.user_id) as user_count
-            FROM Roles r
-            LEFT JOIN User_Roles ur ON r.role_id = ur.role_id
-            GROUP BY r.role_id, r.role_name
-            ORDER BY r.role_id
+            FROM roles r
+            LEFT JOIN user_roles ur ON r.id = ur.role_id
+            GROUP BY r.id, r.role_name
+            ORDER BY r.id
         ");
 
         echo "<ul>";
