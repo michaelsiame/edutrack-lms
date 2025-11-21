@@ -485,7 +485,7 @@ function validateSession() {
     }
     
     // Check if user still exists and is active
-    global $db;
+    $db = Database::getInstance();
     $user = $db->fetchOne("SELECT status FROM users WHERE id = ?", [currentUserId()]);
     
     if (!$user || $user['status'] !== 'active') {

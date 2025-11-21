@@ -237,7 +237,7 @@ function currentUserRole() {
  * @return string Role name (admin, instructor, student)
  */
 function getUserRole($userId) {
-    global $db;
+    $db = Database::getInstance();
 
     $roleData = $db->fetchOne("
         SELECT r.role_name
