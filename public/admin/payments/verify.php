@@ -35,14 +35,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ];
         
         if ($payment->update($updateData)) {
-            // Create enrollment (enrollments table doesn't have payment_id column)
-            Enrollment::create([
-                'user_id' => $payment->getUserId(),
-                'course_id' => $payment->getCourseId(),
-                'enrollment_status' => 'Enrolled',
-                'payment_status' => 'completed',
-                'amount_paid' => $payment->getAmount()
-            ]);
+            // Get student_id from user_id
+            $db = Database::getInstance();
+            $student = $db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$payment->getUserId()]);
+
+            // Create enrollment (enrollments table has both user_id AND student_id)
+            if ($student) {
+                Enrollment::create([
+                    'user_id' => $payment->getUserId(),
+                    'student_id' => $student['id'],
+                    'course_id' => $payment->getCourseId(),
+                    'enrollment_status' => 'Enrolled',
+                    'payment_status' => 'completed',
+                    'amount_paid' => $payment->getAmount()
+                ]);
+            }
             
             // Send confirmation email
             Email::sendMail($payment->getUserEmail(), 'Payment Approved - Enrollment Confirmed', [
