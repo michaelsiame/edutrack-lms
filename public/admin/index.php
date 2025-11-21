@@ -25,6 +25,7 @@ $stats = [
 ];
 
 // Recent activity
+$db = Database::getInstance();
 $recentUsers = $db->fetchAll("
     SELECT u.id, u.first_name, u.last_name, u.email, u.created_at,
            COALESCE(r.role_name, 'Student') as role

@@ -11,8 +11,8 @@
  * @return array ['success' => bool, 'message' => string, 'user_id' => int]
  */
 function registerUser($data) {
-    global $db;
-    
+    $db = Database::getInstance();
+
     try {
         // Check if email already exists
         if ($db->exists('users', 'email = ?', [$data['email']])) {
@@ -95,7 +95,7 @@ function registerUser($data) {
  * @return array ['success' => bool, 'message' => string]
  */
 function loginUser($email, $password, $remember = false) {
-    global $db;
+    $db = Database::getInstance();
 
     if (APP_DEBUG) {
         error_log("=== LOGIN ATTEMPT START ===");
@@ -228,24 +228,34 @@ function loginUser($email, $password, $remember = false) {
  * Logout user
  */
 function logoutUser() {
-    global $db;
-    
     if (isLoggedIn()) {
         $userId = currentUserId();
-        
-        // Delete user sessions
+
+        // Delete user sessions from database
         try {
+            $db = Database::getInstance();
             $db->delete('user_sessions', 'user_id = ?', [$userId]);
         } catch (Exception $e) {
             // Continue with logout even if session deletion fails
+            error_log("Session deletion error during logout: " . $e->getMessage());
         }
-        
+
         // Log activity
         logActivity("User logged out", 'info');
     }
-    
+
+    // Clear all session variables
+    $_SESSION = [];
+
+    // Destroy session cookie
+    if (isset($_COOKIE[session_name()])) {
+        setcookie(session_name(), '', time() - 3600, '/');
+    }
+
     // Destroy session
     session_destroy();
+
+    // Start fresh session for flash messages
     session_start();
 }
 
@@ -256,11 +266,11 @@ function logoutUser() {
  * @param bool $remember Remember me
  */
 function createUserSession($user, $remember = false) {
-    global $db;
-    
+    $db = Database::getInstance();
+
     // Regenerate session ID for security
     session_regenerate_id(true);
-    
+
     // Set session variables
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['user_email'] = $user['email'];
@@ -269,20 +279,24 @@ function createUserSession($user, $remember = false) {
     $_SESSION['user_role'] = getUserRole($user['id']); // Use getUserRole() instead of $user['role']
     $_SESSION['user_status'] = $user['status'];
     $_SESSION['email_verified'] = $user['email_verified'];
-    
+
     // Get user avatar
     $profile = $db->fetchOne("SELECT avatar FROM user_profiles WHERE user_id = ?", [$user['id']]);
     $_SESSION['user_avatar'] = $profile['avatar'] ?? null;
-    
-    // Set session timeout
+
+    // Set session timeout (2 hours for regular login, 30 days for "remember me")
     $lifetime = $remember ? (30 * 24 * 60 * 60) : config('session.lifetime', 7200);
     $_SESSION['session_lifetime'] = time() + $lifetime;
-    
+    $_SESSION['last_activity'] = time();
+
+    // Clean up expired sessions from database
+    cleanupExpiredSessions();
+
     // Store session in database
     try {
         $sessionToken = generateToken();
         $expiresAt = date('Y-m-d H:i:s', time() + $lifetime);
-        
+
         $db->insert('user_sessions', [
             'user_id' => $user['id'],
             'session_token' => $sessionToken,
@@ -290,7 +304,7 @@ function createUserSession($user, $remember = false) {
             'user_agent' => getUserAgent(),
             'expires_at' => $expiresAt
         ]);
-        
+
         $_SESSION['session_token'] = $sessionToken;
     } catch (Exception $e) {
         logActivity("Session storage error: " . $e->getMessage(), 'error');
@@ -330,8 +344,8 @@ function getRedirectUrl($role) {
  * @return array ['success' => bool, 'message' => string]
  */
 function verifyEmail($token) {
-    global $db;
-    
+    $db = Database::getInstance();
+
     try {
         $user = $db->fetchOne(
             "SELECT id, email, first_name FROM users WHERE email_verification_token = ? AND email_verified = 0",
@@ -375,8 +389,8 @@ function verifyEmail($token) {
  * @return array ['success' => bool, 'message' => string]
  */
 function requestPasswordReset($email) {
-    global $db;
-    
+    $db = Database::getInstance();
+
     try {
         $user = $db->fetchOne("SELECT id, email, first_name FROM users WHERE email = ?", [$email]);
         
@@ -426,8 +440,8 @@ function requestPasswordReset($email) {
  * @return array ['success' => bool, 'message' => string]
  */
 function resetPassword($token, $newPassword) {
-    global $db;
-    
+    $db = Database::getInstance();
+
     try {
         $user = $db->fetchOne(
             "SELECT id, email FROM users WHERE password_reset_token = ? AND password_reset_expires > NOW()",
@@ -469,30 +483,56 @@ function resetPassword($token, $newPassword) {
 }
 
 /**
+ * Clean up expired sessions from database
+ */
+function cleanupExpiredSessions() {
+    try {
+        $db = Database::getInstance();
+        // Delete sessions that have expired
+        $db->query("DELETE FROM user_sessions WHERE expires_at < NOW()");
+    } catch (Exception $e) {
+        // Log error but don't break the flow
+        error_log("Session cleanup error: " . $e->getMessage());
+    }
+}
+
+/**
  * Check if session is valid
- * 
+ *
  * @return bool
  */
 function validateSession() {
     if (!isLoggedIn()) {
         return false;
     }
-    
-    // Check session timeout
+
+    // Check absolute session timeout (max session lifetime)
     if (isset($_SESSION['session_lifetime']) && time() > $_SESSION['session_lifetime']) {
         logoutUser();
+        flash('error', 'Your session has expired. Please login again.', 'warning');
         return false;
     }
-    
+
+    // Check inactivity timeout (30 minutes of inactivity)
+    $inactivityTimeout = config('session.inactivity_timeout', 1800); // 30 minutes default
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactivityTimeout) {
+        logoutUser();
+        flash('error', 'Your session has expired due to inactivity.', 'warning');
+        return false;
+    }
+
+    // Update last activity timestamp
+    $_SESSION['last_activity'] = time();
+
     // Check if user still exists and is active
     $db = Database::getInstance();
     $user = $db->fetchOne("SELECT status FROM users WHERE id = ?", [currentUserId()]);
-    
+
     if (!$user || $user['status'] !== 'active') {
         logoutUser();
         return false;
     }
-    
+
     return true;
 }
 
