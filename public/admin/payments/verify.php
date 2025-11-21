@@ -30,18 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($action == 'approve') {
         // Approve payment
         $updateData = [
-            'status' => 'completed',
-            'payment_date' => date('Y-m-d H:i:s'),
-            'notes' => 'Verified and approved by admin'
+            'payment_status' => 'Completed',
+            'payment_date' => date('Y-m-d H:i:s')
         ];
         
         if ($payment->update($updateData)) {
-            // Create enrollment
+            // Create enrollment (enrollments table doesn't have payment_id column)
             Enrollment::create([
                 'user_id' => $payment->getUserId(),
                 'course_id' => $payment->getCourseId(),
-                'payment_id' => $payment->getId(),
-                'enrollment_status' => 'active'
+                'enrollment_status' => 'Enrolled',
+                'payment_status' => 'completed',
+                'amount_paid' => $payment->getAmount()
             ]);
             
             // Send confirmation email
@@ -60,21 +60,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
     } elseif ($action == 'reject') {
         // Reject payment
-        $notes = $_POST['notes'] ?? 'Payment rejected by admin';
-        
-        if ($payment->update(['status' => 'failed', 'notes' => $notes])) {
+        if ($payment->update(['payment_status' => 'Failed'])) {
             flash('message', 'Payment rejected', 'success');
         } else {
             flash('message', 'Failed to reject payment', 'error');
         }
     }
-    
+
     redirect(url('admin/payments/verify.php'));
 }
 
 // Get pending payments
 $pendingPayments = Payment::all([
-    'status' => 'pending',
+    'status' => 'Pending',
     'order' => 'created_at DESC'
 ]);
 
@@ -109,7 +107,7 @@ require_once '../../../src/templates/admin-header.php';
     
     <div class="space-y-6">
         <?php foreach ($pendingPayments as $paymentData): ?>
-            <?php $payment = new Payment($paymentData['id']); ?>
+            <?php $payment = new Payment($paymentData['payment_id']); ?>
             
             <div class="bg-white rounded-lg shadow overflow-hidden">
                 <div class="p-6">

@@ -227,7 +227,7 @@ require_once '../../src/templates/admin-header.php';
                 </div>
                 <div class="divide-y divide-gray-200">
                     <?php foreach ($recentPayments as $payment): ?>
-                    <?php $p = new Payment($payment['id']); ?>
+                    <?php $p = new Payment($payment['payment_id']); ?>
                     <div class="p-4 hover:bg-gray-50">
                         <div class="flex items-center justify-between mb-2">
                             <p class="font-medium text-gray-900"><?= formatCurrency($p->getAmount()) ?></p>
