@@ -121,7 +121,7 @@ class Statistics {
      */
     public static function getTotalRevenue() {
         $db = self::getDb();
-        return (float) $db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'completed'");
+        return (float) $db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE payment_status = 'Completed'");
     }
 
     /**
@@ -135,7 +135,7 @@ class Statistics {
                 SUM(amount) as revenue,
                 COUNT(*) as transactions
             FROM payments
-            WHERE status = 'completed'
+            WHERE payment_status = 'Completed'
               AND created_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
             GROUP BY DATE_FORMAT(created_at, '%Y-%m')
             ORDER BY month DESC
@@ -147,7 +147,7 @@ class Statistics {
      */
     public static function getPendingPayments() {
         $db = self::getDb();
-        return (int) $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE status = 'pending'");
+        return (int) $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE payment_status = 'Pending'");
     }
 
     /**
@@ -227,7 +227,7 @@ class Statistics {
 
         // Total revenue from this course
         $stats['revenue'] = (float) $db->fetchColumn(
-            "SELECT COALESCE(SUM(amount), 0) FROM payments WHERE course_id = ? AND status = 'completed'",
+            "SELECT COALESCE(SUM(amount), 0) FROM payments WHERE course_id = ? AND payment_status = 'Completed'",
             [$courseId]
         );
 
@@ -289,7 +289,7 @@ class Statistics {
             "SELECT COALESCE(SUM(p.amount), 0)
              FROM payments p
              JOIN courses c ON p.course_id = c.id
-             WHERE c.instructor_id = ? AND p.status = 'completed'",
+             WHERE c.instructor_id = ? AND p.payment_status = 'Completed'",
             [$instructorId]
         );
 

@@ -24,10 +24,11 @@ class Payment {
         $sql = "SELECT p.*, u.first_name, u.last_name, u.email,
                 c.title as course_title, c.slug as course_slug
                 FROM payments p
-                JOIN users u ON p.user_id = u.id
+                JOIN students s ON p.student_id = s.id
+                JOIN users u ON s.user_id = u.id
                 LEFT JOIN courses c ON p.course_id = c.id
-                WHERE p.id = :id";
-        
+                WHERE p.payment_id = :id";
+
         $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
     }
     
@@ -51,10 +52,10 @@ class Payment {
      */
     public static function findByReference($reference) {
         $db = Database::getInstance();
-        $sql = "SELECT id FROM payments WHERE transaction_reference = :reference";
+        $sql = "SELECT payment_id FROM payments WHERE transaction_id = :reference";
         $result = $db->query($sql, ['reference' => $reference])->fetch();
-        
-        return $result ? new self($result['id']) : null;
+
+        return $result ? new self($result['payment_id']) : null;
     }
     
     /**
@@ -62,12 +63,13 @@ class Payment {
      */
     public static function getByUser($userId) {
         $db = Database::getInstance();
-        $sql = "SELECT p.*, c.title as course_title 
+        $sql = "SELECT p.*, c.title as course_title
                 FROM payments p
+                JOIN students s ON p.student_id = s.id
                 LEFT JOIN courses c ON p.course_id = c.id
-                WHERE p.user_id = :user_id
+                WHERE s.user_id = :user_id
                 ORDER BY p.created_at DESC";
-        
+
         return $db->query($sql, ['user_id' => $userId])->fetchAll();
     }
     
@@ -78,10 +80,11 @@ class Payment {
         $db = Database::getInstance();
         $sql = "SELECT p.*, u.first_name, u.last_name, u.email
                 FROM payments p
-                JOIN users u ON p.user_id = u.id
+                JOIN students s ON p.student_id = s.id
+                JOIN users u ON s.user_id = u.id
                 WHERE p.course_id = :course_id
                 ORDER BY p.created_at DESC";
-        
+
         return $db->query($sql, ['course_id' => $courseId])->fetchAll();
     }
     
@@ -90,29 +93,36 @@ class Payment {
      */
     public static function create($data) {
         $db = Database::getInstance();
-        
+
+        // Get student_id from user_id
+        $student = $db->query("SELECT id FROM students WHERE user_id = :user_id",
+                             ['user_id' => $data['user_id']])->fetch();
+
+        if (!$student) {
+            return false; // User is not a student
+        }
+
         // Generate unique reference
         $reference = self::generateReference();
-        
+
         $sql = "INSERT INTO payments (
-            user_id, course_id, amount, currency, payment_method,
-            transaction_reference, phone_number, status
+            student_id, course_id, amount, currency, payment_method_id,
+            transaction_id, payment_status
         ) VALUES (
-            :user_id, :course_id, :amount, :currency, :payment_method,
-            :transaction_reference, :phone_number, :status
+            :student_id, :course_id, :amount, :currency, :payment_method_id,
+            :transaction_id, :payment_status
         )";
-        
+
         $params = [
-            'user_id' => $data['user_id'],
+            'student_id' => $student['id'],
             'course_id' => $data['course_id'] ?? null,
             'amount' => $data['amount'],
-            'currency' => $data['currency'] ?? 'ZMW',
-            'payment_method' => $data['payment_method'],
-            'transaction_reference' => $reference,
-            'phone_number' => $data['phone_number'] ?? null,
-            'status' => 'pending'
+            'currency' => $data['currency'] ?? 'USD',
+            'payment_method_id' => $data['payment_method_id'] ?? null,
+            'transaction_id' => $reference,
+            'payment_status' => 'Pending'
         ];
-        
+
         if ($db->query($sql, $params)) {
             return $db->lastInsertId();
         }
@@ -123,94 +133,93 @@ class Payment {
      * Update payment
      */
     public function update($data) {
-        $allowed = ['status', 'transaction_id', 'provider_reference', 
-                   'payment_date', 'notes'];
-        
+        $allowed = ['payment_status', 'transaction_id', 'payment_date'];
+
         $updates = [];
         $params = ['id' => $this->id];
-        
+
         foreach ($allowed as $field) {
             if (isset($data[$field])) {
                 $updates[] = "$field = :$field";
                 $params[$field] = $data[$field];
             }
         }
-        
+
         if (empty($updates)) {
             return false;
         }
-        
-        $sql = "UPDATE payments SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE id = :id";
-        
+
+        $sql = "UPDATE payments SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE payment_id = :id";
+
         if ($this->db->query($sql, $params)) {
             $this->load();
             return true;
         }
         return false;
     }
-    /**
- * Get all payments with optional filters
- */
-public static function all($options = []) {
-    $db = Database::getInstance();
-    
-    $sql = "SELECT p.*, u.first_name, u.last_name, u.email,
-            c.title as course_title, c.slug as course_slug
-            FROM payments p
-            JOIN users u ON p.user_id = u.id
-            LEFT JOIN courses c ON p.course_id = c.id
-            WHERE 1=1";
-    
-    $params = [];
-    
-    // Apply filters
-    if (isset($options['status'])) {
-        $sql .= " AND p.status = :status";
-        $params['status'] = $options['status'];
-    }
-    
-    if (isset($options['user_id'])) {
-        $sql .= " AND p.user_id = :user_id";
-        $params['user_id'] = $options['user_id'];
-    }
-    
-    if (isset($options['course_id'])) {
-        $sql .= " AND p.course_id = :course_id";
-        $params['course_id'] = $options['course_id'];
-    }
-    
-    if (isset($options['payment_method'])) {
-        $sql .= " AND p.payment_method = :payment_method";
-        $params['payment_method'] = $options['payment_method'];
-    }
-    
-    // Apply ordering
-    if (isset($options['order'])) {
-        $sql .= " ORDER BY p." . $options['order'];
-    } else {
-        $sql .= " ORDER BY p.created_at DESC";
-    }
-    
-    // Apply limit
-    if (isset($options['limit'])) {
-        $sql .= " LIMIT " . intval($options['limit']);
-        
-        if (isset($options['offset'])) {
-            $sql .= " OFFSET " . intval($options['offset']);
+        /**
+     * Get all payments with optional filters
+     */
+    public static function all($options = []) {
+        $db = Database::getInstance();
+
+        $sql = "SELECT p.*, u.first_name, u.last_name, u.email,
+                c.title as course_title, c.slug as course_slug
+                FROM payments p
+                JOIN students s ON p.student_id = s.id
+                JOIN users u ON s.user_id = u.id
+                LEFT JOIN courses c ON p.course_id = c.id
+                WHERE 1=1";
+
+        $params = [];
+
+        // Apply filters
+        if (isset($options['status'])) {
+            $sql .= " AND p.payment_status = :status";
+            $params['status'] = $options['status'];
         }
+
+        if (isset($options['user_id'])) {
+            $sql .= " AND s.user_id = :user_id";
+            $params['user_id'] = $options['user_id'];
+        }
+
+        if (isset($options['course_id'])) {
+            $sql .= " AND p.course_id = :course_id";
+            $params['course_id'] = $options['course_id'];
+        }
+
+        if (isset($options['payment_method_id'])) {
+            $sql .= " AND p.payment_method_id = :payment_method_id";
+            $params['payment_method_id'] = $options['payment_method_id'];
+        }
+
+        // Apply ordering
+        if (isset($options['order'])) {
+            $sql .= " ORDER BY p." . $options['order'];
+        } else {
+            $sql .= " ORDER BY p.created_at DESC";
+        }
+
+        // Apply limit
+        if (isset($options['limit'])) {
+            $sql .= " LIMIT " . intval($options['limit']);
+
+            if (isset($options['offset'])) {
+                $sql .= " OFFSET " . intval($options['offset']);
+            }
+        }
+
+        return $db->query($sql, $params)->fetchAll();
     }
-    
-    return $db->query($sql, $params)->fetchAll();
-}
     
     /**
      * Mark as successful
      */
     public function markSuccessful($transactionId = null, $providerReference = null) {
         $result = $this->update([
-            'status' => 'completed',
+            'payment_status' => 'Completed',
             'transaction_id' => $transactionId,
-            'provider_reference' => $providerReference,
             'payment_date' => date('Y-m-d H:i:s')
         ]);
         
@@ -243,8 +252,7 @@ public static function all($options = []) {
      */
     public function markFailed($notes = null) {
         return $this->update([
-            'status' => 'failed',
-            'notes' => $notes
+            'payment_status' => 'Failed'
         ]);
     }
     
@@ -288,29 +296,29 @@ public static function all($options = []) {
      */
     public static function getPendingCount() {
         $db = Database::getInstance();
-        $sql = "SELECT COUNT(*) as count FROM payments WHERE status = 'pending'";
+        $sql = "SELECT COUNT(*) as count FROM payments WHERE payment_status = 'Pending'";
         $result = $db->query($sql)->fetch();
         return $result['count'] ?? 0;
     }
-    
+
     /**
      * Get total revenue
      */
     public static function getTotalRevenue($courseId = null) {
         $db = Database::getInstance();
-        
+
         if ($courseId) {
-            $sql = "SELECT SUM(amount) as total 
-                    FROM payments 
-                    WHERE status = 'completed' AND course_id = :course_id";
+            $sql = "SELECT SUM(amount) as total
+                    FROM payments
+                    WHERE payment_status = 'Completed' AND course_id = :course_id";
             $result = $db->query($sql, ['course_id' => $courseId])->fetch();
         } else {
-            $sql = "SELECT SUM(amount) as total 
-                    FROM payments 
-                    WHERE status = 'completed'";
+            $sql = "SELECT SUM(amount) as total
+                    FROM payments
+                    WHERE payment_status = 'Completed'";
             $result = $db->query($sql)->fetch();
         }
-        
+
         return $result['total'] ?? 0;
     }
     
@@ -319,29 +327,29 @@ public static function all($options = []) {
      */
     public static function getStats($startDate = null, $endDate = null) {
         $db = Database::getInstance();
-        
-        $sql = "SELECT 
+
+        $sql = "SELECT
                 COUNT(*) as total_payments,
-                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as successful,
-                SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed,
-                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
-                SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as total_revenue,
-                AVG(CASE WHEN status = 'completed' THEN amount ELSE NULL END) as avg_payment
+                SUM(CASE WHEN payment_status = 'Completed' THEN 1 ELSE 0 END) as successful,
+                SUM(CASE WHEN payment_status = 'Failed' THEN 1 ELSE 0 END) as failed,
+                SUM(CASE WHEN payment_status = 'Pending' THEN 1 ELSE 0 END) as pending,
+                SUM(CASE WHEN payment_status = 'Completed' THEN amount ELSE 0 END) as total_revenue,
+                AVG(CASE WHEN payment_status = 'Completed' THEN amount ELSE NULL END) as avg_payment
                 FROM payments
                 WHERE 1=1";
-        
+
         $params = [];
-        
+
         if ($startDate) {
             $sql .= " AND created_at >= :start_date";
             $params['start_date'] = $startDate;
         }
-        
+
         if ($endDate) {
             $sql .= " AND created_at <= :end_date";
             $params['end_date'] = $endDate;
         }
-        
+
         return $db->query($sql, $params)->fetch();
     }
     
@@ -412,9 +420,12 @@ public static function all($options = []) {
     }
     
     // Getters
-    public function getId() { return $this->data['id'] ?? null; }
-    public function getUserId() { return $this->data['user_id'] ?? null; }
-    public function getUserName() { 
+    public function getId() { return $this->data['payment_id'] ?? null; }
+    public function getUserId() {
+        // Get user_id from joined students table
+        return $this->data['user_id'] ?? null;
+    }
+    public function getUserName() {
         return trim(($this->data['first_name'] ?? '') . ' ' . ($this->data['last_name'] ?? ''));
     }
     public function getUserEmail() { return $this->data['email'] ?? ''; }
@@ -422,15 +433,12 @@ public static function all($options = []) {
     public function getCourseTitle() { return $this->data['course_title'] ?? ''; }
     public function getCourseSlug() { return $this->data['course_slug'] ?? ''; }
     public function getAmount() { return $this->data['amount'] ?? 0; }
-    public function getCurrency() { return $this->data['currency'] ?? 'ZMW'; }
-    public function getPaymentMethod() { return $this->data['payment_method'] ?? ''; }
-    public function getTransactionReference() { return $this->data['transaction_reference'] ?? ''; }
+    public function getCurrency() { return $this->data['currency'] ?? 'USD'; }
+    public function getPaymentMethod() { return $this->data['payment_method_id'] ?? ''; }
+    public function getTransactionReference() { return $this->data['transaction_id'] ?? ''; }
     public function getTransactionId() { return $this->data['transaction_id'] ?? null; }
-    public function getProviderReference() { return $this->data['provider_reference'] ?? null; }
-    public function getPhoneNumber() { return $this->data['phone_number'] ?? null; }
-    public function getStatus() { return $this->data['status'] ?? 'pending'; }
+    public function getStatus() { return $this->data['payment_status'] ?? 'Pending'; }
     public function getPaymentDate() { return $this->data['payment_date'] ?? null; }
-    public function getNotes() { return $this->data['notes'] ?? ''; }
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }
     public function getUpdatedAt() { return $this->data['updated_at'] ?? null; }
     
@@ -445,21 +453,21 @@ public static function all($options = []) {
      * Check if completed
      */
     public function isCompleted() {
-        return $this->getStatus() == 'completed';
+        return $this->getStatus() == 'Completed';
     }
-    
+
     /**
      * Check if pending
      */
     public function isPending() {
-        return $this->getStatus() == 'pending';
+        return $this->getStatus() == 'Pending';
     }
-    
+
     /**
      * Check if failed
      */
     public function isFailed() {
-        return $this->getStatus() == 'failed';
+        return $this->getStatus() == 'Failed';
     }
     
     /**
@@ -468,11 +476,13 @@ public static function all($options = []) {
     public function getStatusBadge() {
         $status = $this->getStatus();
         $badges = [
-            'completed' => '<span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">Completed</span>',
-            'pending' => '<span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">Pending</span>',
-            'failed' => '<span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">Failed</span>'
+            'Completed' => '<span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">Completed</span>',
+            'Pending' => '<span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">Pending</span>',
+            'Failed' => '<span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">Failed</span>',
+            'Refunded' => '<span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">Refunded</span>',
+            'Cancelled' => '<span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-semibold">Cancelled</span>'
         ];
-        
+
         return $badges[$status] ?? '<span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-semibold">Unknown</span>';
     }
     
