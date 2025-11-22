@@ -4,12 +4,50 @@
  * Allow instructors to edit their own courses
  */
 
+// Debug initialization
+$DEBUG_MODE = defined('DEBUG_MODE') ? DEBUG_MODE : ($_ENV['DEBUG_MODE'] ?? false);
+$page_start_time = microtime(true);
+$page_start_memory = memory_get_usage();
+$debug_data = [
+    'page' => 'instructor/course-edit.php',
+    'timestamp' => date('Y-m-d H:i:s'),
+    'queries' => [],
+    'errors' => []
+];
+
+// Error handler for debugging
+if ($DEBUG_MODE) {
+    set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$debug_data) {
+        $debug_data['errors'][] = [
+            'type' => $errno,
+            'message' => $errstr,
+            'file' => $errfile,
+            'line' => $errline
+        ];
+        return false;
+    });
+}
+
 require_once '../../src/middleware/instructor-only.php';
 require_once '../../src/classes/Course.php';
 require_once '../../src/classes/Category.php';
 require_once '../../src/classes/FileUpload.php';
 
+// Debug: Log user info
+if ($DEBUG_MODE) {
+    $debug_data['user'] = [
+        'id' => $_SESSION['user_id'] ?? null,
+        'email' => $_SESSION['user_email'] ?? null,
+        'role' => $_SESSION['user_role'] ?? null
+    ];
+}
+
 $courseId = $_GET['id'] ?? null;
+
+// Debug: Log course ID being edited
+if ($DEBUG_MODE) {
+    $debug_data['course_id'] = $courseId;
+}
 
 if (!$courseId) {
     redirect(url('instructor/courses.php'));
@@ -30,6 +68,16 @@ if ($course->getInstructorId() != currentUserId()) {
 
 // Get categories
 $categories = Category::all(['active_only' => true]);
+
+// Debug: Log course and categories data
+if ($DEBUG_MODE) {
+    $debug_data['data'] = [
+        'course_title' => $course->getTitle(),
+        'course_status' => $course->getStatus(),
+        'categories_count' => count($categories),
+        'instructor_id' => $course->getInstructorId()
+    ];
+}
 
 $errors = [];
 
@@ -115,27 +163,20 @@ $page_title = 'Edit Course - ' . $course->getTitle();
 require_once '../../src/templates/instructor-header.php';
 ?>
 
-<div class="flex h-screen bg-gray-100">
-    <?php require_once '../../src/templates/instructor-sidebar.php'; ?>
-
-    <div class="flex-1 flex flex-col overflow-hidden">
-        <!-- Top Navigation -->
-        <header class="bg-white shadow-sm z-10">
-            <div class="flex items-center justify-between px-8 py-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Edit Course</h1>
-                    <p class="text-sm text-gray-600 mt-1">Update your course information</p>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="<?= url('instructor/courses.php') ?>" class="text-gray-600 hover:text-gray-900">
-                        <i class="fas fa-arrow-left mr-2"></i>Back to Courses
-                    </a>
-                </div>
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Page Header -->
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Edit Course</h1>
+                <p class="text-gray-600 mt-1">Update your course information</p>
             </div>
-        </header>
+            <a href="<?= url('instructor/courses.php') ?>" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Courses
+            </a>
+        </div>
 
         <!-- Main Content -->
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-8">
 
             <?php if (!empty($errors)): ?>
             <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
@@ -319,7 +360,7 @@ require_once '../../src/templates/instructor-header.php';
             <div class="mt-8 bg-white rounded-lg shadow-md p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-xl font-bold text-gray-900">Course Content</h2>
-                    <a href="<?= url('admin/courses/modules.php?id=' . $courseId) ?>"
+                    <a href="<?= url('instructor/courses/modules.php?id=' . $courseId) ?>"
                        class="px-4 py-2 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700">
                         <i class="fas fa-book mr-2"></i>Manage Modules & Lessons
                     </a>
@@ -328,8 +369,59 @@ require_once '../../src/templates/instructor-header.php';
                     Use the course content manager to add and organize modules, lessons, quizzes, and assignments.
                 </p>
             </div>
-        </main>
+
     </div>
 </div>
+
+<?php
+// Debug panel output
+if ($DEBUG_MODE) {
+    $debug_data['performance'] = [
+        'execution_time' => round((microtime(true) - $page_start_time) * 1000, 2) . 'ms',
+        'memory_used' => round((memory_get_usage() - $page_start_memory) / 1024, 2) . 'KB',
+        'peak_memory' => round(memory_get_peak_usage() / 1024 / 1024, 2) . 'MB'
+    ];
+    $debug_data['form_errors'] = $errors;
+?>
+<!-- Debug Panel -->
+<div id="debug-panel" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white text-xs z-50 max-h-96 overflow-y-auto" style="display: none;">
+    <div class="flex items-center justify-between p-2 bg-gray-800 sticky top-0">
+        <span class="font-bold"><i class="fas fa-bug mr-2"></i>Debug Panel - <?= $debug_data['page'] ?></span>
+        <div class="flex items-center space-x-4">
+            <span class="text-green-400">Time: <?= $debug_data['performance']['execution_time'] ?></span>
+            <span class="text-blue-400">Memory: <?= $debug_data['performance']['memory_used'] ?></span>
+            <button onclick="document.getElementById('debug-panel').style.display='none'" class="text-red-400 hover:text-red-300">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+            <h4 class="font-bold text-yellow-400 mb-2">User Info</h4>
+            <pre class="bg-gray-800 p-2 rounded overflow-x-auto"><?= json_encode($debug_data['user'] ?? [], JSON_PRETTY_PRINT) ?></pre>
+        </div>
+        <div>
+            <h4 class="font-bold text-yellow-400 mb-2">Course Data</h4>
+            <pre class="bg-gray-800 p-2 rounded overflow-x-auto"><?= json_encode($debug_data['data'] ?? [], JSON_PRETTY_PRINT) ?></pre>
+        </div>
+        <?php if (!empty($debug_data['form_errors'])): ?>
+        <div>
+            <h4 class="font-bold text-orange-400 mb-2">Form Errors (<?= count($debug_data['form_errors']) ?>)</h4>
+            <pre class="bg-gray-800 p-2 rounded overflow-x-auto text-orange-300"><?= json_encode($debug_data['form_errors'], JSON_PRETTY_PRINT) ?></pre>
+        </div>
+        <?php endif; ?>
+        <?php if (!empty($debug_data['errors'])): ?>
+        <div>
+            <h4 class="font-bold text-red-400 mb-2">PHP Errors (<?= count($debug_data['errors']) ?>)</h4>
+            <pre class="bg-gray-800 p-2 rounded overflow-x-auto text-red-300"><?= json_encode($debug_data['errors'], JSON_PRETTY_PRINT) ?></pre>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+<button onclick="document.getElementById('debug-panel').style.display = document.getElementById('debug-panel').style.display === 'none' ? 'block' : 'none'"
+        class="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 z-50" title="Toggle Debug Panel">
+    <i class="fas fa-bug"></i>
+</button>
+<?php } ?>
 
 <?php require_once '../../src/templates/instructor-footer.php'; ?>

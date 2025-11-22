@@ -4,12 +4,50 @@
  * View course performance and student engagement metrics
  */
 
+// Debug initialization
+$DEBUG_MODE = defined('DEBUG_MODE') ? DEBUG_MODE : ($_ENV['DEBUG_MODE'] ?? false);
+$page_start_time = microtime(true);
+$page_start_memory = memory_get_usage();
+$debug_data = [
+    'page' => 'instructor/analytics.php',
+    'timestamp' => date('Y-m-d H:i:s'),
+    'queries' => [],
+    'errors' => []
+];
+
+// Error handler for debugging
+if ($DEBUG_MODE) {
+    set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$debug_data) {
+        $debug_data['errors'][] = [
+            'type' => $errno,
+            'message' => $errstr,
+            'file' => $errfile,
+            'line' => $errline
+        ];
+        return false;
+    });
+}
+
 require_once '../../src/middleware/instructor-only.php';
 require_once '../../src/classes/Course.php';
 require_once '../../src/classes/Statistics.php';
 
+// Debug: Log user info
+if ($DEBUG_MODE) {
+    $debug_data['user'] = [
+        'id' => $_SESSION['user_id'] ?? null,
+        'email' => $_SESSION['user_email'] ?? null,
+        'role' => $_SESSION['user_role'] ?? null
+    ];
+}
+
 $db = Database::getInstance();
 $instructorId = currentUserId();
+
+// Debug: Log instructor ID
+if ($DEBUG_MODE) {
+    $debug_data['instructor_id'] = $instructorId;
+}
 
 // Get instructor stats
 $stats = Statistics::getInstructorStats($instructorId);
@@ -51,6 +89,16 @@ $revenueData = $db->fetchOne("
     JOIN courses c ON e.course_id = c.id
     WHERE c.instructor_id = ? AND e.payment_status = 'completed'
 ", [$instructorId]);
+
+// Debug: Log analytics data
+if ($DEBUG_MODE) {
+    $debug_data['data'] = [
+        'stats' => $stats,
+        'course_metrics_count' => count($courseMetrics),
+        'enrollment_trend_count' => count($enrollmentTrend),
+        'revenue' => $revenueData
+    ];
+}
 
 $page_title = 'Analytics - Instructor';
 require_once '../../src/templates/instructor-header.php';
@@ -280,5 +328,49 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<?php
+// Debug panel output
+if ($DEBUG_MODE) {
+    $debug_data['performance'] = [
+        'execution_time' => round((microtime(true) - $page_start_time) * 1000, 2) . 'ms',
+        'memory_used' => round((memory_get_usage() - $page_start_memory) / 1024, 2) . 'KB',
+        'peak_memory' => round(memory_get_peak_usage() / 1024 / 1024, 2) . 'MB'
+    ];
+?>
+<!-- Debug Panel -->
+<div id="debug-panel" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white text-xs z-50 max-h-96 overflow-y-auto" style="display: none;">
+    <div class="flex items-center justify-between p-2 bg-gray-800 sticky top-0">
+        <span class="font-bold"><i class="fas fa-bug mr-2"></i>Debug Panel - <?= $debug_data['page'] ?></span>
+        <div class="flex items-center space-x-4">
+            <span class="text-green-400">Time: <?= $debug_data['performance']['execution_time'] ?></span>
+            <span class="text-blue-400">Memory: <?= $debug_data['performance']['memory_used'] ?></span>
+            <button onclick="document.getElementById('debug-panel').style.display='none'" class="text-red-400 hover:text-red-300">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div>
+            <h4 class="font-bold text-yellow-400 mb-2">User Info</h4>
+            <pre class="bg-gray-800 p-2 rounded overflow-x-auto"><?= json_encode($debug_data['user'] ?? [], JSON_PRETTY_PRINT) ?></pre>
+        </div>
+        <div>
+            <h4 class="font-bold text-yellow-400 mb-2">Analytics Data</h4>
+            <pre class="bg-gray-800 p-2 rounded overflow-x-auto"><?= json_encode($debug_data['data'] ?? [], JSON_PRETTY_PRINT) ?></pre>
+        </div>
+        <?php if (!empty($debug_data['errors'])): ?>
+        <div>
+            <h4 class="font-bold text-red-400 mb-2">Errors (<?= count($debug_data['errors']) ?>)</h4>
+            <pre class="bg-gray-800 p-2 rounded overflow-x-auto text-red-300"><?= json_encode($debug_data['errors'], JSON_PRETTY_PRINT) ?></pre>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+<button onclick="document.getElementById('debug-panel').style.display = document.getElementById('debug-panel').style.display === 'none' ? 'block' : 'none'"
+        class="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 z-50" title="Toggle Debug Panel">
+    <i class="fas fa-bug"></i>
+</button>
+<?php } ?>
 
 <?php require_once '../../src/templates/instructor-footer.php'; ?>
