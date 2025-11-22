@@ -74,7 +74,7 @@ $revenue = $db->fetchOne("
         COALESCE(SUM(c.price), 0) as total_revenue
     FROM enrollments e
     JOIN courses c ON e.course_id = c.id
-    WHERE c.instructor_id = ? AND e.payment_status = 'paid'
+    WHERE c.instructor_id = ? AND e.payment_status = 'completed'
 ", [$instructorId]);
 
 $page_title = 'Instructor Dashboard - Edutrack';
@@ -195,8 +195,8 @@ require_once '../../src/templates/instructor-header.php';
                         <?php foreach ($courses as $course): ?>
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-primary-300 transition">
                             <div class="w-full sm:w-20 h-32 sm:h-20 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
-                                <?php if ($course['thumbnail']): ?>
-                                <img src="<?= courseThumbnail($course['thumbnail']) ?>"
+                                <?php if (!empty($course['thumbnail_url'])): ?>
+                                <img src="<?= htmlspecialchars($course['thumbnail_url']) ?>"
                                      alt="<?= htmlspecialchars($course['title']) ?>"
                                      class="w-full h-full object-cover rounded-lg">
                                 <?php else: ?>
@@ -365,4 +365,4 @@ require_once '../../src/templates/instructor-header.php';
     </div>
 </div>
 
-<?php require_once '../../src/templates/footer.php'; ?>
+<?php require_once '../../src/templates/instructor-footer.php'; ?>
