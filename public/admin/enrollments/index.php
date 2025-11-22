@@ -25,8 +25,16 @@ if ($courseId) {
 }
 
 if ($status) {
+    // Map filter values to database enum values
+    $statusMapping = [
+        'enrolled' => 'Enrolled',
+        'in_progress' => 'In Progress',
+        'completed' => 'Completed',
+        'dropped' => 'Dropped',
+        'expired' => 'Expired',
+    ];
     $where .= " AND e.enrollment_status = ?";
-    $params[] = $status;
+    $params[] = $statusMapping[$status] ?? $status;
 }
 
 if ($search) {
@@ -63,12 +71,12 @@ $params[] = $perPage;
 $params[] = $offset;
 $enrollments = $db->fetchAll($sql, $params);
 
-// Get statistics
+// Get statistics - use correct capitalized enum values
 $stats = [
     'total' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments"),
-    'active' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'active'"),
-    'completed' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'completed'"),
-    'dropped' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'dropped'"),
+    'active' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status IN ('Enrolled', 'In Progress')"),
+    'completed' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'Completed'"),
+    'dropped' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'Dropped'"),
 ];
 
 // Get courses for filter
@@ -136,10 +144,11 @@ require_once '../../../src/templates/admin-header.php';
                     <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                     <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                         <option value="">All Status</option>
-                        <option value="active" <?= $status == 'active' ? 'selected' : '' ?>>Active</option>
+                        <option value="enrolled" <?= $status == 'enrolled' ? 'selected' : '' ?>>Enrolled</option>
+                        <option value="in_progress" <?= $status == 'in_progress' ? 'selected' : '' ?>>In Progress</option>
                         <option value="completed" <?= $status == 'completed' ? 'selected' : '' ?>>Completed</option>
                         <option value="dropped" <?= $status == 'dropped' ? 'selected' : '' ?>>Dropped</option>
-                        <option value="suspended" <?= $status == 'suspended' ? 'selected' : '' ?>>Suspended</option>
+                        <option value="expired" <?= $status == 'expired' ? 'selected' : '' ?>>Expired</option>
                     </select>
                 </div>
 
@@ -192,14 +201,18 @@ require_once '../../../src/templates/admin-header.php';
                             <?= date('M d, Y', strtotime($enrollment['enrolled_at'])) ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <?php if ($enrollment['status'] == 'active'): ?>
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Active</span>
-                            <?php elseif ($enrollment['status'] == 'completed'): ?>
+                            <?php
+                            $enrollStatus = $enrollment['enrollment_status'] ?? 'Enrolled';
+                            if (in_array($enrollStatus, ['Enrolled', 'In Progress'])): ?>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800"><?= $enrollStatus ?></span>
+                            <?php elseif ($enrollStatus == 'Completed'): ?>
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
-                            <?php elseif ($enrollment['status'] == 'dropped'): ?>
+                            <?php elseif ($enrollStatus == 'Dropped'): ?>
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Dropped</span>
+                            <?php elseif ($enrollStatus == 'Expired'): ?>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Expired</span>
                             <?php else: ?>
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800"><?= ucfirst($enrollment['status']) ?></span>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800"><?= htmlspecialchars($enrollStatus) ?></span>
                             <?php endif; ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
