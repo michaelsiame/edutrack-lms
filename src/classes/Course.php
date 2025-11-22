@@ -82,10 +82,16 @@ class Course {
         $params = [];
         
         // Filter by status
-        if (!isset($filters['include_draft'])) {
+        if (!isset($filters['include_draft']) && !isset($filters['instructor_id'])) {
             $sql .= " AND c.status = 'published'";
         }
-        
+
+        // Filter by instructor
+        if (!empty($filters['instructor_id'])) {
+            $sql .= " AND c.instructor_id = :instructor_id";
+            $params['instructor_id'] = $filters['instructor_id'];
+        }
+
         // Filter by category
         if (!empty($filters['category_id'])) {
             $sql .= " AND c.category_id = :category_id";
@@ -180,6 +186,25 @@ class Course {
             'order_by' => 'created_at',
             'order_dir' => 'DESC'
         ]);
+    }
+
+    /**
+     * Get courses by instructor ID
+     */
+    public static function getByInstructor($instructorId) {
+        $db = Database::getInstance();
+
+        $sql = "SELECT c.*, cat.name as category_name,
+                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
+                (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id) as avg_rating,
+                (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) as total_reviews,
+                (SELECT COUNT(*) FROM lessons l JOIN modules m ON l.module_id = m.id WHERE m.course_id = c.id) as total_lessons
+                FROM courses c
+                LEFT JOIN course_categories cat ON c.category_id = cat.id
+                WHERE c.instructor_id = :instructor_id
+                ORDER BY c.created_at DESC";
+
+        return $db->query($sql, ['instructor_id' => $instructorId])->fetchAll();
     }
     
     /**

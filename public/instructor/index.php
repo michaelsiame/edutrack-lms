@@ -44,6 +44,10 @@ if ($DEBUG_MODE) {
 }
 
 $user = User::current();
+if (!$user) {
+    redirect(url('login.php'));
+    exit;
+}
 $instructorId = $user->getId();
 
 // Debug: Log instructor ID

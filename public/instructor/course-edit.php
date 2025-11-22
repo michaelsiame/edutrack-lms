@@ -117,7 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $thumbnail = $course->getThumbnail();
     if (isset($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] == UPLOAD_ERR_OK) {
         $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $upload = new FileUpload($_FILES['thumbnail'], 'courses/thumbnails', $allowedTypes);
+        $upload = new FileUpload($_FILES['thumbnail'], 'courses/thumbnails');
+        $upload->setAllowedTypes($allowedTypes);
         $result = $upload->upload();
 
         if ($result && isset($result['filepath'])) {

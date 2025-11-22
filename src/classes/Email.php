@@ -260,6 +260,75 @@ class Email {
     }
 
     /**
+     * Send assignment graded notification email
+     */
+    public function sendAssignmentGraded($user, $submission) {
+        $subject = "Assignment Graded - " . (defined('APP_NAME') ? APP_NAME : 'Edutrack LMS');
+
+        $firstName = isset($user['first_name']) ? $user['first_name'] : 'Student';
+        $email = isset($user['email']) ? $user['email'] : null;
+
+        if (!$email) {
+            error_log("Email Error: No email provided for sendAssignmentGraded");
+            return false;
+        }
+
+        // Get assignment details from submission
+        $assignmentTitle = method_exists($submission, 'getAssignmentTitle')
+            ? $submission->getAssignmentTitle()
+            : (is_array($submission) ? ($submission['assignment_title'] ?? 'Assignment') : 'Assignment');
+
+        $pointsEarned = method_exists($submission, 'getPointsEarned')
+            ? $submission->getPointsEarned()
+            : (is_array($submission) ? ($submission['points_earned'] ?? 0) : 0);
+
+        $maxPoints = method_exists($submission, 'getMaxPoints')
+            ? $submission->getMaxPoints()
+            : (is_array($submission) ? ($submission['max_points'] ?? 100) : 100);
+
+        $feedback = method_exists($submission, 'getFeedback')
+            ? $submission->getFeedback()
+            : (is_array($submission) ? ($submission['feedback'] ?? '') : '');
+
+        $percentage = $maxPoints > 0 ? round(($pointsEarned / $maxPoints) * 100, 1) : 0;
+
+        $body = "
+        <h2>Your Assignment Has Been Graded</h2>
+        <p>Hi " . htmlspecialchars($firstName, ENT_QUOTES, 'UTF-8') . ",</p>
+        <p>Your instructor has graded your assignment submission.</p>
+
+        <div style='background: #f5f5f5; padding: 20px; margin: 20px 0; border-left: 4px solid #2E70DA;'>
+            <h3>" . htmlspecialchars($assignmentTitle, ENT_QUOTES, 'UTF-8') . "</h3>
+            <p style='font-size: 24px; font-weight: bold; color: #2E70DA; margin: 10px 0;'>
+                Score: {$pointsEarned} / {$maxPoints} ({$percentage}%)
+            </p>
+        </div>
+        ";
+
+        if ($feedback) {
+            $body .= "
+            <div style='background: #fff3cd; padding: 15px; margin: 20px 0; border-left: 4px solid #ffc107;'>
+                <h4 style='margin: 0 0 10px 0;'>Instructor Feedback:</h4>
+                <p style='margin: 0; white-space: pre-wrap;'>" . htmlspecialchars($feedback, ENT_QUOTES, 'UTF-8') . "</p>
+            </div>
+            ";
+        }
+
+        $body .= "
+        <p style='text-align: center; margin: 30px 0;'>
+            <a href='" . $this->url('dashboard.php') . "' style='background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
+                View Your Dashboard
+            </a>
+        </p>
+
+        <p>Keep up the great work!</p>
+        <p>The " . (defined('APP_NAME') ? APP_NAME : 'Edutrack LMS') . " Team</p>
+        ";
+
+        return $this->send($email, $subject, $body);
+    }
+
+    /**
      * Send password reset email
      */
     public function sendPasswordReset($user, $resetToken) {

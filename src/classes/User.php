@@ -118,6 +118,27 @@ class User {
     public function getFullName() {
         return trim($this->data['first_name'] . ' ' . $this->data['last_name']);
     }
+
+    /**
+     * Get email
+     */
+    public function getEmail() {
+        return $this->data['email'] ?? null;
+    }
+
+    /**
+     * Get first name
+     */
+    public function getFirstName() {
+        return $this->data['first_name'] ?? '';
+    }
+
+    /**
+     * Get last name
+     */
+    public function getLastName() {
+        return $this->data['last_name'] ?? '';
+    }
     
     /**
      * Get avatar URL
