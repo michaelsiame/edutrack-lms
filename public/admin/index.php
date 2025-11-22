@@ -220,7 +220,9 @@ try {
             <!-- Revenue Chart -->
             <div class="bg-white rounded-lg shadow p-6">
                 <h2 class="text-lg font-bold text-gray-900 mb-4">Revenue Trend (6 Months)</h2>
-                <canvas id="revenueChart" height="200"></canvas>
+                <div style="position: relative; height: 250px; width: 100%;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
             </div>
 
             <!-- Quick Actions -->
