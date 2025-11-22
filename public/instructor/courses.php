@@ -45,10 +45,16 @@ if (!$user) {
     redirect(url('login.php'));
     exit;
 }
-$instructorId = $user->getId();
+$userId = $user->getId();
+
+// Get instructor ID from instructors table (instructor_id in courses references instructors.id, not users.id)
+$db = Database::getInstance();
+$instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
+$instructorId = $instructorRecord ? $instructorRecord['id'] : $userId;
 
 // Debug: Log instructor ID
 if ($DEBUG_MODE) {
+    $debug_data['user_id'] = $userId;
     $debug_data['instructor_id'] = $instructorId;
 }
 

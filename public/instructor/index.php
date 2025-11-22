@@ -4,54 +4,102 @@
  * Main dashboard showing overview, stats, and recent activities
  */
 
+// Enable full error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Debug initialization
-$DEBUG_MODE = defined('DEBUG_MODE') ? $DEBUG_MODE : ($_ENV['DEBUG_MODE'] ?? false);
+$DEBUG_MODE = true; // Force debug mode for troubleshooting
 $page_start_time = microtime(true);
 $page_start_memory = memory_get_usage();
 $debug_data = [
     'page' => 'instructor/index.php',
     'timestamp' => date('Y-m-d H:i:s'),
     'queries' => [],
-    'errors' => []
+    'errors' => [],
+    'debug_trace' => []
 ];
 
-// Error handler for debugging
-if ($DEBUG_MODE) {
-    set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$debug_data) {
-        $debug_data['errors'][] = [
-            'type' => $errno,
-            'message' => $errstr,
-            'file' => $errfile,
-            'line' => $errline
-        ];
-        return false; // Continue with normal error handling
-    });
+// Custom error handler that captures all errors
+set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$debug_data) {
+    $debug_data['errors'][] = [
+        'type' => $errno,
+        'message' => $errstr,
+        'file' => $errfile,
+        'line' => $errline
+    ];
+    // Also log to error log
+    error_log("PHP Error [$errno]: $errstr in $errfile on line $errline");
+    return false; // Continue with normal error handling
+});
+
+// Set exception handler
+set_exception_handler(function($e) use (&$debug_data) {
+    $debug_data['errors'][] = [
+        'type' => 'Exception',
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'trace' => $e->getTraceAsString()
+    ];
+    error_log("Uncaught Exception: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
+    echo "<pre>Exception: " . htmlspecialchars($e->getMessage()) . "\n";
+    echo "File: " . htmlspecialchars($e->getFile()) . " Line: " . $e->getLine() . "\n";
+    echo "Trace:\n" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
+});
+
+$debug_data['debug_trace'][] = 'Starting script';
+
+try {
+    $debug_data['debug_trace'][] = 'Loading middleware';
+    require_once '../../src/middleware/instructor-only.php';
+    $debug_data['debug_trace'][] = 'Middleware loaded successfully';
+
+    $debug_data['debug_trace'][] = 'Loading Statistics class';
+    require_once '../../src/classes/Statistics.php';
+    $debug_data['debug_trace'][] = 'Statistics class loaded';
+
+} catch (Exception $e) {
+    die("<pre>Error loading dependencies: " . htmlspecialchars($e->getMessage()) . "\nTrace: " . htmlspecialchars($e->getTraceAsString()) . "</pre>");
 }
 
-require_once '../../src/middleware/instructor-only.php';
-require_once '../../src/classes/Statistics.php';
+$debug_data['debug_trace'][] = 'Initializing database';
 
 // Initialize database connection
 $db = Database::getInstance();
 
+$debug_data['debug_trace'][] = 'Database initialized';
+
 // Debug: Log user info
-if ($DEBUG_MODE) {
-    $debug_data['user'] = [
-        'id' => $_SESSION['user_id'] ?? null,
-        'email' => $_SESSION['user_email'] ?? null,
-        'role' => $_SESSION['user_role'] ?? null
-    ];
-}
+$debug_data['user'] = [
+    'id' => $_SESSION['user_id'] ?? null,
+    'email' => $_SESSION['user_email'] ?? null,
+    'role' => $_SESSION['user_role'] ?? null
+];
+
+$debug_data['debug_trace'][] = 'Getting current user';
 
 $user = User::current();
 if (!$user) {
     redirect(url('login.php'));
     exit;
 }
-$instructorId = $user->getId();
 
-// Debug: Log instructor ID
+$debug_data['debug_trace'][] = 'User found, getting instructor ID';
+
+$userId = $user->getId();
+$debug_data['debug_trace'][] = 'User ID: ' . $userId;
+
+// Get instructor ID from instructors table (instructor_id in courses references instructors.id, not users.id)
+$instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
+$instructorId = $instructorRecord ? $instructorRecord['id'] : $userId;
+
+$debug_data['debug_trace'][] = 'Instructor ID (from instructors table): ' . $instructorId;
+
+// Debug: Log IDs
 if ($DEBUG_MODE) {
+    $debug_data['user_id'] = $userId;
     $debug_data['instructor_id'] = $instructorId;
 }
 
@@ -97,7 +145,7 @@ $courses = $db->fetchAll("
            COUNT(DISTINCT l.id) as lesson_count
     FROM courses c
     LEFT JOIN enrollments e ON c.id = e.course_id
-    LEFT JOIN course_modules m ON c.id = m.course_id
+    LEFT JOIN modules m ON c.id = m.course_id
     LEFT JOIN lessons l ON m.id = l.module_id
     WHERE c.instructor_id = ?
     GROUP BY c.id

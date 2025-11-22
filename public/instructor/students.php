@@ -41,10 +41,15 @@ if ($DEBUG_MODE) {
 }
 
 $db = Database::getInstance();
-$instructorId = currentUserId();
+$userId = currentUserId();
+
+// Get instructor ID from instructors table (instructor_id in courses references instructors.id, not users.id)
+$instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
+$instructorId = $instructorRecord ? $instructorRecord['id'] : $userId;
 
 // Debug: Log instructor ID
 if ($DEBUG_MODE) {
+    $debug_data['user_id'] = $userId;
     $debug_data['instructor_id'] = $instructorId;
 }
 

@@ -61,7 +61,13 @@ if (!$course) {
 }
 
 // Security: Ensure instructor can only edit their own courses
-if ($course->getInstructorId() != currentUserId()) {
+// Get instructor ID from instructors table (instructor_id in courses references instructors.id, not users.id)
+$db = Database::getInstance();
+$userId = currentUserId();
+$instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
+$instructorId = $instructorRecord ? $instructorRecord['id'] : $userId;
+
+if ($course->getInstructorId() != $instructorId && !hasRole('admin')) {
     flash('message', 'You do not have permission to edit this course', 'error');
     redirect(url('instructor/courses.php'));
 }
