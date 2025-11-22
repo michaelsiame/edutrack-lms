@@ -210,45 +210,39 @@ class Course {
      */
     public static function create($data) {
         $db = Database::getInstance();
-        
+
         // Generate slug from title
         if (empty($data['slug'])) {
             $data['slug'] = self::generateSlug($data['title']);
         }
-        
+
         $sql = "INSERT INTO courses (
-            title, slug, description, short_description, what_you_will_learn,
-            requirements, thumbnail, category_id, instructor_id, level,
-            price, duration, language, status, teveta_accredited,
-            teveta_course_code, certificate_available, featured
+            title, slug, description, short_description, category_id,
+            level, language, thumbnail_url, video_intro_url, price,
+            total_hours, status, prerequisites, learning_outcomes
         ) VALUES (
-            :title, :slug, :description, :short_description, :what_you_will_learn,
-            :requirements, :thumbnail, :category_id, :instructor_id, :level,
-            :price, :duration, :language, :status, :teveta_accredited,
-            :teveta_course_code, :certificate_available, :featured
+            :title, :slug, :description, :short_description, :category_id,
+            :level, :language, :thumbnail_url, :video_intro_url, :price,
+            :total_hours, :status, :prerequisites, :learning_outcomes
         )";
-        
+
         $params = [
             'title' => $data['title'],
             'slug' => $data['slug'],
             'description' => $data['description'] ?? '',
             'short_description' => $data['short_description'] ?? '',
-            'what_you_will_learn' => $data['what_you_will_learn'] ?? '',
-            'requirements' => $data['requirements'] ?? '',
-            'thumbnail' => $data['thumbnail'] ?? null,
             'category_id' => $data['category_id'],
-            'instructor_id' => $data['instructor_id'],
-            'level' => $data['level'] ?? 'beginner',
-            'price' => $data['price'] ?? 0,
-            'duration' => $data['duration'] ?? 0,
+            'level' => $data['level'] ?? 'Beginner',
             'language' => $data['language'] ?? 'English',
+            'thumbnail_url' => $data['thumbnail_url'] ?? null,
+            'video_intro_url' => $data['video_intro_url'] ?? null,
+            'price' => $data['price'] ?? 0,
+            'total_hours' => $data['total_hours'] ?? null,
             'status' => $data['status'] ?? 'draft',
-            'teveta_accredited' => $data['teveta_accredited'] ?? 0,
-            'teveta_course_code' => $data['teveta_course_code'] ?? null,
-            'certificate_available' => $data['certificate_available'] ?? 1,
-            'featured' => $data['featured'] ?? 0
+            'prerequisites' => $data['prerequisites'] ?? null,
+            'learning_outcomes' => $data['learning_outcomes'] ?? null
         ];
-        
+
         if ($db->query($sql, $params)) {
             return $db->lastInsertId();
         }
@@ -263,12 +257,12 @@ class Course {
         $params = [];
 
         // Build dynamic update query based on provided data
+        // Column names must match the database schema
         $allowedFields = [
-            'title', 'slug', 'description', 'short_description', 'what_you_will_learn',
-            'requirements', 'category_id', 'level', 'price', 'duration', 'duration_hours',
-            'language', 'status', 'teveta_accredited', 'teveta_course_code',
-            'certificate_available', 'featured', 'promo_video_url', 'prerequisites',
-            'learning_outcomes', 'target_audience', 'thumbnail'
+            'title', 'slug', 'description', 'short_description', 'category_id',
+            'level', 'language', 'thumbnail_url', 'video_intro_url', 'price',
+            'discount_price', 'duration_weeks', 'total_hours', 'max_students',
+            'status', 'is_featured', 'prerequisites', 'learning_outcomes'
         ];
 
         foreach ($allowedFields as $field) {

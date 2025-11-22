@@ -72,22 +72,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'slug' => slugify($title),
             'description' => $description,
             'short_description' => $short_description,
-            'thumbnail' => $thumbnail,
+            'thumbnail_url' => $thumbnail,
             'category_id' => $category_id,
-            'instructor_id' => $instructor_id,
             'level' => $level,
             'language' => $language,
             'price' => $price,
-            'duration_hours' => $duration_hours,
+            'total_hours' => $duration_hours,
             'status' => $status,
-            'is_teveta' => $is_teveta,
-            'teveta_code' => $teveta_code,
-            'has_certificate' => $has_certificate,
-            'video_url' => $video_url,
+            'video_intro_url' => $video_url,
             'prerequisites' => $prerequisites,
-            'learning_outcomes' => $learning_outcomes,
-            'target_audience' => $target_audience,
-            'requirements' => $requirements
+            'learning_outcomes' => $learning_outcomes
         ];
         
         $courseId = Course::create($courseData);
