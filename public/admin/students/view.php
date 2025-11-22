@@ -7,46 +7,52 @@
 require_once '../../../src/includes/admin-debug.php';
 require_once '../../../src/middleware/admin-only.php';
 
-$studentId = $_GET['id'] ?? null;
+$userId = $_GET['id'] ?? null;
 
-if (!$studentId) {
+if (!$userId) {
     flash('message', 'Student not found', 'error');
     redirect(url('admin/students/index.php'));
 }
 
-// Get student details
+// Get student details (user with Student role)
 $student = $db->fetchOne("
-    SELECT u.*
+    SELECT u.*, s.id as student_record_id
     FROM users u
     INNER JOIN user_roles ur ON u.id = ur.user_id
     INNER JOIN roles r ON ur.role_id = r.id
+    LEFT JOIN students s ON u.id = s.user_id
     WHERE u.id = ? AND r.role_name = 'Student'
-", [$studentId]);
+", [$userId]);
 
 if (!$student) {
     flash('message', 'Student not found', 'error');
     redirect(url('admin/students/index.php'));
 }
 
-// Get student enrollments
+// Get student_id from students table (if exists)
+$studentRecordId = $student['student_record_id'] ?? null;
+
+// Get student enrollments - enrollments can use user_id or student_id
 $enrollments = $db->fetchAll("
     SELECT e.*, c.title as course_title, c.slug, c.thumbnail_url,
-           p.amount, p.payment_status
+           e.payment_status, e.amount_paid as amount
     FROM enrollments e
     JOIN courses c ON e.course_id = c.id
-    LEFT JOIN payments p ON e.id = p.enrollment_id
     WHERE e.user_id = ?
     ORDER BY e.enrolled_at DESC
-", [$studentId]);
+", [$userId]);
 
-// Get payment history
-$payments = $db->fetchAll("
-    SELECT p.*, c.title as course_title
-    FROM payments p
-    LEFT JOIN courses c ON p.course_id = c.id
-    WHERE p.user_id = ?
-    ORDER BY p.created_at DESC
-", [$studentId]);
+// Get payment history - payments uses student_id from students table
+$payments = [];
+if ($studentRecordId) {
+    $payments = $db->fetchAll("
+        SELECT p.payment_id as id, p.amount, p.payment_status as status, p.created_at, c.title as course_title
+        FROM payments p
+        LEFT JOIN courses c ON p.course_id = c.id
+        WHERE p.student_id = ?
+        ORDER BY p.created_at DESC
+    ", [$studentRecordId]);
+}
 
 // Get certificates
 $certificates = $db->fetchAll("
@@ -55,14 +61,14 @@ $certificates = $db->fetchAll("
     JOIN courses c ON cert.course_id = c.id
     WHERE cert.user_id = ?
     ORDER BY cert.issued_date DESC
-", [$studentId]);
+", [$userId]);
 
-// Calculate statistics
+// Calculate statistics - use correct column names (enrollment_status)
 $stats = [
     'total_enrollments' => count($enrollments),
-    'active_enrollments' => count(array_filter($enrollments, fn($e) => $e['status'] == 'active')),
-    'completed_enrollments' => count(array_filter($enrollments, fn($e) => $e['status'] == 'completed')),
-    'total_spent' => array_sum(array_map(fn($p) => $p['status'] == 'completed' ? $p['amount'] : 0, $payments)),
+    'active_enrollments' => count(array_filter($enrollments, fn($e) => in_array($e['enrollment_status'] ?? '', ['Enrolled', 'In Progress']))),
+    'completed_enrollments' => count(array_filter($enrollments, fn($e) => ($e['enrollment_status'] ?? '') == 'Completed')),
+    'total_spent' => array_sum(array_map(fn($p) => ($p['status'] ?? '') == 'Completed' ? floatval($p['amount'] ?? 0) : 0, $payments)),
     'certificates_earned' => count($certificates),
 ];
 
@@ -202,10 +208,10 @@ require_once '../../../src/templates/admin-header.php';
                                                 <i class="fas fa-calendar mr-1"></i>
                                                 Enrolled: <?= date('M d, Y', strtotime($enrollment['enrolled_at'])) ?>
                                             </span>
-                                            <?php if ($enrollment['status'] == 'completed' && $enrollment['completed_at']): ?>
+                                            <?php if (($enrollment['enrollment_status'] ?? '') == 'Completed' && !empty($enrollment['completion_date'])): ?>
                                             <span>
                                                 <i class="fas fa-check-circle mr-1 text-green-600"></i>
-                                                Completed: <?= date('M d, Y', strtotime($enrollment['completed_at'])) ?>
+                                                Completed: <?= date('M d, Y', strtotime($enrollment['completion_date'])) ?>
                                             </span>
                                             <?php endif; ?>
                                         </div>
@@ -220,15 +226,19 @@ require_once '../../../src/templates/admin-header.php';
                                         </div>
                                     </div>
                                     <div class="ml-4 text-right">
-                                        <?php if ($enrollment['status'] == 'active'): ?>
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Active</span>
-                                        <?php elseif ($enrollment['status'] == 'completed'): ?>
+                                        <?php
+                                        $enrollStatus = $enrollment['enrollment_status'] ?? 'Enrolled';
+                                        if (in_array($enrollStatus, ['Enrolled', 'In Progress'])): ?>
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800"><?= $enrollStatus ?></span>
+                                        <?php elseif ($enrollStatus == 'Completed'): ?>
                                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
-                                        <?php elseif ($enrollment['status'] == 'dropped'): ?>
+                                        <?php elseif ($enrollStatus == 'Dropped'): ?>
                                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Dropped</span>
+                                        <?php elseif ($enrollStatus == 'Expired'): ?>
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Expired</span>
                                         <?php endif; ?>
 
-                                        <?php if ($enrollment['payment_status']): ?>
+                                        <?php if (!empty($enrollment['payment_status'])): ?>
                                         <div class="mt-2 text-xs">
                                             <?php if ($enrollment['payment_status'] == 'completed'): ?>
                                                 <span class="text-green-600"><i class="fas fa-check"></i> Paid</span>
