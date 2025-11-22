@@ -395,9 +395,10 @@ function testCoursesCRUD() {
     // READ - List courses with instructor
     try {
         $courses = $db->fetchAll("
-            SELECT c.*, i.first_name, i.last_name, cat.name as category_name
+            SELECT c.*, u.first_name, u.last_name, cat.name as category_name
             FROM courses c
             LEFT JOIN instructors i ON c.instructor_id = i.id
+            LEFT JOIN users u ON i.user_id = u.id
             LEFT JOIN course_categories cat ON c.category_id = cat.id
             LIMIT 5
         ");
@@ -645,7 +646,7 @@ function testCertificates() {
             JOIN enrollments e ON c.enrollment_id = e.id
             JOIN users u ON e.user_id = u.id
             JOIN courses co ON e.course_id = co.id
-            ORDER BY c.issued_at DESC
+            ORDER BY c.issued_date DESC
             LIMIT 5
         ");
         recordResult('Certificates', 'READ - List certificates with joins', 'PASSED', count($certificates) . " certificates");
@@ -657,7 +658,7 @@ function testCertificates() {
     try {
         $stats = [
             'total' => $db->fetchColumn("SELECT COUNT(*) FROM certificates"),
-            'this_month' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE issued_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"),
+            'this_month' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE issued_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)"),
             'revoked' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE revoked = 1")
         ];
         recordResult('Certificates', 'READ - Certificate statistics', 'PASSED', "Total: {$stats['total']}, This month: {$stats['this_month']}");
@@ -756,7 +757,7 @@ function testStatisticsAndReports() {
             SELECT u.id, u.first_name, u.last_name,
                    COUNT(DISTINCT e.course_id) as courses_enrolled,
                    COUNT(DISTINCT c.id) as courses_completed,
-                   AVG(e.progress_percentage) as avg_progress
+                   AVG(e.progress) as avg_progress
             FROM users u
             INNER JOIN user_roles ur ON u.id = ur.user_id
             INNER JOIN roles r ON ur.role_id = r.id
@@ -842,8 +843,8 @@ function testAnnouncements() {
         $announcementData = [
             'title' => TEST_PREFIX . 'Test Announcement',
             'content' => 'This is a test announcement for automated testing',
-            'status' => 'published',
-            'created_by' => 1
+            'is_published' => 1,
+            'posted_by' => 1
         ];
 
         $announcementId = $db->insert('announcements', $announcementData);
