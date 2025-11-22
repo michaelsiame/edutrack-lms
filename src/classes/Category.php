@@ -113,16 +113,15 @@ class Category {
         $db = Database::getInstance();
 
         $sql = "INSERT INTO course_categories (
-            name, slug, description, icon, created_at, updated_at
+            name, category_description, icon_url, created_at, updated_at
         ) VALUES (
-            ?, ?, ?, ?, NOW(), NOW()
+            ?, ?, ?, NOW(), NOW()
         )";
 
         $params = [
             $data['name'],
-            $data['slug'] ?? strtolower(preg_replace('/[^a-z0-9]+/i', '-', $data['name'])),
             $data['description'] ?? '',
-            $data['icon'] ?? 'fa-folder'
+            $data['icon_url'] ?? null
         ];
 
         if ($db->query($sql, $params)) {
@@ -136,15 +135,20 @@ class Category {
      * Update category
      */
     public function update($data) {
-        $allowed = ['name', 'slug', 'description', 'icon'];
+        // Map input field names to database column names
+        $fieldMapping = [
+            'name' => 'name',
+            'description' => 'category_description',
+            'icon_url' => 'icon_url'
+        ];
 
         $updates = [];
         $params = [];
 
-        foreach ($allowed as $field) {
-            if (isset($data[$field])) {
-                $updates[] = "$field = ?";
-                $params[] = $data[$field];
+        foreach ($fieldMapping as $inputField => $dbColumn) {
+            if (isset($data[$inputField])) {
+                $updates[] = "$dbColumn = ?";
+                $params[] = $data[$inputField];
             }
         }
 
@@ -195,16 +199,14 @@ class Category {
     }
     
     /**
-     * Getters
+     * Getters - using actual database column names
      */
     public function getId() { return $this->data['id'] ?? null; }
     public function getName() { return $this->data['name'] ?? ''; }
-    public function getSlug() { return $this->data['slug'] ?? ''; }
-    public function getDescription() { return $this->data['description'] ?? ''; }
-    public function getIcon() { return $this->data['icon'] ?? 'fa-folder'; }
-    public function getColor() { return $this->data['color'] ?? '#2E70DA'; }
-    public function isActive() { return $this->data['is_active'] == 1; }
-    public function getOrderIndex() { return $this->data['order_index'] ?? 0; }
+    public function getDescription() { return $this->data['category_description'] ?? ''; }
+    public function getIcon() { return $this->data['icon_url'] ?? null; }
+    public function isActive() { return ($this->data['is_active'] ?? 1) == 1; }
+    public function getDisplayOrder() { return $this->data['display_order'] ?? 0; }
     public function getCourseCount() { return $this->data['course_count'] ?? 0; }
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }
     public function getUpdatedAt() { return $this->data['updated_at'] ?? null; }
@@ -216,12 +218,10 @@ class Category {
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'slug' => $this->getSlug(),
             'description' => $this->getDescription(),
-            'icon' => $this->getIcon(),
-            'color' => $this->getColor(),
+            'icon_url' => $this->getIcon(),
             'is_active' => $this->isActive(),
-            'order_index' => $this->getOrderIndex(),
+            'display_order' => $this->getDisplayOrder(),
             'course_count' => $this->getCourseCount(),
             'created_at' => $this->getCreatedAt(),
             'updated_at' => $this->getUpdatedAt()

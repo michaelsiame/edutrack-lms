@@ -3,6 +3,7 @@
  * Admin Edit Category
  */
 
+require_once '../../../src/includes/admin-debug.php';
 require_once '../../../src/middleware/admin-only.php';
 
 $categoryId = $_GET['id'] ?? null;
@@ -100,15 +101,6 @@ require_once '../../../src/templates/admin-header.php';
                     </label>
                     <input type="text" id="name" name="name" required
                            value="<?= htmlspecialchars($_POST['name'] ?? $category['name']) ?>"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <div>
-                    <label for="slug" class="block text-sm font-medium text-gray-700 mb-1">
-                        Slug (URL-friendly name)
-                    </label>
-                    <input type="text" id="slug" name="slug"
-                           value="<?= htmlspecialchars($_POST['slug'] ?? $category['slug']) ?>"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                 </div>
 
