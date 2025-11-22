@@ -5,7 +5,7 @@
  */
 
 // Debug initialization
-$DEBUG_MODE = defined('DEBUG_MODE') ? DEBUG_MODE : ($_ENV['DEBUG_MODE'] ?? false);
+$DEBUG_MODE = defined('DEBUG_MODE') ? $DEBUG_MODE : ($_ENV['DEBUG_MODE'] ?? false);
 $page_start_time = microtime(true);
 $page_start_memory = memory_get_usage();
 $debug_data = [
