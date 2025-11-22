@@ -23,8 +23,11 @@ class Review {
     private $updatedAt;
 
     public function __construct($db = null) {
-        global $db as $globalDb;
-        $this->db = $db ?? $globalDb;
+        if ($db === null) {
+            $this->db = Database::getInstance();
+        } else {
+            $this->db = $db;
+        }
     }
 
     /**
