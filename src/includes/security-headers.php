@@ -6,6 +6,11 @@
  * Include this file early in bootstrap.php or at the start of each page
  */
 
+// Skip headers in CLI mode or when explicitly disabled (for testing)
+if (php_sapi_name() === 'cli' || (defined('SKIP_SECURITY_HEADERS') && SKIP_SECURITY_HEADERS) || headers_sent()) {
+    return;
+}
+
 // Prevent clickjacking attacks
 header('X-Frame-Options: DENY');
 

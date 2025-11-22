@@ -7,10 +7,19 @@
  * Or via browser: http://localhost/edutrack-lms/tests/test-admin-dashboard.php
  */
 
-// Bootstrap the application
-require_once __DIR__ . '/../src/config/config.php';
-require_once __DIR__ . '/../src/includes/database.php';
-require_once __DIR__ . '/../src/includes/functions.php';
+// Define paths
+define('ROOT_PATH', dirname(__DIR__));
+define('SRC_PATH', ROOT_PATH . '/src');
+
+// Skip security headers for CLI/test mode
+if (!defined('SKIP_SECURITY_HEADERS')) {
+    define('SKIP_SECURITY_HEADERS', true);
+}
+
+// Load only the essential includes for testing
+require_once SRC_PATH . '/includes/config.php';
+require_once SRC_PATH . '/includes/database.php';
+require_once SRC_PATH . '/includes/functions.php';
 
 // Test configuration
 define('TEST_PREFIX', 'TEST_' . time() . '_');
