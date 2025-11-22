@@ -50,7 +50,7 @@ $totalPages = ceil($totalEnrollments / $perPage);
 $sql = "SELECT e.*,
         c.title as course_title, c.slug as course_slug,
         u.first_name, u.last_name, u.email,
-        p.amount, p.status as payment_status
+        p.amount, p.payment_status
         FROM enrollments e
         JOIN courses c ON e.course_id = c.id
         JOIN users u ON e.user_id = u.id

@@ -118,7 +118,8 @@ $submissions = $db->fetchAll("
     FROM assignment_submissions s
     JOIN assignments a ON s.assignment_id = a.id
     JOIN courses c ON a.course_id = c.id
-    JOIN users u ON s.user_id = u.id
+    JOIN students st ON s.student_id = st.id
+    JOIN users u ON st.user_id = u.id
     $whereClause
     ORDER BY s.submitted_at DESC
 ", $params);

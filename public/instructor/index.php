@@ -33,8 +33,9 @@ $pendingAssignments = $db->fetchAll("
     FROM assignment_submissions asub
     JOIN assignments a ON asub.assignment_id = a.id
     JOIN courses c ON a.course_id = c.id
-    JOIN users u ON asub.user_id = u.id
-    WHERE c.instructor_id = ? AND asub.status = 'submitted'
+    JOIN students st ON asub.student_id = st.id
+    JOIN users u ON st.user_id = u.id
+    WHERE c.instructor_id = ? AND asub.status = 'Submitted'
     ORDER BY asub.submitted_at DESC
     LIMIT 10
 ", [$instructorId]);

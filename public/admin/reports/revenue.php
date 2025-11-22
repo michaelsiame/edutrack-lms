@@ -13,12 +13,13 @@ $courseId = $_GET['course_id'] ?? '';
 $paymentStatus = $_GET['payment_status'] ?? '';
 
 // Build query
-$sql = "SELECT p.*, 
+$sql = "SELECT p.*,
         c.title as course_title,
         u.first_name, u.last_name, u.email
         FROM payments p
         JOIN courses c ON p.course_id = c.id
-        JOIN users u ON p.user_id = u.id
+        JOIN students st ON p.student_id = st.id
+        JOIN users u ON st.user_id = u.id
         WHERE p.created_at BETWEEN ? AND ?";
 
 $params = [$startDate . ' 00:00:00', $endDate . ' 23:59:59'];
@@ -29,7 +30,7 @@ if ($courseId) {
 }
 
 if ($paymentStatus) {
-    $sql .= " AND p.status = ?";
+    $sql .= " AND p.payment_status = ?";
     $params[] = $paymentStatus;
 }
 
@@ -39,11 +40,11 @@ $payments = $db->fetchAll($sql, $params);
 // Get summary statistics
 $summaryParams = [$startDate . ' 00:00:00', $endDate . ' 23:59:59'];
 $summary = [
-    'total_revenue' => (float) $db->fetchColumn("SELECT SUM(amount) FROM payments WHERE status = 'completed' AND created_at BETWEEN ? AND ?", $summaryParams) ?: 0,
-    'pending_revenue' => (float) $db->fetchColumn("SELECT SUM(amount) FROM payments WHERE status = 'pending' AND created_at BETWEEN ? AND ?", $summaryParams) ?: 0,
-    'completed_payments' => (int) $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE status = 'completed' AND created_at BETWEEN ? AND ?", $summaryParams),
-    'pending_payments' => (int) $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE status = 'pending' AND created_at BETWEEN ? AND ?", $summaryParams),
-    'failed_payments' => (int) $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE status = 'failed' AND created_at BETWEEN ? AND ?", $summaryParams),
+    'total_revenue' => (float) $db->fetchColumn("SELECT SUM(amount) FROM payments WHERE payment_status = 'Completed' AND created_at BETWEEN ? AND ?", $summaryParams) ?: 0,
+    'pending_revenue' => (float) $db->fetchColumn("SELECT SUM(amount) FROM payments WHERE payment_status = 'Pending' AND created_at BETWEEN ? AND ?", $summaryParams) ?: 0,
+    'completed_payments' => (int) $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE payment_status = 'Completed' AND created_at BETWEEN ? AND ?", $summaryParams),
+    'pending_payments' => (int) $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE payment_status = 'Pending' AND created_at BETWEEN ? AND ?", $summaryParams),
+    'failed_payments' => (int) $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE payment_status = 'Failed' AND created_at BETWEEN ? AND ?", $summaryParams),
 ];
 
 // Revenue by course
@@ -51,7 +52,7 @@ $revenueByCourse = $db->fetchAll("
     SELECT c.title, SUM(p.amount) as revenue, COUNT(*) as payment_count
     FROM payments p
     JOIN courses c ON p.course_id = c.id
-    WHERE p.status = 'completed' AND p.created_at BETWEEN ? AND ?
+    WHERE p.payment_status = 'Completed' AND p.created_at BETWEEN ? AND ?
     GROUP BY p.course_id
     ORDER BY revenue DESC
     LIMIT 10
@@ -269,9 +270,9 @@ require_once '../../../src/templates/admin-header.php';
                                 <div class="text-sm font-bold text-gray-900">ZMW <?= number_format($payment['amount'], 2) ?></div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <?php if ($payment['status'] == 'completed'): ?>
+                                <?php if ($payment['payment_status'] == 'Completed'): ?>
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
-                                <?php elseif ($payment['status'] == 'pending'): ?>
+                                <?php elseif ($payment['payment_status'] == 'Pending'): ?>
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
                                 <?php else: ?>
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Failed</span>
@@ -281,7 +282,7 @@ require_once '../../../src/templates/admin-header.php';
                                 <?= date('M d, Y', strtotime($payment['created_at'])) ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                <?php if ($payment['status'] == 'pending'): ?>
+                                <?php if ($payment['payment_status'] == 'Pending'): ?>
                                 <a href="<?= url('admin/payments/verify.php?id=' . $payment['id']) ?>" 
                                    class="text-blue-600 hover:text-blue-900">
                                     <i class="fas fa-eye"></i> Verify

@@ -21,10 +21,10 @@ $stats = [
         WHERE c.instructor_id = ?
     ", [$instructorId]),
     'total_revenue' => $db->fetchColumn("
-        SELECT SUM(p.amount) 
+        SELECT SUM(p.amount)
         FROM payments p
         JOIN courses c ON p.course_id = c.id
-        WHERE c.instructor_id = ? AND p.status = 'completed'
+        WHERE c.instructor_id = ? AND p.payment_status = 'Completed'
     ", [$instructorId]) ?? 0,
 ];
 
@@ -44,16 +44,17 @@ $recentEnrollments = $db->fetchAll("
 
 // Pending assignment submissions
 $pendingSubmissions = $db->fetchAll("
-    SELECT 
+    SELECT
         s.id, s.submitted_at, s.status,
         u.first_name, u.last_name,
         a.title as assignment_title,
         c.title as course_title
     FROM assignment_submissions s
-    JOIN users u ON s.user_id = u.id
+    JOIN students st ON s.student_id = st.id
+    JOIN users u ON st.user_id = u.id
     JOIN assignments a ON s.assignment_id = a.id
     JOIN courses c ON a.course_id = c.id
-    WHERE c.instructor_id = ? AND s.status = 'submitted'
+    WHERE c.instructor_id = ? AND s.status = 'Submitted'
     ORDER BY s.submitted_at ASC
     LIMIT 10
 ", [$instructorId]);

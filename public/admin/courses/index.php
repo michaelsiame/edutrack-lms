@@ -28,13 +28,14 @@ $perPage = 20;
 $offset = ($page - 1) * $perPage;
 
 // Build query
-$sql = "SELECT c.*, 
+$sql = "SELECT c.*,
         cat.name as category_name,
         u.first_name, u.last_name,
         COUNT(DISTINCT e.id) as enrollments
         FROM courses c
         LEFT JOIN course_categories cat ON c.category_id = cat.id
-        LEFT JOIN users u ON c.instructor_id = u.id
+        LEFT JOIN instructors i ON c.instructor_id = i.id
+        LEFT JOIN users u ON i.user_id = u.id
         LEFT JOIN enrollments e ON c.id = e.course_id
         WHERE 1=1";
 

@@ -28,7 +28,7 @@ $enrollmentTrends = $db->fetchAll("
 $revenueTrends = $db->fetchAll("
     SELECT DATE(created_at) as date, SUM(amount) as revenue
     FROM payments
-    WHERE status = 'completed' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    WHERE payment_status = 'Completed' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
     GROUP BY DATE(created_at)
     ORDER BY date ASC
 ");
@@ -37,7 +37,7 @@ $revenueTrends = $db->fetchAll("
 $topCourses = $db->fetchAll("
     SELECT c.id, c.title, c.thumbnail,
            COUNT(DISTINCT e.id) as enrollment_count,
-           SUM(CASE WHEN p.status = 'completed' THEN p.amount ELSE 0 END) as revenue,
+           SUM(CASE WHEN p.payment_status = 'Completed' THEN p.amount ELSE 0 END) as revenue,
            AVG(CASE WHEN r.rating IS NOT NULL THEN r.rating ELSE NULL END) as avg_rating,
            COUNT(DISTINCT r.id) as review_count
     FROM courses c
