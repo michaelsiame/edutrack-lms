@@ -60,12 +60,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Create user
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
+        // Generate username from email (part before @)
+        $username = strtolower(explode('@', $email)[0]);
+        // Ensure username is unique by appending a number if needed
+        $baseUsername = $username;
+        $counter = 1;
+        while ($db->fetchOne("SELECT id FROM users WHERE username = ?", [$username])) {
+            $username = $baseUsername . $counter;
+            $counter++;
+        }
+
         $result = $db->insert('users', [
+            'username' => $username,
             'first_name' => $firstName,
             'last_name' => $lastName,
             'email' => $email,
-            'password' => $hashedPassword,
-            'role' => $role,
+            'password_hash' => $hashedPassword,
             'status' => $status,
             'email_verified' => 0,
             'created_at' => date('Y-m-d H:i:s'),
@@ -73,6 +83,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ]);
 
         if ($result) {
+            // Get the new user ID
+            $userId = $db->lastInsertId();
+
+            // Assign role to user via user_roles junction table
+            $roleMapping = [
+                'student' => 'Student',
+                'instructor' => 'Instructor',
+                'admin' => 'Admin'
+            ];
+            $roleName = $roleMapping[$role] ?? 'Student';
+            $roleRecord = $db->fetchOne("SELECT id FROM roles WHERE role_name = ?", [$roleName]);
+
+            if ($roleRecord) {
+                $db->insert('user_roles', [
+                    'user_id' => $userId,
+                    'role_id' => $roleRecord['id'],
+                    'assigned_at' => date('Y-m-d H:i:s')
+                ]);
+            }
+
             flash('message', 'User created successfully', 'success');
             redirect(url('admin/users/index.php'));
         } else {

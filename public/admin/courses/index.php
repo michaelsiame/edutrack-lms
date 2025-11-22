@@ -152,8 +152,8 @@ require_once '../../../src/templates/admin-header.php';
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4">
                         <div class="flex items-center">
-                            <?php if ($course['thumbnail']): ?>
-                                <img src="<?= uploadUrl($course['thumbnail']) ?>" alt="" class="w-16 h-16 object-cover rounded mr-3">
+                            <?php if (!empty($course['thumbnail_url'])): ?>
+                                <img src="<?= uploadUrl($course['thumbnail_url']) ?>" alt="" class="w-16 h-16 object-cover rounded mr-3">
                             <?php endif; ?>
                             <div>
                                 <p class="font-medium text-gray-900"><?= sanitize($course['title']) ?></p>
