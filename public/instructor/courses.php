@@ -28,6 +28,7 @@ if ($DEBUG_MODE) {
 }
 
 require_once '../../src/middleware/instructor-only.php';
+require_once '../../src/classes/User.php';
 require_once '../../src/classes/Course.php';
 require_once '../../src/classes/Statistics.php';
 

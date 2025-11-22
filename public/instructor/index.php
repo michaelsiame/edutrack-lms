@@ -56,6 +56,10 @@ try {
     require_once '../../src/middleware/instructor-only.php';
     $debug_data['debug_trace'][] = 'Middleware loaded successfully';
 
+    $debug_data['debug_trace'][] = 'Loading User class';
+    require_once '../../src/classes/User.php';
+    $debug_data['debug_trace'][] = 'User class loaded';
+
     $debug_data['debug_trace'][] = 'Loading Statistics class';
     require_once '../../src/classes/Statistics.php';
     $debug_data['debug_trace'][] = 'Statistics class loaded';
