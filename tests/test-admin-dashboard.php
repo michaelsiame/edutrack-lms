@@ -659,7 +659,7 @@ function testCertificates() {
         $stats = [
             'total' => $db->fetchColumn("SELECT COUNT(*) FROM certificates"),
             'this_month' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE issued_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)"),
-            'revoked' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE revoked = 1")
+            'not_verified' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE is_verified = 0")
         ];
         recordResult('Certificates', 'READ - Certificate statistics', 'PASSED', "Total: {$stats['total']}, This month: {$stats['this_month']}");
     } catch (Exception $e) {
@@ -858,7 +858,7 @@ function testAnnouncements() {
 
     // READ
     try {
-        $announcement = $db->fetchOne("SELECT * FROM announcements WHERE id = ?", [$announcementId]);
+        $announcement = $db->fetchOne("SELECT * FROM announcements WHERE announcement_id = ?", [$announcementId]);
         recordResult('Announcements', 'READ - Fetch announcement', $announcement ? 'PASSED' : 'FAILED');
     } catch (Exception $e) {
         recordResult('Announcements', 'READ - Fetch announcement', 'FAILED', $e->getMessage());
@@ -866,7 +866,7 @@ function testAnnouncements() {
 
     // UPDATE
     try {
-        $db->update('announcements', ['title' => TEST_PREFIX . 'Updated Announcement'], 'id = ?', [$announcementId]);
+        $db->update('announcements', ['title' => TEST_PREFIX . 'Updated Announcement'], 'announcement_id = ?', [$announcementId]);
         recordResult('Announcements', 'UPDATE - Update announcement', 'PASSED');
     } catch (Exception $e) {
         recordResult('Announcements', 'UPDATE - Update announcement', 'FAILED', $e->getMessage());
@@ -874,7 +874,7 @@ function testAnnouncements() {
 
     // DELETE
     try {
-        $db->delete('announcements', 'id = ?', [$announcementId]);
+        $db->delete('announcements', 'announcement_id = ?', [$announcementId]);
         recordResult('Announcements', 'DELETE - Remove announcement', 'PASSED');
         $testDataIds['announcements'] = array_diff($testDataIds['announcements'] ?? [], [$announcementId]);
     } catch (Exception $e) {
