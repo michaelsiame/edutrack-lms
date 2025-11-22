@@ -31,6 +31,9 @@ if ($DEBUG_MODE) {
 require_once '../../src/middleware/instructor-only.php';
 require_once '../../src/classes/Statistics.php';
 
+// Initialize database connection
+$db = Database::getInstance();
+
 // Debug: Log user info
 if ($DEBUG_MODE) {
     $debug_data['user'] = [
