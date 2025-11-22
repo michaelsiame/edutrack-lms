@@ -22,7 +22,8 @@ $query = "SELECT c.*, cc.name as category_name, cc.color as category_color,
           CONCAT(u.first_name, ' ', u.last_name) as instructor_name
           FROM courses c
           JOIN course_categories cc ON c.category_id = cc.id
-          JOIN users u ON c.instructor_id = u.id
+          LEFT JOIN instructors i ON c.instructor_id = i.id
+          LEFT JOIN users u ON i.user_id = u.id
           WHERE c.status = 'published'";
 
 $params = [];

@@ -26,7 +26,7 @@ $enrollments = $db->fetchAll("
     SELECT e.*, c.title, c.slug, c.thumbnail, c.description, c.price,
            c.instructor_id,
            u.first_name as instructor_first_name, u.last_name as instructor_last_name,
-           e.enrolled_at, e.last_accessed, e.progress_percentage, e.status as enrollment_status,
+           e.enrolled_at, e.last_accessed, e.progress_percentage, e.enrollment_status,
            COUNT(DISTINCT l.id) as total_lessons,
            COUNT(DISTINCT lp.lesson_id) as completed_lessons,
            COUNT(DISTINCT a.id) as total_assignments,
@@ -35,7 +35,8 @@ $enrollments = $db->fetchAll("
            COUNT(DISTINCT qa.id) as attempted_quizzes
     FROM enrollments e
     JOIN courses c ON e.course_id = c.id
-    LEFT JOIN users u ON c.instructor_id = u.id
+    LEFT JOIN instructors i ON c.instructor_id = i.id
+    LEFT JOIN users u ON i.user_id = u.id
     LEFT JOIN course_modules m ON c.id = m.course_id
     LEFT JOIN lessons l ON m.id = l.module_id
     LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = e.user_id AND lp.status = 'completed'

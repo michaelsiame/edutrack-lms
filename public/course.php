@@ -23,11 +23,12 @@ $course = $db->fetchOne("
            cc.name as category_name,
            cc.color as category_color,
            CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
-           u.id as instructor_id,
+           i.id as instructor_id,
            COUNT(DISTINCT e.id) as enrolled_students
     FROM courses c
     JOIN course_categories cc ON c.category_id = cc.id
-    JOIN users u ON c.instructor_id = u.id
+    LEFT JOIN instructors i ON c.instructor_id = i.id
+    LEFT JOIN users u ON i.user_id = u.id
     LEFT JOIN enrollments e ON c.id = e.course_id
     WHERE c.id = ? AND c.status = 'published'
     GROUP BY c.id

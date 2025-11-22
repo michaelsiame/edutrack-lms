@@ -36,9 +36,10 @@ try {
                u.last_name as instructor_last_name,
                e.id as enrollment_id,
                e.progress_percentage,
-               e.status as enrollment_status
+               e.enrollment_status
         FROM courses c
-        JOIN users u ON c.instructor_id = u.id
+        LEFT JOIN instructors i ON c.instructor_id = i.id
+        LEFT JOIN users u ON i.user_id = u.id
         LEFT JOIN enrollments e ON e.course_id = c.id AND e.user_id = ?
         WHERE c.slug = ?
     ", [$userId, $courseSlug]);

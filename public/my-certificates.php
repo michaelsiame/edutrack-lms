@@ -23,7 +23,8 @@ $certificates = $db->fetchAll("
            e.enrolled_at, e.completed_at as course_completed_at
     FROM certificates cert
     JOIN courses c ON cert.course_id = c.id
-    JOIN users u ON c.instructor_id = u.id
+    LEFT JOIN instructors i ON c.instructor_id = i.id
+    LEFT JOIN users u ON i.user_id = u.id
     LEFT JOIN enrollments e ON e.course_id = c.id AND e.user_id = cert.user_id
     WHERE cert.user_id = ?
     ORDER BY cert.issued_at DESC
