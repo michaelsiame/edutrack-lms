@@ -54,7 +54,7 @@ $certificates = $db->fetchAll("
     FROM certificates cert
     JOIN courses c ON cert.course_id = c.id
     WHERE cert.user_id = ?
-    ORDER BY cert.issued_at DESC
+    ORDER BY cert.issued_date DESC
 ", [$studentId]);
 
 // Calculate statistics
@@ -213,9 +213,9 @@ require_once '../../../src/templates/admin-header.php';
                                             <div class="flex items-center">
                                                 <div class="flex-1 bg-gray-200 rounded-full h-2 mr-2">
                                                     <div class="bg-blue-600 h-2 rounded-full"
-                                                         style="width: <?= $enrollment['progress_percentage'] ?>%"></div>
+                                                         style="width: <?= $enrollment['progress'] ?>%"></div>
                                                 </div>
-                                                <span class="text-sm text-gray-600"><?= round($enrollment['progress_percentage']) ?>%</span>
+                                                <span class="text-sm text-gray-600"><?= round($enrollment['progress']) ?>%</span>
                                             </div>
                                         </div>
                                     </div>
@@ -308,7 +308,7 @@ require_once '../../../src/templates/admin-header.php';
                                             <?= $cert['certificate_number'] ?>
                                         </p>
                                         <p class="text-xs text-gray-500 mt-1">
-                                            Issued: <?= date('M d, Y', strtotime($cert['issued_at'])) ?>
+                                            Issued: <?= date('M d, Y', strtotime($cert['issued_date'])) ?>
                                         </p>
                                     </div>
                                 </div>

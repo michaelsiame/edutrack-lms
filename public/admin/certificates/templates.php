@@ -43,7 +43,7 @@ $settings = $_SESSION['certificate_settings'] ?? [
 // Get certificate statistics
 $stats = [
     'total_issued' => (int) $db->fetchColumn("SELECT COUNT(*) FROM certificates"),
-    'this_month' => (int) $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE issued_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"),
+    'this_month' => (int) $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE issued_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)"),
     'pending' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'completed' AND id NOT IN (SELECT enrollment_id FROM certificates WHERE enrollment_id IS NOT NULL)"),
 ];
 
@@ -56,7 +56,7 @@ $recentCertificates = $db->fetchAll("
     JOIN enrollments e ON c.enrollment_id = e.id
     JOIN users u ON e.user_id = u.id
     JOIN courses co ON e.course_id = co.id
-    ORDER BY c.issued_at DESC
+    ORDER BY c.issued_date DESC
     LIMIT 10
 ");
 
@@ -260,7 +260,7 @@ require_once '../../../src/templates/admin-header.php';
                                         <?= htmlspecialchars($cert['course_title']) ?>
                                     </p>
                                     <p class="text-xs text-gray-500 mt-1">
-                                        <?= date('M d, Y', strtotime($cert['issued_at'])) ?>
+                                        <?= date('M d, Y', strtotime($cert['issued_date'])) ?>
                                     </p>
                                     <p class="text-xs text-gray-400 font-mono mt-1">
                                         <?= $cert['certificate_number'] ?>

@@ -74,8 +74,8 @@ if ($courseId) {
 }
 
 if ($revoked !== '') {
-    $sql .= " AND c.revoked = ?";
-    $params[] = $revoked ? 1 : 0;
+    $sql .= " AND c.is_verified = ?";
+    $params[] = $revoked ? 0 : 1;  // revoked=1 means is_verified=0
 }
 
 // Get total count
@@ -84,7 +84,7 @@ $totalCerts = $db->fetchColumn($countSql, $params);
 $totalPages = ceil($totalCerts / $perPage);
 
 // Get certificates
-$sql .= " ORDER BY c.issued_at DESC LIMIT ? OFFSET ?";
+$sql .= " ORDER BY c.issued_date DESC LIMIT ? OFFSET ?";
 $params[] = $perPage;
 $params[] = $offset;
 $certificates = $db->fetchAll($sql, $params);
@@ -95,9 +95,9 @@ $courses = Course::all(['order' => 'title ASC']);
 // Stats
 $stats = [
     'total' => $db->fetchColumn("SELECT COUNT(*) FROM certificates"),
-    'issued_today' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE DATE(issued_at) = CURDATE()"),
-    'issued_month' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE MONTH(issued_at) = MONTH(CURDATE()) AND YEAR(issued_at) = YEAR(CURDATE())"),
-    'revoked' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE revoked = 1")
+    'issued_today' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE issued_date = CURDATE()"),
+    'issued_month' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE MONTH(issued_date) = MONTH(CURDATE()) AND YEAR(issued_date) = YEAR(CURDATE())"),
+    'revoked' => $db->fetchColumn("SELECT COUNT(*) FROM certificates WHERE is_verified = 0")
 ];
 
 $page_title = 'Manage Certificates';
@@ -249,10 +249,10 @@ require_once '../../../src/templates/admin-header.php';
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-600">
-                            <?= timeAgo($cert['issued_at']) ?>
+                            <?= timeAgo($cert['issued_date']) ?>
                         </td>
                         <td class="px-6 py-4">
-                            <?php if ($cert['revoked']): ?>
+                            <?php if (!$cert['is_verified']): ?>
                                 <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold">
                                     Revoked
                                 </span>
@@ -271,7 +271,7 @@ require_once '../../../src/templates/admin-header.php';
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 
-                                <?php if (!$cert['revoked']): ?>
+                                <?php if ($cert['is_verified']): ?>
                                 <form method="POST" class="inline" onsubmit="return confirm('Revoke this certificate?')">
                                     <?= csrfField() ?>
                                     <input type="hidden" name="action" value="revoke">

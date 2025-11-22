@@ -205,9 +205,9 @@ require_once '../../../src/templates/admin-header.php';
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="w-20 bg-gray-200 rounded-full h-2 mr-2">
-                                    <div class="bg-blue-600 h-2 rounded-full" style="width: <?= $enrollment['progress_percentage'] ?>%"></div>
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: <?= $enrollment['progress'] ?>%"></div>
                                 </div>
-                                <span class="text-sm text-gray-600"><?= round($enrollment['progress_percentage']) ?>%</span>
+                                <span class="text-sm text-gray-600"><?= round($enrollment['progress']) ?>%</span>
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
