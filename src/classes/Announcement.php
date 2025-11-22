@@ -18,6 +18,8 @@ class Announcement {
     private $expiresAt;
     private $createdAt;
     private $updatedAt;
+    private $creatorName;
+    private $courseTitle;
 
     public function __construct($db = null) {
         if ($db === null) {

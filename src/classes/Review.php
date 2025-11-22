@@ -21,6 +21,9 @@ class Review {
     private $helpfulCount;
     private $createdAt;
     private $updatedAt;
+    private $userName;
+    private $userEmail;
+    private $userAvatar;
 
     public function __construct($db = null) {
         if ($db === null) {
