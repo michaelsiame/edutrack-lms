@@ -25,7 +25,14 @@ if (!$course) {
 
 // Get categories and instructors
 $categories = Category::all(['active_only' => true]);
-$instructors = User::getByRole('instructor');
+$instructors = $db->fetchAll("
+    SELECT DISTINCT u.id, u.first_name, u.last_name, u.email
+    FROM users u
+    INNER JOIN user_roles ur ON u.id = ur.user_id
+    INNER JOIN roles r ON ur.role_id = r.id
+    WHERE r.role_name IN ('Instructor', 'Admin', 'Super Admin')
+    ORDER BY u.first_name
+");
 
 $errors = [];
 

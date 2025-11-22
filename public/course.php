@@ -21,13 +21,13 @@ $db = Database::getInstance();
 $course = $db->fetchOne("
     SELECT c.*,
            cc.name as category_name,
-           cc.color as category_color,
            CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
-           u.id as instructor_id,
+           u.id as instructor_user_id,
            COUNT(DISTINCT e.id) as enrolled_students
     FROM courses c
     JOIN course_categories cc ON c.category_id = cc.id
-    JOIN users u ON c.instructor_id = u.id
+    LEFT JOIN instructors i ON c.instructor_id = i.id
+    LEFT JOIN users u ON i.user_id = u.id
     LEFT JOIN enrollments e ON c.id = e.course_id
     WHERE c.id = ? AND c.status = 'published'
     GROUP BY c.id
@@ -86,7 +86,7 @@ $reviewStats = Review::getCourseStats($courseId);
 
 // Get related courses (same category)
 $relatedCourses = $db->fetchAll("
-    SELECT c.*, cc.name as category_name, cc.color as category_color
+    SELECT c.*, cc.name as category_name
     FROM courses c
     JOIN course_categories cc ON c.category_id = cc.id
     WHERE c.category_id = ? AND c.id != ? AND c.status = 'published'
@@ -100,7 +100,7 @@ require_once '../src/templates/header.php';
 ?>
 
 <!-- Course Hero Section -->
-<section class="bg-gradient-to-br from-<?= $course['category_color'] ?>-600 via-<?= $course['category_color'] ?>-700 to-purple-900 text-white py-16">
+<section class="bg-gradient-to-br from-primary-600 via-primary-700 to-purple-900 text-white py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left Column - Course Info -->
@@ -120,11 +120,11 @@ require_once '../src/templates/header.php';
 
                 <!-- Category Badge -->
                 <div class="mb-4">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-<?= $course['category_color'] ?>-100 text-<?= $course['category_color'] ?>-900">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-primary-100 text-primary-900">
                         <i class="fas fa-tag mr-2"></i>
                         <?= sanitize($course['category_name']) ?>
                     </span>
-                    <?php if ($course['is_teveta_certified']): ?>
+                    <?php if (!empty($course['is_teveta_certified'])): ?>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-yellow-400 text-gray-900 ml-2">
                             <i class="fas fa-certificate mr-2"></i>
                             TEVETA Certified
@@ -138,32 +138,32 @@ require_once '../src/templates/header.php';
                 </h1>
 
                 <!-- Course Short Description -->
-                <p class="text-xl text-<?= $course['category_color'] ?>-100 mb-6 leading-relaxed">
-                    <?= sanitize($course['short_description']) ?>
+                <p class="text-xl text-primary-100 mb-6 leading-relaxed">
+                    <?= sanitize($course['short_description'] ?? '') ?>
                 </p>
 
                 <!-- Course Meta Info -->
                 <div class="flex flex-wrap items-center gap-6 text-sm mb-6">
                     <div class="flex items-center">
                         <i class="fas fa-star text-yellow-400 mr-2"></i>
-                        <span class="font-semibold"><?= number_format($course['rating_average'], 1) ?></span>
-                        <span class="ml-1 text-<?= $course['category_color'] ?>-100">(<?= $course['rating_count'] ?> reviews)</span>
+                        <span class="font-semibold"><?= number_format($course['rating_average'] ?? 0, 1) ?></span>
+                        <span class="ml-1 text-primary-100">(<?= $course['rating_count'] ?? 0 ?> reviews)</span>
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-users mr-2"></i>
-                        <span><?= number_format($course['enrolled_students']) ?> students</span>
+                        <span><?= number_format($course['enrolled_students'] ?? 0) ?> students</span>
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-signal mr-2"></i>
-                        <span class="capitalize"><?= sanitize($course['course_level']) ?></span>
+                        <span class="capitalize"><?= sanitize($course['level'] ?? 'Beginner') ?></span>
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-clock mr-2"></i>
-                        <span><?= $course['duration_hours'] ?> hours</span>
+                        <span><?= $course['total_hours'] ?? 0 ?> hours</span>
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-globe mr-2"></i>
-                        <span><?= sanitize($course['language']) ?></span>
+                        <span><?= sanitize($course['language'] ?? 'English') ?></span>
                     </div>
                 </div>
 
@@ -175,8 +175,8 @@ require_once '../src/templates/header.php';
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm text-<?= $course['category_color'] ?>-100">Instructor</p>
-                        <p class="font-semibold text-lg"><?= sanitize($course['instructor_name']) ?></p>
+                        <p class="text-sm text-primary-100">Instructor</p>
+                        <p class="font-semibold text-lg"><?= sanitize($course['instructor_name'] ?? 'Staff') ?></p>
                     </div>
                 </div>
             </div>
@@ -185,14 +185,14 @@ require_once '../src/templates/header.php';
             <div class="lg:col-span-1">
                 <div class="bg-white rounded-xl shadow-2xl overflow-hidden sticky top-4">
                     <!-- Course Thumbnail -->
-                    <div class="relative h-48 bg-gradient-to-br from-<?= $course['category_color'] ?>-100 to-<?= $course['category_color'] ?>-200">
-                        <?php if ($course['thumbnail'] && file_exists('uploads/courses/' . $course['thumbnail'])): ?>
-                            <img src="uploads/courses/<?= sanitize($course['thumbnail']) ?>"
+                    <div class="relative h-48 bg-gradient-to-br from-primary-100 to-primary-200">
+                        <?php if (!empty($course['thumbnail_url'])): ?>
+                            <img src="uploads/courses/<?= sanitize($course['thumbnail_url']) ?>"
                                  alt="<?= sanitize($course['title']) ?>"
                                  class="w-full h-full object-cover">
                         <?php else: ?>
                             <div class="w-full h-full flex items-center justify-center">
-                                <i class="fas fa-graduation-cap text-6xl text-<?= $course['category_color'] ?>-600"></i>
+                                <i class="fas fa-graduation-cap text-6xl text-primary-600"></i>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -207,7 +207,7 @@ require_once '../src/templates/header.php';
                                     ZMW <?= number_format($course['price'], 2) ?>
                                 <?php endif; ?>
                             </div>
-                            <?php if ($course['discounted_price'] && $course['discounted_price'] < $course['price']): ?>
+                            <?php if (!empty($course['discount_price']) && $course['discount_price'] < $course['price']): ?>
                                 <div class="text-lg text-gray-500 line-through mt-1">
                                     ZMW <?= number_format($course['price'], 2) ?>
                                 </div>
@@ -247,7 +247,7 @@ require_once '../src/templates/header.php';
                             <ul class="space-y-3 text-sm text-gray-600">
                                 <li class="flex items-start">
                                     <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
-                                    <span><?= $course['duration_hours'] ?> hours on-demand content</span>
+                                    <span><?= $course['total_hours'] ?? 0 ?> hours on-demand content</span>
                                 </li>
                                 <li class="flex items-start">
                                     <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
@@ -257,7 +257,7 @@ require_once '../src/templates/header.php';
                                     <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
                                     <span>Access on mobile and desktop</span>
                                 </li>
-                                <?php if ($course['is_teveta_certified']): ?>
+                                <?php if (!empty($course['is_teveta_certified'])): ?>
                                 <li class="flex items-start">
                                     <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
                                     <span>TEVETA Certificate upon completion</span>
@@ -458,8 +458,8 @@ require_once '../src/templates/header.php';
                         <?php foreach ($relatedCourses as $related): ?>
                             <a href="course.php?id=<?= $related['id'] ?>" class="block group">
                                 <div class="flex items-start space-x-3">
-                                    <div class="flex-shrink-0 w-20 h-16 bg-gradient-to-br from-<?= $related['category_color'] ?>-100 to-<?= $related['category_color'] ?>-200 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-book text-<?= $related['category_color'] ?>-600"></i>
+                                    <div class="flex-shrink-0 w-20 h-16 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-book text-primary-600"></i>
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-semibold text-gray-900 group-hover:text-primary-600 line-clamp-2">
