@@ -30,8 +30,8 @@ if (!$student) {
 
 // Get student enrollments
 $enrollments = $db->fetchAll("
-    SELECT e.*, c.title as course_title, c.slug, c.thumbnail,
-           p.amount, p.status as payment_status, p.transaction_reference
+    SELECT e.*, c.title as course_title, c.slug, c.thumbnail_url,
+           p.amount, p.payment_status
     FROM enrollments e
     JOIN courses c ON e.course_id = c.id
     LEFT JOIN payments p ON e.id = p.enrollment_id

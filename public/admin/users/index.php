@@ -44,26 +44,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Filters
-$role = $_GET['role'] ?? '';
+$roleFilter = $_GET['role'] ?? '';
 $status = $_GET['status'] ?? '';
 $search = $_GET['search'] ?? '';
 $page = max(1, $_GET['page'] ?? 1);
 $perPage = 20;
 
-// Build query
+// Build query - use junction table for roles
+$baseQuery = "FROM users u
+    LEFT JOIN user_roles ur ON u.id = ur.user_id
+    LEFT JOIN roles r ON ur.role_id = r.id";
+
 $where = [];
 $params = [];
 
-if ($role) {
-    $where[] = "role = ?";
-    $params[] = $role;
+if ($roleFilter) {
+    $roleMapping = ['student' => 'Student', 'instructor' => 'Instructor', 'admin' => 'Admin'];
+    $where[] = "r.role_name = ?";
+    $params[] = $roleMapping[$roleFilter] ?? $roleFilter;
 }
 if ($status) {
-    $where[] = "status = ?";
+    $where[] = "u.status = ?";
     $params[] = $status;
 }
 if ($search) {
-    $where[] = "(first_name LIKE ? OR last_name LIKE ? OR email LIKE ?)";
+    $where[] = "(u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ?)";
     $params[] = "%$search%";
     $params[] = "%$search%";
     $params[] = "%$search%";
@@ -72,12 +77,12 @@ if ($search) {
 $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
 // Get total count
-$totalUsers = $db->fetchColumn("SELECT COUNT(*) FROM users $whereClause", $params);
+$totalUsers = $db->fetchColumn("SELECT COUNT(DISTINCT u.id) $baseQuery $whereClause", $params);
 $totalPages = ceil($totalUsers / $perPage);
 $offset = ($page - 1) * $perPage;
 
-// Get users
-$sql = "SELECT * FROM users $whereClause ORDER BY created_at DESC LIMIT ? OFFSET ?";
+// Get users with role info
+$sql = "SELECT DISTINCT u.*, COALESCE(r.role_name, 'Student') as role_name $baseQuery $whereClause ORDER BY u.created_at DESC LIMIT ? OFFSET ?";
 $params[] = $perPage;
 $params[] = $offset;
 $users = $db->fetchAll($sql, $params);
@@ -138,9 +143,9 @@ require_once '../../../src/templates/admin-header.php';
             
             <select name="role" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500">
                 <option value="">All Roles</option>
-                <option value="student" <?= $role == 'student' ? 'selected' : '' ?>>Students</option>
-                <option value="instructor" <?= $role == 'instructor' ? 'selected' : '' ?>>Instructors</option>
-                <option value="admin" <?= $role == 'admin' ? 'selected' : '' ?>>Admins</option>
+                <option value="student" <?= $roleFilter == 'student' ? 'selected' : '' ?>>Students</option>
+                <option value="instructor" <?= $roleFilter == 'instructor' ? 'selected' : '' ?>>Instructors</option>
+                <option value="admin" <?= $roleFilter == 'admin' ? 'selected' : '' ?>>Admins</option>
             </select>
             
             <select name="status" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500">
@@ -176,69 +181,65 @@ require_once '../../../src/templates/admin-header.php';
             </thead>
             <tbody class="divide-y divide-gray-200">
                 <?php foreach ($users as $userData): ?>
-                    <?php $user = new User($userData['id']); ?>
+                    <?php
+                    $userRole = strtolower($userData['role_name'] ?? 'student');
+                    $userStatus = $userData['status'] ?? 'active';
+                    ?>
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4">
                             <div class="flex items-center">
-                                <img src="<?= getGravatar($user->email) ?>" class="h-10 w-10 rounded-full mr-3">
+                                <img src="<?= getGravatar($userData['email']) ?>" class="h-10 w-10 rounded-full mr-3">
                                 <div>
-                                    <div class="font-medium text-gray-900"><?= sanitize($user->first_name . ' ' . $user->last_name) ?></div>
-                                    <div class="text-sm text-gray-500"><?= sanitize($user->email) ?></div>
+                                    <div class="font-medium text-gray-900"><?= sanitize($userData['first_name'] . ' ' . $userData['last_name']) ?></div>
+                                    <div class="text-sm text-gray-500"><?= sanitize($userData['email']) ?></div>
                                 </div>
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            <form method="POST" class="inline">
-                                <?= csrfField() ?>
-                                <input type="hidden" name="action" value="change_role">
-                                <input type="hidden" name="user_id" value="<?= $user->getId() ?>">
-                                <select name="role" onchange="this.form.submit()" 
-                                        class="text-xs rounded-full px-3 py-1 font-semibold border-0
-                                        <?php
-                                        switch($user->role) {
-                                            case 'admin': echo 'bg-red-100 text-red-800'; break;
-                                            case 'instructor': echo 'bg-purple-100 text-purple-800'; break;
-                                            case 'student': echo 'bg-blue-100 text-blue-800'; break;
-                                        }
-                                        ?>">
-                                    <option value="student" <?= $user->role == 'student' ? 'selected' : '' ?>>Student</option>
-                                    <option value="instructor" <?= $user->role == 'instructor' ? 'selected' : '' ?>>Instructor</option>
-                                    <option value="admin" <?= $user->role == 'admin' ? 'selected' : '' ?>>Admin</option>
-                                </select>
-                            </form>
+                            <?php
+                            $roleColors = [
+                                'admin' => 'bg-red-100 text-red-800',
+                                'instructor' => 'bg-purple-100 text-purple-800',
+                                'student' => 'bg-blue-100 text-blue-800',
+                            ];
+                            $roleClass = $roleColors[$userRole] ?? 'bg-blue-100 text-blue-800';
+                            ?>
+                            <span class="text-xs rounded-full px-3 py-1 font-semibold <?= $roleClass ?>">
+                                <?= ucfirst($userRole) ?>
+                            </span>
                         </td>
                         <td class="px-6 py-4">
                             <form method="POST" class="inline">
                                 <?= csrfField() ?>
                                 <input type="hidden" name="action" value="change_status">
-                                <input type="hidden" name="user_id" value="<?= $user->getId() ?>">
-                                <select name="status" onchange="this.form.submit()" 
+                                <input type="hidden" name="user_id" value="<?= $userData['id'] ?>">
+                                <select name="status" onchange="this.form.submit()"
                                         class="text-xs rounded-full px-3 py-1 font-semibold border-0
                                         <?php
-                                        switch($user->status) {
+                                        switch($userStatus) {
                                             case 'active': echo 'bg-green-100 text-green-800'; break;
                                             case 'inactive': echo 'bg-gray-100 text-gray-800'; break;
                                             case 'suspended': echo 'bg-red-100 text-red-800'; break;
                                         }
                                         ?>">
-                                    <option value="active" <?= $user->status == 'active' ? 'selected' : '' ?>>Active</option>
-                                    <option value="inactive" <?= $user->status == 'inactive' ? 'selected' : '' ?>>Inactive</option>
-                                    <option value="suspended" <?= $user->status == 'suspended' ? 'selected' : '' ?>>Suspended</option>
+                                    <option value="active" <?= $userStatus == 'active' ? 'selected' : '' ?>>Active</option>
+                                    <option value="inactive" <?= $userStatus == 'inactive' ? 'selected' : '' ?>>Inactive</option>
+                                    <option value="suspended" <?= $userStatus == 'suspended' ? 'selected' : '' ?>>Suspended</option>
                                 </select>
                             </form>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-500"><?= timeAgo($user->created_at) ?></td>
-                        <td class="px-6 py-4 text-sm text-gray-500"><?= $user->last_login ? timeAgo($user->last_login) : 'Never' ?></td>
+                        <td class="px-6 py-4 text-sm text-gray-500"><?= timeAgo($userData['created_at']) ?></td>
+                        <td class="px-6 py-4 text-sm text-gray-500"><?= !empty($userData['last_login_at']) ? timeAgo($userData['last_login_at']) : 'Never' ?></td>
                         <td class="px-6 py-4">
                             <div class="flex items-center space-x-2">
-                                <a href="<?= url('admin/users/edit.php?id=' . $user->getId()) ?>" class="text-blue-600 hover:text-blue-800" title="Edit">
+                                <a href="<?= url('admin/users/edit.php?id=' . $userData['id']) ?>" class="text-blue-600 hover:text-blue-800" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <?php if ($user->getId() != currentUserId()): ?>
+                                <?php if ($userData['id'] != currentUserId()): ?>
                                 <form method="POST" class="inline" onsubmit="return confirmDelete('Delete this user and all their data?')">
                                     <?= csrfField() ?>
                                     <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="user_id" value="<?= $user->getId() ?>">
+                                    <input type="hidden" name="user_id" value="<?= $userData['id'] ?>">
                                     <button type="submit" class="text-red-600 hover:text-red-800" title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -260,11 +261,11 @@ require_once '../../../src/templates/admin-header.php';
                 </p>
                 <div class="flex space-x-2">
                     <?php if ($page > 1): ?>
-                        <a href="?page=<?= $page - 1 ?>&role=<?= $role ?>&status=<?= $status ?>&search=<?= urlencode($search) ?>" 
+                        <a href="?page=<?= $page - 1 ?>&role=<?= $roleFilter ?>&status=<?= $status ?>&search=<?= urlencode($search) ?>"
                            class="px-3 py-2 border rounded hover:bg-gray-50">Previous</a>
                     <?php endif; ?>
                     <?php if ($page < $totalPages): ?>
-                        <a href="?page=<?= $page + 1 ?>&role=<?= $role ?>&status=<?= $status ?>&search=<?= urlencode($search) ?>" 
+                        <a href="?page=<?= $page + 1 ?>&role=<?= $roleFilter ?>&status=<?= $status ?>&search=<?= urlencode($search) ?>"
                            class="px-3 py-2 border rounded hover:bg-gray-50">Next</a>
                     <?php endif; ?>
                 </div>
