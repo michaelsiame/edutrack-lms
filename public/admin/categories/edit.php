@@ -13,7 +13,7 @@ if (!$categoryId) {
 }
 
 // Get category
-$category = $db->fetchOne("SELECT * FROM categories WHERE id = ?", [$categoryId]);
+$category = $db->fetchOne("SELECT *, category_description as description, icon_url as icon FROM course_categories WHERE id = ?", [$categoryId]);
 
 if (!$category) {
     flash('message', 'Category not found', 'error');
@@ -44,21 +44,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $slug = trim($slug, '-');
     }
 
-    // Check if slug already exists (excluding current category)
+    // Check if name already exists (excluding current category)
     if (empty($errors)) {
-        $existingCategory = $db->fetchOne("SELECT id FROM categories WHERE slug = ? AND id != ?", [$slug, $categoryId]);
+        $existingCategory = $db->fetchOne("SELECT id FROM course_categories WHERE name = ? AND id != ?", [$name, $categoryId]);
         if ($existingCategory) {
-            $errors[] = 'Category slug already exists';
+            $errors[] = 'Category name already exists';
         }
     }
 
     if (empty($errors)) {
-        $result = $db->update('categories', [
+        $result = $db->update('course_categories', [
             'name' => $name,
-            'slug' => $slug,
-            'description' => $description,
-            'icon' => $icon,
-            'updated_at' => date('Y-m-d H:i:s')
+            'category_description' => $description,
+            'icon_url' => $icon
         ], 'id = ?', [$categoryId]);
 
         if ($result !== false) {

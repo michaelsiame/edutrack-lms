@@ -33,7 +33,7 @@ $sql = "SELECT c.*,
         u.first_name, u.last_name,
         COUNT(DISTINCT e.id) as enrollments
         FROM courses c
-        LEFT JOIN categories cat ON c.category_id = cat.id
+        LEFT JOIN course_categories cat ON c.category_id = cat.id
         LEFT JOIN users u ON c.instructor_id = u.id
         LEFT JOIN enrollments e ON c.id = e.course_id
         WHERE 1=1";
@@ -69,7 +69,7 @@ $params[] = $offset;
 $courses = $db->fetchAll($sql, $params);
 
 // Get categories for filter
-$categories = $db->fetchAll("SELECT * FROM categories ORDER BY name");
+$categories = $db->fetchAll("SELECT * FROM course_categories ORDER BY name");
 
 $page_title = 'Manage Courses';
 require_once '../../../src/templates/admin-header.php';

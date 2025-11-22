@@ -29,22 +29,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $slug = trim($slug, '-');
     }
 
-    // Check if slug already exists
+    // Check if name already exists
     if (empty($errors)) {
-        $existingCategory = $db->fetchOne("SELECT id FROM categories WHERE slug = ?", [$slug]);
+        $existingCategory = $db->fetchOne("SELECT id FROM course_categories WHERE name = ?", [$name]);
         if ($existingCategory) {
-            $errors[] = 'Category slug already exists';
+            $errors[] = 'Category name already exists';
         }
     }
 
     if (empty($errors)) {
-        $result = $db->insert('categories', [
+        $result = $db->insert('course_categories', [
             'name' => $name,
-            'slug' => $slug,
-            'description' => $description,
-            'icon' => $icon,
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
+            'category_description' => $description,
+            'icon_url' => $icon
         ]);
 
         if ($result) {

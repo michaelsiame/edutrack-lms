@@ -22,14 +22,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         if (empty($errors)) {
-            $slug = slugify($name);
-            if ($db->insert('categories', ['name' => $name, 'slug' => $slug, 'description' => $description])) {
+            if ($db->insert('course_categories', ['name' => $name, 'category_description' => $description])) {
                 flash('message', 'Category created successfully', 'success');
             }
         }
     } elseif ($action == 'delete') {
         $catId = $_POST['category_id'] ?? null;
-        if ($catId && $db->delete('categories', 'id = ?', [$catId])) {
+        if ($catId && $db->delete('course_categories', 'id = ?', [$catId])) {
             flash('message', 'Category deleted successfully', 'success');
         }
     }
@@ -41,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Get all categories
 $categories = $db->fetchAll("
-    SELECT c.*, COUNT(co.id) as course_count
-    FROM categories c
+    SELECT c.*, c.category_description as description, COUNT(co.id) as course_count
+    FROM course_categories c
     LEFT JOIN courses co ON c.id = co.category_id
     GROUP BY c.id
     ORDER BY c.name

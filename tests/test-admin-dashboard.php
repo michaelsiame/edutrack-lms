@@ -101,7 +101,7 @@ function testDatabaseConnection() {
 
     // Test each critical table exists
     $tables = ['users', 'roles', 'user_roles', 'courses', 'enrollments', 'payments',
-               'certificates', 'categories', 'students', 'instructors'];
+               'certificates', 'course_categories', 'students', 'instructors'];
 
     foreach ($tables as $table) {
         try {
@@ -353,19 +353,12 @@ function testCoursesCRUD() {
 
     $db = getDb();
 
-    // Get an instructor for course creation
-    $instructor = $db->fetchOne("
-        SELECT u.id FROM users u
-        JOIN user_roles ur ON u.id = ur.user_id
-        JOIN roles r ON ur.role_id = r.id
-        WHERE r.role_name = 'Instructor'
-        LIMIT 1
-    ");
-
+    // Get an instructor for course creation (from instructors table)
+    $instructor = $db->fetchOne("SELECT id FROM instructors LIMIT 1");
     $instructorId = $instructor ? $instructor['id'] : 1;
 
-    // Get a category
-    $category = $db->fetchOne("SELECT id FROM categories LIMIT 1");
+    // Get a category from course_categories
+    $category = $db->fetchOne("SELECT id FROM course_categories LIMIT 1");
     $categoryId = $category ? $category['id'] : null;
 
     // CREATE - Insert a new course
@@ -374,12 +367,10 @@ function testCoursesCRUD() {
             'title' => TEST_PREFIX . 'Test Course',
             'slug' => TEST_PREFIX . 'test-course',
             'description' => 'This is a test course for automated testing',
-            'short_description' => 'Test course',
             'instructor_id' => $instructorId,
             'category_id' => $categoryId,
             'price' => 99.99,
-            'duration_hours' => 10,
-            'level' => 'beginner',
+            'level' => 'Beginner',
             'status' => 'draft'
         ];
 
@@ -404,10 +395,10 @@ function testCoursesCRUD() {
     // READ - List courses with instructor
     try {
         $courses = $db->fetchAll("
-            SELECT c.*, u.first_name, u.last_name, cat.name as category_name
+            SELECT c.*, i.first_name, i.last_name, cat.name as category_name
             FROM courses c
-            LEFT JOIN users u ON c.instructor_id = u.id
-            LEFT JOIN categories cat ON c.category_id = cat.id
+            LEFT JOIN instructors i ON c.instructor_id = i.id
+            LEFT JOIN course_categories cat ON c.category_id = cat.id
             LIMIT 5
         ");
         recordResult('Courses CRUD', 'READ - List courses with joins', count($courses) > 0 ? 'PASSED' : 'FAILED', count($courses) . " courses");
@@ -456,13 +447,11 @@ function testCategoriesCRUD() {
     try {
         $categoryData = [
             'name' => TEST_PREFIX . 'Test Category',
-            'slug' => TEST_PREFIX . 'test-category',
-            'description' => 'Test category for automated testing',
-            'status' => 'active'
+            'category_description' => 'Test category for automated testing'
         ];
 
-        $categoryId = $db->insert('categories', $categoryData);
-        $testDataIds['categories'][] = $categoryId;
+        $categoryId = $db->insert('course_categories', $categoryData);
+        $testDataIds['course_categories'][] = $categoryId;
 
         recordResult('Categories CRUD', 'CREATE - Insert new category', $categoryId > 0 ? 'PASSED' : 'FAILED', "ID: $categoryId");
     } catch (Exception $e) {
@@ -472,7 +461,7 @@ function testCategoriesCRUD() {
 
     // READ
     try {
-        $category = $db->fetchOne("SELECT * FROM categories WHERE id = ?", [$categoryId]);
+        $category = $db->fetchOne("SELECT * FROM course_categories WHERE id = ?", [$categoryId]);
         $success = $category && strpos($category['name'], TEST_PREFIX) !== false;
         recordResult('Categories CRUD', 'READ - Fetch category by ID', $success ? 'PASSED' : 'FAILED');
     } catch (Exception $e) {
@@ -483,7 +472,7 @@ function testCategoriesCRUD() {
     try {
         $categories = $db->fetchAll("
             SELECT c.*, COUNT(co.id) as course_count
-            FROM categories c
+            FROM course_categories c
             LEFT JOIN courses co ON c.id = co.category_id
             GROUP BY c.id
             LIMIT 5
@@ -495,8 +484,8 @@ function testCategoriesCRUD() {
 
     // UPDATE
     try {
-        $db->update('categories', ['name' => TEST_PREFIX . 'Updated Category'], 'id = ?', [$categoryId]);
-        $category = $db->fetchOne("SELECT * FROM categories WHERE id = ?", [$categoryId]);
+        $db->update('course_categories', ['name' => TEST_PREFIX . 'Updated Category'], 'id = ?', [$categoryId]);
+        $category = $db->fetchOne("SELECT * FROM course_categories WHERE id = ?", [$categoryId]);
         $success = strpos($category['name'], 'Updated') !== false;
         recordResult('Categories CRUD', 'UPDATE - Update category', $success ? 'PASSED' : 'FAILED');
     } catch (Exception $e) {
@@ -505,12 +494,12 @@ function testCategoriesCRUD() {
 
     // DELETE
     try {
-        $db->delete('categories', 'id = ?', [$categoryId]);
-        $category = $db->fetchOne("SELECT * FROM categories WHERE id = ?", [$categoryId]);
+        $db->delete('course_categories', 'id = ?', [$categoryId]);
+        $category = $db->fetchOne("SELECT * FROM course_categories WHERE id = ?", [$categoryId]);
         $success = $category === false || $category === null;
         recordResult('Categories CRUD', 'DELETE - Remove category', $success ? 'PASSED' : 'FAILED');
 
-        $testDataIds['categories'] = array_diff($testDataIds['categories'] ?? [], [$categoryId]);
+        $testDataIds['course_categories'] = array_diff($testDataIds['course_categories'] ?? [], [$categoryId]);
     } catch (Exception $e) {
         recordResult('Categories CRUD', 'DELETE - Remove category', 'FAILED', $e->getMessage());
     }
@@ -970,10 +959,10 @@ function cleanup() {
     }
 
     // Clean up any orphaned test data by prefix
-    $tables = ['users', 'courses', 'categories', 'announcements'];
+    $tables = ['users', 'courses', 'course_categories', 'announcements'];
     foreach ($tables as $table) {
         try {
-            $column = $table === 'categories' ? 'name' : ($table === 'users' ? 'email' : 'title');
+            $column = $table === 'course_categories' ? 'name' : ($table === 'users' ? 'email' : 'title');
             $deleted = $db->query("DELETE FROM $table WHERE $column LIKE ?", [TEST_PREFIX . '%']);
             if ($deleted) {
                 $cleanedUp++;
