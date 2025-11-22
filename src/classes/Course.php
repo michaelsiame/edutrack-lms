@@ -21,7 +21,7 @@ class Course {
      * Load course data from database
      */
     private function load() {
-        $sql = "SELECT c.*, cat.name as category_name, cat.slug as category_slug,
+        $sql = "SELECT c.*, cat.name as category_name,
                 u.first_name as instructor_first_name, u.last_name as instructor_last_name,
                 (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
                 (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id) as avg_rating,
@@ -30,7 +30,7 @@ class Course {
                 LEFT JOIN course_categories cat ON c.category_id = cat.id
                 LEFT JOIN users u ON c.instructor_id = u.id
                 WHERE c.id = :id";
-        
+
         $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
     }
     
@@ -68,8 +68,8 @@ class Course {
      */
     public static function all($filters = []) {
         $db = Database::getInstance();
-        
-        $sql = "SELECT c.*, cat.name as category_name, cat.slug as category_slug,
+
+        $sql = "SELECT c.*, cat.name as category_name,
                 u.first_name as instructor_first_name, u.last_name as instructor_last_name,
                 (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
                 (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id) as avg_rating,
