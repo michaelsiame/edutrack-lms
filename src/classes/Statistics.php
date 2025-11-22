@@ -312,6 +312,15 @@ class Statistics {
             [$instructorId]
         );
 
+        // Completed enrollments count
+        $stats['completed_enrollments'] = (int) $db->fetchColumn(
+            "SELECT COUNT(*)
+             FROM enrollments e
+             JOIN courses c ON e.course_id = c.id
+             WHERE c.instructor_id = ? AND e.enrollment_status = 'Completed'",
+            [$instructorId]
+        );
+
         return $stats;
     }
 
