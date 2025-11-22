@@ -10,14 +10,14 @@ require_once '../../../src/middleware/admin-only.php';
 $startDate = $_GET['start_date'] ?? date('Y-m-01');
 $endDate = $_GET['end_date'] ?? date('Y-m-t');
 
-// Get revenue stats
+// Get revenue stats - use capitalized enum values
 $totalRevenue = $db->fetchColumn(
-    "SELECT COALESCE(SUM(amount), 0) FROM payments WHERE payment_status = 'completed' AND created_at BETWEEN ? AND ?",
+    "SELECT COALESCE(SUM(amount), 0) FROM payments WHERE payment_status = 'Completed' AND created_at BETWEEN ? AND ?",
     [$startDate . ' 00:00:00', $endDate . ' 23:59:59']
 );
 
 $totalTransactions = $db->fetchColumn(
-    "SELECT COUNT(*) FROM payments WHERE payment_status = 'completed' AND created_at BETWEEN ? AND ?",
+    "SELECT COUNT(*) FROM payments WHERE payment_status = 'Completed' AND created_at BETWEEN ? AND ?",
     [$startDate . ' 00:00:00', $endDate . ' 23:59:59']
 );
 
@@ -30,31 +30,32 @@ $monthlyRevenue = $db->fetchAll("
         COALESCE(SUM(amount), 0) as revenue,
         COUNT(*) as transactions
     FROM payments
-    WHERE payment_status = 'completed'
+    WHERE payment_status = 'Completed'
     AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
     GROUP BY DATE_FORMAT(created_at, '%Y-%m')
     ORDER BY month ASC
 ");
 
-// Get top courses by revenue
+// Get top courses by revenue - use payment_id not id
 $topCourses = $db->fetchAll("
-    SELECT c.title, COUNT(p.id) as sales, COALESCE(SUM(p.amount), 0) as revenue
+    SELECT c.title, COUNT(p.payment_id) as sales, COALESCE(SUM(p.amount), 0) as revenue
     FROM payments p
     JOIN courses c ON p.course_id = c.id
-    WHERE p.payment_status = 'completed'
+    WHERE p.payment_status = 'Completed'
     AND p.created_at BETWEEN ? AND ?
-    GROUP BY c.id
+    GROUP BY c.id, c.title
     ORDER BY revenue DESC
     LIMIT 10
 ", [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
 
-// Get payment methods breakdown
+// Get payment methods breakdown - use payment_method_id with join
 $paymentMethods = $db->fetchAll("
-    SELECT payment_method, COUNT(*) as count, COALESCE(SUM(amount), 0) as total
-    FROM payments
-    WHERE payment_status = 'completed'
-    AND created_at BETWEEN ? AND ?
-    GROUP BY payment_method
+    SELECT COALESCE(pm.method_name, 'Unknown') as payment_method, COUNT(*) as count, COALESCE(SUM(p.amount), 0) as total
+    FROM payments p
+    LEFT JOIN payment_methods pm ON p.payment_method_id = pm.payment_method_id
+    WHERE p.payment_status = 'Completed'
+    AND p.created_at BETWEEN ? AND ?
+    GROUP BY p.payment_method_id, pm.method_name
     ORDER BY total DESC
 ", [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
 

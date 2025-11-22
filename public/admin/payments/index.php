@@ -12,9 +12,10 @@ $search = $_GET['search'] ?? '';
 $page = max(1, $_GET['page'] ?? 1);
 $perPage = 20;
 
-// Build query
+// Build query - payments table uses student_id and payment_id
 $baseQuery = "FROM payments p
-    LEFT JOIN users u ON p.user_id = u.id
+    LEFT JOIN students s ON p.student_id = s.id
+    LEFT JOIN users u ON s.user_id = u.id
     LEFT JOIN courses c ON p.course_id = c.id";
 
 $where = [];
@@ -22,7 +23,7 @@ $params = [];
 
 if ($status) {
     $where[] = "p.payment_status = ?";
-    $params[] = $status;
+    $params[] = ucfirst($status); // Schema uses capitalized enum values
 }
 if ($search) {
     $where[] = "(u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR p.transaction_id LIKE ?)";
@@ -40,7 +41,8 @@ $totalPages = ceil($totalPayments / $perPage);
 $offset = ($page - 1) * $perPage;
 
 // Get payments
-$sql = "SELECT p.*,
+$sql = "SELECT p.payment_id as id, p.student_id, p.course_id, p.amount, p.currency,
+        p.payment_status, p.transaction_id, p.payment_date, p.created_at,
         u.first_name, u.last_name, u.email,
         c.title as course_title
         $baseQuery $whereClause
@@ -49,12 +51,12 @@ $params[] = $perPage;
 $params[] = $offset;
 $payments = $db->fetchAll($sql, $params);
 
-// Get stats
+// Get stats - use capitalized enum values as in schema
 $stats = [
     'total' => $db->fetchColumn("SELECT COUNT(*) FROM payments"),
-    'completed' => $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE payment_status = 'completed'"),
-    'pending' => $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE payment_status = 'pending'"),
-    'total_revenue' => $db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE payment_status = 'completed'"),
+    'completed' => $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE payment_status = 'Completed'"),
+    'pending' => $db->fetchColumn("SELECT COUNT(*) FROM payments WHERE payment_status = 'Pending'"),
+    'total_revenue' => $db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE payment_status = 'Completed'"),
 ];
 
 $page_title = 'Payments Management';
@@ -175,15 +177,17 @@ require_once '../../../src/templates/admin-header.php';
                             <td class="px-6 py-4">
                                 <?php
                                 $statusColors = [
-                                    'completed' => 'bg-green-100 text-green-800',
-                                    'pending' => 'bg-yellow-100 text-yellow-800',
-                                    'failed' => 'bg-red-100 text-red-800',
-                                    'refunded' => 'bg-gray-100 text-gray-800',
+                                    'Completed' => 'bg-green-100 text-green-800',
+                                    'Pending' => 'bg-yellow-100 text-yellow-800',
+                                    'Failed' => 'bg-red-100 text-red-800',
+                                    'Refunded' => 'bg-gray-100 text-gray-800',
+                                    'Cancelled' => 'bg-red-100 text-red-800',
                                 ];
-                                $statusClass = $statusColors[$payment['payment_status']] ?? 'bg-gray-100 text-gray-800';
+                                $paymentStatus = $payment['payment_status'] ?? 'Pending';
+                                $statusClass = $statusColors[$paymentStatus] ?? 'bg-gray-100 text-gray-800';
                                 ?>
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full <?= $statusClass ?>">
-                                    <?= ucfirst($payment['payment_status']) ?>
+                                    <?= $paymentStatus ?>
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">
