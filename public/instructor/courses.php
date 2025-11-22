@@ -108,8 +108,8 @@ require_once '../../src/templates/instructor-header.php';
                     <div class="bg-white rounded-lg shadow hover:shadow-lg transition">
                         <!-- Thumbnail -->
                         <div class="relative h-48">
-                            <?php if ($course['thumbnail']): ?>
-                                <img src="<?= uploadUrl($course['thumbnail']) ?>"
+                            <?php if (!empty($course['thumbnail_url'])): ?>
+                                <img src="<?= htmlspecialchars($course['thumbnail_url']) ?>"
                                      alt="<?= htmlspecialchars($course['title']) ?>"
                                      class="w-full h-full object-cover rounded-t-lg">
                             <?php else: ?>
