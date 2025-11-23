@@ -25,7 +25,7 @@ $course = $db->fetchOne("
            u.id as instructor_user_id,
            COUNT(DISTINCT e.id) as enrolled_students
     FROM courses c
-    JOIN course_categories cc ON c.category_id = cc.id
+    LEFT JOIN course_categories cc ON c.category_id = cc.id
     LEFT JOIN instructors i ON c.instructor_id = i.id
     LEFT JOIN users u ON i.user_id = u.id
     LEFT JOIN enrollments e ON c.id = e.course_id
@@ -52,14 +52,14 @@ if (isLoggedIn()) {
 
 // Get course modules and lessons
 $modules = $db->fetchAll("
-    SELECT cm.*,
+    SELECT m.*,
            COUNT(l.id) as lesson_count,
            SUM(l.duration_minutes) as total_duration
-    FROM course_modules cm
-    LEFT JOIN lessons l ON cm.id = l.module_id
-    WHERE cm.course_id = ?
-    GROUP BY cm.id
-    ORDER BY cm.display_order ASC
+    FROM modules m
+    LEFT JOIN lessons l ON m.id = l.module_id
+    WHERE m.course_id = ?
+    GROUP BY m.id
+    ORDER BY m.order_index ASC
 ", [$courseId]);
 
 // Get course reviews using Review class
@@ -88,7 +88,7 @@ $reviewStats = Review::getCourseStats($courseId);
 $relatedCourses = $db->fetchAll("
     SELECT c.*, cc.name as category_name
     FROM courses c
-    JOIN course_categories cc ON c.category_id = cc.id
+    LEFT JOIN course_categories cc ON c.category_id = cc.id
     WHERE c.category_id = ? AND c.id != ? AND c.status = 'published'
     ORDER BY c.created_at DESC
     LIMIT 3
@@ -155,11 +155,11 @@ require_once '../src/templates/header.php';
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-signal mr-2"></i>
-                        <span class="capitalize"><?= sanitize($course['level'] ?? 'Beginner') ?></span>
+                        <span class="capitalize"><?= sanitize($course['course_level'] ?? 'Beginner') ?></span>
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-clock mr-2"></i>
-                        <span><?= $course['total_hours'] ?? 0 ?> hours</span>
+                        <span><?= $course['duration_hours'] ?? 0 ?> hours</span>
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-globe mr-2"></i>
@@ -247,7 +247,7 @@ require_once '../src/templates/header.php';
                             <ul class="space-y-3 text-sm text-gray-600">
                                 <li class="flex items-start">
                                     <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
-                                    <span><?= $course['total_hours'] ?? 0 ?> hours on-demand content</span>
+                                    <span><?= $course['duration_hours'] ?? 0 ?> hours on-demand content</span>
                                 </li>
                                 <li class="flex items-start">
                                     <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
