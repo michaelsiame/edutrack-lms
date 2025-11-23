@@ -5,11 +5,13 @@
  */
 
 require_once '../src/bootstrap.php';
+require_once '../src/classes/Course.php';
+require_once '../src/classes/Enrollment.php';
 
 // Must be logged in to checkout
 if (!isLoggedIn()) {
     setFlashMessage('Please login to continue with payment', 'error');
-    redirect('login.php');
+    redirect('login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']));
 }
 
 // Get course ID
@@ -20,31 +22,23 @@ if (!$courseId) {
     redirect('courses.php');
 }
 
-// Get course details
-$db = Database::getInstance();
-$course = $db->fetchOne("
-    SELECT c.*, cc.name as category_name
-    FROM courses c
-    JOIN course_categories cc ON c.category_id = cc.id
-    WHERE c.id = ? AND c.status = 'published'
-", [$courseId]);
+// Get course using Course class (consistent with enroll.php)
+$course = Course::find($courseId);
 
-if (!$course) {
+if (!$course || !$course->isPublished()) {
     setFlashMessage('Course not found', 'error');
     redirect('courses.php');
 }
 
-// Check if already enrolled
+// Check if already enrolled using Enrollment class (removes duplicate SQL)
 $userId = $_SESSION['user_id'];
-$existingEnrollment = $db->fetchOne("
-    SELECT * FROM enrollments
-    WHERE user_id = ? AND course_id = ?
-", [$userId, $courseId]);
-
-if ($existingEnrollment) {
+if (Enrollment::isEnrolled($userId, $courseId)) {
     setFlashMessage('You are already enrolled in this course', 'info');
     redirect('my-courses.php');
 }
+
+// Get database instance for payment record creation
+$db = Database::getInstance();
 
 // Handle payment submission
 $paymentSubmitted = false;
@@ -58,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_payment'])) {
         // Get payment details
         $transactionRef = trim($_POST['transaction_reference'] ?? '');
         $paymentDate = trim($_POST['payment_date'] ?? '');
-        $accountUsed = trim($_POST['account_used'] ?? '');
+        $paymentMethod = trim($_POST['payment_method'] ?? '');
 
         // Validate
         if (empty($transactionRef)) {
@@ -67,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_payment'])) {
         if (empty($paymentDate)) {
             $errors[] = 'Payment date is required';
         }
-        if (empty($accountUsed)) {
-            $errors[] = 'Please select the account you used for payment';
+        if (empty($paymentMethod)) {
+            $errors[] = 'Please select the payment method you used';
         }
 
         // Handle file upload (payment proof)
@@ -129,9 +123,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_payment'])) {
                     'student_id' => $studentId,
                     'course_id' => $courseId,
                     'enrollment_id' => $enrollmentId,
-                    'amount' => $course['price'],
+                    'amount' => $course->getPrice(),
                     'currency' => 'ZMW',
                     'payment_status' => 'Pending',
+                    'payment_method' => $paymentMethod,
                     'transaction_id' => $transactionRef,
                     'payment_date' => $paymentDate . ' 00:00:00'
                 ]);
@@ -147,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_payment'])) {
     }
 }
 
-$page_title = 'Checkout - ' . sanitize($course['title']);
+$page_title = 'Checkout - ' . sanitize($course->getTitle());
 require_once '../src/templates/header.php';
 ?>
 
@@ -242,7 +237,7 @@ require_once '../src/templates/header.php';
                                 </div>
                                 <div class="flex justify-between items-center py-2">
                                     <span class="text-gray-600 font-medium">Amount to Pay:</span>
-                                    <span class="text-primary-600 font-bold text-xl">ZMW <?= number_format($course['price'], 2) ?></span>
+                                    <span class="text-primary-600 font-bold text-xl">ZMW <?= number_format($course->getPrice(), 2) ?></span>
                                 </div>
                             </div>
                             <div class="mt-4 bg-yellow-50 border border-yellow-200 rounded p-3">
@@ -289,21 +284,21 @@ require_once '../src/templates/header.php';
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                             </div>
 
-                            <!-- Account Used -->
+                            <!-- Payment Method -->
                             <div>
-                                <label for="account_used" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Payment Method <span class="text-red-500">*</span>
+                                <label for="payment_method" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Payment Method Used <span class="text-red-500">*</span>
                                 </label>
-                                <select id="account_used"
-                                        name="account_used"
+                                <select id="payment_method"
+                                        name="payment_method"
                                         required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                                     <option value="">Select payment method</option>
-                                    <option value="Mobile Money - MTN">Mobile Money - MTN</option>
-                                    <option value="Mobile Money - Airtel">Mobile Money - Airtel</option>
-                                    <option value="Mobile Money - Zamtel">Mobile Money - Zamtel</option>
-                                    <option value="Bank Transfer">Bank Transfer</option>
-                                    <option value="Lenco App">Lenco App</option>
+                                    <option value="mtn" <?= ($_POST['payment_method'] ?? '') == 'mtn' ? 'selected' : '' ?>>Mobile Money - MTN</option>
+                                    <option value="airtel" <?= ($_POST['payment_method'] ?? '') == 'airtel' ? 'selected' : '' ?>>Mobile Money - Airtel</option>
+                                    <option value="zamtel" <?= ($_POST['payment_method'] ?? '') == 'zamtel' ? 'selected' : '' ?>>Mobile Money - Zamtel</option>
+                                    <option value="bank_transfer" <?= ($_POST['payment_method'] ?? '') == 'bank_transfer' ? 'selected' : '' ?>>Bank Transfer</option>
+                                    <option value="lenco_app" <?= ($_POST['payment_method'] ?? '') == 'lenco_app' ? 'selected' : '' ?>>Lenco App</option>
                                 </select>
                             </div>
 
@@ -371,11 +366,11 @@ require_once '../src/templates/header.php';
 
                         <!-- Course Info -->
                         <div class="mb-6">
-                            <h4 class="font-semibold text-gray-900 mb-2"><?= sanitize($course['title']) ?></h4>
-                            <p class="text-sm text-gray-600 mb-2"><?= sanitize($course['category_name']) ?></p>
+                            <h4 class="font-semibold text-gray-900 mb-2"><?= sanitize($course->getTitle()) ?></h4>
+                            <p class="text-sm text-gray-600 mb-2"><?= sanitize($course->getCategoryName()) ?></p>
                             <div class="flex items-center text-sm text-gray-600">
                                 <i class="fas fa-clock mr-2"></i>
-                                <span><?= $course['duration_hours'] ?> hours</span>
+                                <span><?= $course->getDuration() ?> hours</span>
                             </div>
                         </div>
 
@@ -383,7 +378,7 @@ require_once '../src/templates/header.php';
                         <div class="border-t border-gray-200 pt-4 space-y-3">
                             <div class="flex justify-between text-gray-700">
                                 <span>Course Price:</span>
-                                <span class="font-semibold">ZMW <?= number_format($course['price'], 2) ?></span>
+                                <span class="font-semibold">ZMW <?= number_format($course->getPrice(), 2) ?></span>
                             </div>
                             <div class="flex justify-between text-gray-700">
                                 <span>Processing Fee:</span>
@@ -391,7 +386,7 @@ require_once '../src/templates/header.php';
                             </div>
                             <div class="border-t border-gray-300 pt-3 flex justify-between text-lg font-bold text-gray-900">
                                 <span>Total:</span>
-                                <span class="text-primary-600">ZMW <?= number_format($course['price'], 2) ?></span>
+                                <span class="text-primary-600">ZMW <?= number_format($course->getPrice(), 2) ?></span>
                             </div>
                         </div>
 
