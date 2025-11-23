@@ -51,7 +51,7 @@ $userId = $user->getId();
 // Get instructor ID from instructors table (instructor_id in courses references instructors.id, not users.id)
 $db = Database::getInstance();
 $instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
-$instructorId = $instructorRecord ? $instructorRecord['id'] : $userId;
+$instructorId = $instructorRecord ? $instructorRecord['id'] : null;
 
 // Debug: Log instructor ID
 if ($DEBUG_MODE) {
@@ -59,11 +59,35 @@ if ($DEBUG_MODE) {
     $debug_data['instructor_id'] = $instructorId;
 }
 
-// Get instructor's courses
-$courses = Course::all(['instructor_id' => $instructorId]);
+// Get instructor's courses - check both instructors.id AND user.id for legacy data
+// This handles cases where courses were created with user_id as instructor_id
+if ($instructorId) {
+    // Fetch courses where instructor_id matches either instructors.id or user.id
+    $courses = $db->fetchAll("
+        SELECT c.*, cat.name as category_name,
+               (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
+               (SELECT COUNT(*) FROM lessons l JOIN modules m ON l.module_id = m.id WHERE m.course_id = c.id) as total_lessons
+        FROM courses c
+        LEFT JOIN course_categories cat ON c.category_id = cat.id
+        WHERE c.instructor_id = ? OR c.instructor_id = ?
+        ORDER BY c.created_at DESC
+    ", [$instructorId, $userId]);
+} else {
+    // No instructor record yet - only check user_id
+    $courses = $db->fetchAll("
+        SELECT c.*, cat.name as category_name,
+               (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
+               (SELECT COUNT(*) FROM lessons l JOIN modules m ON l.module_id = m.id WHERE m.course_id = c.id) as total_lessons
+        FROM courses c
+        LEFT JOIN course_categories cat ON c.category_id = cat.id
+        WHERE c.instructor_id = ?
+        ORDER BY c.created_at DESC
+    ", [$userId]);
+}
 
-// Get statistics using Statistics class
-$instructorStats = Statistics::getInstructorStats($instructorId);
+// Get statistics using Statistics class (use instructorId if available, else userId)
+$statsId = $instructorId ?: $userId;
+$instructorStats = Statistics::getInstructorStats($statsId);
 
 $stats = [
     'total' => $instructorStats['total_courses'],

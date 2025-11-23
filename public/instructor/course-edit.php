@@ -65,11 +65,25 @@ if (!$course) {
 $db = Database::getInstance();
 $userId = currentUserId();
 $instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
-$instructorId = $instructorRecord ? $instructorRecord['id'] : $userId;
+$instructorId = $instructorRecord ? $instructorRecord['id'] : null;
 
-if ($course->getInstructorId() != $instructorId && !hasRole('admin')) {
+// Check ownership: course.instructor_id should match instructors.id
+// Also check legacy case where instructor_id might be user_id directly
+$courseInstructorId = $course->getInstructorId();
+$canEdit = hasRole('admin') ||
+           ($instructorId && $courseInstructorId == $instructorId) ||
+           ($courseInstructorId == $userId);
+
+if (!$canEdit) {
     flash('message', 'You do not have permission to edit this course', 'error');
     redirect(url('instructor/courses.php'));
+}
+
+// If instructor record doesn't exist yet, create one for future use
+if (!$instructorId) {
+    require_once '../../src/classes/Instructor.php';
+    $instructor = Instructor::getOrCreate($userId);
+    $instructorId = $instructor->getId();
 }
 
 // Get categories

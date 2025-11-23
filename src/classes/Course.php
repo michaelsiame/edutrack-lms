@@ -258,30 +258,32 @@ class Course {
         }
 
         $sql = "INSERT INTO courses (
-            title, slug, description, short_description, category_id,
-            level, language, thumbnail_url, video_intro_url, price,
-            total_hours, status, prerequisites, learning_outcomes
+            instructor_id, title, slug, description, short_description, category_id,
+            course_level, language, thumbnail, promo_video_url, price,
+            duration_hours, status, prerequisites, learning_outcomes, target_audience
         ) VALUES (
-            :title, :slug, :description, :short_description, :category_id,
-            :level, :language, :thumbnail_url, :video_intro_url, :price,
-            :total_hours, :status, :prerequisites, :learning_outcomes
+            :instructor_id, :title, :slug, :description, :short_description, :category_id,
+            :course_level, :language, :thumbnail, :promo_video_url, :price,
+            :duration_hours, :status, :prerequisites, :learning_outcomes, :target_audience
         )";
 
         $params = [
+            'instructor_id' => $data['instructor_id'],
             'title' => $data['title'],
             'slug' => $data['slug'],
             'description' => $data['description'] ?? '',
             'short_description' => $data['short_description'] ?? '',
             'category_id' => $data['category_id'],
-            'level' => $data['level'] ?? 'Beginner',
+            'course_level' => $data['course_level'] ?? $data['level'] ?? 'beginner',
             'language' => $data['language'] ?? 'English',
-            'thumbnail_url' => $data['thumbnail_url'] ?? null,
-            'video_intro_url' => $data['video_intro_url'] ?? null,
+            'thumbnail' => $data['thumbnail'] ?? $data['thumbnail_url'] ?? null,
+            'promo_video_url' => $data['promo_video_url'] ?? $data['video_intro_url'] ?? null,
             'price' => $data['price'] ?? 0,
-            'total_hours' => $data['total_hours'] ?? null,
+            'duration_hours' => $data['duration_hours'] ?? $data['total_hours'] ?? null,
             'status' => $data['status'] ?? 'draft',
             'prerequisites' => $data['prerequisites'] ?? null,
-            'learning_outcomes' => $data['learning_outcomes'] ?? null
+            'learning_outcomes' => $data['learning_outcomes'] ?? null,
+            'target_audience' => $data['target_audience'] ?? null
         ];
 
         if ($db->query($sql, $params)) {
