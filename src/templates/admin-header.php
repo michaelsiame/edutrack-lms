@@ -52,7 +52,7 @@
             border-left: 4px solid #2E70DA;
         }
 
-        /* Button Styles */
+        /* Button Styles - Base */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -64,63 +64,150 @@
             transition: all 0.2s ease;
             cursor: pointer;
             border: 1px solid transparent;
+            text-decoration: none;
         }
 
-        .btn-primary {
-            background-color: #2563EB;
-            color: white;
+        /* Button variants - work with or without .btn base class */
+        .btn-primary,
+        .btn.btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-decoration: none;
+            background-color: #2563EB !important;
+            color: white !important;
         }
 
-        .btn-primary:hover {
-            background-color: #1D4ED8;
+        .btn-primary:hover,
+        .btn.btn-primary:hover {
+            background-color: #1D4ED8 !important;
         }
 
-        .btn-secondary {
-            background-color: #f3f4f6;
-            color: #374151;
-            border-color: #d1d5db;
+        .btn-secondary,
+        .btn.btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            background-color: #f3f4f6 !important;
+            color: #374151 !important;
+            border: 1px solid #d1d5db !important;
         }
 
-        .btn-secondary:hover {
-            background-color: #e5e7eb;
+        .btn-secondary:hover,
+        .btn.btn-secondary:hover {
+            background-color: #e5e7eb !important;
         }
 
-        .btn-danger {
-            background-color: #dc2626;
-            color: white;
+        .btn-danger,
+        .btn.btn-danger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-decoration: none;
+            background-color: #dc2626 !important;
+            color: white !important;
         }
 
-        .btn-danger:hover {
-            background-color: #b91c1c;
+        .btn-danger:hover,
+        .btn.btn-danger:hover {
+            background-color: #b91c1c !important;
         }
 
-        .btn-success {
-            background-color: #16a34a;
-            color: white;
+        .btn-success,
+        .btn.btn-success {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-decoration: none;
+            background-color: #16a34a !important;
+            color: white !important;
         }
 
-        .btn-success:hover {
-            background-color: #15803d;
+        .btn-success:hover,
+        .btn.btn-success:hover {
+            background-color: #15803d !important;
         }
 
-        .btn-warning {
-            background-color: #f59e0b;
-            color: white;
+        .btn-warning,
+        .btn.btn-warning {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-decoration: none;
+            background-color: #f59e0b !important;
+            color: white !important;
         }
 
-        .btn-warning:hover {
-            background-color: #d97706;
+        .btn-warning:hover,
+        .btn.btn-warning:hover {
+            background-color: #d97706 !important;
         }
 
         .btn-sm {
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem !important;
+            font-size: 0.75rem !important;
         }
 
         .btn-lg {
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
+            padding: 0.75rem 1.5rem !important;
+            font-size: 1rem !important;
         }
+
+        /* Ensure submit buttons are visible */
+        button[type="submit"],
+        input[type="submit"] {
+            cursor: pointer;
+        }
+
+        /* Fallback for Tailwind primary colors (in case CDN JIT doesn't generate them) */
+        .bg-primary-500 { background-color: #2E70DA !important; }
+        .bg-primary-600 { background-color: #2563EB !important; }
+        .bg-primary-700 { background-color: #1D4ED8 !important; }
+        .hover\:bg-primary-600:hover { background-color: #2563EB !important; }
+        .hover\:bg-primary-700:hover { background-color: #1D4ED8 !important; }
+        .text-primary-500 { color: #2E70DA !important; }
+        .text-primary-600 { color: #2563EB !important; }
+        .text-primary-700 { color: #1D4ED8 !important; }
+        .border-primary-500 { border-color: #2E70DA !important; }
+        .border-primary-600 { border-color: #2563EB !important; }
+        .ring-primary-500 { --tw-ring-color: #2E70DA !important; }
+        .focus\:ring-primary-500:focus { --tw-ring-color: #2E70DA !important; }
+        .focus\:border-primary-500:focus { border-color: #2E70DA !important; }
     </style>
 </head>
 <body class="bg-gray-100">

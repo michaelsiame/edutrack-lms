@@ -86,7 +86,7 @@ require_once '../../../src/templates/admin-header.php';
             </h1>
             <p class="text-gray-600 mt-1"><?= number_format($totalCourses) ?> total courses</p>
         </div>
-        <a href="<?= url('admin/courses/create.php') ?>" class="btn-primary px-6 py-2 rounded-lg">
+        <a href="<?= url('admin/courses/create.php') ?>" class="btn btn-primary">
             <i class="fas fa-plus mr-2"></i>Create Course
         </a>
     </div>
@@ -119,10 +119,10 @@ require_once '../../../src/templates/admin-header.php';
                     </select>
                 </div>
                 <div class="flex gap-2">
-                    <button type="submit" class="flex-1 btn-primary px-6 py-2 rounded-lg">
+                    <button type="submit" class="flex-1 btn btn-primary">
                         <i class="fas fa-filter mr-2"></i>Filter
                     </button>
-                    <a href="<?= url('admin/courses/index.php') ?>" class="px-4 py-2 border rounded-lg hover:bg-gray-50">
+                    <a href="<?= url('admin/courses/index.php') ?>" class="btn btn-secondary">
                         Clear
                     </a>
                 </div>

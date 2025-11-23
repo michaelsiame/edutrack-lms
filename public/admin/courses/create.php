@@ -336,10 +336,10 @@ require_once '../../../src/templates/admin-header.php';
         <!-- Submit -->
         <div class="p-6 bg-gray-50">
             <div class="flex items-center justify-end space-x-3">
-                <a href="<?= url('admin/courses/index.php') ?>" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                <a href="<?= url('admin/courses/index.php') ?>" class="btn btn-secondary">
                     Cancel
                 </a>
-                <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">
+                <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save mr-2"></i>Create Course
                 </button>
             </div>
