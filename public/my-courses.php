@@ -19,16 +19,16 @@ $userId = $user->getId();
 $status = $_GET['status'] ?? 'all';
 
 // Get enrollments with detailed statistics
-$statusFilter = $status === 'all' ? '' : "AND e.status = ?";
+$statusFilter = $status === 'all' ? '' : "AND e.enrollment_status = ?";
 $params = $status === 'all' ? [$userId] : [$userId, $status];
 
 $enrollments = $db->fetchAll("
-    SELECT e.*, c.title, c.slug, c.thumbnail, c.description, c.price,
+    SELECT e.*, c.title, c.slug, c.thumbnail_url, c.description, c.price,
            c.instructor_id,
            u.first_name as instructor_first_name, u.last_name as instructor_last_name,
-           e.enrolled_at, e.last_accessed, e.progress_percentage, e.enrollment_status,
+           e.enrolled_at, e.last_accessed, e.progress as progress_percentage, e.enrollment_status,
            COUNT(DISTINCT l.id) as total_lessons,
-           COUNT(DISTINCT lp.lesson_id) as completed_lessons,
+           COUNT(DISTINCT CASE WHEN lp.status = 'Completed' THEN lp.lesson_id END) as completed_lessons,
            COUNT(DISTINCT a.id) as total_assignments,
            COUNT(DISTINCT asub.id) as submitted_assignments,
            COUNT(DISTINCT q.id) as total_quizzes,
@@ -37,13 +37,13 @@ $enrollments = $db->fetchAll("
     JOIN courses c ON e.course_id = c.id
     LEFT JOIN instructors i ON c.instructor_id = i.id
     LEFT JOIN users u ON i.user_id = u.id
-    LEFT JOIN course_modules m ON c.id = m.course_id
+    LEFT JOIN modules m ON c.id = m.course_id
     LEFT JOIN lessons l ON m.id = l.module_id
-    LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = e.user_id AND lp.status = 'completed'
-    LEFT JOIN assignments a ON c.id = a.course_id AND a.status = 'published'
-    LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.user_id = e.user_id
-    LEFT JOIN quizzes q ON c.id = q.course_id AND q.status = 'published'
-    LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.user_id = e.user_id
+    LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.enrollment_id = e.id
+    LEFT JOIN assignments a ON c.id = a.course_id
+    LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.student_id = e.student_id
+    LEFT JOIN quizzes q ON c.id = q.course_id AND q.is_published = 1
+    LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.student_id = e.student_id
     WHERE e.user_id = ? $statusFilter
     GROUP BY e.id, c.id
     ORDER BY e.last_accessed DESC, e.enrolled_at DESC
@@ -54,21 +54,21 @@ foreach ($enrollments as &$enrollment) {
     $enrollment['modules'] = $db->fetchAll("
         SELECT m.id, m.title,
                COUNT(DISTINCT l.id) as total_lessons,
-               COUNT(DISTINCT lp.lesson_id) as completed_lessons
-        FROM course_modules m
+               COUNT(DISTINCT CASE WHEN lp.status = 'Completed' THEN lp.lesson_id END) as completed_lessons
+        FROM modules m
         LEFT JOIN lessons l ON m.id = l.module_id
-        LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = ? AND lp.status = 'completed'
+        LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.enrollment_id = ?
         WHERE m.course_id = ?
         GROUP BY m.id
         ORDER BY m.display_order ASC
-    ", [$userId, $enrollment['course_id']]);
+    ", [$enrollment['id'], $enrollment['course_id']]);
 }
 
 // Count by status
 $counts = [
     'all' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE user_id = ?", [$userId]),
-    'active' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND status = 'active'", [$userId]),
-    'completed' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND status = 'completed'", [$userId])
+    'active' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status IN ('Enrolled', 'In Progress')", [$userId]),
+    'completed' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'Completed'", [$userId])
 ];
 
 $page_title = "My Courses - Edutrack";
@@ -118,13 +118,13 @@ require_once '../src/templates/header.php';
                     <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
                         <!-- Thumbnail -->
                         <div class="relative h-48 bg-gray-200">
-                            <img src="<?= courseThumbnail($enrollment['thumbnail']) ?>" 
+                            <img src="<?= courseThumbnail($enrollment['thumbnail_url']) ?>"
                                  alt="<?= sanitize($enrollment['title']) ?>"
                                  class="w-full h-full object-cover">
                             
                             <!-- Status Badge -->
                             <div class="absolute top-3 right-3">
-                                <?php if ($enrollment['enrollment_status'] === 'completed'): ?>
+                                <?php if ($enrollment['enrollment_status'] === 'Completed'): ?>
                                     <span class="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">
                                         <i class="fas fa-check-circle mr-1"></i>Completed
                                     </span>
@@ -236,12 +236,12 @@ require_once '../src/templates/header.php';
                             
                             <!-- Actions -->
                             <div class="flex space-x-2">
-                                <?php if ($enrollment['enrollment_status'] === 'completed'): ?>
-                                    <a href="<?= url('my-certificates.php') ?>" 
+                                <?php if ($enrollment['enrollment_status'] === 'Completed'): ?>
+                                    <a href="<?= url('my-certificates.php') ?>"
                                        class="flex-1 text-center py-2 px-4 bg-green-50 text-green-600 rounded-md hover:bg-green-100 transition font-medium text-sm">
                                         <i class="fas fa-certificate mr-1"></i>Certificate
                                     </a>
-                                    <a href="<?= url('course.php?id=' . $enrollment['course_id']) ?>" 
+                                    <a href="<?= url('course.php?id=' . $enrollment['course_id']) ?>"
                                        class="flex-1 text-center py-2 px-4 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition font-medium text-sm">
                                         <i class="fas fa-eye mr-1"></i>Review
                                     </a>
