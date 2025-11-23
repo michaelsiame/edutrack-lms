@@ -59,7 +59,7 @@ $modules = $db->fetchAll("
     LEFT JOIN lessons l ON m.id = l.module_id
     WHERE m.course_id = ?
     GROUP BY m.id
-    ORDER BY m.order_index ASC
+    ORDER BY m.display_order ASC
 ", [$courseId]);
 
 // Get course reviews using Review class
