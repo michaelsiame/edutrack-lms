@@ -45,8 +45,8 @@ $stats = [
 // Get recent enrollments with course details
 try {
     $recentEnrollments = $db->fetchAll("
-        SELECT e.*, c.title, c.slug, c.thumbnail, c.description,
-               e.last_accessed, e.progress_percentage
+        SELECT e.*, c.title, c.slug, c.thumbnail_url, c.description,
+               e.last_accessed, e.progress as progress_percentage
         FROM enrollments e
         JOIN courses c ON e.course_id = c.id
         WHERE e.user_id = ? AND e.enrollment_status IN ('Enrolled', 'In Progress')
@@ -65,15 +65,14 @@ try {
         JOIN courses c ON a.course_id = c.id
         JOIN enrollments e ON e.course_id = c.id
         WHERE e.user_id = ?
-        AND a.status = 'published'
         AND a.due_date > NOW()
         AND a.due_date < DATE_ADD(NOW(), INTERVAL 7 DAY)
         AND a.id NOT IN (
-            SELECT assignment_id FROM assignment_submissions WHERE user_id = ?
+            SELECT assignment_id FROM assignment_submissions WHERE student_id = e.student_id
         )
         ORDER BY a.due_date ASC
         LIMIT 5
-    ", [$userId, $userId]);
+    ", [$userId]);
 } catch (Exception $e) {
     $upcomingDeadlines = [];
 }
@@ -97,7 +96,8 @@ try {
         FROM quiz_attempts qa
         JOIN quizzes q ON qa.quiz_id = q.id
         JOIN courses c ON q.course_id = c.id
-        WHERE qa.user_id = ?
+        JOIN enrollments e ON e.course_id = c.id AND e.user_id = ?
+        WHERE qa.student_id = e.student_id
         ORDER BY qa.completed_at DESC
         LIMIT 3
     ", [$userId]);
@@ -108,11 +108,12 @@ try {
 // Get recent graded assignments
 try {
     $recentGradedAssignments = $db->fetchAll("
-        SELECT asub.*, a.title as assignment_title, c.title as course_title, c.slug as course_slug
+        SELECT asub.*, a.title as assignment_title, a.max_points, c.title as course_title, c.slug as course_slug
         FROM assignment_submissions asub
         JOIN assignments a ON asub.assignment_id = a.id
         JOIN courses c ON a.course_id = c.id
-        WHERE asub.user_id = ? AND asub.status = 'graded'
+        JOIN enrollments e ON e.course_id = c.id AND e.user_id = ?
+        WHERE asub.student_id = e.student_id AND asub.status = 'Graded'
         ORDER BY asub.graded_at DESC
         LIMIT 3
     ", [$userId]);
@@ -249,7 +250,7 @@ require_once '../src/templates/header.php';
                     <div class="p-6 space-y-4">
                         <?php foreach ($recentEnrollments as $enrollment): ?>
                             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-primary-300 transition">
-                                <img src="<?= courseThumbnail($enrollment['thumbnail']) ?>"
+                                <img src="<?= courseThumbnail($enrollment['thumbnail_url']) ?>"
                                      alt="<?= sanitize($enrollment['title']) ?>"
                                      class="w-full sm:w-20 h-32 sm:h-20 object-cover rounded">
                                 <div class="flex-1">

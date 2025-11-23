@@ -151,8 +151,8 @@ try {
                             <?php foreach ($category_courses as $course): ?>
                                 <div class="group course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                                     <div class="relative h-40 bg-gradient-to-br from-<?= $course['category_color'] ?>-50 to-<?= $course['category_color'] ?>-100 overflow-hidden">
-                                        <?php if ($course['thumbnail'] && file_exists('uploads/courses/' . $course['thumbnail'])): ?>
-                                            <img src="uploads/courses/<?= htmlspecialchars($course['thumbnail']) ?>" 
+                                        <?php if ($course['thumbnail_url'] && file_exists('uploads/courses/' . $course['thumbnail_url'])): ?>
+                                            <img src="uploads/courses/<?= htmlspecialchars($course['thumbnail_url']) ?>" 
                                                  alt="<?= htmlspecialchars($course['title']) ?>" 
                                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                         <?php else: ?>
@@ -166,7 +166,7 @@ try {
                                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium 
                                                 bg-<?= $course['category_color'] ?>-100 text-<?= $course['category_color'] ?>-800">
                                                 <i class="fas fa-tag mr-1"></i>
-                                                <?= htmlspecialchars($course['course_level']) ?>
+                                                <?= htmlspecialchars($course['level']) ?>
                                             </span>
                                         </div>
                                     </div>
@@ -236,8 +236,8 @@ try {
                     <div class="group course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up animation-delay-<?= $index * 100 ?>">
                         <!-- Course Thumbnail -->
                         <div class="relative h-48 bg-gradient-to-br from-<?= $course['category_color'] ?>-50 to-<?= $course['category_color'] ?>-100 overflow-hidden">
-                            <?php if ($course['thumbnail'] && file_exists('uploads/courses/' . $course['thumbnail'])): ?>
-                                <img src="uploads/courses/<?= htmlspecialchars($course['thumbnail']) ?>" 
+                            <?php if ($course['thumbnail_url'] && file_exists('uploads/courses/' . $course['thumbnail_url'])): ?>
+                                <img src="uploads/courses/<?= htmlspecialchars($course['thumbnail_url']) ?>" 
                                      alt="<?= htmlspecialchars($course['title']) ?>" 
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             <?php else: ?>
@@ -259,7 +259,7 @@ try {
                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium 
                                     bg-<?= $course['category_color'] ?>-100 text-<?= $course['category_color'] ?>-800">
                                     <i class="fas fa-tag mr-1"></i>
-                                    <?= htmlspecialchars($course['course_level']) ?>
+                                    <?= htmlspecialchars($course['level']) ?>
                                 </span>
                             </div>
                         </div>
@@ -274,8 +274,8 @@ try {
                                     <div class="text-xl font-bold text-primary-600">
                                         <?= $course['price'] == 0 ? 'Free' : formatCurrency($course['price']) ?>
                                     </div>
-                                    <?php if (isset($course['duration_hours']) && $course['duration_hours'] > 0): ?>
-                                        <div class="text-xs text-gray-500"><?= $course['duration_hours'] ?>h total</div>
+                                    <?php if (isset($course['total_hours']) && $course['total_hours'] > 0): ?>
+                                        <div class="text-xs text-gray-500"><?= $course['total_hours'] ?>h total</div>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -293,7 +293,7 @@ try {
                                 <?php endif; ?>
                                 <span class="flex items-center">
                                     <i class="fas fa-clock mr-1 text-primary-500"></i>
-                                    <?= isset($course['duration_weeks']) ? $course['duration_weeks'] . ' weeks' : (isset($course['duration_hours']) ? $course['duration_hours'] . ' hours' : 'Varies') ?>
+                                    <?= isset($course['duration_weeks']) ? $course['duration_weeks'] . ' weeks' : (isset($course['total_hours']) ? $course['total_hours'] . ' hours' : 'Varies') ?>
                                 </span>
                             </div>
                             

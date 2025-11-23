@@ -35,8 +35,9 @@ try {
                u.first_name as instructor_first_name,
                u.last_name as instructor_last_name,
                e.id as enrollment_id,
-               e.progress_percentage,
-               e.enrollment_status
+               e.progress as progress_percentage,
+               e.enrollment_status,
+               e.student_id
         FROM courses c
         LEFT JOIN instructors i ON c.instructor_id = i.id
         LEFT JOIN users u ON i.user_id = u.id
@@ -67,7 +68,7 @@ try {
         $modules = $db->fetchAll("
             SELECT m.*,
                    COUNT(DISTINCT l.id) as lesson_count
-            FROM course_modules m
+            FROM modules m
             LEFT JOIN lessons l ON m.id = l.module_id
             WHERE m.course_id = ?
             GROUP BY m.id
@@ -85,17 +86,18 @@ try {
         }
 
         // Get quizzes for this course
+        $studentId = $course['student_id'] ?? null;
         $quizzes = $db->fetchAll("
             SELECT q.*,
                    COUNT(DISTINCT qa.id) as attempt_count,
                    MAX(qa.percentage) as best_score,
                    MAX(qa.passed) as has_passed
             FROM quizzes q
-            LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.user_id = ?
-            WHERE q.course_id = ? AND q.status = 'published'
+            LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.student_id = ?
+            WHERE q.course_id = ? AND q.is_published = 1
             GROUP BY q.id
             ORDER BY q.created_at ASC
-        ", [$userId, $courseId]);
+        ", [$studentId, $courseId]);
 
         // Get assignments for this course
         $assignments = $db->fetchAll("
@@ -104,11 +106,11 @@ try {
                    MAX(s.score) as best_score,
                    MAX(s.status) as submission_status
             FROM assignments a
-            LEFT JOIN assignment_submissions s ON a.id = s.assignment_id AND s.user_id = ?
-            WHERE a.course_id = ? AND a.status = 'published'
+            LEFT JOIN assignment_submissions s ON a.id = s.assignment_id AND s.student_id = ?
+            WHERE a.course_id = ?
             GROUP BY a.id
             ORDER BY a.created_at ASC
-        ", [$userId, $courseId]);
+        ", [$studentId, $courseId]);
 
     } catch (Exception $e) {
         error_log("Learn.php Error - Modules/Lessons query: " . $e->getMessage());
@@ -133,18 +135,18 @@ try {
                        m.title as module_title,
                        m.id as module_id
                 FROM lessons l
-                JOIN course_modules m ON l.module_id = m.id
+                JOIN modules m ON l.module_id = m.id
                 WHERE l.id = ? AND m.course_id = ?
             ", [$lessonId, $courseId]);
 
             if ($currentLesson) {
-                $currentModule = $db->fetchOne("SELECT * FROM course_modules WHERE id = ?", [$currentLesson['module_id']]);
+                $currentModule = $db->fetchOne("SELECT * FROM modules WHERE id = ?", [$currentLesson['module_id']]);
 
                 // Get all lessons in order to find previous and next
                 $allLessons = $db->fetchAll("
                     SELECT l.id, l.title, m.display_order as module_order, l.display_order as lesson_order
                     FROM lessons l
-                    JOIN course_modules m ON l.module_id = m.id
+                    JOIN modules m ON l.module_id = m.id
                     WHERE m.course_id = ?
                     ORDER BY m.display_order ASC, l.display_order ASC
                 ", [$courseId]);

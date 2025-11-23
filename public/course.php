@@ -146,20 +146,20 @@ require_once '../src/templates/header.php';
                 <div class="flex flex-wrap items-center gap-6 text-sm mb-6">
                     <div class="flex items-center">
                         <i class="fas fa-star text-yellow-400 mr-2"></i>
-                        <span class="font-semibold"><?= number_format($course['rating_average'] ?? 0, 1) ?></span>
-                        <span class="ml-1 text-primary-100">(<?= $course['rating_count'] ?? 0 ?> reviews)</span>
+                        <span class="font-semibold"><?= number_format($course['rating'] ?? 0, 1) ?></span>
+                        <span class="ml-1 text-primary-100">(<?= $course['total_reviews'] ?? 0 ?> reviews)</span>
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-users mr-2"></i>
-                        <span><?= number_format($course['enrolled_students'] ?? 0) ?> students</span>
+                        <span><?= number_format($course['enrollment_count'] ?? 0) ?> students</span>
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-signal mr-2"></i>
-                        <span class="capitalize"><?= sanitize($course['course_level'] ?? 'Beginner') ?></span>
+                        <span class="capitalize"><?= sanitize($course['level'] ?? 'Beginner') ?></span>
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-clock mr-2"></i>
-                        <span><?= $course['duration_hours'] ?? 0 ?> hours</span>
+                        <span><?= $course['total_hours'] ?? 0 ?> hours</span>
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-globe mr-2"></i>
@@ -247,7 +247,7 @@ require_once '../src/templates/header.php';
                             <ul class="space-y-3 text-sm text-gray-600">
                                 <li class="flex items-start">
                                     <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
-                                    <span><?= $course['duration_hours'] ?? 0 ?> hours on-demand content</span>
+                                    <span><?= $course['total_hours'] ?? 0 ?> hours on-demand content</span>
                                 </li>
                                 <li class="flex items-start">
                                     <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
