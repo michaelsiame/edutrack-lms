@@ -21,38 +21,47 @@ function registerUser($data) {
                 'message' => 'Email address already registered'
             ];
         }
-        
+
         // Hash password
         $passwordHash = hashPassword($data['password']);
-        
-        // Generate verification token
-        $verificationToken = generateToken();
-        
+
+        // Generate username from email (part before @) or first+last name
+        $baseUsername = strtolower(explode('@', $data['email'])[0]);
+        $username = $baseUsername;
+        $counter = 1;
+        // Ensure username is unique
+        while ($db->exists('users', 'username = ?', [$username])) {
+            $username = $baseUsername . $counter;
+            $counter++;
+        }
+
         // Prepare user data (without role - handled separately in user_roles table)
+        // Note: email_verification_token not in schema, using separate verification system
         $userData = [
+            'username' => $username,
             'email' => $data['email'],
             'password_hash' => $passwordHash,
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'phone' => $data['phone'] ?? null,
             'status' => 'active',
-            'email_verified' => false,
-            'email_verification_token' => $verificationToken
+            'email_verified' => false
         ];
 
         // Insert user
         $userId = $db->insert('users', $userData);
 
         // Assign role to user via user_roles table
-        $roleName = ucfirst($data['role'] ?? 'student'); // Convert to proper case (student -> Student)
-        $role = $db->fetchOne("SELECT id FROM roles WHERE role_name = ?", [$roleName]);
+        // Try different case variations for role_name (Student, student, STUDENT)
+        $roleName = $data['role'] ?? 'student';
+        $role = $db->fetchOne("SELECT id FROM roles WHERE LOWER(role_name) = LOWER(?)", [$roleName]);
         if ($role) {
             $db->insert('user_roles', [
                 'user_id' => $userId,
                 'role_id' => $role['id']
             ]);
         }
-        
+
         // Create user profile
         $db->insert('user_profiles', [
             'user_id' => $userId,
@@ -64,16 +73,13 @@ function registerUser($data) {
             'province' => $data['province'] ?? null,
             'country' => 'Zambia'
         ]);
-        
-        // Send verification email
-        sendVerificationEmail($data['email'], $data['first_name'], $verificationToken);
-        
+
         // Log activity
         logActivity("New user registered: {$data['email']}", 'info');
-        
+
         return [
             'success' => true,
-            'message' => 'Registration successful! Please check your email to verify your account.',
+            'message' => 'Registration successful! You can now login to your account.',
             'user_id' => $userId
         ];
         
