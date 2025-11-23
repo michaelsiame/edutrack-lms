@@ -2,17 +2,18 @@
 /**
  * Announcement Class
  * Manages system-wide and course-specific announcements
+ * Fixed to match actual database schema
  */
 
 class Announcement {
     private $db;
     private $id;
     private $courseId;
-    private $createdBy;
+    private $postedBy;
     private $title;
     private $content;
     private $announcementType;
-    private $targetAudience;
+    private $priority;
     private $isPublished;
     private $publishedAt;
     private $expiresAt;
@@ -31,30 +32,31 @@ class Announcement {
 
     /**
      * Create a new announcement
+     * Uses correct column names: announcement_id, posted_by, priority
      */
     public static function create($data) {
-        global $db;
+        $db = Database::getInstance();
 
         // Validate required fields
-        if (empty($data['title']) || empty($data['content']) || empty($data['created_by'])) {
+        if (empty($data['title']) || empty($data['content']) || empty($data['posted_by'])) {
             throw new Exception('Title, content, and creator are required');
         }
 
         $sql = "INSERT INTO announcements (
-            course_id, created_by, title, content, announcement_type,
-            target_audience, is_published, published_at, expires_at
+            course_id, posted_by, title, content, announcement_type,
+            priority, is_published, published_at, expires_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        $isPublished = $data['is_published'] ?? false;
+        $isPublished = $data['is_published'] ?? true;
         $publishedAt = $isPublished ? ($data['published_at'] ?? date('Y-m-d H:i:s')) : null;
 
         $params = [
             $data['course_id'] ?? null,
-            $data['created_by'],
+            $data['posted_by'],
             $data['title'],
             $data['content'],
-            $data['announcement_type'] ?? 'info',
-            $data['target_audience'] ?? 'all',
+            $data['announcement_type'] ?? 'General',
+            $data['priority'] ?? 'Normal',
             $isPublished ? 1 : 0,
             $publishedAt,
             $data['expires_at'] ?? null
@@ -72,17 +74,18 @@ class Announcement {
 
     /**
      * Find announcement by ID
+     * Uses announcement_id and posted_by columns
      */
     public static function find($id) {
-        global $db;
+        $db = Database::getInstance();
 
         $sql = "SELECT a.*,
                        CONCAT(u.first_name, ' ', u.last_name) as creator_name,
                        c.title as course_title
                 FROM announcements a
-                JOIN users u ON a.created_by = u.id
+                JOIN users u ON a.posted_by = u.id
                 LEFT JOIN courses c ON a.course_id = c.id
-                WHERE a.id = ?";
+                WHERE a.announcement_id = ?";
 
         $data = $db->fetchOne($sql, [$id]);
 
@@ -99,13 +102,13 @@ class Announcement {
      * Get all announcements with filters
      */
     public static function getAll($filters = []) {
-        global $db;
+        $db = Database::getInstance();
 
         $sql = "SELECT a.*,
                        CONCAT(u.first_name, ' ', u.last_name) as creator_name,
                        c.title as course_title
                 FROM announcements a
-                JOIN users u ON a.created_by = u.id
+                JOIN users u ON a.posted_by = u.id
                 LEFT JOIN courses c ON a.course_id = c.id
                 WHERE 1=1";
 
@@ -128,16 +131,16 @@ class Announcement {
             }
         }
 
-        // Filter by target audience
-        if (isset($filters['target_audience'])) {
-            $sql .= " AND (a.target_audience = ? OR a.target_audience = 'all')";
-            $params[] = $filters['target_audience'];
-        }
-
         // Filter by type
         if (isset($filters['type'])) {
             $sql .= " AND a.announcement_type = ?";
             $params[] = $filters['type'];
+        }
+
+        // Filter by priority
+        if (isset($filters['priority'])) {
+            $sql .= " AND a.priority = ?";
+            $params[] = $filters['priority'];
         }
 
         // Order by
@@ -167,15 +170,17 @@ class Announcement {
 
     /**
      * Get active announcements for a user
+     * Fixed: Removed target_audience filter (column doesn't exist)
+     * Uses announcement_type for filtering instead
      */
     public static function getActiveForUser($userId, $role = null, $courseId = null) {
-        global $db;
+        $db = Database::getInstance();
 
         $sql = "SELECT a.*,
                        CONCAT(u.first_name, ' ', u.last_name) as creator_name,
                        c.title as course_title
                 FROM announcements a
-                JOIN users u ON a.created_by = u.id
+                JOIN users u ON a.posted_by = u.id
                 LEFT JOIN courses c ON a.course_id = c.id
                 WHERE a.is_published = 1
                   AND (a.published_at IS NULL OR a.published_at <= NOW())
@@ -183,24 +188,16 @@ class Announcement {
 
         $params = [];
 
-        // Filter by user role
-        if ($role) {
-            if ($role === 'student') {
-                $sql .= " AND (a.target_audience = 'students' OR a.target_audience = 'all')";
-            } elseif ($role === 'instructor') {
-                $sql .= " AND (a.target_audience = 'instructors' OR a.target_audience = 'all')";
-            }
-        }
-
-        // Filter by course or global
+        // Filter by course or global (System/General types are global)
         if ($courseId) {
-            $sql .= " AND (a.course_id = ? OR a.course_id IS NULL)";
+            $sql .= " AND (a.course_id = ? OR a.course_id IS NULL OR a.announcement_type IN ('System', 'General'))";
             $params[] = $courseId;
         } else {
-            $sql .= " AND a.course_id IS NULL";
+            // Show system and general announcements for dashboard
+            $sql .= " AND (a.course_id IS NULL OR a.announcement_type IN ('System', 'General'))";
         }
 
-        $sql .= " ORDER BY a.announcement_type = 'urgent' DESC, a.created_at DESC";
+        $sql .= " ORDER BY a.priority = 'Urgent' DESC, a.announcement_type = 'Urgent' DESC, a.created_at DESC";
         $sql .= " LIMIT 10";
 
         $results = $db->fetchAll($sql, $params);
@@ -237,9 +234,9 @@ class Announcement {
             $params[] = $data['announcement_type'];
         }
 
-        if (isset($data['target_audience'])) {
-            $fields[] = "target_audience = ?";
-            $params[] = $data['target_audience'];
+        if (isset($data['priority'])) {
+            $fields[] = "priority = ?";
+            $params[] = $data['priority'];
         }
 
         if (isset($data['is_published'])) {
@@ -270,7 +267,7 @@ class Announcement {
         $fields[] = "updated_at = NOW()";
         $params[] = $this->id;
 
-        $sql = "UPDATE announcements SET " . implode(', ', $fields) . " WHERE id = ?";
+        $sql = "UPDATE announcements SET " . implode(', ', $fields) . " WHERE announcement_id = ?";
 
         return $this->db->query($sql, $params);
     }
@@ -279,7 +276,7 @@ class Announcement {
      * Delete an announcement
      */
     public function delete() {
-        return $this->db->query("DELETE FROM announcements WHERE id = ?", [$this->id]);
+        return $this->db->query("DELETE FROM announcements WHERE announcement_id = ?", [$this->id]);
     }
 
     /**
@@ -333,10 +330,10 @@ class Announcement {
      */
     public function getTypeBadgeColor() {
         $colors = [
-            'info' => 'blue',
-            'success' => 'green',
-            'warning' => 'yellow',
-            'urgent' => 'red'
+            'General' => 'blue',
+            'Course' => 'green',
+            'System' => 'yellow',
+            'Urgent' => 'red'
         ];
 
         return $colors[$this->announcementType] ?? 'gray';
@@ -347,10 +344,10 @@ class Announcement {
      */
     public function getTypeIcon() {
         $icons = [
-            'info' => 'info-circle',
-            'success' => 'check-circle',
-            'warning' => 'exclamation-triangle',
-            'urgent' => 'exclamation-circle'
+            'General' => 'info-circle',
+            'Course' => 'book',
+            'System' => 'cog',
+            'Urgent' => 'exclamation-circle'
         ];
 
         return $icons[$this->announcementType] ?? 'bell';
@@ -358,15 +355,16 @@ class Announcement {
 
     /**
      * Hydrate object from database row
+     * Fixed: Uses announcement_id and posted_by columns
      */
     private function hydrate($data) {
-        $this->id = $data['id'] ?? null;
+        $this->id = $data['announcement_id'] ?? null;
         $this->courseId = $data['course_id'] ?? null;
-        $this->createdBy = $data['created_by'] ?? null;
+        $this->postedBy = $data['posted_by'] ?? null;
         $this->title = $data['title'] ?? null;
         $this->content = $data['content'] ?? null;
-        $this->announcementType = $data['announcement_type'] ?? 'info';
-        $this->targetAudience = $data['target_audience'] ?? 'all';
+        $this->announcementType = $data['announcement_type'] ?? 'General';
+        $this->priority = $data['priority'] ?? 'Normal';
         $this->isPublished = (bool)($data['is_published'] ?? false);
         $this->publishedAt = $data['published_at'] ?? null;
         $this->expiresAt = $data['expires_at'] ?? null;
@@ -385,11 +383,12 @@ class Announcement {
     // Getters
     public function getId() { return $this->id; }
     public function getCourseId() { return $this->courseId; }
-    public function getCreatedBy() { return $this->createdBy; }
+    public function getPostedBy() { return $this->postedBy; }
+    public function getCreatedBy() { return $this->postedBy; } // Alias for backward compatibility
     public function getTitle() { return $this->title; }
     public function getContent() { return $this->content; }
     public function getAnnouncementType() { return $this->announcementType; }
-    public function getTargetAudience() { return $this->targetAudience; }
+    public function getPriority() { return $this->priority; }
     public function isPublished() { return $this->isPublished; }
     public function getPublishedAt() { return $this->publishedAt; }
     public function getExpiresAt() { return $this->expiresAt; }
