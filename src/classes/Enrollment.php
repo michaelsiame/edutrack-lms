@@ -78,34 +78,49 @@ class Enrollment {
      */
     public static function create($data) {
         $db = Database::getInstance();
-        
+
         // Check if already enrolled
         if (self::isEnrolled($data['user_id'], $data['course_id'])) {
             return false; // Already enrolled
         }
-        
+
+        // Get student_id from students table (required FK)
+        $student = $db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$data['user_id']]);
+
+        // If user is not in students table, create student record
+        if (!$student) {
+            $db->insert('students', [
+                'user_id' => $data['user_id'],
+                'enrollment_date' => date('Y-m-d')
+            ]);
+            $studentId = $db->lastInsertId();
+        } else {
+            $studentId = $student['id'];
+        }
+
         $sql = "INSERT INTO enrollments (
-            user_id, course_id, enrollment_status, payment_status,
+            user_id, student_id, course_id, enrollment_status, payment_status,
             amount_paid, enrolled_at
         ) VALUES (
-            :user_id, :course_id, :enrollment_status, :payment_status,
+            :user_id, :student_id, :course_id, :enrollment_status, :payment_status,
             :amount_paid, NOW()
         )";
-        
+
         $params = [
             'user_id' => $data['user_id'],
+            'student_id' => $studentId,
             'course_id' => $data['course_id'],
-            'enrollment_status' => $data['enrollment_status'] ?? 'active',
+            'enrollment_status' => $data['enrollment_status'] ?? 'Enrolled',
             'payment_status' => $data['payment_status'] ?? 'pending',
             'amount_paid' => $data['amount_paid'] ?? 0
         ];
-        
+
         if ($db->query($sql, $params)) {
             $enrollmentId = $db->lastInsertId();
-            
+
             // Log activity
-            self::logActivity($data['user_id'], $data['course_id'], 'enrolled');
-            
+            self::logActivity($data['user_id'], 'enrollment', $data['course_id'], 'Enrolled in course');
+
             return $enrollmentId;
         }
         return false;
@@ -185,56 +200,69 @@ class Enrollment {
      * Get completed lessons
      */
     public function getCompletedLessons() {
-        $sql = "SELECT lesson_id FROM lesson_progress 
-                WHERE user_id = :user_id AND course_id = :course_id AND completed = 1";
-        
+        $sql = "SELECT lesson_id FROM lesson_progress
+                WHERE enrollment_id = :enrollment_id AND status = 'Completed'";
+
         return $this->db->query($sql, [
-            'user_id' => $this->getUserId(),
-            'course_id' => $this->getCourseId()
+            'enrollment_id' => $this->getId()
         ])->fetchAll();
     }
-    
+
     /**
      * Get lesson progress
      */
     public function getLessonProgress($lessonId) {
-        $sql = "SELECT * FROM lesson_progress 
-                WHERE user_id = :user_id AND lesson_id = :lesson_id";
-        
+        $sql = "SELECT * FROM lesson_progress
+                WHERE enrollment_id = :enrollment_id AND lesson_id = :lesson_id";
+
         return $this->db->query($sql, [
-            'user_id' => $this->getUserId(),
+            'enrollment_id' => $this->getId(),
             'lesson_id' => $lessonId
         ])->fetch();
     }
-    
+
     /**
      * Mark lesson as completed
      */
     public function markLessonComplete($lessonId) {
-        $sql = "INSERT INTO lesson_progress (
-            user_id, course_id, lesson_id, completed, completed_at
-        ) VALUES (
-            :user_id, :course_id, :lesson_id, 1, NOW()
-        ) ON DUPLICATE KEY UPDATE 
-            completed = 1, completed_at = NOW()";
-        
+        // Check if progress record exists
+        $existing = $this->getLessonProgress($lessonId);
+
+        if ($existing) {
+            // Update existing record
+            $sql = "UPDATE lesson_progress SET
+                    status = 'Completed',
+                    progress_percentage = 100.00,
+                    completed_at = NOW(),
+                    last_accessed = NOW()
+                    WHERE enrollment_id = :enrollment_id AND lesson_id = :lesson_id";
+        } else {
+            // Insert new record
+            $sql = "INSERT INTO lesson_progress (
+                enrollment_id, lesson_id, status, progress_percentage,
+                started_at, completed_at, last_accessed
+            ) VALUES (
+                :enrollment_id, :lesson_id, 'Completed', 100.00,
+                NOW(), NOW(), NOW()
+            )";
+        }
+
         $result = $this->db->query($sql, [
-            'user_id' => $this->getUserId(),
-            'course_id' => $this->getCourseId(),
+            'enrollment_id' => $this->getId(),
             'lesson_id' => $lessonId
         ]);
-        
+
         if ($result) {
             // Recalculate progress
             $this->recalculateProgress();
-            
+
             // Log activity
-            self::logActivity($this->getUserId(), $this->getCourseId(), 'completed_lesson', $lessonId);
+            self::logActivity($this->getUserId(), 'lesson', $lessonId, 'Completed lesson');
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Recalculate progress percentage
      */
@@ -242,26 +270,28 @@ class Enrollment {
         // Get total lessons in course
         require_once __DIR__ . '/Course.php';
         $course = Course::find($this->getCourseId());
+        if (!$course) {
+            return;
+        }
         $totalLessons = $course->getTotalLessons();
-        
+
         if ($totalLessons == 0) {
             return;
         }
-        
-        // Get completed lessons count
-        $sql = "SELECT COUNT(*) as completed FROM lesson_progress 
-                WHERE user_id = :user_id AND course_id = :course_id AND completed = 1";
-        
+
+        // Get completed lessons count using enrollment_id
+        $sql = "SELECT COUNT(*) as completed FROM lesson_progress
+                WHERE enrollment_id = :enrollment_id AND status = 'Completed'";
+
         $result = $this->db->query($sql, [
-            'user_id' => $this->getUserId(),
-            'course_id' => $this->getCourseId()
+            'enrollment_id' => $this->getId()
         ])->fetch();
-        
+
         $completedLessons = $result['completed'];
         $percentage = ($completedLessons / $totalLessons) * 100;
-        
+
         $this->updateProgress($percentage);
-        
+
         // Check if course is completed
         if ($percentage >= 100) {
             $this->complete();
@@ -270,65 +300,89 @@ class Enrollment {
     
     /**
      * Get user's quiz attempts
+     * Note: quiz_attempts uses student_id (FK to students table), not user_id
      */
     public function getQuizAttempts($quizId = null) {
-        $sql = "SELECT * FROM quiz_attempts 
-                WHERE user_id = :user_id AND course_id = :course_id";
-        
+        // Get student_id from students table
+        $student = $this->db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$this->getUserId()]);
+        if (!$student) {
+            return [];
+        }
+
+        $sql = "SELECT qa.*, q.title as quiz_title
+                FROM quiz_attempts qa
+                JOIN quizzes q ON qa.quiz_id = q.id
+                WHERE qa.student_id = :student_id AND q.course_id = :course_id";
+
         $params = [
-            'user_id' => $this->getUserId(),
+            'student_id' => $student['id'],
             'course_id' => $this->getCourseId()
         ];
-        
+
         if ($quizId) {
-            $sql .= " AND quiz_id = :quiz_id";
+            $sql .= " AND qa.quiz_id = :quiz_id";
             $params['quiz_id'] = $quizId;
         }
-        
-        $sql .= " ORDER BY started_at DESC";
-        
+
+        $sql .= " ORDER BY qa.started_at DESC";
+
         return $this->db->query($sql, $params)->fetchAll();
     }
-    
+
     /**
      * Get user's assignment submissions
+     * Note: assignment_submissions uses student_id (FK to students table), not user_id
      */
     public function getAssignmentSubmissions($assignmentId = null) {
-        $sql = "SELECT * FROM assignment_submissions 
-                WHERE user_id = :user_id AND course_id = :course_id";
-        
+        // Get student_id from students table
+        $student = $this->db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$this->getUserId()]);
+        if (!$student) {
+            return [];
+        }
+
+        $sql = "SELECT asub.*, a.title as assignment_title
+                FROM assignment_submissions asub
+                JOIN assignments a ON asub.assignment_id = a.id
+                WHERE asub.student_id = :student_id AND a.course_id = :course_id";
+
         $params = [
-            'user_id' => $this->getUserId(),
+            'student_id' => $student['id'],
             'course_id' => $this->getCourseId()
         ];
-        
+
         if ($assignmentId) {
-            $sql .= " AND assignment_id = :assignment_id";
+            $sql .= " AND asub.assignment_id = :assignment_id";
             $params['assignment_id'] = $assignmentId;
         }
-        
-        $sql .= " ORDER BY submitted_at DESC";
-        
+
+        $sql .= " ORDER BY asub.submitted_at DESC";
+
         return $this->db->query($sql, $params)->fetchAll();
     }
     
     /**
      * Log activity
+     * Uses correct column names for activity_logs table
      */
-    private static function logActivity($userId, $courseId, $activityType, $resourceId = null) {
+    private static function logActivity($userId, $entityType, $entityId = null, $description = null) {
         $db = Database::getInstance();
-        
+
         $sql = "INSERT INTO activity_logs (
-            user_id, course_id, activity_type, resource_id, activity_date
+            user_id, activity_type, entity_type, entity_id, description,
+            ip_address, user_agent, created_at
         ) VALUES (
-            :user_id, :course_id, :activity_type, :resource_id, NOW()
+            :user_id, :activity_type, :entity_type, :entity_id, :description,
+            :ip_address, :user_agent, NOW()
         )";
-        
+
         return $db->query($sql, [
             'user_id' => $userId,
-            'course_id' => $courseId,
-            'activity_type' => $activityType,
-            'resource_id' => $resourceId
+            'activity_type' => $entityType . '_action',
+            'entity_type' => $entityType,
+            'entity_id' => $entityId,
+            'description' => $description,
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null
         ]);
     }
     

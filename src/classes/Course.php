@@ -124,9 +124,25 @@ class Course {
             $params['search'] = '%' . $filters['search'] . '%';
         }
         
-        // Sorting
+        // Sorting - whitelist allowed columns to prevent SQL injection
+        $allowedOrderColumns = [
+            'created_at', 'updated_at', 'title', 'price', 'rating',
+            'enrollment_count', 'start_date', 'end_date', 'level', 'featured'
+        ];
+        $allowedOrderDir = ['ASC', 'DESC'];
+
         $orderBy = $filters['order_by'] ?? 'created_at';
-        $orderDir = $filters['order_dir'] ?? 'DESC';
+        $orderDir = strtoupper($filters['order_dir'] ?? 'DESC');
+
+        // Validate order column
+        if (!in_array($orderBy, $allowedOrderColumns)) {
+            $orderBy = 'created_at';
+        }
+        // Validate order direction
+        if (!in_array($orderDir, $allowedOrderDir)) {
+            $orderDir = 'DESC';
+        }
+
         $sql .= " ORDER BY c.$orderBy $orderDir";
         
         // Pagination

@@ -4,13 +4,18 @@
  * Main dashboard showing overview, stats, and recent activities
  */
 
-// Enable full error reporting for debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// Debug mode - set to false for production
+$DEBUG_MODE = false;
 
-// Debug initialization
-$DEBUG_MODE = true; // Force debug mode for troubleshooting
+// Only enable error display in debug mode
+if ($DEBUG_MODE) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+} else {
+    ini_set('display_errors', 0);
+    error_reporting(0);
+}
 $page_start_time = microtime(true);
 $page_start_memory = memory_get_usage();
 $debug_data = [

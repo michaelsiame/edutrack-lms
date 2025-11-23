@@ -149,19 +149,51 @@ class User {
     
     /**
      * Get role
+     * Queries user_roles junction table since users table doesn't have a role column
      */
     public function getRole() {
-        return $this->data['role'] ?? 'student';
+        // First check if we've already cached the role
+        if (isset($this->data['_cached_role'])) {
+            return $this->data['_cached_role'];
+        }
+
+        // Query user_roles table to get the actual role
+        $roleData = $this->db->fetchOne("
+            SELECT r.role_name
+            FROM user_roles ur
+            JOIN roles r ON ur.role_id = r.id
+            WHERE ur.user_id = ?
+            LIMIT 1
+        ", [$this->id]);
+
+        if ($roleData) {
+            $roleName = strtolower(str_replace(' ', '_', $roleData['role_name']));
+            // Normalize role names
+            if (strpos($roleName, 'admin') !== false || strpos($roleName, 'super') !== false) {
+                $role = 'admin';
+            } elseif (strpos($roleName, 'instructor') !== false) {
+                $role = 'instructor';
+            } else {
+                $role = 'student';
+            }
+        } else {
+            $role = 'student'; // Default role
+        }
+
+        // Cache the role to avoid repeated queries
+        $this->data['_cached_role'] = $role;
+        return $role;
     }
-    
+
     /**
      * Check if user has role
      */
     public function hasRole($role) {
+        $userRole = $this->getRole();
         if (is_array($role)) {
-            return in_array($this->getRole(), $role);
+            return in_array($userRole, $role);
         }
-        return $this->getRole() === $role;
+        return $userRole === $role;
     }
     
     /**
@@ -240,9 +272,9 @@ class User {
      */
     public function uploadAvatar($file) {
         $uploadDir = UPLOAD_PATH . '/users/avatars/';
-        
+
         if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
+            mkdir($uploadDir, 0755, true);
         }
         
         // Validate file
@@ -416,60 +448,80 @@ class User {
     
     /**
      * Get all users
+     * Fixed: Uses user_roles junction table instead of non-existent role column
      */
     public static function all($role = null, $limit = 100, $offset = 0) {
         $db = Database::getInstance();
-        
-        $sql = "SELECT u.*, up.avatar, up.city, up.province 
-                FROM users u 
+
+        $sql = "SELECT u.*, up.avatar, up.city, up.country as province
+                FROM users u
                 LEFT JOIN user_profiles up ON u.id = up.user_id";
         $params = [];
-        
+
         if ($role) {
-            $sql .= " WHERE u.role = ?";
-            $params[] = $role;
+            // Map role name to actual role patterns
+            $rolePattern = '%' . ucfirst($role) . '%';
+            $sql .= " INNER JOIN user_roles ur ON u.id = ur.user_id
+                      INNER JOIN roles r ON ur.role_id = r.id
+                      WHERE r.role_name LIKE ?";
+            $params[] = $rolePattern;
         }
-        
+
         $sql .= " ORDER BY u.created_at DESC LIMIT ? OFFSET ?";
         $params[] = $limit;
         $params[] = $offset;
-        
+
         return $db->fetchAll($sql, $params);
     }
-    
+
     /**
      * Count users
+     * Fixed: Uses user_roles junction table instead of non-existent role column
      */
     public static function count($role = null) {
         $db = Database::getInstance();
-        
+
         if ($role) {
-            return $db->count('users', 'role = ?', [$role]);
+            $rolePattern = '%' . ucfirst($role) . '%';
+            return $db->fetchColumn(
+                "SELECT COUNT(DISTINCT u.id)
+                 FROM users u
+                 INNER JOIN user_roles ur ON u.id = ur.user_id
+                 INNER JOIN roles r ON ur.role_id = r.id
+                 WHERE r.role_name LIKE ?",
+                [$rolePattern]
+            );
         }
-        
-        return $db->count('users');
+
+        return $db->fetchColumn("SELECT COUNT(*) FROM users");
     }
-    
+
     /**
      * Search users
+     * Fixed: Uses user_roles junction table instead of non-existent role column
      */
     public static function search($query, $role = null) {
         $db = Database::getInstance();
-        
-        $sql = "SELECT u.*, up.avatar, up.city 
-                FROM users u 
-                LEFT JOIN user_profiles up ON u.id = up.user_id 
+
+        $sql = "SELECT u.*, up.avatar, up.city
+                FROM users u
+                LEFT JOIN user_profiles up ON u.id = up.user_id
                 WHERE (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ?)";
         $searchTerm = "%{$query}%";
         $params = [$searchTerm, $searchTerm, $searchTerm];
-        
+
         if ($role) {
-            $sql .= " AND u.role = ?";
-            $params[] = $role;
+            $rolePattern = '%' . ucfirst($role) . '%';
+            $sql .= " AND u.id IN (
+                SELECT ur.user_id FROM user_roles ur
+                INNER JOIN roles r ON ur.role_id = r.id
+                WHERE r.role_name LIKE ?
+            )";
+            $params[] = $rolePattern;
         }
-        
+
         $sql .= " ORDER BY u.created_at DESC LIMIT 50";
-        
+
         return $db->fetchAll($sql, $params);
     }
     

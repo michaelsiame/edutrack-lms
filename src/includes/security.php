@@ -407,20 +407,20 @@ function secureSession() {
         session_regenerate_id(true);
         $_SESSION['last_regeneration'] = time();
     }
-    
-    // Store fingerprint
+
+    // Store fingerprint - fixed concatenation to use parentheses for proper null coalescing
     if (!isset($_SESSION['fingerprint'])) {
         $_SESSION['fingerprint'] = md5(
-            $_SERVER['HTTP_USER_AGENT'] ?? '' . 
-            $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''
+            ($_SERVER['HTTP_USER_AGENT'] ?? '') .
+            ($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
         );
     } else {
         // Verify fingerprint
         $currentFingerprint = md5(
-            $_SERVER['HTTP_USER_AGENT'] ?? '' . 
-            $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''
+            ($_SERVER['HTTP_USER_AGENT'] ?? '') .
+            ($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
         );
-        
+
         if ($_SESSION['fingerprint'] !== $currentFingerprint) {
             session_destroy();
             session_start();
