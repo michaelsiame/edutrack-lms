@@ -102,31 +102,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_payment'])) {
         // If no errors, create enrollment and payment record
         if (empty($errors)) {
             try {
-                // Get or create student record for this user
-                $student = $db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$userId]);
+                require_once '../src/classes/Enrollment.php';
 
-                if (!$student) {
-                    // Create student record if it doesn't exist
-                    $studentId = $db->insert('students', [
-                        'user_id' => $userId,
-                        'enrollment_date' => date('Y-m-d')
-                    ]);
-                } else {
-                    $studentId = $student['id'];
-                }
-
-                // Create enrollment (pending status)
-                $enrollmentId = $db->insert('enrollments', [
+                // Use Enrollment::create() - handles student record creation automatically
+                // Uses correct schema enum values:
+                // enrollment_status: 'Enrolled', 'In Progress', 'Completed', 'Dropped', 'Expired'
+                // payment_status: 'pending', 'completed', 'failed', 'refunded'
+                $enrollmentId = Enrollment::create([
                     'user_id' => $userId,
-                    'student_id' => $studentId,
                     'course_id' => $courseId,
-                    'enrolled_at' => date('Y-m-d'),
-                    'start_date' => date('Y-m-d'),
-                    'progress' => 0,
                     'enrollment_status' => 'Enrolled',
                     'payment_status' => 'pending',
                     'amount_paid' => 0
                 ]);
+
+                if (!$enrollmentId) {
+                    throw new Exception('Failed to create enrollment');
+                }
+
+                // Get student_id for payment record (Enrollment::create handles this)
+                $student = $db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$userId]);
+                $studentId = $student['id'];
 
                 // Create payment record
                 $paymentId = $db->insert('payments', [

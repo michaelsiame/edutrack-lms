@@ -215,6 +215,7 @@ class Payment {
     
     /**
      * Mark as successful
+     * Uses correct schema enum values for enrollment
      */
     public function markSuccessful($transactionId = null, $providerReference = null) {
         $result = $this->update([
@@ -222,28 +223,31 @@ class Payment {
             'transaction_id' => $transactionId,
             'payment_date' => date('Y-m-d H:i:s')
         ]);
-        
+
         if ($result && $this->getCourseId()) {
-            // Auto-enroll in course
+            // Auto-enroll in course using Enrollment::create()
+            // Uses correct schema enum values:
+            // enrollment_status: 'Enrolled', 'In Progress', 'Completed', 'Dropped', 'Expired'
+            // payment_status: 'pending', 'completed', 'failed', 'refunded'
             require_once __DIR__ . '/Enrollment.php';
-            
+
             $enrollmentData = [
                 'user_id' => $this->getUserId(),
                 'course_id' => $this->getCourseId(),
-                'enrollment_status' => 'active',
-                'payment_status' => 'paid',
+                'enrollment_status' => 'Enrolled',
+                'payment_status' => 'completed',
                 'amount_paid' => $this->getAmount()
             ];
-            
+
             Enrollment::create($enrollmentData);
-            
+
             // Generate invoice
             $this->generateInvoice();
-            
+
             // Send confirmation email
             $this->sendConfirmationEmail();
         }
-        
+
         return $result;
     }
     

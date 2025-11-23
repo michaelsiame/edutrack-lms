@@ -39,14 +39,17 @@ if (Enrollment::isEnrolled($userId, $courseId)) {
 
 // If course is free, enroll immediately
 if ($course->isFree()) {
+    // Use correct schema enum values:
+    // enrollment_status: 'Enrolled', 'In Progress', 'Completed', 'Dropped', 'Expired'
+    // payment_status: 'pending', 'completed', 'failed', 'refunded'
     $enrollmentData = [
         'user_id' => $userId,
         'course_id' => $courseId,
-        'enrollment_status' => 'active',
-        'payment_status' => 'free',
+        'enrollment_status' => 'Enrolled',
+        'payment_status' => 'completed', // Free course = already paid
         'amount_paid' => 0
     ];
-    
+
     $enrollmentId = Enrollment::create($enrollmentData);
     
     if ($enrollmentId) {

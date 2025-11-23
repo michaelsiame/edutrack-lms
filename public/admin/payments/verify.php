@@ -33,24 +33,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'payment_status' => 'Completed',
             'payment_date' => date('Y-m-d H:i:s')
         ];
-        
-        if ($payment->update($updateData)) {
-            // Get student_id from user_id
-            $db = Database::getInstance();
-            $student = $db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$payment->getUserId()]);
 
-            // Create enrollment (enrollments table has both user_id AND student_id)
-            if ($student) {
-                Enrollment::create([
-                    'user_id' => $payment->getUserId(),
-                    'student_id' => $student['id'],
-                    'course_id' => $payment->getCourseId(),
-                    'enrollment_status' => 'Enrolled',
-                    'payment_status' => 'completed',
-                    'amount_paid' => $payment->getAmount()
-                ]);
-            }
-            
+        if ($payment->update($updateData)) {
+            // Create enrollment using Enrollment::create()
+            // This handles student record creation automatically (no redundant queries)
+            // Uses correct schema enum values:
+            // enrollment_status: 'Enrolled', 'In Progress', 'Completed', 'Dropped', 'Expired'
+            // payment_status: 'pending', 'completed', 'failed', 'refunded'
+            $enrollmentId = Enrollment::create([
+                'user_id' => $payment->getUserId(),
+                'course_id' => $payment->getCourseId(),
+                'enrollment_status' => 'Enrolled',
+                'payment_status' => 'completed',
+                'amount_paid' => $payment->getAmount()
+            ]);
+
             // Send confirmation email
             Email::sendMail($payment->getUserEmail(), 'Payment Approved - Enrollment Confirmed', [
                 'name' => $payment->getUserName(),
@@ -59,8 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'reference' => $payment->getTransactionReference(),
                 'course_url' => url('learn.php?course=' . $payment->getCourseSlug())
             ]);
-            
-            flash('message', 'Payment approved and student enrolled', 'success');
+
+            if ($enrollmentId) {
+                flash('message', 'Payment approved and student enrolled', 'success');
+            } else {
+                flash('message', 'Payment approved but student may already be enrolled', 'info');
+            }
         } else {
             flash('message', 'Failed to approve payment', 'error');
         }

@@ -100,10 +100,10 @@ class Enrollment {
 
         $sql = "INSERT INTO enrollments (
             user_id, student_id, course_id, enrollment_status, payment_status,
-            amount_paid, enrolled_at
+            amount_paid, enrolled_at, start_date, progress
         ) VALUES (
             :user_id, :student_id, :course_id, :enrollment_status, :payment_status,
-            :amount_paid, NOW()
+            :amount_paid, :enrolled_at, :start_date, :progress
         )";
 
         $params = [
@@ -112,7 +112,10 @@ class Enrollment {
             'course_id' => $data['course_id'],
             'enrollment_status' => $data['enrollment_status'] ?? 'Enrolled',
             'payment_status' => $data['payment_status'] ?? 'pending',
-            'amount_paid' => $data['amount_paid'] ?? 0
+            'amount_paid' => $data['amount_paid'] ?? 0,
+            'enrolled_at' => date('Y-m-d'),
+            'start_date' => date('Y-m-d'),
+            'progress' => 0
         ];
 
         if ($db->query($sql, $params)) {
@@ -128,26 +131,33 @@ class Enrollment {
     
     /**
      * Update enrollment
+     * Note: Database field is 'progress' not 'progress_percentage'
      */
     public function update($data) {
-        $allowed = ['enrollment_status', 'payment_status', 'amount_paid', 'progress_percentage', 'total_time_spent'];
-        
+        $allowed = ['enrollment_status', 'payment_status', 'amount_paid', 'progress', 'total_time_spent', 'completion_date'];
+
+        // Map progress_percentage to progress for backwards compatibility
+        if (isset($data['progress_percentage'])) {
+            $data['progress'] = $data['progress_percentage'];
+            unset($data['progress_percentage']);
+        }
+
         $updates = [];
         $params = ['id' => $this->id];
-        
+
         foreach ($allowed as $field) {
             if (isset($data[$field])) {
                 $updates[] = "$field = :$field";
                 $params[$field] = $data[$field];
             }
         }
-        
+
         if (empty($updates)) {
             return false;
         }
-        
+
         $sql = "UPDATE enrollments SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE id = :id";
-        
+
         if ($this->db->query($sql, $params)) {
             $this->load();
             return true;
@@ -157,12 +167,13 @@ class Enrollment {
     
     /**
      * Complete enrollment
+     * Uses schema enum value: 'Completed'
      */
     public function complete() {
         return $this->update([
-            'enrollment_status' => 'completed',
-            'completed_at' => date('Y-m-d H:i:s'),
-            'progress_percentage' => 100
+            'enrollment_status' => 'Completed',
+            'completion_date' => date('Y-m-d'),
+            'progress' => 100
         ]);
     }
     
@@ -170,7 +181,7 @@ class Enrollment {
      * Update progress
      */
     public function updateProgress($percentage) {
-        return $this->update(['progress_percentage' => min(100, max(0, $percentage))]);
+        return $this->update(['progress' => min(100, max(0, $percentage))]);
     }
     
     /**
@@ -190,10 +201,11 @@ class Enrollment {
     }
     
     /**
-     * Cancel enrollment
+     * Cancel/Drop enrollment
+     * Uses schema enum value: 'Dropped'
      */
     public function cancel() {
-        return $this->update(['enrollment_status' => 'cancelled']);
+        return $this->update(['enrollment_status' => 'Dropped']);
     }
     
     /**
@@ -429,20 +441,36 @@ class Enrollment {
     // Getters
     public function getId() { return $this->data['id'] ?? null; }
     public function getUserId() { return $this->data['user_id'] ?? null; }
+    public function getStudentId() { return $this->data['student_id'] ?? null; }
     public function getCourseId() { return $this->data['course_id'] ?? null; }
     public function getCourseTitle() { return $this->data['course_title'] ?? ''; }
     public function getCourseSlug() { return $this->data['course_slug'] ?? ''; }
-    public function getEnrollmentStatus() { return $this->data['enrollment_status'] ?? 'active'; }
+    public function getEnrollmentStatus() { return $this->data['enrollment_status'] ?? 'Enrolled'; }
     public function getPaymentStatus() { return $this->data['payment_status'] ?? 'pending'; }
     public function getAmountPaid() { return $this->data['amount_paid'] ?? 0; }
-    public function getProgressPercentage() { return $this->data['progress_percentage'] ?? 0; }
+    public function getProgress() { return $this->data['progress'] ?? 0; }
+    public function getProgressPercentage() { return $this->getProgress(); } // Alias for backwards compatibility
     public function getTotalTimeSpent() { return $this->data['total_time_spent'] ?? 0; }
     public function getEnrolledAt() { return $this->data['enrolled_at'] ?? null; }
-    public function getLastAccessedAt() { return $this->data['last_accessed_at'] ?? null; }
-    public function getCompletedAt() { return $this->data['completed_at'] ?? null; }
-    
-    public function isActive() { return $this->getEnrollmentStatus() == 'active'; }
-    public function isCompleted() { return $this->getEnrollmentStatus() == 'completed'; }
-    public function isCancelled() { return $this->getEnrollmentStatus() == 'cancelled'; }
-    public function isPaid() { return $this->getPaymentStatus() == 'paid'; }
+    public function getLastAccessedAt() { return $this->data['last_accessed'] ?? null; }
+    public function getCompletionDate() { return $this->data['completion_date'] ?? null; }
+    public function getCompletedAt() { return $this->getCompletionDate(); } // Alias
+
+    /**
+     * Status helper methods - use correct schema enum values
+     * enrollment_status: 'Enrolled', 'In Progress', 'Completed', 'Dropped', 'Expired'
+     * payment_status: 'pending', 'completed', 'failed', 'refunded'
+     */
+    public function isEnrolled() { return $this->getEnrollmentStatus() == 'Enrolled'; }
+    public function isInProgress() { return $this->getEnrollmentStatus() == 'In Progress'; }
+    public function isCompleted() { return $this->getEnrollmentStatus() == 'Completed'; }
+    public function isDropped() { return $this->getEnrollmentStatus() == 'Dropped'; }
+    public function isExpired() { return $this->getEnrollmentStatus() == 'Expired'; }
+    public function isActive() { return in_array($this->getEnrollmentStatus(), ['Enrolled', 'In Progress']); }
+    public function isCancelled() { return $this->isDropped(); } // Alias for backwards compatibility
+
+    public function isPending() { return $this->getPaymentStatus() == 'pending'; }
+    public function isPaid() { return $this->getPaymentStatus() == 'completed'; }
+    public function isFailed() { return $this->getPaymentStatus() == 'failed'; }
+    public function isRefunded() { return $this->getPaymentStatus() == 'refunded'; }
 }
