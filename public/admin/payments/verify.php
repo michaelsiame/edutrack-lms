@@ -199,24 +199,23 @@ require_once '../../../src/templates/admin-header.php';
                 
                 <!-- Action Buttons -->
                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end space-x-3">
-                    
+
                     <!-- Reject Button -->
-                    <button onclick="showRejectModal(<?= $payment->getId() ?>)" 
-                            class="px-6 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition">
+                    <button onclick="showRejectModal(<?= $payment->getId() ?>)"
+                            class="btn btn-danger" style="background-color: transparent !important; color: #dc2626 !important; border: 2px solid #dc2626 !important;">
                         <i class="fas fa-times mr-2"></i>Reject
                     </button>
-                    
+
                     <!-- Approve Button -->
                     <form method="POST" class="inline" onsubmit="return confirm('Approve this payment and enroll the student?')">
                         <?= csrfField() ?>
                         <input type="hidden" name="action" value="approve">
                         <input type="hidden" name="payment_id" value="<?= $payment->getId() ?>">
-                        <button type="submit" 
-                                class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                        <button type="submit" class="btn btn-success">
                             <i class="fas fa-check mr-2"></i>Approve & Enroll
                         </button>
                     </form>
-                    
+
                 </div>
             </div>
             
@@ -247,12 +246,10 @@ require_once '../../../src/templates/admin-header.php';
             </div>
             
             <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end space-x-3">
-                <button type="button" onclick="closeRejectModal()" 
-                        class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                <button type="button" onclick="closeRejectModal()" class="btn btn-secondary">
                     Cancel
                 </button>
-                <button type="submit" 
-                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                <button type="submit" class="btn btn-danger">
                     Reject Payment
                 </button>
             </div>

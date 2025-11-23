@@ -73,7 +73,7 @@ require_once '../../../src/templates/admin-header.php';
             </h1>
             <p class="text-gray-600 mt-1">Total: <?= number_format($totalPayments) ?> payments</p>
         </div>
-        <a href="<?= url('admin/payments/reports.php') ?>" class="btn-primary px-6 py-3 rounded-lg">
+        <a href="<?= url('admin/payments/reports.php') ?>" class="btn btn-primary">
             <i class="fas fa-chart-bar mr-2"></i>View Reports
         </a>
     </div>

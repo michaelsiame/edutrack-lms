@@ -208,6 +208,96 @@
         .ring-primary-500 { --tw-ring-color: #2E70DA !important; }
         .focus\:ring-primary-500:focus { --tw-ring-color: #2E70DA !important; }
         .focus\:border-primary-500:focus { border-color: #2E70DA !important; }
+
+        /* Fallback for green/red button colors (Tailwind CDN JIT may not generate) */
+        .bg-green-600 { background-color: #16a34a !important; }
+        .bg-green-700 { background-color: #15803d !important; }
+        .hover\:bg-green-700:hover { background-color: #15803d !important; }
+        .text-green-600 { color: #16a34a !important; }
+        .border-green-600 { border-color: #16a34a !important; }
+
+        .bg-red-600 { background-color: #dc2626 !important; }
+        .bg-red-700 { background-color: #b91c1c !important; }
+        .hover\:bg-red-700:hover { background-color: #b91c1c !important; }
+        .text-red-600 { color: #dc2626 !important; }
+        .border-red-600 { border-color: #dc2626 !important; }
+        .hover\:bg-red-50:hover { background-color: #fef2f2 !important; }
+
+        /* Ensure all buttons/links are visible and clickable */
+        button,
+        input[type="submit"],
+        input[type="button"],
+        .btn,
+        a.btn {
+            position: relative;
+            z-index: 1;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        /* Action button container styling */
+        .flex.items-center.justify-end.space-x-4 button,
+        .flex.items-center.justify-end.space-x-4 a,
+        .flex.items-center.justify-end.space-x-3 button,
+        .flex.items-center.justify-end.space-x-3 a {
+            display: inline-flex !important;
+            align-items: center !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        /* White text on colored buttons */
+        .text-white { color: white !important; }
+
+        /* Rounded button styles */
+        .rounded-lg { border-radius: 0.5rem !important; }
+
+        /* Button padding */
+        .px-6 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+        .py-2 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+        .px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+        .py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+
+        /* Border utilities */
+        .border { border-width: 1px !important; border-style: solid !important; }
+        .border-gray-300 { border-color: #d1d5db !important; }
+        .border-gray-200 { border-color: #e5e7eb !important; }
+
+        /* Transition utilities */
+        .transition { transition-property: all !important; transition-timing-function: ease !important; transition-duration: 0.15s !important; }
+
+        /* Hover states for gray backgrounds */
+        .hover\:bg-gray-50:hover { background-color: #f9fafb !important; }
+
+        /* Blue button fallbacks (for view/edit icons) */
+        .text-blue-600 { color: #2563eb !important; }
+        .hover\:text-blue-800:hover { color: #1e40af !important; }
+
+        /* Yellow/warning fallbacks */
+        .bg-yellow-100 { background-color: #fef3c7 !important; }
+        .text-yellow-800 { color: #92400e !important; }
+        .text-yellow-600 { color: #ca8a04 !important; }
+
+        /* Spacing utilities */
+        .mr-2 { margin-right: 0.5rem !important; }
+        .space-x-3 > * + * { margin-left: 0.75rem !important; }
+        .space-x-4 > * + * { margin-left: 1rem !important; }
+
+        /* Flexbox utilities */
+        .inline-flex { display: inline-flex !important; }
+        .inline { display: inline !important; }
+        .items-center { align-items: center !important; }
+        .justify-end { justify-content: flex-end !important; }
+
+        /* Form elements visibility */
+        form button[type="submit"],
+        form input[type="submit"],
+        .bg-gray-50 button,
+        .border-t button {
+            display: inline-flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
     </style>
 </head>
 <body class="bg-gray-100">

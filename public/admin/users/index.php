@@ -110,7 +110,7 @@ require_once '../../../src/templates/admin-header.php';
             </h1>
             <p class="text-gray-600 mt-1">Total: <?= number_format($totalUsers) ?> users</p>
         </div>
-        <a href="<?= url('admin/users/create.php') ?>" class="btn-primary px-6 py-3 rounded-lg">
+        <a href="<?= url('admin/users/create.php') ?>" class="btn btn-primary">
             <i class="fas fa-plus mr-2"></i>Add User
         </a>
     </div>
