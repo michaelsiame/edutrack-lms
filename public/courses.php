@@ -15,13 +15,13 @@ $level_filter = $_GET['level'] ?? '';
 
 // Get all categories for filter dropdown
 $db = Database::getInstance();
-$categories = $db->fetchAll("SELECT * FROM course_categories WHERE status = 'active' ORDER BY name");
+$categories = $db->fetchAll("SELECT * FROM course_categories WHERE is_active = 1 ORDER BY name");
 
 // Build course query with filters
-$query = "SELECT c.*, cc.name as category_name, cc.color as category_color,
+$query = "SELECT c.*, cc.name as category_name, 'blue' as category_color,
           CONCAT(u.first_name, ' ', u.last_name) as instructor_name
           FROM courses c
-          JOIN course_categories cc ON c.category_id = cc.id
+          LEFT JOIN course_categories cc ON c.category_id = cc.id
           LEFT JOIN instructors i ON c.instructor_id = i.id
           LEFT JOIN users u ON i.user_id = u.id
           WHERE c.status = 'published'";
