@@ -102,34 +102,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_payment'])) {
         // If no errors, create enrollment and payment record
         if (empty($errors)) {
             try {
+                // Get or create student record for this user
+                $student = $db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$userId]);
+
+                if (!$student) {
+                    // Create student record if it doesn't exist
+                    $studentId = $db->insert('students', [
+                        'user_id' => $userId,
+                        'enrollment_date' => date('Y-m-d')
+                    ]);
+                } else {
+                    $studentId = $student['id'];
+                }
+
                 // Create enrollment (pending status)
                 $enrollmentId = $db->insert('enrollments', [
                     'user_id' => $userId,
+                    'student_id' => $studentId,
                     'course_id' => $courseId,
-                    'enrollment_status' => 'active',
-                    'status' => 'active',
+                    'enrolled_at' => date('Y-m-d'),
+                    'start_date' => date('Y-m-d'),
+                    'progress' => 0,
+                    'enrollment_status' => 'Enrolled',
                     'payment_status' => 'pending',
-                    'progress_percentage' => 0,
-                    'enrolled_at' => date('Y-m-d H:i:s')
+                    'amount_paid' => 0
                 ]);
 
                 // Create payment record
                 $paymentId = $db->insert('payments', [
-                    'user_id' => $userId,
+                    'student_id' => $studentId,
                     'course_id' => $courseId,
                     'enrollment_id' => $enrollmentId,
-                    'transaction_reference' => $transactionRef,
                     'amount' => $course['price'],
                     'currency' => 'ZMW',
-                    'status' => 'pending',
-                    'payment_type' => 'course_fee',
-                    'payment_proof' => $proofFile,
-                    'notes' => "Payment via Lenco - Account: $accountUsed\nPayment Date: $paymentDate",
-                    'payment_date' => $paymentDate
+                    'payment_status' => 'Pending',
+                    'transaction_id' => $transactionRef,
+                    'payment_date' => $paymentDate . ' 00:00:00'
                 ]);
-
-                // Update enrollment with payment ID
-                $db->update('enrollments', ['payment_id' => $paymentId], ['id' => $enrollmentId]);
 
                 $paymentSubmitted = true;
                 setFlashMessage('Payment submitted successfully! Your enrollment is pending verification.', 'success');
