@@ -10,6 +10,8 @@ require_once '../../../src/classes/Certificate.php';
 require_once '../../../src/classes/User.php';
 require_once '../../../src/classes/Course.php';
 require_once '../../../src/classes/Enrollment.php';
+require_once '../../../src/classes/PaymentPlan.php';
+require_once '../../../src/classes/RegistrationFee.php';
 
 $errors = [];
 $success = false;
@@ -40,6 +42,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!Enrollment::isEnrolled($userId, $courseId)) {
                 $errors['general'] = 'Student must be enrolled in the course first';
             } else {
+                // Check if registration fee is paid
+                if (RegistrationFee::isRequired() && !RegistrationFee::hasPaid($userId)) {
+                    $errors['general'] = 'Cannot issue certificate: Student has not paid the registration fee (K150)';
+                }
+
+                // Check if course fees are fully paid
+                if (empty($errors)) {
+                    $enrollment = Enrollment::findByUserAndCourse($userId, $courseId);
+                    if ($enrollment) {
+                        $plan = PaymentPlan::findByEnrollment($enrollment->getId());
+                        if ($plan && $plan->getBalance() > 0) {
+                            $errors['general'] = 'Cannot issue certificate: Student has outstanding balance of K' .
+                                               number_format($plan->getBalance(), 2) . ' for this course. Please clear the balance first.';
+                        }
+                    }
+                }
+            }
+
+            if (empty($errors)) {
                 // Generate certificate
                 $certificate = Certificate::generate($userId, $courseId);
                 
@@ -91,6 +112,8 @@ require_once '../../../src/templates/admin-header.php';
                 <ul class="list-disc list-inside space-y-1">
                     <li>Student must be enrolled in the course</li>
                     <li>Course completion is recommended (but not required for manual issuance)</li>
+                    <li><strong>Registration fee (K150) must be paid</strong></li>
+                    <li><strong>Course fees must be fully paid (no outstanding balance)</strong></li>
                     <li>A unique certificate number will be generated automatically</li>
                     <li>The certificate PDF will be generated and emailed to the student</li>
                 </ul>
