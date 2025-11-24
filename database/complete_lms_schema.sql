@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2025 at 12:26 PM
+-- Generation Time: Nov 24, 2025 at 01:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -482,6 +482,7 @@ CREATE TABLE `enrollments` (
   `amount_paid` decimal(10,2) DEFAULT 0.00,
   `completion_date` date DEFAULT NULL,
   `certificate_issued` tinyint(1) DEFAULT 0,
+  `certificate_blocked` tinyint(1) DEFAULT 0 COMMENT 'Certificate blocked until fully paid',
   `last_accessed` timestamp NULL DEFAULT NULL,
   `total_time_spent` int(11) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -492,36 +493,58 @@ CREATE TABLE `enrollments` (
 -- Dumping data for table `enrollments`
 --
 
-INSERT INTO `enrollments` (`id`, `user_id`, `student_id`, `course_id`, `enrolled_at`, `start_date`, `progress`, `final_grade`, `enrollment_status`, `payment_status`, `amount_paid`, `completion_date`, `certificate_issued`, `last_accessed`, `total_time_spent`, `created_at`, `updated_at`) VALUES
-(1, 8, 1, 1, '2025-01-15', '2025-01-15', 100.00, 92.50, 'Completed', 'completed', 250.00, '2025-04-10', 1, NULL, 2880, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(2, 8, 1, 5, '2025-01-15', '2025-01-16', 75.00, NULL, 'In Progress', 'completed', 315.00, NULL, 0, NULL, 2700, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(3, 8, 1, 10, '2025-01-20', '2025-01-21', 45.00, NULL, 'In Progress', 'completed', 360.00, NULL, 0, NULL, 1620, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(4, 9, 2, 7, '2025-01-15', '2025-01-15', 100.00, 88.00, 'Completed', 'completed', 342.00, '2025-04-25', 1, NULL, 4200, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(5, 9, 2, 15, '2025-01-15', '2025-01-16', 85.00, NULL, 'In Progress', 'completed', 380.00, NULL, 0, NULL, 2856, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(6, 9, 2, 17, '2025-01-20', '2025-01-21', 60.00, NULL, 'In Progress', 'completed', 320.00, NULL, 0, NULL, 1728, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(7, 10, 3, 18, '2025-01-10', '2025-01-10', 100.00, 95.00, 'Completed', 'completed', 300.00, '2025-04-08', 1, NULL, 2880, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(8, 10, 3, 19, '2025-02-01', '2025-02-02', 30.00, NULL, 'In Progress', 'completed', 405.00, NULL, 0, NULL, 1152, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(9, 10, 3, 1, '2025-01-15', '2025-01-15', 100.00, 87.50, 'Completed', 'completed', 250.00, '2025-04-12', 1, NULL, 2640, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(10, 11, 4, 5, '2025-01-10', '2025-01-10', 100.00, 91.00, 'Completed', 'completed', 315.00, '2025-04-05', 1, NULL, 3600, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(11, 11, 4, 6, '2025-02-01', '2025-02-02', 50.00, NULL, 'In Progress', 'completed', 400.00, NULL, 0, NULL, 2400, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(12, 11, 4, 9, '2025-02-10', '2025-02-11', 25.00, NULL, 'In Progress', 'completed', 320.00, NULL, 0, NULL, 720, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(13, 12, 5, 11, '2025-02-15', '2025-02-16', 40.00, NULL, 'In Progress', 'completed', 495.00, NULL, 0, NULL, 2160, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(14, 12, 5, 12, '2025-01-25', '2025-01-26', 70.00, NULL, 'In Progress', 'completed', 400.00, NULL, 0, NULL, 2688, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(16, 13, 6, 3, '2025-01-20', '2025-01-20', 35.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, NULL, 672, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(17, 13, 6, 17, '2025-01-20', '2025-01-21', 40.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, NULL, 1152, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(18, 14, 7, 13, '2025-03-01', '2025-03-02', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, NULL, 720, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(19, 14, 7, 8, '2025-03-01', '2025-03-02', 20.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, NULL, 1200, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(20, 15, 8, 18, '2025-01-10', '2025-01-10', 90.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, NULL, 2592, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(21, 15, 8, 3, '2025-01-20', '2025-01-20', 100.00, 94.00, 'Completed', 'pending', 0.00, '2025-03-15', 1, NULL, 1920, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(22, 16, 9, 10, '2025-01-20', '2025-01-21', 65.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, NULL, 2340, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(23, 16, 9, 12, '2025-01-25', '2025-01-26', 40.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, NULL, 1536, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(24, 17, 10, 15, '2025-01-15', '2025-01-16', 80.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, NULL, 2688, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(25, 17, 10, 16, '2025-02-05', '2025-02-06', 45.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, NULL, 1296, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(26, 18, 11, 1, '2025-01-15', '2025-01-16', 55.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, NULL, 1584, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(27, 18, 11, 4, '2025-02-15', '2025-02-16', 30.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, NULL, 864, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(28, 19, 12, 5, '2025-01-20', '2025-01-21', 10.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, NULL, 360, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(29, 19, 12, 3, '2025-01-20', '2025-01-21', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, NULL, 288, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(30, 26, 13, 1, '2025-11-23', '2025-11-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, NULL, 0, '2025-11-23 11:45:51', '2025-11-23 11:45:51');
+INSERT INTO `enrollments` (`id`, `user_id`, `student_id`, `course_id`, `enrolled_at`, `start_date`, `progress`, `final_grade`, `enrollment_status`, `payment_status`, `amount_paid`, `completion_date`, `certificate_issued`, `certificate_blocked`, `last_accessed`, `total_time_spent`, `created_at`, `updated_at`) VALUES
+(1, 8, 1, 1, '2025-01-15', '2025-01-15', 100.00, 92.50, 'Completed', 'completed', 250.00, '2025-04-10', 1, 0, NULL, 2880, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(2, 8, 1, 5, '2025-01-15', '2025-01-16', 75.00, NULL, 'In Progress', 'completed', 315.00, NULL, 0, 0, NULL, 2700, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(3, 8, 1, 10, '2025-01-20', '2025-01-21', 45.00, NULL, 'In Progress', 'completed', 360.00, NULL, 0, 0, NULL, 1620, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(4, 9, 2, 7, '2025-01-15', '2025-01-15', 100.00, 88.00, 'Completed', 'completed', 342.00, '2025-04-25', 1, 0, NULL, 4200, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(5, 9, 2, 15, '2025-01-15', '2025-01-16', 85.00, NULL, 'In Progress', 'completed', 380.00, NULL, 0, 0, NULL, 2856, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(6, 9, 2, 17, '2025-01-20', '2025-01-21', 60.00, NULL, 'In Progress', 'completed', 320.00, NULL, 0, 0, NULL, 1728, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(7, 10, 3, 18, '2025-01-10', '2025-01-10', 100.00, 95.00, 'Completed', 'completed', 300.00, '2025-04-08', 1, 0, NULL, 2880, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(8, 10, 3, 19, '2025-02-01', '2025-02-02', 30.00, NULL, 'In Progress', 'completed', 405.00, NULL, 0, 0, NULL, 1152, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(9, 10, 3, 1, '2025-01-15', '2025-01-15', 100.00, 87.50, 'Completed', 'completed', 250.00, '2025-04-12', 1, 0, NULL, 2640, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(10, 11, 4, 5, '2025-01-10', '2025-01-10', 100.00, 91.00, 'Completed', 'completed', 315.00, '2025-04-05', 1, 0, NULL, 3600, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(11, 11, 4, 6, '2025-02-01', '2025-02-02', 50.00, NULL, 'In Progress', 'completed', 400.00, NULL, 0, 0, NULL, 2400, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(12, 11, 4, 9, '2025-02-10', '2025-02-11', 25.00, NULL, 'In Progress', 'completed', 320.00, NULL, 0, 0, NULL, 720, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(13, 12, 5, 11, '2025-02-15', '2025-02-16', 40.00, NULL, 'In Progress', 'completed', 495.00, NULL, 0, 0, NULL, 2160, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(14, 12, 5, 12, '2025-01-25', '2025-01-26', 70.00, NULL, 'In Progress', 'completed', 400.00, NULL, 0, 0, NULL, 2688, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
+(16, 13, 6, 3, '2025-01-20', '2025-01-20', 35.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 672, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(17, 13, 6, 17, '2025-01-20', '2025-01-21', 40.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 1152, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(18, 14, 7, 13, '2025-03-01', '2025-03-02', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 720, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(19, 14, 7, 8, '2025-03-01', '2025-03-02', 20.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 1200, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(20, 15, 8, 18, '2025-01-10', '2025-01-10', 90.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 2592, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(21, 15, 8, 3, '2025-01-20', '2025-01-20', 100.00, 94.00, 'Completed', 'pending', 0.00, '2025-03-15', 1, 0, NULL, 1920, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(22, 16, 9, 10, '2025-01-20', '2025-01-21', 65.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 2340, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(23, 16, 9, 12, '2025-01-25', '2025-01-26', 40.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 1536, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(24, 17, 10, 15, '2025-01-15', '2025-01-16', 80.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 2688, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(25, 17, 10, 16, '2025-02-05', '2025-02-06', 45.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 1296, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(26, 18, 11, 1, '2025-01-15', '2025-01-16', 55.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 1584, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(27, 18, 11, 4, '2025-02-15', '2025-02-16', 30.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 864, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(28, 19, 12, 5, '2025-01-20', '2025-01-21', 10.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 360, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(29, 19, 12, 3, '2025-01-20', '2025-01-21', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 288, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(30, 26, 13, 1, '2025-11-23', '2025-11-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 0, '2025-11-23 11:45:51', '2025-11-23 11:45:51');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `enrollment_payment_plans`
+--
+
+CREATE TABLE `enrollment_payment_plans` (
+  `id` int(11) NOT NULL,
+  `enrollment_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `course_id` int(11) NOT NULL,
+  `total_fee` decimal(10,2) NOT NULL COMMENT 'Full course fee',
+  `total_paid` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `balance` decimal(10,2) GENERATED ALWAYS AS (`total_fee` - `total_paid`) STORED,
+  `currency` varchar(3) NOT NULL DEFAULT 'ZMW',
+  `payment_status` enum('pending','partial','completed','overdue') DEFAULT 'pending',
+  `due_date` date DEFAULT NULL COMMENT 'Final payment due date',
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -764,11 +787,16 @@ CREATE TABLE `payments` (
   `student_id` int(11) NOT NULL,
   `course_id` int(11) NOT NULL,
   `enrollment_id` int(11) DEFAULT NULL,
+  `payment_plan_id` int(11) DEFAULT NULL,
   `amount` decimal(10,2) NOT NULL,
   `currency` varchar(3) DEFAULT 'USD',
   `payment_method_id` int(11) DEFAULT NULL,
+  `payment_type` enum('registration','course_fee','partial_payment') DEFAULT 'course_fee',
+  `recorded_by` int(11) DEFAULT NULL COMMENT 'User ID of admin/finance who recorded cash payment',
   `payment_status` enum('Pending','Completed','Failed','Refunded','Cancelled') DEFAULT 'Pending',
   `transaction_id` varchar(100) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
   `payment_date` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -778,23 +806,23 @@ CREATE TABLE `payments` (
 -- Dumping data for table `payments`
 --
 
-INSERT INTO `payments` (`payment_id`, `student_id`, `course_id`, `enrollment_id`, `amount`, `currency`, `payment_method_id`, `payment_status`, `transaction_id`, `payment_date`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 1, 250.00, 'USD', 1, 'Completed', 'TXN-2025-000001', '2025-01-15 08:30:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(2, 1, 5, 2, 315.00, 'USD', 1, 'Completed', 'TXN-2025-000002', '2025-01-15 08:35:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(3, 1, 10, 3, 360.00, 'USD', 2, 'Completed', 'TXN-2025-000003', '2025-01-20 10:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(4, 2, 7, 4, 342.00, 'USD', 1, 'Completed', 'TXN-2025-000004', '2025-01-15 09:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(5, 2, 15, 5, 380.00, 'USD', 1, 'Completed', 'TXN-2025-000005', '2025-01-15 09:10:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(6, 2, 17, 6, 320.00, 'USD', 2, 'Completed', 'TXN-2025-000006', '2025-01-20 11:30:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(7, 3, 18, 7, 300.00, 'USD', 3, 'Completed', 'TXN-2025-000007', '2025-01-10 14:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(8, 3, 19, 8, 405.00, 'USD', 1, 'Completed', 'TXN-2025-000008', '2025-02-01 10:15:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(9, 3, 1, 9, 250.00, 'USD', 1, 'Completed', 'TXN-2025-000009', '2025-01-15 12:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(10, 4, 5, 10, 315.00, 'USD', 2, 'Completed', 'TXN-2025-000010', '2025-01-10 08:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(11, 4, 6, 11, 400.00, 'USD', 1, 'Completed', 'TXN-2025-000011', '2025-02-01 09:30:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(12, 4, 9, 12, 320.00, 'USD', 1, 'Completed', 'TXN-2025-000012', '2025-02-10 11:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(13, 5, 11, 13, 495.00, 'USD', 1, 'Completed', 'TXN-2025-000013', '2025-02-15 13:45:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(14, 5, 12, 14, 400.00, 'USD', 2, 'Completed', 'TXN-2025-000014', '2025-01-25 16:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(16, 7, 13, 19, 540.00, 'USD', 1, 'Pending', 'TXN-2025-000016', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(17, 13, 1, 30, 250.00, 'ZMW', NULL, 'Pending', '1234', '2025-11-23 00:00:00', '2025-11-23 11:45:51', '2025-11-23 11:45:51');
+INSERT INTO `payments` (`payment_id`, `student_id`, `course_id`, `enrollment_id`, `payment_plan_id`, `amount`, `currency`, `payment_method_id`, `payment_type`, `recorded_by`, `payment_status`, `transaction_id`, `phone_number`, `notes`, `payment_date`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 1, NULL, 250.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000001', NULL, NULL, '2025-01-15 08:30:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(2, 1, 5, 2, NULL, 315.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000002', NULL, NULL, '2025-01-15 08:35:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(3, 1, 10, 3, NULL, 360.00, 'USD', 2, 'course_fee', NULL, 'Completed', 'TXN-2025-000003', NULL, NULL, '2025-01-20 10:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(4, 2, 7, 4, NULL, 342.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000004', NULL, NULL, '2025-01-15 09:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(5, 2, 15, 5, NULL, 380.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000005', NULL, NULL, '2025-01-15 09:10:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(6, 2, 17, 6, NULL, 320.00, 'USD', 2, 'course_fee', NULL, 'Completed', 'TXN-2025-000006', NULL, NULL, '2025-01-20 11:30:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(7, 3, 18, 7, NULL, 300.00, 'USD', 3, 'course_fee', NULL, 'Completed', 'TXN-2025-000007', NULL, NULL, '2025-01-10 14:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(8, 3, 19, 8, NULL, 405.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000008', NULL, NULL, '2025-02-01 10:15:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(9, 3, 1, 9, NULL, 250.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000009', NULL, NULL, '2025-01-15 12:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(10, 4, 5, 10, NULL, 315.00, 'USD', 2, 'course_fee', NULL, 'Completed', 'TXN-2025-000010', NULL, NULL, '2025-01-10 08:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(11, 4, 6, 11, NULL, 400.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000011', NULL, NULL, '2025-02-01 09:30:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(12, 4, 9, 12, NULL, 320.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000012', NULL, NULL, '2025-02-10 11:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(13, 5, 11, 13, NULL, 495.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000013', NULL, NULL, '2025-02-15 13:45:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(14, 5, 12, 14, NULL, 400.00, 'USD', 2, 'course_fee', NULL, 'Completed', 'TXN-2025-000014', NULL, NULL, '2025-01-25 16:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(16, 7, 13, 19, NULL, 540.00, 'USD', 1, 'course_fee', NULL, 'Pending', 'TXN-2025-000016', NULL, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(17, 13, 1, 30, NULL, 250.00, 'ZMW', NULL, 'course_fee', NULL, 'Pending', '1234', NULL, NULL, '2025-11-23 00:00:00', '2025-11-23 11:45:51', '2025-11-23 11:45:51');
 
 -- --------------------------------------------------------
 
@@ -996,6 +1024,30 @@ INSERT INTO `quiz_questions` (`quiz_question_id`, `quiz_id`, `question_id`, `dis
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `registration_fees`
+--
+
+CREATE TABLE `registration_fees` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `student_id` int(11) DEFAULT NULL,
+  `amount` decimal(10,2) NOT NULL DEFAULT 150.00,
+  `currency` varchar(3) NOT NULL DEFAULT 'ZMW',
+  `payment_status` enum('pending','completed','failed','refunded') DEFAULT 'pending',
+  `payment_method` enum('bank_transfer','bank_deposit') NOT NULL DEFAULT 'bank_deposit',
+  `bank_reference` varchar(100) DEFAULT NULL COMMENT 'Bank deposit slip or transfer reference',
+  `bank_name` varchar(100) DEFAULT NULL,
+  `deposit_date` date DEFAULT NULL,
+  `verified_by` int(11) DEFAULT NULL COMMENT 'Admin/Finance user who verified the payment',
+  `verified_at` datetime DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `roles`
 --
 
@@ -1016,7 +1068,8 @@ INSERT INTO `roles` (`id`, `role_name`, `description`, `permissions`, `created_a
 (2, 'Admin', 'Administrative access to manage system', '{\"users\": [\"create\", \"read\", \"update\", \"delete\"], \"courses\": [\"create\", \"read\", \"update\", \"delete\"], \"reports\": [\"read\"]}', '2025-11-18 22:21:01'),
 (3, 'Instructor', 'Can create and manage courses', '{\"courses\": [\"create\", \"read\", \"update\"], \"students\": [\"read\"], \"grades\": [\"create\", \"update\"]}', '2025-11-18 22:21:01'),
 (4, 'Student', 'Can enroll and access courses', '{\"courses\": [\"read\", \"enroll\"], \"assignments\": [\"submit\"], \"quizzes\": [\"take\"]}', '2025-11-18 22:21:01'),
-(5, 'Content Creator', 'Can create course content', '{\"courses\": [\"create\", \"read\", \"update\"], \"content\": [\"create\", \"update\"]}', '2025-11-18 22:21:01');
+(5, 'Content Creator', 'Can create course content', '{\"courses\": [\"create\", \"read\", \"update\"], \"content\": [\"create\", \"update\"]}', '2025-11-18 22:21:01'),
+(6, 'Finance', 'Financial operations and cash payment management', '{\"payments\": [\"create\", \"read\", \"update\"], \"students\": [\"read\"], \"enrollments\": [\"read\"], \"reports\": [\"read\"]}', '2025-11-24 11:56:11');
 
 -- --------------------------------------------------------
 
@@ -1118,7 +1171,16 @@ INSERT INTO `system_settings` (`setting_id`, `setting_key`, `setting_value`, `se
 (7, 'enable_email_notifications', 'true', 'Boolean', 'Enable email notifications for users', 1, '2025-11-18 22:21:01'),
 (8, 'platform_version', '1.0.0', 'String', 'Current platform version', 0, '2025-11-18 22:21:01'),
 (9, 'maintenance_mode', 'false', 'Boolean', 'Enable maintenance mode', 1, '2025-11-18 22:21:01'),
-(10, 'default_currency', 'USD', 'String', 'Default currency for payments', 1, '2025-11-18 22:21:01');
+(10, 'default_currency', 'USD', 'String', 'Default currency for payments', 1, '2025-11-18 22:21:01'),
+(11, 'registration_fee_amount', '150.00', 'Number', 'Registration fee amount in ZMW', 1, '2025-11-24 11:56:12'),
+(12, 'registration_fee_required', 'true', 'Boolean', 'Whether registration fee is required before enrollment', 1, '2025-11-24 11:56:12'),
+(13, 'bank_account_name', 'EDUTRACK Computer Training College', 'String', 'Bank account name for deposits', 1, '2025-11-24 11:56:12'),
+(14, 'bank_account_number', '', 'String', 'Bank account number for deposits', 1, '2025-11-24 11:56:12'),
+(15, 'bank_name', '', 'String', 'Bank name for deposits', 1, '2025-11-24 11:56:12'),
+(16, 'bank_branch', '', 'String', 'Bank branch for deposits', 1, '2025-11-24 11:56:12'),
+(17, 'currency', 'ZMW', 'String', 'Default currency (Zambian Kwacha)', 1, '2025-11-24 11:56:12'),
+(18, 'partial_payments_enabled', 'true', 'Boolean', 'Allow partial payments for course fees', 1, '2025-11-24 11:56:12'),
+(19, 'certificate_requires_full_payment', 'true', 'Boolean', 'Block certificate issuance until fully paid', 1, '2025-11-24 11:56:12');
 
 -- --------------------------------------------------------
 
@@ -1305,6 +1367,69 @@ CREATE TABLE `user_sessions` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `v_pending_verifications`
+-- (See below for the actual view)
+--
+CREATE TABLE `v_pending_verifications` (
+`fee_type` varchar(12)
+,`fee_id` int(11)
+,`user_id` int(11)
+,`username` varchar(50)
+,`full_name` varchar(101)
+,`email` varchar(100)
+,`course_id` int(11)
+,`course_title` varchar(200)
+,`amount` decimal(10,2)
+,`currency` varchar(3)
+,`payment_method` varchar(50)
+,`reference` varchar(100)
+,`payment_date` datetime
+,`created_at` timestamp
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `v_student_balances`
+-- (See below for the actual view)
+--
+CREATE TABLE `v_student_balances` (
+`user_id` int(11)
+,`username` varchar(50)
+,`full_name` varchar(101)
+,`email` varchar(100)
+,`student_id` int(11)
+,`registration_fee_id` int(11)
+,`registration_status` enum('pending','completed','failed','refunded')
+,`registration_amount` decimal(10,2)
+,`total_courses` bigint(21)
+,`total_course_fees` decimal(32,2)
+,`total_paid` decimal(32,2)
+,`total_balance` decimal(32,2)
+,`overall_status` varchar(20)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `v_pending_verifications`
+--
+DROP TABLE IF EXISTS `v_pending_verifications`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_pending_verifications`  AS SELECT 'registration' AS `fee_type`, `rf`.`id` AS `fee_id`, `rf`.`user_id` AS `user_id`, `u`.`username` AS `username`, concat(`u`.`first_name`,' ',`u`.`last_name`) AS `full_name`, `u`.`email` AS `email`, NULL AS `course_id`, NULL AS `course_title`, `rf`.`amount` AS `amount`, `rf`.`currency` AS `currency`, `rf`.`payment_method` AS `payment_method`, `rf`.`bank_reference` AS `reference`, `rf`.`deposit_date` AS `payment_date`, `rf`.`created_at` AS `created_at` FROM (`registration_fees` `rf` join `users` `u` on(`u`.`id` = `rf`.`user_id`)) WHERE `rf`.`payment_status` = 'pending'union all select 'course_fee' AS `fee_type`,`p`.`payment_id` AS `fee_id`,`p`.`student_id` AS `user_id`,`u`.`username` AS `username`,concat(`u`.`first_name`,' ',`u`.`last_name`) AS `full_name`,`u`.`email` AS `email`,`p`.`course_id` AS `course_id`,`c`.`title` AS `course_title`,`p`.`amount` AS `amount`,`p`.`currency` AS `currency`,coalesce(`pm`.`method_name`,'Unknown') AS `payment_method`,`p`.`transaction_id` AS `reference`,`p`.`payment_date` AS `payment_date`,`p`.`created_at` AS `created_at` from ((((`payments` `p` join `students` `s` on(`s`.`id` = `p`.`student_id`)) join `users` `u` on(`u`.`id` = `s`.`user_id`)) join `courses` `c` on(`c`.`id` = `p`.`course_id`)) left join `payment_methods` `pm` on(`pm`.`payment_method_id` = `p`.`payment_method_id`)) where `p`.`payment_status` = 'Pending'  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `v_student_balances`
+--
+DROP TABLE IF EXISTS `v_student_balances`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_student_balances`  AS SELECT `u`.`id` AS `user_id`, `u`.`username` AS `username`, concat(`u`.`first_name`,' ',`u`.`last_name`) AS `full_name`, `u`.`email` AS `email`, `s`.`id` AS `student_id`, `rf`.`id` AS `registration_fee_id`, `rf`.`payment_status` AS `registration_status`, `rf`.`amount` AS `registration_amount`, coalesce(`epp`.`total_courses`,0) AS `total_courses`, coalesce(`epp`.`total_fees`,0) AS `total_course_fees`, coalesce(`epp`.`total_paid`,0) AS `total_paid`, coalesce(`epp`.`total_balance`,0) AS `total_balance`, CASE WHEN `rf`.`payment_status` <> 'completed' OR `rf`.`payment_status` is null THEN 'registration_pending' WHEN coalesce(`epp`.`total_balance`,0) > 0 THEN 'balance_owing' ELSE 'cleared' END AS `overall_status` FROM (((`users` `u` left join `students` `s` on(`s`.`user_id` = `u`.`id`)) left join `registration_fees` `rf` on(`rf`.`user_id` = `u`.`id`)) left join (select `enrollment_payment_plans`.`user_id` AS `user_id`,count(0) AS `total_courses`,sum(`enrollment_payment_plans`.`total_fee`) AS `total_fees`,sum(`enrollment_payment_plans`.`total_paid`) AS `total_paid`,sum(`enrollment_payment_plans`.`balance`) AS `total_balance` from `enrollment_payment_plans` group by `enrollment_payment_plans`.`user_id`) `epp` on(`epp`.`user_id` = `u`.`id`)) WHERE exists(select 1 from `user_roles` `ur` where `ur`.`user_id` = `u`.`id` AND `ur`.`role_id` = 4 limit 1) ;
+
 --
 -- Indexes for dumped tables
 --
@@ -1435,6 +1560,19 @@ ALTER TABLE `enrollments`
   ADD KEY `idx_user_id` (`user_id`);
 
 --
+-- Indexes for table `enrollment_payment_plans`
+--
+ALTER TABLE `enrollment_payment_plans`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_enrollment_plan` (`enrollment_id`),
+  ADD KEY `idx_user_id` (`user_id`),
+  ADD KEY `idx_course_id` (`course_id`),
+  ADD KEY `idx_payment_status` (`payment_status`),
+  ADD KEY `idx_balance` (`balance`),
+  ADD KEY `idx_epp_balance` (`balance`),
+  ADD KEY `idx_epp_status` (`payment_status`);
+
+--
 -- Indexes for table `instructors`
 --
 ALTER TABLE `instructors`
@@ -1501,7 +1639,9 @@ ALTER TABLE `payments`
   ADD KEY `payment_method_id` (`payment_method_id`),
   ADD KEY `idx_student` (`student_id`),
   ADD KEY `idx_status` (`payment_status`),
-  ADD KEY `idx_transaction` (`transaction_id`);
+  ADD KEY `idx_transaction` (`transaction_id`),
+  ADD KEY `fk_payment_recorded_by` (`recorded_by`),
+  ADD KEY `fk_payment_plan` (`payment_plan_id`);
 
 --
 -- Indexes for table `payment_methods`
@@ -1554,6 +1694,16 @@ ALTER TABLE `quiz_questions`
   ADD PRIMARY KEY (`quiz_question_id`),
   ADD UNIQUE KEY `unique_quiz_question` (`quiz_id`,`question_id`),
   ADD KEY `question_id` (`question_id`);
+
+--
+-- Indexes for table `registration_fees`
+--
+ALTER TABLE `registration_fees`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_user_registration` (`user_id`),
+  ADD KEY `idx_student_id` (`student_id`),
+  ADD KEY `idx_payment_status` (`payment_status`),
+  ADD KEY `idx_verified_by` (`verified_by`);
 
 --
 -- Indexes for table `roles`
@@ -1719,6 +1869,12 @@ ALTER TABLE `enrollments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `enrollment_payment_plans`
+--
+ALTER TABLE `enrollment_payment_plans`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `instructors`
 --
 ALTER TABLE `instructors`
@@ -1809,10 +1965,16 @@ ALTER TABLE `quiz_questions`
   MODIFY `quiz_question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `registration_fees`
+--
+ALTER TABLE `registration_fees`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `students`
@@ -1830,7 +1992,7 @@ ALTER TABLE `student_achievements`
 -- AUTO_INCREMENT for table `system_settings`
 --
 ALTER TABLE `system_settings`
-  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `transactions`
@@ -1951,6 +2113,14 @@ ALTER TABLE `enrollments`
   ADD CONSTRAINT `fk_enrollments_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `enrollment_payment_plans`
+--
+ALTER TABLE `enrollment_payment_plans`
+  ADD CONSTRAINT `fk_plan_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_plan_enrollment` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_plan_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `instructors`
 --
 ALTER TABLE `instructors`
@@ -1999,6 +2169,8 @@ ALTER TABLE `notifications`
 -- Constraints for table `payments`
 --
 ALTER TABLE `payments`
+  ADD CONSTRAINT `fk_payment_plan` FOREIGN KEY (`payment_plan_id`) REFERENCES `enrollment_payment_plans` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_payment_recorded_by` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `payments_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `payments_ibfk_3` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE SET NULL,
@@ -2038,6 +2210,14 @@ ALTER TABLE `quiz_attempts`
 ALTER TABLE `quiz_questions`
   ADD CONSTRAINT `quiz_questions_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `quiz_questions_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `registration_fees`
+--
+ALTER TABLE `registration_fees`
+  ADD CONSTRAINT `fk_regfee_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_regfee_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_regfee_verified_by` FOREIGN KEY (`verified_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `students`
