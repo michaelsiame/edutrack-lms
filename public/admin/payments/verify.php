@@ -4,6 +4,10 @@
  * Verify and approve pending payments
  */
 
+// Temporarily show errors for debugging
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 require_once '../../../src/middleware/admin-only.php';
 require_once '../../../src/classes/Payment.php';
 require_once '../../../src/classes/Enrollment.php';
