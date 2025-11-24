@@ -4,10 +4,27 @@
  * Verify and approve pending payments
  */
 
+// Enable error display for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Debug mode flag - set to true to show debug info
+$debug = true;
+
 require_once '../../../src/middleware/admin-only.php';
 require_once '../../../src/classes/Payment.php';
 require_once '../../../src/classes/Enrollment.php';
 require_once '../../../src/classes/Email.php';
+
+// Debug: Log request info
+if ($debug) {
+    error_log("=== Payment Verify Page ===");
+    error_log("Request Method: " . $_SERVER['REQUEST_METHOD']);
+    error_log("Request URI: " . $_SERVER['REQUEST_URI']);
+    error_log("GET params: " . print_r($_GET, true));
+    error_log("Session user_id: " . ($_SESSION['user_id'] ?? 'not set'));
+}
 
 // Handle payment verification
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -79,17 +96,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Get pending payments
-$pendingPayments = Payment::all([
-    'status' => 'Pending',
-    'order' => 'created_at DESC'
-]);
+try {
+    $pendingPayments = Payment::all([
+        'status' => 'Pending',
+        'order' => 'created_at DESC'
+    ]);
+
+    if ($debug) {
+        error_log("Pending payments count: " . count($pendingPayments));
+        error_log("Payment IDs: " . implode(', ', array_column($pendingPayments, 'payment_id')));
+    }
+} catch (Exception $e) {
+    if ($debug) {
+        error_log("ERROR fetching payments: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
+    }
+    $pendingPayments = [];
+}
 
 $page_title = 'Verify Payments';
 require_once '../../../src/templates/admin-header.php';
 ?>
 
 <div class="container mx-auto px-4 py-8">
-    
+
+    <?php if ($debug): ?>
+    <!-- Debug Panel -->
+    <div class="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <h3 class="font-bold text-yellow-800 mb-2">
+            <i class="fas fa-bug mr-2"></i>Debug Information
+        </h3>
+        <div class="text-sm text-yellow-700 space-y-1">
+            <p><strong>Request URI:</strong> <?= htmlspecialchars($_SERVER['REQUEST_URI']) ?></p>
+            <p><strong>Request Method:</strong> <?= $_SERVER['REQUEST_METHOD'] ?></p>
+            <p><strong>GET Params:</strong> <?= htmlspecialchars(json_encode($_GET)) ?></p>
+            <p><strong>Session User ID:</strong> <?= $_SESSION['user_id'] ?? 'not set' ?></p>
+            <p><strong>Pending Payments Count:</strong> <?= count($pendingPayments) ?></p>
+            <?php if (!empty($pendingPayments)): ?>
+            <p><strong>Payment IDs:</strong> <?= implode(', ', array_column($pendingPayments, 'payment_id')) ?></p>
+            <?php endif; ?>
+            <p><strong>PHP Version:</strong> <?= PHP_VERSION ?></p>
+            <p><strong>Memory Usage:</strong> <?= round(memory_get_usage() / 1024 / 1024, 2) ?> MB</p>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-900">
             <i class="fas fa-check-circle text-primary-600 mr-2"></i>
@@ -114,13 +165,34 @@ require_once '../../../src/templates/admin-header.php';
     <?php else: ?>
     
     <div class="space-y-6">
-        <?php foreach ($pendingPayments as $paymentData): ?>
+        <?php foreach ($pendingPayments as $index => $paymentData): ?>
             <?php
+            if ($debug) {
+                error_log("Processing payment #{$index}: ID=" . ($paymentData['payment_id'] ?? 'unknown'));
+            }
+
             $payment = new Payment($paymentData['payment_id']);
+
             // Skip if payment data couldn't be loaded (e.g., related records deleted)
-            if (!$payment->exists()) continue;
+            if (!$payment->exists()) {
+                if ($debug) {
+                    error_log("Payment ID {$paymentData['payment_id']} - exists() returned false, skipping");
+                }
+                continue;
+            }
+
+            if ($debug) {
+                error_log("Payment ID {$paymentData['payment_id']} loaded successfully");
+            }
             ?>
-            
+
+            <?php if ($debug): ?>
+            <!-- Debug: Payment #<?= $index ?> -->
+            <div class="text-xs text-gray-400 mb-1">
+                Debug: Payment ID=<?= $payment->getId() ?>, User=<?= $payment->getUserName() ?>, Amount=<?= $payment->getAmount() ?>
+            </div>
+            <?php endif; ?>
+
             <div class="bg-white rounded-lg shadow overflow-hidden">
                 <div class="p-6">
                     <div class="flex items-start justify-between">
