@@ -29,7 +29,10 @@ class Payment {
                 LEFT JOIN courses c ON p.course_id = c.id
                 WHERE p.payment_id = :id";
 
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $result = $this->db->query($sql, ['id' => $this->id])->fetch();
+        // Ensure $this->data is always an array, never false
+        // This prevents TypeError in PHP 8+ when accessing array keys on false
+        $this->data = $result ?: [];
     }
     
     /**
