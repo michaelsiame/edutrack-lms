@@ -445,6 +445,10 @@ class Payment {
     public function getPaymentDate() { return $this->data['payment_date'] ?? null; }
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }
     public function getUpdatedAt() { return $this->data['updated_at'] ?? null; }
+    public function getPhoneNumber() { return $this->data['phone_number'] ?? ''; }
+    public function getNotes() { return $this->data['notes'] ?? ''; }
+    public function getRecordedBy() { return $this->data['recorded_by'] ?? null; }
+    public function getPaymentType() { return $this->data['payment_type'] ?? 'course_fee'; }
     
     /**
      * Get formatted amount
