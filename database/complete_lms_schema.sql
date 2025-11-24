@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 23, 2025 at 09:55 AM
+-- Generation Time: Nov 24, 2025 at 12:26 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -252,25 +252,36 @@ CREATE TABLE `courses` (
 --
 
 INSERT INTO `courses` (`id`, `title`, `slug`, `description`, `short_description`, `category_id`, `instructor_id`, `level`, `language`, `thumbnail_url`, `video_intro_url`, `start_date`, `end_date`, `price`, `discount_price`, `duration_weeks`, `total_hours`, `max_students`, `enrollment_count`, `status`, `is_featured`, `rating`, `total_reviews`, `prerequisites`, `learning_outcomes`, `created_at`, `updated_at`) VALUES
-(1, 'Certificate in Microsoft Office Suite', 'microsoft-office-suite', 'Comprehensive training in Word, Excel, PowerPoint, and Publisher. Learn document creation, spreadsheet analysis, presentations, and desktop publishing for professional environments.', 'Master Word, Excel, PowerPoint & Publisher', 1, 1, 'Beginner', 'English', NULL, NULL, '2025-01-15', '2025-04-15', 250.00, NULL, 12, 48.00, 30, 0, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(3, 'Certificate in Digital Literacy', 'digital-literacy', 'Essential digital skills for the modern workplace including email, internet research, cloud storage, online collaboration, and digital safety.', 'Essential digital skills for everyone', 1, 1, 'Beginner', 'English', NULL, NULL, '2025-01-20', '2025-03-20', 150.00, NULL, 8, 32.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(4, 'Certificate in Record Management', 'record-management', 'Professional records and information management systems. Learn filing systems, document control, archiving, and compliance with data protection regulations.', 'Professional records management', 1, 1, 'Intermediate', 'English', NULL, NULL, '2025-02-15', '2025-05-15', 280.00, NULL, 12, 48.00, 30, 0, 'published', 0, 4.50, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(5, 'Certificate in Python Programming', 'python-programming', 'Learn Python from basics to advanced concepts. Cover data structures, OOP, file handling, and popular libraries. Ideal for beginners and aspiring developers.', 'Master Python programming', 2, 2, 'Beginner', 'English', NULL, NULL, '2025-01-10', '2025-04-10', 350.00, 315.00, 12, 60.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(6, 'Certificate in Java Programming', 'java-programming', 'Master Java programming with hands-on projects. Learn OOP principles, Java collections, multithreading, and enterprise application development.', 'Complete Java development course', 2, 2, 'Intermediate', 'English', NULL, NULL, '2025-02-01', '2025-06-01', 400.00, NULL, 16, 80.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(7, 'Certificate in Web Development', 'web-development', 'Full-stack web development using HTML5, CSS3, JavaScript, and modern frameworks. Build responsive websites and web applications from scratch.', 'Build modern web applications', 2, 2, 'Beginner', 'English', NULL, NULL, '2025-01-15', '2025-04-30', 380.00, 342.00, 14, 70.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(8, 'Certificate in Mobile App Development', 'mobile-app-development', 'Create mobile applications for Android and iOS platforms. Learn Java/Kotlin for Android and Swift for iOS with practical app projects.', 'iOS and Android app development', 2, 2, 'Advanced', 'English', NULL, NULL, '2025-03-01', '2025-07-30', 500.00, NULL, 20, 100.00, 30, 0, 'published', 1, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(9, 'Certificate in Software Engineering & Git', 'software-engineering-git', 'Software development methodologies, version control with Git/GitHub, testing, CI/CD, and collaborative development practices.', 'Professional software engineering', 2, 2, 'Intermediate', 'English', NULL, NULL, '2025-02-10', '2025-05-10', 320.00, NULL, 12, 48.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(10, 'Certificate in Data Analysis', 'data-analysis', 'Data analysis fundamentals using Excel, SQL, and Python. Learn data cleaning, visualization, statistical analysis, and reporting techniques.', 'Become a data analyst', 3, 4, 'Beginner', 'English', NULL, NULL, '2025-01-20', '2025-04-20', 360.00, NULL, 12, 60.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(11, 'Certificate in Cyber Security', 'cyber-security', 'Comprehensive cybersecurity training covering network security, ethical hacking, threat analysis, and security best practices. Industry-recognized certification.', 'Advanced cybersecurity training', 3, 3, 'Advanced', 'English', NULL, NULL, '2025-02-15', '2025-06-30', 550.00, 495.00, 18, 90.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(12, 'Certificate in Database Management Systems', 'database-management', 'Master database design and management using MySQL, PostgreSQL, and SQL Server. Learn SQL, normalization, optimization, and administration.', 'Database design and management', 3, 3, 'Intermediate', 'English', NULL, NULL, '2025-01-25', '2025-05-25', 400.00, NULL, 16, 64.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(13, 'Certificate in AI & Machine Learning', 'ai-machine-learning', 'Introduction to artificial intelligence and machine learning. Learn algorithms, neural networks, and practical applications using Python and TensorFlow.', 'AI and ML fundamentals', 4, 4, 'Advanced', 'English', NULL, NULL, '2025-03-01', '2025-07-01', 600.00, 540.00, 16, 80.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(14, 'Certificate in Internet of Things', 'internet-of-things', 'IoT fundamentals including sensors, microcontrollers, connectivity, and cloud integration. Build smart devices and IoT solutions.', 'Build IoT solutions', 4, 4, 'Intermediate', 'English', NULL, NULL, '2025-02-20', '2025-05-20', 450.00, NULL, 12, 60.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(15, 'Certificate in Graphic Designing', 'graphic-designing', 'Professional graphic design using Adobe Photoshop, Illustrator, and InDesign. Learn design principles, typography, branding, and print/digital media.', 'Master graphic design tools', 5, 6, 'Beginner', 'English', NULL, NULL, '2025-01-15', '2025-04-30', 380.00, NULL, 14, 56.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(16, 'Certificate in Digital Content Creation', 'digital-content-creation', 'Create engaging multimedia content for education and business. Video editing, animation, interactive presentations, and e-learning materials.', 'Multimedia content creation', 5, 6, 'Intermediate', 'English', NULL, NULL, '2025-02-05', '2025-05-05', 350.00, 315.00, 12, 48.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(17, 'Certificate in Digital Marketing', 'digital-marketing', 'Comprehensive digital marketing strategies including SEO, social media marketing, content marketing, email campaigns, and analytics.', 'Complete digital marketing', 5, 6, 'Beginner', 'English', NULL, NULL, '2025-01-20', '2025-04-20', 320.00, NULL, 12, 48.00, 30, 0, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(18, 'Certificate in Entrepreneurship', 'entrepreneurship', 'Start and grow your business with essential entrepreneurship skills. Business planning, financing, marketing, and operations management.', 'Start your own business', 6, 5, 'Beginner', 'English', NULL, NULL, '2025-01-10', '2025-04-10', 300.00, NULL, 12, 48.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(19, 'Certificate in Project Management', 'project-management', 'Professional project management methodologies including PMBOK, Agile, and Scrum. Plan, execute, and deliver successful projects.', 'Professional project management', 6, 5, 'Intermediate', 'English', NULL, NULL, '2025-02-01', '2025-06-01', 450.00, 405.00, 16, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(20, 'Certificate in Financial Technology', 'financial-technology', 'Explore digital payments, blockchain, cryptocurrency, mobile money, and digital banking. Understand the future of financial services.', 'FinTech fundamentals', 6, 5, 'Advanced', 'English', NULL, NULL, '2025-03-01', '2025-06-15', 480.00, NULL, 14, 56.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 23:02:35');
+(1, 'Certificate in Microsoft Office Suite', 'microsoft-office-suite', 'Comprehensive training in Microsoft Word, Excel, PowerPoint, Publisher and Internet skills. Learn document creation, spreadsheet analysis, presentations, desktop publishing and internet navigation for professional environments.', 'Master Word, Excel, PowerPoint, Publisher & Internet', 1, 1, 'Beginner', 'English', NULL, NULL, '2025-01-15', '2025-04-15', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(3, 'Certificate in Digital Literacy', 'digital-literacy', 'Essential digital skills for the modern workplace including email, internet research, cloud storage, online collaboration, and digital safety.', 'Essential digital skills for everyone', 1, 1, 'Beginner', 'English', NULL, NULL, '2025-01-20', '2025-03-20', 850.00, NULL, 2, 16.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(4, 'Certificate in Record Management', 'record-management', 'Professional records and information management systems. Learn filing systems, document control, archiving, and compliance with data protection regulations.', 'Professional records management', 1, 1, 'Intermediate', 'English', NULL, NULL, '2025-02-15', '2025-05-15', 1500.00, NULL, 6, 48.00, 30, 0, 'published', 0, 4.50, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(5, 'Certificate in Python Programming', 'python-programming', 'Learn Python from basics to advanced concepts. Cover data structures, OOP, file handling, and popular libraries. Ideal for beginners and aspiring developers.', 'Master Python programming', 2, 2, 'Beginner', 'English', NULL, NULL, '2025-01-10', '2025-04-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(6, 'Certificate in Java Programming', 'java-programming', 'Master Java programming with hands-on projects. Learn OOP principles, Java collections, multithreading, and enterprise application development.', 'Complete Java development course', 2, 2, 'Intermediate', 'English', NULL, NULL, '2025-02-01', '2025-06-01', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(7, 'Certificate in Web Development', 'web-development', 'Full-stack web development using HTML5, CSS3, JavaScript, and modern frameworks. Build responsive websites and web applications from scratch.', 'Build modern web applications', 2, 2, 'Beginner', 'English', NULL, NULL, '2025-01-15', '2025-04-30', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(8, 'Certificate in Mobile App Development', 'mobile-app-development', 'Create mobile applications for Android and iOS platforms. Learn Java/Kotlin for Android and Swift for iOS with practical app projects.', 'iOS and Android app development', 2, 2, 'Advanced', 'English', NULL, NULL, '2025-03-01', '2025-07-30', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(9, 'Certificate in Software Engineering', 'software-engineering-git', 'Software development methodologies, version control with Git/GitHub, testing, CI/CD, and collaborative development practices.', 'Professional software engineering', 2, 2, 'Intermediate', 'English', NULL, NULL, '2025-02-10', '2025-05-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(10, 'Certificate in Data Analysis', 'data-analysis', 'Data analysis fundamentals using Excel, SQL, and Python. Learn data cleaning, visualization, statistical analysis, and reporting techniques.', 'Become a data analyst', 3, 4, 'Beginner', 'English', NULL, NULL, '2025-01-20', '2025-04-20', 1500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(11, 'Certificate in Cyber Security', 'cyber-security', 'Comprehensive cybersecurity training covering network security, ethical hacking, threat analysis, and security best practices. Industry-recognized certification.', 'Advanced cybersecurity training', 3, 3, 'Advanced', 'English', NULL, NULL, '2025-02-15', '2025-06-30', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(12, 'Certificate in Database Management Systems', 'database-management', 'Master database design and management using MySQL, PostgreSQL, and SQL Server. Learn SQL, normalization, optimization, and administration.', 'Database design and management', 3, 3, 'Intermediate', 'English', NULL, NULL, '2025-01-25', '2025-05-25', 1500.00, NULL, 6, 48.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(13, 'Certificate in Artificial Intelligence', 'ai-machine-learning', 'Introduction to artificial intelligence concepts and applications. Learn AI fundamentals, machine learning basics, and practical applications in modern technology.', 'AI fundamentals and applications', 4, 4, 'Advanced', 'English', NULL, NULL, '2025-03-01', '2025-07-01', 850.00, NULL, 3, 24.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(14, 'Certificate in Internet of Things', 'internet-of-things', 'IoT fundamentals including sensors, microcontrollers, connectivity, and cloud integration. Build smart devices and IoT solutions.', 'Build IoT solutions', 4, 4, 'Intermediate', 'English', NULL, NULL, '2025-02-20', '2025-05-20', 450.00, NULL, 12, 60.00, 30, 0, 'archived', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(15, 'Certificate in Graphic Designing', 'graphic-designing', 'Professional graphic design using Adobe Photoshop, Illustrator, and InDesign. Learn design principles, typography, branding, and print/digital media.', 'Master graphic design tools', 5, 6, 'Beginner', 'English', NULL, NULL, '2025-01-15', '2025-04-30', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(16, 'Certificate in Digital & Content Creation', 'digital-content-creation', 'Create engaging multimedia content for education and business. Video editing, animation, interactive presentations, and e-learning materials.', 'Multimedia content creation', 5, 6, 'Intermediate', 'English', NULL, NULL, '2025-02-05', '2025-05-05', 950.00, NULL, 3, 24.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(17, 'Certificate in Digital Marketing', 'digital-marketing', 'Comprehensive digital marketing strategies including SEO, social media marketing, content marketing, email campaigns, and analytics.', 'Complete digital marketing', 5, 6, 'Beginner', 'English', NULL, NULL, '2025-01-20', '2025-04-20', 950.00, NULL, 3, 24.00, 30, 0, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(18, 'Certificate in Entrepreneurship', 'entrepreneurship', 'Start and grow your business with essential entrepreneurship skills. Business planning, financing, marketing, and operations management.', 'Start your own business', 6, 5, 'Beginner', 'English', NULL, NULL, '2025-01-10', '2025-04-10', 2500.00, NULL, 11, 88.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(19, 'Certificate in Project Management', 'project-management', 'Professional project management methodologies including PMBOK, Agile, and Scrum. Plan, execute, and deliver successful projects.', 'Professional project management', 6, 5, 'Intermediate', 'English', NULL, NULL, '2025-02-01', '2025-06-01', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(20, 'Certificate in Financial Technology', 'financial-technology', 'Explore digital payments, blockchain, cryptocurrency, mobile money, and digital banking. Understand the future of financial services.', 'FinTech fundamentals', 6, 5, 'Advanced', 'English', NULL, NULL, '2025-03-01', '2025-06-15', 1200.00, NULL, 3, 24.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
+(24, 'Certificate in ICT Support & Hardware Repair', 'ict-support-hardware-repair', 'Comprehensive training in computer hardware, troubleshooting, maintenance, and repair. Learn to diagnose and fix common hardware issues, install operating systems, and provide technical support.', 'Computer hardware repair & support', 1, 1, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
+(25, 'Certificate in Computer Studies', 'computer-studies', 'Comprehensive computer studies program covering fundamental concepts, applications, and practical skills. Ideal foundation for further ICT studies.', 'Foundation computer studies', 1, 1, 'Beginner', 'English', NULL, NULL, NULL, NULL, 3850.00, NULL, 12, 96.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
+(26, 'Certificate in Computer Science General', 'computer-science-general', 'General computer science covering both software and hardware fundamentals. Learn programming basics, system architecture, and computing principles.', 'Software and hardware fundamentals', 1, 1, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
+(27, 'Certificate in Information Technology', 'information-technology', 'Comprehensive IT fundamentals covering networking, systems administration, IT security, and technical support. Prepare for entry-level IT positions.', 'IT fundamentals and systems', 1, 1, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
+(28, 'Certificate in Computer & Business Handling', 'computer-business-handling', 'Essential computer skills for business professionals. Learn office applications, business communication, data entry, and basic accounting software.', 'Business computer skills', 1, 1, 'Beginner', 'English', NULL, NULL, NULL, NULL, 1200.00, NULL, 4, 32.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
+(29, 'Certificate in C++ Programming', 'cpp-programming', 'Master C++ programming from basics to advanced concepts. Learn object-oriented programming, data structures, algorithms, and system programming.', 'Master C++ programming', 2, 2, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
+(30, 'Certificate in Sales & Marketing', 'sales-marketing', 'Comprehensive sales and marketing training. Learn customer relationship management, sales techniques, market research, and marketing strategies.', 'Sales and marketing skills', 6, 5, 'Beginner', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
+(31, 'Certificate in Monitoring & Evaluation', 'monitoring-evaluation', 'Professional M&E training covering project monitoring frameworks, data collection, analysis, reporting, and evaluation methodologies.', 'M&E for projects and programs', 6, 5, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
+(32, 'Certificate in Purchasing & Supply', 'purchasing-supply', 'Professional procurement and supply chain management. Learn purchasing procedures, vendor management, inventory control, and logistics.', 'Procurement and supply chain', 6, 5, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
+(33, 'Certificate in E-Commerce & Online Business', 'ecommerce-online-business', 'Start and run an online business. Learn e-commerce platforms, online payment systems, digital storefronts, and online customer service.', 'Start your online business', 6, 5, 'Beginner', 'English', NULL, NULL, NULL, NULL, 950.00, NULL, 3, 24.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
+(34, 'Certificate in Secretarial & Office Management', 'secretarial-office-management', 'Professional secretarial training covering office management, business communication, typing skills, filing systems, and office ethics.', 'Office management & typing skills', 6, 5, 'Beginner', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37');
 
 -- --------------------------------------------------------
 
@@ -509,7 +520,8 @@ INSERT INTO `enrollments` (`id`, `user_id`, `student_id`, `course_id`, `enrolled
 (26, 18, 11, 1, '2025-01-15', '2025-01-16', 55.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, NULL, 1584, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
 (27, 18, 11, 4, '2025-02-15', '2025-02-16', 30.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, NULL, 864, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
 (28, 19, 12, 5, '2025-01-20', '2025-01-21', 10.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, NULL, 360, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(29, 19, 12, 3, '2025-01-20', '2025-01-21', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, NULL, 288, '2025-11-18 22:21:01', '2025-11-18 23:02:35');
+(29, 19, 12, 3, '2025-01-20', '2025-01-21', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, NULL, 288, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
+(30, 26, 13, 1, '2025-11-23', '2025-11-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, NULL, 0, '2025-11-23 11:45:51', '2025-11-23 11:45:51');
 
 -- --------------------------------------------------------
 
@@ -781,7 +793,8 @@ INSERT INTO `payments` (`payment_id`, `student_id`, `course_id`, `enrollment_id`
 (12, 4, 9, 12, 320.00, 'USD', 1, 'Completed', 'TXN-2025-000012', '2025-02-10 11:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (13, 5, 11, 13, 495.00, 'USD', 1, 'Completed', 'TXN-2025-000013', '2025-02-15 13:45:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (14, 5, 12, 14, 400.00, 'USD', 2, 'Completed', 'TXN-2025-000014', '2025-01-25 16:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(16, 7, 13, 19, 540.00, 'USD', 1, 'Pending', 'TXN-2025-000016', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01');
+(16, 7, 13, 19, 540.00, 'USD', 1, 'Pending', 'TXN-2025-000016', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(17, 13, 1, 30, 250.00, 'ZMW', NULL, 'Pending', '1234', '2025-11-23 00:00:00', '2025-11-23 11:45:51', '2025-11-23 11:45:51');
 
 -- --------------------------------------------------------
 
@@ -1044,7 +1057,8 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (9, 16, '2000-04-20', 'Male', NULL, 'Solwezi', 'Zambia', NULL, '2025-01-10', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (10, 17, '1999-06-08', 'Female', NULL, 'Mongu', 'Zambia', NULL, '2025-01-12', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (11, 18, '1997-10-15', 'Male', NULL, 'Kasama', 'Zambia', NULL, '2025-01-15', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(12, 19, '2001-01-30', 'Female', NULL, 'Lusaka', 'Zambia', NULL, '2025-01-18', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01');
+(12, 19, '2001-01-30', 'Female', NULL, 'Lusaka', 'Zambia', NULL, '2025-01-18', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(13, 26, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-23', 0, 0, 0, '2025-11-23 11:45:50', '2025-11-23 11:45:50');
 
 -- --------------------------------------------------------
 
@@ -1184,7 +1198,8 @@ INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `first_name`, `
 (17, 'jennifer.musonda', 'jennifer.musonda@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Jennifer', 'Musonda', '+260970000000', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (18, 'moses.chola', 'moses.chola@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Moses', 'Chola', '+260971234567', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (19, 'ruth.zimba', 'ruth.zimba@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Ruth', 'Zimba', '+260972345678', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(25, 'taona', 'taona@gmail.com', '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14');
+(25, 'taona', 'taona@gmail.com', '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
+(26, 'jaysiame076', 'jaysiame076@gmail.com', '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', 0, NULL, '2025-11-23 11:05:46', '2025-11-23 11:05:46');
 
 -- --------------------------------------------------------
 
@@ -1270,7 +1285,8 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`, `assigned_b
 (17, 17, 4, '2025-11-18 22:21:01', 1),
 (18, 18, 4, '2025-11-18 22:21:01', 1),
 (19, 19, 4, '2025-11-18 22:21:01', 1),
-(25, 25, 2, '2025-11-22 09:07:23', NULL);
+(25, 25, 2, '2025-11-22 09:07:23', NULL),
+(26, 26, 4, '2025-11-23 11:05:46', NULL);
 
 -- --------------------------------------------------------
 
@@ -1748,7 +1764,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `payment_methods`
@@ -1802,7 +1818,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `student_achievements`
@@ -1826,7 +1842,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
@@ -1838,7 +1854,7 @@ ALTER TABLE `user_profiles`
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `user_sessions`
