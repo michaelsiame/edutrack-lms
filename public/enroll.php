@@ -7,6 +7,7 @@
 require_once '../src/bootstrap.php';
 require_once '../src/classes/Course.php';
 require_once '../src/classes/Enrollment.php';
+require_once '../src/classes/RegistrationFee.php';
 
 // Must be logged in to enroll
 if (!isLoggedIn()) {
@@ -30,8 +31,17 @@ if (!$course || !$course->isPublished()) {
     redirect('courses.php');
 }
 
-// Check if already enrolled
 $userId = $_SESSION['user_id'];
+
+// Check if registration fee is required and not paid
+if (RegistrationFee::isRequired() && !RegistrationFee::hasPaid($userId)) {
+    // Store intended course for after registration
+    $_SESSION['intended_course_id'] = $courseId;
+    setFlashMessage('Please pay the registration fee (K150) before enrolling in courses.', 'info');
+    redirect('registration-fee.php');
+}
+
+// Check if already enrolled
 if (Enrollment::isEnrolled($userId, $courseId)) {
     setFlashMessage('You are already enrolled in this course', 'info');
     redirect('learn.php?course=' . $course->getSlug());
