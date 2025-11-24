@@ -6,12 +6,32 @@
 
 // Temporarily show errors for debugging
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once '../../../src/middleware/admin-only.php';
-require_once '../../../src/classes/Payment.php';
-require_once '../../../src/classes/Enrollment.php';
-require_once '../../../src/classes/Email.php';
+try {
+    require_once '../../../src/middleware/admin-only.php';
+} catch (Exception $e) {
+    die('Error loading middleware: ' . $e->getMessage());
+}
+
+try {
+    require_once '../../../src/classes/Payment.php';
+} catch (Exception $e) {
+    die('Error loading Payment class: ' . $e->getMessage());
+}
+
+try {
+    require_once '../../../src/classes/Enrollment.php';
+} catch (Exception $e) {
+    die('Error loading Enrollment class: ' . $e->getMessage());
+}
+
+try {
+    require_once '../../../src/classes/Email.php';
+} catch (Exception $e) {
+    die('Error loading Email class: ' . $e->getMessage());
+}
 
 // Handle payment verification
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -83,10 +103,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Get pending payments
-$pendingPayments = Payment::all([
-    'status' => 'Pending',
-    'order' => 'created_at DESC'
-]);
+try {
+    $pendingPayments = Payment::all([
+        'status' => 'Pending',
+        'order' => 'created_at DESC'
+    ]);
+} catch (Exception $e) {
+    die('Error fetching payments: ' . $e->getMessage());
+}
 
 $page_title = 'Verify Payments';
 require_once '../../../src/templates/admin-header.php';
