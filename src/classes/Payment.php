@@ -21,7 +21,7 @@ class Payment {
      * Load payment data
      */
     private function load() {
-        $sql = "SELECT p.*, u.first_name, u.last_name, u.email,
+        $sql = "SELECT p.*, u.id as user_id, u.first_name, u.last_name, u.email,
                 c.title as course_title, c.slug as course_slug
                 FROM payments p
                 JOIN students s ON p.student_id = s.id
