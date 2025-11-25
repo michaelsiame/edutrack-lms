@@ -12,6 +12,9 @@ require_once '../../../src/classes/Course.php';
 
 $db = Database::getInstance();
 
+// Get cash payment method ID from config (avoids hard-coding)
+$cashPaymentMethodId = config('payment.method_ids.cash', 5);
+
 // Get students with outstanding balances
 $studentsWithBalance = $db->query("
     SELECT DISTINCT u.id, u.username, u.first_name, u.last_name, u.email
@@ -86,14 +89,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!$plan) {
                     $errors[] = 'Payment plan not found';
                 } else {
-                    // Create payment record
+                    // Create payment record (uses cash payment method from config)
                     $sql = "INSERT INTO payments (
                         student_id, course_id, enrollment_id, payment_plan_id,
                         amount, currency, payment_method_id, payment_type,
                         payment_status, transaction_id, recorded_by, notes, payment_date
                     ) VALUES (
                         :student_id, :course_id, :enrollment_id, :plan_id,
-                        :amount, 'ZMW', 5, 'partial_payment',
+                        :amount, 'ZMW', :payment_method_id, 'partial_payment',
                         'Completed', :reference, :recorded_by, :notes, NOW()
                     )";
 
@@ -103,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'enrollment_id' => $plan->getEnrollmentId(),
                         'plan_id' => $planId,
                         'amount' => $amount,
+                        'payment_method_id' => $cashPaymentMethodId,
                         'reference' => 'CASH-' . date('Ymd') . '-' . ($receiptNumber ?: uniqid()),
                         'recorded_by' => $_SESSION['user_id'],
                         'notes' => $notes
@@ -152,14 +156,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                             $planId = PaymentPlan::create($planData);
 
-                            // Create payment record
+                            // Create payment record (uses cash payment method from config)
                             $sql = "INSERT INTO payments (
                                 student_id, course_id, enrollment_id, payment_plan_id,
                                 amount, currency, payment_method_id, payment_type,
                                 payment_status, transaction_id, recorded_by, notes, payment_date
                             ) VALUES (
                                 :student_id, :course_id, :enrollment_id, :plan_id,
-                                :amount, 'ZMW', 5, 'course_fee',
+                                :amount, 'ZMW', :payment_method_id, 'course_fee',
                                 'Completed', :reference, :recorded_by, :notes, NOW()
                             )";
 
@@ -169,6 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 'enrollment_id' => $enrollmentId,
                                 'plan_id' => $planId,
                                 'amount' => $amount,
+                                'payment_method_id' => $cashPaymentMethodId,
                                 'reference' => 'CASH-' . date('Ymd') . '-' . ($receiptNumber ?: uniqid()),
                                 'recorded_by' => $_SESSION['user_id'],
                                 'notes' => $notes

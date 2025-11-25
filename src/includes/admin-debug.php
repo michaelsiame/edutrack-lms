@@ -2,11 +2,34 @@
 /**
  * Admin Debug Helper
  * Include this file at the top of admin pages to enable comprehensive debugging
+ *
+ * Debug output behavior:
+ * - Always logs to files (admin_debug.log, admin_errors.log)
+ * - HTML comment output only in debug mode (APP_DEBUG=true or APP_ENV=development)
+ * - Detailed error display only in debug mode
+ *
+ * In production:
+ * - Errors are logged but not displayed to users
+ * - HTML comments with debug info are suppressed
+ * - Users see a generic error message instead of stack traces
  */
 
-// Enable error display for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Determine if we're in debug mode
+// Check APP_DEBUG constant first (set by config), then fall back to environment variable
+$isDebugMode = (defined('APP_DEBUG') && APP_DEBUG === true)
+    || getenv('APP_DEBUG') === 'true'
+    || getenv('APP_DEBUG') === '1'
+    || getenv('APP_ENV') === 'development'
+    || getenv('APP_ENV') === 'local';
+
+// Enable error display only in debug mode
+if ($isDebugMode) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 0);
+}
 ini_set('log_errors', 1);
 
 // Create logs directory if it doesn't exist
@@ -20,10 +43,20 @@ ini_set('error_log', $logDir . '/admin_errors.log');
 
 /**
  * Debug logging function
- * Writes to both file and HTML comments
+ * Always writes to log file, but HTML output only in debug mode
+ *
+ * @param string $message Log message
+ * @param mixed $data Optional data to log
  */
 if (!function_exists('debugLog')) {
     function debugLog($message, $data = null) {
+        // Determine debug mode (re-check in case it changed after initial load)
+        $isDebug = (defined('APP_DEBUG') && APP_DEBUG === true)
+            || getenv('APP_DEBUG') === 'true'
+            || getenv('APP_DEBUG') === '1'
+            || getenv('APP_ENV') === 'development'
+            || getenv('APP_ENV') === 'local';
+
         $logFile = __DIR__ . '/../../logs/admin_debug.log';
         $timestamp = date('Y-m-d H:i:s');
         $logMessage = "[$timestamp] $message";
@@ -33,34 +66,56 @@ if (!function_exists('debugLog')) {
         }
         $logMessage .= "\n";
 
+        // Always write to file
         file_put_contents($logFile, $logMessage, FILE_APPEND);
 
-        // Also echo to browser for immediate feedback
-        echo "<!-- DEBUG: $message -->\n";
-        if ($data !== null) {
-            echo "<!-- DATA: " . htmlspecialchars(print_r($data, true)) . " -->\n";
+        // Only output HTML comments in debug mode
+        if ($isDebug) {
+            echo "<!-- DEBUG: $message -->\n";
+            if ($data !== null) {
+                echo "<!-- DATA: " . htmlspecialchars(print_r($data, true)) . " -->\n";
+            }
         }
     }
 }
 
 /**
  * Exception handler for uncaught exceptions
+ * Shows detailed error in debug mode, generic message in production
  */
 set_exception_handler(function($e) {
+    // Determine debug mode
+    $isDebug = (defined('APP_DEBUG') && APP_DEBUG === true)
+        || getenv('APP_DEBUG') === 'true'
+        || getenv('APP_DEBUG') === '1'
+        || getenv('APP_ENV') === 'development'
+        || getenv('APP_ENV') === 'local';
+
+    // Always log the error
     debugLog("FATAL ERROR: " . $e->getMessage());
     debugLog("Stack trace", $e->getTraceAsString());
 
-    // Display error to user
-    echo "<div style='background: #fee; border: 2px solid #f00; padding: 20px; margin: 20px; font-family: monospace;'>";
-    echo "<h1 style='color: #c00;'>Admin Page Error</h1>";
-    echo "<p><strong>Error:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
-    echo "<p><strong>File:</strong> " . htmlspecialchars($e->getFile()) . "</p>";
-    echo "<p><strong>Line:</strong> " . $e->getLine() . "</p>";
-    echo "<h3>Stack Trace:</h3>";
-    echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
-    echo "<h3>Debug Log Location:</h3>";
-    echo "<p>" . __DIR__ . '/../../logs/admin_debug.log' . "</p>";
-    echo "</div>";
+    if ($isDebug) {
+        // Display detailed error in debug mode
+        echo "<div style='background: #fee; border: 2px solid #f00; padding: 20px; margin: 20px; font-family: monospace;'>";
+        echo "<h1 style='color: #c00;'>Admin Page Error</h1>";
+        echo "<p><strong>Error:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+        echo "<p><strong>File:</strong> " . htmlspecialchars($e->getFile()) . "</p>";
+        echo "<p><strong>Line:</strong> " . $e->getLine() . "</p>";
+        echo "<h3>Stack Trace:</h3>";
+        echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
+        echo "<h3>Debug Log Location:</h3>";
+        echo "<p>" . __DIR__ . '/../../logs/admin_debug.log' . "</p>";
+        echo "</div>";
+    } else {
+        // Display generic error in production
+        http_response_code(500);
+        echo "<div style='background: #f8f8f8; border: 1px solid #ddd; padding: 40px; margin: 40px auto; max-width: 500px; text-align: center; font-family: sans-serif;'>";
+        echo "<h1 style='color: #333; margin-bottom: 10px;'>Something went wrong</h1>";
+        echo "<p style='color: #666;'>We're sorry, but an unexpected error occurred. Our team has been notified.</p>";
+        echo "<p style='margin-top: 20px;'><a href='javascript:history.back()' style='color: #2563eb;'>Go back</a></p>";
+        echo "</div>";
+    }
     exit;
 });
 
@@ -93,6 +148,6 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
     return true;
 });
 
-// Log page load
+// Log page load (only writes to file in production, HTML comments in debug)
 $currentPage = $_SERVER['PHP_SELF'] ?? 'unknown';
 debugLog("=== PAGE LOAD: $currentPage ===");

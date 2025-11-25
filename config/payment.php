@@ -8,6 +8,16 @@ return [
     // Default currency
     'currency' => 'ZMW',
     'currency_symbol' => 'K',
+
+    // Payment Method IDs (from payment_methods database table)
+    // Use these constants instead of hard-coding IDs throughout the codebase
+    'method_ids' => [
+        'credit_card' => 1,    // Credit Card (Visa, Mastercard, American Express)
+        'mobile_money' => 2,   // Mobile Money (MTN, Airtel)
+        'bank_transfer' => 3,  // Bank Transfer (Direct bank transfer)
+        'paypal' => 4,         // PayPal payment gateway
+        'cash' => 5,           // Cash payment at office
+    ],
     
     // Tax settings
     'tax_enabled' => false,

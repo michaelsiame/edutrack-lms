@@ -102,18 +102,20 @@ class Statistics {
 
     /**
      * Get active enrollments
+     * Uses correct schema enum values: 'Enrolled', 'In Progress'
      */
     public static function getActiveEnrollments() {
         $db = self::getDb();
-        return (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'active'");
+        return (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status IN ('Enrolled', 'In Progress')");
     }
 
     /**
      * Get completed enrollments
+     * Uses correct schema enum value: 'Completed'
      */
     public static function getCompletedEnrollments() {
         $db = self::getDb();
-        return (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'completed'");
+        return (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE enrollment_status = 'Completed'");
     }
 
     /**
@@ -207,21 +209,21 @@ class Statistics {
             [$courseId]
         );
 
-        // Active students
+        // Active students (uses correct schema enum values: 'Enrolled', 'In Progress')
         $stats['active_students'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE course_id = ? AND enrollment_status = 'active'",
+            "SELECT COUNT(*) FROM enrollments WHERE course_id = ? AND enrollment_status IN ('Enrolled', 'In Progress')",
             [$courseId]
         );
 
-        // Completed students
+        // Completed students (uses correct schema enum value: 'Completed')
         $stats['completed_students'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE course_id = ? AND enrollment_status = 'completed'",
+            "SELECT COUNT(*) FROM enrollments WHERE course_id = ? AND enrollment_status = 'Completed'",
             [$courseId]
         );
 
-        // Average progress
+        // Average progress (uses correct field name: 'progress')
         $stats['avg_progress'] = (float) $db->fetchColumn(
-            "SELECT AVG(progress_percentage) FROM enrollments WHERE course_id = ?",
+            "SELECT AVG(progress) FROM enrollments WHERE course_id = ?",
             [$courseId]
         );
 
@@ -329,15 +331,15 @@ class Statistics {
             [$studentId]
         );
 
-        // Completed courses
+        // Completed courses (uses correct schema enum value: 'Completed')
         $stats['completed_courses'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'completed'",
+            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'Completed'",
             [$studentId]
         );
 
-        // In progress courses
+        // In progress courses (uses correct schema enum values: 'Enrolled', 'In Progress')
         $stats['in_progress_courses'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'active'",
+            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status IN ('Enrolled', 'In Progress')",
             [$studentId]
         );
 
@@ -349,9 +351,9 @@ class Statistics {
             [$studentId]
         );
 
-        // Average progress across all courses
+        // Average progress across all courses (uses correct field name: 'progress')
         $stats['avg_progress'] = (float) $db->fetchColumn(
-            "SELECT AVG(progress_percentage) FROM enrollments WHERE user_id = ?",
+            "SELECT AVG(progress) FROM enrollments WHERE user_id = ?",
             [$studentId]
         );
 
@@ -454,6 +456,7 @@ class Statistics {
 
     /**
      * Get top performing students
+     * Uses correct schema enum value: 'Completed' and field name: 'progress'
      */
     public static function getTopStudents($limit = 10) {
         $db = self::getDb();
@@ -461,13 +464,13 @@ class Statistics {
             SELECT u.id, u.first_name, u.last_name, u.email,
                    COUNT(DISTINCT e.course_id) as courses_enrolled,
                    COUNT(DISTINCT c.id) as courses_completed,
-                   AVG(e.progress_percentage) as avg_progress,
+                   AVG(e.progress) as avg_progress,
                    COUNT(DISTINCT cert.certificate_id) as certificates_earned
             FROM users u
             INNER JOIN user_roles ur ON u.id = ur.user_id
             INNER JOIN roles r ON ur.role_id = r.id
             LEFT JOIN enrollments e ON u.id = e.user_id
-            LEFT JOIN enrollments c ON u.id = c.user_id AND c.enrollment_status = 'completed'
+            LEFT JOIN enrollments c ON u.id = c.user_id AND c.enrollment_status = 'Completed'
             LEFT JOIN certificates cert ON c.id = cert.enrollment_id
             WHERE r.role_name = 'Student'
             GROUP BY u.id
