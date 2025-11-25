@@ -460,8 +460,12 @@ class Enrollment {
      * Status helper methods - use correct schema enum values
      * enrollment_status: 'Enrolled', 'In Progress', 'Completed', 'Dropped', 'Expired'
      * payment_status: 'pending', 'completed', 'failed', 'refunded'
+     *
+     * Note: hasEnrolledStatus() checks if status equals 'Enrolled'
+     * This is different from the static isEnrolled($userId, $courseId) which checks
+     * if a user has any enrollment record for a course
      */
-    public function isEnrolled() { return $this->getEnrollmentStatus() == 'Enrolled'; }
+    public function hasEnrolledStatus() { return $this->getEnrollmentStatus() == 'Enrolled'; }
     public function isInProgress() { return $this->getEnrollmentStatus() == 'In Progress'; }
     public function isCompleted() { return $this->getEnrollmentStatus() == 'Completed'; }
     public function isDropped() { return $this->getEnrollmentStatus() == 'Dropped'; }
