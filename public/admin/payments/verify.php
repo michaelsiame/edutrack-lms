@@ -234,11 +234,57 @@ require_once '../../../src/templates/admin-header.php';
                                 </div>
                                 <?php endif; ?>
                             </div>
+
+                            <!-- Proof of Payment -->
+                            <?php if ($payment->hasProofOfPayment()): ?>
+                            <div class="mt-6 pt-6 border-t border-gray-200">
+                                <h3 class="text-sm font-medium text-gray-500 mb-3">
+                                    <i class="fas fa-file-image mr-2"></i>Proof of Payment
+                                </h3>
+                                <div class="bg-gray-100 rounded-lg p-4">
+                                    <?php
+                                    $proofUrl = $payment->getProofOfPaymentUrl();
+                                    $proofFile = $payment->getProofOfPayment();
+                                    $isPdf = strtolower(pathinfo($proofFile, PATHINFO_EXTENSION)) === 'pdf';
+                                    ?>
+                                    <?php if ($isPdf): ?>
+                                        <div class="flex items-center space-x-4">
+                                            <i class="fas fa-file-pdf text-red-500 text-3xl"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-900">PDF Document</p>
+                                                <a href="<?= $proofUrl ?>" target="_blank"
+                                                   class="text-primary-600 hover:text-primary-700 text-sm">
+                                                    <i class="fas fa-external-link-alt mr-1"></i>View PDF
+                                                </a>
+                                            </div>
+                                        </div>
+                                    <?php else: ?>
+                                        <a href="<?= $proofUrl ?>" target="_blank" class="block">
+                                            <img src="<?= $proofUrl ?>" alt="Payment Proof"
+                                                 class="max-w-full max-h-64 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer">
+                                        </a>
+                                        <p class="text-xs text-gray-500 mt-2">
+                                            <i class="fas fa-search-plus mr-1"></i>Click image to view full size
+                                        </p>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <?php else: ?>
+                            <div class="mt-6 pt-6 border-t border-gray-200">
+                                <h3 class="text-sm font-medium text-gray-500 mb-3">
+                                    <i class="fas fa-file-image mr-2"></i>Proof of Payment
+                                </h3>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+                                    <i class="fas fa-exclamation-triangle text-yellow-500 text-2xl mb-2"></i>
+                                    <p class="text-sm text-yellow-700">No proof of payment uploaded</p>
+                                </div>
+                            </div>
+                            <?php endif; ?>
                         </div>
-                        
+
                     </div>
                 </div>
-                
+
                 <!-- Action Buttons -->
                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end space-x-3">
 

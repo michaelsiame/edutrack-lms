@@ -452,7 +452,27 @@ class Payment {
     public function getNotes() { return $this->data['notes'] ?? ''; }
     public function getRecordedBy() { return $this->data['recorded_by'] ?? null; }
     public function getPaymentType() { return $this->data['payment_type'] ?? 'course_fee'; }
-    
+    public function getProofOfPayment() { return $this->data['proof_of_payment'] ?? null; }
+
+    /**
+     * Get proof of payment URL
+     * Returns full URL to the uploaded proof image/PDF
+     */
+    public function getProofOfPaymentUrl() {
+        $proof = $this->getProofOfPayment();
+        if ($proof && file_exists(PUBLIC_PATH . '/uploads/payments/' . $proof)) {
+            return url('uploads/payments/' . $proof);
+        }
+        return null;
+    }
+
+    /**
+     * Check if proof of payment exists
+     */
+    public function hasProofOfPayment() {
+        return $this->getProofOfPaymentUrl() !== null;
+    }
+
     /**
      * Get formatted amount
      */

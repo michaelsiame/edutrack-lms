@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_payment'])) {
                 $student = $db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$userId]);
                 $studentId = $student['id'];
 
-                // Create payment record
+                // Create payment record (including proof of payment filename)
                 $paymentId = $db->insert('payments', [
                     'student_id' => $studentId,
                     'course_id' => $courseId,
@@ -128,7 +128,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_payment'])) {
                     'payment_status' => 'Pending',
                     'payment_method' => $paymentMethod,
                     'transaction_id' => $transactionRef,
-                    'payment_date' => $paymentDate . ' 00:00:00'
+                    'payment_date' => $paymentDate . ' 00:00:00',
+                    'proof_of_payment' => $proofFile
                 ]);
 
                 $paymentSubmitted = true;
