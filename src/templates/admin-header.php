@@ -39,274 +39,39 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
+    <!-- Admin Custom Styles -->
+    <link rel="stylesheet" href="<?= url('assets/css/admin.css') ?>">
+
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <!-- Custom Admin Styles -->
+
+    <!-- Critical Inline Styles -->
     <style>
         [x-cloak] { display: none !important; }
-        .sidebar-link.active {
-            background-color: #EBF4FF;
-            color: #2E70DA;
-            border-left: 4px solid #2E70DA;
-        }
-
-        /* Button Styles - Base */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: 1px solid transparent;
-            text-decoration: none;
-        }
-
-        /* Button variants - work with or without .btn base class */
-        .btn-primary,
-        .btn.btn-primary {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: 1px solid transparent;
-            text-decoration: none;
-            background-color: #2563EB !important;
-            color: white !important;
-        }
-
-        .btn-primary:hover,
-        .btn.btn-primary:hover {
-            background-color: #1D4ED8 !important;
-        }
-
-        .btn-secondary,
-        .btn.btn-secondary {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            text-decoration: none;
-            background-color: #f3f4f6 !important;
-            color: #374151 !important;
-            border: 1px solid #d1d5db !important;
-        }
-
-        .btn-secondary:hover,
-        .btn.btn-secondary:hover {
-            background-color: #e5e7eb !important;
-        }
-
-        .btn-danger,
-        .btn.btn-danger {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: 1px solid transparent;
-            text-decoration: none;
-            background-color: #dc2626 !important;
-            color: white !important;
-        }
-
-        .btn-danger:hover,
-        .btn.btn-danger:hover {
-            background-color: #b91c1c !important;
-        }
-
-        .btn-success,
-        .btn.btn-success {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: 1px solid transparent;
-            text-decoration: none;
-            background-color: #16a34a !important;
-            color: white !important;
-        }
-
-        .btn-success:hover,
-        .btn.btn-success:hover {
-            background-color: #15803d !important;
-        }
-
-        .btn-warning,
-        .btn.btn-warning {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: 1px solid transparent;
-            text-decoration: none;
-            background-color: #f59e0b !important;
-            color: white !important;
-        }
-
-        .btn-warning:hover,
-        .btn.btn-warning:hover {
-            background-color: #d97706 !important;
-        }
-
-        .btn-sm {
-            padding: 0.25rem 0.75rem !important;
-            font-size: 0.75rem !important;
-        }
-
-        .btn-lg {
-            padding: 0.75rem 1.5rem !important;
-            font-size: 1rem !important;
-        }
-
-        /* Ensure submit buttons are visible */
-        button[type="submit"],
-        input[type="submit"] {
-            cursor: pointer;
-        }
-
-        /* Fallback for Tailwind primary colors (in case CDN JIT doesn't generate them) */
-        .bg-primary-500 { background-color: #2E70DA !important; }
-        .bg-primary-600 { background-color: #2563EB !important; }
-        .bg-primary-700 { background-color: #1D4ED8 !important; }
-        .hover\:bg-primary-600:hover { background-color: #2563EB !important; }
-        .hover\:bg-primary-700:hover { background-color: #1D4ED8 !important; }
-        .text-primary-500 { color: #2E70DA !important; }
-        .text-primary-600 { color: #2563EB !important; }
-        .text-primary-700 { color: #1D4ED8 !important; }
-        .border-primary-500 { border-color: #2E70DA !important; }
-        .border-primary-600 { border-color: #2563EB !important; }
-        .ring-primary-500 { --tw-ring-color: #2E70DA !important; }
-        .focus\:ring-primary-500:focus { --tw-ring-color: #2E70DA !important; }
-        .focus\:border-primary-500:focus { border-color: #2E70DA !important; }
-
-        /* Fallback for green/red button colors (Tailwind CDN JIT may not generate) */
-        .bg-green-600 { background-color: #16a34a !important; }
-        .bg-green-700 { background-color: #15803d !important; }
-        .hover\:bg-green-700:hover { background-color: #15803d !important; }
-        .text-green-600 { color: #16a34a !important; }
-        .border-green-600 { border-color: #16a34a !important; }
-
-        .bg-red-600 { background-color: #dc2626 !important; }
-        .bg-red-700 { background-color: #b91c1c !important; }
-        .hover\:bg-red-700:hover { background-color: #b91c1c !important; }
-        .text-red-600 { color: #dc2626 !important; }
-        .border-red-600 { border-color: #dc2626 !important; }
-        .hover\:bg-red-50:hover { background-color: #fef2f2 !important; }
-
-        /* Ensure all buttons/links are visible and clickable */
-        button,
-        input[type="submit"],
-        input[type="button"],
-        .btn,
-        a.btn {
-            position: relative;
-            z-index: 1;
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-
-        /* Action button container styling */
-        .flex.items-center.justify-end.space-x-4 button,
-        .flex.items-center.justify-end.space-x-4 a,
-        .flex.items-center.justify-end.space-x-3 button,
-        .flex.items-center.justify-end.space-x-3 a {
-            display: inline-flex !important;
-            align-items: center !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-
-        /* White text on colored buttons */
-        .text-white { color: white !important; }
-
-        /* Rounded button styles */
-        .rounded-lg { border-radius: 0.5rem !important; }
-
-        /* Button padding */
-        .px-6 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
-        .py-2 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
-        .px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
-        .py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
-
-        /* Border utilities */
-        .border { border-width: 1px !important; border-style: solid !important; }
-        .border-gray-300 { border-color: #d1d5db !important; }
-        .border-gray-200 { border-color: #e5e7eb !important; }
-
-        /* Transition utilities */
-        .transition { transition-property: all !important; transition-timing-function: ease !important; transition-duration: 0.15s !important; }
-
-        /* Hover states for gray backgrounds */
-        .hover\:bg-gray-50:hover { background-color: #f9fafb !important; }
-
-        /* Blue button fallbacks (for view/edit icons) */
-        .text-blue-600 { color: #2563eb !important; }
-        .hover\:text-blue-800:hover { color: #1e40af !important; }
-
-        /* Yellow/warning fallbacks */
-        .bg-yellow-100 { background-color: #fef3c7 !important; }
-        .text-yellow-800 { color: #92400e !important; }
-        .text-yellow-600 { color: #ca8a04 !important; }
-
-        /* Spacing utilities */
-        .mr-2 { margin-right: 0.5rem !important; }
-        .space-x-3 > * + * { margin-left: 0.75rem !important; }
-        .space-x-4 > * + * { margin-left: 1rem !important; }
-
-        /* Flexbox utilities */
-        .inline-flex { display: inline-flex !important; }
-        .inline { display: inline !important; }
-        .items-center { align-items: center !important; }
-        .justify-end { justify-content: flex-end !important; }
-
-        /* Form elements visibility */
-        form button[type="submit"],
-        form input[type="submit"],
-        .bg-gray-50 button,
-        .border-t button {
-            display: inline-flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
     </style>
 </head>
 <body class="bg-gray-100">
 
-<div x-data="{ sidebarOpen: true, userMenuOpen: false }" class="flex h-screen overflow-hidden">
-    
+<div x-data="{ sidebarOpen: false, userMenuOpen: false }" class="flex h-screen overflow-hidden">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div x-show="sidebarOpen"
+         x-cloak
+         @click="sidebarOpen = false"
+         class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden transition-opacity duration-300"
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+    </div>
+
     <!-- Sidebar -->
-    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" 
-           class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0">
+    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+           class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col"
+           @keydown.escape.window="sidebarOpen = false">
         
         <!-- Logo -->
         <div class="flex items-center justify-between h-16 px-4 bg-gray-800">
@@ -314,13 +79,15 @@
                 <i class="fas fa-graduation-cap text-2xl text-primary-500"></i>
                 <span class="text-lg font-bold">Admin Panel</span>
             </a>
-            <button @click="sidebarOpen = false" class="lg:hidden text-gray-400 hover:text-white">
+            <button @click="sidebarOpen = false"
+                    class="lg:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+                    aria-label="Close sidebar">
                 <i class="fas fa-times text-xl"></i>
             </button>
         </div>
-        
+
         <!-- Navigation -->
-        <nav class="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
             
             <a href="<?= url('admin/index.php') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
                 <i class="fas fa-tachometer-alt w-6"></i>
@@ -431,46 +198,96 @@
     
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-hidden">
-        
+
         <!-- Top Navigation -->
-        <header class="bg-white shadow-sm border-b border-gray-200">
-            <div class="flex items-center justify-between h-16 px-4">
-                
-                <button @click="sidebarOpen = !sidebarOpen" class="text-gray-600 hover:text-gray-900 lg:hidden">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-                
-                <div class="flex items-center space-x-4">
-                    
+        <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
+            <div class="flex items-center justify-between h-16 px-4 lg:px-6">
+
+                <!-- Left side: Menu button + Page breadcrumb -->
+                <div class="flex items-center gap-4">
+                    <!-- Mobile menu button -->
+                    <button @click="sidebarOpen = true"
+                            class="lg:hidden p-2.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                            aria-label="Open menu">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+
+                    <!-- Page title / Breadcrumb (hidden on small screens) -->
+                    <div class="hidden sm:block">
+                        <h1 class="text-lg font-semibold text-gray-800"><?= $page_title ?? 'Admin' ?></h1>
+                    </div>
+                </div>
+
+                <!-- Right side: Actions -->
+                <div class="flex items-center gap-2 sm:gap-4">
+
+                    <!-- Quick search (desktop only) -->
+                    <div class="hidden lg:block relative">
+                        <input type="text"
+                               placeholder="Search..."
+                               class="w-64 pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+
                     <!-- Notifications -->
                     <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full">
+                        <button @click="open = !open"
+                                class="relative p-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                                aria-label="Notifications">
                             <i class="fas fa-bell text-lg"></i>
-                            <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
+                            <span class="absolute top-1 right-1 flex h-2.5 w-2.5">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                            </span>
                         </button>
+                        <!-- Notifications dropdown would go here -->
                     </div>
-                    
+
                     <!-- User Menu -->
                     <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
-                            <img src="<?= getGravatar($_SESSION['user_email'] ?? '') ?>" class="h-8 w-8 rounded-full">
-                            <span class="text-sm font-medium text-gray-700 hidden md:block"><?= sanitize($_SESSION['user_first_name'] ?? 'Admin') ?></span>
-                            <i class="fas fa-chevron-down text-xs text-gray-600"></i>
+                        <button @click="open = !open"
+                                class="flex items-center gap-2 p-1.5 pr-3 rounded-lg hover:bg-gray-100 transition-colors"
+                                aria-label="User menu">
+                            <img src="<?= getGravatar($_SESSION['user_email'] ?? '') ?>"
+                                 alt="User avatar"
+                                 class="h-8 w-8 rounded-full ring-2 ring-gray-200">
+                            <span class="hidden sm:block text-sm font-medium text-gray-700"><?= sanitize($_SESSION['user_first_name'] ?? 'Admin') ?></span>
+                            <i class="fas fa-chevron-down text-xs text-gray-500 hidden sm:block"></i>
                         </button>
-                        <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                            <a href="<?= url('profile.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-user mr-2"></i>Profile
+                        <div x-show="open"
+                             @click.away="open = false"
+                             x-cloak
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 py-1 z-50">
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <p class="text-sm font-medium text-gray-900"><?= sanitize(($_SESSION['user_first_name'] ?? '') . ' ' . ($_SESSION['user_last_name'] ?? '')) ?></p>
+                                <p class="text-xs text-gray-500 truncate"><?= sanitize($_SESSION['user_email'] ?? '') ?></p>
+                            </div>
+                            <a href="<?= url('profile.php') ?>" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-user w-5 text-gray-400"></i>
+                                <span>My Profile</span>
                             </a>
-                            <a href="<?= url('dashboard.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-th-large mr-2"></i>Student Dashboard
+                            <a href="<?= url('dashboard.php') ?>" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-th-large w-5 text-gray-400"></i>
+                                <span>Student Dashboard</span>
                             </a>
-                            <hr class="my-1">
-                            <a href="<?= url('logout.php') ?>" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            <a href="<?= url('admin/settings/index.php') ?>" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-cog w-5 text-gray-400"></i>
+                                <span>Settings</span>
+                            </a>
+                            <hr class="my-1 border-gray-100">
+                            <a href="<?= url('logout.php') ?>" class="flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                <i class="fas fa-sign-out-alt w-5"></i>
+                                <span>Logout</span>
                             </a>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </header>
