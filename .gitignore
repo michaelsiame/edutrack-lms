@@ -3,8 +3,6 @@
 # ============================================
 
 # Environment & Config
-.env
-.env.local
 .env.production
 config/local.php
 
@@ -60,7 +58,6 @@ yarn.lock
 /storage/certificates/*.pdf
 
 # Backup Files
-*.sql
 *.backup
 *.bak
 *.tmp
