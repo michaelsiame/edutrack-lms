@@ -119,7 +119,8 @@ try {
             FROM live_sessions ls
             JOIN lessons l ON ls.lesson_id = l.id
             JOIN modules m ON l.module_id = m.id
-            LEFT JOIN users u ON ls.instructor_id = u.id
+            LEFT JOIN instructors i ON ls.instructor_id = i.id
+            LEFT JOIN users u ON i.user_id = u.id
             WHERE m.course_id = ?
             AND ls.status IN ('scheduled', 'live')
             AND ls.scheduled_start_time >= NOW()
@@ -402,7 +403,8 @@ require_once '../src/templates/header.php';
                         $liveSessionData = $db->fetchOne("
                             SELECT ls.*, u.name as instructor_name
                             FROM live_sessions ls
-                            LEFT JOIN users u ON ls.instructor_id = u.id
+                            LEFT JOIN instructors i ON ls.instructor_id = i.id
+                            LEFT JOIN users u ON i.user_id = u.id
                             WHERE ls.lesson_id = ?
                             ORDER BY ls.scheduled_start_time DESC
                             LIMIT 1

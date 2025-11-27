@@ -30,7 +30,8 @@ class LiveSession {
                 JOIN lessons l ON ls.lesson_id = l.id
                 JOIN modules m ON l.module_id = m.id
                 JOIN courses c ON m.course_id = c.id
-                JOIN users u ON ls.instructor_id = u.id
+                JOIN instructors i ON ls.instructor_id = i.id
+                JOIN users u ON i.user_id = u.id
                 WHERE ls.id = :id";
 
         $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
@@ -58,7 +59,8 @@ class LiveSession {
         $db = Database::getInstance();
         $sql = "SELECT ls.*, u.name as instructor_name
                 FROM live_sessions ls
-                JOIN users u ON ls.instructor_id = u.id
+                JOIN instructors i ON ls.instructor_id = i.id
+                JOIN users u ON i.user_id = u.id
                 WHERE ls.lesson_id = :lesson_id
                 ORDER BY ls.scheduled_start_time DESC";
         return $db->query($sql, ['lesson_id' => $lessonId])->fetchAll();
@@ -73,7 +75,8 @@ class LiveSession {
                 FROM live_sessions ls
                 JOIN lessons l ON ls.lesson_id = l.id
                 JOIN modules m ON l.module_id = m.id
-                JOIN users u ON ls.instructor_id = u.id
+                JOIN instructors i ON ls.instructor_id = i.id
+                JOIN users u ON i.user_id = u.id
                 WHERE m.course_id = :course_id
                 AND ls.status IN ('scheduled', 'live')
                 AND ls.scheduled_start_time >= NOW()

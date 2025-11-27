@@ -77,10 +77,14 @@
                 <i class="fas fa-question-circle w-6"></i><span>Quizzes</span>
             </a>
 
+            <a href="<?= url('instructor/live-sessions.php') ?>" class="flex items-center px-4 py-3 text-sm rounded-lg hover:bg-gray-800">
+                <i class="fas fa-video w-6"></i><span>Live Sessions</span>
+            </a>
+
             <a href="<?= url('instructor/analytics.php') ?>" class="flex items-center px-4 py-3 text-sm rounded-lg hover:bg-gray-800">
                 <i class="fas fa-chart-bar w-6"></i><span>Analytics</span>
             </a>
-            
+
             <hr class="my-4 border-gray-700">
             
             <a href="<?= url() ?>" target="_blank" class="flex items-center px-4 py-3 text-sm rounded-lg hover:bg-gray-800">

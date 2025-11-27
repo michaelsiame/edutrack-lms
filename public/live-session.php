@@ -4,10 +4,7 @@
  * Jitsi Meet Integration for Live Lessons
  */
 
-require_once '../src/includes/init.php';
-require_once '../src/classes/User.php';
-require_once '../src/classes/LiveSession.php';
-require_once '../src/classes/Lesson.php';
+require_once '../src/bootstrap.php';
 
 // Require authentication
 if (!isset($_SESSION['user_id'])) {
