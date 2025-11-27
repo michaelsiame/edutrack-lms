@@ -87,7 +87,45 @@ return [
         'bunny_cdn_url' => getenv('BUNNY_CDN_URL') ?: '',
         'bunny_api_key' => getenv('BUNNY_API_KEY') ?: '',
     ],
-    
+
+    // Jitsi Meet Live Lessons Configuration
+    'jitsi' => [
+        'enabled' => filter_var(getenv('JITSI_ENABLED'), FILTER_VALIDATE_BOOLEAN) ?: true,
+        'domain' => getenv('JITSI_DOMAIN') ?: 'meet.jit.si', // Use meet.jit.si or your self-hosted domain
+        'app_id' => getenv('JITSI_APP_ID') ?: '', // Optional: for JWT authentication
+        'app_secret' => getenv('JITSI_APP_SECRET') ?: '', // Optional: for JWT authentication
+        'room_prefix' => getenv('JITSI_ROOM_PREFIX') ?: 'edutrack',
+        'options' => [
+            'enableWelcomePage' => false,
+            'enableClosePage' => false,
+            'prejoinPageEnabled' => true,
+            'hideConferenceSubject' => false,
+            'hideConferenceTimer' => false,
+            'enableNoisyMicDetection' => true,
+            'startWithAudioMuted' => false,
+            'startWithVideoMuted' => false,
+            'enableRecording' => true,
+            'liveStreamingEnabled' => false,
+            'fileRecordingsEnabled' => true,
+            'requireDisplayName' => true,
+            'enableInsecureRoomNameWarning' => true,
+        ],
+        'interface' => [
+            'TOOLBAR_BUTTONS' => [
+                'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+                'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+                'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
+                'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+                'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'
+            ],
+            'SETTINGS_SECTIONS' => ['devices', 'language', 'moderator', 'profile', 'calendar'],
+            'APP_NAME' => 'Edutrack Live Lesson',
+            'BRAND_WATERMARK_LINK' => '',
+            'SHOW_JITSI_WATERMARK' => false,
+            'DEFAULT_BACKGROUND' => '#2E70DA', // Edutrack brand color
+        ],
+    ],
+
     // Session Configuration
     'session' => [
         'lifetime' => (int) getenv('SESSION_LIFETIME') ?: 7200, // 2 hours

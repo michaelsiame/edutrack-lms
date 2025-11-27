@@ -62,6 +62,7 @@ try {
     $lessonsGrouped = [];
     $quizzes = [];
     $assignments = [];
+    $liveSessions = [];
 
     try {
         // Get all modules with their lessons
@@ -111,6 +112,19 @@ try {
             GROUP BY a.id
             ORDER BY a.created_at ASC
         ", [$studentId, $courseId]);
+
+        // Get upcoming live sessions for this course
+        $liveSessions = $db->fetchAll("
+            SELECT ls.*, l.title as lesson_title, u.name as instructor_name
+            FROM live_sessions ls
+            JOIN lessons l ON ls.lesson_id = l.id
+            JOIN modules m ON l.module_id = m.id
+            LEFT JOIN users u ON ls.instructor_id = u.id
+            WHERE m.course_id = ?
+            AND ls.status IN ('scheduled', 'live')
+            AND ls.scheduled_start_time >= NOW()
+            ORDER BY ls.scheduled_start_time ASC
+        ", [$courseId]);
 
     } catch (Exception $e) {
         error_log("Learn.php Error - Modules/Lessons query: " . $e->getMessage());
@@ -242,6 +256,7 @@ require_once '../src/templates/header.php';
                                     if ($lesson['lesson_type'] == 'text') $icon = 'fa-file-alt';
                                     elseif ($lesson['lesson_type'] == 'quiz') $icon = 'fa-question-circle';
                                     elseif ($lesson['lesson_type'] == 'assignment') $icon = 'fa-tasks';
+                                    elseif ($lesson['lesson_type'] == 'Live Session') $icon = 'fa-video';
                                 ?>
                                 <li>
                                     <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $lesson['id']) ?>"
@@ -328,6 +343,43 @@ require_once '../src/templates/header.php';
                         </ul>
                     </div>
                     <?php endif; ?>
+
+                    <!-- Live Sessions Section -->
+                    <?php if (!empty($liveSessions)): ?>
+                    <div class="p-4 border-t bg-red-50">
+                        <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+                            <i class="fas fa-video text-red-600 mr-2"></i>
+                            Upcoming Live Sessions
+                        </h3>
+                        <ul class="space-y-2 ml-4">
+                            <?php foreach ($liveSessions as $liveSession):
+                                $sessionStart = new DateTime($liveSession['scheduled_start_time']);
+                                $now = new DateTime();
+                                $isLive = ($liveSession['status'] === 'live');
+                            ?>
+                            <li>
+                                <a href="<?= url('live-session.php?session_id=' . $liveSession['id']) ?>"
+                                   class="flex items-center justify-between text-sm text-gray-700 hover:text-red-600"
+                                   target="_blank">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-broadcast-tower mr-2 <?= $isLive ? 'text-red-600 animate-pulse' : '' ?>"></i>
+                                        <?= htmlspecialchars($liveSession['lesson_title']) ?>
+                                    </span>
+                                    <?php if ($isLive): ?>
+                                    <span class="text-xs text-red-600 font-bold">
+                                        <i class="fas fa-circle" style="font-size: 0.5rem;"></i> LIVE
+                                    </span>
+                                    <?php else: ?>
+                                    <span class="text-xs text-gray-500">
+                                        <?= $sessionStart->format('M d, g:i A') ?>
+                                    </span>
+                                    <?php endif; ?>
+                                </a>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -343,7 +395,126 @@ require_once '../src/templates/header.php';
                     </div>
 
                     <div class="p-6">
-                        <?php if ($currentLesson['lesson_type'] == 'video' && $currentLesson['video_url']): ?>
+                        <?php if ($currentLesson['lesson_type'] == 'Live Session'): ?>
+                        <!-- Live Session -->
+                        <?php
+                        // Get live session for this lesson
+                        $liveSessionData = $db->fetchOne("
+                            SELECT ls.*, u.name as instructor_name
+                            FROM live_sessions ls
+                            LEFT JOIN users u ON ls.instructor_id = u.id
+                            WHERE ls.lesson_id = ?
+                            ORDER BY ls.scheduled_start_time DESC
+                            LIMIT 1
+                        ", [$currentLesson['id']]);
+
+                        if ($liveSessionData):
+                            $sessionStart = new DateTime($liveSessionData['scheduled_start_time']);
+                            $sessionEnd = new DateTime($liveSessionData['scheduled_end_time']);
+                            $now = new DateTime();
+                            $bufferBefore = (int)($liveSessionData['buffer_minutes_before'] ?? 15);
+                            $bufferAfter = (int)($liveSessionData['buffer_minutes_after'] ?? 30);
+                            $canJoinTime = clone $sessionStart;
+                            $canJoinTime->modify("-{$bufferBefore} minutes");
+                            $endJoinTime = clone $sessionEnd;
+                            $endJoinTime->modify("+{$bufferAfter} minutes");
+                            $canJoinNow = ($now >= $canJoinTime && $now <= $endJoinTime && $liveSessionData['status'] !== 'cancelled');
+                            $isLive = ($liveSessionData['status'] === 'live');
+                        ?>
+                        <div class="bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-200 rounded-lg p-6 mb-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center">
+                                    <i class="fas fa-video text-red-600 text-3xl mr-4"></i>
+                                    <div>
+                                        <h3 class="text-xl font-bold text-gray-900">Live Session</h3>
+                                        <p class="text-gray-600">Interactive online class with your instructor</p>
+                                    </div>
+                                </div>
+                                <?php if ($isLive): ?>
+                                <span class="px-4 py-2 bg-red-600 text-white font-bold rounded-full animate-pulse">
+                                    <i class="fas fa-circle text-xs"></i> LIVE NOW
+                                </span>
+                                <?php elseif ($liveSessionData['status'] === 'scheduled'): ?>
+                                <span class="px-4 py-2 bg-blue-600 text-white font-bold rounded-full">
+                                    <i class="fas fa-calendar"></i> Scheduled
+                                </span>
+                                <?php elseif ($liveSessionData['status'] === 'ended'): ?>
+                                <span class="px-4 py-2 bg-gray-600 text-white font-bold rounded-full">
+                                    <i class="fas fa-check"></i> Ended
+                                </span>
+                                <?php elseif ($liveSessionData['status'] === 'cancelled'): ?>
+                                <span class="px-4 py-2 bg-gray-600 text-white font-bold rounded-full">
+                                    <i class="fas fa-times"></i> Cancelled
+                                </span>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="bg-white rounded p-3">
+                                    <div class="text-sm text-gray-600">Date & Time</div>
+                                    <div class="font-bold text-gray-900">
+                                        <i class="fas fa-calendar-alt text-red-600 mr-2"></i>
+                                        <?= $sessionStart->format('l, F j, Y') ?>
+                                    </div>
+                                    <div class="text-gray-700">
+                                        <i class="fas fa-clock text-red-600 mr-2"></i>
+                                        <?= $sessionStart->format('g:i A') ?> - <?= $sessionEnd->format('g:i A') ?>
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded p-3">
+                                    <div class="text-sm text-gray-600">Duration</div>
+                                    <div class="font-bold text-gray-900">
+                                        <i class="fas fa-hourglass-half text-red-600 mr-2"></i>
+                                        <?= $liveSessionData['duration_minutes'] ?> minutes
+                                    </div>
+                                    <?php if ($liveSessionData['instructor_name']): ?>
+                                    <div class="text-gray-700">
+                                        <i class="fas fa-user text-red-600 mr-2"></i>
+                                        <?= htmlspecialchars($liveSessionData['instructor_name']) ?>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <?php if ($liveSessionData['description']): ?>
+                            <div class="bg-white rounded p-3 mb-4">
+                                <div class="text-sm text-gray-600 mb-1">About this session</div>
+                                <div class="text-gray-700"><?= htmlspecialchars($liveSessionData['description']) ?></div>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php if ($canJoinNow): ?>
+                            <a href="<?= url('live-session.php?session_id=' . $liveSessionData['id']) ?>"
+                               target="_blank"
+                               class="block w-full py-4 bg-red-600 text-white text-center font-bold rounded-lg hover:bg-red-700 transition">
+                                <i class="fas fa-video mr-2"></i>
+                                <?= $isLive ? 'JOIN LIVE SESSION NOW' : 'JOIN SESSION' ?>
+                            </a>
+                            <?php elseif ($liveSessionData['status'] === 'scheduled'): ?>
+                            <div class="bg-yellow-100 border border-yellow-300 rounded p-4 text-center">
+                                <i class="fas fa-info-circle text-yellow-700 mr-2"></i>
+                                <span class="text-yellow-700">
+                                    This session will be available to join <?= $bufferBefore ?> minutes before start time
+                                </span>
+                            </div>
+                            <?php elseif ($liveSessionData['status'] === 'ended' && $liveSessionData['recording_url']): ?>
+                            <a href="<?= htmlspecialchars($liveSessionData['recording_url']) ?>"
+                               target="_blank"
+                               class="block w-full py-4 bg-blue-600 text-white text-center font-bold rounded-lg hover:bg-blue-700 transition">
+                                <i class="fas fa-play mr-2"></i>
+                                WATCH RECORDING
+                            </a>
+                            <?php endif; ?>
+                        </div>
+                        <?php else: ?>
+                        <div class="bg-yellow-100 border border-yellow-300 rounded-lg p-6 mb-6 text-center">
+                            <i class="fas fa-calendar-times text-yellow-700 text-3xl mb-3"></i>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">No Live Session Scheduled</h3>
+                            <p class="text-gray-700">Your instructor hasn't scheduled a live session for this lesson yet.</p>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php elseif ($currentLesson['lesson_type'] == 'video' && $currentLesson['video_url']): ?>
                         <!-- Video Player -->
                         <div class="aspect-video bg-black rounded-lg mb-6">
                             <iframe width="100%" height="100%"
