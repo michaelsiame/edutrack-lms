@@ -319,8 +319,42 @@ function createUserSession($user, $remember = false) {
 }
 
 /**
+ * Validate redirect URL to prevent open redirect attacks
+ *
+ * @param string $url URL to validate
+ * @return bool True if valid relative URL, false otherwise
+ */
+function isValidRedirectUrl($url) {
+    if (empty($url)) {
+        return false;
+    }
+
+    // Only allow relative URLs (no absolute URLs or protocol-relative URLs)
+    if (strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0 || strpos($url, '//') === 0) {
+        return false;
+    }
+
+    // Reject URLs with @ (can be used for auth bypass)
+    if (strpos($url, '@') !== false) {
+        return false;
+    }
+
+    // Reject JavaScript protocol
+    if (stripos($url, 'javascript:') === 0) {
+        return false;
+    }
+
+    // Reject data protocol
+    if (stripos($url, 'data:') === 0) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * Get redirect URL based on user role
- * 
+ *
  * @param string $role User role
  * @return string
  */
@@ -329,9 +363,14 @@ function getRedirectUrl($role) {
     if (isset($_SESSION['redirect_after_login'])) {
         $redirect = $_SESSION['redirect_after_login'];
         unset($_SESSION['redirect_after_login']);
-        return $redirect;
+
+        // SECURITY: Validate redirect URL to prevent open redirect attacks
+        if (isValidRedirectUrl($redirect)) {
+            return $redirect;
+        }
+        // If invalid, fall through to default redirect
     }
-    
+
     // Default redirects by role
     switch ($role) {
         case 'admin':
