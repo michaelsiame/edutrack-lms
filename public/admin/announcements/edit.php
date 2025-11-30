@@ -193,7 +193,7 @@ require_once '../../../src/templates/admin-header.php';
                                 $expiresAt = date('Y-m-d\TH:i', strtotime($expiresAt));
                             }
                             ?>
-                            <input type="datetime-local" name="expires_at" value="<?= $expiresAt ?>"
+                            <input type="datetime-local" name="expires_at" value="<?= htmlspecialchars($expiresAt ?? '', ENT_QUOTES, 'UTF-8') ?>"
                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                             <p class="text-sm text-gray-500 mt-1">When announcement should stop showing</p>
                         </div>

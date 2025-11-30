@@ -12,6 +12,25 @@ if (!isLoggedIn()) {
     redirect('login.php');
 }
 
+// Validate redirect URL to prevent open redirect vulnerability
+function isValidRedirectUrl($url) {
+    if (empty($url)) {
+        return 'my-courses.php';
+    }
+
+    // Only allow relative URLs (no absolute URLs or protocol-relative URLs)
+    if (strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0 || strpos($url, '//') === 0) {
+        return 'my-courses.php'; // Reject and use safe default
+    }
+
+    // Additional check: URL must not contain @ (can be used for auth bypass)
+    if (strpos($url, '@') !== false) {
+        return 'my-courses.php';
+    }
+
+    return $url;
+}
+
 // Validate CSRF token
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('index.php');
@@ -21,7 +40,7 @@ try {
     requireCsrfToken();
 } catch (Exception $e) {
     flash('error', 'Invalid security token. Please try again.', 'error');
-    redirect($_POST['redirect'] ?? 'my-courses.php');
+    redirect(isValidRedirectUrl($_POST['redirect'] ?? 'my-courses.php'));
 }
 
 try {
@@ -30,7 +49,7 @@ try {
 
     $courseId = filter_input(INPUT_POST, 'course_id', FILTER_VALIDATE_INT);
     $lessonId = filter_input(INPUT_POST, 'lesson_id', FILTER_VALIDATE_INT);
-    $redirectUrl = $_POST['redirect'] ?? 'my-courses.php';
+    $redirectUrl = isValidRedirectUrl($_POST['redirect'] ?? 'my-courses.php');
 
     if (!$courseId || !$lessonId) {
         flash('error', 'Invalid course or lesson', 'error');
