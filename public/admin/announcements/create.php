@@ -183,7 +183,7 @@ require_once '../../../src/templates/admin-header.php';
                         <!-- Expiration Date -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Expiration Date (Optional)</label>
-                            <input type="datetime-local" name="expires_at" value="<?= $_POST['expires_at'] ?? '' ?>"
+                            <input type="datetime-local" name="expires_at" value="<?= htmlspecialchars($_POST['expires_at'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                             <p class="text-sm text-gray-500 mt-1">When announcement should stop showing</p>
                         </div>

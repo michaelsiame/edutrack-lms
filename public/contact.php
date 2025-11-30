@@ -65,17 +65,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Send notification email to admin using Email class
                 $adminEmail = SITE_EMAIL;
 
-                $emailSubject = "New Contact Form: $subject";
+                $emailSubject = "New Contact Form: " . htmlspecialchars($subject, ENT_QUOTES, 'UTF-8');
                 $emailBody = "
                     <h2>New Contact Form Submission</h2>
-                    <p><strong>From:</strong> $name ($email)</p>
-                    <p><strong>Phone:</strong> " . ($phone ?: 'Not provided') . "</p>
-                    <p><strong>Subject:</strong> $subject</p>
+                    <p><strong>From:</strong> " . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . " (" . htmlspecialchars($email, ENT_QUOTES, 'UTF-8') . ")</p>
+                    <p><strong>Phone:</strong> " . ($phone ? htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') : 'Not provided') . "</p>
+                    <p><strong>Subject:</strong> " . htmlspecialchars($subject, ENT_QUOTES, 'UTF-8') . "</p>
                     <hr>
                     <h3>Message:</h3>
-                    <p>" . nl2br(htmlspecialchars($message)) . "</p>
+                    <p>" . nl2br(htmlspecialchars($message, ENT_QUOTES, 'UTF-8')) . "</p>
                     <hr>
-                    <p><small>Sent from IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'Unknown') . "</small></p>
+                    <p><small>Sent from IP: " . htmlspecialchars($_SERVER['REMOTE_ADDR'] ?? 'Unknown', ENT_QUOTES, 'UTF-8') . "</small></p>
                 ";
 
                 // Send email
@@ -84,13 +84,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Send confirmation email to user
                 $userEmailBody = "
                     <h2>Thank you for contacting Edutrack!</h2>
-                    <p>Dear $name,</p>
+                    <p>Dear " . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . ",</p>
                     <p>We have received your message and will get back to you as soon as possible.</p>
                     <h3>Your Message:</h3>
-                    <p><strong>Subject:</strong> $subject</p>
-                    <p>" . nl2br(htmlspecialchars($message)) . "</p>
+                    <p><strong>Subject:</strong> " . htmlspecialchars($subject, ENT_QUOTES, 'UTF-8') . "</p>
+                    <p>" . nl2br(htmlspecialchars($message, ENT_QUOTES, 'UTF-8')) . "</p>
                     <hr>
-                    <p>If you have any urgent concerns, please call us at " . SITE_PHONE . "</p>
+                    <p>If you have any urgent concerns, please call us at " . htmlspecialchars(SITE_PHONE, ENT_QUOTES, 'UTF-8') . "</p>
                     <p>Best regards,<br>Edutrack Team</p>
                 ";
 
