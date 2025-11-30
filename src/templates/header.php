@@ -52,7 +52,9 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA Certif
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= asset('css/main.css') ?>">
-    
+    <link rel="stylesheet" href="<?= asset('css/toast.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/loading.css') ?>">
+
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {

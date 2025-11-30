@@ -219,7 +219,7 @@ require_once '../src/templates/header.php';
                 <div class="flex items-center space-x-4">
                     <div class="text-right">
                         <p class="text-sm text-gray-600">Progress</p>
-                        <p class="text-lg font-bold text-blue-600"><?= round($course['progress_percentage'] ?? 0) ?>%</p>
+                        <p class="text-lg font-bold text-blue-600" data-course-progress><?= round($course['progress_percentage'] ?? 0) ?>%</p>
                     </div>
                 </div>
             </div>
@@ -385,7 +385,11 @@ require_once '../src/templates/header.php';
             </div>
 
             <!-- Main Content - Lesson -->
-            <div class="lg:col-span-3">
+            <div class="lg:col-span-3"
+                 data-lesson-tracking
+                 data-course-id="<?= $courseId ?>"
+                 data-lesson-id="<?= $lessonId ?>"
+                 data-lesson-type="<?= htmlspecialchars($currentLesson['lesson_type'] ?? 'text') ?>">
                 <?php if ($currentLesson): ?>
                 <div class="bg-white rounded-lg shadow">
                     <div class="p-6 border-b">
@@ -595,5 +599,7 @@ require_once '../src/templates/header.php';
     </div>
 
 </div>
+
+<script src="<?= asset('js/progress-tracking.js') ?>"></script>
 
 <?php require_once '../src/templates/footer.php'; ?>

@@ -1,0 +1,132 @@
+/**
+ * Toast Notification Styles
+ * Modern, smooth animations for toast notifications
+ */
+
+/* Toast container */
+#toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+/* Individual toast */
+.toast {
+    pointer-events: auto;
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.toast-show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Toast animations */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Progress bar for toast auto-dismiss */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: currentColor;
+    opacity: 0.5;
+    animation: progress linear;
+}
+
+@keyframes progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+    #toast-container {
+        left: 1rem;
+        right: 1rem;
+        top: auto;
+        bottom: 1rem;
+    }
+
+    .toast {
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    .toast-show {
+        transform: translateY(0);
+    }
+
+    .toast {
+        transform: translateY(100%);
+    }
+}
+
+/* Dark mode support (if implementing dark mode) */
+@media (prefers-color-scheme: dark) {
+    .toast > div {
+        background-color: #1f2937;
+        border-color: #374151;
+    }
+
+    .toast p {
+        color: #f3f4f6;
+    }
+
+    .toast .text-gray-600 {
+        color: #d1d5db;
+    }
+}
+
+/* Accessibility - reduce motion */
+@media (prefers-reduced-motion: reduce) {
+    .toast {
+        transition: none;
+    }
+
+    .animate-spin {
+        animation: none;
+    }
+}

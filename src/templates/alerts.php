@@ -46,8 +46,10 @@ function displayAlert($message, $type = 'info', $dismissible = true) {
     $colors = $alertColors[$type] ?? $alertColors['info'];
     
     ?>
-    <div class="<?= $colors['bg'] ?> border-l-4 <?= $colors['border'] ?> p-4 rounded mb-4 <?= $dismissible ? 'relative' : '' ?>" 
+    <div class="<?= $colors['bg'] ?> border-l-4 <?= $colors['border'] ?> p-4 rounded mb-4 <?= $dismissible ? 'relative' : '' ?>"
          role="alert"
+         data-flash-message="<?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>"
+         data-flash-type="<?= $type ?>"
          <?= $dismissible ? 'x-data="{ show: true }" x-show="show"' : '' ?>>
         <div class="flex items-start">
             <i class="fas <?= $colors['icon'] ?> <?= $colors['iconColor'] ?> mr-3 mt-1"></i>
