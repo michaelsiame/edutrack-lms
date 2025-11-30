@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2025 at 01:08 PM
+-- Generation Time: Nov 27, 2025 at 02:20 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -685,6 +685,54 @@ CREATE TABLE `lesson_resources` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `live_sessions`
+--
+
+CREATE TABLE `live_sessions` (
+  `id` int(11) NOT NULL,
+  `lesson_id` int(11) NOT NULL,
+  `instructor_id` int(11) NOT NULL,
+  `meeting_room_id` varchar(255) NOT NULL,
+  `scheduled_start_time` datetime NOT NULL,
+  `scheduled_end_time` datetime NOT NULL,
+  `duration_minutes` int(11) NOT NULL DEFAULT 60,
+  `status` enum('scheduled','live','ended','cancelled') NOT NULL DEFAULT 'scheduled',
+  `max_participants` int(11) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `recording_url` varchar(500) DEFAULT NULL,
+  `moderator_password` varchar(100) DEFAULT NULL,
+  `participant_password` varchar(100) DEFAULT NULL,
+  `allow_recording` tinyint(1) NOT NULL DEFAULT 1,
+  `auto_start_recording` tinyint(1) NOT NULL DEFAULT 0,
+  `enable_chat` tinyint(1) NOT NULL DEFAULT 1,
+  `enable_screen_share` tinyint(1) NOT NULL DEFAULT 1,
+  `buffer_minutes_before` int(11) NOT NULL DEFAULT 15,
+  `buffer_minutes_after` int(11) NOT NULL DEFAULT 30,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `live_session_attendance`
+--
+
+CREATE TABLE `live_session_attendance` (
+  `id` int(11) NOT NULL,
+  `live_session_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `joined_at` datetime NOT NULL,
+  `left_at` datetime DEFAULT NULL,
+  `duration_seconds` int(11) DEFAULT 0,
+  `is_moderator` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `messages`
 --
 
@@ -822,7 +870,7 @@ INSERT INTO `payments` (`payment_id`, `student_id`, `course_id`, `enrollment_id`
 (13, 5, 11, 13, NULL, 495.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000013', NULL, NULL, '2025-02-15 13:45:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (14, 5, 12, 14, NULL, 400.00, 'USD', 2, 'course_fee', NULL, 'Completed', 'TXN-2025-000014', NULL, NULL, '2025-01-25 16:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (16, 7, 13, 19, NULL, 540.00, 'USD', 1, 'course_fee', NULL, 'Pending', 'TXN-2025-000016', NULL, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(17, 13, 1, 30, NULL, 250.00, 'ZMW', NULL, 'course_fee', NULL, 'Pending', '1234', NULL, NULL, '2025-11-23 00:00:00', '2025-11-23 11:45:51', '2025-11-23 11:45:51');
+(17, 13, 1, 30, NULL, 250.00, 'ZMW', NULL, 'course_fee', NULL, 'Completed', '1234', NULL, NULL, '2025-11-25 18:37:20', '2025-11-23 11:45:51', '2025-11-25 16:37:20');
 
 -- --------------------------------------------------------
 
@@ -1604,6 +1652,27 @@ ALTER TABLE `lesson_resources`
   ADD KEY `lesson_id` (`lesson_id`);
 
 --
+-- Indexes for table `live_sessions`
+--
+ALTER TABLE `live_sessions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `meeting_room_id` (`meeting_room_id`),
+  ADD KEY `lesson_id` (`lesson_id`),
+  ADD KEY `instructor_id` (`instructor_id`),
+  ADD KEY `scheduled_start_time` (`scheduled_start_time`),
+  ADD KEY `status` (`status`),
+  ADD KEY `idx_live_session_status_time` (`status`,`scheduled_start_time`);
+
+--
+-- Indexes for table `live_session_attendance`
+--
+ALTER TABLE `live_session_attendance`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `live_session_id` (`live_session_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `idx_attendance_user_session` (`user_id`,`live_session_id`);
+
+--
 -- Indexes for table `messages`
 --
 ALTER TABLE `messages`
@@ -1899,6 +1968,18 @@ ALTER TABLE `lesson_resources`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `live_sessions`
+--
+ALTER TABLE `live_sessions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `live_session_attendance`
+--
+ALTER TABLE `live_session_attendance`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
@@ -2144,6 +2225,20 @@ ALTER TABLE `lesson_progress`
 --
 ALTER TABLE `lesson_resources`
   ADD CONSTRAINT `lesson_resources_ibfk_1` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `live_sessions`
+--
+ALTER TABLE `live_sessions`
+  ADD CONSTRAINT `fk_live_sessions_instructor` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_live_sessions_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `live_session_attendance`
+--
+ALTER TABLE `live_session_attendance`
+  ADD CONSTRAINT `fk_attendance_live_session` FOREIGN KEY (`live_session_id`) REFERENCES `live_sessions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_attendance_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `messages`
