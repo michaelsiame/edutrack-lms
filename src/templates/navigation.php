@@ -22,7 +22,29 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </div>
                 </a>
             </div>
-            
+
+            <!-- Global Search (Only for logged in users) -->
+            <?php if (isLoggedIn()): ?>
+            <div class="hidden lg:flex flex-1 max-w-md mx-6">
+                <div class="search-container w-full">
+                    <div class="relative">
+                        <i class="fas fa-search search-icon"></i>
+                        <input
+                            type="text"
+                            id="globalSearch"
+                            class="search-input"
+                            placeholder="Search courses, lessons..."
+                            autocomplete="off"
+                        />
+                        <span class="search-shortcut">
+                            <span>⌘</span><span>K</span>
+                        </span>
+                    </div>
+                    <div id="searchResults" class="search-results hidden"></div>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center space-x-8">
                 <a href="<?= url() ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'index.php' ? 'active text-primary-600' : '' ?>">
@@ -100,6 +122,25 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- Mobile Menu -->
     <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false" x-cloak class="md:hidden bg-white border-t">
         <div class="px-2 pt-2 pb-3 space-y-1">
+            <!-- Mobile Search (Only for logged in users) -->
+            <?php if (isLoggedIn()): ?>
+            <div class="px-3 py-2">
+                <div class="search-container w-full">
+                    <div class="relative">
+                        <i class="fas fa-search search-icon"></i>
+                        <input
+                            type="text"
+                            id="globalSearchMobile"
+                            class="search-input"
+                            placeholder="Search courses, lessons..."
+                            autocomplete="off"
+                        />
+                    </div>
+                    <div id="searchResultsMobile" class="search-results hidden"></div>
+                </div>
+            </div>
+            <div class="border-t my-2"></div>
+            <?php endif; ?>
             <a href="<?= url() ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'index.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 Home
             </a>

@@ -200,6 +200,7 @@
 <script src="<?= asset('js/main.js') ?>"></script>
 <script src="<?= asset('js/toast.js') ?>"></script>
 <script src="<?= asset('js/loading.js') ?>"></script>
+<script src="<?= asset('js/search.js') ?>"></script>
 
 <?php if (isset($extra_js)): ?>
     <?= $extra_js ?>
