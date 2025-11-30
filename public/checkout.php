@@ -49,6 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_payment'])) {
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         $errors[] = 'Invalid form submission';
     } else {
+        // Rate limiting: Prevent payment submission spam (10 attempts per hour per user)
+        $userId = currentUserId();
+        if (!checkRateLimit('payment_submit_' . $userId, 10, 3600)) {
+            $errors[] = 'Too many payment submissions. Please wait before trying again.';
+        }
+
         // Get payment details
         $transactionRef = trim($_POST['transaction_reference'] ?? '');
         $paymentDate = trim($_POST['payment_date'] ?? '');

@@ -20,17 +20,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrfToken()) {
         $errors[] = 'Invalid request. Please try again.';
     } else {
-        $email = trim($_POST['email'] ?? '');
-        
-        if (empty($email)) {
-            $errors[] = 'Email is required';
-        } elseif (!validateEmail($email)) {
-            $errors[] = 'Please enter a valid email address';
+        // Rate limiting: Prevent password reset spam (3 attempts per 15 minutes per IP)
+        $clientIp = getClientIp();
+        if (!checkRateLimit('password_reset_' . $clientIp, 3, 900)) {
+            $errors[] = 'Too many password reset attempts. Please try again in 15 minutes.';
         } else {
-            $result = requestPasswordReset($email);
-            $success = $result['success'];
-            if (!$success) {
-                $errors[] = $result['message'];
+            $email = trim($_POST['email'] ?? '');
+
+            if (empty($email)) {
+                $errors[] = 'Email is required';
+            } elseif (!validateEmail($email)) {
+                $errors[] = 'Please enter a valid email address';
+            } else {
+                $result = requestPasswordReset($email);
+                $success = $result['success'];
+                if (!$success) {
+                    $errors[] = $result['message'];
+                }
             }
         }
     }

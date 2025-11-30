@@ -25,6 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrfToken()) {
         $errors[] = 'Invalid request. Please try again.';
     } else {
+        // Rate limiting: Prevent spam registrations (5 attempts per 15 minutes per IP)
+        $clientIp = getClientIp();
+        if (!checkRateLimit('registration_' . $clientIp, 5, 900)) {
+            $errors[] = 'Too many registration attempts. Please try again in 15 minutes.';
+        }
+
         // Get form data
         $formData = [
             'first_name' => trim($_POST['first_name'] ?? ''),
