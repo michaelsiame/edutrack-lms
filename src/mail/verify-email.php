@@ -46,7 +46,7 @@
                     </tr>
                     
                     <tr>
-                        <td style="background-color: #f9fafb; padding: 20px; text-center; border-top: 1px solid #e5e7eb;">
+                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;">
                             <p style="color: #9CA3AF; margin: 0; font-size: 12px;">
                                 © <?= date('Y') ?> <?= APP_NAME ?> | TEVETA: <?= TEVETA_CODE ?>
                             </p>

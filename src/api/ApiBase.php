@@ -54,7 +54,9 @@ abstract class ApiBase {
                 // For PUT/PATCH/DELETE, also try to parse php://input
                 if (in_array($this->method, ['PUT', 'PATCH', 'DELETE'])) {
                     parse_str(file_get_contents('php://input'), $parsedData);
-                    $this->data = array_merge($this->data, $parsedData);
+                    if (is_array($parsedData)) {
+                        $this->data = array_merge($this->data, $parsedData);
+                    }
                 }
             }
         }
@@ -83,6 +85,11 @@ abstract class ApiBase {
             }
         } else {
             // Session authentication
+            if (!function_exists('isLoggedIn')) {
+                // Load auth helper if not already loaded
+                require_once dirname(__DIR__) . '/includes/auth.php';
+            }
+
             if (!isLoggedIn()) {
                 $this->errorResponse('Unauthorized - Authentication required', 401);
             }
@@ -96,11 +103,19 @@ abstract class ApiBase {
      * Handle CORS
      */
     private function handleCors() {
-        $allowedOrigins = ['http://localhost:3000', APP_URL];
+        // CORRECTION: Use getenv() instead of undefined constant APP_URL
+        $allowedOrigins = [
+            'http://localhost:3000', 
+            'http://localhost:8000',
+            getenv('APP_URL'),
+            'https://edutrackzambia.com',
+            'https://www.edutrackzambia.com'
+        ];
 
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-        if (in_array($origin, $allowedOrigins)) {
+        // If origin is in allowed list, or we are in debug mode allowing all
+        if (in_array($origin, $allowedOrigins) || (getenv('APP_DEBUG') === 'true' && $origin)) {
             header("Access-Control-Allow-Origin: $origin");
             header("Access-Control-Allow-Credentials: true");
             header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
@@ -118,7 +133,17 @@ abstract class ApiBase {
      * Get bearer token from Authorization header
      */
     private function getBearerToken() {
-        $headers = getallheaders();
+        // CORRECTION: Polyfill for getallheaders() if missing on server
+        if (!function_exists('getallheaders')) {
+            $headers = [];
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        } else {
+            $headers = getallheaders();
+        }
 
         if (isset($headers['Authorization'])) {
             if (preg_match('/Bearer\s+(.*)$/i', $headers['Authorization'], $matches)) {
@@ -141,7 +166,13 @@ abstract class ApiBase {
 
         list($header, $payload, $signature) = $parts;
 
-        $secret = getenv('JWT_SECRET') ?: getenv('APP_KEY') ?: 'CHANGE_ME';
+        $secret = getenv('JWT_SECRET');
+        if (!$secret) {
+            // Log error if secret is missing
+            error_log('JWT_SECRET is missing in .env');
+            return false;
+        }
+
         $validSignature = rtrim(strtr(base64_encode(hash_hmac('sha256', "$header.$payload", $secret, true)), '+/', '-_'), '=');
 
         if ($signature !== $validSignature) {
@@ -305,18 +336,21 @@ abstract class ApiBase {
         $this->requireRole(['instructor', 'admin']);
     }
 
-    /**
+/**
      * Log API activity
      */
     protected function logActivity($action, $details = '') {
-        logActivity([
-            'user_id' => $this->userId,
-            'action' => $action,
-            'details' => $details,
-            'ip_address' => getClientIp()
-        ]);
-    }
+        if (function_exists('logActivity')) {
+            // Prepare the context data
+            $context = [
+                'user_id' => $this->userId,
+                'details' => $details,
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0'
+            ];
 
+            logActivity($action, json_encode($context));
+        }
+    }
     /**
      * Main handler - must be implemented by child classes
      */

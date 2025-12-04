@@ -1,15 +1,15 @@
 <?php
 /**
- * Edutrack computer training college
+ * Edutrack Computer Training College
  * Application Configuration
  */
 
 return [
     
     // Application Information
-    'name' => getenv('APP_NAME') ?: 'Edutrack computer training college',
-    // 'url' => getenv('APP_URL') ?: 'http://localhost:8000',
-    'url' => getenv('APP_URL') ?: 'http://localhost/edutrack-lms/public/',
+    'name' => getenv('APP_NAME') ?: 'Edutrack Computer Training College',
+    'url' => getenv('APP_URL') ?: 'https://edutrackzambia.com',
+    
     'env' => getenv('APP_ENV') ?: 'production',
     'debug' => filter_var(getenv('APP_DEBUG'), FILTER_VALIDATE_BOOLEAN),
     'timezone' => getenv('APP_TIMEZONE') ?: 'Africa/Lusaka',
@@ -36,16 +36,16 @@ return [
     'teveta' => [
         'enabled' => true,
         'institution_code' => getenv('TEVETA_INSTITUTION_CODE') ?: 'TEVETA/XXX/2024',
-        'institution_name' => getenv('TEVETA_INSTITUTION_NAME') ?: 'Edutrack computer training college',
+        'institution_name' => getenv('TEVETA_INSTITUTION_NAME') ?: 'Edutrack Computer Training College',
         'registration_url' => getenv('TEVETA_REGISTRATION_URL') ?: 'https://www.teveta.org.zm',
         'verified' => filter_var(getenv('TEVETA_VERIFIED'), FILTER_VALIDATE_BOOLEAN),
     ],
     
     // Site Information
     'site' => [
-        'email' => getenv('SITE_EMAIL') ?: '',
-        'phone' => getenv('SITE_PHONE') ?: '+260-XXX-XXX-XXX',
-        'address' => getenv('SITE_ADDRESS') ?: 'Lusaka, Zambia',
+        'email' => getenv('SITE_EMAIL') ?: 'info@edutrackzambia.com', // Updated to match domain
+        'phone' => getenv('SITE_PHONE') ?: '+260771216339',
+        'address' => getenv('SITE_ADDRESS') ?: 'Kalomo, Zambia',
         'currency' => getenv('CURRENCY') ?: 'ZMW',
         'currency_symbol' => getenv('CURRENCY_SYMBOL') ?: 'K',
     ],
@@ -61,18 +61,18 @@ return [
     
     // Course Settings
     'courses' => [
-        'per_page' => (int) getenv('COURSES_PER_PAGE') ?: 12,
-        'free_preview_lessons' => (int) getenv('FREE_PREVIEW_LESSONS') ?: 2,
+        'per_page' => (int) (getenv('COURSES_PER_PAGE') ?: 12),
+        'free_preview_lessons' => (int) (getenv('FREE_PREVIEW_LESSONS') ?: 2),
         'auto_enroll_free' => filter_var(getenv('AUTO_ENROLL_FREE_COURSES'), FILTER_VALIDATE_BOOLEAN),
         'certificate_auto_issue' => filter_var(getenv('CERTIFICATE_AUTO_ISSUE'), FILTER_VALIDATE_BOOLEAN),
-        'min_completion_percentage' => (int) getenv('MIN_COMPLETION_PERCENTAGE') ?: 80,
-        'min_passing_score' => (int) getenv('MIN_PASSING_SCORE') ?: 70,
+        'min_completion_percentage' => (int) (getenv('MIN_COMPLETION_PERCENTAGE') ?: 80),
+        'min_passing_score' => (int) (getenv('MIN_PASSING_SCORE') ?: 70),
     ],
     
     // File Upload Settings
     'upload' => [
-        'max_size' => (int) getenv('MAX_UPLOAD_SIZE') ?: 52428800, // 50MB in bytes
-        'max_size_mb' => (int) getenv('MAX_UPLOAD_SIZE_MB') ?: 50,
+        'max_size' => (int) (getenv('MAX_UPLOAD_SIZE') ?: 52428800), // 50MB
+        'max_size_mb' => (int) (getenv('MAX_UPLOAD_SIZE_MB') ?: 50),
         'allowed_images' => explode(',', getenv('ALLOWED_IMAGE_TYPES') ?: 'jpg,jpeg,png,gif,webp'),
         'allowed_documents' => explode(',', getenv('ALLOWED_DOC_TYPES') ?: 'pdf,doc,docx,xls,xlsx,ppt,pptx,txt'),
         'allowed_videos' => explode(',', getenv('ALLOWED_VIDEO_TYPES') ?: 'mp4,avi,mov,wmv'),
@@ -88,13 +88,13 @@ return [
         'bunny_api_key' => getenv('BUNNY_API_KEY') ?: '',
     ],
 
-    // Jitsi Meet Live Lessons Configuration
+    // Jitsi Meet Configuration
     'jitsi' => [
-        'enabled' => filter_var(getenv('JITSI_ENABLED'), FILTER_VALIDATE_BOOLEAN) ?: true,
-        'domain' => getenv('JITSI_DOMAIN') ?: 'meet.jit.si', // Use meet.jit.si or your self-hosted domain
-        'app_id' => getenv('JITSI_APP_ID') ?: '', // Optional: for JWT authentication
-        'app_secret' => getenv('JITSI_APP_SECRET') ?: '', // Optional: for JWT authentication
-        'room_prefix' => getenv('JITSI_ROOM_PREFIX') ?: 'edutrack',
+        'enabled' => filter_var(getenv('JITSI_ENABLED'), FILTER_VALIDATE_BOOLEAN) !== false,
+        'domain' => getenv('JITSI_DOMAIN') ?: 'meet.jit.si', 
+        'app_id' => getenv('JITSI_APP_ID') ?: '',
+        'app_secret' => getenv('JITSI_APP_SECRET') ?: '',
+        'room_prefix' => getenv('JITSI_ROOM_PREFIX') ?: 'edutrack_zm', // Shortened prefix
         'options' => [
             'enableWelcomePage' => false,
             'enableClosePage' => false,
@@ -122,13 +122,13 @@ return [
             'APP_NAME' => 'Edutrack Live Lesson',
             'BRAND_WATERMARK_LINK' => '',
             'SHOW_JITSI_WATERMARK' => false,
-            'DEFAULT_BACKGROUND' => '#2E70DA', // Edutrack brand color
+            'DEFAULT_BACKGROUND' => '#2E70DA',
         ],
     ],
 
     // Session Configuration
     'session' => [
-        'lifetime' => (int) getenv('SESSION_LIFETIME') ?: 7200, // 2 hours
+        'lifetime' => (int) (getenv('SESSION_LIFETIME') ?: 7200),
         'name' => getenv('SESSION_NAME') ?: 'edutrack_session',
         'secure' => filter_var(getenv('SESSION_SECURE'), FILTER_VALIDATE_BOOLEAN),
         'httponly' => filter_var(getenv('SESSION_HTTPONLY'), FILTER_VALIDATE_BOOLEAN),
@@ -140,7 +140,7 @@ return [
         'encryption_key' => getenv('ENCRYPTION_KEY') ?: '',
         'jwt_secret' => getenv('JWT_SECRET') ?: '',
         'csrf_token_name' => getenv('CSRF_TOKEN_NAME') ?: 'csrf_token',
-        'password_min_length' => (int) getenv('PASSWORD_MIN_LENGTH') ?: 8,
+        'password_min_length' => (int) (getenv('PASSWORD_MIN_LENGTH') ?: 8),
         'password_require_uppercase' => filter_var(getenv('PASSWORD_REQUIRE_UPPERCASE'), FILTER_VALIDATE_BOOLEAN),
         'password_require_number' => filter_var(getenv('PASSWORD_REQUIRE_NUMBER'), FILTER_VALIDATE_BOOLEAN),
         'password_require_special' => filter_var(getenv('PASSWORD_REQUIRE_SPECIAL'), FILTER_VALIDATE_BOOLEAN),
@@ -149,8 +149,8 @@ return [
     // Rate Limiting
     'rate_limit' => [
         'enabled' => filter_var(getenv('RATE_LIMIT_ENABLED'), FILTER_VALIDATE_BOOLEAN),
-        'login_attempts_max' => (int) getenv('LOGIN_ATTEMPTS_MAX') ?: 5,
-        'login_attempts_timeout' => (int) getenv('LOGIN_ATTEMPTS_TIMEOUT') ?: 900, // 15 minutes
+        'login_attempts_max' => (int) (getenv('LOGIN_ATTEMPTS_MAX') ?: 5),
+        'login_attempts_timeout' => (int) (getenv('LOGIN_ATTEMPTS_TIMEOUT') ?: 900),
     ],
     
     // Maintenance Mode
