@@ -1,4 +1,9 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # If the URL already starts with "public/", stop processing rules ([L])
+    RewriteRule ^public/ - [L]
+
+    # Otherwise, forward the request to the public folder
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
