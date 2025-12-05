@@ -9,6 +9,16 @@ require_once '../src/bootstrap.php';
 $page_title = "About Us - Edutrack computer training college";
 
 require_once '../src/templates/header.php';
+
+// Fetch Team Members from Database
+$team_members = [];
+try {
+    $stmt = $pdo->query("SELECT * FROM team_members ORDER BY display_order ASC");
+    $team_members = $stmt->fetchAll();
+} catch (PDOException $e) {
+    // If table doesn't exist yet, we handle it gracefully or log error
+    error_log("Team fetch error: " . $e->getMessage());
+}
 ?>
 
 <!-- Page Header -->
@@ -58,37 +68,69 @@ require_once '../src/templates/header.php';
     </div>
 </section>
 
-<!-- Our Story -->
-<section class="py-16 bg-gray-50">
+<!-- Leadership & Team Section -->
+<section class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-4xl mx-auto text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
-            <p class="text-lg text-gray-700 leading-relaxed">
-                Edutrack computer training college was founded with a simple yet powerful vision: to bridge the digital
-                skills gap in Zambia and empower individuals with the technical knowledge needed to thrive in the modern workplace.
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                The dedicated professionals driving excellence at Edutrack
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-            <div class="text-center">
-                <div class="bg-white rounded-lg p-8 shadow-md">
-                    <div class="text-4xl font-bold text-primary-600 mb-2">10+</div>
-                    <div class="text-gray-600">Years of Excellence</div>
-                </div>
+        <?php if (!empty($team_members)): ?>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <?php foreach ($team_members as $member): ?>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
+                        <!-- Image Container -->
+                        <div class="relative h-64 bg-gray-200 overflow-hidden">
+                            <?php 
+                                // Assuming images are stored in public/uploads/team/
+                                $imagePath = 'uploads/team/' . $member['image_url'];
+                                if ($member['image_url'] && file_exists($imagePath)): 
+                            ?>
+                                <img src="<?= htmlspecialchars($imagePath) ?>" 
+                                     alt="<?= htmlspecialchars($member['name']) ?>" 
+                                     class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+                            <?php else: ?>
+                                <!-- Fallback if image not found -->
+                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-600 to-blue-800 text-white">
+                                    <div class="text-center">
+                                        <div class="text-4xl font-bold mb-2">
+                                            <?= strtoupper(substr($member['name'], 0, 1)) ?>
+                                        </div>
+                                        <i class="fas fa-user text-2xl opacity-50"></i>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <!-- Overlay Gradient -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-1">
+                                <?= htmlspecialchars($member['name']) ?>
+                            </h3>
+                            <div class="text-primary-600 font-semibold text-sm uppercase tracking-wide mb-3">
+                                <?= htmlspecialchars($member['position']) ?>
+                            </div>
+                            <div class="border-t border-gray-100 pt-3">
+                                <p class="text-gray-600 text-sm italic leading-relaxed">
+                                    <?= nl2br(htmlspecialchars($member['qualifications'])) ?>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
-            <div class="text-center">
-                <div class="bg-white rounded-lg p-8 shadow-md">
-                    <div class="text-4xl font-bold text-primary-600 mb-2">5000+</div>
-                    <div class="text-gray-600">Students Trained</div>
-                </div>
+        <?php else: ?>
+            <div class="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-100">
+                <i class="fas fa-users text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500">Team details are being updated.</p>
             </div>
-            <div class="text-center">
-                <div class="bg-white rounded-lg p-8 shadow-md">
-                    <div class="text-4xl font-bold text-primary-600 mb-2">17</div>
-                    <div class="text-gray-600">TEVETA Programs</div>
-                </div>
-            </div>
-        </div>
+        <?php endif; ?>
     </div>
 </section>
 
