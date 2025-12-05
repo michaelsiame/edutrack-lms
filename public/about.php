@@ -203,7 +203,7 @@ try {
                     </div>
                 </div>
                 <div class="flex-1">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">TEVETA Accredited Institution</h2>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">TEVETA Registered Institution</h2>
                     <p class="text-lg text-gray-700 mb-4">
                         Edutrack computer training college is proud to be registered and accredited by the Technical Education,
                         Vocational and Entrepreneurship Training Authority (TEVETA). This accreditation ensures that our training
