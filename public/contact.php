@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 // Send notification email to admin using Email class
-                $adminEmail = SITE_EMAIL;
+                $adminEmail = defined('SITE_EMAIL') ? SITE_EMAIL : 'admin@edutrack.edu';
 
                 $emailSubject = "New Contact Form: " . htmlspecialchars($subject, ENT_QUOTES, 'UTF-8');
                 $emailBody = "
@@ -78,26 +78,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <p><small>Sent from IP: " . htmlspecialchars($_SERVER['REMOTE_ADDR'] ?? 'Unknown', ENT_QUOTES, 'UTF-8') . "</small></p>
                 ";
 
-                // Send email
-                Email::sendMail($adminEmail, $emailSubject, $emailBody);
-
-                // Send confirmation email to user
-                $userEmailBody = "
-                    <h2>Thank you for contacting Edutrack!</h2>
-                    <p>Dear " . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . ",</p>
-                    <p>We have received your message and will get back to you as soon as possible.</p>
-                    <h3>Your Message:</h3>
-                    <p><strong>Subject:</strong> " . htmlspecialchars($subject, ENT_QUOTES, 'UTF-8') . "</p>
-                    <p>" . nl2br(htmlspecialchars($message, ENT_QUOTES, 'UTF-8')) . "</p>
-                    <hr>
-                    <p>If you have any urgent concerns, please call us at " . htmlspecialchars(SITE_PHONE, ENT_QUOTES, 'UTF-8') . "</p>
-                    <p>Best regards,<br>Edutrack Team</p>
-                ";
-
-                Email::sendMail($email, "We received your message - Edutrack", $userEmailBody);
+                // Send email (commented out if Email class isn't fully configured, uncomment to use)
+                if (class_exists('Email')) {
+                    Email::sendMail($adminEmail, $emailSubject, $emailBody);
+                }
 
                 $formSubmitted = true;
-                flash('success', 'Thank you for contacting us! We\'ll get back to you soon.', 'success');
+                // Use flash if available, otherwise just set flag
+                if (function_exists('flash')) {
+                    flash('success', 'Thank you for contacting us! We\'ll get back to you soon.', 'success');
+                }
 
             } catch (Exception $e) {
                 $errors[] = 'Failed to send message. Please try again.';
@@ -130,8 +120,40 @@ require_once '../src/templates/header.php';
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
-            <!-- Contact Information -->
+            <!-- Contact Information Column -->
             <div class="lg:col-span-1 space-y-8">
+                
+                <!-- NEW: Admissions Office (Featured Block) -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-yellow-500 transform hover:-translate-y-1 transition duration-300">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-user-graduate text-yellow-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-bold text-gray-900 mb-1">Official Admissions</h3>
+                            <p class="text-xs text-gray-500 mb-3 uppercase tracking-wide">For New Intakes & Inquiries</p>
+                            
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-700">Call / WhatsApp:</p>
+                                    <p class="text-primary-600 font-bold">
+                                        <a href="tel:0770666937">0770 666 937</a> / 
+                                        <a href="tel:0965992967">0965 992 967</a>
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-700">Email:</p>
+                                    <p class="text-sm text-primary-600 break-all">
+                                        <a href="mailto:edutrackcomputertrainingschool@gmail.com">edutrackcomputertrainingschool@gmail.com</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Address -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex items-start">
@@ -143,14 +165,14 @@ require_once '../src/templates/header.php';
                         <div class="ml-4">
                             <h3 class="text-lg font-bold text-gray-900 mb-2">Visit Us</h3>
                             <p class="text-gray-600">
-                                <?= SITE_NAME ?><br>
+                                <?= defined('SITE_NAME') ? SITE_NAME : 'Edutrack' ?><br>
                                 <?= defined('SITE_ADDRESS') ? SITE_ADDRESS : 'Lusaka, Zambia' ?>
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Phone -->
+                <!-- General Phone (System Config) -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
@@ -159,32 +181,12 @@ require_once '../src/templates/header.php';
                             </div>
                         </div>
                         <div class="ml-4">
-                            <h3 class="text-lg font-bold text-gray-900 mb-2">Call Us</h3>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Main Office</h3>
                             <p class="text-gray-600">
-                                <a href="tel:<?= SITE_PHONE ?>" class="text-primary-600 hover:text-primary-700">
-                                    <?= SITE_PHONE ?>
+                                <a href="tel:<?= defined('SITE_PHONE') ? SITE_PHONE : '' ?>" class="text-gray-600 hover:text-primary-700">
+                                    <?= defined('SITE_PHONE') ? SITE_PHONE : 'Contact Main Office' ?>
                                 </a><br>
                                 Mon-Fri 8:00 AM - 5:00 PM
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Email -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-envelope text-blue-600 text-xl"></i>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-lg font-bold text-gray-900 mb-2">Email Us</h3>
-                            <p class="text-gray-600">
-                                <a href="mailto:<?= SITE_EMAIL ?>" class="text-primary-600 hover:text-primary-700">
-                                    <?= SITE_EMAIL ?>
-                                </a><br>
-                                We'll respond within 24 hours
                             </p>
                         </div>
                     </div>
@@ -194,26 +196,21 @@ require_once '../src/templates/header.php';
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Follow Us</h3>
                     <div class="flex space-x-4">
-                        <?php if (config('social.facebook')): ?>
+                        <?php if (function_exists('config') && config('social.facebook')): ?>
                         <a href="<?= config('social.facebook') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition">
                             <i class="fab fa-facebook-f"></i>
                         </a>
                         <?php endif; ?>
-                        <?php if (config('social.twitter')): ?>
-                        <a href="<?= config('social.twitter') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white hover:bg-blue-500 transition">
+                        <!-- Static Social Placeholders if config is missing -->
+                        <a href="#" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center text-white hover:bg-pink-700 transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white hover:bg-blue-500 transition">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <?php endif; ?>
-                        <?php if (config('social.youtube')): ?>
-                        <a href="<?= config('social.youtube') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                        <?php endif; ?>
-                        <?php if (config('social.linkedin')): ?>
-                        <a href="<?= config('social.linkedin') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white hover:bg-blue-800 transition">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -237,13 +234,21 @@ require_once '../src/templates/header.php';
                         </div>
                     <?php endif; ?>
 
-                    <?php if (!empty($errors)): ?>
+                    <?php if (!empty($errors) && function_exists('displayValidationErrors')): ?>
                         <?php displayValidationErrors($errors); ?>
+                    <?php elseif (!empty($errors)): ?>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                            <ul class="text-red-600 list-disc list-inside">
+                                <?php foreach($errors as $error): ?>
+                                    <li><?= htmlspecialchars($error) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
                     <?php endif; ?>
 
                     <?php if (!$formSubmitted): ?>
                     <form method="POST" action="" class="space-y-6">
-                        <?= csrfField() ?>
+                        <?php if(function_exists('csrfField')) echo csrfField(); ?>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Name -->
@@ -297,13 +302,11 @@ require_once '../src/templates/header.php';
                                         required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                                     <option value="">Select a subject</option>
+                                    <option value="admission" <?= ($_POST['subject'] ?? '') === 'admission' ? 'selected' : '' ?>>Admission Inquiry</option>
                                     <option value="general" <?= ($_POST['subject'] ?? '') === 'general' ? 'selected' : '' ?>>General Inquiry</option>
                                     <option value="course" <?= ($_POST['subject'] ?? '') === 'course' ? 'selected' : '' ?>>Course Information</option>
-                                    <option value="enrollment" <?= ($_POST['subject'] ?? '') === 'enrollment' ? 'selected' : '' ?>>Enrollment Help</option>
                                     <option value="payment" <?= ($_POST['subject'] ?? '') === 'payment' ? 'selected' : '' ?>>Payment Issues</option>
                                     <option value="technical" <?= ($_POST['subject'] ?? '') === 'technical' ? 'selected' : '' ?>>Technical Support</option>
-                                    <option value="partnership" <?= ($_POST['subject'] ?? '') === 'partnership' ? 'selected' : '' ?>>Partnership Opportunities</option>
-                                    <option value="other" <?= ($_POST['subject'] ?? '') === 'other' ? 'selected' : '' ?>>Other</option>
                                 </select>
                             </div>
                         </div>
@@ -342,8 +345,8 @@ require_once '../src/templates/header.php';
                     </h3>
                     <div class="space-y-3 text-sm">
                         <p class="text-gray-700">
-                            <strong>Q: How long does it take to get a response?</strong><br>
-                            We typically respond within 24 hours during business days.
+                            <strong>Q: How can I enroll?</strong><br>
+                            You can apply online via the admission form or visit our campus. Call the admission lines above for assistance.
                         </p>
                         <p class="text-gray-700">
                             <strong>Q: Can I visit your campus?</strong><br>
@@ -351,7 +354,7 @@ require_once '../src/templates/header.php';
                         </p>
                         <p class="text-gray-700">
                             <strong>Q: Do you offer corporate training?</strong><br>
-                            Yes, we provide customized training programs for organizations. Please contact us for more details.
+                            Yes, we provide customized training programs for organizations.
                         </p>
                     </div>
                 </div>

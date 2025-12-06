@@ -3,6 +3,7 @@
  * Edutrack Computer Training College
  * Application Configuration
  */
+define('SITE_NAME', 'EduTrack Zambia'); // Or your preferred site name
 
 return [
     

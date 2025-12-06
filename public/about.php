@@ -68,24 +68,67 @@ try {
     </div>
 </section>
 
-<!-- Leadership & Team Section -->
+<!-- Leadership & Faculty Section -->
 <section class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">College Leadership & Faculty</h2>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                The dedicated professionals driving excellence at Edutrack
+                Meet the dedicated professionals driving academic excellence at Edutrack
             </p>
         </div>
 
         <?php if (!empty($team_members)): ?>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <?php foreach ($team_members as $member): ?>
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
+            <!-- Principal's Card (Featured) -->
+            <?php 
+                $principal = $team_members[0]; // Assuming order 1 is Principal
+                $rest_of_team = array_slice($team_members, 1);
+            ?>
+            
+            <div class="flex justify-center mb-16">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full flex flex-col md:flex-row transform hover:-translate-y-1 transition duration-300">
+                    <div class="md:w-2/5 relative h-96 md:h-auto bg-gray-200">
+                        <?php if ($principal['image_url'] && file_exists('uploads/team/' . $principal['image_url'])): ?>
+                            <img src="uploads/team/<?= htmlspecialchars($principal['image_url']) ?>" 
+                                 alt="<?= htmlspecialchars($principal['name']) ?>" 
+                                 class="w-full h-full object-cover">
+                        <?php else: ?>
+                            <div class="w-full h-full flex items-center justify-center bg-primary-700 text-white">
+                                <i class="fas fa-user-tie text-6xl"></i>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="p-8 md:p-12 md:w-3/5 flex flex-col justify-center">
+                        <div class="uppercase tracking-wide text-sm text-primary-600 font-bold mb-2"><?= htmlspecialchars($principal['position']) ?></div>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-4"><?= htmlspecialchars($principal['name']) ?></h3>
+                        <div class="prose text-gray-600 mb-6">
+                            <p class="italic">"Leading Edutrack with a vision to empower Zambia's future through technology and skills."</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-primary-500">
+                            <h4 class="font-semibold text-gray-900 mb-2">Qualifications</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <?php 
+                                    $quals = explode("\n", $principal['qualifications']);
+                                    foreach($quals as $qual): 
+                                ?>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-graduation-cap text-primary-400 mt-1 mr-2"></i>
+                                        <span><?= htmlspecialchars(trim($qual)) ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rest of Team Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <?php foreach ($rest_of_team as $member): ?>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 group border-t-4 border-transparent hover:border-primary-500">
                         <!-- Image Container -->
-                        <div class="relative h-64 bg-gray-200 overflow-hidden">
+                        <div class="relative h-64 bg-gray-100 overflow-hidden">
                             <?php 
-                                // Assuming images are stored in public/uploads/team/
                                 $imagePath = 'uploads/team/' . $member['image_url'];
                                 if ($member['image_url'] && file_exists($imagePath)): 
                             ?>
@@ -93,19 +136,12 @@ try {
                                      alt="<?= htmlspecialchars($member['name']) ?>" 
                                      class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
                             <?php else: ?>
-                                <!-- Fallback if image not found -->
-                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-600 to-blue-800 text-white">
+                                <div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
                                     <div class="text-center">
-                                        <div class="text-4xl font-bold mb-2">
-                                            <?= strtoupper(substr($member['name'], 0, 1)) ?>
-                                        </div>
-                                        <i class="fas fa-user text-2xl opacity-50"></i>
+                                        <i class="fas fa-user text-4xl mb-2"></i>
                                     </div>
                                 </div>
                             <?php endif; ?>
-                            
-                            <!-- Overlay Gradient -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </div>
 
                         <!-- Content -->
@@ -113,18 +149,30 @@ try {
                             <h3 class="text-xl font-bold text-gray-900 mb-1">
                                 <?= htmlspecialchars($member['name']) ?>
                             </h3>
-                            <div class="text-primary-600 font-semibold text-sm uppercase tracking-wide mb-3">
+                            <div class="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-4">
                                 <?= htmlspecialchars($member['position']) ?>
                             </div>
-                            <div class="border-t border-gray-100 pt-3">
-                                <p class="text-gray-600 text-sm italic leading-relaxed">
-                                    <?= nl2br(htmlspecialchars($member['qualifications'])) ?>
-                                </p>
+                            
+                            <div class="space-y-2">
+                                <?php 
+                                    $quals = explode("\n", $member['qualifications']);
+                                    foreach($quals as $qual): 
+                                        if(trim($qual) !== ''):
+                                ?>
+                                    <div class="flex items-start text-sm text-gray-600">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2 flex-shrink-0"></i>
+                                        <span><?= htmlspecialchars(trim($qual)) ?></span>
+                                    </div>
+                                <?php 
+                                        endif;
+                                    endforeach; 
+                                ?>
                             </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
+
         <?php else: ?>
             <div class="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-100">
                 <i class="fas fa-users text-4xl text-gray-300 mb-3"></i>
