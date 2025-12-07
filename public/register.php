@@ -1,4 +1,5 @@
 <?php
+ob_start();
 /**
  * Edutrack computer training college
  * Registration Page
@@ -9,6 +10,7 @@ require_once '../src/bootstrap.php';
 // Redirect if already logged in
 if (isLoggedIn()) {
     redirect(url('dashboard.php'));
+    exit; // <--- 2. STOP script execution immediately after redirect
 }
 
 $errors = [];
@@ -68,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($result['success']) {
                 flash('success', $result['message'], 'success');
                 redirect(url('login.php'));
+                exit; // <--- 3. STOP script execution here too
             } else {
                 $errors[] = $result['message'];
             }
@@ -93,13 +96,20 @@ require_once '../src/templates/header.php';
         
         <!-- Registration Form -->
         <div class="bg-white shadow-lg rounded-lg p-8">
-            <?php if (!empty($errors) && isset($errors[0])): ?>
+            <?php if (!empty($errors)): ?>
                 <div class="mb-6">
-                    <?php foreach ($errors as $error): ?>
-                        <?php if (is_string($error)): ?>
-                            <?php errorAlert($error); ?>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
+                    <?php 
+                    // Handle case where errors might be flat array or associative
+                    $displayErrors = is_array($errors) ? $errors : [$errors];
+                    foreach ($displayErrors as $key => $error): 
+                        // If validation returns array of errors per field, flatten it or show main message
+                        if (is_array($error)) {
+                             foreach($error as $e) { errorAlert($e); }
+                        } elseif (is_string($error)) {
+                             errorAlert($error); 
+                        }
+                    endforeach; 
+                    ?>
                 </div>
             <?php endif; ?>
             

@@ -1,4 +1,5 @@
 <?php
+ob_start();
 /**
  * Edutrack computer training college
  * Login Page
