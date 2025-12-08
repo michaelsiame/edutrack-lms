@@ -3,6 +3,9 @@
  * Invoice Class
  * Handles invoice generation and management
  */
+if (!defined('TEMPLATES_PATH')) {
+    define('TEMPLATES_PATH', dirname(__DIR__) . '/templates');
+}
 
 class Invoice {
     private $db;

@@ -107,11 +107,11 @@ class Notification {
             $notificationId = $db->lastInsertId();
 
             // Log activity
-            logActivity([
-                'user_id' => $data['user_id'],
-                'action' => 'notification_created',
-                'details' => 'Notification: ' . $data['title']
-            ]);
+            // FIXED: Adapted to match function logActivity($message, $level = 'info')
+            if (function_exists('logActivity')) {
+                $logMessage = "Notification created for User ID {$data['user_id']}: {$data['title']}";
+                logActivity($logMessage, 'info');
+            }
 
             return $notificationId;
         }

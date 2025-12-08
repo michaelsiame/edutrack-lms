@@ -80,7 +80,6 @@ define('SITE_EMAIL', $appConfig['site']['email']);
 define('SITE_PHONE', $appConfig['site']['phone']);
 define('SITE_ADDRESS', $appConfig['site']['address']);
 define('CURRENCY', $appConfig['site']['currency']);
-define('CURRENCY_SYMBOL', $appConfig['site']['currency_symbol']);
 
 // Set timezone
 date_default_timezone_set(APP_TIMEZONE);

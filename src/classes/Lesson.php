@@ -284,12 +284,6 @@ class Lesson {
             return '<iframe src="' . $embedUrl . '" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
         }
         
-        // Vimeo
-        if (strpos($url, 'vimeo.com') !== false) {
-            $embedUrl = getVimeoEmbedUrl($url) . $autoplayParam;
-            return '<iframe src="' . $embedUrl . '" class="w-full h-full" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
-        }
-        
         // Direct video
         return '<video controls class="w-full h-full" ' . ($autoplay ? 'autoplay' : '') . '>
                     <source src="' . htmlspecialchars($url) . '" type="video/mp4">
@@ -344,5 +338,28 @@ class Lesson {
      */
     public function isQuiz() {
         return $this->getType() === 'quiz';
+    }
+}
+
+/**
+ * Helper function to extract YouTube Video ID and return Embed URL
+ * 
+ * @param string $url The full YouTube URL
+ * @return string The embed URL (e.g. https://www.youtube.com/embed/VIDEO_ID)
+ */
+if (!function_exists('getYoutubeEmbedUrl')) {
+    function getYoutubeEmbedUrl($url) {
+        $videoId = '';
+        
+        // Handle different YouTube URL formats
+        if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $url, $matches)) {
+            $videoId = $matches[1];
+        }
+        
+        if ($videoId) {
+            return 'https://www.youtube.com/embed/' . $videoId . '?rel=0&modestbranding=1';
+        }
+        
+        return $url; // Return original if pattern matching fails
     }
 }
