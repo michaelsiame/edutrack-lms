@@ -50,11 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Validate other fields
+        // FIX: Removed 'phone' validation here to prevent conflict with visual input length
         $validation = validate($formData, [
             'first_name' => 'required|min:2|max:100',
             'last_name' => 'required|min:2|max:100',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'phone|min:10|max:13',
             'password' => 'required|min:8',
             'password_confirm' => 'required|matches:password'
         ]);
@@ -70,11 +70,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Validate Zambian phone number
             if (!empty($formData['phone'])) {
-                $phoneValidation = validateZambianPhone($formData['phone']);
+                // FIX: Prepare the number for validation by adding prefix if missing
+                $rawPhone = preg_replace('/\D/', '', $formData['phone']);
+                $phoneToCheck = $formData['phone'];
+
+                // If user typed 9 digits (e.g. 971234567), pretend it has +260
+                if (strlen($rawPhone) === 9) {
+                    $phoneToCheck = '+260' . $rawPhone;
+                }
+
+                $phoneValidation = validateZambianPhone($phoneToCheck);
+                
                 if (!$phoneValidation['valid']) {
                     $errors['phone'] = $phoneValidation['message'];
                 } else {
-                    // Format phone number
+                    // Format phone number for database (Store as +260...)
                     $formData['phone'] = $phoneValidation['formatted'];
                 }
             }
@@ -100,7 +110,7 @@ require_once '../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
-    <!-- Progress Steps (for multi-step form if implemented later) -->
+    <!-- Progress Steps -->
     <div class="max-w-2xl mx-auto mb-8">
         <div class="flex items-center justify-center space-x-4">
             <div class="flex items-center">
@@ -274,7 +284,7 @@ require_once '../src/templates/header.php';
                             <input type="tel" 
                                 id="phone" 
                                 name="phone" 
-                                /* FIX: Strip +260 or 260 for display so it fits the visual design */
+                                /* FIX: Strip +260 or 260 for display on reload */
                                 value="<?= isset($formData['phone']) ? ltrim(str_replace(['+260', '260'], '', sanitize($formData['phone'])), '0') : '' ?>"
                                 autocomplete="tel"
                                 class="block w-full pl-24 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-200 <?= hasError($errors, 'phone') ? 'border-red-500 ring-1 ring-red-500' : '' ?>"
@@ -288,7 +298,6 @@ require_once '../src/templates/header.php';
                                 <?= validationError($errors, 'phone') ?>
                             </p>
                         <?php endif; ?>
-                        
                     </div>
                     
                     <!-- Password -->
