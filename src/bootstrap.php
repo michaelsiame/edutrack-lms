@@ -103,3 +103,35 @@ if (isset($_SESSION['user_id'])) {
 if (APP_DEBUG) {
     error_log('Application bootstrapped at ' . date('Y-m-d H:i:s'));
 }
+/**
+ * Validate Zambian phone number
+ */
+function validateZambianPhone($phone) {
+    // Remove all non-digit characters
+    $cleanPhone = preg_replace('/\D/', '', $phone);
+    
+    // Remove leading 0 if present
+    if (strlen($cleanPhone) === 10 && $cleanPhone[0] === '0') {
+        $cleanPhone = substr($cleanPhone, 1);
+    }
+    
+    // Check if it's a valid Zambian mobile number (9 digits after +260)
+    if (strlen($cleanPhone) === 9) {
+        $prefix = substr($cleanPhone, 0, 2);
+        $validPrefixes = ['97', '96', '95', '77', '76', '75', '09', '08', '07', '06','05'];
+        
+        if (in_array($prefix, $validPrefixes)) {
+            return [
+                'valid' => true,
+                'formatted' => '+260' . $cleanPhone,
+                'message' => ''
+            ];
+        }
+    }
+    
+    return [
+        'valid' => false,
+        'formatted' => '',
+        'message' => 'Please enter a valid Zambian mobile number (e.g., 0977123456, 0771234567)'
+    ];
+}
