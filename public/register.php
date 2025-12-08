@@ -280,11 +280,6 @@ require_once '../src/templates/header.php';
                                    placeholder="97 123 4567"
                                    pattern="[0-9]{9,12}"
                                    maxlength="12">
-                            <button type="button" 
-                                    onclick="suggestCommonProvider()" 
-                                    class="absolute right-12 top-1/2 transform -translate-y-1/2 text-primary-600 hover:text-primary-700 text-sm font-medium">
-                                Suggest
-                            </button>
                         </div>
                         <?php if (hasError($errors, 'phone')): ?>
                             <p class="mt-1 text-sm text-red-600 flex items-center">
@@ -293,31 +288,6 @@ require_once '../src/templates/header.php';
                             </p>
                         <?php endif; ?>
                         
-                        <!-- Phone Help Information -->
-                        <div class="mt-2">
-                            <div class="flex items-center text-xs text-gray-500 mb-1">
-                                <i class="fas fa-info-circle mr-1"></i>
-                                <span>Zambian phone number formats:</span>
-                            </div>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                                <div class="bg-gray-50 p-2 rounded text-center">
-                                    <div class="font-medium">Airtel</div>
-                                    <div class="text-gray-600">09XX XXX XXX</div>
-                                </div>
-                                <div class="bg-gray-50 p-2 rounded text-center">
-                                    <div class="font-medium">MTN</div>
-                                    <div class="text-gray-600">07XX XXX XXX</div>
-                                </div>
-                                <div class="bg-gray-50 p-2 rounded text-center">
-                                    <div class="font-medium">Zamtel</div>
-                                    <div class="text-gray-600">08XX XXX XXX</div>
-                                </div>
-                                <div class="bg-gray-50 p-2 rounded text-center">
-                                    <div class="font-medium">New</div>
-                                    <div class="text-gray-600">06XX XXX XXX</div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     
                     <!-- Password -->
