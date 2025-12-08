@@ -107,23 +107,29 @@ if (APP_DEBUG) {
  * Validate Zambian phone number
  */
 function validateZambianPhone($phone) {
-    // Remove all non-digit characters
+    // 1. Sanitize: Remove everything except numbers
     $cleanPhone = preg_replace('/\D/', '', $phone);
     
-    // Remove leading 0 if present
+    // 2. Handle cases where user (or browser autofill) included 260
+    if (strlen($cleanPhone) === 12 && substr($cleanPhone, 0, 3) === '260') {
+        $cleanPhone = substr($cleanPhone, 3);
+    }
+    
+    // 3. Handle cases where user typed leading 0 (e.g. 097...)
     if (strlen($cleanPhone) === 10 && $cleanPhone[0] === '0') {
         $cleanPhone = substr($cleanPhone, 1);
     }
     
-    // Check if it's a valid Zambian mobile number (9 digits after +260)
+    // 4. Now we strictly expect 9 digits
     if (strlen($cleanPhone) === 9) {
         $prefix = substr($cleanPhone, 0, 2);
-        $validPrefixes = ['97', '96', '95', '77', '76', '75', '09', '08', '07', '06','05'];
+        // Added '07' specifically as it is common now for new networks
+        $validPrefixes = ['97', '96', '95', '77', '76', '75', '09', '07','57','56','55'];
         
-        if (in_array($prefix, $validPrefixes)) {
+        if (in_array($prefix, $validPrefixes) || in_array('0'.$prefix, $validPrefixes)) {
             return [
                 'valid' => true,
-                'formatted' => '+260' . $cleanPhone,
+                'formatted' => '+260' . $cleanPhone, // Save to DB as +26097...
                 'message' => ''
             ];
         }
@@ -131,7 +137,7 @@ function validateZambianPhone($phone) {
     
     return [
         'valid' => false,
-        'formatted' => '',
-        'message' => 'Please enter a valid Zambian mobile number (e.g., 0977123456, 0771234567)'
+        'formatted' => $phone,
+        'message' => 'Please enter a valid Zambian mobile number (e.g. 97 123 4567)'
     ];
 }

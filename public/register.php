@@ -272,14 +272,15 @@ require_once '../src/templates/header.php';
                                 </div>
                             </div>
                             <input type="tel" 
-                                   id="phone" 
-                                   name="phone" 
-                                   value="<?= sanitize($formData['phone']) ?>"
-                                   autocomplete="tel"
-                                   class="block w-full pl-24 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-200 <?= hasError($errors, 'phone') ? 'border-red-500 ring-1 ring-red-500' : '' ?>"
-                                   placeholder="97 123 4567"
-                                   pattern="[0-9]{9,12}"
-                                   maxlength="12">
+                                id="phone" 
+                                name="phone" 
+                                /* FIX: Strip +260 or 260 for display so it fits the visual design */
+                                value="<?= isset($formData['phone']) ? ltrim(str_replace(['+260', '260'], '', sanitize($formData['phone'])), '0') : '' ?>"
+                                autocomplete="tel"
+                                class="block w-full pl-24 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-200 <?= hasError($errors, 'phone') ? 'border-red-500 ring-1 ring-red-500' : '' ?>"
+                                placeholder="97 123 4567"
+                                pattern="[0-9 ]*"
+                                maxlength="12">
                         </div>
                         <?php if (hasError($errors, 'phone')): ?>
                             <p class="mt-1 text-sm text-red-600 flex items-center">
@@ -579,39 +580,39 @@ document.getElementById('password_confirm').addEventListener('input', function()
 
 // Format Zambian phone number as user types
 document.getElementById('phone').addEventListener('input', function(e) {
+    // 1. Remove everything that is not a digit
     let value = this.value.replace(/\D/g, '');
     
-    // Remove leading 0 if present (we already show +260)
+    // 2. Handle pasted numbers containing country code (260)
+    if (value.startsWith('260') && value.length > 9) {
+        value = value.substring(3);
+    }
+    
+    // 3. Remove leading 0 if user typed it (we have +260 visually)
     if (value.startsWith('0')) {
         value = value.substring(1);
     }
     
-    // Format with spaces for readability
+    // 4. Limit to 9 digits (Zambian mobile length)
+    if (value.length > 9) {
+        value = value.substring(0, 9);
+    }
+    
+    // 5. Format with spaces for readability (e.g. 97 123 4567)
     if (value.length > 0) {
         let formatted = '';
         if (value.length <= 2) {
             formatted = value;
         } else if (value.length <= 5) {
             formatted = value.substring(0, 2) + ' ' + value.substring(2);
-        } else if (value.length <= 9) {
-            formatted = value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5);
         } else {
-            formatted = value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5, 9);
+            formatted = value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5);
         }
         this.value = formatted;
+    } else {
+        this.value = '';
     }
 });
-
-// Suggest common Zambian phone number prefix
-function suggestCommonProvider() {
-    const prefixes = ['97', '96', '95', '77', '76', '75'];
-    const randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-    const randomNumber = Math.floor(1000000 + Math.random() * 9000000);
-    const phoneInput = document.getElementById('phone');
-    
-    phoneInput.value = randomPrefix + ' ' + randomNumber.toString().substring(0, 3) + ' ' + randomNumber.toString().substring(3, 7);
-    phoneInput.focus();
-}
 
 // Form submission loading state
 document.getElementById('registrationForm').addEventListener('submit', function() {
