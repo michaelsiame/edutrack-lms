@@ -127,7 +127,7 @@ require_once '../src/templates/header.php';
                     <?php if (!empty($course['is_teveta_certified'])): ?>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-yellow-400 text-gray-900 ml-2">
                             <i class="fas fa-certificate mr-2"></i>
-                            TEVETA Certified
+                            TEVETA Registered
                         </span>
                     <?php endif; ?>
                 </div>

@@ -456,7 +456,7 @@ class Email {
                             <tr>
                                 <td style='background: linear-gradient(135deg, #2E70DA 0%, #1E5FBD 100%); padding: 30px; text-align: center;'>
                                     <h1 style='color: white; margin: 0; font-size: 28px;'>" . htmlspecialchars($appName, ENT_QUOTES, 'UTF-8') . "</h1>
-                                    <p style='color: #F6B745; margin: 5px 0 0 0; font-size: 14px;'>TEVETA Certified Training</p>
+                                    <p style='color: #F6B745; margin: 5px 0 0 0; font-size: 14px;'>TEVETA REGISTERED Training</p>
                                 </td>
                             </tr>
                             <tr><td style='padding: 40px 30px;'>$content</td></tr>

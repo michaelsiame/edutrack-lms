@@ -74,7 +74,7 @@
                 <?php if ($course->isTeveta()): ?>
                 <li class="flex items-start">
                     <i class="fas fa-award text-secondary-600 mt-1 mr-3"></i>
-                    <span class="text-gray-700 font-semibold">TEVETA Certified</span>
+                    <span class="text-gray-700 font-semibold">TEVETA REGISTERED</span>
                 </li>
                 <?php endif; ?>
             </ul>

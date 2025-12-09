@@ -131,7 +131,7 @@ function teveta_badge() {
     ?>
     <div class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-100 text-secondary-900 text-sm font-semibold">
         <i class="fas fa-certificate mr-2"></i>
-        TEVETA Certified
+        TEVETA REGISTERED
     </div>
     <?php
 }

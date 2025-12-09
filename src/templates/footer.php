@@ -17,7 +17,7 @@
                     <img src="<?= asset('images/logo.png') ?>" alt="Edutrack Logo" class="h-10 w-auto mr-2">
                     <div>
                         <h3 class="text-white text-lg font-bold">Edutrack</h3>
-                        <span class="text-secondary-500 text-xs font-semibold">TEVETA CERTIFIED</span>
+                        <span class="text-secondary-500 text-xs font-semibold">TEVETA REGISTERED</span>
                     </div>
                 </div>
                 <p class="text-sm text-gray-400 mb-4">

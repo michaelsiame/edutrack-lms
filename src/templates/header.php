@@ -12,7 +12,7 @@ if (!defined('EDUTRACK_INIT')) {
 }
 
 // Set page title
-$page_title = $page_title ?? 'Edutrack computer training college - TEVETA Certified';
+$page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGISTERED';
 ?>
 <!DOCTYPE html>
 <html lang="en">

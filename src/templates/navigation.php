@@ -18,7 +18,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <img src="<?= asset('images/logo.png') ?>" alt="Edutrack Logo" class="h-12 w-auto mr-3">
                     <div class="flex flex-col">
                         <span class="text-xl font-bold text-primary-600">Edutrack</span>
-                        <span class="text-xs text-gray-600">TEVETA Certified</span>
+                        <span class="text-xs text-gray-600">TEVETA REGISTERED</span>
                     </div>
                 </a>
             </div>

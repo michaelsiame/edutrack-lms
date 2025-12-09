@@ -14,7 +14,7 @@
                     <tr>
                         <td style="background: linear-gradient(135deg, #2E70DA 0%, #1E4A8A 100%); padding: 40px 30px; text-align: center;">
                             <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Welcome to Edutrack!</h1>
-                            <p style="color: #F6B745; margin: 10px 0 0 0; font-size: 14px; font-weight: bold;">TEVETA Certified Institution</p>
+                            <p style="color: #F6B745; margin: 10px 0 0 0; font-size: 14px; font-weight: bold;">TEVETA REGISTERED Institution</p>
                         </td>
                     </tr>
                     

@@ -469,7 +469,7 @@ require_once '../src/templates/header.php';
                         </div>
                         <div>
                             <i class="fas fa-graduation-cap text-blue-500 text-2xl mb-2"></i>
-                            <p class="text-xs text-gray-600">TEVETA Certified</p>
+                            <p class="text-xs text-gray-600">TEVETA REGISTERED</p>
                         </div>
                         <div>
                             <i class="fas fa-headset text-purple-500 text-2xl mb-2"></i>

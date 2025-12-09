@@ -76,7 +76,7 @@ require_once '../src/templates/header.php';
                 <div class="bg-gradient-to-r from-purple-600 to-purple-800 rounded-lg shadow-md p-6 text-white">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-purple-100 text-sm font-medium">TEVETA Certified</p>
+                            <p class="text-purple-100 text-sm font-medium">TEVETA REGISTERED</p>
                             <p class="text-lg font-bold mt-2"><?= TEVETA_CODE ?></p>
                         </div>
                         <div class="bg-white bg-opacity-20 rounded-full p-4">

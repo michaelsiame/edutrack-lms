@@ -254,7 +254,7 @@ require_once '../src/templates/header.php';
                 <!-- TEVETA Badge -->
                 <div class="bg-gradient-to-br from-primary-600 to-primary-800 rounded-lg shadow-md p-6 text-center text-white">
                     <i class="fas fa-certificate text-secondary-500 text-4xl mb-3"></i>
-                    <h3 class="font-bold text-lg mb-2">TEVETA Certified</h3>
+                    <h3 class="font-bold text-lg mb-2">TEVETA REGISTERED</h3>
                     <p class="text-sm text-primary-100 mb-4">
                         You're learning with a government-registered institution
                     </p>
