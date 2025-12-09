@@ -48,8 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $validation = validate($data, [
                 'first_name' => 'required|min:2|max:100',
                 'last_name' => 'required|min:2|max:100',
-                'phone' => 'phone'
             ]);
+            // Only validate phone if the user actually typed something
+            if (!empty($data['phone'])) {
+                // You can try 'phone' again, or use 'min:10' to be safer
+                $rules['phone'] = 'min:10|max:20'; 
+            }
             
             if (!$validation['valid']) {
                 $errors = $validation['errors'];
