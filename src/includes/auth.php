@@ -7,122 +7,95 @@
 /**
  * Register a new user
  * 
- * @param array $data User data
- * @return array ['success' => bool, 'message' => string, 'user_id' => int]
+ * @param array $data Form data
+ * @return array Result with success boolean and message
  */
 function registerUser($data) {
-    // Get the DB instance
     $db = Database::getInstance();
-    // We need the raw PDO connection to handle transactions
-    $pdo = $db->getConnection(); 
+    
+    // 1. Sanitize basic data
+    $firstName = trim($data['first_name']);
+    $lastName = trim($data['last_name']);
+    $email = trim($data['email']);
+    $phone = trim($data['phone'] ?? '');
+    $password = $data['password'];
+
+    // 2. Auto-generate Username (since form doesn't provide it)
+    // Example: john.doe@email.com -> john.doe
+    $baseUsername = explode('@', $email)[0];
+    // Remove invalid characters
+    $baseUsername = preg_replace('/[^a-zA-Z0-9._-]/', '', $baseUsername);
+    if (empty($baseUsername)) $baseUsername = 'user';
+    
+    $username = $baseUsername;
+    $counter = 1;
+
+    // Ensure username is unique
+    while ($db->fetchColumn("SELECT COUNT(*) FROM users WHERE username = ?", [$username]) > 0) {
+        $username = $baseUsername . $counter;
+        $counter++;
+    }
+
+    // 3. Hash Password
+    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
     try {
-        // 1. Start Transaction
-        $pdo->beginTransaction();
+        $db->beginTransaction();
 
-        // Check if email already exists (Using your wrapper)
-        if ($db->exists('users', 'email = ?', [$data['email']])) {
-            $pdo->rollBack();
-            return [
-                'success' => false,
-                'message' => 'Email address already registered'
-            ];
-        }
-
-        // Hash password
-        $passwordHash = password_hash($data['password'], PASSWORD_DEFAULT);
-
-        // Generate username from email
-        $baseUsername = strtolower(explode('@', $data['email'])[0]);
-        $username = $baseUsername;
-        $counter = 1;
+        // 4. Insert User
+        $sql = "INSERT INTO users (
+            username, email, password_hash, first_name, last_name, 
+            phone, status, email_verified, created_at, updated_at
+        ) VALUES (
+            :username, :email, :password_hash, :first_name, :last_name, 
+            :phone, 'active', 0, NOW(), NOW()
+        )";
         
-        // Ensure username is unique using a loop
-        while ($db->exists('users', 'username = ?', [$username])) {
-            $username = $baseUsername . $counter;
-            $counter++;
-        }
-
-        // 2. Insert User
-        $userData = [
+        $params = [
             'username' => $username,
-            'email' => $data['email'],
+            'email' => $email,
             'password_hash' => $passwordHash,
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'phone' => $data['phone'] ?? null,
-            'status' => 'active',
-            'email_verified' => 0, // Using 0/1 for boolean in MySQL usually
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'phone' => $phone
         ];
 
-        // Insert and get ID
-        $userId = $db->insert('users', $userData);
-
-        if (!$userId) {
-            throw new Exception("Failed to create user record.");
+        if (!$db->query($sql, $params)) {
+            // Retrieve specific SQL error for logging
+            throw new Exception("Database insert failed.");
         }
+        
+        $userId = $db->lastInsertId();
 
-        // 3. Assign Role (Role ID 4 = Student)
-        // We use the ID directly to avoid an extra lookup query
-        $db->insert('user_roles', [
-            'user_id' => $userId,
-            'role_id' => 4, 
-            'assigned_at' => date('Y-m-d H:i:s')
-        ]);
+        // 5. Assign 'Student' Role (Role ID 4 based on your dump)
+        $roleSql = "INSERT INTO user_roles (user_id, role_id, assigned_at) VALUES (?, 4, NOW())";
+        $db->query($roleSql, [$userId]);
 
-        // 4. Create Student Record (CRITICAL FIX)
-        // Required for course enrollment
-        $db->insert('students', [
-            'user_id' => $userId,
-            'enrollment_date' => date('Y-m-d'),
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+        // 6. Create Student Profile Record
+        // (Assuming you have a students table that links to users)
+        $studentSql = "INSERT INTO students (user_id, enrollment_date, created_at) VALUES (?, CURDATE(), NOW())";
+        $db->query($studentSql, [$userId]);
 
-        // 5. Create User Profile
-        // Note: Syncing phone number here as per your schema
-        $db->insert('user_profiles', [
-            'user_id' => $userId,
-            'bio' => null,
-            'phone' => $data['phone'] ?? null, // Added phone here too
-            'date_of_birth' => $data['date_of_birth'] ?? null,
-            'gender' => $data['gender'] ?? null,
-            'address' => $data['address'] ?? null,
-            'city' => $data['city'] ?? null,
-            'province' => $data['province'] ?? null,
-            'country' => 'Zambia',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
-        ]);
+        // 7. Create User Profile
+        $profileSql = "INSERT INTO user_profiles (user_id, created_at) VALUES (?, NOW())";
+        $db->query($profileSql, [$userId]);
 
-        // 6. Commit Transaction
-        $pdo->commit();
-
-        // Log activity (after commit ensures we only log if successful)
+        $db->commit();
+        
+        // Log activity (using the string format we fixed earlier)
         if (function_exists('logActivity')) {
-            logActivity('New user registered user id:'+ $userId, 'register');
+            logActivity("New user registration: $email ($username)", 'info');
         }
 
-        return [
-            'success' => true,
-            'message' => 'Registration successful! You can now login to your account.',
-            'user_id' => $userId
-        ];
-        
+        return ['success' => true, 'message' => 'Account created successfully. Please login.'];
+
     } catch (Exception $e) {
-        // 7. Rollback on error
-        if ($pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
+        $db->rollBack();
+        // Log the actual error to your php error log
+        error_log("Registration SQL Error: " . $e->getMessage()); 
         
-        // Log the actual error for the admin
-        error_log("Registration error: " . $e->getMessage());
-        
-        return [
-            'success' => false,
-            'message' => 'An error occurred during registration. Please try again.'
-        ];
+        // Return a safe message to the user
+        return ['success' => false, 'message' => 'Registration failed. Please try again or contact support.'];
     }
 }
 
