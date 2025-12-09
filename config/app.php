@@ -45,7 +45,8 @@ return [
     // Site Information
     'site' => [
         'email' => getenv('SITE_EMAIL') ?: 'info@edutrackzambia.com', // Updated to match domain
-        'phone' => getenv('SITE_PHONE1') ?: '+260771216339',
+        'phone' => getenv('SITE_PHONE') ?: '+260771216339',
+        'phone2' => getenv('SITE_PHONE2'),
         'address' => getenv('SITE_ADDRESS') ?: 'Kalomo, Zambia',
         'currency' => getenv('CURRENCY') ?: 'ZMW',
         'currency_symbol' => getenv('CURRENCY_SYMBOL') ?: 'K',

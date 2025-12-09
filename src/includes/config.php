@@ -78,6 +78,7 @@ define('TEVETA_VERIFIED', $appConfig['teveta']['verified']);
 // Site information
 define('SITE_EMAIL', $appConfig['site']['email']);
 define('SITE_PHONE', $appConfig['site']['phone']);
+define('SITE_PHONE2', $appConfig['site']['phone2']);
 define('SITE_ADDRESS', $appConfig['site']['address']);
 define('CURRENCY', $appConfig['site']['currency']);
 
