@@ -135,8 +135,12 @@
                     </li>
                     <li class="flex items-start">
                         <i class="fas fa-phone text-secondary-500 mt-1 mr-3"></i>
-                        <a href="tel:<?= SITE_PHONE ?>" class="text-sm text-gray-400 hover:text-secondary-500 transition">
+                        <a href="tel:<?= SITE_PHONE1 ?>" class="text-sm text-gray-400 hover:text-secondary-500 transition">
                             <?= SITE_PHONE ?>
+                        </a>
+                        <i class="fas fa-phone text-secondary-500 mt-1 mr-3"></i>
+                        <a href="tel:<?= SITE_PHONE ?>" class="text-sm text-gray-400 hover:text-secondary-500 transition">
+                            <?= SITE_PHONE2 ?>
                         </a>
                     </li>
                     <li class="flex items-start">
