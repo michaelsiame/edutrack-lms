@@ -24,8 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $action = $_POST['action'] ?? '';
         
-        // Update Profile Information
+        // --- MERGED UPDATE: Handles Profile Info AND Password ---
         if ($action === 'update_profile') {
+            
+            // 1. Prepare Profile Data
             $data = [
                 'first_name' => trim($_POST['first_name'] ?? ''),
                 'last_name' => trim($_POST['last_name'] ?? ''),
@@ -44,34 +46,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'twitter_url' => trim($_POST['twitter_url'] ?? '')
             ];
             
-            // Validate
-            $validation = validate($data, [
+            // 2. Define Validation Rules
+            $rules = [
                 'first_name' => 'required|min:2|max:100',
                 'last_name' => 'required|min:2|max:100',
-            ]);
-            // Only validate phone if the user actually typed something
+            ];
+
+            // Only validate phone if user typed something
             if (!empty($data['phone'])) {
-                // You can try 'phone' again, or use 'min:10' to be safer
                 $rules['phone'] = 'min:10|max:20'; 
             }
             
+            // Run Validation
+            $validation = validate($data, $rules);
             if (!$validation['valid']) {
-                $errors = $validation['errors'];
-            } else {
-                if ($user->update($data)) {
-                    // Update session
+                $errors = array_merge($errors, $validation['errors']);
+            }
+
+            // 3. Handle Optional Password Change
+            $passwordChangeRequested = !empty($_POST['new_password']);
+            $new_password = $_POST['new_password'] ?? '';
+            
+            if ($passwordChangeRequested) {
+                $current_password = $_POST['current_password'] ?? '';
+                $confirm_password = $_POST['confirm_password'] ?? '';
+
+                if (empty($current_password)) {
+                    $errors[] = 'Please enter your current password to set a new one.';
+                } elseif ($new_password !== $confirm_password) {
+                    $errors[] = 'New passwords do not match.';
+                } elseif (!verifyPassword($current_password, $user->password_hash)) {
+                    $errors[] = 'Current password is incorrect.';
+                } else {
+                    $passwordCheck = validatePasswordStrength($new_password);
+                    if (!$passwordCheck['valid']) {
+                        $errors = array_merge($errors, $passwordCheck['errors']);
+                    }
+                }
+            }
+
+            // 4. Save Changes if No Errors
+            if (empty($errors)) {
+                // Update Basic Info
+                $profileUpdated = $user->update($data);
+                
+                // Update Password (if requested)
+                $passwordUpdated = false;
+                if ($passwordChangeRequested) {
+                    $passwordUpdated = $user->updatePassword($new_password);
+                }
+
+                if ($profileUpdated || $passwordUpdated) {
+                    // Update session variables for name
                     $_SESSION['user_first_name'] = $data['first_name'];
                     $_SESSION['user_last_name'] = $data['last_name'];
                     
                     $success = true;
-                    flash('success', 'Profile updated successfully!', 'success');
+                    flash('success', 'Profile settings saved successfully!', 'success');
                 } else {
-                    $errors[] = 'Failed to update profile. Please try again.';
+                    $errors[] = 'No changes were detected or update failed.';
                 }
             }
         }
         
-        // Upload Avatar
+        // --- Upload Avatar ---
         elseif ($action === 'upload_avatar') {
             if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
                 $result = $user->uploadAvatar($_FILES['avatar']);
@@ -87,39 +125,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        // Delete Avatar
+        // --- Delete Avatar ---
         elseif ($action === 'delete_avatar') {
             $user->deleteAvatar();
             $success = true;
             flash('success', 'Avatar deleted successfully!', 'success');
             redirect(url('edit-profile.php'));
-        }
-        
-        // Change Password
-        elseif ($action === 'change_password') {
-            $current_password = $_POST['current_password'] ?? '';
-            $new_password = $_POST['new_password'] ?? '';
-            $confirm_password = $_POST['confirm_password'] ?? '';
-            
-            if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
-                $errors[] = 'All password fields are required.';
-            } elseif ($new_password !== $confirm_password) {
-                $errors[] = 'New passwords do not match.';
-            } elseif (!verifyPassword($current_password, $user->password_hash)) {
-                $errors[] = 'Current password is incorrect.';
-            } else {
-                $passwordCheck = validatePasswordStrength($new_password);
-                if (!$passwordCheck['valid']) {
-                    $errors = $passwordCheck['errors'];
-                } else {
-                    if ($user->updatePassword($new_password)) {
-                        $success = true;
-                        flash('success', 'Password changed successfully!', 'success');
-                    } else {
-                        $errors[] = 'Failed to change password. Please try again.';
-                    }
-                }
-            }
         }
     }
 }
@@ -156,7 +167,7 @@ require_once '../src/templates/header.php';
             </div>
         <?php endif; ?>
         
-        <!-- Avatar Section -->
+        <!-- Avatar Section (Separate Form) -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 class="text-xl font-bold text-gray-900 mb-4">Profile Picture</h2>
             <div class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
@@ -197,7 +208,7 @@ require_once '../src/templates/header.php';
             </div>
         </div>
         
-        <!-- Personal Information -->
+        <!-- MAIN FORM: Personal Info + Password -->
         <form method="POST" action="" class="space-y-6">
             <?= csrfField() ?>
             <input type="hidden" name="action" value="update_profile">
@@ -434,23 +445,12 @@ require_once '../src/templates/header.php';
                 </div>
             </div>
             
-            <!-- Save Button -->
-            <div class="flex justify-end">
-                <button type="submit" class="btn-primary px-8 py-3 rounded-md font-medium">
-                    <i class="fas fa-save mr-2"></i>Save Changes
-                </button>
-            </div>
-        </form>
-        
-        <!-- Change Password -->
-        <div class="bg-white rounded-lg shadow-md p-6 mt-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Change Password</h2>
-            
-            <form method="POST" action="" class="max-w-md">
-                <?= csrfField() ?>
-                <input type="hidden" name="action" value="change_password">
+            <!-- Change Password (Merged into main form) -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Change Password</h2>
+                <p class="text-sm text-gray-500 mb-4">Leave these fields blank if you do not want to change your password.</p>
                 
-                <div class="space-y-4">
+                <div class="max-w-md space-y-4">
                     <div>
                         <label for="current_password" class="block text-sm font-medium text-gray-700 mb-2">
                             Current Password
@@ -480,13 +480,16 @@ require_once '../src/templates/header.php';
                                name="confirm_password" 
                                class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500">
                     </div>
-                    
-                    <button type="submit" class="btn-primary px-6 py-2 rounded-md">
-                        <i class="fas fa-key mr-2"></i>Change Password
-                    </button>
                 </div>
-            </form>
-        </div>
+            </div>
+            
+            <!-- Single Save Button -->
+            <div class="flex justify-end pb-8">
+                <button type="submit" class="btn-primary px-8 py-3 rounded-md font-medium shadow-lg">
+                    <i class="fas fa-save mr-2"></i>Save All Changes
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
