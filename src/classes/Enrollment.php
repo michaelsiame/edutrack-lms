@@ -1,13 +1,15 @@
 <?php
 /**
+ * Edutrack Computer Training College
  * Enrollment Class
- * Handles course enrollments
+ * Handles course access, progress tracking, and financial logic.
  */
 
 class Enrollment {
     private $db;
     private $id;
     private $data = [];
+    private $paymentPlan = [];
     
     public function __construct($id = null) {
         $this->db = Database::getInstance();
@@ -18,22 +20,34 @@ class Enrollment {
     }
     
     /**
-     * Load enrollment data
+     * Load enrollment data with financial info
      */
     private function load() {
-        $sql = "SELECT e.*, c.title as course_title, c.slug as course_slug,
-                u.first_name, u.last_name, u.email
+        // We LEFT JOIN the payment plans so we know the balance/paid status immediately
+        $sql = "SELECT e.*, 
+                       c.title as course_title, c.slug as course_slug, c.price as course_price, c.duration_weeks,
+                       u.first_name, u.last_name, u.email,
+                       p.total_fee, p.total_paid, p.balance, p.payment_status as plan_status
                 FROM enrollments e
                 JOIN courses c ON e.course_id = c.id
                 JOIN users u ON e.user_id = u.id
+                LEFT JOIN enrollment_payment_plans p ON e.id = p.enrollment_id
                 WHERE e.id = :id";
         
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $result = $this->db->fetchOne($sql, ['id' => $this->id]);
+        
+        if ($result) {
+            $this->data = $result;
+            // Separate payment plan data for clarity, though it's in $this->data now too
+            $this->paymentPlan = [
+                'total_fee' => $result['total_fee'] ?? $result['course_price'],
+                'total_paid' => $result['total_paid'] ?? 0,
+                'balance' => $result['balance'] ?? 0,
+                'status' => $result['plan_status'] ?? 'pending'
+            ];
+        }
     }
     
-    /**
-     * Check if enrollment exists
-     */
     public function exists() {
         return !empty($this->data);
     }
@@ -47,47 +61,36 @@ class Enrollment {
     }
     
     /**
-     * Find enrollment by user and course
+     * Find enrollment by User and Course
      */
     public static function findByUserAndCourse($userId, $courseId) {
         $db = Database::getInstance();
-        $sql = "SELECT id FROM enrollments 
-                WHERE user_id = :user_id AND course_id = :course_id";
+        $result = $db->fetchOne("SELECT id FROM enrollments WHERE user_id = ? AND course_id = ?", [$userId, $courseId]);
         
-        $result = $db->query($sql, [
-            'user_id' => $userId,
-            'course_id' => $courseId
-        ])->fetch();
-        
-        if ($result) {
-            return new self($result['id']);
-        }
-        return null;
+        return $result ? new self($result['id']) : null;
     }
     
     /**
-     * Check if user is enrolled in course
+     * Check if user is already enrolled
      */
     public static function isEnrolled($userId, $courseId) {
-        $enrollment = self::findByUserAndCourse($userId, $courseId);
-        return $enrollment !== null;
+        return self::findByUserAndCourse($userId, $courseId) !== null;
     }
     
     /**
-     * Create new enrollment
+     * CORE LOGIC: Create New Enrollment + Payment Plan
+     * This runs inside a transaction to ensure financial data is created.
      */
     public static function create($data) {
         $db = Database::getInstance();
 
-        // Check if already enrolled
+        // 1. Check Duplicates
         if (self::isEnrolled($data['user_id'], $data['course_id'])) {
-            return false; // Already enrolled
+            return false;
         }
 
-        // Get student_id from students table (required FK)
+        // 2. Ensure Student Record Exists (Foreign Key Requirement)
         $student = $db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$data['user_id']]);
-
-        // If user is not in students table, create student record
         if (!$student) {
             $db->insert('students', [
                 'user_id' => $data['user_id'],
@@ -98,77 +101,132 @@ class Enrollment {
             $studentId = $student['id'];
         }
 
-        $sql = "INSERT INTO enrollments (
-            user_id, student_id, course_id, enrollment_status, payment_status,
-            amount_paid, enrolled_at, start_date, progress
-        ) VALUES (
-            :user_id, :student_id, :course_id, :enrollment_status, :payment_status,
-            :amount_paid, :enrolled_at, :start_date, :progress
-        )";
+        // 3. Get Course Price for Payment Plan
+        $course = $db->fetchOne("SELECT price FROM courses WHERE id = ?", [$data['course_id']]);
+        $coursePrice = $course['price'] ?? 0;
 
-        $params = [
-            'user_id' => $data['user_id'],
-            'student_id' => $studentId,
-            'course_id' => $data['course_id'],
-            'enrollment_status' => $data['enrollment_status'] ?? 'Enrolled',
-            'payment_status' => $data['payment_status'] ?? 'pending',
-            'amount_paid' => $data['amount_paid'] ?? 0,
-            'enrolled_at' => date('Y-m-d'),
-            'start_date' => date('Y-m-d'),
-            'progress' => 0
-        ];
+        try {
+            $db->beginTransaction();
 
-        if ($db->query($sql, $params)) {
+            // 4. Insert Enrollment
+            // Default status 'Enrolled' implies "Waiting for Payment/Deposit"
+            $enrollParams = [
+                'user_id' => $data['user_id'],
+                'student_id' => $studentId,
+                'course_id' => $data['course_id'],
+                'enrollment_status' => 'Enrolled', 
+                'payment_status' => 'pending',
+                'amount_paid' => 0,
+                'enrolled_at' => date('Y-m-d'),
+                'start_date' => date('Y-m-d'),
+                'progress' => 0,
+                'certificate_blocked' => 1 // Blocked by default until fully paid
+            ];
+            
+            if (!$db->insert('enrollments', $enrollParams)) {
+                throw new Exception("Failed to insert enrollment record.");
+            }
             $enrollmentId = $db->lastInsertId();
 
-            // Log activity
-            self::logActivity($data['user_id'], 'enrollment', $data['course_id'], 'Enrolled in course');
+            // 5. Create Payment Plan Record (Crucial for Finance Reports)
+            $planParams = [
+                'enrollment_id' => $enrollmentId,
+                'user_id' => $data['user_id'],
+                'course_id' => $data['course_id'],
+                'total_fee' => $coursePrice,
+                'total_paid' => 0,
+                'currency' => 'ZMW', // Defaulting to Zambia currency
+                'payment_status' => 'pending'
+            ];
+            
+            if (!$db->insert('enrollment_payment_plans', $planParams)) {
+                throw new Exception("Failed to create payment plan.");
+            }
 
+            // 6. Log Activity
+            self::logActivity($data['user_id'], 'enrollment', $data['course_id'], 'Enrolled in course (Pending Deposit)');
+
+            $db->commit();
             return $enrollmentId;
+
+        } catch (Exception $e) {
+            $db->rollBack();
+            error_log("Enrollment::create Error: " . $e->getMessage());
+            return false;
         }
-        return false;
     }
     
-    /**
-     * Update enrollment
-     * Note: Database field is 'progress' not 'progress_percentage'
-     */
-    public function update($data) {
-        $allowed = ['enrollment_status', 'payment_status', 'amount_paid', 'progress', 'total_time_spent', 'completion_date'];
+    // =====================================================================
+    // FINANCIAL ACCESS LOGIC (The 30% Rule)
+    // =====================================================================
 
-        // Map progress_percentage to progress for backwards compatibility
+    /**
+     * Check if student can access course content
+     * Logic: Must be Admin OR Instructor OR (Paid >= 30%)
+     */
+    public function canAccessContent() {
+        // 1. Admins & Instructors bypass checks
+        $currentUser = User::current();
+        if ($currentUser && ($currentUser->hasRole('admin') || $currentUser->hasRole('instructor'))) {
+            return true;
+        }
+
+        // 2. Completed courses are always accessible
+        if ($this->data['enrollment_status'] === 'Completed') {
+            return true;
+        }
+
+        // 3. Check Financials
+        $totalFee = (float) $this->paymentPlan['total_fee'];
+        $totalPaid = (float) $this->paymentPlan['total_paid'];
+
+        // If free course, allow access
+        if ($totalFee <= 0) {
+            return true;
+        }
+
+        // Calculate percentage
+        $percentagePaid = ($totalPaid / $totalFee) * 100;
+
+        // THE RULE: 30% Threshold
+        return $percentagePaid >= 30;
+    }
+
+    /**
+     * Check if certificate download is allowed
+     * Logic: Must be 100% Paid
+     */
+    public function canDownloadCertificate() {
+        // If specific block flag is on
+        if (!empty($this->data['certificate_blocked'])) {
+            return false;
+        }
+
+        // Double check balance
+        $balance = (float) ($this->paymentPlan['balance'] ?? 0);
+        return $balance <= 0;
+    }
+
+    // =====================================================================
+    // STANDARD METHODS
+    // =====================================================================
+
+    public function update($data) {
+        // Alias mapping for backward compatibility
         if (isset($data['progress_percentage'])) {
             $data['progress'] = $data['progress_percentage'];
             unset($data['progress_percentage']);
         }
-
-        $updates = [];
-        $params = ['id' => $this->id];
-
-        foreach ($allowed as $field) {
-            if (isset($data[$field])) {
-                $updates[] = "$field = :$field";
-                $params[$field] = $data[$field];
-            }
-        }
-
-        if (empty($updates)) {
-            return false;
-        }
-
-        $sql = "UPDATE enrollments SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE id = :id";
-
-        if ($this->db->query($sql, $params)) {
-            $this->load();
-            return true;
-        }
-        return false;
+        
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        return $this->db->update('enrollments', $data, 'id = ?', [$this->id]);
     }
     
-    /**
-     * Complete enrollment
-     * Uses schema enum value: 'Completed'
-     */
+    public function updateProgress($percentage) {
+        $percentage = min(100, max(0, floatval($percentage)));
+        return $this->update(['progress' => $percentage]);
+    }
+    
     public function complete() {
         return $this->update([
             'enrollment_status' => 'Completed',
@@ -177,304 +235,184 @@ class Enrollment {
         ]);
     }
     
-    /**
-     * Update progress
-     */
-    public function updateProgress($percentage) {
-        return $this->update(['progress' => min(100, max(0, $percentage))]);
-    }
-    
-    /**
-     * Add time spent
-     */
     public function addTimeSpent($minutes) {
         $currentTime = $this->getTotalTimeSpent();
         return $this->update(['total_time_spent' => $currentTime + $minutes]);
     }
     
-    /**
-     * Update last accessed
-     */
     public function updateLastAccessed() {
-        $sql = "UPDATE enrollments SET last_accessed_at = NOW() WHERE id = :id";
-        return $this->db->query($sql, ['id' => $this->id]);
+        return $this->update(['last_accessed' => date('Y-m-d H:i:s')]);
     }
     
-    /**
-     * Cancel/Drop enrollment
-     * Uses schema enum value: 'Dropped'
-     */
     public function cancel() {
         return $this->update(['enrollment_status' => 'Dropped']);
     }
-    
-    /**
-     * Get completed lessons
-     */
-    public function getCompletedLessons() {
-        $sql = "SELECT lesson_id FROM lesson_progress
-                WHERE enrollment_id = :enrollment_id AND status = 'Completed'";
 
-        return $this->db->query($sql, [
-            'enrollment_id' => $this->getId()
-        ])->fetchAll();
-    }
+    // =====================================================================
+    // PROGRESS TRACKING
+    // =====================================================================
 
-    /**
-     * Get lesson progress
-     */
     public function getLessonProgress($lessonId) {
-        $sql = "SELECT * FROM lesson_progress
-                WHERE enrollment_id = :enrollment_id AND lesson_id = :lesson_id";
-
-        return $this->db->query($sql, [
-            'enrollment_id' => $this->getId(),
-            'lesson_id' => $lessonId
-        ])->fetch();
+        return $this->db->fetchOne(
+            "SELECT * FROM lesson_progress WHERE enrollment_id = ? AND lesson_id = ?", 
+            [$this->id, $lessonId]
+        );
     }
 
-    /**
-     * Mark lesson as completed
-     */
     public function markLessonComplete($lessonId) {
-        // Check if progress record exists
-        $existing = $this->getLessonProgress($lessonId);
-
-        if ($existing) {
-            // Update existing record
-            $sql = "UPDATE lesson_progress SET
-                    status = 'Completed',
-                    progress_percentage = 100.00,
-                    completed_at = NOW(),
-                    last_accessed = NOW()
-                    WHERE enrollment_id = :enrollment_id AND lesson_id = :lesson_id";
-        } else {
-            // Insert new record
-            $sql = "INSERT INTO lesson_progress (
-                enrollment_id, lesson_id, status, progress_percentage,
-                started_at, completed_at, last_accessed
-            ) VALUES (
-                :enrollment_id, :lesson_id, 'Completed', 100.00,
-                NOW(), NOW(), NOW()
-            )";
-        }
-
-        $result = $this->db->query($sql, [
-            'enrollment_id' => $this->getId(),
-            'lesson_id' => $lessonId
-        ]);
-
-        if ($result) {
-            // Recalculate progress
-            $this->recalculateProgress();
-
-            // Log activity
-            self::logActivity($this->getUserId(), 'lesson', $lessonId, 'Completed lesson');
-        }
-
-        return $result;
+        // Use ON DUPLICATE KEY UPDATE to handle re-visits
+        $sql = "INSERT INTO lesson_progress 
+                (enrollment_id, lesson_id, status, progress_percentage, started_at, completed_at, last_accessed)
+                VALUES (?, ?, 'Completed', 100, NOW(), NOW(), NOW())
+                ON DUPLICATE KEY UPDATE 
+                status = 'Completed', progress_percentage = 100, completed_at = NOW(), last_accessed = NOW()";
+        
+        $this->db->query($sql, [$this->id, $lessonId]);
+        
+        // Update main progress
+        $this->recalculateProgress();
+        
+        // Log it
+        self::logActivity($this->getUserId(), 'lesson', $lessonId, 'Completed lesson');
+        
+        return true;
     }
 
-    /**
-     * Recalculate progress percentage
-     */
     public function recalculateProgress() {
-        // Get total lessons in course
-        require_once __DIR__ . '/Course.php';
+        // Need Course class to count lessons
+        if (!class_exists('Course')) {
+            require_once __DIR__ . '/Course.php';
+        }
+        
         $course = Course::find($this->getCourseId());
-        if (!$course) {
-            return;
-        }
+        if (!$course) return;
+        
         $totalLessons = $course->getTotalLessons();
+        if ($totalLessons == 0) return; // Prevent division by zero
 
-        if ($totalLessons == 0) {
-            return;
-        }
+        // Count completed lessons
+        $completed = $this->db->fetchColumn(
+            "SELECT COUNT(*) FROM lesson_progress WHERE enrollment_id = ? AND status = 'Completed'",
+            [$this->id]
+        );
 
-        // Get completed lessons count using enrollment_id
-        $sql = "SELECT COUNT(*) as completed FROM lesson_progress
-                WHERE enrollment_id = :enrollment_id AND status = 'Completed'";
-
-        $result = $this->db->query($sql, [
-            'enrollment_id' => $this->getId()
-        ])->fetch();
-
-        $completedLessons = $result['completed'];
-        $percentage = ($completedLessons / $totalLessons) * 100;
-
+        $percentage = ($completed / $totalLessons) * 100;
         $this->updateProgress($percentage);
 
-        // Check if course is completed
-        if ($percentage >= 100) {
+        // Auto-complete course if 100%
+        if ($percentage >= 100 && !$this->isCompleted()) {
             $this->complete();
         }
     }
-    
-    /**
-     * Get user's quiz attempts
-     * Note: quiz_attempts uses student_id (FK to students table), not user_id
-     */
+
+    // =====================================================================
+    // RELATED DATA GETTERS
+    // =====================================================================
+
+    public function getCompletedLessons() {
+        $rows = $this->db->fetchAll(
+            "SELECT lesson_id FROM lesson_progress WHERE enrollment_id = ? AND status = 'Completed'",
+            [$this->id]
+        );
+        return array_column($rows, 'lesson_id');
+    }
+
     public function getQuizAttempts($quizId = null) {
-        // Get student_id from students table
-        $student = $this->db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$this->getUserId()]);
-        if (!$student) {
-            return [];
-        }
-
-        $sql = "SELECT qa.*, q.title as quiz_title
-                FROM quiz_attempts qa
-                JOIN quizzes q ON qa.quiz_id = q.id
-                WHERE qa.student_id = :student_id AND q.course_id = :course_id";
-
-        $params = [
-            'student_id' => $student['id'],
-            'course_id' => $this->getCourseId()
-        ];
-
+        $sql = "SELECT qa.*, q.title as quiz_title 
+                FROM quiz_attempts qa 
+                JOIN quizzes q ON qa.quiz_id = q.id 
+                WHERE qa.student_id = ? AND q.course_id = ?";
+        $params = [$this->getStudentId(), $this->getCourseId()];
+        
         if ($quizId) {
-            $sql .= " AND qa.quiz_id = :quiz_id";
-            $params['quiz_id'] = $quizId;
+            $sql .= " AND qa.quiz_id = ?";
+            $params[] = $quizId;
         }
-
         $sql .= " ORDER BY qa.started_at DESC";
-
-        return $this->db->query($sql, $params)->fetchAll();
+        return $this->db->fetchAll($sql, $params);
     }
 
-    /**
-     * Get user's assignment submissions
-     * Note: assignment_submissions uses student_id (FK to students table), not user_id
-     */
     public function getAssignmentSubmissions($assignmentId = null) {
-        // Get student_id from students table
-        $student = $this->db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$this->getUserId()]);
-        if (!$student) {
-            return [];
-        }
-
-        $sql = "SELECT asub.*, a.title as assignment_title
-                FROM assignment_submissions asub
-                JOIN assignments a ON asub.assignment_id = a.id
-                WHERE asub.student_id = :student_id AND a.course_id = :course_id";
-
-        $params = [
-            'student_id' => $student['id'],
-            'course_id' => $this->getCourseId()
-        ];
-
+        $sql = "SELECT s.*, a.title as assignment_title 
+                FROM assignment_submissions s 
+                JOIN assignments a ON s.assignment_id = a.id 
+                WHERE s.student_id = ? AND a.course_id = ?";
+        $params = [$this->getStudentId(), $this->getCourseId()];
+        
         if ($assignmentId) {
-            $sql .= " AND asub.assignment_id = :assignment_id";
-            $params['assignment_id'] = $assignmentId;
+            $sql .= " AND s.assignment_id = ?";
+            $params[] = $assignmentId;
         }
-
-        $sql .= " ORDER BY asub.submitted_at DESC";
-
-        return $this->db->query($sql, $params)->fetchAll();
+        $sql .= " ORDER BY s.submitted_at DESC";
+        return $this->db->fetchAll($sql, $params);
     }
-    
-    /**
-     * Log activity
-     * Uses correct column names for activity_logs table
-     */
-    private static function logActivity($userId, $entityType, $entityId = null, $description = null) {
+
+    private static function logActivity($userId, $type, $entityId, $desc) {
         $db = Database::getInstance();
-
-        $sql = "INSERT INTO activity_logs (
-            user_id, activity_type, entity_type, entity_id, description,
-            ip_address, user_agent, created_at
-        ) VALUES (
-            :user_id, :activity_type, :entity_type, :entity_id, :description,
-            :ip_address, :user_agent, NOW()
-        )";
-
-        return $db->query($sql, [
+        $db->insert('activity_logs', [
             'user_id' => $userId,
-            'activity_type' => $entityType . '_action',
-            'entity_type' => $entityType,
+            'activity_type' => $type,
+            'entity_type' => 'course',
             'entity_id' => $entityId,
-            'description' => $description,
+            'description' => $desc,
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null
+            'created_at' => date('Y-m-d H:i:s')
         ]);
     }
+
+    // =====================================================================
+    // HELPER GETTERS
+    // =====================================================================
+
+    public function getId() { return $this->id; }
+    public function getUserId() { return $this->data['user_id'] ?? null; }
+    public function getStudentId() { return $this->data['student_id'] ?? null; }
+    public function getCourseId() { return $this->data['course_id'] ?? null; }
+    public function getCourseTitle() { return $this->data['course_title'] ?? ''; }
+    public function getCourseSlug() { return $this->data['course_slug'] ?? ''; }
+    public function getProgress() { return (float)($this->data['progress'] ?? 0); }
+    public function getTotalTimeSpent() { return (int)($this->data['total_time_spent'] ?? 0); }
+    public function getEnrolledAt() { return $this->data['enrolled_at'] ?? null; }
+    
+    // Status Helpers
+    public function getStatus() { return $this->data['enrollment_status'] ?? 'Enrolled'; }
+    public function isActive() { return in_array($this->getStatus(), ['Enrolled', 'In Progress']); }
+    public function isCompleted() { return $this->getStatus() === 'Completed'; }
+    public function isDropped() { return $this->getStatus() === 'Dropped'; }
+    
+    // Financial Helpers
+    public function getTotalFee() { return (float)($this->paymentPlan['total_fee'] ?? 0); }
+    public function getTotalPaid() { return (float)($this->paymentPlan['total_paid'] ?? 0); }
+    public function getBalance() { return (float)($this->paymentPlan['balance'] ?? 0); }
     
     /**
-     * Get all enrollments with filters
+     * Get list of all enrollments (for Admin/Reports)
      */
     public static function all($filters = []) {
         $db = Database::getInstance();
-        
-        $sql = "SELECT e.*, c.title as course_title, c.slug as course_slug,
-                u.first_name, u.last_name, u.email
+        $sql = "SELECT e.*, c.title as course_title, 
+                       u.first_name, u.last_name, u.email
                 FROM enrollments e
                 JOIN courses c ON e.course_id = c.id
                 JOIN users u ON e.user_id = u.id
                 WHERE 1=1";
         
         $params = [];
-        
         if (!empty($filters['user_id'])) {
-            $sql .= " AND e.user_id = :user_id";
-            $params['user_id'] = $filters['user_id'];
+            $sql .= " AND e.user_id = ?";
+            $params[] = $filters['user_id'];
         }
-        
         if (!empty($filters['course_id'])) {
-            $sql .= " AND e.course_id = :course_id";
-            $params['course_id'] = $filters['course_id'];
-        }
-        
-        if (!empty($filters['status'])) {
-            $sql .= " AND e.enrollment_status = :status";
-            $params['status'] = $filters['status'];
+            $sql .= " AND e.course_id = ?";
+            $params[] = $filters['course_id'];
         }
         
         $sql .= " ORDER BY e.enrolled_at DESC";
         
         if (isset($filters['limit'])) {
-            $sql .= " LIMIT :limit";
-            $params['limit'] = (int)$filters['limit'];
+            $sql .= " LIMIT " . (int)$filters['limit'];
         }
         
-        return $db->query($sql, $params)->fetchAll();
+        return $db->fetchAll($sql, $params);
     }
-    
-    // Getters
-    public function getId() { return $this->data['id'] ?? null; }
-    public function getUserId() { return $this->data['user_id'] ?? null; }
-    public function getStudentId() { return $this->data['student_id'] ?? null; }
-    public function getCourseId() { return $this->data['course_id'] ?? null; }
-    public function getCourseTitle() { return $this->data['course_title'] ?? ''; }
-    public function getCourseSlug() { return $this->data['course_slug'] ?? ''; }
-    public function getEnrollmentStatus() { return $this->data['enrollment_status'] ?? 'Enrolled'; }
-    public function getPaymentStatus() { return $this->data['payment_status'] ?? 'pending'; }
-    public function getAmountPaid() { return $this->data['amount_paid'] ?? 0; }
-    public function getProgress() { return $this->data['progress'] ?? 0; }
-    public function getProgressPercentage() { return $this->getProgress(); } // Alias for backwards compatibility
-    public function getTotalTimeSpent() { return $this->data['total_time_spent'] ?? 0; }
-    public function getEnrolledAt() { return $this->data['enrolled_at'] ?? null; }
-    public function getLastAccessedAt() { return $this->data['last_accessed'] ?? null; }
-    public function getCompletionDate() { return $this->data['completion_date'] ?? null; }
-    public function getCompletedAt() { return $this->getCompletionDate(); } // Alias
-
-    /**
-     * Status helper methods - use correct schema enum values
-     * enrollment_status: 'Enrolled', 'In Progress', 'Completed', 'Dropped', 'Expired'
-     * payment_status: 'pending', 'completed', 'failed', 'refunded'
-     *
-     * Note: hasEnrolledStatus() checks if status equals 'Enrolled'
-     * This is different from the static isEnrolled($userId, $courseId) which checks
-     * if a user has any enrollment record for a course
-     */
-    public function hasEnrolledStatus() { return $this->getEnrollmentStatus() == 'Enrolled'; }
-    public function isInProgress() { return $this->getEnrollmentStatus() == 'In Progress'; }
-    public function isCompleted() { return $this->getEnrollmentStatus() == 'Completed'; }
-    public function isDropped() { return $this->getEnrollmentStatus() == 'Dropped'; }
-    public function isExpired() { return $this->getEnrollmentStatus() == 'Expired'; }
-    public function isActive() { return in_array($this->getEnrollmentStatus(), ['Enrolled', 'In Progress']); }
-    public function isCancelled() { return $this->isDropped(); } // Alias for backwards compatibility
-
-    public function isPending() { return $this->getPaymentStatus() == 'pending'; }
-    public function isPaid() { return $this->getPaymentStatus() == 'completed'; }
-    public function isFailed() { return $this->getPaymentStatus() == 'failed'; }
-    public function isRefunded() { return $this->getPaymentStatus() == 'refunded'; }
 }

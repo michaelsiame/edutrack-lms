@@ -1,7 +1,7 @@
 <?php
 /**
- * Edutrack computer training college
- * User Class
+ * Edutrack Computer Training College
+ * User Class - Normalized for Database Structure
  */
 
 class User {
@@ -24,13 +24,19 @@ class User {
     }
     
     /**
-     * Load user data
+     * Load user data from both tables
      */
     private function load() {
+        // Load core credentials
         $this->data = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$this->id]);
         
+        // Load extended profile
         if ($this->data) {
             $this->profile = $this->db->fetchOne("SELECT * FROM user_profiles WHERE user_id = ?", [$this->id]);
+            // Ensure profile is an array even if empty
+            if (!$this->profile) {
+                $this->profile = [];
+            }
         }
     }
     
@@ -46,14 +52,10 @@ class User {
      */
     public static function findByEmail($email) {
         $db = Database::getInstance();
-        $user = $db->fetchOne("SELECT * FROM users WHERE email = ?", [$email]);
+        $userData = $db->fetchOne("SELECT id FROM users WHERE email = ?", [$email]);
         
-        if ($user) {
-            $instance = new self();
-            $instance->id = $user['id'];
-            $instance->data = $user;
-            $instance->profile = $db->fetchOne("SELECT * FROM user_profiles WHERE user_id = ?", [$user['id']]);
-            return $instance;
+        if ($userData) {
+            return new self($userData['id']);
         }
         
         return null;
@@ -74,6 +76,7 @@ class User {
      * Create new user
      */
     public static function create($data) {
+        // This relies on your global registerUser function which handles the INSERTs
         $result = registerUser($data);
         
         if ($result['success']) {
@@ -84,7 +87,7 @@ class User {
     }
     
     /**
-     * Get user property
+     * Magic getter to access properties from both tables transparently
      */
     public function __get($key) {
         if (isset($this->data[$key])) {
@@ -105,37 +108,24 @@ class User {
         return !empty($this->data);
     }
     
-    /**
-     * Get user ID
-     */
+    // --- Basic Getters ---
+
     public function getId() {
         return $this->id;
     }
     
-    /**
-     * Get full name
-     */
     public function getFullName() {
-        return trim($this->data['first_name'] . ' ' . $this->data['last_name']);
+        return trim(($this->data['first_name'] ?? '') . ' ' . ($this->data['last_name'] ?? ''));
     }
 
-    /**
-     * Get email
-     */
     public function getEmail() {
         return $this->data['email'] ?? null;
     }
 
-    /**
-     * Get first name
-     */
     public function getFirstName() {
         return $this->data['first_name'] ?? '';
     }
 
-    /**
-     * Get last name
-     */
     public function getLastName() {
         return $this->data['last_name'] ?? '';
     }
@@ -144,20 +134,29 @@ class User {
      * Get avatar URL
      */
     public function getAvatarUrl() {
-        return userAvatar($this->profile['avatar'] ?? null, $this->data['email']);
+        $avatarFile = $this->profile['avatar'] ?? null;
+        
+        // Check if custom avatar exists
+        if ($avatarFile && defined('UPLOAD_PATH') && file_exists(UPLOAD_PATH . '/users/avatars/' . $avatarFile)) {
+            return UPLOAD_URL . '/users/avatars/' . $avatarFile;
+        }
+        
+        // Fallback to Gravatar
+        $hash = md5(strtolower(trim($this->getEmail())));
+        return "https://www.gravatar.com/avatar/{$hash}?d=mp&s=200";
     }
     
     /**
      * Get role
-     * Queries user_roles junction table since users table doesn't have a role column
+     * Optimized to query the new user_roles table
      */
     public function getRole() {
-        // First check if we've already cached the role
+        // Return cached role if available to save queries
         if (isset($this->data['_cached_role'])) {
             return $this->data['_cached_role'];
         }
 
-        // Query user_roles table to get the actual role
+        // Query user_roles table
         $roleData = $this->db->fetchOne("
             SELECT r.role_name
             FROM user_roles ur
@@ -167,26 +166,27 @@ class User {
         ", [$this->id]);
 
         if ($roleData) {
-            $roleName = strtolower(str_replace(' ', '_', $roleData['role_name']));
-            // Normalize role names
+            $roleName = strtolower($roleData['role_name']);
+            // Normalize role names for code checks
             if (strpos($roleName, 'admin') !== false || strpos($roleName, 'super') !== false) {
                 $role = 'admin';
             } elseif (strpos($roleName, 'instructor') !== false) {
                 $role = 'instructor';
+            } elseif (strpos($roleName, 'finance') !== false) {
+                $role = 'finance';
             } else {
                 $role = 'student';
             }
         } else {
-            $role = 'student'; // Default role
+            $role = 'student'; // Default fallback
         }
 
-        // Cache the role to avoid repeated queries
         $this->data['_cached_role'] = $role;
         return $role;
     }
 
     /**
-     * Check if user has role
+     * Check if user has specific role
      */
     public function hasRole($role) {
         $userRole = $this->getRole();
@@ -196,39 +196,42 @@ class User {
         return $userRole === $role;
     }
     
-    /**
-     * Check if email is verified
-     */
     public function isEmailVerified() {
         return (bool) ($this->data['email_verified'] ?? false);
     }
     
-    /**
-     * Check if account is active
-     */
     public function isActive() {
-        return $this->data['status'] === 'active';
+        return ($this->data['status'] ?? '') === 'active';
     }
     
     /**
      * Update user data
+     * Handles splitting data between 'users' and 'user_profiles' tables correctly
      */
     public function update($data) {
         $userData = [];
         $profileData = [];
         
-        // User table fields
-        $userFields = ['email', 'first_name', 'last_name', 'phone', 'role', 'status'];
+        // 1. Fields for 'users' table
+        $userFields = ['first_name', 'last_name', 'phone', 'status']; 
         foreach ($userFields as $field) {
             if (isset($data[$field])) {
                 $userData[$field] = $data[$field];
             }
         }
         
-        // Profile table fields
-        $profileFields = ['bio', 'date_of_birth', 'gender', 'address', 'city', 'province', 
-                         'country', 'nrc_number', 'education_level', 'occupation', 
-                         'linkedin_url', 'facebook_url', 'twitter_url', 'avatar'];
+        // 2. Fields for 'user_profiles' table (Expanded for new schema)
+        $profileFields = [
+            'bio', 'date_of_birth', 'gender', 'address', 'city', 'province', 
+            'country', 'postal_code', 'nrc_number', 'education_level', 'occupation', 
+            'linkedin_url', 'facebook_url', 'twitter_url', 'avatar'
+        ];
+        
+        // Note: phone is redundant in schema, sync it to both if present
+        if (isset($data['phone'])) {
+            $profileData['phone'] = $data['phone'];
+        }
+
         foreach ($profileFields as $field) {
             if (isset($data[$field])) {
                 $profileData[$field] = $data[$field];
@@ -238,23 +241,31 @@ class User {
         try {
             $this->db->beginTransaction();
             
-            // Update user
+            // Update users table
             if (!empty($userData)) {
                 $this->db->update('users', $userData, 'id = ?', [$this->id]);
             }
             
-            // Update profile
+            // Update user_profiles table
             if (!empty($profileData)) {
-                $this->db->update('user_profiles', $profileData, 'user_id = ?', [$this->id]);
+                // Check if profile exists first
+                $profileExists = $this->db->fetchColumn("SELECT id FROM user_profiles WHERE user_id = ?", [$this->id]);
+                
+                if ($profileExists) {
+                    $this->db->update('user_profiles', $profileData, 'user_id = ?', [$this->id]);
+                } else {
+                    $profileData['user_id'] = $this->id;
+                    $this->db->insert('user_profiles', $profileData);
+                }
             }
             
             $this->db->commit();
-            $this->load(); // Reload data
+            $this->load(); // Reload object data from DB
             
             return true;
         } catch (Exception $e) {
             $this->db->rollback();
-            logActivity("User update error: " . $e->getMessage(), 'error');
+            error_log("User update error: " . $e->getMessage());
             return false;
         }
     }
@@ -263,80 +274,91 @@ class User {
      * Update password
      */
     public function updatePassword($newPassword) {
-        $passwordHash = hashPassword($newPassword);
-        return $this->db->update('users', ['password_hash' => $passwordHash], 'id = ?', [$this->id]) > 0;
+        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        return $this->db->update('users', ['password_hash' => $passwordHash], 'id = ?', [$this->id]);
     }
     
     /**
      * Upload avatar
      */
     public function uploadAvatar($file) {
+        if (!defined('UPLOAD_PATH')) {
+            return ['success' => false, 'message' => 'Upload path not configured'];
+        }
+
         $uploadDir = UPLOAD_PATH . '/users/avatars/';
 
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
         
-        // Validate file
-        $validation = validateFileUpload($file, config('upload.allowed_images'));
-        if (!$validation['valid']) {
-            return ['success' => false, 'message' => $validation['error']];
+        // Basic Validation
+        $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file['tmp_name']);
+
+        if (!in_array($mime, $allowed)) {
+            return ['success' => false, 'message' => 'Invalid file type.'];
         }
         
         // Generate filename
-        $filename = cleanFilename($file['name']);
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = 'user_' . $this->id . '_' . time() . '.' . $ext;
         $targetPath = $uploadDir . $filename;
         
         // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-            // Delete old avatar if exists
-            if ($this->profile['avatar'] && file_exists($uploadDir . $this->profile['avatar'])) {
-                unlink($uploadDir . $this->profile['avatar']);
-            }
+            // Delete old avatar
+            $this->deleteAvatarFile();
             
-            // Update database
-            $this->db->update('user_profiles', ['avatar' => $filename], 'user_id = ?', [$this->id]);
-            $this->load();
+            // Update database via the robust update method
+            $this->update(['avatar' => $filename]);
             
-            // Update session
-            if (currentUserId() === $this->id) {
+            // Update session if current user
+            if (function_exists('currentUserId') && currentUserId() === $this->id) {
                 $_SESSION['user_avatar'] = $filename;
             }
             
             return ['success' => true, 'filename' => $filename];
         }
         
-        return ['success' => false, 'message' => 'Failed to upload file'];
+        return ['success' => false, 'message' => 'Failed to move uploaded file'];
     }
     
     /**
      * Delete avatar
      */
     public function deleteAvatar() {
-        $uploadDir = UPLOAD_PATH . '/users/avatars/';
+        $this->deleteAvatarFile();
+        $success = $this->update(['avatar' => null]);
         
-        if ($this->profile['avatar'] && file_exists($uploadDir . $this->profile['avatar'])) {
-            unlink($uploadDir . $this->profile['avatar']);
-        }
-        
-        $this->db->update('user_profiles', ['avatar' => null], 'user_id = ?', [$this->id]);
-        $this->load();
-        
-        // Update session
-        if (currentUserId() === $this->id) {
+        if (function_exists('currentUserId') && currentUserId() === $this->id) {
             $_SESSION['user_avatar'] = null;
         }
         
-        return true;
+        return $success;
+    }
+
+    /**
+     * Helper to physically remove file
+     */
+    private function deleteAvatarFile() {
+        $oldAvatar = $this->profile['avatar'] ?? null;
+        if ($oldAvatar && defined('UPLOAD_PATH') && file_exists(UPLOAD_PATH . '/users/avatars/' . $oldAvatar)) {
+            @unlink(UPLOAD_PATH . '/users/avatars/' . $oldAvatar);
+        }
     }
     
     /**
      * Get user enrollments
+     * Updated to fetch balance from payment plans
      */
     public function getEnrollments($status = null) {
-        $sql = "SELECT e.*, c.title, c.thumbnail, c.slug 
+        $sql = "SELECT e.*, c.title, c.thumbnail_url, c.slug, 
+                       ep.balance, ep.payment_status as financial_status, ep.total_paid, ep.total_fee
                 FROM enrollments e 
                 JOIN courses c ON e.course_id = c.id 
+                LEFT JOIN enrollment_payment_plans ep ON e.id = ep.enrollment_id
                 WHERE e.user_id = ?";
         $params = [$this->id];
         
@@ -350,54 +372,38 @@ class User {
         return $this->db->fetchAll($sql, $params);
     }
     
-    /**
-     * Get active enrollments count
-     */
     public function getActiveEnrollmentsCount() {
         return $this->db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'active'",
+            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'In Progress'",
             [$this->id]
         );
     }
     
-    /**
-     * Get completed courses count
-     */
     public function getCompletedCoursesCount() {
         return $this->db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'completed'",
+            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'Completed'",
             [$this->id]
         );
     }
     
-    /**
-     * Get certificates
-     */
     public function getCertificates() {
         return $this->db->fetchAll(
             "SELECT c.*, co.title as course_title, co.slug as course_slug 
              FROM certificates c 
              JOIN courses co ON c.course_id = co.id 
-             WHERE c.user_id = ? 
-             ORDER BY c.issue_date DESC",
+             WHERE c.enrollment_id IN (SELECT id FROM enrollments WHERE user_id = ?) 
+             ORDER BY c.issued_date DESC",
             [$this->id]
         );
     }
     
-    /**
-     * Check if enrolled in course
-     */
     public function isEnrolledIn($courseId) {
-        return $this->db->exists(
-            'enrollments',
-            'user_id = ? AND course_id = ?',
+        return $this->db->fetchColumn(
+            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND course_id = ? AND enrollment_status != 'Dropped'",
             [$this->id, $courseId]
-        );
+        ) > 0;
     }
     
-    /**
-     * Get total time spent learning (minutes)
-     */
     public function getTotalTimeSpent() {
         return (int) $this->db->fetchColumn(
             "SELECT SUM(total_time_spent) FROM enrollments WHERE user_id = ?",
@@ -405,9 +411,6 @@ class User {
         );
     }
     
-    /**
-     * Get recent activity
-     */
     public function getRecentActivity($limit = 10) {
         return $this->db->fetchAll(
             "SELECT * FROM activity_logs 
@@ -418,49 +421,35 @@ class User {
         );
     }
     
-    /**
-     * Deactivate account
-     */
     public function deactivate() {
-        return $this->db->update('users', ['status' => 'inactive'], 'id = ?', [$this->id]) > 0;
+        return $this->update(['status' => 'inactive']);
     }
     
-    /**
-     * Activate account
-     */
     public function activate() {
-        return $this->db->update('users', ['status' => 'active'], 'id = ?', [$this->id]) > 0;
+        return $this->update(['status' => 'active']);
     }
     
-    /**
-     * Suspend account
-     */
     public function suspend() {
-        return $this->db->update('users', ['status' => 'suspended'], 'id = ?', [$this->id]) > 0;
+        return $this->update(['status' => 'suspended']);
     }
     
-    /**
-     * Delete account (soft delete)
-     */
     public function delete() {
-        return $this->deactivate();
+        return $this->deactivate(); // Prefer soft delete
     }
     
     /**
-     * Get all users
-     * Fixed: Uses user_roles junction table instead of non-existent role column
+     * Get all users (Admin)
      */
     public static function all($role = null, $limit = 100, $offset = 0) {
         $db = Database::getInstance();
 
-        $sql = "SELECT u.*, up.avatar, up.city, up.country as province
+        $sql = "SELECT u.*, up.avatar_url, up.city, up.province
                 FROM users u
                 LEFT JOIN user_profiles up ON u.id = up.user_id";
         $params = [];
 
         if ($role) {
-            // Map role name to actual role patterns
-            $rolePattern = '%' . ucfirst($role) . '%';
+            $rolePattern = '%' . $role . '%';
             $sql .= " INNER JOIN user_roles ur ON u.id = ur.user_id
                       INNER JOIN roles r ON ur.role_id = r.id
                       WHERE r.role_name LIKE ?";
@@ -474,15 +463,11 @@ class User {
         return $db->fetchAll($sql, $params);
     }
 
-    /**
-     * Count users
-     * Fixed: Uses user_roles junction table instead of non-existent role column
-     */
     public static function count($role = null) {
         $db = Database::getInstance();
 
         if ($role) {
-            $rolePattern = '%' . ucfirst($role) . '%';
+            $rolePattern = '%' . $role . '%';
             return $db->fetchColumn(
                 "SELECT COUNT(DISTINCT u.id)
                  FROM users u
@@ -496,14 +481,10 @@ class User {
         return $db->fetchColumn("SELECT COUNT(*) FROM users");
     }
 
-    /**
-     * Search users
-     * Fixed: Uses user_roles junction table instead of non-existent role column
-     */
     public static function search($query, $role = null) {
         $db = Database::getInstance();
 
-        $sql = "SELECT u.*, up.avatar, up.city
+        $sql = "SELECT u.*, up.avatar_url, up.city
                 FROM users u
                 LEFT JOIN user_profiles up ON u.id = up.user_id
                 WHERE (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ?)";
@@ -511,7 +492,7 @@ class User {
         $params = [$searchTerm, $searchTerm, $searchTerm];
 
         if ($role) {
-            $rolePattern = '%' . ucfirst($role) . '%';
+            $rolePattern = '%' . $role . '%';
             $sql .= " AND u.id IN (
                 SELECT ur.user_id FROM user_roles ur
                 INNER JOIN roles r ON ur.role_id = r.id
@@ -525,9 +506,6 @@ class User {
         return $db->fetchAll($sql, $params);
     }
     
-    /**
-     * Get user data as array
-     */
     public function toArray() {
         return array_merge($this->data, $this->profile);
     }

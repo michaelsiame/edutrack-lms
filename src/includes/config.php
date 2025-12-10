@@ -30,6 +30,9 @@ if (!defined('CONFIG_PATH')) {
 if (!defined('UPLOAD_PATH')) {
     define('UPLOAD_PATH', PUBLIC_PATH . '/uploads');
 }
+if (!defined('PUBLIC_URL')) define('PUBLIC_URL', $baseUrl . '/public');
+
+if (!defined('UPLOAD_URL')) define('UPLOAD_URL', PUBLIC_URL . '/uploads');
 
 // Load environment variables
 $envFile = ROOT_PATH . '/.env';
