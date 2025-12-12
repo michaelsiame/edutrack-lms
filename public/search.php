@@ -32,7 +32,7 @@ $sql = "SELECT c.*,
         LEFT JOIN instructors i ON c.instructor_id = i.id
         LEFT JOIN users u ON i.user_id = u.id
         LEFT JOIN enrollments e ON c.id = e.course_id
-        LEFT JOIN course_reviews cr ON c.id = cr.course_id AND cr.status = 'approved'
+        LEFT JOIN course_reviews cr ON c.id = cr.course_id
         WHERE c.status = 'published'";
 
 $params = [];

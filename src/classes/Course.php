@@ -132,6 +132,12 @@ class Course {
             $params['search'] = '%' . $filters['search'] . '%';
         }
         
+        // Exclude specific course ID
+        if (!empty($filters['exclude_id'])) {
+            $sql .= " AND c.id != :exclude_id";
+            $params['exclude_id'] = $filters['exclude_id'];
+        }
+        
         // Sorting
         $allowedOrderColumns = [
             'created_at', 'updated_at', 'title', 'price', 
@@ -497,18 +503,15 @@ class Course {
     public function getDescription() { return $this->data['description'] ?? ''; }
     public function getShortDescription() { return $this->data['short_description'] ?? ''; }
     
-    // Mapped correctly to database columns used in create/update
     public function getThumbnailUrl() {
         $thumbnail = $this->data['thumbnail_url'] ?? null;
         
         if (!empty($thumbnail)) {
-            // 1. If it's already a full URL (e.g. from S3), return it
             if (filter_var($thumbnail, FILTER_VALIDATE_URL)) {
                 return $thumbnail;
             }
             
-            // 3. Fallback: Return a standard relative path
-            // Assumes your web root has an 'uploads' folder
+            // Return a standard relative path
             return '/uploads/courses/' . $thumbnail;
         }
 
@@ -559,5 +562,263 @@ class Course {
 
     public function getFormattedPrice() {
         return $this->isFree() ? 'Free' : (function_exists('formatCurrency') ? formatCurrency($this->getPrice()) : '$' . number_format($this->getPrice(), 2));
+    }
+    
+    // ==================== MISSING METHODS ADDED BELOW ====================
+    
+    /**
+     * Get enrollment count (alias for getTotalStudents)
+     */
+    public function getEnrollmentCount() {
+        return $this->getTotalStudents();
+    }
+    
+    /**
+     * Check if course has discount
+     */
+    public function hasDiscount() {
+        return !empty($this->data['discount_price']) && $this->data['discount_price'] < $this->data['price'];
+    }
+    
+    /**
+     * Get current price (discounted price if available, otherwise regular price)
+     */
+    public function getCurrentPrice() {
+        if ($this->hasDiscount()) {
+            return (float)$this->data['discount_price'];
+        }
+        return $this->getPrice();
+    }
+    
+    /**
+     * Get original price (before discount)
+     */
+    public function getOriginalPrice() {
+        return $this->getPrice();
+    }
+    
+    /**
+     * Get maximum students allowed
+     */
+    public function getMaxStudents() {
+        return (int)($this->data['max_students'] ?? 30);
+    }
+    
+    /**
+     * Get course start date
+     */
+    public function getStartDate() {
+        return $this->data['start_date'] ?? null;
+    }
+    
+    /**
+     * Get course end date
+     */
+    public function getEndDate() {
+        return $this->data['end_date'] ?? null;
+    }
+    
+    /**
+     * Check if course is full (reached max students)
+     */
+    public function isFull() {
+        return $this->getTotalStudents() >= $this->getMaxStudents();
+    }
+    
+    /**
+     * Get remaining seats
+     */
+    public function getRemainingSeats() {
+        return max(0, $this->getMaxStudents() - $this->getTotalStudents());
+    }
+    
+    /**
+     * Get completion percentage for a user (if enrolled)
+     */
+    public function getUserProgress($userId) {
+        $sql = "SELECT progress FROM enrollments 
+                WHERE course_id = :course_id AND user_id = :user_id";
+        $result = $this->db->query($sql, [
+            'course_id' => $this->id,
+            'user_id' => $userId
+        ])->fetch();
+        
+        return $result ? (float)$result['progress'] : 0;
+    }
+    
+    /**
+     * Check if user has completed this course
+     */
+    public function isUserCompleted($userId) {
+        $sql = "SELECT enrollment_status FROM enrollments 
+                WHERE course_id = :course_id AND user_id = :user_id";
+        $result = $this->db->query($sql, [
+            'course_id' => $this->id,
+            'user_id' => $userId
+        ])->fetch();
+        
+        return $result && $result['enrollment_status'] === 'Completed';
+    }
+    
+    /**
+     * Get course completion requirements
+     */
+    public function getCompletionRequirements() {
+        return [
+            'minimum_progress' => 100,
+            'passing_grade' => 60,
+            'assignments_completed' => true
+        ];
+    }
+    
+    /**
+     * Get related courses (same category, excluding current)
+     */
+    public function getRelatedCourses($limit = 3) {
+        if (!$this->getCategoryId()) {
+            return [];
+        }
+        
+        $sql = "SELECT c.*, cat.name as category_name
+                FROM courses c
+                LEFT JOIN course_categories cat ON c.category_id = cat.id
+                WHERE c.category_id = :category_id 
+                AND c.id != :course_id 
+                AND c.status = 'published'
+                ORDER BY c.created_at DESC
+                LIMIT :limit";
+        
+        return $this->db->query($sql, [
+            'category_id' => $this->getCategoryId(),
+            'course_id' => $this->getId(),
+            'limit' => $limit
+        ])->fetchAll();
+    }
+    
+    /**
+     * Get course statistics
+     */
+    public function getStatistics() {
+        return [
+            'enrollment_count' => $this->getTotalStudents(),
+            'average_rating' => $this->getAvgRating(),
+            'total_reviews' => $this->getTotalReviews(),
+            'total_lessons' => $this->getTotalLessons(),
+            'completion_rate' => 0, // Would need to calculate
+            'dropout_rate' => 0, // Would need to calculate
+        ];
+    }
+    
+    /**
+     * Get course duration in weeks
+     */
+    public function getDurationInWeeks() {
+        return $this->getDurationWeeks();
+    }
+    
+    /**
+     * Get formatted duration string
+     */
+    public function getFormattedDuration() {
+        $hours = $this->getTotalHours();
+        $weeks = $this->getDurationInWeeks();
+        
+        if ($weeks > 0) {
+            return $weeks . ' weeks • ' . $hours . ' hours';
+        }
+        return $hours . ' hours';
+    }
+    
+    /**
+     * Get course tags or keywords (placeholder - would need tags table)
+     */
+    public function getTags() {
+        // Placeholder - implement if you have a tags system
+        $keywords = [
+            $this->getLevel(),
+            $this->getCategoryName(),
+            $this->getLanguage()
+        ];
+        
+        return array_filter($keywords);
+    }
+    
+    /**
+     * Check if course is starting soon
+     */
+    public function isStartingSoon($days = 7) {
+        if (!$this->getStartDate()) {
+            return false;
+        }
+        
+        $startDate = new DateTime($this->getStartDate());
+        $today = new DateTime();
+        $interval = $today->diff($startDate);
+        
+        return $interval->days <= $days && $interval->invert == 0;
+    }
+    
+    /**
+     * Check if course is ongoing
+     */
+    public function isOngoing() {
+        if (!$this->getStartDate() || !$this->getEndDate()) {
+            return true; // If no dates set, consider it ongoing
+        }
+        
+        $today = new DateTime();
+        $startDate = new DateTime($this->getStartDate());
+        $endDate = new DateTime($this->getEndDate());
+        
+        return $today >= $startDate && $today <= $endDate;
+    }
+    
+    /**
+     * Check if course has ended
+     */
+    public function hasEnded() {
+        if (!$this->getEndDate()) {
+            return false;
+        }
+        
+        $today = new DateTime();
+        $endDate = new DateTime($this->getEndDate());
+        
+        return $today > $endDate;
+    }
+    
+    /**
+     * Get time until course starts (if future date)
+     */
+    public function getTimeUntilStart() {
+        if (!$this->getStartDate()) {
+            return null;
+        }
+        
+        $startDate = new DateTime($this->getStartDate());
+        $today = new DateTime();
+        
+        if ($today > $startDate) {
+            return null; // Already started
+        }
+        
+        return $today->diff($startDate);
+    }
+    
+    /**
+     * Format time until start as string
+     */
+    public function getFormattedTimeUntilStart() {
+        $interval = $this->getTimeUntilStart();
+        
+        if (!$interval) {
+            return $this->isOngoing() ? 'Ongoing' : 'Not scheduled';
+        }
+        
+        if ($interval->days > 0) {
+            return $interval->days . ' day' . ($interval->days > 1 ? 's' : '') . ' to start';
+        }
+        
+        return 'Starting soon';
     }
 }
