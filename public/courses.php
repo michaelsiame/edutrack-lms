@@ -6,7 +6,7 @@
 
 require_once '../src/bootstrap.php';
 
-$page_title = "Browse Courses - EduTrack LMS";
+$page_title = "Browse Courses - " . (defined('APP_NAME') ? APP_NAME : 'EduTrack LMS');
 
 // --- 1. CONFIGURATION & INPUTS ---
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
@@ -16,57 +16,74 @@ $offset = ($page - 1) * $limit;
 $search = trim($_GET['search'] ?? '');
 $category_filter = $_GET['category'] ?? '';
 $level_filter = $_GET['level'] ?? '';
-$sort_filter = $_GET['sort'] ?? 'newest'; // newest, price_low, price_high, popular
+$sort_filter = $_GET['sort'] ?? 'newest'; // newest, price_low, price_high, popular, rating
 
 // --- 2. DATA FETCHING ---
 $db = Database::getInstance();
 
-// Fetch Categories with their DB colors
+// Fetch Categories for the filter dropdown
 $categories = $db->fetchAll("SELECT * FROM course_categories WHERE is_active = 1 ORDER BY name");
 
-// Build Query
-$base_query = " FROM courses c
-                LEFT JOIN course_categories cc ON c.category_id = cc.id
-                LEFT JOIN instructors i ON c.instructor_id = i.id
-                LEFT JOIN users u ON i.user_id = u.id
-                WHERE c.status = 'published'";
-
+// --- 3. BUILD QUERY ---
+// We build the WHERE clause first as it's shared by both the Count query and the Main query
+$where_sql = " WHERE c.status = 'published'";
 $params = [];
 
 // Apply Filters
 if (!empty($search)) {
-    $base_query .= " AND (c.title LIKE ? OR c.description LIKE ? OR c.short_description LIKE ?)";
+    $where_sql .= " AND (c.title LIKE ? OR c.description LIKE ? OR c.short_description LIKE ?)";
     $searchTerm = "%{$search}%";
     array_push($params, $searchTerm, $searchTerm, $searchTerm);
 }
 
 if (!empty($category_filter)) {
-    $base_query .= " AND c.category_id = ?";
+    $where_sql .= " AND c.category_id = ?";
     $params[] = $category_filter;
 }
 
 if (!empty($level_filter)) {
-    $base_query .= " AND c.level = ?";
+    $where_sql .= " AND c.level = ?";
     $params[] = $level_filter;
 }
 
-// Get Total Count for Pagination
-$total_courses = $db->fetchColumn("SELECT COUNT(*)" . $base_query, $params);
+// Get Total Count for Pagination (Efficiently)
+$count_query = "SELECT COUNT(*) 
+                FROM courses c 
+                LEFT JOIN course_categories cc ON c.category_id = cc.id 
+                $where_sql";
+$total_courses = $db->fetchColumn($count_query, $params);
 $total_pages = ceil($total_courses / $limit);
+
+// Define Selection Fields (Including Subqueries for Sorting/Stats)
+// We calculate enrollment_count and rating dynamically per row
+$select_sql = "SELECT c.*, 
+               cc.name as category_name, 
+               COALESCE(cc.color, '#4F46E5') as category_color,
+               CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
+               i.is_verified,
+               (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrollment_count,
+               (SELECT COALESCE(AVG(rating), 0) FROM course_reviews WHERE course_id = c.id AND status='approved') as rating,
+               (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id AND status='approved') as total_reviews";
+
+$join_sql = " FROM courses c
+              LEFT JOIN course_categories cc ON c.category_id = cc.id
+              LEFT JOIN instructors i ON c.instructor_id = i.id
+              LEFT JOIN users u ON i.user_id = u.id";
 
 // Apply Sorting
 switch ($sort_filter) {
     case 'price_low':
-        $order_sql = "ORDER BY COALESCE(c.discount_price, c.price) ASC";
+        // Sort by effective price (discounted if exists)
+        $order_sql = "ORDER BY COALESCE(NULLIF(c.discount_price, 0), c.price) ASC";
         break;
     case 'price_high':
-        $order_sql = "ORDER BY COALESCE(c.discount_price, c.price) DESC";
+        $order_sql = "ORDER BY COALESCE(NULLIF(c.discount_price, 0), c.price) DESC";
         break;
     case 'popular':
-        $order_sql = "ORDER BY c.enrollment_count DESC";
+        $order_sql = "ORDER BY enrollment_count DESC"; // Uses the subquery alias
         break;
     case 'rating':
-        $order_sql = "ORDER BY c.rating DESC";
+        $order_sql = "ORDER BY rating DESC"; // Uses the subquery alias
         break;
     default: // newest
         $order_sql = "ORDER BY c.created_at DESC";
@@ -74,16 +91,12 @@ switch ($sort_filter) {
 }
 
 // Final Select Query
-$query = "SELECT c.*, 
-          cc.name as category_name, 
-          COALESCE(cc.color, '#4F46E5') as category_color,
-          CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
-          i.is_verified
-          " . $base_query . " " . $order_sql . " LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
+$query = $select_sql . $join_sql . $where_sql . " " . $order_sql . " LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
 
 $courses = $db->fetchAll($query, $params);
 
-// Helper function to render stars
+// --- 4. HELPERS ---
+
 function renderStars($rating) {
     $html = '<div class="flex items-center">';
     for ($i = 1; $i <= 5; $i++) {
@@ -99,13 +112,20 @@ function renderStars($rating) {
     return $html;
 }
 
+// Safe formatting helper
+function formatMoney($amount) {
+    return 'K' . number_format((float)$amount, 2);
+}
+
 require_once '../src/templates/header.php';
 ?>
 
-<!-- Hero Section with Pattern -->
+<!-- Hero Section -->
 <section class="relative bg-primary-900 overflow-hidden">
-    <div class="absolute inset-0 opacity-10" style="background-image: url('assets/img/circuit-board.svg');"></div>
+    <!-- Abstract Background Pattern -->
+    <div class="absolute inset-0 opacity-10" style="background-image: url('<?= function_exists('asset') ? asset('images/pattern-dots.svg') : 'assets/images/pattern-dots.svg' ?>'); background-size: cover;"></div>
     <div class="absolute inset-0 bg-gradient-to-br from-primary-900 via-primary-800 to-indigo-900 opacity-95"></div>
+    
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
             Advance Your Career
@@ -114,7 +134,7 @@ require_once '../src/templates/header.php';
             Explore <?= number_format($total_courses) ?>+ TEVETA certified courses in Technology, Business, and Design.
         </p>
         
-        <!-- Quick Search Bar in Hero -->
+        <!-- Search Bar -->
         <div class="max-w-2xl mx-auto">
             <form action="" method="GET" class="relative">
                 <i class="fas fa-search absolute left-4 top-3.5 text-gray-400 z-10"></i>
@@ -206,35 +226,53 @@ require_once '../src/templates/header.php';
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                 <?php foreach ($courses as $course): 
                     // Calculate Discount logic
-                    $has_discount = !empty($course['discount_price']) && $course['discount_price'] < $course['price'];
-                    $current_price = $has_discount ? $course['discount_price'] : $course['price'];
-                    $bg_color = $course['category_color']; // Using DB Color
+                    $price = (float)$course['price'];
+                    $discountPrice = (float)($course['discount_price'] ?? 0);
+                    $has_discount = $discountPrice > 0 && $discountPrice < $price;
+                    $current_price = $has_discount ? $discountPrice : $price;
+                    
+                    // Style logic
+                    $bg_color = $course['category_color'] ?? '#4F46E5';
+                    
+                    // Image Path Logic (Robust Fallback)
+                    $thumbnailUrl = null;
+                    if (!empty($course['thumbnail_url'])) {
+                        if (function_exists('upload_url')) {
+                            $thumbnailUrl = upload_url('courses/' . $course['thumbnail_url']);
+                        } else {
+                            $thumbnailUrl = 'uploads/courses/' . $course['thumbnail_url'];
+                        }
+                    }
+
+                    // Link logic
+                    $courseUrl = "course.php?id=" . $course['id'];
                 ?>
-                    <!-- Enhanced Card -->
+                    <!-- Course Card -->
                     <div class="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:border-primary-200 transition-all duration-300 flex flex-col h-full relative">
                         
                         <!-- Image Container -->
-                        <div class="relative h-48 overflow-hidden">
-                            <?php if ($course['thumbnail_url']): ?>
-                                <img src="<?= htmlspecialchars($course['thumbnail_url']) ?>" 
+                        <a href="<?= $courseUrl ?>" class="relative h-48 overflow-hidden block bg-gray-100">
+                            <?php if ($thumbnailUrl): ?>
+                                <img src="<?= htmlspecialchars($thumbnailUrl) ?>" 
                                      alt="<?= htmlspecialchars($course['title']) ?>" 
-                                     class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                                     class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                             <?php else: ?>
-                                <!-- Fallback patterned background using category color -->
+                                <!-- Fallback patterned background -->
                                 <div class="w-full h-full flex items-center justify-center relative" 
-                                     style="background-color: <?= htmlspecialchars($bg_color) ?>20;"> <!-- 20% opacity -->
+                                     style="background-color: <?= htmlspecialchars($bg_color) ?>20;">
                                     <i class="fas fa-graduation-cap text-5xl opacity-30" style="color: <?= htmlspecialchars($bg_color) ?>"></i>
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
                                 </div>
                             <?php endif; ?>
 
-                            <!-- Badges -->
+                            <!-- Category Badge -->
                             <div class="absolute top-3 left-3 flex flex-col gap-2">
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-white/90 backdrop-blur-sm shadow-sm" style="color: <?= htmlspecialchars($bg_color) ?>;">
-                                    <?= htmlspecialchars($course['category_name']) ?>
+                                    <?= htmlspecialchars($course['category_name'] ?? 'General') ?>
                                 </span>
                             </div>
 
+                            <!-- Sale Badge -->
                             <?php if ($has_discount): ?>
                                 <div class="absolute top-3 right-3">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-500 text-white shadow-sm animate-pulse">
@@ -242,26 +280,26 @@ require_once '../src/templates/header.php';
                                     </span>
                                 </div>
                             <?php endif; ?>
-                        </div>
+                        </a>
 
                         <!-- Card Body -->
                         <div class="p-5 flex-1 flex flex-col">
                             <!-- Rating & Enrollment -->
                             <div class="flex items-center justify-between mb-3 text-xs text-gray-500">
                                 <div class="flex items-center gap-1.5">
-                                    <span class="font-bold text-gray-900"><?= number_format($course['rating'], 1) ?></span>
-                                    <?= renderStars($course['rating']) ?>
-                                    <span class="text-gray-400">(<?= $course['total_reviews'] ?>)</span>
+                                    <span class="font-bold text-gray-900"><?= number_format((float)$course['rating'], 1) ?></span>
+                                    <?= renderStars((float)$course['rating']) ?>
+                                    <span class="text-gray-400">(<?= (int)$course['total_reviews'] ?>)</span>
                                 </div>
                                 <div class="flex items-center" title="Enrolled Students">
                                     <i class="fas fa-user-friends mr-1"></i>
-                                    <?= number_format($course['enrollment_count']) ?>
+                                    <?= number_format((int)$course['enrollment_count']) ?>
                                 </div>
                             </div>
 
                             <!-- Title -->
                             <h3 class="text-lg font-bold text-gray-900 mb-2 leading-tight line-clamp-2 group-hover:text-primary-600 transition-colors">
-                                <a href="course_details.php?slug=<?= htmlspecialchars($course['slug']) ?>">
+                                <a href="<?= $courseUrl ?>">
                                     <?= htmlspecialchars($course['title']) ?>
                                 </a>
                             </h3>
@@ -269,29 +307,33 @@ require_once '../src/templates/header.php';
                             <!-- Instructor -->
                             <div class="flex items-center mb-4">
                                 <div class="text-sm text-gray-600 flex items-center">
-                                    By <?= htmlspecialchars($course['instructor_name']) ?>
-                                    <?php if($course['is_verified']): ?>
+                                    By <?= htmlspecialchars($course['instructor_name'] ?? 'Instructor') ?>
+                                    <?php if(!empty($course['is_verified'])): ?>
                                         <i class="fas fa-check-circle text-blue-500 ml-1 text-xs" title="Verified Instructor"></i>
                                     <?php endif; ?>
                                 </div>
                             </div>
 
-                            <!-- Divider to push footer down -->
+                            <!-- Price Footer -->
                             <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
                                 <div class="flex flex-col">
-                                    <?php if ($current_price == 0): ?>
+                                    <?php if ($price <= 0): ?>
                                         <span class="text-xl font-bold text-green-600">Free</span>
                                     <?php else: ?>
                                         <div class="flex items-center gap-2">
-                                            <span class="text-xl font-bold text-gray-900">ZMW <?= number_format($current_price, 2) ?></span>
+                                            <span class="text-xl font-bold text-gray-900">
+                                                <?= formatMoney($current_price) ?>
+                                            </span>
                                             <?php if ($has_discount): ?>
-                                                <span class="text-sm text-gray-400 line-through">ZMW <?= number_format($course['price'], 2) ?></span>
+                                                <span class="text-sm text-gray-400 line-through">
+                                                    <?= formatMoney($price) ?>
+                                                </span>
                                             <?php endif; ?>
                                         </div>
                                     <?php endif; ?>
                                 </div>
 
-                                <a href="course_details.php?slug=<?= htmlspecialchars($course['slug']) ?>" 
+                                <a href="<?= $courseUrl ?>" 
                                    class="p-2 rounded-full text-gray-400 hover:text-primary-600 hover:bg-primary-50 transition-colors" title="View Details">
                                     <i class="fas fa-arrow-right text-lg"></i>
                                 </a>
@@ -341,7 +383,7 @@ require_once '../src/templates/header.php';
                     We couldn't find any courses matching your filters. Try removing some filters or search for something else.
                 </p>
                 <div class="mt-6">
-                    <a href="courses.php" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <a href="courses.php" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
                         View All Courses
                     </a>
                 </div>

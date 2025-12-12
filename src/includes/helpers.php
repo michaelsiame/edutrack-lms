@@ -34,6 +34,13 @@ function formatDuration($minutes) {
     return $hours . 'h ' . $mins . 'm';
 }
 
+if (!function_exists('upload_url')) {
+    function upload_url($path = '') {
+        // Returns URL to uploads folder
+        return APP_URL . '/uploads/' . ltrim($path, '/');
+    }
+}
+
 /**
  * Check if video URL is YouTube
  *

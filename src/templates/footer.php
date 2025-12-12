@@ -203,7 +203,7 @@
 </button>
 <!-- WhatsApp Floating Button -->
 <div class="whatsapp-float-container">
-    <a href="https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE" 
+    <a href="https://chat.whatsapp.com/HkqCis0yejbJybxyTbsG2e?mode=wwt" 
        target="_blank" 
        rel="noopener noreferrer"
        class="whatsapp-button"
