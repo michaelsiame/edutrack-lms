@@ -1,271 +1,231 @@
 <?php
 /**
+ * Edutrack Computer Training College
  * Course Detail Page
- * Display single course information
  */
 
 require_once '../src/bootstrap.php';
+require_once '../src/classes/Course.php';
+require_once '../src/classes/Enrollment.php';
 require_once '../src/classes/Review.php';
+require_once '../src/classes/User.php';
 
-// Get course ID from URL
+// 1. Get Course ID & Validate
 $courseId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if (!$courseId) {
-    $_SESSION['error'] = 'Invalid course ID';
+    setFlashMessage('Invalid course link.', 'error');
     redirect('courses.php');
 }
 
-// Get course details with all related information
-$db = Database::getInstance();
+// 2. Fetch Course Object
+$course = Course::find($courseId);
 
-$course = $db->fetchOne("
-    SELECT c.*,
-           cc.name as category_name,
-           CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
-           u.id as instructor_user_id,
-           COUNT(DISTINCT e.id) as enrolled_students
-    FROM courses c
-    LEFT JOIN course_categories cc ON c.category_id = cc.id
-    LEFT JOIN instructors i ON c.instructor_id = i.id
-    LEFT JOIN users u ON i.user_id = u.id
-    LEFT JOIN enrollments e ON c.id = e.course_id
-    WHERE c.id = ? AND c.status = 'published'
-    GROUP BY c.id
-", [$courseId]);
-
-if (!$course) {
-    $_SESSION['error'] = 'Course not found or not available';
+if (!$course || !$course->isPublished()) {
+    setFlashMessage('Course not found or currently unavailable.', 'error');
     redirect('courses.php');
 }
 
-// Check if user is already enrolled
+// 3. User Status & Access Logic
+$isLoggedIn = isLoggedIn();
 $isEnrolled = false;
-$enrollment = null;
-if (isLoggedIn()) {
+$canAccess = false;
+$enrollmentId = null;
+
+if ($isLoggedIn) {
     $userId = $_SESSION['user_id'];
-    $enrollment = $db->fetchOne("
-        SELECT * FROM enrollments
-        WHERE user_id = ? AND course_id = ?
-    ", [$userId, $courseId]);
-    $isEnrolled = !empty($enrollment);
+    $enrollment = Enrollment::findByUserAndCourse($userId, $courseId);
+    
+    if ($enrollment) {
+        $isEnrolled = true;
+        $enrollmentId = $enrollment->getId();
+        // Check 30% payment rule via Enrollment class
+        $canAccess = $enrollment->canAccessContent();
+    }
 }
 
-// Get course modules and lessons
-$modules = $db->fetchAll("
-    SELECT m.*,
-           COUNT(l.id) as lesson_count,
-           SUM(l.duration_minutes) as total_duration
-    FROM modules m
-    LEFT JOIN lessons l ON m.id = l.module_id
-    WHERE m.course_id = ?
-    GROUP BY m.id
-    ORDER BY m.display_order ASC
-", [$courseId]);
+// 4. Fetch Curriculum (Optimized to avoid N+1 queries)
+$modules = $course->getModules(); // Assuming Course class has this
+$allLessons = $course->getLessons(); // Assuming Course class has this
 
-// Get course reviews using Review class
-$reviewObjects = Review::getCourseReviews($courseId, ['status' => 'approved', 'limit' => 10]);
-
-// Convert to array format for template compatibility
-$reviews = [];
-foreach ($reviewObjects as $review) {
-    $reviews[] = [
-        'id' => $review->getId(),
-        'rating' => $review->getRating(),
-        'review_title' => $review->getReviewTitle(),
-        'review_text' => $review->getReviewText(),
-        'reviewer_name' => $review->getUserName(),
-        'avatar' => $review->getUserAvatar(),
-        'created_at' => $review->getCreatedAt(),
-        'helpful_count' => $review->getHelpfulCount(),
-        'is_featured' => $review->isFeatured()
+// Group lessons by module_id for easy display
+$curriculum = [];
+foreach ($modules as $mod) {
+    $modId = $mod['id'];
+    $curriculum[$modId] = [
+        'info' => $mod,
+        'lessons' => [],
+        'duration' => 0
     ];
 }
 
-// Get review statistics
-$reviewStats = Review::getCourseStats($courseId);
+foreach ($allLessons as $lesson) {
+    $modId = $lesson['module_id'];
+    if (isset($curriculum[$modId])) {
+        $curriculum[$modId]['lessons'][] = $lesson;
+        $curriculum[$modId]['duration'] += $lesson['duration_minutes'] ?? 0;
+    }
+}
 
-// Get related courses (same category)
-$relatedCourses = $db->fetchAll("
-    SELECT c.*, cc.name as category_name
-    FROM courses c
-    LEFT JOIN course_categories cc ON c.category_id = cc.id
-    WHERE c.category_id = ? AND c.id != ? AND c.status = 'published'
-    ORDER BY c.created_at DESC
-    LIMIT 3
-", [$course['category_id'], $courseId]);
+// 5. Fetch Reviews & Stats
+$reviews = Review::getCourseReviews($courseId, ['status' => 'approved', 'limit' => 5]);
+// $reviewStats = Review::getCourseStats($courseId); // Optional if using cached stats in Course object
 
-$page_title = sanitize($course['title']) . ' - Edutrack computer training college';
+// 6. Fetch Related Courses (Using Course::all with filters)
+$relatedCoursesData = Course::all([
+    'category_id' => $course->getCategoryId(),
+    'limit' => 4 // Fetch 4, then remove current course to ensure we have 3
+]);
 
+// Filter out the current course from related list
+$relatedCourses = [];
+foreach ($relatedCoursesData as $rc) {
+    if ($rc['id'] != $courseId && count($relatedCourses) < 3) {
+        $relatedCourses[] = new Course($rc['id']); // Convert to object for uniform access
+    }
+}
+
+$page_title = sanitize($course->getTitle()) . ' - ' . APP_NAME;
 require_once '../src/templates/header.php';
 ?>
 
 <!-- Course Hero Section -->
-<section class="bg-gradient-to-br from-primary-600 via-primary-700 to-purple-900 text-white py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column - Course Info -->
+<section class="bg-gradient-to-br from-primary-800 to-primary-900 text-white py-16 lg:py-20 relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-1/2 h-full opacity-10 bg-no-repeat bg-right bg-contain" 
+         style="background-image: url('<?= asset('images/pattern-dots.svg') ?>');"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            <!-- LEFT COLUMN: Course Info -->
             <div class="lg:col-span-2">
-                <!-- Breadcrumb -->
-                <nav class="mb-6 text-sm">
-                    <ol class="flex items-center space-x-2">
-                        <li><a href="index.php" class="hover:text-yellow-300">Home</a></li>
-                        <li><i class="fas fa-chevron-right text-xs"></i></li>
-                        <li><a href="courses.php" class="hover:text-yellow-300">Courses</a></li>
-                        <li><i class="fas fa-chevron-right text-xs"></i></li>
-                        <li><a href="courses.php?category=<?= $course['category_id'] ?>" class="hover:text-yellow-300"><?= sanitize($course['category_name']) ?></a></li>
-                        <li><i class="fas fa-chevron-right text-xs"></i></li>
-                        <li class="text-yellow-300"><?= sanitize($course['title']) ?></li>
-                    </ol>
+                <nav class="flex items-center text-sm text-primary-200 mb-6">
+                    <a href="courses.php" class="hover:text-white transition">Courses</a>
+                    <i class="fas fa-chevron-right text-xs mx-3"></i>
+                    <span class="text-white font-medium truncate"><?= sanitize($course->getTitle()) ?></span>
                 </nav>
 
-                <!-- Category Badge -->
-                <div class="mb-4">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-primary-100 text-primary-900">
-                        <i class="fas fa-tag mr-2"></i>
-                        <?= sanitize($course['category_name']) ?>
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/10 text-white border border-white/20 backdrop-blur-sm">
+                        <?= sanitize($course->getCategoryName()) ?>
                     </span>
-                    <?php if (!empty($course['is_teveta_certified'])): ?>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-yellow-400 text-gray-900 ml-2">
-                            <i class="fas fa-certificate mr-2"></i>
-                            TEVETA Registered
-                        </span>
+                    
+                    <?php if ($course->getAvgRating() > 0): ?>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-500/20 text-yellow-300 border border-yellow-500/40">
+                        <i class="fas fa-star mr-1"></i> <?= number_format($course->getAvgRating(), 1) ?>
+                    </span>
                     <?php endif; ?>
                 </div>
 
-                <!-- Course Title -->
-                <h1 class="text-4xl md:text-5xl font-bold mb-4">
-                    <?= sanitize($course['title']) ?>
+                <h1 class="text-3xl md:text-5xl font-bold mb-6 leading-tight">
+                    <?= sanitize($course->getTitle()) ?>
                 </h1>
-
-                <!-- Course Short Description -->
-                <p class="text-xl text-primary-100 mb-6 leading-relaxed">
-                    <?= sanitize($course['short_description'] ?? '') ?>
+                
+                <p class="text-lg text-primary-100 mb-8 leading-relaxed max-w-2xl">
+                    <?= sanitize($course->getShortDescription()) ?>
                 </p>
 
-                <!-- Course Meta Info -->
-                <div class="flex flex-wrap items-center gap-6 text-sm mb-6">
-                    <div class="flex items-center">
-                        <i class="fas fa-star text-yellow-400 mr-2"></i>
-                        <span class="font-semibold"><?= number_format($course['rating'] ?? 0, 1) ?></span>
-                        <span class="ml-1 text-primary-100">(<?= $course['total_reviews'] ?? 0 ?> reviews)</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-users mr-2"></i>
-                        <span><?= number_format($course['enrollment_count'] ?? 0) ?> students</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-signal mr-2"></i>
-                        <span class="capitalize"><?= sanitize($course['level'] ?? 'Beginner') ?></span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-clock mr-2"></i>
-                        <span><?= $course['total_hours'] ?? 0 ?> hours</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-globe mr-2"></i>
-                        <span><?= sanitize($course['language'] ?? 'English') ?></span>
-                    </div>
-                </div>
-
-                <!-- Instructor Info -->
-                <div class="flex items-center bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <div class="flex items-center p-4 bg-white/5 rounded-lg border border-white/10 max-w-md">
                     <div class="flex-shrink-0">
-                        <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-                            <i class="fas fa-user text-2xl"></i>
+                        <div class="w-12 h-12 rounded-full bg-primary-700 flex items-center justify-center text-xl font-bold border-2 border-primary-500">
+                            <?= strtoupper(substr($course->getInstructorName(), 0, 1)) ?>
                         </div>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm text-primary-100">Instructor</p>
-                        <p class="font-semibold text-lg"><?= sanitize($course['instructor_name'] ?? 'Staff') ?></p>
+                        <p class="text-xs text-primary-300 uppercase tracking-wide">Instructor</p>
+                        <p class="font-semibold text-white"><?= sanitize($course->getInstructorName()) ?></p>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column - Enrollment Card -->
+            <!-- RIGHT COLUMN: Sticky Enrollment Card -->
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-xl shadow-2xl overflow-hidden sticky top-4">
-                    <!-- Course Thumbnail -->
-                    <div class="relative h-48 bg-gradient-to-br from-primary-100 to-primary-200">
-                        <?php if (!empty($course['thumbnail_url'])): ?>
-                            <img src="uploads/courses/<?= sanitize($course['thumbnail_url']) ?>"
-                                 alt="<?= sanitize($course['title']) ?>"
-                                 class="w-full h-full object-cover">
-                        <?php else: ?>
-                            <div class="w-full h-full flex items-center justify-center">
-                                <i class="fas fa-graduation-cap text-6xl text-primary-600"></i>
+                <div class="bg-white text-gray-800 rounded-xl shadow-2xl overflow-hidden sticky top-24 z-20">
+                    
+                    <!-- Thumbnail -->
+                    <div class="relative h-52 bg-gray-200 group">
+                        <img src="<?= $course->getThumbnailUrl() ?>" 
+                             alt="<?= sanitize($course->getTitle()) ?>"
+                             class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+
+                        <?php if($course->getVideoIntroUrl()): ?>
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition flex items-center justify-center cursor-pointer">
+                            <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm group-hover:scale-110">
+                                <i class="fas fa-play text-primary-600 text-xl ml-1"></i>
                             </div>
+                        </div>
                         <?php endif; ?>
                     </div>
 
                     <div class="p-6">
-                        <!-- Price -->
-                        <div class="mb-6">
-                            <div class="text-4xl font-bold text-gray-900">
-                                <?php if ($course['price'] == 0): ?>
-                                    <span class="text-green-600">Free</span>
-                                <?php else: ?>
-                                    ZMW <?= number_format($course['price'], 2) ?>
+                        <!-- Pricing -->
+                        <div class="flex items-end gap-3 mb-6">
+                            <?php if ($course->isFree()): ?>
+                                <span class="text-4xl font-bold text-green-600">Free</span>
+                            <?php else: ?>
+                                <span class="text-4xl font-bold text-gray-900">
+                                    <?= $course->getFormattedPrice() ?>
+                                </span>
+                                <?php if ($course->getDiscountPrice() > 0): ?>
+                                    <span class="text-lg text-gray-400 line-through mb-2">
+                                        <?= formatCurrency($course->getDiscountPrice()) ?>
+                                    </span>
                                 <?php endif; ?>
-                            </div>
-                            <?php if (!empty($course['discount_price']) && $course['discount_price'] < $course['price']): ?>
-                                <div class="text-lg text-gray-500 line-through mt-1">
-                                    ZMW <?= number_format($course['price'], 2) ?>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="mb-6 space-y-3">
+                            <?php if ($isEnrolled): ?>
+                                <?php if ($canAccess): ?>
+                                    <div class="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center text-sm text-green-800 mb-2">
+                                        <i class="fas fa-check-circle text-lg mr-2"></i> Active Enrollment
+                                    </div>
+                                    <a href="learn.php?course=<?= $course->getSlug() ?>" class="btn-primary">
+                                        <i class="fas fa-play-circle mr-2"></i> Continue Learning
+                                    </a>
+                                <?php else: ?>
+                                    <div class="p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 text-sm mb-2 rounded-r-lg">
+                                        <p class="font-bold mb-1"><i class="fas fa-lock mr-1"></i> Access Locked</p>
+                                        <p>Pay at least <strong>30%</strong> to unlock.</p>
+                                    </div>
+                                    <a href="checkout.php?enrollment_id=<?= $enrollmentId ?>" class="btn-warning">
+                                        <i class="fas fa-credit-card mr-2"></i> Make Payment
+                                    </a>
+                                <?php endif; ?>
+
+                            <?php elseif ($isLoggedIn): ?>
+                                <a href="enroll.php?course_id=<?= $course->getId() ?>" class="btn-primary">
+                                    <i class="fas fa-user-plus mr-2"></i> Enroll Now
+                                </a>
+                                <p class="text-center text-xs text-gray-500 mt-2">30-Day Money-Back Guarantee</p>
+
+                            <?php else: ?>
+                                <a href="login.php?redirect=course.php?id=<?= $course->getId() ?>" class="btn-primary">
+                                    <i class="fas fa-sign-in-alt mr-2"></i> Login to Enroll
+                                </a>
+                                <div class="text-center mt-3">
+                                    <span class="text-gray-500 text-sm">Don't have an account?</span>
+                                    <a href="register.php" class="text-primary-600 font-semibold text-sm hover:underline">Register</a>
                                 </div>
                             <?php endif; ?>
                         </div>
 
-                        <!-- Enrollment Action -->
-                        <?php if ($isEnrolled): ?>
-                            <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                                <div class="flex items-center text-green-800">
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                    <span class="font-semibold">You're enrolled in this course</span>
-                                </div>
-                            </div>
-                            <a href="learn.php?course=<?= $course['slug'] ?>"
-                               class="block w-full text-center px-6 py-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition duration-200 shadow-lg">
-                                <i class="fas fa-play-circle mr-2"></i>
-                                Continue Learning
-                            </a>
-                        <?php elseif (isLoggedIn()): ?>
-                            <a href="enroll.php?course_id=<?= $course['id'] ?>"
-                               class="block w-full text-center px-6 py-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition duration-200 shadow-lg">
-                                <i class="fas fa-shopping-cart mr-2"></i>
-                                Enroll Now
-                            </a>
-                        <?php else: ?>
-                            <a href="register.php?redirect=course.php?id=<?= $course['id'] ?>"
-                               class="block w-full text-center px-6 py-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition duration-200 shadow-lg">
-                                <i class="fas fa-user-plus mr-2"></i>
-                                Sign Up to Enroll
-                            </a>
-                        <?php endif; ?>
-
-                        <!-- Course Includes -->
-                        <div class="mt-6 pt-6 border-t border-gray-200">
-                            <h4 class="font-semibold text-gray-900 mb-4">This course includes:</h4>
+                        <!-- Stats -->
+                        <div class="border-t border-gray-100 pt-6">
+                            <h4 class="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wide">Included:</h4>
                             <ul class="space-y-3 text-sm text-gray-600">
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
-                                    <span><?= $course['total_hours'] ?? 0 ?> hours on-demand content</span>
+                                    <i class="fas fa-video w-6 text-primary-500 mt-0.5"></i>
+                                    <span><?= $course->getTotalHours() ?> hours video</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
-                                    <span>Full lifetime access</span>
+                                    <i class="fas fa-file-alt w-6 text-primary-500 mt-0.5"></i>
+                                    <span><?= count($modules) ?> Modules</span>
                                 </li>
                                 <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
-                                    <span>Access on mobile and desktop</span>
-                                </li>
-                                <?php if (!empty($course['is_teveta_certified'])): ?>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
-                                    <span>TEVETA Certificate upon completion</span>
-                                </li>
-                                <?php endif; ?>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check text-green-500 mr-3 mt-0.5"></i>
-                                    <span>Assignments and quizzes</span>
+                                    <i class="fas fa-certificate w-6 text-primary-500 mt-0.5"></i>
+                                    <span>Certificate of Completion</span>
                                 </li>
                             </ul>
                         </div>
@@ -276,208 +236,180 @@ require_once '../src/templates/header.php';
     </div>
 </section>
 
-<!-- Course Content Tabs -->
-<section class="py-12 bg-gray-50">
+<!-- Content Tabs -->
+<section class="py-16 bg-gray-50 min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <!-- Tabs -->
-                    <div class="border-b border-gray-200" x-data="{ activeTab: 'overview' }">
-                        <nav class="flex -mb-px">
-                            <button @click="activeTab = 'overview'"
-                                    :class="activeTab === 'overview' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                                    class="px-6 py-4 border-b-2 font-medium text-sm transition">
-                                Overview
-                            </button>
-                            <button @click="activeTab = 'curriculum'"
-                                    :class="activeTab === 'curriculum' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                                    class="px-6 py-4 border-b-2 font-medium text-sm transition">
-                                Curriculum
-                            </button>
-                            <button @click="activeTab = 'reviews'"
-                                    :class="activeTab === 'reviews' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                                    class="px-6 py-4 border-b-2 font-medium text-sm transition">
-                                Reviews (<?= count($reviews) ?>)
-                            </button>
-                        </nav>
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" x-data="{ activeTab: 'overview' }">
+                    <div class="flex border-b border-gray-200">
+                        <button @click="activeTab = 'overview'" :class="activeTab==='overview'?'text-primary-600 border-primary-600':'text-gray-500 border-transparent'" class="tab-btn">Overview</button>
+                        <button @click="activeTab = 'curriculum'" :class="activeTab==='curriculum'?'text-primary-600 border-primary-600':'text-gray-500 border-transparent'" class="tab-btn">Curriculum</button>
+                        <button @click="activeTab = 'reviews'" :class="activeTab==='reviews'?'text-primary-600 border-primary-600':'text-gray-500 border-transparent'" class="tab-btn">Reviews</button>
+                    </div>
 
-                        <!-- Tab Content -->
-                        <div class="p-8">
-                            <!-- Overview Tab -->
-                            <div x-show="activeTab === 'overview'" x-transition>
-                                <h2 class="text-2xl font-bold text-gray-900 mb-6">Course Description</h2>
-                                <div class="prose max-w-none text-gray-700 leading-relaxed">
-                                    <?= nl2br(sanitize($course['description'])) ?>
-                                </div>
-
-                                <?php if ($course['learning_outcomes']): ?>
-                                <div class="mt-8">
-                                    <h3 class="text-xl font-bold text-gray-900 mb-4">What You'll Learn</h3>
-                                    <div class="prose max-w-none text-gray-700">
-                                        <?= nl2br(sanitize($course['learning_outcomes'])) ?>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-
-                                <?php if ($course['prerequisites']): ?>
-                                <div class="mt-8">
-                                    <h3 class="text-xl font-bold text-gray-900 mb-4">Prerequisites</h3>
-                                    <div class="prose max-w-none text-gray-700">
-                                        <?= nl2br(sanitize($course['prerequisites'])) ?>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
-
-                                <?php if ($course['target_audience']): ?>
-                                <div class="mt-8">
-                                    <h3 class="text-xl font-bold text-gray-900 mb-4">Who This Course Is For</h3>
-                                    <div class="prose max-w-none text-gray-700">
-                                        <?= nl2br(sanitize($course['target_audience'])) ?>
-                                    </div>
-                                </div>
-                                <?php endif; ?>
+                    <div class="p-6 md:p-8">
+                        <!-- Overview -->
+                        <div x-show="activeTab === 'overview'" class="space-y-8 animate-fade-in">
+                            <div class="prose max-w-none text-gray-600">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4">Description</h3>
+                                <?= nl2br(sanitize($course->getDescription())) ?>
                             </div>
 
-                            <!-- Curriculum Tab -->
-                            <div x-show="activeTab === 'curriculum'" x-transition>
-                                <h2 class="text-2xl font-bold text-gray-900 mb-6">Course Curriculum</h2>
-
-                                <?php if (!empty($modules)): ?>
-                                    <div class="space-y-4">
-                                        <?php foreach ($modules as $index => $module): ?>
-                                            <div class="border border-gray-200 rounded-lg" x-data="{ open: <?= $index === 0 ? 'true' : 'false' ?> }">
-                                                <button @click="open = !open"
-                                                        class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition">
-                                                    <div class="flex-1">
-                                                        <h4 class="font-semibold text-gray-900">
-                                                            Module <?= $index + 1 ?>: <?= sanitize($module['title']) ?>
-                                                        </h4>
-                                                        <p class="text-sm text-gray-600 mt-1">
-                                                            <?= $module['lesson_count'] ?> lessons • <?= $module['total_duration'] ?? 0 ?> minutes
-                                                        </p>
-                                                    </div>
-                                                    <i class="fas fa-chevron-down transition-transform" :class="open && 'rotate-180'"></i>
-                                                </button>
-
-                                                <div x-show="open" x-collapse class="border-t border-gray-200 bg-gray-50 p-4">
-                                                    <?php if ($module['description']): ?>
-                                                        <p class="text-gray-700 mb-4"><?= sanitize($module['description']) ?></p>
-                                                    <?php endif; ?>
-
-                                                    <?php
-                                                    $lessons = $db->fetchAll("
-                                                        SELECT * FROM lessons
-                                                        WHERE module_id = ?
-                                                        ORDER BY display_order ASC
-                                                    ", [$module['id']]);
-                                                    ?>
-
-                                                    <?php if (!empty($lessons)): ?>
-                                                        <ul class="space-y-2">
-                                                            <?php foreach ($lessons as $lesson): ?>
-                                                                <li class="flex items-center text-sm text-gray-700 p-2 hover:bg-white rounded transition">
-                                                                    <i class="fas fa-<?= $lesson['lesson_type'] === 'video' ? 'play-circle' : ($lesson['lesson_type'] === 'quiz' ? 'question-circle' : 'file-alt') ?> text-gray-400 mr-3"></i>
-                                                                    <span class="flex-1"><?= sanitize($lesson['title']) ?></span>
-                                                                    <?php if ($lesson['duration_minutes']): ?>
-                                                                        <span class="text-gray-500"><?= $lesson['duration_minutes'] ?> min</span>
-                                                                    <?php endif; ?>
-                                                                    <?php if ($lesson['is_preview']): ?>
-                                                                        <span class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">Preview</span>
-                                                                    <?php endif; ?>
-                                                                </li>
-                                                            <?php endforeach; ?>
-                                                        </ul>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="text-center py-12">
-                                        <i class="fas fa-info-circle text-gray-400 text-4xl mb-4"></i>
-                                        <p class="text-gray-600">Course curriculum will be available soon.</p>
-                                    </div>
-                                <?php endif; ?>
+                            <?php if ($outcomes = $course->getLearningOutcomes()): ?>
+                            <div class="bg-primary-50 p-6 rounded-lg border border-primary-100">
+                                <h3 class="text-lg font-bold text-primary-900 mb-4">What you'll learn</h3>
+                                <div class="grid md:grid-cols-2 gap-3">
+                                    <?php foreach (explode("\n", $outcomes) as $outcome): ?>
+                                        <?php if(trim($outcome)): ?>
+                                        <div class="flex items-start">
+                                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                            <span class="text-gray-700 text-sm"><?= sanitize(trim($outcome)) ?></span>
+                                        </div>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
-
-                            <!-- Reviews Tab -->
-                            <div x-show="activeTab === 'reviews'" x-transition>
-                                <h2 class="text-2xl font-bold text-gray-900 mb-6">Student Reviews</h2>
-
-                                <?php if (!empty($reviews)): ?>
-                                    <div class="space-y-6">
-                                        <?php foreach ($reviews as $review): ?>
-                                            <div class="border-b border-gray-200 pb-6 last:border-b-0">
-                                                <div class="flex items-start">
-                                                    <div class="flex-shrink-0">
-                                                        <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                                                            <i class="fas fa-user text-gray-500"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div class="ml-4 flex-1">
-                                                        <div class="flex items-center justify-between mb-2">
-                                                            <h4 class="font-semibold text-gray-900"><?= sanitize($review['reviewer_name']) ?></h4>
-                                                            <span class="text-sm text-gray-500"><?= timeAgo($review['created_at']) ?></span>
-                                                        </div>
-                                                        <div class="flex items-center mb-2">
-                                                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                                <i class="fas fa-star text-sm <?= $i <= $review['rating'] ? 'text-yellow-400' : 'text-gray-300' ?>"></i>
-                                                            <?php endfor; ?>
-                                                            <span class="ml-2 text-sm font-semibold text-gray-700"><?= number_format($review['rating'], 1) ?></span>
-                                                        </div>
-                                                        <?php if ($review['review_title']): ?>
-                                                            <h5 class="font-medium text-gray-900 mb-1"><?= sanitize($review['review_title']) ?></h5>
-                                                        <?php endif; ?>
-                                                        <p class="text-gray-700"><?= sanitize($review['review_text']) ?></p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="text-center py-12">
-                                        <i class="fas fa-star text-gray-400 text-4xl mb-4"></i>
-                                        <p class="text-gray-600">No reviews yet. Be the first to review this course!</p>
-                                    </div>
-                                <?php endif; ?>
+                            <?php endif; ?>
+                            
+                            <?php if ($prereqs = $course->getPrerequisites()): ?>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-2">Requirements</h3>
+                                <ul class="list-disc pl-5 text-gray-600">
+                                    <?php foreach (explode("\n", $prereqs) as $req): ?>
+                                        <?php if(trim($req)): ?><li><?= sanitize(trim($req)) ?></li><?php endif; ?>
+                                    <?php endforeach; ?>
+                                </ul>
                             </div>
+                            <?php endif; ?>
                         </div>
+
+                        <!-- Curriculum -->
+                        <div x-show="activeTab === 'curriculum'" style="display: none;" class="animate-fade-in">
+                            <h3 class="text-xl font-bold text-gray-900 mb-6">Course Content</h3>
+                            <?php if (empty($curriculum)): ?>
+                                <div class="text-center py-10 bg-gray-50 border border-dashed rounded-lg">
+                                    <p class="text-gray-500">Content is being updated.</p>
+                                </div>
+                            <?php else: ?>
+                                <div class="space-y-4">
+                                    <?php 
+                                    $i = 0;
+                                    foreach ($curriculum as $modId => $data): 
+                                        $i++;
+                                        $mod = $data['info'];
+                                        $modLessons = $data['lessons'];
+                                    ?>
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden" x-data="{ open: <?= $i === 1 ? 'true' : 'false' ?> }">
+                                        <button @click="open = !open" class="w-full flex justify-between p-4 bg-gray-50 hover:bg-gray-100">
+                                            <div class="text-left">
+                                                <h4 class="font-bold text-gray-800">Module <?= $i ?>: <?= sanitize($mod['title']) ?></h4>
+                                                <p class="text-xs text-gray-500"><?= count($modLessons) ?> Lessons • <?= $data['duration'] ?> Mins</p>
+                                            </div>
+                                            <i class="fas fa-chevron-down text-gray-400" :class="{'rotate-180': open}"></i>
+                                        </button>
+                                        
+                                        <div x-show="open" class="bg-white border-t border-gray-200">
+                                            <?php if (empty($modLessons)): ?>
+                                                <div class="p-4 text-sm text-gray-400 italic">No lessons yet.</div>
+                                            <?php else: ?>
+                                                <ul class="divide-y divide-gray-100">
+                                                    <?php foreach ($modLessons as $lesson): 
+                                                        $icon = ($lesson['lesson_type'] === 'Video') ? 'play-circle' : 'file-alt';
+                                                    ?>
+                                                    <li class="flex justify-between p-3 hover:bg-gray-50">
+                                                        <div class="flex items-center gap-3">
+                                                            <i class="fas fa-<?= $icon ?> text-primary-400 w-5"></i>
+                                                            <span class="text-sm text-gray-700"><?= sanitize($lesson['title']) ?></span>
+                                                            <?php if (!empty($lesson['is_preview'])): ?>
+                                                                <span class="text-xs bg-green-100 text-green-700 px-2 rounded">Preview</span>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                        <span class="text-xs text-gray-400"><?= $lesson['duration_minutes'] ?>m</span>
+                                                    </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Reviews -->
+                        <div x-show="activeTab === 'reviews'" style="display: none;" class="animate-fade-in">
+                            <h3 class="text-xl font-bold text-gray-900 mb-6">Student Feedback</h3>
+                            <?php if (empty($reviews)): ?>
+                                <p class="text-gray-500 text-center py-8">No reviews yet.</p>
+                            <?php else: ?>
+                                <div class="space-y-6">
+                                    <?php foreach ($reviews as $review): ?>
+                                    <div class="border-b border-gray-100 pb-6 last:border-0">
+                                        <div class="flex gap-4">
+                                            <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold flex-shrink-0">
+                                                <?= strtoupper(substr($review->getUserName(), 0, 1)) ?>
+                                            </div>
+                                            <div>
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <h5 class="font-bold text-gray-900"><?= sanitize($review->getUserName()) ?></h5>
+                                                    <span class="text-xs text-gray-400"><?= timeAgo($review->getCreatedAt()) ?></span>
+                                                </div>
+                                                <div class="text-yellow-400 text-xs mb-2">
+                                                    <?php for($star=1; $star<=5; $star++): ?>
+                                                        <i class="fas fa-star <?= $star <= $review->getRating() ? '' : 'text-gray-200' ?>"></i>
+                                                    <?php endfor; ?>
+                                                </div>
+                                                <p class="text-sm text-gray-600"><?= sanitize($review->getReviewText()) ?></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
                     </div>
                 </div>
             </div>
 
-            <!-- Sidebar -->
+            <!-- Related Courses -->
             <div class="lg:col-span-1">
-                <!-- Related Courses -->
                 <?php if (!empty($relatedCourses)): ?>
-                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Related Courses</h3>
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Related Courses</h3>
                     <div class="space-y-4">
                         <?php foreach ($relatedCourses as $related): ?>
-                            <a href="course.php?id=<?= $related['id'] ?>" class="block group">
-                                <div class="flex items-start space-x-3">
-                                    <div class="flex-shrink-0 w-20 h-16 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-book text-primary-600"></i>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-semibold text-gray-900 group-hover:text-primary-600 line-clamp-2">
-                                            <?= sanitize($related['title']) ?>
-                                        </p>
-                                        <p class="text-xs text-gray-500 mt-1">
-                                            <?= $related['price'] == 0 ? 'Free' : 'ZMW ' . number_format($related['price'], 2) ?>
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
+                        <a href="course.php?id=<?= $related->getId() ?>" class="group flex gap-4">
+                            <div class="w-20 h-16 bg-gray-200 rounded overflow-hidden flex-shrink-0">
+                                <img src="<?= $related->getThumbnailUrl() ?>" class="w-full h-full object-cover group-hover:scale-110 transition">
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-gray-900 group-hover:text-primary-600 line-clamp-2">
+                                    <?= sanitize($related->getTitle()) ?>
+                                </h4>
+                                <p class="text-xs text-primary-600 font-bold mt-1">
+                                    <?= $related->getFormattedPrice() ?>
+                                </p>
+                            </div>
+                        </a>
                         <?php endforeach; ?>
                     </div>
                 </div>
                 <?php endif; ?>
             </div>
+
         </div>
     </div>
 </section>
+
+<style>
+    .btn-primary { @apply block w-full text-center py-4 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 shadow-lg transition transform hover:-translate-y-0.5; }
+    .btn-warning { @apply block w-full text-center py-4 bg-yellow-500 text-white font-bold rounded-lg hover:bg-yellow-600 shadow-lg transition transform hover:-translate-y-0.5; }
+    .tab-btn { @apply flex-1 py-4 text-sm font-medium border-b-2 transition; }
+    .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
 
 <?php require_once '../src/templates/footer.php'; ?>

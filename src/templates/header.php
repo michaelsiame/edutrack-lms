@@ -52,6 +52,7 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= asset('css/main.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/whatsapp-button.css') ?>">
     
     <!-- Tailwind Config -->
     <script>

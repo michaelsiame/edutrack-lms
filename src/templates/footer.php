@@ -201,6 +201,19 @@
 <button id="scrollToTop" class="fixed bottom-8 right-8 bg-primary-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-primary-700 transition-all duration-300 hidden z-40">
     <i class="fas fa-arrow-up"></i>
 </button>
+<!-- WhatsApp Floating Button -->
+<div class="whatsapp-float-container">
+    <a href="https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       class="whatsapp-button"
+       aria-label="Join our WhatsApp Group">
+        <div class="ripple"></div>
+        <i class="fab fa-whatsapp"></i>
+        <span class="notification-badge">New</span>
+        <span class="whatsapp-tooltip">Join Our Community!</span>
+    </a>
+</div>
 
 <!-- Custom JavaScript -->
 <script src="<?= asset('js/main.js') ?>"></script>

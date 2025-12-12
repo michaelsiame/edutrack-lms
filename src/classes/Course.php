@@ -12,7 +12,7 @@ class Course {
     public function __construct($id = null) {
         $this->db = Database::getInstance();
         if ($id) {
-            $this->id = $id;
+            $this->id = (int)$id;
             $this->load();
         }
     }
@@ -21,17 +21,20 @@ class Course {
      * Load course data from database
      */
     private function load() {
-        $sql = "SELECT c.*, cat.name as category_name,
-                u.first_name as instructor_first_name, u.last_name as instructor_last_name,
-                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
-                (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id) as avg_rating,
-                (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) as total_reviews
+        $sql = "SELECT c.*, 
+                       cat.name as category_name,
+                       u.first_name as instructor_first_name, 
+                       u.last_name as instructor_last_name,
+                       (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
+                       (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id AND status = 'approved') as avg_rating,
+                       (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id AND status = 'approved') as total_reviews
                 FROM courses c
                 LEFT JOIN course_categories cat ON c.category_id = cat.id
                 LEFT JOIN users u ON c.instructor_id = u.id
                 WHERE c.id = :id";
 
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $result = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $this->data = $result ?: [];
     }
     
     /**
@@ -69,11 +72,13 @@ class Course {
     public static function all($filters = []) {
         $db = Database::getInstance();
 
-        $sql = "SELECT c.*, cat.name as category_name,
-                u.first_name as instructor_first_name, u.last_name as instructor_last_name,
-                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
-                (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id) as avg_rating,
-                (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) as total_reviews
+        $sql = "SELECT c.*, 
+                       cat.name as category_name,
+                       u.first_name as instructor_first_name, 
+                       u.last_name as instructor_last_name,
+                       (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
+                       (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id AND status = 'approved') as avg_rating,
+                       (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id AND status = 'approved') as total_reviews
                 FROM courses c
                 LEFT JOIN course_categories cat ON c.category_id = cat.id
                 LEFT JOIN users u ON c.instructor_id = u.id
@@ -81,9 +86,12 @@ class Course {
         
         $params = [];
         
-        // Filter by status
+        // Filter by status (Default to published unless specified)
         if (!isset($filters['include_draft']) && !isset($filters['instructor_id'])) {
             $sql .= " AND c.status = 'published'";
+        } elseif (isset($filters['status'])) {
+            $sql .= " AND c.status = :status";
+            $params['status'] = $filters['status'];
         }
 
         // Filter by instructor
@@ -115,35 +123,49 @@ class Course {
         
         // Filter by TEVETA
         if (!empty($filters['teveta_accredited'])) {
-            $sql .= " AND c.teveta_accredited = 1";
+            $sql .= " AND c.is_teveta_certified = 1";
         }
         
         // Search
         if (!empty($filters['search'])) {
-            $sql .= " AND (c.title LIKE :search OR c.description LIKE :search OR c.what_you_will_learn LIKE :search)";
+            $sql .= " AND (c.title LIKE :search OR c.description LIKE :search OR c.learning_outcomes LIKE :search)";
             $params['search'] = '%' . $filters['search'] . '%';
         }
         
-        // Sorting - whitelist allowed columns to prevent SQL injection
+        // Sorting
         $allowedOrderColumns = [
-            'created_at', 'updated_at', 'title', 'price', 'rating',
-            'enrollment_count', 'start_date', 'end_date', 'level', 'featured'
+            'created_at', 'updated_at', 'title', 'price', 
+            'rating', 'enrollment_count', 'level', 'featured'
         ];
-        $allowedOrderDir = ['ASC', 'DESC'];
-
-        $orderBy = $filters['order_by'] ?? 'created_at';
+        
+        $orderByInput = $filters['order_by'] ?? 'created_at';
         $orderDir = strtoupper($filters['order_dir'] ?? 'DESC');
-
-        // Validate order column
-        if (!in_array($orderBy, $allowedOrderColumns)) {
-            $orderBy = 'created_at';
-        }
-        // Validate order direction
-        if (!in_array($orderDir, $allowedOrderDir)) {
+        
+        if (!in_array($orderDir, ['ASC', 'DESC'])) {
             $orderDir = 'DESC';
         }
 
-        $sql .= " ORDER BY c.$orderBy $orderDir";
+        // Map sort keys to actual SQL columns or aliases
+        switch ($orderByInput) {
+            case 'rating':
+                $orderBy = 'avg_rating';
+                break;
+            case 'enrollment_count':
+            case 'total_students':
+                $orderBy = 'total_students';
+                break;
+            case 'price':
+                $orderBy = 'c.price';
+                break;
+            case 'title':
+                $orderBy = 'c.title';
+                break;
+            default:
+                $orderBy = 'c.created_at';
+                break;
+        }
+
+        $sql .= " ORDER BY $orderBy $orderDir";
         
         // Pagination
         if (isset($filters['limit'])) {
@@ -171,26 +193,14 @@ class Course {
     }
     
     /**
-     * Get popular courses
+     * Get popular courses (Most Enrolled)
      */
     public static function popular($limit = 6) {
-        $db = Database::getInstance();
-        
-        $sql = "SELECT c.*, cat.name as category_name,
-                u.first_name as instructor_first_name, u.last_name as instructor_last_name,
-                COUNT(e.id) as total_students,
-                AVG(r.rating) as avg_rating
-                FROM courses c
-                LEFT JOIN course_categories cat ON c.category_id = cat.id
-                LEFT JOIN users u ON c.instructor_id = u.id
-                LEFT JOIN enrollments e ON c.id = e.course_id
-                LEFT JOIN course_reviews r ON c.id = r.course_id
-                WHERE c.status = 'published'
-                GROUP BY c.id
-                ORDER BY total_students DESC, avg_rating DESC
-                LIMIT :limit";
-        
-        return $db->query($sql, ['limit' => $limit])->fetchAll();
+        return self::all([
+            'limit' => $limit,
+            'order_by' => 'enrollment_count',
+            'order_dir' => 'DESC'
+        ]);
     }
     
     /**
@@ -208,19 +218,7 @@ class Course {
      * Get courses by instructor ID
      */
     public static function getByInstructor($instructorId) {
-        $db = Database::getInstance();
-
-        $sql = "SELECT c.*, cat.name as category_name,
-                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
-                (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id) as avg_rating,
-                (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) as total_reviews,
-                (SELECT COUNT(*) FROM lessons l JOIN modules m ON l.module_id = m.id WHERE m.course_id = c.id) as total_lessons
-                FROM courses c
-                LEFT JOIN course_categories cat ON c.category_id = cat.id
-                WHERE c.instructor_id = :instructor_id
-                ORDER BY c.created_at DESC";
-
-        return $db->query($sql, ['instructor_id' => $instructorId])->fetchAll();
+        return self::all(['instructor_id' => $instructorId]);
     }
     
     /**
@@ -252,38 +250,59 @@ class Course {
     public static function create($data) {
         $db = Database::getInstance();
 
-        // Generate slug from title
+        // Generate slug from title if not provided
         if (empty($data['slug'])) {
             $data['slug'] = self::generateSlug($data['title']);
         }
 
+        // Ensure array keys exist
+        $data = array_merge([
+            'short_description' => '',
+            'level' => 'beginner',
+            'language' => 'English',
+            'thumbnail_url' => null,
+            'video_intro_url' => null,
+            'price' => 0,
+            'total_hours' => 0,
+            'duration_weeks' => 0,
+            'status' => 'draft',
+            'prerequisites' => null,
+            'learning_outcomes' => null,
+            'target_audience' => null,
+            'is_teveta_certified' => 0
+        ], $data);
+
         $sql = "INSERT INTO courses (
             instructor_id, title, slug, description, short_description, category_id,
-            course_level, language, thumbnail, promo_video_url, price,
-            duration_hours, status, prerequisites, learning_outcomes, target_audience
+            level, language, thumbnail_url, video_intro_url, price,
+            total_hours, duration_weeks, status, prerequisites, learning_outcomes, target_audience,
+            is_teveta_certified, created_at, updated_at
         ) VALUES (
             :instructor_id, :title, :slug, :description, :short_description, :category_id,
-            :course_level, :language, :thumbnail, :promo_video_url, :price,
-            :duration_hours, :status, :prerequisites, :learning_outcomes, :target_audience
+            :level, :language, :thumbnail_url, :video_intro_url, :price,
+            :total_hours, :duration_weeks, :status, :prerequisites, :learning_outcomes, :target_audience,
+            :is_teveta_certified, NOW(), NOW()
         )";
 
         $params = [
             'instructor_id' => $data['instructor_id'],
             'title' => $data['title'],
             'slug' => $data['slug'],
-            'description' => $data['description'] ?? '',
-            'short_description' => $data['short_description'] ?? '',
+            'description' => $data['description'],
+            'short_description' => $data['short_description'],
             'category_id' => $data['category_id'],
-            'course_level' => $data['course_level'] ?? $data['level'] ?? 'beginner',
-            'language' => $data['language'] ?? 'English',
-            'thumbnail' => $data['thumbnail'] ?? $data['thumbnail_url'] ?? null,
-            'promo_video_url' => $data['promo_video_url'] ?? $data['video_intro_url'] ?? null,
-            'price' => $data['price'] ?? 0,
-            'duration_hours' => $data['duration_hours'] ?? $data['total_hours'] ?? null,
-            'status' => $data['status'] ?? 'draft',
-            'prerequisites' => $data['prerequisites'] ?? null,
-            'learning_outcomes' => $data['learning_outcomes'] ?? null,
-            'target_audience' => $data['target_audience'] ?? null
+            'level' => $data['level'],
+            'language' => $data['language'],
+            'thumbnail_url' => $data['thumbnail_url'],
+            'video_intro_url' => $data['video_intro_url'],
+            'price' => $data['price'],
+            'total_hours' => $data['total_hours'],
+            'duration_weeks' => $data['duration_weeks'],
+            'status' => $data['status'],
+            'prerequisites' => $data['prerequisites'],
+            'learning_outcomes' => $data['learning_outcomes'],
+            'target_audience' => $data['target_audience'],
+            'is_teveta_certified' => $data['is_teveta_certified']
         ];
 
         if ($db->query($sql, $params)) {
@@ -299,13 +318,13 @@ class Course {
         $fields = [];
         $params = [];
 
-        // Build dynamic update query based on provided data
-        // Column names must match the database schema
+        // Whitelist allowed fields for update
         $allowedFields = [
             'title', 'slug', 'description', 'short_description', 'category_id',
             'level', 'language', 'thumbnail_url', 'video_intro_url', 'price',
             'discount_price', 'duration_weeks', 'total_hours', 'max_students',
-            'status', 'is_featured', 'prerequisites', 'learning_outcomes'
+            'status', 'featured', 'prerequisites', 'learning_outcomes', 'target_audience',
+            'is_teveta_certified'
         ];
 
         foreach ($allowedFields as $field) {
@@ -335,6 +354,7 @@ class Course {
      * Delete course
      */
     public function delete() {
+        // Optional: Check for enrollments before deleting
         $sql = "DELETE FROM courses WHERE id = :id";
         return $this->db->query($sql, ['id' => $this->id]);
     }
@@ -350,7 +370,7 @@ class Course {
     }
     
     /**
-     * Get course lessons
+     * Get course lessons with Module info
      */
     public function getLessons() {
         $sql = "SELECT l.*, m.title as module_title 
@@ -370,7 +390,7 @@ class Course {
                 JOIN modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id";
         $result = $this->db->query($sql, ['course_id' => $this->id])->fetch();
-        return $result['total'];
+        return $result['total'] ?? 0;
     }
     
     /**
@@ -384,12 +404,14 @@ class Course {
                 WHERE r.course_id = :course_id AND r.status = 'approved'
                 ORDER BY r.created_at DESC";
         
+        $params = ['course_id' => $this->id];
+
         if ($limit) {
             $sql .= " LIMIT :limit";
-            return $this->db->query($sql, ['course_id' => $this->id, 'limit' => $limit])->fetchAll();
+            $params['limit'] = (int)$limit;
         }
         
-        return $this->db->query($sql, ['course_id' => $this->id])->fetchAll();
+        return $this->db->query($sql, $params)->fetchAll();
     }
     
     /**
@@ -398,7 +420,7 @@ class Course {
     public function getRatingBreakdown() {
         $sql = "SELECT 
                 COUNT(*) as total_reviews,
-                AVG(rating) as avg_rating,
+                COALESCE(AVG(rating), 0) as avg_rating,
                 SUM(CASE WHEN rating = 5 THEN 1 ELSE 0 END) as five_star,
                 SUM(CASE WHEN rating = 4 THEN 1 ELSE 0 END) as four_star,
                 SUM(CASE WHEN rating = 3 THEN 1 ELSE 0 END) as three_star,
@@ -414,18 +436,20 @@ class Course {
      * Get enrolled students
      */
     public function getEnrolledStudents($limit = null) {
-        $sql = "SELECT u.*, e.enrolled_at, e.progress_percentage
+        $sql = "SELECT u.first_name, u.last_name, u.email, e.enrolled_at, e.progress_percentage
                 FROM enrollments e
                 JOIN users u ON e.user_id = u.id
                 WHERE e.course_id = :course_id
                 ORDER BY e.enrolled_at DESC";
         
+        $params = ['course_id' => $this->id];
+
         if ($limit) {
             $sql .= " LIMIT :limit";
-            return $this->db->query($sql, ['course_id' => $this->id, 'limit' => $limit])->fetchAll();
+            $params['limit'] = (int)$limit;
         }
         
-        return $this->db->query($sql, ['course_id' => $this->id])->fetchAll();
+        return $this->db->query($sql, $params)->fetchAll();
     }
     
     /**
@@ -447,7 +471,7 @@ class Course {
      */
     private static function generateSlug($title) {
         $db = Database::getInstance();
-        $slug = slugify($title);
+        $slug = function_exists('slugify') ? slugify($title) : strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
         $originalSlug = $slug;
         $counter = 1;
         
@@ -466,74 +490,74 @@ class Course {
         return $slug;
     }
     
-    // Getters
+    // --- Getters (Updated for key consistency) ---
     public function getId() { return $this->data['id'] ?? null; }
     public function getTitle() { return $this->data['title'] ?? ''; }
     public function getSlug() { return $this->data['slug'] ?? ''; }
     public function getDescription() { return $this->data['description'] ?? ''; }
     public function getShortDescription() { return $this->data['short_description'] ?? ''; }
-    public function getWhatYouWillLearn() { return $this->data['what_you_will_learn'] ?? ''; }
-    public function getRequirements() { return $this->data['requirements'] ?? ''; }
-    public function getThumbnail() { return $this->data['thumbnail'] ?? null; }
+    
+    // Mapped correctly to database columns used in create/update
+    public function getThumbnailUrl() {
+        $thumbnail = $this->data['thumbnail_url'] ?? null;
+        
+        if (!empty($thumbnail)) {
+            // 1. If it's already a full URL (e.g. from S3), return it
+            if (filter_var($thumbnail, FILTER_VALIDATE_URL)) {
+                return $thumbnail;
+            }
+            
+            // 3. Fallback: Return a standard relative path
+            // Assumes your web root has an 'uploads' folder
+            return '/uploads/courses/' . $thumbnail;
+        }
+
+        // Handle Placeholder
+        if (function_exists('asset')) {
+            return asset('images/course-placeholder.jpg');
+        }
+        
+        return '/assets/images/course-placeholder.jpg';
+    }
+
+    public function getVideoIntroUrl() { return $this->data['video_intro_url'] ?? ''; }
+    
     public function getCategoryId() { return $this->data['category_id'] ?? null; }
     public function getCategoryName() { return $this->data['category_name'] ?? ''; }
-    public function getCategorySlug() { return $this->data['category_slug'] ?? ''; }
+    
     public function getInstructorId() { return $this->data['instructor_id'] ?? null; }
     public function getInstructorName() { 
         return trim(($this->data['instructor_first_name'] ?? '') . ' ' . ($this->data['instructor_last_name'] ?? ''));
     }
-    public function getLevel() { return $this->data['level'] ?? 'beginner'; }
-    public function getPrice() { return $this->data['price'] ?? 0; }
-    public function getDuration() { return $this->data['duration'] ?? 0; }
+    
+    public function getLevel() { return $this->data['level'] ?? 'Beginner'; }
+    public function getPrice() { return (float)($this->data['price'] ?? 0); }
+    public function getDiscountPrice() { return (float)($this->data['discount_price'] ?? 0); }
+    
+    public function getTotalHours() { return $this->data['total_hours'] ?? 0; }
+    public function getDurationWeeks() { return $this->data['duration_weeks'] ?? 0; }
+    
     public function getLanguage() { return $this->data['language'] ?? 'English'; }
     public function getStatus() { return $this->data['status'] ?? 'draft'; }
-    public function isTeveta() {
-    return isset($this->data['is_teveta_certified']) && $this->data['is_teveta_certified'] == 1;
-}
-    public function getTevetaCourseCode() { return $this->data['teveta_course_code'] ?? ''; }
-    public function hasCertificate() { return $this->data['certificate_available'] == 1; }
-    public function isFeatured() { return $this->data['featured'] == 1; }
-    public function getTotalStudents() { return $this->data['total_students'] ?? 0; }
-    public function getAvgRating() { return $this->data['avg_rating'] ?? 0; }
-    public function getTotalReviews() { return $this->data['total_reviews'] ?? 0; }
-    public function isFree() { return $this->getPrice() == 0; }
-    public function isPublished() { return $this->getStatus() == 'published'; }
+    
+    public function isTevetaCertified() {
+        return !empty($this->data['is_teveta_certified']);
+    }
+
+    public function isFeatured() { return !empty($this->data['featured']); }
+    public function getTotalStudents() { return (int)($this->data['total_students'] ?? 0); }
+    public function getAvgRating() { return (float)($this->data['avg_rating'] ?? 0); }
+    public function getTotalReviews() { return (int)($this->data['total_reviews'] ?? 0); }
+    
+    public function isFree() { return $this->getPrice() <= 0; }
+    public function isPublished() { return $this->getStatus() === 'published'; }
+    
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }
-    public function getUpdatedAt() { return $this->data['updated_at'] ?? null; }
-    public function getDurationHours() { return $this->data['duration_hours'] ?? 0; }
-    public function getPromoVideoUrl() { return $this->data['promo_video_url'] ?? ''; }
     public function getPrerequisites() { return $this->data['prerequisites'] ?? ''; }
     public function getLearningOutcomes() { return $this->data['learning_outcomes'] ?? ''; }
     public function getTargetAudience() { return $this->data['target_audience'] ?? ''; }
-    
-    /**
-     * Get formatted price
-     */
+
     public function getFormattedPrice() {
-        return $this->isFree() ? 'Free' : formatCurrency($this->getPrice());
-    }
-    
-    /**
-     * Get thumbnail URL
-     */
-    public function getThumbnailUrl() {
-        if ($this->getThumbnail()) {
-            return upload_url('courses/thumbnails/' . $this->getThumbnail());
-        }
-        return asset('images/course-placeholder.jpg');
-    }
-    
-    /**
-     * Get course URL
-     */
-    public function getUrl() {
-        return url('course.php?slug=' . $this->getSlug());
-    }
-    
-    /**
-     * Get enroll URL
-     */
-    public function getEnrollUrl() {
-        return url('enroll.php?course_id=' . $this->getId());
+        return $this->isFree() ? 'Free' : (function_exists('formatCurrency') ? formatCurrency($this->getPrice()) : '$' . number_format($this->getPrice(), 2));
     }
 }
