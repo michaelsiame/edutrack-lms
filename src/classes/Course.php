@@ -26,8 +26,8 @@ class Course {
                        u.first_name as instructor_first_name, 
                        u.last_name as instructor_last_name,
                        (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
-                       (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id AND status = 'approved') as avg_rating,
-                       (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id AND status = 'approved') as total_reviews
+                       (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id) as avg_rating,
+                       (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) as total_reviews
                 FROM courses c
                 LEFT JOIN course_categories cat ON c.category_id = cat.id
                 LEFT JOIN users u ON c.instructor_id = u.id
@@ -77,8 +77,8 @@ class Course {
                        u.first_name as instructor_first_name, 
                        u.last_name as instructor_last_name,
                        (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
-                       (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id AND status = 'approved') as avg_rating,
-                       (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id AND status = 'approved') as total_reviews
+                       (SELECT AVG(rating) FROM course_reviews WHERE course_id = c.id) as avg_rating,
+                       (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) as total_reviews
                 FROM courses c
                 LEFT JOIN course_categories cat ON c.category_id = cat.id
                 LEFT JOIN users u ON c.instructor_id = u.id
