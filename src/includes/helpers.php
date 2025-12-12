@@ -122,6 +122,52 @@ function readingTime($text) {
 function randomString($length = 32) {
     return bin2hex(random_bytes($length / 2));
 }
+/**
+ * Format currency for display
+ */
+function formatCurrency($amount, $currency = null) {
+    if (is_null($currency)) {
+        $currency = getSystemCurrency();
+    }
+    
+    // Ensure amount is float
+    $amount = (float)$amount;
+    
+    // Format with thousands separators
+    $formatted = number_format($amount, 2, '.', ',');
+    
+    return $currency . ' ' . $formatted;
+}
+
+/**
+ * Get system currency from settings
+ */
+function getSystemCurrency() {
+    // Default to ZMW for Zambia
+    $defaultCurrency = 'ZMW';
+    
+    // Try to get from database if needed
+    if (class_exists('Database')) {
+        $db = Database::getInstance();
+        $sql = "SELECT setting_value FROM system_settings WHERE setting_key = 'currency'";
+        $result = $db->query($sql)->fetch();
+        
+        if ($result && !empty($result['setting_value'])) {
+            return $result['setting_value'];
+        }
+    }
+    
+    return $defaultCurrency;
+}
+
+/**
+ * Debug function to check price values
+ */
+function debugPrice($value, $label = 'Price') {
+    echo "<!-- DEBUG $label: ";
+    var_dump($value);
+    echo " -->\n";
+}
 
 /**
  * Check if user owns resource

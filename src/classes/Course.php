@@ -533,10 +533,104 @@ class Course {
         return trim(($this->data['instructor_first_name'] ?? '') . ' ' . ($this->data['instructor_last_name'] ?? ''));
     }
     
-    public function getLevel() { return $this->data['level'] ?? 'Beginner'; }
-    public function getPrice() { return (float)($this->data['price'] ?? 0); }
-    public function getDiscountPrice() { return (float)($this->data['discount_price'] ?? 0); }
+    public function getLevel() { return $this->data['level'] ?? 'Beginner'; }// In your Course class, update these methods:
+
+/**
+ * Get price - ensure it returns a float
+ */
+public function getPrice() { 
+    $price = $this->data['price'] ?? 0;
     
+    // Handle different formats
+    if (is_string($price)) {
+        // Remove any commas and convert to float
+        $price = str_replace(',', '', $price);
+    }
+    
+    return (float)$price; 
+}
+
+/**
+ * Get discount price - ensure it returns a float
+ */
+public function getDiscountPrice() { 
+    $price = $this->data['discount_price'] ?? 0;
+    
+    if (empty($price)) {
+        return 0.0;
+    }
+    
+    // Handle different formats
+    if (is_string($price)) {
+        $price = str_replace(',', '', $price);
+    }
+    
+    return (float)$price; 
+}
+
+/**
+ * Format price with proper currency formatting
+ */
+public function getFormattedPrice($formatWithCurrency = true) {
+    if ($this->isFree()) {
+        return 'Free';
+    }
+    
+    $price = $this->getPrice();
+    
+    // Format the number with thousands separators
+    $formatted = number_format($price, 2, '.', ',');
+    
+    if ($formatWithCurrency) {
+        // Get currency from system settings
+        $currency = 'ZMW'; // Default
+        
+        if (function_exists('getSystemCurrency')) {
+            $currency = getSystemCurrency();
+        }
+        
+        return $currency . ' ' . $formatted;
+    }
+    
+    return $formatted;
+}
+
+/**
+ * Format discount price with proper currency formatting
+ */
+public function getFormattedDiscountPrice($formatWithCurrency = true) {
+    $price = $this->getDiscountPrice();
+    
+    if ($price <= 0) {
+        return '';
+    }
+    
+    // Format the number with thousands separators
+    $formatted = number_format($price, 2, '.', ',');
+    
+    if ($formatWithCurrency) {
+        // Get currency from system settings
+        $currency = 'ZMW'; // Default
+        
+        if (function_exists('getSystemCurrency')) {
+            $currency = getSystemCurrency();
+        }
+        
+        return $currency . ' ' . $formatted;
+    }
+    
+    return $formatted;
+}
+
+/**
+ * Check if course has discount
+ */
+public function hasDiscount() {
+    $discountPrice = $this->getDiscountPrice();
+    $regularPrice = $this->getPrice();
+    
+    return $discountPrice > 0 && $discountPrice < $regularPrice;
+}
     public function getTotalHours() { return $this->data['total_hours'] ?? 0; }
     public function getDurationWeeks() { return $this->data['duration_weeks'] ?? 0; }
     
@@ -559,10 +653,6 @@ class Course {
     public function getPrerequisites() { return $this->data['prerequisites'] ?? ''; }
     public function getLearningOutcomes() { return $this->data['learning_outcomes'] ?? ''; }
     public function getTargetAudience() { return $this->data['target_audience'] ?? ''; }
-
-    public function getFormattedPrice() {
-        return $this->isFree() ? 'Free' : (function_exists('formatCurrency') ? formatCurrency($this->getPrice()) : '$' . number_format($this->getPrice(), 2));
-    }
     
     // ==================== MISSING METHODS ADDED BELOW ====================
     
@@ -572,13 +662,7 @@ class Course {
     public function getEnrollmentCount() {
         return $this->getTotalStudents();
     }
-    
-    /**
-     * Check if course has discount
-     */
-    public function hasDiscount() {
-        return !empty($this->data['discount_price']) && $this->data['discount_price'] < $this->data['price'];
-    }
+
     
     /**
      * Get current price (discounted price if available, otherwise regular price)
