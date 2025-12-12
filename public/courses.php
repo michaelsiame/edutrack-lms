@@ -62,8 +62,8 @@ $select_sql = "SELECT c.*,
                CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
                i.is_verified,
                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrollment_count,
-               (SELECT COALESCE(AVG(rating), 0) FROM course_reviews WHERE course_id = c.id AND status='approved') as rating,
-               (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id AND status='approved') as total_reviews";
+               (SELECT COALESCE(AVG(rating), 0) FROM course_reviews WHERE course_id = c.id) as rating,
+               (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) as total_reviews";
 
 $join_sql = " FROM courses c
               LEFT JOIN course_categories cc ON c.category_id = cc.id
