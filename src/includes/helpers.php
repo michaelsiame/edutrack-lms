@@ -123,58 +123,6 @@ function randomString($length = 32) {
     return bin2hex(random_bytes($length / 2));
 }
 
-/**
- * Format currency for display
- */
-function formatCurrency($amount, $currency = null) {
-    if (is_null($currency)) {
-        $currency = getSystemCurrency();
-    }
-    
-    // Ensure amount is float
-    $amount = (float)$amount;
-    
-    // Format with thousands separators
-    $formatted = number_format($amount, 2, '.', ',');
-    
-    return $currency . ' ' . $formatted;
-}
-
-/**
- * Get system currency from settings
- */
-function getSystemCurrency() {
-    // Default to ZMW for Zambia
-    $defaultCurrency = 'ZMW';
-    
-    // Check if we can access database
-    if (defined('DB_HOST') && class_exists('Database')) {
-        try {
-            $db = Database::getInstance();
-            $sql = "SELECT setting_value FROM system_settings WHERE setting_key = 'currency'";
-            $result = $db->query($sql)->fetch();
-            
-            if ($result && !empty($result['setting_value'])) {
-                return $result['setting_value'];
-            }
-        } catch (Exception $e) {
-            // Silently fail and return default
-        }
-    }
-    
-    return $defaultCurrency;
-}
-
-/**
- * Safe debug function for production
- */
-function debugPrice($value, $label = 'Price') {
-    if (defined('APP_DEBUG') && APP_DEBUG) {
-        echo "<!-- DEBUG $label: ";
-        var_dump($value);
-        echo " -->\n";
-    }
-}
 
 /**
  * Check if user owns resource
@@ -193,7 +141,6 @@ function ownsResource($resourceUserId) {
  * @return bool
  */
 function isPast($date) {
-    if (empty($date)) return false;
     return strtotime($date) < time();
 }
 
@@ -204,7 +151,6 @@ function isPast($date) {
  * @return bool
  */
 function isFuture($date) {
-    if (empty($date)) return false;
     return strtotime($date) > time();
 }
 
@@ -288,106 +234,14 @@ function jsonError($message, $code = 400) {
     ], $code);
 }
 
+// NOTE: getClientIP() removed - duplicate of getClientIp() in functions.php
+// PHP function names are case-insensitive, so getClientIP and getClientIp conflict
+
 /**
  * Check if request is mobile
  *
  * @return bool
  */
 function isMobile() {
-    $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    return preg_match('/(android|iphone|ipad|mobile)/i', $ua);
-}
-
-/**
- * Missing function for course detail page
- * Format time ago (e.g., "2 days ago")
- */
-if (!function_exists('timeAgo')) {
-    function timeAgo($datetime, $full = false) {
-        $now = new DateTime;
-        $ago = new DateTime($datetime);
-        $diff = $now->diff($ago);
-        
-        
-        $string = array(
-            'y' => 'year',
-            'm' => 'month',
-            'd' => 'day',
-            'h' => 'hour',
-            'i' => 'minute',
-            's' => 'second',
-        );
-        
-        // Build the output array
-        $output = [];
-        foreach ($string as $key => $text) {
-            if ($diff->$key) {
-                $value = $diff->$key;
-                $output[] = $value . ' ' . $text . ($value > 1 ? 's' : '');
-            }
-        }
-        
-        // If no time difference, return "just now"
-        if (empty($output)) {
-            return 'just now';
-        }
-        
-        if (!$full && count($output) > 1) {
-            $output = array_slice($output, 0, 1);
-        }
-        
-        return implode(', ', $output) . ' ago';
-    }
-}
-
-/**
- * Missing function for course detail page
- * Get asset URL
- */
-if (!function_exists('asset')) {
-    function asset($path) {
-        return APP_URL . '/' . ltrim($path, '/');
-    }
-}
-
-/**
- * Missing function for course detail page
- * Sanitize output
- */
-if (!function_exists('sanitize')) {
-    function sanitize($string) {
-        return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
-    }
-}
-
-/**
- * Missing function for course detail page
- * Create URL-friendly slug
- */
-if (!function_exists('slugify')) {
-    function slugify($text) {
-        // Replace non-letter or digits by -
-        $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-        
-        // Transliterate
-        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-        
-        // Remove unwanted characters
-        $text = preg_replace('~[^-\w]+~', '', $text);
-        
-        // Trim
-        $text = trim($text, '-');
-        
-        // Remove duplicate -
-        $text = preg_replace('~-+~', '-', $text);
-        
-        // Lowercase
-        $text = strtolower($text);
-        
-        if (empty($text)) {
-            return 'n-a';
-        }
-        
-        return $text;
-    }
+    return preg_match('/(android|iphone|ipad|mobile)/i', $_SERVER['HTTP_USER_AGENT'] ?? '');
 }
