@@ -401,7 +401,7 @@ class Course {
                 FROM course_reviews r
                 JOIN users u ON r.user_id = u.id
                 LEFT JOIN user_profiles up ON u.id = up.user_id
-                WHERE r.course_id = :course_id AND r.status = 'approved'
+                WHERE r.course_id = :course_id
                 ORDER BY r.created_at DESC";
         
         $params = ['course_id' => $this->id];
@@ -427,7 +427,7 @@ class Course {
                 SUM(CASE WHEN rating = 2 THEN 1 ELSE 0 END) as two_star,
                 SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as one_star
                 FROM course_reviews 
-                WHERE course_id = :course_id AND status = 'approved'";
+                WHERE course_id = :course_id";
         
         return $this->db->query($sql, ['course_id' => $this->id])->fetch();
     }
