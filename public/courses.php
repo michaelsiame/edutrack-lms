@@ -234,13 +234,19 @@ require_once '../src/templates/header.php';
                     // Style logic
                     $bg_color = $course['category_color'] ?? '#4F46E5';
                     
-                    // Image Path Logic (Robust Fallback)
+                    // Image Path Logic
                     $thumbnailUrl = null;
-                    if (!empty($course['thumbnail_url'])) {
-                        if (function_exists('upload_url')) {
-                            $thumbnailUrl = upload_url('courses/' . $course['thumbnail_url']);
-                        } else {
-                            $thumbnailUrl = 'uploads/courses/' . $course['thumbnail_url'];
+                    $dbThumbnail = $course['thumbnail_url'] ?? '';
+
+                    if (!empty($dbThumbnail)) {
+                        // 1. If it's a full web URL (like your Unsplash links), use it as is
+                        if (filter_var($dbThumbnail, FILTER_VALIDATE_URL)) {
+                            $thumbnailUrl = $dbThumbnail;
+                        } 
+                        // 2. If it's a local file (e.g., "image.jpg"), add the path
+                        else {
+                            // We use a leading slash '/' to ensure it points to the root uploads folder
+                            $thumbnailUrl = '/uploads/courses/' . $dbThumbnail;
                         }
                     }
 
