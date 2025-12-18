@@ -15,7 +15,7 @@ require_once '../src/templates/header.php';
 // 1. FEATURED BY CATEGORY (Optimized Query with Instructors)
 $featured_by_category = [];
 try {
-    // We added the JOINs here to get the instructor name, just like in courses.php
+    // We added the JOINs here to get the instructor name
     $stmt = $pdo->query("
         SELECT c.*, 
                cc.name as category_name, 
@@ -155,14 +155,22 @@ try {
                         
                         <!-- Course Grid -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <?php foreach ($category_courses as $course): ?>
+                            <?php foreach ($category_courses as $course): 
+                                // --- FIX: Image Path Logic ---
+                                $thumbnailUrl = null;
+                                if (!empty($course['thumbnail_url'])) {
+                                    if (filter_var($course['thumbnail_url'], FILTER_VALIDATE_URL)) {
+                                        $thumbnailUrl = $course['thumbnail_url'];
+                                    } else {
+                                        $thumbnailUrl = '/uploads/courses/' . $course['thumbnail_url'];
+                                    }
+                                }
+                            ?>
                                 <div class="group course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                                     <!-- Thumbnail -->
                                     <div class="relative h-48 bg-gradient-to-br from-<?= $course['category_color'] ?>-50 to-<?= $course['category_color'] ?>-100 overflow-hidden">
-                                        <?php 
-                                        // Match paths with courses.php logic
-                                        if ($course['thumbnail_url'] && file_exists('../public/uploads/courses/' . $course['thumbnail_url'])): ?>
-                                            <img src="uploads/courses/<?= htmlspecialchars($course['thumbnail_url']) ?>" 
+                                        <?php if ($thumbnailUrl): ?>
+                                            <img src="<?= htmlspecialchars($thumbnailUrl) ?>" 
                                                  alt="<?= htmlspecialchars($course['title']) ?>" 
                                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                         <?php else: ?>
@@ -246,12 +254,22 @@ try {
 
         <?php if (!empty($top_featured)): ?>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <?php foreach ($top_featured as $index => $course): ?>
+                <?php foreach ($top_featured as $index => $course): 
+                    // --- FIX: Image Path Logic ---
+                    $thumbnailUrl = null;
+                    if (!empty($course['thumbnail_url'])) {
+                        if (filter_var($course['thumbnail_url'], FILTER_VALIDATE_URL)) {
+                            $thumbnailUrl = $course['thumbnail_url'];
+                        } else {
+                            $thumbnailUrl = '/uploads/courses/' . $course['thumbnail_url'];
+                        }
+                    }
+                ?>
                     <div class="group course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up animation-delay-<?= $index * 100 ?>">
                         <!-- Thumbnail -->
                         <div class="relative h-48 bg-gradient-to-br from-<?= $course['category_color'] ?>-50 to-<?= $course['category_color'] ?>-100 overflow-hidden">
-                            <?php if ($course['thumbnail_url'] && file_exists('../public/uploads/courses/' . $course['thumbnail_url'])): ?>
-                                <img src="uploads/courses/<?= htmlspecialchars($course['thumbnail_url']) ?>" 
+                            <?php if ($thumbnailUrl): ?>
+                                <img src="<?= htmlspecialchars($thumbnailUrl) ?>" 
                                      alt="<?= htmlspecialchars($course['title']) ?>" 
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             <?php else: ?>
