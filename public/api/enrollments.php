@@ -7,6 +7,7 @@
 require_once '../../src/bootstrap.php';
 require_once '../../src/middleware/admin-only.php';
 require_once '../../src/classes/Enrollment.php';
+require_once '../../src/includes/email-hooks.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: ' . ($_SERVER['HTTP_ORIGIN'] ?? '*'));
@@ -66,6 +67,9 @@ try {
             ]);
 
             if ($enrollmentId) {
+                // Send enrollment confirmation email
+                sendEnrollmentConfirmation($enrollmentId);
+
                 echo json_encode([
                     'success' => true,
                     'message' => 'Enrollment created successfully',
