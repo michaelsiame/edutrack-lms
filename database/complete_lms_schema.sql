@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Nov 27, 2025 at 02:20 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Host: 127.0.0.1:3306
+-- Generation Time: Dec 21, 2025 at 06:47 AM
+-- Server version: 11.8.3-MariaDB-log
+-- PHP Version: 7.2.34
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `edutrack_lms`
+-- Database: `u605780771_edutrack_lms`
 --
 
 -- --------------------------------------------------------
@@ -245,43 +245,43 @@ CREATE TABLE `courses` (
   `learning_outcomes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `courses`
 --
 
 INSERT INTO `courses` (`id`, `title`, `slug`, `description`, `short_description`, `category_id`, `instructor_id`, `level`, `language`, `thumbnail_url`, `video_intro_url`, `start_date`, `end_date`, `price`, `discount_price`, `duration_weeks`, `total_hours`, `max_students`, `enrollment_count`, `status`, `is_featured`, `rating`, `total_reviews`, `prerequisites`, `learning_outcomes`, `created_at`, `updated_at`) VALUES
-(1, 'Certificate in Microsoft Office Suite', 'microsoft-office-suite', 'Comprehensive training in Microsoft Word, Excel, PowerPoint, Publisher and Internet skills. Learn document creation, spreadsheet analysis, presentations, desktop publishing and internet navigation for professional environments.', 'Master Word, Excel, PowerPoint, Publisher & Internet', 1, 1, 'Beginner', 'English', NULL, NULL, '2025-01-15', '2025-04-15', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(3, 'Certificate in Digital Literacy', 'digital-literacy', 'Essential digital skills for the modern workplace including email, internet research, cloud storage, online collaboration, and digital safety.', 'Essential digital skills for everyone', 1, 1, 'Beginner', 'English', NULL, NULL, '2025-01-20', '2025-03-20', 850.00, NULL, 2, 16.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(4, 'Certificate in Record Management', 'record-management', 'Professional records and information management systems. Learn filing systems, document control, archiving, and compliance with data protection regulations.', 'Professional records management', 1, 1, 'Intermediate', 'English', NULL, NULL, '2025-02-15', '2025-05-15', 1500.00, NULL, 6, 48.00, 30, 0, 'published', 0, 4.50, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(5, 'Certificate in Python Programming', 'python-programming', 'Learn Python from basics to advanced concepts. Cover data structures, OOP, file handling, and popular libraries. Ideal for beginners and aspiring developers.', 'Master Python programming', 2, 2, 'Beginner', 'English', NULL, NULL, '2025-01-10', '2025-04-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(6, 'Certificate in Java Programming', 'java-programming', 'Master Java programming with hands-on projects. Learn OOP principles, Java collections, multithreading, and enterprise application development.', 'Complete Java development course', 2, 2, 'Intermediate', 'English', NULL, NULL, '2025-02-01', '2025-06-01', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(7, 'Certificate in Web Development', 'web-development', 'Full-stack web development using HTML5, CSS3, JavaScript, and modern frameworks. Build responsive websites and web applications from scratch.', 'Build modern web applications', 2, 2, 'Beginner', 'English', NULL, NULL, '2025-01-15', '2025-04-30', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(8, 'Certificate in Mobile App Development', 'mobile-app-development', 'Create mobile applications for Android and iOS platforms. Learn Java/Kotlin for Android and Swift for iOS with practical app projects.', 'iOS and Android app development', 2, 2, 'Advanced', 'English', NULL, NULL, '2025-03-01', '2025-07-30', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(9, 'Certificate in Software Engineering', 'software-engineering-git', 'Software development methodologies, version control with Git/GitHub, testing, CI/CD, and collaborative development practices.', 'Professional software engineering', 2, 2, 'Intermediate', 'English', NULL, NULL, '2025-02-10', '2025-05-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(10, 'Certificate in Data Analysis', 'data-analysis', 'Data analysis fundamentals using Excel, SQL, and Python. Learn data cleaning, visualization, statistical analysis, and reporting techniques.', 'Become a data analyst', 3, 4, 'Beginner', 'English', NULL, NULL, '2025-01-20', '2025-04-20', 1500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(11, 'Certificate in Cyber Security', 'cyber-security', 'Comprehensive cybersecurity training covering network security, ethical hacking, threat analysis, and security best practices. Industry-recognized certification.', 'Advanced cybersecurity training', 3, 3, 'Advanced', 'English', NULL, NULL, '2025-02-15', '2025-06-30', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(12, 'Certificate in Database Management Systems', 'database-management', 'Master database design and management using MySQL, PostgreSQL, and SQL Server. Learn SQL, normalization, optimization, and administration.', 'Database design and management', 3, 3, 'Intermediate', 'English', NULL, NULL, '2025-01-25', '2025-05-25', 1500.00, NULL, 6, 48.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(13, 'Certificate in Artificial Intelligence', 'ai-machine-learning', 'Introduction to artificial intelligence concepts and applications. Learn AI fundamentals, machine learning basics, and practical applications in modern technology.', 'AI fundamentals and applications', 4, 4, 'Advanced', 'English', NULL, NULL, '2025-03-01', '2025-07-01', 850.00, NULL, 3, 24.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(14, 'Certificate in Internet of Things', 'internet-of-things', 'IoT fundamentals including sensors, microcontrollers, connectivity, and cloud integration. Build smart devices and IoT solutions.', 'Build IoT solutions', 4, 4, 'Intermediate', 'English', NULL, NULL, '2025-02-20', '2025-05-20', 450.00, NULL, 12, 60.00, 30, 0, 'archived', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(15, 'Certificate in Graphic Designing', 'graphic-designing', 'Professional graphic design using Adobe Photoshop, Illustrator, and InDesign. Learn design principles, typography, branding, and print/digital media.', 'Master graphic design tools', 5, 6, 'Beginner', 'English', NULL, NULL, '2025-01-15', '2025-04-30', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(16, 'Certificate in Digital & Content Creation', 'digital-content-creation', 'Create engaging multimedia content for education and business. Video editing, animation, interactive presentations, and e-learning materials.', 'Multimedia content creation', 5, 6, 'Intermediate', 'English', NULL, NULL, '2025-02-05', '2025-05-05', 950.00, NULL, 3, 24.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(17, 'Certificate in Digital Marketing', 'digital-marketing', 'Comprehensive digital marketing strategies including SEO, social media marketing, content marketing, email campaigns, and analytics.', 'Complete digital marketing', 5, 6, 'Beginner', 'English', NULL, NULL, '2025-01-20', '2025-04-20', 950.00, NULL, 3, 24.00, 30, 0, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(18, 'Certificate in Entrepreneurship', 'entrepreneurship', 'Start and grow your business with essential entrepreneurship skills. Business planning, financing, marketing, and operations management.', 'Start your own business', 6, 5, 'Beginner', 'English', NULL, NULL, '2025-01-10', '2025-04-10', 2500.00, NULL, 11, 88.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(19, 'Certificate in Project Management', 'project-management', 'Professional project management methodologies including PMBOK, Agile, and Scrum. Plan, execute, and deliver successful projects.', 'Professional project management', 6, 5, 'Intermediate', 'English', NULL, NULL, '2025-02-01', '2025-06-01', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(20, 'Certificate in Financial Technology', 'financial-technology', 'Explore digital payments, blockchain, cryptocurrency, mobile money, and digital banking. Understand the future of financial services.', 'FinTech fundamentals', 6, 5, 'Advanced', 'English', NULL, NULL, '2025-03-01', '2025-06-15', 1200.00, NULL, 3, 24.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-11-24 11:25:37'),
-(24, 'Certificate in ICT Support & Hardware Repair', 'ict-support-hardware-repair', 'Comprehensive training in computer hardware, troubleshooting, maintenance, and repair. Learn to diagnose and fix common hardware issues, install operating systems, and provide technical support.', 'Computer hardware repair & support', 1, 1, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
-(25, 'Certificate in Computer Studies', 'computer-studies', 'Comprehensive computer studies program covering fundamental concepts, applications, and practical skills. Ideal foundation for further ICT studies.', 'Foundation computer studies', 1, 1, 'Beginner', 'English', NULL, NULL, NULL, NULL, 3850.00, NULL, 12, 96.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
-(26, 'Certificate in Computer Science General', 'computer-science-general', 'General computer science covering both software and hardware fundamentals. Learn programming basics, system architecture, and computing principles.', 'Software and hardware fundamentals', 1, 1, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
-(27, 'Certificate in Information Technology', 'information-technology', 'Comprehensive IT fundamentals covering networking, systems administration, IT security, and technical support. Prepare for entry-level IT positions.', 'IT fundamentals and systems', 1, 1, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
-(28, 'Certificate in Computer & Business Handling', 'computer-business-handling', 'Essential computer skills for business professionals. Learn office applications, business communication, data entry, and basic accounting software.', 'Business computer skills', 1, 1, 'Beginner', 'English', NULL, NULL, NULL, NULL, 1200.00, NULL, 4, 32.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
-(29, 'Certificate in C++ Programming', 'cpp-programming', 'Master C++ programming from basics to advanced concepts. Learn object-oriented programming, data structures, algorithms, and system programming.', 'Master C++ programming', 2, 2, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
-(30, 'Certificate in Sales & Marketing', 'sales-marketing', 'Comprehensive sales and marketing training. Learn customer relationship management, sales techniques, market research, and marketing strategies.', 'Sales and marketing skills', 6, 5, 'Beginner', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
-(31, 'Certificate in Monitoring & Evaluation', 'monitoring-evaluation', 'Professional M&E training covering project monitoring frameworks, data collection, analysis, reporting, and evaluation methodologies.', 'M&E for projects and programs', 6, 5, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
-(32, 'Certificate in Purchasing & Supply', 'purchasing-supply', 'Professional procurement and supply chain management. Learn purchasing procedures, vendor management, inventory control, and logistics.', 'Procurement and supply chain', 6, 5, 'Intermediate', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
-(33, 'Certificate in E-Commerce & Online Business', 'ecommerce-online-business', 'Start and run an online business. Learn e-commerce platforms, online payment systems, digital storefronts, and online customer service.', 'Start your online business', 6, 5, 'Beginner', 'English', NULL, NULL, NULL, NULL, 950.00, NULL, 3, 24.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37'),
-(34, 'Certificate in Secretarial & Office Management', 'secretarial-office-management', 'Professional secretarial training covering office management, business communication, typing skills, filing systems, and office ethics.', 'Office management & typing skills', 6, 5, 'Beginner', 'English', NULL, NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-11-24 11:25:37');
+(1, 'Certificate in Microsoft Office Suite', 'microsoft-office-suite', 'Transform your productivity with comprehensive Microsoft Office training. This industry-leading program covers the complete Office Suite including Word, Excel, PowerPoint, Publisher, and essential internet skills. Learn to create professional documents, analyze data with powerful spreadsheets, design compelling presentations, and master desktop publishing. Perfect for professionals seeking to enhance workplace efficiency, students preparing for academic success, or career changers entering the digital workplace. Our hands-on approach ensures you gain practical, job-ready skills that employers value. By course end, you\'ll confidently handle complex office tasks, automate workflows, and present information professionally.', 'Master Word, Excel, PowerPoint, Publisher & Internet skills for professional success', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=800', NULL, '2025-01-15', '2025-04-15', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(3, 'Certificate in Digital Literacy', 'digital-literacy', 'Bridge the digital divide with essential 21st-century skills. This foundational course equips you with critical digital competencies for modern life and work. Learn professional email communication, effective internet research techniques, cloud storage management, online collaboration tools, and digital safety practices. Understand social media etiquette, basic troubleshooting, file management, and online privacy protection. Ideal for beginners, seniors transitioning to digital workplaces, or anyone looking to build confidence with technology. Our patient, step-by-step instruction ensures no one gets left behind in the digital age. Gain the digital fluency needed to thrive in today\'s connected world.', 'Essential digital skills for navigating modern technology confidently', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800', NULL, '2025-01-20', '2025-03-20', 850.00, NULL, 2, 16.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(4, 'Certificate in Record Management', 'record-management', 'Master professional records and information management systems that keep organizations running smoothly. Learn comprehensive filing systems, document control procedures, archiving best practices, and compliance with data protection regulations including GDPR. Understand records lifecycle management, retention schedules, digitization processes, and efficient retrieval systems. This course covers both physical and electronic records management, preparing you for roles in government, healthcare, legal, and corporate environments. Gain expertise in maintaining confidentiality, ensuring audit trails, and implementing secure disposal methods. Essential for administrative professionals, office managers, and those pursuing careers in information governance.', 'Professional records and information management for compliance and efficiency', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800', NULL, '2025-02-15', '2025-05-15', 1500.00, NULL, 6, 48.00, 30, 0, 'published', 0, 4.50, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(5, 'Certificate in Python Programming', 'python-programming', 'Launch your programming career with Python, the world\'s most popular and versatile programming language. This comprehensive course takes you from absolute beginner to confident developer. Master Python fundamentals including variables, data types, control structures, and functions. Progress to advanced topics like object-oriented programming, file handling, error management, and popular libraries including NumPy, Pandas, and Matplotlib. Build real-world projects including data analysis tools, automation scripts, and web applications. Python\'s readability and extensive community support make it perfect for beginners, while its power suits professional developers. Ideal for aspiring programmers, data scientists, automation engineers, or anyone entering tech careers.', 'Learn Python from basics to advanced - the most in-demand programming language', 2, 2, 'Beginner', 'English', 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800', NULL, '2025-01-10', '2025-04-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(6, 'Certificate in Java Programming', 'java-programming', 'Master Java, the enterprise-standard programming language powering billions of devices worldwide. This rigorous course covers Java fundamentals through advanced enterprise development. Learn object-oriented programming principles, Java collections framework, multithreading, exception handling, and JDBC for database connectivity. Build robust, scalable applications using industry best practices. Understand design patterns, unit testing with JUnit, and modern development tools. Java\'s \"write once, run anywhere\" philosophy makes it essential for enterprise applications, Android development, and large-scale systems. Perfect for aspiring software engineers, mobile developers, or professionals transitioning into backend development roles.', 'Master Java for enterprise applications and Android development', 2, 2, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800', NULL, '2025-02-01', '2025-06-01', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(7, 'Certificate in Web Development', 'web-development', 'Build stunning, professional websites from scratch with our comprehensive full-stack web development program. Master the complete web development toolkit: HTML5 for structure, CSS3 for beautiful styling, JavaScript for interactivity, and modern frameworks for responsive design. Learn mobile-first development, CSS Grid and Flexbox layouts, JavaScript ES6+ features, DOM manipulation, and API integration. Create portfolio-worthy projects including responsive business websites, interactive web applications, and dynamic user interfaces. Understand version control with Git, browser developer tools, and deployment processes. This hands-on course prepares you for frontend developer roles or freelance web design careers. No prior experience required.', 'Build modern, responsive websites with HTML5, CSS3, JavaScript & frameworks', 2, 2, 'Beginner', 'English', 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=800', NULL, '2025-01-15', '2025-04-30', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(8, 'Certificate in Mobile App Development', 'mobile-app-development', 'Create professional mobile applications for the world\'s two dominant platforms - Android and iOS. This comprehensive program covers native mobile development using Java/Kotlin for Android and Swift for iOS. Learn mobile UI/UX principles, lifecycle management, data persistence, API integration, and app publishing processes. Build real apps including social media clients, e-commerce apps, and location-based services. Understand mobile-specific challenges like varying screen sizes, touch interfaces, push notifications, and offline functionality. Master app store submission, monetization strategies, and user analytics. Perfect for aspiring mobile developers, entrepreneurs launching apps, or web developers expanding their skillset into the lucrative mobile market.', 'Develop native iOS and Android applications professionally', 2, 2, 'Advanced', 'English', 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800', NULL, '2025-03-01', '2025-07-30', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(9, 'Certificate in Software Engineering', 'software-engineering-git', 'Learn professional software development practices that distinguish hobbyists from industry professionals. Master essential software engineering methodologies including Agile, Scrum, and DevOps. Gain expertise in version control with Git and GitHub for collaborative development, branching strategies, pull requests, and code reviews. Understand software testing principles, continuous integration/continuous deployment (CI/CD), code quality tools, and documentation best practices. Learn project management, technical communication, and team collaboration workflows used by leading tech companies. This course bridges the gap between writing code and building enterprise-grade software. Essential for junior developers preparing for professional roles or programmers seeking to adopt industry standards.', 'Professional software development with Git, testing, CI/CD & methodologies', 2, 2, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=800', NULL, '2025-02-10', '2025-05-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(10, 'Certificate in Data Analysis', 'data-analysis', 'Transform raw data into actionable business insights with comprehensive data analysis training. Master the complete data analytics workflow: collection, cleaning, analysis, visualization, and reporting. Learn Excel for data manipulation and pivot tables, SQL for database querying, and Python with Pandas for advanced analysis. Create compelling data visualizations using Tableau-style dashboards, statistical analysis techniques, and predictive modeling basics. Understand key performance indicators (KPIs), A/B testing, and data-driven decision making. Work with real-world datasets from business, healthcare, and finance sectors. This practical course prepares you for data analyst, business intelligence, or market research roles. No advanced math required - just curiosity and attention to detail.', 'Analyze data and create insights using Excel, SQL, Python & visualization tools', 3, 4, 'Beginner', 'English', 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800', NULL, '2025-01-20', '2025-04-20', 1500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(11, 'Certificate in Cyber Security', 'cyber-security', 'Defend organizations against evolving cyber threats with industry-recognized cybersecurity training. This advanced program covers network security fundamentals, ethical hacking techniques, threat analysis, penetration testing, and security best practices. Learn cryptography, firewall configuration, intrusion detection systems, security auditing, and incident response protocols. Master vulnerability assessment tools, security frameworks (NIST, ISO 27001), and compliance requirements. Understand social engineering, malware analysis, and secure coding practices. Gain hands-on experience with Kali Linux, Wireshark, Metasploit, and other professional tools. This comprehensive course prepares you for security analyst, penetration tester, or security consultant roles. Help protect critical infrastructure in our increasingly connected world.', 'Advanced cybersecurity: ethical hacking, network defense & threat analysis', 3, 3, 'Advanced', 'English', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800', NULL, '2025-02-15', '2025-06-30', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(12, 'Certificate in Database Management Systems', 'database-management', 'Master the backbone of modern applications - professional database design and management. Learn relational database concepts, SQL mastery, database design principles, and normalization techniques. Work with industry-standard systems including MySQL, PostgreSQL, and SQL Server. Understand indexing strategies, query optimization, stored procedures, triggers, and transactions. Learn database administration tasks including backup/recovery, user management, performance tuning, and security. Explore NoSQL basics and data warehousing concepts. Build real-world database projects from e-commerce platforms to content management systems. Essential for backend developers, data engineers, database administrators, or anyone working with data-intensive applications. Transform messy data into organized, efficient database systems.', 'Design, manage & optimize databases using MySQL, PostgreSQL & SQL Server', 3, 3, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800', NULL, '2025-01-25', '2025-05-25', 1500.00, NULL, 6, 48.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(13, 'Certificate in Artificial Intelligence', 'ai-machine-learning', 'Explore the transformative world of Artificial Intelligence and its practical applications across industries. This introductory course demystifies AI concepts including machine learning, neural networks, natural language processing, and computer vision. Understand how AI powers recommendation systems, autonomous vehicles, virtual assistants, and medical diagnostics. Learn AI ethics, bias considerations, and societal implications. Gain hands-on experience with AI tools and platforms without deep mathematical knowledge. Explore real-world case studies from healthcare, finance, retail, and manufacturing. Perfect for business professionals, managers, entrepreneurs, or anyone curious about AI\'s impact on their industry. No programming background required - focus on understanding and applying AI strategically.', 'Understand AI fundamentals and practical applications across industries', 4, 4, 'Advanced', 'English', 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800', NULL, '2025-03-01', '2025-07-01', 850.00, NULL, 3, 24.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(14, 'Certificate in Internet of Things', 'internet-of-things', 'Build smart, connected devices with Internet of Things (IoT) technology. Learn IoT architecture, sensor integration, microcontroller programming (Arduino, Raspberry Pi), wireless communication protocols, and cloud connectivity. Understand MQTT, REST APIs, and IoT security challenges. Build practical IoT projects including smart home systems, environmental monitoring, and industrial automation solutions. Explore IoT platforms like AWS IoT, Azure IoT Hub, and ThingSpeak. Learn data collection from sensors, real-time processing, and remote device control. Perfect for electronics enthusiasts, embedded systems developers, or engineers implementing Industry 4.0 solutions. Transform everyday objects into intelligent, internet-connected devices.', 'Build smart IoT solutions with sensors, microcontrollers & cloud integration', 4, 4, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=800', NULL, '2025-02-20', '2025-05-20', 450.00, NULL, 12, 60.00, 30, 0, 'archived', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(15, 'Certificate in Graphic Designing', 'graphic-designing', 'Unleash your creativity with professional graphic design training using industry-standard Adobe Creative Suite. Master Photoshop for photo editing and digital art, Illustrator for vector graphics and logos, and InDesign for layouts and publications. Learn fundamental design principles including typography, color theory, composition, and visual hierarchy. Create professional materials: business cards, brochures, posters, social media graphics, and brand identities. Understand print vs. digital design requirements, file formats, and client collaboration. Build a stunning portfolio showcasing diverse design projects. Perfect for aspiring graphic designers, marketing professionals, small business owners, or creative individuals. Transform ideas into visually compelling designs that capture attention and communicate effectively.', 'Master Adobe Creative Suite for professional graphic design and branding', 5, 6, 'Beginner', 'English', 'https://images.unsplash.com/photo-1626785774625-ddcddc3445e9?w=800', NULL, '2025-01-15', '2025-04-30', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(16, 'Certificate in Digital & Content Creation', 'digital-content-creation', 'Create engaging multimedia content that educates, entertains, and converts. Master video editing, motion graphics, animation, interactive presentations, and e-learning materials. Learn industry-standard tools for video production, audio editing, screen recording, and multimedia authoring. Understand storytelling techniques, scriptwriting, storyboarding, and visual communication strategies. Create professional content for corporate training, educational institutions, YouTube channels, and social media platforms. Learn content strategy, audience engagement, and multimedia accessibility. Perfect for educators, corporate trainers, content creators, marketing professionals, or entrepreneurs. Transform complex information into captivating visual experiences that resonate with modern audiences.', 'Create engaging multimedia content: videos, animations & e-learning materials', 5, 6, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800', NULL, '2025-02-05', '2025-05-05', 950.00, NULL, 3, 24.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(17, 'Certificate in Digital Marketing', 'digital-marketing', 'Master the complete digital marketing ecosystem to grow businesses online. Learn search engine optimization (SEO), social media marketing, content marketing, email campaigns, and paid advertising (Google Ads, Facebook Ads). Understand marketing analytics, conversion optimization, customer journey mapping, and ROI measurement. Create comprehensive digital marketing strategies, develop engaging content, and build effective campaigns. Master tools including Google Analytics, Facebook Business Manager, Mailchimp, and keyword research platforms. Learn influencer marketing, affiliate marketing, and marketing automation. Perfect for marketing professionals, business owners, entrepreneurs, or anyone entering the digital marketing field. Drive traffic, generate leads, and grow revenue through strategic online marketing.', 'Master SEO, social media, content marketing & digital advertising strategies', 5, 6, 'Beginner', 'English', 'https://images.unsplash.com/photo-1557838923-2985c318be48?w=800', NULL, '2025-01-20', '2025-04-20', 950.00, NULL, 3, 24.00, 30, 0, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(18, 'Certificate in Entrepreneurship', 'entrepreneurship', 'Transform your business idea into reality with comprehensive entrepreneurship training. Learn business planning, market research, financial management, and growth strategies. Understand business registration, legal structures, taxation, and regulatory compliance. Master customer validation, minimum viable product development, and lean startup methodologies. Learn sales strategies, negotiation skills, and customer relationship management. Understand funding options including bootstrapping, angel investment, venture capital, and crowdfunding. Develop essential entrepreneurial skills: leadership, decision-making, risk management, and resilience. Create a comprehensive business plan investors will take seriously. Perfect for aspiring entrepreneurs, freelancers transitioning to business ownership, or intrapreneurs driving innovation within organizations. Turn your passion into a profitable venture.', 'Launch and grow your business: planning, financing, marketing & operations', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800', NULL, '2025-01-10', '2025-04-10', 2500.00, NULL, 11, 88.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(19, 'Certificate in Project Management', 'project-management', 'Lead successful projects using professional project management methodologies. Master PMBOK framework, Agile principles, and Scrum practices. Learn project initiation, planning, execution, monitoring, and closure. Understand scope management, time estimation, budget control, risk management, and stakeholder communication. Use project management tools including Gantt charts, Kanban boards, and collaboration platforms. Learn team leadership, conflict resolution, and change management. Understand earned value management, critical path analysis, and quality assurance. Prepare for PMP or Agile certifications. Perfect for project managers, team leaders, coordinators, or professionals managing complex initiatives. Deliver projects on time, within budget, and exceeding stakeholder expectations.', 'Professional project management: PMBOK, Agile, Scrum & leadership skills', 6, 5, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800', NULL, '2025-02-01', '2025-06-01', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(20, 'Certificate in Financial Technology', 'financial-technology', 'Explore the digital revolution transforming financial services worldwide. Understand blockchain technology, cryptocurrency fundamentals, digital payments systems, mobile money platforms, and digital banking. Learn about fintech ecosystems, regulatory technology (RegTech), peer-to-peer lending, robo-advisors, and insurtech innovations. Understand payment gateways, digital wallets, and cross-border transactions. Explore real-world case studies from M-Pesa, PayPal, Stripe, and emerging fintech startups. Learn about financial inclusion, cybersecurity in finance, and future trends. Perfect for banking professionals, entrepreneurs entering fintech, financial advisors adapting to digital trends, or anyone curious about money\'s digital future. Position yourself at the intersection of finance and technology.', 'Explore digital payments, blockchain, cryptocurrency & digital banking innovations', 6, 5, 'Advanced', 'English', 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800', NULL, '2025-03-01', '2025-06-15', 1200.00, NULL, 3, 24.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
+(24, 'Certificate in ICT Support & Hardware Repair', 'ict-support-hardware-repair', 'Become a skilled ICT technician with comprehensive computer hardware training. Learn computer architecture, component identification, hardware installation, troubleshooting methodologies, and repair techniques. Master operating system installation (Windows, Linux), driver management, and system optimization. Understand common hardware problems: motherboard issues, power supply failures, storage problems, and peripheral connectivity. Learn diagnostic tools, preventive maintenance, data recovery basics, and customer service skills. Gain hands-on experience assembling PCs, upgrading components, and resolving technical issues. Understand mobile device repair fundamentals. Perfect for aspiring IT support professionals, computer technicians, or entrepreneurs starting repair businesses. Provide essential technical support that keeps organizations running smoothly.', 'Computer hardware repair, troubleshooting & technical support expertise', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
+(25, 'Certificate in Computer Studies', 'computer-studies', 'Build a solid foundation in computer science through this comprehensive introductory program. Explore fundamental computing concepts, computer architecture, operating systems, networking basics, and software applications. Understand binary systems, logic gates, algorithms, and problem-solving techniques. Learn essential applications including word processing, spreadsheets, presentations, and internet usage. Gain exposure to programming concepts, database fundamentals, and cybersecurity awareness. Perfect foundation for further ICT studies or professional certifications. Ideal for students beginning their technology journey, career changers entering IT fields, or professionals needing comprehensive computer literacy. Develop the core knowledge essential for any technology-related career path.', 'Comprehensive computer fundamentals: ideal foundation for ICT careers', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800', NULL, NULL, NULL, 3850.00, NULL, 12, 96.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
+(26, 'Certificate in Computer Science General', 'computer-science-general', 'Master both theoretical and practical aspects of computer science through this balanced curriculum. Learn computer organization, system architecture, programming fundamentals, data structures, algorithms, and software engineering principles. Understand operating systems, computer networks, database systems, and web technologies. Gain programming experience in multiple languages while learning core CS concepts like recursion, sorting algorithms, and object-oriented design. Explore hardware-software interaction, memory management, and system optimization. Perfect for students pursuing computer science careers, professionals transitioning into technical roles, or those seeking comprehensive IT knowledge. Build the versatile skillset needed for software development, systems administration, or further specialization.', 'Balanced computer science: software development & hardware fundamentals', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800', NULL, NULL, NULL, 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
+(27, 'Certificate in Information Technology', 'information-technology', 'Master enterprise IT fundamentals preparing you for professional IT positions. Learn network administration, systems infrastructure, IT security principles, and technical support procedures. Understand TCP/IP networking, routing, switching, Active Directory, and server management. Master troubleshooting methodologies, help desk operations, and customer service excellence. Learn virtualization, cloud computing basics, backup solutions, and disaster recovery. Understand IT service management (ITIL), documentation practices, and change management. Gain practical experience with Windows Server, Linux administration, and network configuration. Perfect preparation for entry-level IT roles including help desk technician, systems administrator, or network support specialist. Build the practical skills IT departments need.', 'Enterprise IT fundamentals: networking, systems administration & support', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
+(28, 'Certificate in Computer & Business Handling', 'computer-business-handling', 'Bridge technology and business operations with essential computer skills for business professionals. Master Microsoft Office Suite for business: advanced Excel for financial analysis, Word for professional documentation, PowerPoint for business presentations, and Outlook for communication management. Learn business email etiquette, calendar management, task organization, and digital collaboration. Understand basic accounting software, data entry best practices, report generation, and business communication standards. Learn office automation, time management with digital tools, and remote work technologies. Perfect for administrative assistants, office managers, receptionists, bookkeepers, or anyone handling business operations. Boost workplace productivity and professional competence.', 'Essential business computer skills for administrative and office professionals', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800', NULL, NULL, NULL, 1200.00, NULL, 4, 32.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
+(29, 'Certificate in C++ Programming', 'cpp-programming', 'Master C++, the powerful programming language behind operating systems, game engines, and high-performance applications. Learn C++ fundamentals, pointers, memory management, and object-oriented programming. Understand templates, Standard Template Library (STL), exception handling, and file I/O. Master advanced topics including operator overloading, inheritance, polymorphism, and design patterns. Learn efficient algorithms, data structures implementation, and performance optimization. Understand modern C++ features (C++11/14/17/20). Build projects including games, system utilities, and performance-critical applications. Perfect for aspiring game developers, systems programmers, or software engineers needing high-performance computing skills. C++ powers everything from embedded systems to AAA video games.', 'Master C++ for high-performance applications, game development & systems programming', 2, 2, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800', NULL, NULL, NULL, 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
+(30, 'Certificate in Sales & Marketing', 'sales-marketing', 'Master the art and science of sales and marketing to drive business growth. Learn customer psychology, persuasion techniques, relationship building, and consultative selling. Understand marketing fundamentals: market segmentation, targeting, positioning, and the marketing mix. Master lead generation, sales funnel optimization, objection handling, and closing techniques. Learn customer relationship management (CRM), sales forecasting, and territory management. Understand brand building, competitive analysis, and market research methods. Develop essential skills: negotiation, presentation, communication, and customer service excellence. Create effective marketing campaigns and sales strategies. Perfect for sales professionals, marketing coordinators, business development representatives, or entrepreneurs growing their ventures. Turn prospects into loyal customers.', 'Master sales techniques, marketing strategies & customer relationship management', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1556155092-490a1ba16284?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
+(31, 'Certificate in Monitoring & Evaluation', 'monitoring-evaluation', 'Become an expert in program assessment and performance measurement with professional M&E training. Learn monitoring frameworks, evaluation methodologies, indicator development, and data collection techniques. Master logical frameworks, theory of change, results-based management, and impact assessment. Understand quantitative and qualitative research methods, sampling techniques, survey design, and data analysis. Learn M&E planning, reporting standards, stakeholder engagement, and lessons learned documentation. Use M&E software and tools for data visualization and reporting. Perfect for program managers, development professionals, NGO staff, government officials, or consultants working in international development, public health, education, or social programs. Demonstrate program effectiveness and drive evidence-based decision making.', 'Professional M&E: frameworks, data collection, analysis & reporting', 6, 5, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
+(32, 'Certificate in Purchasing & Supply', 'purchasing-supply', 'Master professional procurement and supply chain management for organizational efficiency. Learn strategic sourcing, vendor selection, contract negotiation, and supplier relationship management. Understand purchase order processing, inventory control systems, just-in-time delivery, and warehouse management. Master logistics coordination, demand forecasting, and supply chain optimization. Learn procurement ethics, tender processes, compliance requirements, and risk management. Understand cost analysis, value for money principles, and purchase budgeting. Explore e-procurement systems, supply chain software, and procurement best practices. Perfect for purchasing officers, supply chain coordinators, inventory managers, or business owners managing procurement. Reduce costs while maintaining quality and reliability.', 'Professional procurement, supply chain management & logistics expertise', 6, 5, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
+(33, 'Certificate in E-Commerce & Online Business', 'ecommerce-online-business', 'Launch and grow a successful online business in the booming e-commerce market. Learn e-commerce platforms (Shopify, WooCommerce, Magento), online store setup, product listing optimization, and digital storefront design. Master payment gateway integration, shipping logistics, inventory management, and order fulfillment. Understand online customer service, returns management, and reputation building. Learn digital marketing for e-commerce: SEO, social media advertising, email marketing, and conversion optimization. Explore dropshipping, print-on-demand, and various e-commerce business models. Understand legal requirements, taxation, and international selling. Perfect for entrepreneurs starting online stores, retailers moving online, or anyone entering the e-commerce industry. Build your profitable online business empire.', 'Launch and scale your online store: e-commerce platforms & digital selling strategies', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800', NULL, NULL, NULL, 950.00, NULL, 3, 24.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
+(34, 'Certificate in Secretarial & Office Management', 'secretarial-office-management', 'Become an indispensable administrative professional with comprehensive secretarial and office management training. Master advanced typing skills, business correspondence, minutes taking, and professional communication. Learn office organization, filing systems, records management, and document control. Understand meeting coordination, travel arrangements, calendar management, and executive support. Master business etiquette, telephone techniques, customer service excellence, and professional image. Learn time management, priority setting, and workflow optimization. Understand office technology, database management, and basic bookkeeping. Perfect for executive assistants, office administrators, personal assistants, or professionals in administrative roles. Become the organizational backbone that enables business success.', 'Professional secretarial training: office management, typing & administrative excellence', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42');
 
 -- --------------------------------------------------------
 
@@ -298,20 +298,21 @@ CREATE TABLE `course_categories` (
   `display_order` int(11) DEFAULT 0,
   `is_active` tinyint(1) DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `color` varchar(20) DEFAULT '#333333'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `course_categories`
 --
 
-INSERT INTO `course_categories` (`id`, `name`, `category_description`, `parent_category_id`, `icon_url`, `display_order`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'Core ICT & Digital Skills', 'Fundamental computer and digital literacy courses covering essential office applications, digital tools, and basic ICT competencies', NULL, NULL, 1, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(2, 'Programming & Software Development', 'Programming languages, software engineering practices, web and mobile application development courses', NULL, NULL, 2, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(3, 'Data, Security & Networks', 'Data analysis, cybersecurity, database management, and network infrastructure courses', NULL, NULL, 3, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(4, 'Emerging Technologies', 'Cutting-edge technology courses including AI, machine learning, and Internet of Things', NULL, NULL, 4, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(5, 'Digital Media & Design', 'Creative and digital content courses covering graphic design, multimedia, and digital marketing', NULL, NULL, 5, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(6, 'Business & Management', 'Business administration, entrepreneurship, project management, and professional development courses', NULL, NULL, 6, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01');
+INSERT INTO `course_categories` (`id`, `name`, `category_description`, `parent_category_id`, `icon_url`, `display_order`, `is_active`, `created_at`, `updated_at`, `color`) VALUES
+(1, 'Core ICT & Digital Skills', 'Fundamental computer and digital literacy courses covering essential office applications, digital tools, and basic ICT competencies', NULL, NULL, 1, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01', '#333333'),
+(2, 'Programming & Software Development', 'Programming languages, software engineering practices, web and mobile application development courses', NULL, NULL, 2, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01', '#333333'),
+(3, 'Data, Security & Networks', 'Data analysis, cybersecurity, database management, and network infrastructure courses', NULL, NULL, 3, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01', '#333333'),
+(4, 'Emerging Technologies', 'Cutting-edge technology courses including AI, machine learning, and Internet of Things', NULL, NULL, 4, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01', '#333333'),
+(5, 'Digital Media & Design', 'Creative and digital content courses covering graphic design, multimedia, and digital marketing', NULL, NULL, 5, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01', '#333333'),
+(6, 'Business & Management', 'Business administration, entrepreneurship, project management, and professional development courses', NULL, NULL, 6, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01', '#333333');
 
 -- --------------------------------------------------------
 
@@ -437,6 +438,27 @@ INSERT INTO `discussion_replies` (`reply_id`, `discussion_id`, `parent_reply_id`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `email_queue`
+--
+
+CREATE TABLE `email_queue` (
+  `id` int(11) NOT NULL,
+  `recipient` varchar(255) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `body` longtext NOT NULL,
+  `attachments` text DEFAULT NULL,
+  `status` enum('pending','processing','sent','failed') DEFAULT 'pending',
+  `attempts` tinyint(3) DEFAULT 0,
+  `priority` tinyint(3) DEFAULT 0,
+  `scheduled_at` datetime DEFAULT NULL,
+  `sent_at` datetime DEFAULT NULL,
+  `last_attempt` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `email_templates`
 --
 
@@ -487,42 +509,42 @@ CREATE TABLE `enrollments` (
   `total_time_spent` int(11) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `enrollments`
 --
 
 INSERT INTO `enrollments` (`id`, `user_id`, `student_id`, `course_id`, `enrolled_at`, `start_date`, `progress`, `final_grade`, `enrollment_status`, `payment_status`, `amount_paid`, `completion_date`, `certificate_issued`, `certificate_blocked`, `last_accessed`, `total_time_spent`, `created_at`, `updated_at`) VALUES
-(1, 8, 1, 1, '2025-01-15', '2025-01-15', 100.00, 92.50, 'Completed', 'completed', 250.00, '2025-04-10', 1, 0, NULL, 2880, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(2, 8, 1, 5, '2025-01-15', '2025-01-16', 75.00, NULL, 'In Progress', 'completed', 315.00, NULL, 0, 0, NULL, 2700, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(3, 8, 1, 10, '2025-01-20', '2025-01-21', 45.00, NULL, 'In Progress', 'completed', 360.00, NULL, 0, 0, NULL, 1620, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(4, 9, 2, 7, '2025-01-15', '2025-01-15', 100.00, 88.00, 'Completed', 'completed', 342.00, '2025-04-25', 1, 0, NULL, 4200, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(5, 9, 2, 15, '2025-01-15', '2025-01-16', 85.00, NULL, 'In Progress', 'completed', 380.00, NULL, 0, 0, NULL, 2856, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(6, 9, 2, 17, '2025-01-20', '2025-01-21', 60.00, NULL, 'In Progress', 'completed', 320.00, NULL, 0, 0, NULL, 1728, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(7, 10, 3, 18, '2025-01-10', '2025-01-10', 100.00, 95.00, 'Completed', 'completed', 300.00, '2025-04-08', 1, 0, NULL, 2880, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(8, 10, 3, 19, '2025-02-01', '2025-02-02', 30.00, NULL, 'In Progress', 'completed', 405.00, NULL, 0, 0, NULL, 1152, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(9, 10, 3, 1, '2025-01-15', '2025-01-15', 100.00, 87.50, 'Completed', 'completed', 250.00, '2025-04-12', 1, 0, NULL, 2640, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(10, 11, 4, 5, '2025-01-10', '2025-01-10', 100.00, 91.00, 'Completed', 'completed', 315.00, '2025-04-05', 1, 0, NULL, 3600, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(11, 11, 4, 6, '2025-02-01', '2025-02-02', 50.00, NULL, 'In Progress', 'completed', 400.00, NULL, 0, 0, NULL, 2400, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(12, 11, 4, 9, '2025-02-10', '2025-02-11', 25.00, NULL, 'In Progress', 'completed', 320.00, NULL, 0, 0, NULL, 720, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(13, 12, 5, 11, '2025-02-15', '2025-02-16', 40.00, NULL, 'In Progress', 'completed', 495.00, NULL, 0, 0, NULL, 2160, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(14, 12, 5, 12, '2025-01-25', '2025-01-26', 70.00, NULL, 'In Progress', 'completed', 400.00, NULL, 0, 0, NULL, 2688, '2025-11-18 22:21:01', '2025-11-18 23:02:36'),
-(16, 13, 6, 3, '2025-01-20', '2025-01-20', 35.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 672, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(17, 13, 6, 17, '2025-01-20', '2025-01-21', 40.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 1152, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(18, 14, 7, 13, '2025-03-01', '2025-03-02', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 720, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(19, 14, 7, 8, '2025-03-01', '2025-03-02', 20.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 1200, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(20, 15, 8, 18, '2025-01-10', '2025-01-10', 90.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 2592, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(21, 15, 8, 3, '2025-01-20', '2025-01-20', 100.00, 94.00, 'Completed', 'pending', 0.00, '2025-03-15', 1, 0, NULL, 1920, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(22, 16, 9, 10, '2025-01-20', '2025-01-21', 65.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 2340, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(23, 16, 9, 12, '2025-01-25', '2025-01-26', 40.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 1536, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(24, 17, 10, 15, '2025-01-15', '2025-01-16', 80.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 2688, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(25, 17, 10, 16, '2025-02-05', '2025-02-06', 45.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 1296, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(26, 18, 11, 1, '2025-01-15', '2025-01-16', 55.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 1584, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(27, 18, 11, 4, '2025-02-15', '2025-02-16', 30.00, NULL, 'In Progress', 'pending', 0.00, NULL, 0, 0, NULL, 864, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(28, 19, 12, 5, '2025-01-20', '2025-01-21', 10.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 360, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(29, 19, 12, 3, '2025-01-20', '2025-01-21', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 288, '2025-11-18 22:21:01', '2025-11-18 23:02:35'),
-(30, 26, 13, 1, '2025-11-23', '2025-11-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 0, '2025-11-23 11:45:51', '2025-11-23 11:45:51');
+(1, 8, 1, 1, '2025-01-15', '2025-01-15', 100.00, 92.50, 'Enrolled', 'completed', 250.00, '2025-04-10', 1, 1, NULL, 2880, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(2, 8, 1, 5, '2025-01-15', '2025-01-16', 75.00, NULL, 'Enrolled', 'completed', 315.00, NULL, 0, 1, NULL, 2700, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(3, 8, 1, 10, '2025-01-20', '2025-01-21', 45.00, NULL, 'Enrolled', 'completed', 360.00, NULL, 0, 1, NULL, 1620, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(4, 9, 2, 7, '2025-01-15', '2025-01-15', 100.00, 88.00, 'Enrolled', 'completed', 342.00, '2025-04-25', 1, 1, NULL, 4200, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(5, 9, 2, 15, '2025-01-15', '2025-01-16', 85.00, NULL, 'Enrolled', 'completed', 380.00, NULL, 0, 1, NULL, 2856, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(6, 9, 2, 17, '2025-01-20', '2025-01-21', 60.00, NULL, 'In Progress', 'completed', 320.00, NULL, 0, 1, NULL, 1728, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(7, 10, 3, 18, '2025-01-10', '2025-01-10', 100.00, 95.00, 'Enrolled', 'completed', 300.00, '2025-04-08', 1, 1, NULL, 2880, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(8, 10, 3, 19, '2025-02-01', '2025-02-02', 30.00, NULL, 'Enrolled', 'completed', 405.00, NULL, 0, 1, NULL, 1152, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(9, 10, 3, 1, '2025-01-15', '2025-01-15', 100.00, 87.50, 'Enrolled', 'completed', 250.00, '2025-04-12', 1, 1, NULL, 2640, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(10, 11, 4, 5, '2025-01-10', '2025-01-10', 100.00, 91.00, 'Enrolled', 'completed', 315.00, '2025-04-05', 1, 1, NULL, 3600, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(11, 11, 4, 6, '2025-02-01', '2025-02-02', 50.00, NULL, 'Enrolled', 'completed', 400.00, NULL, 0, 1, NULL, 2400, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(12, 11, 4, 9, '2025-02-10', '2025-02-11', 25.00, NULL, 'Enrolled', 'completed', 320.00, NULL, 0, 1, NULL, 720, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(13, 12, 5, 11, '2025-02-15', '2025-02-16', 40.00, NULL, 'Enrolled', 'completed', 495.00, NULL, 0, 1, NULL, 2160, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(14, 12, 5, 12, '2025-01-25', '2025-01-26', 70.00, NULL, 'Enrolled', 'completed', 400.00, NULL, 0, 1, NULL, 2688, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(16, 13, 6, 3, '2025-01-20', '2025-01-20', 35.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 672, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(17, 13, 6, 17, '2025-01-20', '2025-01-21', 40.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1152, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(18, 14, 7, 13, '2025-03-01', '2025-03-02', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 720, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(19, 14, 7, 8, '2025-03-01', '2025-03-02', 20.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1200, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(20, 15, 8, 18, '2025-01-10', '2025-01-10', 90.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 2592, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(21, 15, 8, 3, '2025-01-20', '2025-01-20', 100.00, 94.00, 'Enrolled', 'pending', 0.00, '2025-03-15', 1, 1, NULL, 1920, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(22, 16, 9, 10, '2025-01-20', '2025-01-21', 65.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 2340, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(23, 16, 9, 12, '2025-01-25', '2025-01-26', 40.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1536, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(24, 17, 10, 15, '2025-01-15', '2025-01-16', 80.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 2688, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(25, 17, 10, 16, '2025-02-05', '2025-02-06', 45.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1296, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(26, 18, 11, 1, '2025-01-15', '2025-01-16', 55.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1584, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(27, 18, 11, 4, '2025-02-15', '2025-02-16', 30.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 864, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(28, 19, 12, 5, '2025-01-20', '2025-01-21', 10.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 360, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(29, 19, 12, 3, '2025-01-20', '2025-01-21', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 288, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
+(30, 26, 13, 1, '2025-11-23', '2025-11-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2025-11-23 11:45:51', '2025-12-09 13:26:07');
 
 -- --------------------------------------------------------
 
@@ -546,6 +568,41 @@ CREATE TABLE `enrollment_payment_plans` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `enrollment_payment_plans`
+--
+
+INSERT INTO `enrollment_payment_plans` (`id`, `enrollment_id`, `user_id`, `course_id`, `total_fee`, `total_paid`, `currency`, `payment_status`, `due_date`, `notes`, `created_at`, `updated_at`) VALUES
+(1, 1, 8, 1, 2500.00, 250.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(2, 2, 8, 5, 3000.00, 315.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(3, 3, 8, 10, 1500.00, 360.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(4, 4, 9, 7, 3000.00, 342.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(5, 5, 9, 15, 2500.00, 380.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(6, 6, 9, 17, 950.00, 320.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(7, 7, 10, 18, 2500.00, 300.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(8, 8, 10, 19, 2500.00, 405.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(9, 9, 10, 1, 2500.00, 250.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(10, 10, 11, 5, 3000.00, 315.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(11, 11, 11, 6, 3000.00, 400.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(12, 12, 11, 9, 3000.00, 320.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(13, 13, 12, 11, 2500.00, 495.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(14, 14, 12, 12, 1500.00, 400.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(15, 16, 13, 3, 850.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(16, 17, 13, 17, 950.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(17, 18, 14, 13, 850.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(18, 19, 14, 8, 3000.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(19, 20, 15, 18, 2500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(20, 21, 15, 3, 850.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(21, 22, 16, 10, 1500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(22, 23, 16, 12, 1500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(23, 24, 17, 15, 2500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(24, 25, 17, 16, 950.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(25, 26, 18, 1, 2500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(26, 27, 18, 4, 1500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(27, 28, 19, 5, 3000.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(28, 29, 19, 3, 850.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(29, 30, 26, 1, 2500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07');
+
 -- --------------------------------------------------------
 
 --
@@ -566,7 +623,7 @@ CREATE TABLE `instructors` (
   `is_verified` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `instructors`
@@ -872,6 +929,58 @@ INSERT INTO `payments` (`payment_id`, `student_id`, `course_id`, `enrollment_id`
 (16, 7, 13, 19, NULL, 540.00, 'USD', 1, 'course_fee', NULL, 'Pending', 'TXN-2025-000016', NULL, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (17, 13, 1, 30, NULL, 250.00, 'ZMW', NULL, 'course_fee', NULL, 'Completed', '1234', NULL, NULL, '2025-11-25 18:37:20', '2025-11-23 11:45:51', '2025-11-25 16:37:20');
 
+--
+-- Triggers `payments`
+--
+DELIMITER $$
+CREATE TRIGGER `after_payment_insert` AFTER INSERT ON `payments` FOR EACH ROW BEGIN
+    DECLARE v_total_fee DECIMAL(10,2);
+    DECLARE v_total_paid DECIMAL(10,2);
+    DECLARE v_min_percent INT DEFAULT 30; -- Fallback value
+    
+    -- 1. Update the Payment Plan Balance
+    IF NEW.payment_plan_id IS NOT NULL AND NEW.payment_status = 'Completed' THEN
+        
+        -- Get current fee and previously paid amount
+        SELECT total_fee, total_paid INTO v_total_fee, v_total_paid 
+        FROM enrollment_payment_plans 
+        WHERE id = NEW.payment_plan_id;
+        
+        -- Update the Plan
+        UPDATE `enrollment_payment_plans`
+        SET 
+            `total_paid` = `total_paid` + NEW.amount,
+            `updated_at` = NOW(),
+            `payment_status` = CASE 
+                WHEN (`total_paid` + NEW.amount) >= `total_fee` THEN 'completed'
+                ELSE 'partial'
+            END
+        WHERE `id` = NEW.payment_plan_id;
+        
+        -- 2. Check the 30% Logic to Unlock Course
+        -- Calculate new total paid
+        SET v_total_paid = v_total_paid + NEW.amount;
+        
+        -- Update Enrollment Status based on 30% Rule
+        -- 'In Progress' means they have access. 'Enrolled' means waiting for deposit.
+        IF (v_total_paid / v_total_fee) * 100 >= 30 THEN
+            UPDATE `enrollments` 
+            SET `enrollment_status` = 'In Progress' 
+            WHERE `id` = NEW.enrollment_id AND `enrollment_status` = 'Enrolled';
+        END IF;
+
+        -- 3. Check Full Payment to Unblock Certificate
+        IF v_total_paid >= v_total_fee THEN
+            UPDATE `enrollments` 
+            SET `certificate_blocked` = 0 
+            WHERE `id` = NEW.enrollment_id;
+        END IF;
+
+    END IF;
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -1031,18 +1140,20 @@ CREATE TABLE `quiz_attempts` (
   `score` decimal(5,2) DEFAULT NULL,
   `status` enum('In Progress','Submitted','Graded','Abandoned') DEFAULT 'In Progress',
   `time_spent_minutes` int(11) DEFAULT NULL,
-  `ip_address` varchar(45) DEFAULT NULL
+  `ip_address` varchar(45) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `completed_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `quiz_attempts`
 --
 
-INSERT INTO `quiz_attempts` (`attempt_id`, `quiz_id`, `student_id`, `attempt_number`, `started_at`, `submitted_at`, `score`, `status`, `time_spent_minutes`, `ip_address`) VALUES
-(1, 1, 1, 1, '2025-01-25 12:00:00', '2025-01-25 12:28:00', 85.00, 'Graded', 28, NULL),
-(2, 1, 4, 1, '2025-01-26 08:00:00', '2025-01-26 08:25:00', 92.00, 'Graded', 25, NULL),
-(3, 1, 4, 2, '2025-01-27 13:00:00', '2025-01-27 13:20:00', 98.00, 'Graded', 20, NULL),
-(4, 3, 2, 1, '2025-02-10 09:00:00', '2025-02-10 09:40:00', 88.00, 'Graded', 40, NULL);
+INSERT INTO `quiz_attempts` (`attempt_id`, `quiz_id`, `student_id`, `attempt_number`, `started_at`, `submitted_at`, `score`, `status`, `time_spent_minutes`, `ip_address`, `id`, `completed_at`) VALUES
+(1, 1, 1, 1, '2025-01-25 12:00:00', '2025-01-25 12:28:00', 85.00, 'Graded', 28, NULL, 1, NULL),
+(2, 1, 4, 1, '2025-01-26 08:00:00', '2025-01-26 08:25:00', 92.00, 'Graded', 25, NULL, 2, NULL),
+(3, 1, 4, 2, '2025-01-27 13:00:00', '2025-01-27 13:20:00', 98.00, 'Graded', 20, NULL, 3, NULL),
+(4, 3, 2, 1, '2025-02-10 09:00:00', '2025-02-10 09:40:00', 88.00, 'Graded', 40, NULL, 4, NULL);
 
 -- --------------------------------------------------------
 
@@ -1092,6 +1203,20 @@ CREATE TABLE `registration_fees` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `remember_tokens`
+--
+
+CREATE TABLE `remember_tokens` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1159,7 +1284,9 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (10, 17, '1999-06-08', 'Female', NULL, 'Mongu', 'Zambia', NULL, '2025-01-12', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (11, 18, '1997-10-15', 'Male', NULL, 'Kasama', 'Zambia', NULL, '2025-01-15', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (12, 19, '2001-01-30', 'Female', NULL, 'Lusaka', 'Zambia', NULL, '2025-01-18', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(13, 26, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-23', 0, 0, 0, '2025-11-23 11:45:50', '2025-11-23 11:45:50');
+(13, 26, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-23', 0, 0, 0, '2025-11-23 11:45:50', '2025-11-23 11:45:50'),
+(14, 30, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-09', 0, 0, 0, '2025-12-09 11:30:29', '2025-12-09 11:30:29'),
+(28, 34, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-20', 0, 0, 0, '2025-12-20 13:21:55', '2025-12-20 13:21:55');
 
 -- --------------------------------------------------------
 
@@ -1228,7 +1355,39 @@ INSERT INTO `system_settings` (`setting_id`, `setting_key`, `setting_value`, `se
 (16, 'bank_branch', '', 'String', 'Bank branch for deposits', 1, '2025-11-24 11:56:12'),
 (17, 'currency', 'ZMW', 'String', 'Default currency (Zambian Kwacha)', 1, '2025-11-24 11:56:12'),
 (18, 'partial_payments_enabled', 'true', 'Boolean', 'Allow partial payments for course fees', 1, '2025-11-24 11:56:12'),
-(19, 'certificate_requires_full_payment', 'true', 'Boolean', 'Block certificate issuance until fully paid', 1, '2025-11-24 11:56:12');
+(19, 'certificate_requires_full_payment', 'true', 'Boolean', 'Block certificate issuance until fully paid', 1, '2025-11-24 11:56:12'),
+(20, 'enrollment_min_deposit_percent', '30', 'Number', 'Minimum percentage (0-100) of course fee required to unlock content', 1, '2025-12-09 13:21:21'),
+(21, 'registration_fee_amount', '150', 'Number', 'Mandatory one-time registration fee amount', 1, '2025-12-09 13:21:21');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `team_members`
+--
+
+CREATE TABLE `team_members` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `name` varchar(100) NOT NULL,
+  `position` varchar(100) NOT NULL,
+  `qualifications` text DEFAULT NULL,
+  `image_url` varchar(255) DEFAULT NULL,
+  `display_order` int(11) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+--
+-- Dumping data for table `team_members`
+--
+
+INSERT INTO `team_members` (`id`, `user_id`, `name`, `position`, `qualifications`, `image_url`, `display_order`, `created_at`) VALUES
+(1, 27, 'Chilala Moonga', 'Principal & Director', 'MSc. Computer Science (DMI St. Eugene)\r\nB.ICT (The University of Zambia)\r\nDip. Education (The University of Zambia)', 'chilala.jpg', 1, '2025-12-06 09:00:22'),
+(2, 29, 'Edward Musole', 'Vice Principal', 'Bachelor\'s Degree in Education (UNZA)\r\nAcademic Administration Specialist', 'edward.jpg', 2, '2025-12-06 09:00:22'),
+(3, 6, 'Michael Siame', 'Head of ICT Department', 'B.ICT (Copperbelt University)\r\nStructural & Software Engineer', 'michael.jpg', 3, '2025-12-06 09:00:22'),
+(4, 31, 'Anthony Nampute', 'Senior Lecturer', 'Dip. Computer Studies (UNZA)\r\nCertificate in English Language', 'anthony.jpg', 4, '2025-12-06 09:00:22'),
+(5, 32, 'Inutu Simasiku', 'Admin & Procurement Officer', 'Dip. Registered Nursing\r\nCertificate in Marketing', 'inutu.jpg', 5, '2025-12-06 09:00:22'),
+(6, 33, 'Nita Sichimwa', 'Student Support & Hygiene Officer', 'Nurse Assistant\r\nCert. Social Work & Community Development\r\nCertified Counselor', 'nita.jpg', 6, '2025-12-06 09:00:22'),
+(7, 28, 'Witman Miyande', 'Senior Lecturer', 'B.ICT (UNZA)\r\nPROGRAMMING AND COMPUTER HARDWARE', 'witman.jpg', 7, '2025-12-12 09:37:04');
 
 -- --------------------------------------------------------
 
@@ -1278,8 +1437,13 @@ CREATE TABLE `users` (
   `phone` varchar(20) DEFAULT NULL,
   `avatar_url` varchar(255) DEFAULT NULL,
   `status` enum('active','inactive','suspended','pending') DEFAULT 'active',
+  `email_verification_token` varchar(255) DEFAULT NULL,
+  `email_verification_expires` datetime DEFAULT NULL,
   `email_verified` tinyint(1) DEFAULT 0,
   `last_login` timestamp NULL DEFAULT NULL,
+  `last_login_ip` varchar(45) DEFAULT NULL,
+  `failed_login_attempts` int(11) DEFAULT 0,
+  `account_locked_until` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1288,28 +1452,19 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `avatar_url`, `status`, `email_verified`, `last_login`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'System', 'Administrator', '+260900000000', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 23:23:52'),
-(2, 'james.mwanza', 'james.mwanza@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'James', 'Mwanza', '+260977123456', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-22 11:31:51'),
-(3, 'sarah.banda', 'sarah.banda@edutrack.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Sarah', 'Banda', '+260966234567', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(4, 'peter.phiri', 'peter.phiri@edutrack.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Peter', 'Phiri', '+260955345678', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(5, 'grace.chanda', 'grace.chanda@edutrack.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Grace', 'Chanda', '+260944456789', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(6, 'michael.siame', 'michael.siame@edutrack.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Michael', 'Siame', '+260933567890', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(7, 'mercy.zulu', 'mercy.zulu@edutrack.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Mercy', 'Zulu', '+260922678901', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(8, 'john.tembo', 'john.tembo@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'John', 'Tembo', '+260971111111', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(9, 'mary.lungu', 'mary.lungu@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Mary', 'Lungu', '+260972222222', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(10, 'david.sakala', 'david.sakala@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'David', 'Sakala', '+260973333333', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(11, 'alice.mulenga', 'alice.mulenga@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Alice', 'Mulenga', '+260974444444', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(12, 'robert.chilufya', 'robert.chilufya@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Robert', 'Chilufya', '+260975555555', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(13, 'susan.banda', 'susan.banda@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Susan', 'Banda', '+260976666666', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(14, 'patrick.mutale', 'patrick.mutale@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Patrick', 'Mutale', '+260977777777', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(15, 'elizabeth.phiri', 'elizabeth.phiri@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Elizabeth', 'Phiri', '+260978888888', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(16, 'george.kunda', 'george.kunda@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'George', 'Kunda', '+260979999999', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(17, 'jennifer.musonda', 'jennifer.musonda@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Jennifer', 'Musonda', '+260970000000', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(18, 'moses.chola', 'moses.chola@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Moses', 'Chola', '+260971234567', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(19, 'ruth.zimba', 'ruth.zimba@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Ruth', 'Zimba', '+260972345678', NULL, 'active', 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(25, 'taona', 'taona@gmail.com', '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
-(26, 'jaysiame076', 'jaysiame076@gmail.com', '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', 0, NULL, '2025-11-23 11:05:46', '2025-11-23 11:05:46');
+INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `avatar_url`, `status`, `email_verification_token`, `email_verification_expires`, `email_verified`, `last_login`, `last_login_ip`, `failed_login_attempts`, `account_locked_until`, `created_at`, `updated_at`) VALUES
+(1, 'admin', 'admin@edutrack.edu', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2025-12-18 21:57:23', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-18 19:57:23'),
+(6, 'michael.siame', 'michael.siame@edutrack.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(25, 'taona', 'taona@gmail.com', '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
+(26, 'jaysiame076', 'jaysiame076@gmail.com', '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:32:59', NULL, 0, NULL, '2025-11-23 11:05:46', '2025-12-09 09:32:59'),
+(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', '$2y$10$uTNe95f2nXGaFBDyrBtrQeCaYHRNQBr67kFd7Fugt2dfWZX59fQom', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2025-12-19 13:48:58', NULL, 0, NULL, '2025-12-04 20:34:20', '2025-12-19 11:48:58'),
+(28, 'it', 'it@witmanmiyande.com', '$2y$10$kbm0yafbxD0Iu0Vk7uZYoOKTaqE1DTV47I7FHEFmeRESglBLmnWve', 'Witman', 'Miyande', '+260976062621', NULL, 'active', NULL, NULL, 0, '2025-12-08 13:07:32', NULL, 0, NULL, '2025-12-05 14:38:37', '2025-12-08 17:45:29'),
+(29, 'edwardmusole76', 'edwardmusole76@gmail.com', '$2y$10$WAgkucanVQ4OuVJtxfZeIuH2gxPk4lH7tTmhKT0I8awfPWiBBakdC', 'Edward', 'Musole', '+260978605960', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:34:48', NULL, 0, NULL, '2025-12-05 14:42:37', '2025-12-09 09:34:48'),
+(30, 'siamem570', 'siamem570@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, '2025-12-18 20:42:20', NULL, 0, NULL, '2025-12-09 11:30:29', '2025-12-18 18:42:20'),
+(31, 'anthony.nampute', 'anthony.nampute@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Anthony', 'Nampute', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
+(32, 'inutu.simasiku', 'inutu.simasiku@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Inutu', 'Simasiku', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
+(33, 'nita.sichimwa', 'nita.sichimwa@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Nita', 'Sichimwa', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
+(34, 'jilowahappy19', 'jilowahappy19@gmail.com', '$2y$10$BsJsXUusPmNBJmhfOOj15uzzlP.rFmjhhG.lKeZDTwcOzW62FFHne', 'Happy', 'Jilowa', '+260760054975', NULL, 'active', NULL, NULL, 0, '2025-12-20 15:22:34', NULL, 0, NULL, '2025-12-20 13:21:55', '2025-12-20 13:22:34');
 
 -- --------------------------------------------------------
 
@@ -1330,32 +1485,47 @@ CREATE TABLE `user_profiles` (
   `postal_code` varchar(20) DEFAULT NULL,
   `avatar_url` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `avatar` varchar(255) DEFAULT NULL,
+  `province` varchar(100) DEFAULT NULL,
+  `nrc_number` varchar(20) DEFAULT NULL,
+  `education_level` varchar(50) DEFAULT NULL,
+  `occupation` varchar(100) DEFAULT NULL,
+  `linkedin_url` varchar(255) DEFAULT NULL,
+  `facebook_url` varchar(255) DEFAULT NULL,
+  `twitter_url` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `user_profiles`
 --
 
-INSERT INTO `user_profiles` (`id`, `user_id`, `bio`, `phone`, `date_of_birth`, `gender`, `address`, `city`, `country`, `postal_code`, `avatar_url`, `created_at`, `updated_at`) VALUES
-(1, 8, NULL, '+260971111111', '1998-05-15', 'Male', NULL, 'Lusaka', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(2, 9, NULL, '+260972222222', '2000-08-22', 'Female', NULL, 'Ndola', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(3, 10, NULL, '+260973333333', '1995-03-10', 'Male', NULL, 'Kitwe', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(4, 11, NULL, '+260974444444', '1999-11-30', 'Female', NULL, 'Livingstone', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(5, 12, NULL, '+260975555555', '1997-07-18', 'Male', NULL, 'Lusaka', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(6, 13, NULL, '+260976666666', '2001-02-25', 'Female', NULL, 'Kabwe', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(7, 14, NULL, '+260977777777', '1996-09-12', 'Male', NULL, 'Chingola', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(8, 15, NULL, '+260978888888', '1998-12-05', 'Female', NULL, 'Lusaka', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(9, 16, NULL, '+260979999999', '2000-04-20', 'Male', NULL, 'Solwezi', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(10, 17, NULL, '+260970000000', '1999-06-08', 'Female', NULL, 'Mongu', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(11, 18, NULL, '+260971234567', '1997-10-15', 'Male', NULL, 'Kasama', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(12, 19, NULL, '+260972345678', '2001-01-30', 'Female', NULL, 'Lusaka', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(16, 2, 'Experienced ICT trainer with 10+ years in corporate training. Microsoft Certified Professional with expertise in Office Suite and digital literacy programs.', '+260977123456', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(17, 3, 'Full-stack developer and certified instructor with passion for teaching modern programming languages. 8 years industry experience in software development.', '+260966234567', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(18, 4, 'Cybersecurity specialist and ethical hacker with CISSP certification. Former network administrator with extensive experience in data security.', '+260955345678', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(19, 5, 'AI/ML researcher and data scientist with PhD in Computer Science. Published researcher with focus on practical applications of machine learning.', '+260944456789', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(20, 6, 'Business consultant and entrepreneur with MBA. Specializes in digital transformation, project management, and business strategy.', '+260933567890', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36'),
-(21, 7, 'Award-winning graphic designer and digital marketer. Adobe Certified Expert with 7 years experience in creative industries.', '+260922678901', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36');
+INSERT INTO `user_profiles` (`id`, `user_id`, `bio`, `phone`, `date_of_birth`, `gender`, `address`, `city`, `country`, `postal_code`, `avatar_url`, `created_at`, `updated_at`, `avatar`, `province`, `nrc_number`, `education_level`, `occupation`, `linkedin_url`, `facebook_url`, `twitter_url`) VALUES
+(1, 8, NULL, '+260971111111', '1998-05-15', 'Male', NULL, 'Lusaka', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 9, NULL, '+260972222222', '2000-08-22', 'Female', NULL, 'Ndola', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 10, NULL, '+260973333333', '1995-03-10', 'Male', NULL, 'Kitwe', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 11, NULL, '+260974444444', '1999-11-30', 'Female', NULL, 'Livingstone', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 12, NULL, '+260975555555', '1997-07-18', 'Male', NULL, 'Lusaka', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 13, NULL, '+260976666666', '2001-02-25', 'Female', NULL, 'Kabwe', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(7, 14, NULL, '+260977777777', '1996-09-12', 'Male', NULL, 'Chingola', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(8, 15, NULL, '+260978888888', '1998-12-05', 'Female', NULL, 'Lusaka', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(9, 16, NULL, '+260979999999', '2000-04-20', 'Male', NULL, 'Solwezi', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(10, 17, NULL, '+260970000000', '1999-06-08', 'Female', NULL, 'Mongu', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(11, 18, NULL, '+260971234567', '1997-10-15', 'Male', NULL, 'Kasama', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(12, 19, NULL, '+260972345678', '2001-01-30', 'Female', NULL, 'Lusaka', 'Zambia', NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(16, 2, 'Experienced ICT trainer with 10+ years in corporate training. Microsoft Certified Professional with expertise in Office Suite and digital literacy programs.', '+260977123456', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(17, 3, 'Full-stack developer and certified instructor with passion for teaching modern programming languages. 8 years industry experience in software development.', '+260966234567', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(18, 4, 'Cybersecurity specialist and ethical hacker with CISSP certification. Former network administrator with extensive experience in data security.', '+260955345678', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(19, 5, 'AI/ML researcher and data scientist with PhD in Computer Science. Published researcher with focus on practical applications of machine learning.', '+260944456789', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(20, 6, 'Business consultant and entrepreneur with MBA. Specializes in digital transformation, project management, and business strategy.', '+260933567890', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(21, 7, 'Award-winning graphic designer and digital marketer. Adobe Certified Expert with 7 years experience in creative industries.', '+260922678901', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-18 23:02:36', '2025-11-18 23:02:36', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(22, 25, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-08 17:45:29', '2025-12-08 17:45:29', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(23, 26, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-08 17:45:29', '2025-12-08 17:45:29', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(24, 27, NULL, '+260979536820', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-08 17:45:29', '2025-12-08 17:45:29', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(25, 28, NULL, '+260976062621', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-08 17:45:29', '2025-12-08 17:45:29', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(26, 29, NULL, '+260978605960', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-08 17:45:29', '2025-12-08 17:45:29', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(28, 30, '', '+260771216339', '2002-05-03', 'Male', '1038 accra road', 'kitwe', 'Zambia', '10101', NULL, '2025-12-09 11:30:29', '2025-12-10 07:40:33', NULL, 'Copperbelt', '398943/65/1', 'Grade 12', 'technican', '', '', ''),
+(47, 34, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-20 13:21:55', '2025-12-20 13:21:55', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1396,7 +1566,22 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`, `assigned_b
 (18, 18, 4, '2025-11-18 22:21:01', 1),
 (19, 19, 4, '2025-11-18 22:21:01', 1),
 (25, 25, 2, '2025-11-22 09:07:23', NULL),
-(26, 26, 4, '2025-11-23 11:05:46', NULL);
+(26, 26, 4, '2025-11-23 11:05:46', NULL),
+(27, 27, 4, '2025-12-08 17:45:29', NULL),
+(28, 28, 4, '2025-12-08 17:45:29', NULL),
+(29, 29, 4, '2025-12-08 17:45:29', NULL),
+(30, 0, 4, '2025-12-09 11:25:06', NULL),
+(31, 30, 4, '2025-12-09 11:30:29', NULL),
+(53, 27, 1, '2025-12-18 19:11:42', NULL),
+(54, 27, 3, '2025-12-18 19:11:42', NULL),
+(55, 29, 2, '2025-12-18 19:11:42', NULL),
+(56, 6, 2, '2025-12-18 19:11:42', NULL),
+(57, 6, 3, '2025-12-18 19:11:42', NULL),
+(58, 31, 3, '2025-12-18 19:11:42', NULL),
+(59, 28, 3, '2025-12-18 19:11:42', NULL),
+(60, 32, 6, '2025-12-18 19:11:42', NULL),
+(61, 33, 2, '2025-12-18 19:11:42', NULL),
+(62, 34, 4, '2025-12-20 13:21:55', NULL);
 
 -- --------------------------------------------------------
 
@@ -1415,28 +1600,13 @@ CREATE TABLE `user_sessions` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+--
+-- Dumping data for table `user_sessions`
+--
 
---
--- Stand-in structure for view `v_pending_verifications`
--- (See below for the actual view)
---
-CREATE TABLE `v_pending_verifications` (
-`fee_type` varchar(12)
-,`fee_id` int(11)
-,`user_id` int(11)
-,`username` varchar(50)
-,`full_name` varchar(101)
-,`email` varchar(100)
-,`course_id` int(11)
-,`course_title` varchar(200)
-,`amount` decimal(10,2)
-,`currency` varchar(3)
-,`payment_method` varchar(50)
-,`reference` varchar(100)
-,`payment_date` datetime
-,`created_at` timestamp
-);
+INSERT INTO `user_sessions` (`id`, `user_id`, `session_token`, `ip_address`, `user_agent`, `expires_at`, `created_at`, `updated_at`) VALUES
+(1, 29, 'd7b648d8453dc74a04bee2da99b2d981fb3040b2663552dcbe6926021557edc3', '45.215.252.142', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/140.0.7339.122 Mobile/15E148 Safari/604.1', '2026-01-08 11:34:48', '2025-12-09 09:34:48', '2025-12-09 09:34:48'),
+(11, 34, '91bfdeccc6b5f864eafec843bf557ed9b858a9caa1721076e71a9d1ff24f70af', '102.212.183.105', 'Mozilla/5.0 (Linux; Android 13; Infinix X6525 Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.34 Mobile Safari/537.36[FBAN/EMA;FBLC/en_US;FBAV/485.0.0.19.109;FBCX/modulariab;]', '2026-01-19 15:22:34', '2025-12-20 13:22:34', '2025-12-20 13:22:34');
 
 -- --------------------------------------------------------
 
@@ -1450,33 +1620,12 @@ CREATE TABLE `v_student_balances` (
 ,`full_name` varchar(101)
 ,`email` varchar(100)
 ,`student_id` int(11)
-,`registration_fee_id` int(11)
-,`registration_status` enum('pending','completed','failed','refunded')
-,`registration_amount` decimal(10,2)
 ,`total_courses` bigint(21)
 ,`total_course_fees` decimal(32,2)
 ,`total_paid` decimal(32,2)
-,`total_balance` decimal(32,2)
-,`overall_status` varchar(20)
+,`total_balance` decimal(33,2)
+,`overall_status` varchar(11)
 );
-
--- --------------------------------------------------------
-
---
--- Structure for view `v_pending_verifications`
---
-DROP TABLE IF EXISTS `v_pending_verifications`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_pending_verifications`  AS SELECT 'registration' AS `fee_type`, `rf`.`id` AS `fee_id`, `rf`.`user_id` AS `user_id`, `u`.`username` AS `username`, concat(`u`.`first_name`,' ',`u`.`last_name`) AS `full_name`, `u`.`email` AS `email`, NULL AS `course_id`, NULL AS `course_title`, `rf`.`amount` AS `amount`, `rf`.`currency` AS `currency`, `rf`.`payment_method` AS `payment_method`, `rf`.`bank_reference` AS `reference`, `rf`.`deposit_date` AS `payment_date`, `rf`.`created_at` AS `created_at` FROM (`registration_fees` `rf` join `users` `u` on(`u`.`id` = `rf`.`user_id`)) WHERE `rf`.`payment_status` = 'pending'union all select 'course_fee' AS `fee_type`,`p`.`payment_id` AS `fee_id`,`p`.`student_id` AS `user_id`,`u`.`username` AS `username`,concat(`u`.`first_name`,' ',`u`.`last_name`) AS `full_name`,`u`.`email` AS `email`,`p`.`course_id` AS `course_id`,`c`.`title` AS `course_title`,`p`.`amount` AS `amount`,`p`.`currency` AS `currency`,coalesce(`pm`.`method_name`,'Unknown') AS `payment_method`,`p`.`transaction_id` AS `reference`,`p`.`payment_date` AS `payment_date`,`p`.`created_at` AS `created_at` from ((((`payments` `p` join `students` `s` on(`s`.`id` = `p`.`student_id`)) join `users` `u` on(`u`.`id` = `s`.`user_id`)) join `courses` `c` on(`c`.`id` = `p`.`course_id`)) left join `payment_methods` `pm` on(`pm`.`payment_method_id` = `p`.`payment_method_id`)) where `p`.`payment_status` = 'Pending'  ;
-
--- --------------------------------------------------------
-
---
--- Structure for view `v_student_balances`
---
-DROP TABLE IF EXISTS `v_student_balances`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_student_balances`  AS SELECT `u`.`id` AS `user_id`, `u`.`username` AS `username`, concat(`u`.`first_name`,' ',`u`.`last_name`) AS `full_name`, `u`.`email` AS `email`, `s`.`id` AS `student_id`, `rf`.`id` AS `registration_fee_id`, `rf`.`payment_status` AS `registration_status`, `rf`.`amount` AS `registration_amount`, coalesce(`epp`.`total_courses`,0) AS `total_courses`, coalesce(`epp`.`total_fees`,0) AS `total_course_fees`, coalesce(`epp`.`total_paid`,0) AS `total_paid`, coalesce(`epp`.`total_balance`,0) AS `total_balance`, CASE WHEN `rf`.`payment_status` <> 'completed' OR `rf`.`payment_status` is null THEN 'registration_pending' WHEN coalesce(`epp`.`total_balance`,0) > 0 THEN 'balance_owing' ELSE 'cleared' END AS `overall_status` FROM (((`users` `u` left join `students` `s` on(`s`.`user_id` = `u`.`id`)) left join `registration_fees` `rf` on(`rf`.`user_id` = `u`.`id`)) left join (select `enrollment_payment_plans`.`user_id` AS `user_id`,count(0) AS `total_courses`,sum(`enrollment_payment_plans`.`total_fee`) AS `total_fees`,sum(`enrollment_payment_plans`.`total_paid`) AS `total_paid`,sum(`enrollment_payment_plans`.`balance`) AS `total_balance` from `enrollment_payment_plans` group by `enrollment_payment_plans`.`user_id`) `epp` on(`epp`.`user_id` = `u`.`id`)) WHERE exists(select 1 from `user_roles` `ur` where `ur`.`user_id` = `u`.`id` AND `ur`.`role_id` = 4 limit 1) ;
 
 --
 -- Indexes for dumped tables
@@ -1486,38 +1635,28 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- Indexes for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  ADD PRIMARY KEY (`log_id`),
-  ADD KEY `idx_user` (`user_id`),
-  ADD KEY `idx_activity_type` (`activity_type`),
-  ADD KEY `idx_created_at` (`created_at`);
+  ADD PRIMARY KEY (`log_id`);
 
 --
 -- Indexes for table `announcements`
 --
 ALTER TABLE `announcements`
-  ADD PRIMARY KEY (`announcement_id`),
-  ADD KEY `posted_by` (`posted_by`),
-  ADD KEY `idx_course` (`course_id`),
-  ADD KEY `idx_published` (`is_published`);
+  ADD PRIMARY KEY (`announcement_id`);
 
 --
 -- Indexes for table `assignments`
 --
 ALTER TABLE `assignments`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `lesson_id` (`lesson_id`),
-  ADD KEY `idx_course` (`course_id`),
-  ADD KEY `idx_due_date` (`due_date`);
+  ADD KEY `idx_assign_course` (`course_id`);
 
 --
 -- Indexes for table `assignment_submissions`
 --
 ALTER TABLE `assignment_submissions`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `graded_by` (`graded_by`),
-  ADD KEY `idx_assignment` (`assignment_id`),
-  ADD KEY `idx_student` (`student_id`),
-  ADD KEY `idx_status` (`status`);
+  ADD KEY `idx_sub_assign` (`assignment_id`),
+  ADD KEY `idx_sub_student` (`student_id`);
 
 --
 -- Indexes for table `badges`
@@ -1529,188 +1668,149 @@ ALTER TABLE `badges`
 -- Indexes for table `certificates`
 --
 ALTER TABLE `certificates`
-  ADD PRIMARY KEY (`certificate_id`),
-  ADD UNIQUE KEY `certificate_number` (`certificate_number`),
-  ADD UNIQUE KEY `verification_code` (`verification_code`),
-  ADD KEY `enrollment_id` (`enrollment_id`),
-  ADD KEY `idx_verification_code` (`verification_code`);
+  ADD PRIMARY KEY (`certificate_id`);
 
 --
 -- Indexes for table `courses`
 --
 ALTER TABLE `courses`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `slug` (`slug`),
-  ADD KEY `idx_status` (`status`),
-  ADD KEY `idx_category` (`category_id`),
-  ADD KEY `idx_featured` (`is_featured`),
-  ADD KEY `fk_courses_instructor` (`instructor_id`);
+  ADD KEY `idx_courses_cat` (`category_id`),
+  ADD KEY `idx_courses_inst` (`instructor_id`);
 
 --
 -- Indexes for table `course_categories`
 --
 ALTER TABLE `course_categories`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `category_name` (`name`),
-  ADD KEY `parent_category_id` (`parent_category_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `course_instructors`
 --
 ALTER TABLE `course_instructors`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_course_instructor` (`course_id`,`instructor_id`),
-  ADD KEY `instructor_id` (`instructor_id`);
+  ADD KEY `idx_ci_course` (`course_id`),
+  ADD KEY `idx_ci_inst` (`instructor_id`);
 
 --
 -- Indexes for table `course_reviews`
 --
 ALTER TABLE `course_reviews`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_user_course_review` (`user_id`,`course_id`),
-  ADD KEY `idx_course` (`course_id`),
-  ADD KEY `idx_rating` (`rating`);
+  ADD KEY `idx_review_course` (`course_id`),
+  ADD KEY `idx_review_user` (`user_id`);
 
 --
 -- Indexes for table `discussions`
 --
 ALTER TABLE `discussions`
   ADD PRIMARY KEY (`discussion_id`),
-  ADD KEY `created_by` (`created_by`),
-  ADD KEY `idx_course` (`course_id`),
-  ADD KEY `idx_pinned` (`is_pinned`);
+  ADD KEY `idx_disc_course` (`course_id`),
+  ADD KEY `idx_disc_user` (`created_by`);
 
 --
 -- Indexes for table `discussion_replies`
 --
 ALTER TABLE `discussion_replies`
   ADD PRIMARY KEY (`reply_id`),
-  ADD KEY `parent_reply_id` (`parent_reply_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `idx_discussion` (`discussion_id`);
+  ADD KEY `idx_reply_disc` (`discussion_id`),
+  ADD KEY `idx_reply_user` (`user_id`),
+  ADD KEY `idx_reply_parent` (`parent_reply_id`);
+
+--
+-- Indexes for table `email_queue`
+--
+ALTER TABLE `email_queue`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `status` (`status`),
+  ADD KEY `scheduled_at` (`scheduled_at`);
 
 --
 -- Indexes for table `email_templates`
 --
 ALTER TABLE `email_templates`
-  ADD PRIMARY KEY (`template_id`),
-  ADD UNIQUE KEY `template_name` (`template_name`);
+  ADD PRIMARY KEY (`template_id`);
 
 --
 -- Indexes for table `enrollments`
 --
 ALTER TABLE `enrollments`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_enrollment` (`student_id`,`course_id`),
-  ADD KEY `idx_status` (`enrollment_status`),
-  ADD KEY `idx_student` (`student_id`),
-  ADD KEY `idx_course` (`course_id`),
-  ADD KEY `idx_user_id` (`user_id`);
+  ADD KEY `idx_enroll_user` (`user_id`),
+  ADD KEY `idx_enroll_course` (`course_id`),
+  ADD KEY `idx_enroll_student` (`student_id`);
 
 --
 -- Indexes for table `enrollment_payment_plans`
 --
 ALTER TABLE `enrollment_payment_plans`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_enrollment_plan` (`enrollment_id`),
-  ADD KEY `idx_user_id` (`user_id`),
-  ADD KEY `idx_course_id` (`course_id`),
-  ADD KEY `idx_payment_status` (`payment_status`),
-  ADD KEY `idx_balance` (`balance`),
-  ADD KEY `idx_epp_balance` (`balance`),
-  ADD KEY `idx_epp_status` (`payment_status`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `instructors`
 --
 ALTER TABLE `instructors`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `user_id` (`user_id`);
+  ADD KEY `idx_inst_user` (`user_id`);
 
 --
 -- Indexes for table `lessons`
 --
 ALTER TABLE `lessons`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_module_order` (`module_id`,`display_order`);
+  ADD KEY `idx_less_mod` (`module_id`);
 
 --
 -- Indexes for table `lesson_progress`
 --
 ALTER TABLE `lesson_progress`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_lesson_progress` (`enrollment_id`,`lesson_id`),
-  ADD KEY `lesson_id` (`lesson_id`),
-  ADD KEY `idx_enrollment` (`enrollment_id`),
-  ADD KEY `idx_status` (`status`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `lesson_resources`
 --
 ALTER TABLE `lesson_resources`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `lesson_id` (`lesson_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `live_sessions`
 --
 ALTER TABLE `live_sessions`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `meeting_room_id` (`meeting_room_id`),
-  ADD KEY `lesson_id` (`lesson_id`),
-  ADD KEY `instructor_id` (`instructor_id`),
-  ADD KEY `scheduled_start_time` (`scheduled_start_time`),
-  ADD KEY `status` (`status`),
-  ADD KEY `idx_live_session_status_time` (`status`,`scheduled_start_time`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `live_session_attendance`
 --
 ALTER TABLE `live_session_attendance`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `live_session_id` (`live_session_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `idx_attendance_user_session` (`user_id`,`live_session_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `messages`
 --
 ALTER TABLE `messages`
   ADD PRIMARY KEY (`message_id`),
-  ADD KEY `parent_message_id` (`parent_message_id`),
-  ADD KEY `idx_recipient` (`recipient_id`),
-  ADD KEY `idx_sender` (`sender_id`),
-  ADD KEY `idx_read` (`is_read`);
+  ADD KEY `idx_msg_sender` (`sender_id`),
+  ADD KEY `idx_msg_recipient` (`recipient_id`);
 
 --
 -- Indexes for table `modules`
 --
 ALTER TABLE `modules`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_course_order` (`course_id`,`display_order`);
+  ADD KEY `idx_mod_course` (`course_id`);
 
 --
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
   ADD PRIMARY KEY (`notification_id`),
-  ADD KEY `idx_user` (`user_id`),
-  ADD KEY `idx_read` (`is_read`);
+  ADD KEY `idx_notif_user` (`user_id`);
 
 --
 -- Indexes for table `payments`
 --
 ALTER TABLE `payments`
-  ADD PRIMARY KEY (`payment_id`),
-  ADD UNIQUE KEY `transaction_id` (`transaction_id`),
-  ADD KEY `course_id` (`course_id`),
-  ADD KEY `enrollment_id` (`enrollment_id`),
-  ADD KEY `payment_method_id` (`payment_method_id`),
-  ADD KEY `idx_student` (`student_id`),
-  ADD KEY `idx_status` (`payment_status`),
-  ADD KEY `idx_transaction` (`transaction_id`),
-  ADD KEY `fk_payment_recorded_by` (`recorded_by`),
-  ADD KEY `fk_payment_plan` (`payment_plan_id`);
+  ADD PRIMARY KEY (`payment_id`);
 
 --
 -- Indexes for table `payment_methods`
@@ -1728,126 +1828,119 @@ ALTER TABLE `questions`
 -- Indexes for table `question_options`
 --
 ALTER TABLE `question_options`
-  ADD PRIMARY KEY (`option_id`),
-  ADD KEY `idx_question` (`question_id`);
+  ADD PRIMARY KEY (`option_id`);
 
 --
 -- Indexes for table `quizzes`
 --
 ALTER TABLE `quizzes`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `lesson_id` (`lesson_id`),
-  ADD KEY `idx_course` (`course_id`);
+  ADD KEY `idx_quiz_course` (`course_id`);
 
 --
 -- Indexes for table `quiz_answers`
 --
 ALTER TABLE `quiz_answers`
-  ADD PRIMARY KEY (`answer_id`),
-  ADD KEY `attempt_id` (`attempt_id`),
-  ADD KEY `question_id` (`question_id`),
-  ADD KEY `selected_option_id` (`selected_option_id`);
+  ADD PRIMARY KEY (`answer_id`);
 
 --
 -- Indexes for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
-  ADD PRIMARY KEY (`attempt_id`),
-  ADD KEY `idx_quiz` (`quiz_id`),
-  ADD KEY `idx_student` (`student_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_att_quiz` (`quiz_id`),
+  ADD KEY `idx_att_student` (`student_id`);
 
 --
 -- Indexes for table `quiz_questions`
 --
 ALTER TABLE `quiz_questions`
-  ADD PRIMARY KEY (`quiz_question_id`),
-  ADD UNIQUE KEY `unique_quiz_question` (`quiz_id`,`question_id`),
-  ADD KEY `question_id` (`question_id`);
+  ADD PRIMARY KEY (`quiz_question_id`);
 
 --
 -- Indexes for table `registration_fees`
 --
 ALTER TABLE `registration_fees`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `remember_tokens`
+--
+ALTER TABLE `remember_tokens`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_user_registration` (`user_id`),
-  ADD KEY `idx_student_id` (`student_id`),
-  ADD KEY `idx_payment_status` (`payment_status`),
-  ADD KEY `idx_verified_by` (`verified_by`);
+  ADD UNIQUE KEY `token` (`token`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `roles`
 --
 ALTER TABLE `roles`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `role_name` (`role_name`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `user_id` (`user_id`);
+  ADD KEY `idx_st_user` (`user_id`);
 
 --
 -- Indexes for table `student_achievements`
 --
 ALTER TABLE `student_achievements`
   ADD PRIMARY KEY (`achievement_id`),
-  ADD KEY `badge_id` (`badge_id`),
-  ADD KEY `course_id` (`course_id`),
-  ADD KEY `idx_student` (`student_id`);
+  ADD KEY `idx_ach_student` (`student_id`),
+  ADD KEY `idx_ach_badge` (`badge_id`);
 
 --
 -- Indexes for table `system_settings`
 --
 ALTER TABLE `system_settings`
-  ADD PRIMARY KEY (`setting_id`),
-  ADD UNIQUE KEY `setting_key` (`setting_key`),
-  ADD KEY `idx_key` (`setting_key`);
+  ADD PRIMARY KEY (`setting_id`);
+
+--
+-- Indexes for table `team_members`
+--
+ALTER TABLE `team_members`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_team_user_link` (`user_id`);
 
 --
 -- Indexes for table `transactions`
 --
 ALTER TABLE `transactions`
-  ADD PRIMARY KEY (`transaction_id`),
-  ADD KEY `idx_payment` (`payment_id`);
+  ADD PRIMARY KEY (`transaction_id`);
 
 --
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`),
-  ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `idx_email` (`email`),
-  ADD KEY `idx_username` (`username`),
-  ADD KEY `idx_status` (`status`);
+  ADD KEY `idx_users_email_search` (`email`),
+  ADD KEY `idx_users_ver_token` (`email_verification_token`),
+  ADD KEY `id` (`id`);
 
 --
 -- Indexes for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `user_id` (`user_id`),
-  ADD KEY `idx_user_id` (`user_id`);
+  ADD KEY `idx_profile_nrc` (`nrc_number`),
+  ADD KEY `idx_up_user` (`user_id`);
 
 --
 -- Indexes for table `user_roles`
 --
 ALTER TABLE `user_roles`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_user_role` (`user_id`,`role_id`),
-  ADD KEY `role_id` (`role_id`),
-  ADD KEY `assigned_by` (`assigned_by`);
+  ADD KEY `idx_ur_user` (`user_id`),
+  ADD KEY `idx_ur_role` (`role_id`);
 
 --
 -- Indexes for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `session_token` (`session_token`),
-  ADD KEY `idx_user_id` (`user_id`),
-  ADD KEY `idx_expires_at` (`expires_at`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -1863,7 +1956,7 @@ ALTER TABLE `activity_logs`
 -- AUTO_INCREMENT for table `announcements`
 --
 ALTER TABLE `announcements`
-  MODIFY `announcement_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `announcement_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `assignments`
@@ -1890,16 +1983,10 @@ ALTER TABLE `certificates`
   MODIFY `certificate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `courses`
---
-ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `course_categories`
 --
 ALTER TABLE `course_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `course_instructors`
@@ -1920,10 +2007,10 @@ ALTER TABLE `discussions`
   MODIFY `discussion_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `discussion_replies`
+-- AUTO_INCREMENT for table `email_queue`
 --
-ALTER TABLE `discussion_replies`
-  MODIFY `reply_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+ALTER TABLE `email_queue`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `email_templates`
@@ -1935,19 +2022,19 @@ ALTER TABLE `email_templates`
 -- AUTO_INCREMENT for table `enrollments`
 --
 ALTER TABLE `enrollments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `enrollment_payment_plans`
 --
 ALTER TABLE `enrollment_payment_plans`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `instructors`
 --
 ALTER TABLE `instructors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `lessons`
@@ -1971,12 +2058,6 @@ ALTER TABLE `lesson_resources`
 -- AUTO_INCREMENT for table `live_sessions`
 --
 ALTER TABLE `live_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `live_session_attendance`
---
-ALTER TABLE `live_session_attendance`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -2028,27 +2109,21 @@ ALTER TABLE `quizzes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `quiz_answers`
---
-ALTER TABLE `quiz_answers`
-  MODIFY `answer_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
-  MODIFY `attempt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `quiz_questions`
---
-ALTER TABLE `quiz_questions`
-  MODIFY `quiz_question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `registration_fees`
 --
 ALTER TABLE `registration_fees`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `remember_tokens`
+--
+ALTER TABLE `remember_tokens`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -2061,298 +2136,195 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
-
---
--- AUTO_INCREMENT for table `student_achievements`
---
-ALTER TABLE `student_achievements`
-  MODIFY `achievement_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `system_settings`
 --
 ALTER TABLE `system_settings`
-  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
--- AUTO_INCREMENT for table `transactions`
+-- AUTO_INCREMENT for table `team_members`
 --
-ALTER TABLE `transactions`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+ALTER TABLE `team_members`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `v_student_balances`
+--
+DROP TABLE IF EXISTS `v_student_balances`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`u605780771_root`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_student_balances`  AS SELECT `u`.`id` AS `user_id`, `u`.`username` AS `username`, concat(`u`.`first_name`,' ',`u`.`last_name`) AS `full_name`, `u`.`email` AS `email`, `s`.`id` AS `student_id`, count(`e`.`id`) AS `total_courses`, coalesce(sum(`epp`.`total_fee`),0) AS `total_course_fees`, coalesce(sum(`epp`.`total_paid`),0) AS `total_paid`, coalesce(sum(`epp`.`total_fee` - `epp`.`total_paid`),0) AS `total_balance`, CASE WHEN sum(`epp`.`total_fee` - `epp`.`total_paid`) > 0 THEN 'Outstanding' ELSE 'Clear' END AS `overall_status` FROM (((`users` `u` join `students` `s` on(`u`.`id` = `s`.`user_id`)) left join `enrollments` `e` on(`s`.`id` = `e`.`student_id`)) left join `enrollment_payment_plans` `epp` on(`e`.`id` = `epp`.`enrollment_id`)) GROUP BY `u`.`id`, `u`.`username`, `u`.`first_name`, `u`.`last_name`, `u`.`email`, `s`.`id` ;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `activity_logs`
---
-ALTER TABLE `activity_logs`
-  ADD CONSTRAINT `activity_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `announcements`
---
-ALTER TABLE `announcements`
-  ADD CONSTRAINT `announcements_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `announcements_ibfk_2` FOREIGN KEY (`posted_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
 -- Constraints for table `assignments`
 --
 ALTER TABLE `assignments`
-  ADD CONSTRAINT `assignments_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `assignments_ibfk_2` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `fk_assign_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `assignment_submissions`
 --
 ALTER TABLE `assignment_submissions`
-  ADD CONSTRAINT `assignment_submissions_ibfk_1` FOREIGN KEY (`assignment_id`) REFERENCES `assignments` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `assignment_submissions_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `assignment_submissions_ibfk_3` FOREIGN KEY (`graded_by`) REFERENCES `instructors` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `certificates`
---
-ALTER TABLE `certificates`
-  ADD CONSTRAINT `certificates_ibfk_1` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_sub_assign` FOREIGN KEY (`assignment_id`) REFERENCES `assignments` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_sub_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `courses`
 --
 ALTER TABLE `courses`
-  ADD CONSTRAINT `courses_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `course_categories` (`id`),
-  ADD CONSTRAINT `fk_courses_instructor` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `course_categories`
---
-ALTER TABLE `course_categories`
-  ADD CONSTRAINT `course_categories_ibfk_1` FOREIGN KEY (`parent_category_id`) REFERENCES `course_categories` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `fk_courses_category` FOREIGN KEY (`category_id`) REFERENCES `course_categories` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_courses_instructor` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `course_instructors`
 --
 ALTER TABLE `course_instructors`
-  ADD CONSTRAINT `course_instructors_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `course_instructors_ibfk_2` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_ci_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_ci_inst` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `course_reviews`
 --
 ALTER TABLE `course_reviews`
-  ADD CONSTRAINT `course_reviews_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `course_reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_review_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_review_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `discussions`
 --
 ALTER TABLE `discussions`
-  ADD CONSTRAINT `discussions_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `discussions_ibfk_2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_disc_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_disc_user` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `discussion_replies`
 --
 ALTER TABLE `discussion_replies`
-  ADD CONSTRAINT `discussion_replies_ibfk_1` FOREIGN KEY (`discussion_id`) REFERENCES `discussions` (`discussion_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `discussion_replies_ibfk_2` FOREIGN KEY (`parent_reply_id`) REFERENCES `discussion_replies` (`reply_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `discussion_replies_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_reply_disc` FOREIGN KEY (`discussion_id`) REFERENCES `discussions` (`discussion_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_reply_parent` FOREIGN KEY (`parent_reply_id`) REFERENCES `discussion_replies` (`reply_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_reply_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `enrollments`
 --
 ALTER TABLE `enrollments`
-  ADD CONSTRAINT `enrollments_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `enrollments_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_enrollments_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `enrollment_payment_plans`
---
-ALTER TABLE `enrollment_payment_plans`
-  ADD CONSTRAINT `fk_plan_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_plan_enrollment` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_plan_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_enroll_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_enroll_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_enroll_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `instructors`
 --
 ALTER TABLE `instructors`
-  ADD CONSTRAINT `instructors_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_inst_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `lessons`
 --
 ALTER TABLE `lessons`
-  ADD CONSTRAINT `lessons_ibfk_1` FOREIGN KEY (`module_id`) REFERENCES `modules` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `lesson_progress`
---
-ALTER TABLE `lesson_progress`
-  ADD CONSTRAINT `lesson_progress_ibfk_1` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `lesson_progress_ibfk_2` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `lesson_resources`
---
-ALTER TABLE `lesson_resources`
-  ADD CONSTRAINT `lesson_resources_ibfk_1` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `live_sessions`
---
-ALTER TABLE `live_sessions`
-  ADD CONSTRAINT `fk_live_sessions_instructor` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_live_sessions_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `live_session_attendance`
---
-ALTER TABLE `live_session_attendance`
-  ADD CONSTRAINT `fk_attendance_live_session` FOREIGN KEY (`live_session_id`) REFERENCES `live_sessions` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_attendance_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_less_mod` FOREIGN KEY (`module_id`) REFERENCES `modules` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `messages`
 --
 ALTER TABLE `messages`
-  ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`recipient_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `messages_ibfk_3` FOREIGN KEY (`parent_message_id`) REFERENCES `messages` (`message_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_msg_recipient` FOREIGN KEY (`recipient_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_msg_sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `modules`
 --
 ALTER TABLE `modules`
-  ADD CONSTRAINT `modules_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_mod_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
-  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `payments`
---
-ALTER TABLE `payments`
-  ADD CONSTRAINT `fk_payment_plan` FOREIGN KEY (`payment_plan_id`) REFERENCES `enrollment_payment_plans` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `fk_payment_recorded_by` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `payments_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `payments_ibfk_3` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `payments_ibfk_4` FOREIGN KEY (`payment_method_id`) REFERENCES `payment_methods` (`payment_method_id`) ON DELETE SET NULL;
-
---
--- Constraints for table `question_options`
---
-ALTER TABLE `question_options`
-  ADD CONSTRAINT `question_options_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_notif_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `quizzes`
 --
 ALTER TABLE `quizzes`
-  ADD CONSTRAINT `quizzes_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `quizzes_ibfk_2` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `quiz_answers`
---
-ALTER TABLE `quiz_answers`
-  ADD CONSTRAINT `quiz_answers_ibfk_1` FOREIGN KEY (`attempt_id`) REFERENCES `quiz_attempts` (`attempt_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `quiz_answers_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `quiz_answers_ibfk_3` FOREIGN KEY (`selected_option_id`) REFERENCES `question_options` (`option_id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `fk_quiz_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
-  ADD CONSTRAINT `quiz_attempts_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `quiz_attempts_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_att_quiz` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_att_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `quiz_questions`
+-- Constraints for table `remember_tokens`
 --
-ALTER TABLE `quiz_questions`
-  ADD CONSTRAINT `quiz_questions_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `quiz_questions_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
-
---
--- Constraints for table `registration_fees`
---
-ALTER TABLE `registration_fees`
-  ADD CONSTRAINT `fk_regfee_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `fk_regfee_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_regfee_verified_by` FOREIGN KEY (`verified_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+ALTER TABLE `remember_tokens`
+  ADD CONSTRAINT `DE` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `students`
 --
 ALTER TABLE `students`
-  ADD CONSTRAINT `students_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_st_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `student_achievements`
 --
 ALTER TABLE `student_achievements`
-  ADD CONSTRAINT `student_achievements_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `student_achievements_ibfk_2` FOREIGN KEY (`badge_id`) REFERENCES `badges` (`badge_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `student_achievements_ibfk_3` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `fk_ach_badge` FOREIGN KEY (`badge_id`) REFERENCES `badges` (`badge_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_ach_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `transactions`
+-- Constraints for table `team_members`
 --
-ALTER TABLE `transactions`
-  ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`payment_id`) REFERENCES `payments` (`payment_id`) ON DELETE CASCADE;
+ALTER TABLE `team_members`
+  ADD CONSTRAINT `fk_team_user_link` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  ADD CONSTRAINT `user_profiles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_up_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  ADD CONSTRAINT `user_roles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `user_roles_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `user_roles_ibfk_3` FOREIGN KEY (`assigned_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `user_sessions`
---
-ALTER TABLE `user_sessions`
-  ADD CONSTRAINT `user_sessions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_ur_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_ur_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
