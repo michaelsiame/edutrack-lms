@@ -1,18 +1,19 @@
 <?php
 /**
  * Announcements API Endpoint
- * Handles system and course announcements
+ * Uses Announcement class for database operations
  */
 
 require_once '../../src/bootstrap.php';
 require_once '../../src/middleware/admin-only.php';
+require_once '../../src/classes/Announcement.php';
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: ' . ($_SERVER['HTTP_ORIGIN'] ?? '*'));
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Credentials: true');
 
-// Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -24,145 +25,72 @@ $input = json_decode(file_get_contents('php://input'), true);
 try {
     switch ($method) {
         case 'GET':
-            // Get all announcements
-            $sql = "SELECT
-                        a.announcement_id as id,
-                        a.course_id,
-                        a.posted_by,
-                        a.title,
-                        a.content,
-                        a.announcement_type as type,
-                        a.priority,
-                        a.is_published,
-                        a.published_at,
-                        a.expires_at,
-                        a.created_at as date,
-                        a.updated_at,
-                        CONCAT(u.first_name, ' ', u.last_name) as author_name,
-                        c.title as course_title
-                    FROM announcements a
-                    INNER JOIN users u ON a.posted_by = u.id
-                    LEFT JOIN courses c ON a.course_id = c.id
-                    ORDER BY a.created_at DESC";
+            $announcements = Announcement::all();
+            
+            $formattedAnnouncements = array_map(function($a) {
+                return [
+                    'id' => $a['announcement_id'],
+                    'course_id' => $a['course_id'],
+                    'title' => $a['title'],
+                    'content' => $a['content'],
+                    'type' => $a['announcement_type'],
+                    'priority' => $a['priority'],
+                    'is_published' => (bool)$a['is_published'],
+                    'date' => $a['created_at'],
+                    'author_name' => $a['author_name'] ?? 'Unknown'
+                ];
+            }, $announcements);
 
-            $announcements = $db->fetchAll($sql);
-
-            echo json_encode([
-                'success' => true,
-                'data' => $announcements
-            ]);
+            echo json_encode(['success' => true, 'data' => $formattedAnnouncements]);
             break;
 
         case 'POST':
-            // Create new announcement
             if (empty($input['title']) || empty($input['content'])) {
-                throw new Exception('Title and content are required');
+                throw new Exception('Title and content required');
             }
 
-            $announcementData = [
+            $announcementId = Announcement::create([
                 'posted_by' => $_SESSION['user_id'],
                 'title' => $input['title'],
                 'content' => $input['content'],
                 'announcement_type' => $input['type'] ?? 'General',
                 'priority' => $input['priority'] ?? 'Normal',
-                'is_published' => isset($input['is_published']) ? ($input['is_published'] ? 1 : 0) : 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ];
-
-            if (isset($input['course_id']) && $input['course_id'] > 0) {
-                $announcementData['course_id'] = $input['course_id'];
-            }
-
-            if (isset($input['published_at'])) {
-                $announcementData['published_at'] = $input['published_at'];
-            } elseif ($announcementData['is_published']) {
-                $announcementData['published_at'] = date('Y-m-d H:i:s');
-            }
-
-            if (isset($input['expires_at'])) {
-                $announcementData['expires_at'] = $input['expires_at'];
-            }
-
-            $announcementId = $db->insert('announcements', $announcementData);
-
-            echo json_encode([
-                'success' => true,
-                'message' => 'Announcement created successfully',
-                'data' => ['id' => $announcementId]
+                'course_id' => $input['course_id'] ?? null,
+                'is_published' => isset($input['is_published']) ? (int)$input['is_published'] : 1
             ]);
+
+            echo json_encode(['success' => true, 'message' => 'Announcement created', 'data' => ['id' => $announcementId]]);
             break;
 
         case 'PUT':
-            // Update announcement
-            if (empty($input['id'])) {
-                throw new Exception('Announcement ID is required');
+            if (empty($input['id'])) throw new Exception('Announcement ID required');
+
+            $announcement = Announcement::find($input['id']);
+            if (!$announcement) throw new Exception('Announcement not found');
+
+            $updateData = array_intersect_key($input, array_flip([
+                'title', 'content', 'type', 'priority', 'is_published'
+            ]));
+            
+            if (isset($updateData['type'])) {
+                $updateData['announcement_type'] = $updateData['type'];
+                unset($updateData['type']);
             }
 
-            $updateData = [];
-
-            if (isset($input['title'])) {
-                $updateData['title'] = $input['title'];
-            }
-            if (isset($input['content'])) {
-                $updateData['content'] = $input['content'];
-            }
-            if (isset($input['type'])) {
-                $updateData['announcement_type'] = $input['type'];
-            }
-            if (isset($input['priority'])) {
-                $updateData['priority'] = $input['priority'];
-            }
-            if (isset($input['is_published'])) {
-                $updateData['is_published'] = $input['is_published'] ? 1 : 0;
-                if ($updateData['is_published'] && !isset($input['published_at'])) {
-                    $updateData['published_at'] = date('Y-m-d H:i:s');
-                }
-            }
-            if (isset($input['expires_at'])) {
-                $updateData['expires_at'] = $input['expires_at'];
-            }
-
-            if (!empty($updateData)) {
-                $updateData['updated_at'] = date('Y-m-d H:i:s');
-                $db->update('announcements', $updateData, 'announcement_id = ?', [$input['id']]);
-            }
-
-            echo json_encode([
-                'success' => true,
-                'message' => 'Announcement updated successfully'
-            ]);
+            $announcement->update($updateData);
+            echo json_encode(['success' => true, 'message' => 'Announcement updated']);
             break;
 
         case 'DELETE':
-            // Delete announcement
             parse_str(file_get_contents('php://input'), $params);
             $announcementId = $params['id'] ?? $_GET['id'] ?? null;
+            if (!$announcementId) throw new Exception('Announcement ID required');
 
-            if (empty($announcementId)) {
-                throw new Exception('Announcement ID is required');
-            }
-
-            $db->delete('announcements', 'announcement_id = ?', [$announcementId]);
-
-            echo json_encode([
-                'success' => true,
-                'message' => 'Announcement deleted successfully'
-            ]);
+            Announcement::delete($announcementId);
+            echo json_encode(['success' => true, 'message' => 'Announcement deleted']);
             break;
-
-        default:
-            throw new Exception('Method not allowed');
     }
-
 } catch (Exception $e) {
-    if ($db->getConnection()->inTransaction()) {
-        $db->rollback();
-    }
-
     http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'error' => $e->getMessage()
-    ]);
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }

@@ -1,18 +1,19 @@
 <?php
 /**
  * Categories API Endpoint
- * Handles course category management
+ * Uses Category class for database operations
  */
 
 require_once '../../src/bootstrap.php';
 require_once '../../src/middleware/admin-only.php';
+require_once '../../src/classes/Category.php';
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: ' . ($_SERVER['HTTP_ORIGIN'] ?? '*'));
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Credentials: true');
 
-// Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -24,123 +25,60 @@ $input = json_decode(file_get_contents('php://input'), true);
 try {
     switch ($method) {
         case 'GET':
-            // Get all categories with course count
-            $sql = "SELECT
-                        cc.id,
-                        cc.name,
-                        cc.category_description as description,
-                        cc.color,
-                        cc.icon_url,
-                        cc.display_order,
-                        cc.is_active,
-                        cc.parent_category_id,
-                        COUNT(c.id) as count
-                    FROM course_categories cc
-                    LEFT JOIN courses c ON cc.id = c.category_id
-                    GROUP BY cc.id
-                    ORDER BY cc.display_order ASC, cc.name ASC";
+            $categories = Category::all();
+            
+            $formattedCategories = array_map(function($cat) {
+                return [
+                    'id' => $cat['id'],
+                    'name' => $cat['name'],
+                    'description' => $cat['category_description'] ?? '',
+                    'color' => $cat['color'] ?? '#333333',
+                    'count' => $cat['course_count'] ?? 0,
+                    'is_active' => (bool)$cat['is_active']
+                ];
+            }, $categories);
 
-            $categories = $db->fetchAll($sql);
-
-            echo json_encode([
-                'success' => true,
-                'data' => $categories
-            ]);
+            echo json_encode(['success' => true, 'data' => $formattedCategories]);
             break;
 
         case 'POST':
-            // Create new category
-            if (empty($input['name'])) {
-                throw new Exception('Category name is required');
-            }
+            if (empty($input['name'])) throw new Exception('Category name required');
 
-            $categoryData = [
+            $categoryId = Category::create([
                 'name' => $input['name'],
                 'category_description' => $input['description'] ?? '',
-                'color' => $input['color'] ?? '#333333',
-                'is_active' => $input['is_active'] ?? 1,
-                'display_order' => $input['display_order'] ?? 0,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ];
-
-            $categoryId = $db->insert('course_categories', $categoryData);
-
-            echo json_encode([
-                'success' => true,
-                'message' => 'Category created successfully',
-                'data' => ['id' => $categoryId]
+                'color' => $input['color'] ?? '#333333'
             ]);
+
+            echo json_encode(['success' => true, 'message' => 'Category created', 'data' => ['id' => $categoryId]]);
             break;
 
         case 'PUT':
-            // Update category
-            if (empty($input['id'])) {
-                throw new Exception('Category ID is required');
-            }
+            if (empty($input['id'])) throw new Exception('Category ID required');
 
-            $updateData = [];
+            $category = Category::find($input['id']);
+            if (!$category) throw new Exception('Category not found');
 
-            if (isset($input['name'])) {
-                $updateData['name'] = $input['name'];
-            }
+            $updateData = array_intersect_key($input, array_flip(['name', 'description', 'color']));
             if (isset($input['description'])) {
                 $updateData['category_description'] = $input['description'];
-            }
-            if (isset($input['color'])) {
-                $updateData['color'] = $input['color'];
-            }
-            if (isset($input['is_active'])) {
-                $updateData['is_active'] = $input['is_active'] ? 1 : 0;
+                unset($updateData['description']);
             }
 
-            if (!empty($updateData)) {
-                $updateData['updated_at'] = date('Y-m-d H:i:s');
-                $db->update('course_categories', $updateData, 'id = ?', [$input['id']]);
-            }
-
-            echo json_encode([
-                'success' => true,
-                'message' => 'Category updated successfully'
-            ]);
+            $category->update($updateData);
+            echo json_encode(['success' => true, 'message' => 'Category updated']);
             break;
 
         case 'DELETE':
-            // Delete category
             parse_str(file_get_contents('php://input'), $params);
             $categoryId = $params['id'] ?? $_GET['id'] ?? null;
+            if (!$categoryId) throw new Exception('Category ID required');
 
-            if (empty($categoryId)) {
-                throw new Exception('Category ID is required');
-            }
-
-            // Check if category has courses
-            $courseCount = $db->count('courses', 'category_id = ?', [$categoryId]);
-
-            if ($courseCount > 0) {
-                throw new Exception('Cannot delete category with associated courses. Please reassign courses first.');
-            }
-
-            $db->delete('course_categories', 'id = ?', [$categoryId]);
-
-            echo json_encode([
-                'success' => true,
-                'message' => 'Category deleted successfully'
-            ]);
+            Category::delete($categoryId);
+            echo json_encode(['success' => true, 'message' => 'Category deleted']);
             break;
-
-        default:
-            throw new Exception('Method not allowed');
     }
-
 } catch (Exception $e) {
-    if ($db->getConnection()->inTransaction()) {
-        $db->rollback();
-    }
-
     http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'error' => $e->getMessage()
-    ]);
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
