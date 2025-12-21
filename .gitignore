@@ -92,6 +92,9 @@ secrets.txt
 # Build Files
 /dist/
 /build/
+/public/admin/dist/
+/public/admin/node_modules/
+admin-built.zip
 
 # Temporary Files
 tmp/
