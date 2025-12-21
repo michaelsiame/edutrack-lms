@@ -8,6 +8,7 @@ require_once '../../src/bootstrap.php';
 require_once '../../src/middleware/admin-only.php';
 require_once '../../src/classes/Certificate.php';
 require_once '../../src/classes/Enrollment.php';
+require_once '../../src/includes/email-hooks.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: ' . ($_SERVER['HTTP_ORIGIN'] ?? '*'));
@@ -62,6 +63,9 @@ try {
             $certificateId = Certificate::issue($input['enrollment_id']);
 
             if ($certificateId) {
+                // Send certificate notification email
+                sendCertificateNotification($certificateId);
+
                 $certificate = Certificate::find($certificateId);
                 echo json_encode([
                     'success' => true,

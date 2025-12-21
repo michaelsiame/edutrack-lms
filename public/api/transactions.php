@@ -6,6 +6,7 @@
 
 require_once '../../src/bootstrap.php';
 require_once '../../src/middleware/admin-only.php';
+require_once '../../src/includes/email-hooks.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -74,6 +75,11 @@ try {
 
             $transactionId = $db->insert('transactions', $transactionData);
 
+            // Send payment receipt email if transaction is completed
+            if ($transactionData['payment_status'] === 'Completed') {
+                sendPaymentReceipt($transactionId);
+            }
+
             echo json_encode([
                 'success' => true,
                 'message' => 'Transaction created successfully',
@@ -105,6 +111,11 @@ try {
             if (!empty($updateData)) {
                 $updateData['updated_at'] = date('Y-m-d H:i:s');
                 $db->update('transactions', $updateData, 'transaction_id = ?', [$input['id']]);
+
+                // Send payment receipt email if status changed to Completed
+                if (isset($input['status']) && $input['status'] === 'Completed') {
+                    sendPaymentReceipt($input['id']);
+                }
             }
 
             echo json_encode([
