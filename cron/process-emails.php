@@ -1,21 +1,21 @@
 <?php
-/**
- * Email Queue Processor - Cron Job Script
- *
- * This script processes pending emails in the email_queue table
- *
- * Setup on Hostinger:
- * 1. Go to hPanel → Advanced → Cron Jobs
- * 2. Add new cron job:
- *    - Common Settings: Every 5 minutes (or custom)
- *    - Command: /usr/bin/php /home/yourusername/public_html/cron/process-emails.php
- *    - Or: cd /home/yourusername/public_html && php cron/process-emails.php
- *
- * Schedule examples:
- * - Every 5 minutes:  *//* * * * *
- * - Every 10 minutes: */10 * * * *
- * - Every hour:       0 * * * *
- */
+// /**
+//  * Email Queue Processor - Cron Job Script
+//  *
+//  * This script processes pending emails in the email_queue table
+//  *
+//  * Setup on Hostinger:
+//  * 1. Go to hPanel → Advanced → Cron Jobs
+//  * 2. Add new cron job:
+//  *    - Common Settings: Every 5 minutes (or custom)
+//  *    - Command: /usr/bin/php /home/yourusername/public_html/cron/process-emails.php
+//  *    - Or: cd /home/yourusername/public_html && php cron/process-emails.php
+//  *
+//  * Schedule examples:
+//  * - Every 5 minutes:  *//* * * * *
+//  * - Every 10 minutes: */10 * * * *
+//  * - Every hour:       0 * * * *
+//  **/
 
 // Prevent web access
 if (php_sapi_name() !== 'cli') {
