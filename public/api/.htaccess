@@ -7,6 +7,11 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
 
+    # Rewrite /api/endpoint to /api/endpoint.php if the PHP file exists
+    # This allows frontend to call /api/users instead of /api/users.php
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([^/]+)$ $1.php [L]
+
     # Route /api requests to index.php for version handling
     # This allows /api/v1/auth.php to work directly
     # while /api/ goes to the router
