@@ -113,11 +113,25 @@ class DBService {
         credentials: 'include', // Include session cookies for authentication
         ...options,
       });
-      if (!res.ok) throw new Error(`API Error: ${res.statusText}`);
+
+      if (!res.ok) {
+        console.error(`[API] ${endpoint} failed with status ${res.status} ${res.statusText}`);
+
+        // Try to get error details
+        try {
+          const errorData = await res.json();
+          console.error(`[API] Error details:`, errorData);
+        } catch (e) {
+          console.error(`[API] Could not parse error response`);
+        }
+
+        throw new Error(`API Error: ${res.status} ${res.statusText}`);
+      }
+
       const json = await res.json();
       return json.data || json; // Handle wrapped responses
     } catch (error) {
-      console.warn(`[API] Connection failed for ${endpoint}. Using mock data.`);
+      console.warn(`[API] Connection failed for ${endpoint}. Using mock data.`, error);
       return null;
     }
   }
