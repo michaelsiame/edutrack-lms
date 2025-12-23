@@ -48,7 +48,12 @@ export const Layout = ({ children, currentView, setView }: LayoutProps) => {
              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-bold text-xs text-white">AD</div>
              <div className="ml-3">
                <p className="text-sm font-medium">Administrator</p>
-               <button className="text-xs text-gray-400 hover:text-white">Log out</button>
+               <button
+                 onClick={() => window.location.href = '/logout.php'}
+                 className="text-xs text-gray-400 hover:text-white transition-colors"
+               >
+                 Log out
+               </button>
              </div>
            </div>
         </div>
