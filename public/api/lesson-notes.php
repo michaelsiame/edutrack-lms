@@ -17,6 +17,7 @@ if (!isLoggedIn()) {
 
 $user = User::current();
 $userId = $user->getId();
+$db = Database::getInstance();
 
 // Handle GET requests - Fetch notes
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {

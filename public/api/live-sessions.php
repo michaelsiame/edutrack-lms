@@ -18,6 +18,7 @@ if (!isLoggedIn()) {
 $user = User::current();
 $userId = $user->getId();
 $userRole = $_SESSION['user_role'] ?? 'student';
+$db = Database::getInstance();
 
 // Get instructor ID if user is an instructor
 $instructorId = null;
