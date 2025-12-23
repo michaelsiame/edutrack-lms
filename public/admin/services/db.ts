@@ -106,7 +106,11 @@ class DBService {
   private async fetch<T>(endpoint: string, options?: RequestInit): Promise<T | null> {
     try {
       const res = await fetch(`${this.API_BASE}${endpoint}`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest' // Identify as AJAX request for PHP backend
+        },
+        credentials: 'include', // Include session cookies for authentication
         ...options,
       });
       if (!res.ok) throw new Error(`API Error: ${res.statusText}`);
