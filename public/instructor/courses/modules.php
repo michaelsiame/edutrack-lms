@@ -29,13 +29,24 @@ if (!$course) {
     redirect(url('instructor/courses.php'));
 }
 
-// Verify ownership
-$instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
-$instructorId = $instructorRecord ? $instructorRecord['id'] : null;
+// Verify ownership - create instructor record if doesn't exist
+$instructor = Instructor::getOrCreate($userId);
+$instructorId = $instructor->getId();
+
+// Check ownership from THREE sources:
+// 1. Direct assignment: course.instructor_id = instructors.id
+// 2. Legacy assignment: course.instructor_id = user.id
+// 3. Multi-instructor assignment: course_instructors table
+$courseInstructorId = $course->getInstructorId();
+$isAssignedViaTable = $db->fetchOne("
+    SELECT 1 FROM course_instructors
+    WHERE course_id = ? AND instructor_id = ?
+", [$courseId, $instructorId]);
 
 $canEdit = hasRole('admin') ||
-           ($instructorId && $course->getInstructorId() == $instructorId) ||
-           ($course->getInstructorId() == $userId);
+           ($courseInstructorId == $instructorId) ||
+           ($courseInstructorId == $userId) ||
+           ($isAssignedViaTable !== null);
 
 if (!$canEdit) {
     flash('message', 'You do not have permission to edit this course', 'error');

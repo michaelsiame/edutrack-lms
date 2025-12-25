@@ -61,29 +61,31 @@ if (!$course) {
 }
 
 // Security: Ensure instructor can only edit their own courses
-// Get instructor ID from instructors table (instructor_id in courses references instructors.id, not users.id)
+// Get instructor ID from instructors table - create if doesn't exist
 $db = Database::getInstance();
 $userId = currentUserId();
-$instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
-$instructorId = $instructorRecord ? $instructorRecord['id'] : null;
+require_once '../../src/classes/Instructor.php';
+$instructor = Instructor::getOrCreate($userId);
+$instructorId = $instructor->getId();
 
-// Check ownership: course.instructor_id should match instructors.id
-// Also check legacy case where instructor_id might be user_id directly
+// Check ownership from THREE sources:
+// 1. Direct assignment: course.instructor_id = instructors.id
+// 2. Legacy assignment: course.instructor_id = user.id
+// 3. Multi-instructor assignment: course_instructors table
 $courseInstructorId = $course->getInstructorId();
+$isAssignedViaTable = $db->fetchOne("
+    SELECT 1 FROM course_instructors
+    WHERE course_id = ? AND instructor_id = ?
+", [$courseId, $instructorId]);
+
 $canEdit = hasRole('admin') ||
-           ($instructorId && $courseInstructorId == $instructorId) ||
-           ($courseInstructorId == $userId);
+           ($courseInstructorId == $instructorId) ||
+           ($courseInstructorId == $userId) ||
+           ($isAssignedViaTable !== null);
 
 if (!$canEdit) {
     flash('message', 'You do not have permission to edit this course', 'error');
     redirect(url('instructor/courses.php'));
-}
-
-// If instructor record doesn't exist yet, create one for future use
-if (!$instructorId) {
-    require_once '../../src/classes/Instructor.php';
-    $instructor = Instructor::getOrCreate($userId);
-    $instructorId = $instructor->getId();
 }
 
 // Get categories
