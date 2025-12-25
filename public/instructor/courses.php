@@ -31,6 +31,7 @@ require_once '../../src/middleware/instructor-only.php';
 require_once '../../src/classes/User.php';
 require_once '../../src/classes/Course.php';
 require_once '../../src/classes/Statistics.php';
+require_once '../../src/classes/Instructor.php';
 
 // Debug: Log user info
 if ($DEBUG_MODE) {
@@ -48,10 +49,10 @@ if (!$user) {
 }
 $userId = $user->getId();
 
-// Get instructor ID from instructors table (instructor_id in courses references instructors.id, not users.id)
+// Get instructor ID from instructors table - create if doesn't exist
 $db = Database::getInstance();
-$instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
-$instructorId = $instructorRecord ? $instructorRecord['id'] : null;
+$instructor = Instructor::getOrCreate($userId);
+$instructorId = $instructor->getId();
 
 // Debug: Log instructor ID
 if ($DEBUG_MODE) {
@@ -59,31 +60,23 @@ if ($DEBUG_MODE) {
     $debug_data['instructor_id'] = $instructorId;
 }
 
-// Get instructor's courses - check both instructors.id AND user.id for legacy data
-// This handles cases where courses were created with user_id as instructor_id
-if ($instructorId) {
-    // Fetch courses where instructor_id matches either instructors.id or user.id
-    $courses = $db->fetchAll("
-        SELECT c.*, cat.name as category_name,
-               (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
-               (SELECT COUNT(*) FROM lessons l JOIN modules m ON l.module_id = m.id WHERE m.course_id = c.id) as total_lessons
-        FROM courses c
-        LEFT JOIN course_categories cat ON c.category_id = cat.id
-        WHERE c.instructor_id = ? OR c.instructor_id = ?
-        ORDER BY c.created_at DESC
-    ", [$instructorId, $userId]);
-} else {
-    // No instructor record yet - only check user_id
-    $courses = $db->fetchAll("
-        SELECT c.*, cat.name as category_name,
-               (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
-               (SELECT COUNT(*) FROM lessons l JOIN modules m ON l.module_id = m.id WHERE m.course_id = c.id) as total_lessons
-        FROM courses c
-        LEFT JOIN course_categories cat ON c.category_id = cat.id
-        WHERE c.instructor_id = ?
-        ORDER BY c.created_at DESC
-    ", [$userId]);
-}
+// Get instructor's courses - check THREE sources:
+// 1. Direct assignment via courses.instructor_id = instructors.id
+// 2. Legacy assignment via courses.instructor_id = user.id
+// 3. Multi-instructor assignment via course_instructors table
+$courses = $db->fetchAll("
+    SELECT DISTINCT c.*, cat.name as category_name,
+           (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
+           (SELECT COUNT(*) FROM lessons l JOIN modules m ON l.module_id = m.id WHERE m.course_id = c.id) as total_lessons,
+           ci.is_lead
+    FROM courses c
+    LEFT JOIN course_categories cat ON c.category_id = cat.id
+    LEFT JOIN course_instructors ci ON c.id = ci.course_id AND ci.instructor_id = ?
+    WHERE c.instructor_id = ?
+       OR c.instructor_id = ?
+       OR c.id IN (SELECT course_id FROM course_instructors WHERE instructor_id = ?)
+    ORDER BY c.created_at DESC
+", [$instructorId, $instructorId, $userId, $instructorId]);
 
 // Get statistics using Statistics class (use instructorId if available, else userId)
 $statsId = $instructorId ?: $userId;
