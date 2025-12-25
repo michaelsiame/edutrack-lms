@@ -159,6 +159,15 @@ require_once '../../../src/templates/instructor-header.php';
                                         <i class="fas fa-<?= $lesson['lesson_type'] == 'video' ? 'video' : 'file-alt' ?> mr-1"></i>
                                         <?= ucfirst($lesson['lesson_type']) ?>
                                     </span>
+                                    <?php
+                                    require_once BASE_PATH . '/src/classes/LessonResource.php';
+                                    $lessonResources = LessonResource::getByLesson($lesson['id']);
+                                    if (!empty($lessonResources)):
+                                    ?>
+                                    <span class="px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded-full">
+                                        <i class="fas fa-download mr-1"></i><?= count($lessonResources) ?> resource<?= count($lessonResources) > 1 ? 's' : '' ?>
+                                    </span>
+                                    <?php endif; ?>
                                 </div>
                                 <?php if ($lesson['duration']): ?>
                                 <p class="text-sm text-gray-500 mt-1">
@@ -168,6 +177,11 @@ require_once '../../../src/templates/instructor-header.php';
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
+                            <a href="<?= url('instructor/courses/lesson-resources.php?lesson_id=' . $lesson['id']) ?>"
+                               class="px-3 py-1 text-sm bg-purple-50 text-purple-600 rounded hover:bg-purple-100"
+                               title="Manage Resources">
+                                <i class="fas fa-download"></i>
+                            </a>
                             <button onclick="showEditLessonModal(<?= htmlspecialchars(json_encode($lesson)) ?>)"
                                     class="px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded hover:bg-blue-100">
                                 <i class="fas fa-edit"></i>
