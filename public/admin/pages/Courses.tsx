@@ -346,7 +346,18 @@ export const Courses = () => {
                             <span className="text-sm text-gray-700">{lesson.title}</span>
                             <span className="text-xs text-gray-400 bg-gray-200 px-1 rounded">{lesson.type}</span>
                           </div>
-                          <button onClick={() => handleDeleteLesson(lesson.id)} className="text-gray-400 hover:text-red-500"><Icons.X /></button>
+                          <div className="flex items-center space-x-2">
+                            <a
+                              href={`/instructor/courses/lesson-resources.php?lesson_id=${lesson.id}`}
+                              target="_blank"
+                              className="text-purple-600 hover:text-purple-800 text-xs flex items-center space-x-1 px-2 py-1 bg-purple-50 rounded hover:bg-purple-100"
+                              title="Manage Resources (PDFs, documents, etc.)"
+                            >
+                              <Icons.Download size={14} />
+                              <span>Resources</span>
+                            </a>
+                            <button onClick={() => handleDeleteLesson(lesson.id)} className="text-gray-400 hover:text-red-500"><Icons.X /></button>
+                          </div>
                         </div>
                       ))}
 
