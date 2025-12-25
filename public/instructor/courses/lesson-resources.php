@@ -113,6 +113,51 @@ require_once '../../../src/templates/instructor-header.php';
                         <p class="text-xs text-gray-500 mt-1">Max size: 50MB (100MB for videos). Supported: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, ZIP, MP4, MP3</p>
                     </div>
 
+                    <?php
+                    // Check if Google Drive is configured
+                    $googleDriveEnabled = defined('GOOGLE_DRIVE_ENABLED') && GOOGLE_DRIVE_ENABLED;
+                    $googleDriveConfigured = false;
+                    if ($googleDriveEnabled) {
+                        require_once BASE_PATH . '/src/classes/GoogleDriveService.php';
+                        $configCheck = GoogleDriveService::isConfigured();
+                        $googleDriveConfigured = $configCheck['configured'];
+                    }
+                    ?>
+
+                    <?php if ($googleDriveConfigured): ?>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Storage Location *</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-primary-500 has-[:checked]:border-primary-600 has-[:checked]:bg-primary-50">
+                                <input type="radio" name="storage_type" value="local" checked class="sr-only">
+                                <div class="flex items-center">
+                                    <i class="fas fa-server text-2xl text-gray-600 mr-3"></i>
+                                    <div>
+                                        <div class="font-medium text-gray-900">Local Server</div>
+                                        <div class="text-xs text-gray-500">Store on this server</div>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-primary-500 has-[:checked]:border-primary-600 has-[:checked]:bg-primary-50">
+                                <input type="radio" name="storage_type" value="gdrive" class="sr-only">
+                                <div class="flex items-center">
+                                    <i class="fab fa-google-drive text-2xl text-blue-600 mr-3"></i>
+                                    <div>
+                                        <div class="font-medium text-gray-900">Google Drive</div>
+                                        <div class="text-xs text-gray-500">Store on Google Drive</div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            <strong>Google Drive:</strong> Files are automatically uploaded to Google Drive and students get a shareable link. No server storage used!
+                        </p>
+                    </div>
+                    <?php else: ?>
+                    <input type="hidden" name="storage_type" value="local">
+                    <?php endif; ?>
+
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Resource Title *</label>

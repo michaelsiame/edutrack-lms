@@ -58,7 +58,8 @@ if ($method === 'POST') {
     $title = $_POST['title'] ?? null;
     $description = $_POST['description'] ?? null;
     $resourceType = $_POST['resource_type'] ?? 'Other';
-    $uploadType = $_POST['upload_type'] ?? 'file'; // 'file' or 'url'
+    $uploadType = $_POST['upload_type'] ?? 'file'; // 'file', 'url', or 'gdrive'
+    $storageType = $_POST['storage_type'] ?? 'local'; // 'local' or 'gdrive'
 
     if (!$lessonId || !$title) {
         http_response_code(400);
@@ -124,6 +125,95 @@ if ($method === 'POST') {
     $uploadSubDir = 'courses/lessons/resources';
 
     try {
+        // Check if Google Drive storage is requested and enabled
+        $useGoogleDrive = ($storageType === 'gdrive' && defined('GOOGLE_DRIVE_ENABLED') && GOOGLE_DRIVE_ENABLED);
+
+        if ($useGoogleDrive) {
+            // Upload to Google Drive
+            require_once BASE_PATH . '/src/classes/GoogleDriveService.php';
+
+            // First, upload to temp location
+            $fileUpload = new FileUpload($_FILES['file'], 'temp');
+
+            // Set max file size (default 50MB, 100MB for videos)
+            $maxSize = ($resourceType === 'Video') ? 100 : 50;
+            $fileUpload->setMaxFileSize($maxSize * 1024 * 1024);
+
+            $tempResult = $fileUpload->upload();
+
+            if (!$tempResult['success']) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => $tempResult['error']]);
+                exit;
+            }
+
+            // Get temp file path
+            $tempFilePath = UPLOAD_DIR . '/' . $tempResult['filepath'];
+            $originalFileName = $tempResult['original_name'];
+            $fileMimeType = $_FILES['file']['type'];
+
+            // Upload to Google Drive
+            try {
+                $gdriveService = new GoogleDriveService();
+                $gdriveResult = $gdriveService->uploadFile($tempFilePath, $originalFileName, $fileMimeType);
+
+                // Delete temp file
+                if (file_exists($tempFilePath)) {
+                    unlink($tempFilePath);
+                }
+
+                if (!$gdriveResult['success']) {
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'message' => $gdriveResult['error']]);
+                    exit;
+                }
+
+                // Get file size in KB
+                $fileSizeKb = round($tempResult['size'] / 1024);
+
+                // Store Google Drive link in database
+                $resourceId = LessonResource::create([
+                    'lesson_id' => $lessonId,
+                    'title' => $title,
+                    'description' => $description,
+                    'resource_type' => $resourceType,
+                    'file_url' => $gdriveResult['shareable_link'],
+                    'file_size_kb' => $fileSizeKb
+                ]);
+
+                if ($resourceId) {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Resource uploaded to Google Drive successfully',
+                        'resource_id' => $resourceId,
+                        'storage' => 'Google Drive',
+                        'file_info' => [
+                            'filename' => $originalFileName,
+                            'size' => $fileSizeKb . ' KB',
+                            'type' => $resourceType,
+                            'google_drive_id' => $gdriveResult['file_id']
+                        ]
+                    ]);
+                } else {
+                    // Try to delete from Google Drive if database insert failed
+                    $gdriveService->deleteFile($gdriveResult['file_id']);
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'message' => 'Failed to save resource']);
+                }
+                exit;
+
+            } catch (Exception $e) {
+                // Delete temp file if exists
+                if (file_exists($tempFilePath)) {
+                    unlink($tempFilePath);
+                }
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Google Drive error: ' . $e->getMessage()]);
+                exit;
+            }
+        }
+
+        // Regular local upload
         $fileUpload = new FileUpload($_FILES['file'], $uploadSubDir);
 
         // Set allowed file types based on resource type
