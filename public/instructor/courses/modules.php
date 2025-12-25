@@ -8,6 +8,7 @@ require_once '../../../src/middleware/instructor-only.php';
 require_once '../../../src/classes/Course.php';
 require_once '../../../src/classes/Module.php';
 require_once '../../../src/classes/Lesson.php';
+require_once '../../../src/classes/LessonResource.php';
 require_once '../../../src/classes/Instructor.php';
 
 $db = Database::getInstance();
@@ -160,14 +161,22 @@ require_once '../../../src/templates/instructor-header.php';
                                         <?= ucfirst($lesson['lesson_type']) ?>
                                     </span>
                                     <?php
-                                    require_once BASE_PATH . '/src/classes/LessonResource.php';
-                                    $lessonResources = LessonResource::getByLesson($lesson['id']);
-                                    if (!empty($lessonResources)):
+                                    if (!class_exists('LessonResource')) {
+                                        require_once BASE_PATH . '/src/classes/LessonResource.php';
+                                    }
+                                    try {
+                                        $lessonResources = LessonResource::getByLesson($lesson['id']);
+                                        if (!empty($lessonResources)):
                                     ?>
                                     <span class="px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded-full">
                                         <i class="fas fa-download mr-1"></i><?= count($lessonResources) ?> resource<?= count($lessonResources) > 1 ? 's' : '' ?>
                                     </span>
-                                    <?php endif; ?>
+                                    <?php
+                                        endif;
+                                    } catch (Exception $e) {
+                                        // Silently fail if resource loading fails
+                                    }
+                                    ?>
                                 </div>
                                 <?php if ($lesson['duration']): ?>
                                 <p class="text-sm text-gray-500 mt-1">
