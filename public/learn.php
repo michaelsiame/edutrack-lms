@@ -541,6 +541,65 @@ require_once '../src/templates/header.php';
                             <?= $currentLesson['content'] ?>
                         </div>
                         <?php endif; ?>
+
+                        <!-- Lesson Resources -->
+                        <?php
+                        require_once BASE_PATH . '/src/classes/LessonResource.php';
+                        $resources = LessonResource::getByLesson($lessonId);
+                        if (!empty($resources)):
+                        ?>
+                        <div class="mt-8 border-t pt-6">
+                            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                                <i class="fas fa-download text-blue-600 mr-2"></i>
+                                Downloadable Resources
+                            </h3>
+                            <p class="text-gray-600 mb-4">Download the following materials to enhance your learning experience:</p>
+
+                            <div class="grid gap-3">
+                                <?php foreach ($resources as $resource):
+                                    $resourceObj = LessonResource::find($resource['id']);
+                                    $iconClass = $resourceObj->getIconClass();
+                                    $fileSize = $resourceObj->getFormattedFileSize();
+                                    $downloadUrl = $resourceObj->getDownloadUrl();
+                                ?>
+                                <a href="<?= htmlspecialchars($downloadUrl) ?>"
+                                   target="_blank"
+                                   class="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition group">
+                                    <div class="flex items-center flex-1">
+                                        <i class="fas <?= $iconClass ?> text-2xl mr-4"></i>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-900 group-hover:text-blue-600">
+                                                <?= htmlspecialchars($resource['title']) ?>
+                                            </h4>
+                                            <?php if ($resource['description']): ?>
+                                            <p class="text-sm text-gray-600 mt-1">
+                                                <?= htmlspecialchars($resource['description']) ?>
+                                            </p>
+                                            <?php endif; ?>
+                                            <div class="flex items-center mt-2 text-xs text-gray-500 space-x-4">
+                                                <span>
+                                                    <i class="fas fa-file mr-1"></i>
+                                                    <?= htmlspecialchars($resource['resource_type']) ?>
+                                                </span>
+                                                <?php if ($fileSize !== 'Unknown'): ?>
+                                                <span>
+                                                    <i class="fas fa-hdd mr-1"></i>
+                                                    <?= $fileSize ?>
+                                                </span>
+                                                <?php endif; ?>
+                                                <span>
+                                                    <i class="fas fa-download mr-1"></i>
+                                                    <?= number_format($resource['download_count']) ?> downloads
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-arrow-down text-blue-600 text-xl ml-4"></i>
+                                </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <?php endif; ?>
                     </div>
 
                     <!-- Lesson Navigation -->

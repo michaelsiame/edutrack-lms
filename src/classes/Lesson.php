@@ -258,13 +258,29 @@ class Lesson {
     }
     
     /**
-     * Get lesson attachments
+     * Get lesson attachments (legacy)
      */
     public function getAttachments() {
         if (!$this->getAttachmentsData()) {
             return [];
         }
         return json_decode($this->getAttachmentsData(), true) ?? [];
+    }
+
+    /**
+     * Get lesson resources
+     */
+    public function getResources() {
+        require_once BASE_PATH . '/src/classes/LessonResource.php';
+        return LessonResource::getByLesson($this->getId());
+    }
+
+    /**
+     * Check if lesson has resources
+     */
+    public function hasResources() {
+        $resources = $this->getResources();
+        return !empty($resources);
     }
     
     /**
