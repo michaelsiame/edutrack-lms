@@ -68,7 +68,7 @@ $courses = $db->fetchAll("
     SELECT DISTINCT c.*, cat.name as category_name,
            (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as total_students,
            (SELECT COUNT(*) FROM lessons l JOIN modules m ON l.module_id = m.id WHERE m.course_id = c.id) as total_lessons,
-           ci.is_lead
+           ci.role as instructor_role
     FROM courses c
     LEFT JOIN course_categories cat ON c.category_id = cat.id
     LEFT JOIN course_instructors ci ON c.id = ci.course_id AND ci.instructor_id = ?

@@ -16,9 +16,10 @@ try {
             id,
             course_id,
             instructor_id,
-            is_lead
+            role,
+            CASE WHEN role = 'Lead' THEN 1 ELSE 0 END as is_lead
         FROM course_instructors
-        ORDER BY course_id, is_lead DESC
+        ORDER BY course_id, role ASC
     ");
 
     echo json_encode([
