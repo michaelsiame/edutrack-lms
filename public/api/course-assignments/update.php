@@ -64,13 +64,13 @@ try {
 
     // Insert new assignments
     foreach ($instructorIds as $instructorId) {
-        $isLead = ($instructorId == $leadInstructorId) ? 1 : 0;
+        $role = ($instructorId == $leadInstructorId) ? 'Lead' : 'Assistant';
 
         $db->insert('course_instructors', [
             'course_id' => $courseId,
             'instructor_id' => $instructorId,
-            'is_lead' => $isLead,
-            'assigned_at' => date('Y-m-d H:i:s')
+            'role' => $role,
+            'assigned_date' => date('Y-m-d')
         ]);
     }
 
