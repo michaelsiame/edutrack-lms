@@ -15,6 +15,7 @@ export const Layout = ({ children, currentView, setView }: LayoutProps) => {
     { id: 'dashboard', label: 'Dashboard', icon: Icons.Home },
     { id: 'users', label: 'User Management', icon: Icons.Users },
     { id: 'courses', label: 'Courses', icon: Icons.Book },
+    { id: 'course-assignments', label: 'Course Assignments', icon: Icons.Users },
     { id: 'categories', label: 'Categories', icon: Icons.Tag },
     { id: 'enrollments', label: 'Enrollments', icon: Icons.AcademicCap },
     { id: 'financials', label: 'Financials', icon: Icons.Cash },

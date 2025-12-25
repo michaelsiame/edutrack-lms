@@ -12,6 +12,7 @@ import { Announcements } from './pages/Announcements';
 import { Categories } from './pages/Categories';
 import { Certificates } from './pages/Certificates';
 import { Reports } from './pages/Reports';
+import { CourseAssignments } from './pages/CourseAssignments';
 
 export const App = () => {
   const [currentView, setView] = useState('dashboard');
@@ -21,6 +22,7 @@ export const App = () => {
       case 'dashboard': return <Dashboard />;
       case 'users': return <Users />;
       case 'courses': return <Courses />;
+      case 'course-assignments': return <CourseAssignments />;
       case 'enrollments': return <Enrollments />;
       case 'financials': return <Financials />;
       case 'announcements': return <Announcements />;
