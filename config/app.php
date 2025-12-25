@@ -4,6 +4,9 @@
  * Application Configuration
  */
 define('SITE_NAME', 'EduTrack Zambia'); // Or your preferred site name
+// Google Drive Integration
+define('GOOGLE_DRIVE_ENABLED', true);
+define('GOOGLE_DRIVE_FOLDER_ID', '1Qk9LOW92Niv_lci_AM4LFAiK-y2iXbiW'); 
 
 return [
     
