@@ -16,7 +16,7 @@ if (!isLoggedIn()) {
 }
 
 $userId = $_SESSION['user_id'];
-$user = getCurrentUser();
+$user = User::current();
 
 // Get registration fee status
 $registrationFee = RegistrationFee::findByUser($userId);

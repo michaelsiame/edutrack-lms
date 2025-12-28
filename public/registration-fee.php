@@ -14,7 +14,7 @@ if (!isLoggedIn()) {
 }
 
 $userId = $_SESSION['user_id'];
-$user = getCurrentUser();
+$user = User::current();
 
 // Check if already paid
 if (RegistrationFee::hasPaid($userId)) {
