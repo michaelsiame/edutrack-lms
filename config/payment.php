@@ -54,7 +54,31 @@ return [
         'api_key' => env('ZAMTEL_API_KEY', ''),
         'callback_url' => env('APP_URL') . '/api/payment-callback.php?provider=zamtel'
     ],
-    
+
+    // Lenco Payment Gateway (Bank Transfer)
+    'lenco' => [
+        'enabled' => true,
+        'name' => 'Lenco Bank Transfer',
+        'description' => 'Pay via bank transfer using Lenco virtual accounts',
+        'live_mode' => env('LENCO_LIVE_MODE', false),
+        'sandbox' => [
+            'api_url' => 'https://api.sandbox.lenco.co',
+            'api_key' => env('LENCO_SANDBOX_API_KEY', ''),
+            'secret_key' => env('LENCO_SANDBOX_SECRET_KEY', ''),
+        ],
+        'live' => [
+            'api_url' => 'https://api.lenco.co',
+            'api_key' => env('LENCO_LIVE_API_KEY', ''),
+            'secret_key' => env('LENCO_LIVE_SECRET_KEY', ''),
+        ],
+        'webhook_secret' => env('LENCO_WEBHOOK_SECRET', ''),
+        'callback_url' => env('APP_URL') . '/api/lenco-webhook.php',
+        'transaction_expiry' => 86400, // 24 hours in seconds
+        'supported_currencies' => ['ZMW', 'NGN', 'USD'],
+        'min_amount' => 10, // Minimum transaction amount
+        'max_amount' => 1000000, // Maximum transaction amount
+    ],
+
     // Bank Transfer
     'bank_transfer' => [
         'enabled' => true,
