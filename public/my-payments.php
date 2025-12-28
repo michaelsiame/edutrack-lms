@@ -8,6 +8,7 @@ require_once '../src/bootstrap.php';
 require_once '../src/classes/RegistrationFee.php';
 require_once '../src/classes/PaymentPlan.php';
 require_once '../src/classes/Payment.php';
+require_once '../src/classes/Lenco.php';
 
 // Must be logged in
 if (!isLoggedIn()) {
@@ -27,6 +28,15 @@ $paymentPlans = PaymentPlan::getByUser($userId);
 
 // Get payment history
 $paymentHistory = Payment::getByUser($userId);
+
+// Get Lenco transactions (pending and successful)
+$lenco = new Lenco();
+$lencoTransactions = [];
+try {
+    $lencoTransactions = $lenco->getUserTransactions($userId);
+} catch (Exception $e) {
+    // Lenco table might not exist yet
+}
 
 // Calculate totals
 $totalFees = 0;
@@ -253,6 +263,54 @@ require_once '../src/templates/header.php';
             <?php endif; ?>
         </div>
 
+        <!-- Pending Lenco Transactions -->
+        <?php
+        $pendingLenco = array_filter($lencoTransactions, function($tx) {
+            return $tx['status'] === 'pending';
+        });
+        if (!empty($pendingLenco)):
+        ?>
+        <div class="bg-white rounded-lg shadow mb-8">
+            <div class="px-6 py-4 border-b border-gray-200 bg-yellow-50">
+                <h2 class="text-lg font-semibold text-yellow-800">
+                    <i class="fas fa-clock text-yellow-600 mr-2"></i>
+                    Pending Bank Transfers
+                </h2>
+            </div>
+            <div class="divide-y divide-gray-200">
+                <?php foreach ($pendingLenco as $tx): ?>
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    <i class="fas fa-hourglass-half mr-1"></i>Awaiting Payment
+                                </span>
+                                <span class="text-sm text-gray-500 font-mono"><?= sanitize($tx['reference']) ?></span>
+                            </div>
+                            <p class="font-semibold text-gray-900"><?= sanitize($tx['course_title'] ?? 'Course Payment') ?></p>
+                            <div class="mt-2 text-sm text-gray-600">
+                                <p><strong>Amount:</strong> K<?= number_format($tx['amount'], 2) ?></p>
+                                <?php if ($tx['virtual_account_number']): ?>
+                                <p><strong>Account:</strong> <?= sanitize($tx['virtual_account_number']) ?> (<?= sanitize($tx['virtual_account_bank'] ?? 'Lenco') ?>)</p>
+                                <?php endif; ?>
+                                <p><strong>Expires:</strong> <?= date('d M Y, g:i A', strtotime($tx['expires_at'])) ?></p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-primary-600">K<?= number_format($tx['amount'], 2) ?></p>
+                            <a href="lenco-checkout.php?reference=<?= urlencode($tx['reference']) ?>"
+                               class="inline-block mt-2 text-sm text-primary-600 hover:text-primary-700 font-medium">
+                                View Payment Details <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <!-- Payment History -->
         <div class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200">
@@ -262,7 +320,7 @@ require_once '../src/templates/header.php';
                 </h2>
             </div>
 
-            <?php if (empty($paymentHistory)): ?>
+            <?php if (empty($paymentHistory) && empty($lencoTransactions)): ?>
             <div class="p-12 text-center text-gray-500">
                 <i class="fas fa-receipt text-4xl mb-2"></i>
                 <p>No payment history available.</p>
@@ -280,13 +338,41 @@ require_once '../src/templates/header.php';
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <?php foreach ($paymentHistory as $payment): ?>
+                        <?php
+                        // Combine regular payments with successful Lenco transactions
+                        $allPayments = $paymentHistory;
+
+                        // Add successful Lenco transactions that aren't already in payments
+                        $successfulLenco = array_filter($lencoTransactions, function($tx) {
+                            return $tx['status'] === 'successful';
+                        });
+                        foreach ($successfulLenco as $tx) {
+                            $allPayments[] = [
+                                'created_at' => $tx['paid_at'] ?? $tx['created_at'],
+                                'course_title' => $tx['course_title'] ?? 'Course Payment',
+                                'amount' => $tx['amount'],
+                                'transaction_id' => $tx['reference'],
+                                'payment_status' => 'Completed',
+                                'payment_type' => 'Lenco'
+                            ];
+                        }
+
+                        // Sort by date descending
+                        usort($allPayments, function($a, $b) {
+                            return strtotime($b['created_at']) - strtotime($a['created_at']);
+                        });
+                        ?>
+
+                        <?php foreach ($allPayments as $payment): ?>
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 <?= date('d M Y', strtotime($payment['created_at'])) ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 <?= sanitize($payment['course_title'] ?? 'N/A') ?>
+                                <?php if (isset($payment['payment_type']) && $payment['payment_type'] === 'Lenco'): ?>
+                                <span class="ml-1 text-xs text-blue-600"><i class="fas fa-university"></i></span>
+                                <?php endif; ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                                 K<?= number_format($payment['amount'], 2) ?>
@@ -299,7 +385,8 @@ require_once '../src/templates/header.php';
                                 $statusColors = [
                                     'Completed' => 'green',
                                     'Pending' => 'yellow',
-                                    'Failed' => 'red'
+                                    'Failed' => 'red',
+                                    'Refunded' => 'blue'
                                 ];
                                 $color = $statusColors[$payment['payment_status']] ?? 'gray';
                                 ?>
@@ -324,17 +411,19 @@ require_once '../src/templates/header.php';
                 <div>
                     <h4 class="font-medium mb-2">Payment Methods</h4>
                     <ul class="list-disc list-inside space-y-1">
+                        <li><i class="fas fa-university text-primary-600 mr-1"></i> <strong>Lenco Bank Transfer</strong> (Instant - Recommended)</li>
                         <li>Cash payment at the college office</li>
-                        <li>Bank deposit (registration fee only)</li>
+                        <li>Bank deposit with proof upload</li>
                         <li>Mobile Money (MTN, Airtel, Zamtel)</li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-medium mb-2">Important Notes</h4>
                     <ul class="list-disc list-inside space-y-1">
-                        <li>Registration fee must be paid via bank deposit</li>
-                        <li>Course fees can be paid in installments</li>
+                        <li>Lenco payments are verified automatically</li>
+                        <li>Course fees can be paid in installments (min 30%)</li>
                         <li>Certificates are issued only after full payment</li>
+                        <li>Upload payment proof for manual verification</li>
                     </ul>
                 </div>
             </div>
