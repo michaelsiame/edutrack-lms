@@ -5,6 +5,8 @@
  */
 
 require_once '../src/bootstrap.php';
+require_once '../src/classes/PaymentPlan.php';
+require_once '../src/classes/RegistrationFee.php';
 
 // Ensure user is authenticated
 if (!isLoggedIn()) {
@@ -121,6 +123,28 @@ try {
     $recentGradedAssignments = [];
 }
 
+// Get payment/fees information
+$totalBalance = 0;
+$totalFees = 0;
+$totalPaid = 0;
+$registrationPaid = true;
+
+try {
+    // Check registration fee status
+    $registrationPaid = RegistrationFee::hasPaid($userId);
+
+    // Get payment plans for course fees
+    $paymentPlans = PaymentPlan::getByUser($userId);
+
+    foreach ($paymentPlans as $plan) {
+        $totalFees += floatval($plan['total_fee']);
+        $totalPaid += floatval($plan['total_paid']);
+        $totalBalance += floatval($plan['balance']);
+    }
+} catch (Exception $e) {
+    // Payment tables might not exist yet
+}
+
 $page_title = "Dashboard - Edutrack";
 require_once '../src/templates/header.php';
 ?>
@@ -154,7 +178,30 @@ require_once '../src/templates/header.php';
             </div>
         </div>
         <?php endif; ?>
-        
+
+        <!-- Outstanding Balance Alert -->
+        <?php if ($totalBalance > 0 || !$registrationPaid): ?>
+        <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle text-red-600 mr-3 text-xl"></i>
+                    <div>
+                        <?php if (!$registrationPaid): ?>
+                        <h3 class="font-semibold text-red-900">Registration Fee Required</h3>
+                        <p class="text-sm text-red-700 mt-1">Please pay your registration fee to access courses.</p>
+                        <?php else: ?>
+                        <h3 class="font-semibold text-red-900">Outstanding Balance: K<?= number_format($totalBalance, 2) ?></h3>
+                        <p class="text-sm text-red-700 mt-1">Please clear your balance to receive your certificate.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <a href="<?= url('my-payments.php') ?>" class="px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 font-medium">
+                    <i class="fas fa-credit-card mr-1"></i> View Payments
+                </a>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <!-- Statistics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- Active Courses -->
@@ -427,6 +474,31 @@ require_once '../src/templates/header.php';
 
                 <!-- Notifications Section -->
                 <?php if (!empty($unreadNotifications)): ?>
+                <?php
+                // Notification color mappings for Tailwind CSS
+                $notificationBgColors = [
+                    'green' => 'bg-green-100',
+                    'red' => 'bg-red-100',
+                    'blue' => 'bg-blue-100',
+                    'yellow' => 'bg-yellow-100',
+                    'orange' => 'bg-orange-100',
+                    'purple' => 'bg-purple-100',
+                    'indigo' => 'bg-indigo-100',
+                    'gray' => 'bg-gray-100',
+                    'primary' => 'bg-blue-100'
+                ];
+                $notificationTextColors = [
+                    'green' => 'text-green-600',
+                    'red' => 'text-red-600',
+                    'blue' => 'text-blue-600',
+                    'yellow' => 'text-yellow-600',
+                    'orange' => 'text-orange-600',
+                    'purple' => 'text-purple-600',
+                    'indigo' => 'text-indigo-600',
+                    'gray' => 'text-gray-600',
+                    'primary' => 'text-blue-600'
+                ];
+                ?>
                 <div id="notifications-section" class="bg-white rounded-lg shadow-md overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                         <h2 class="text-xl font-bold text-gray-900">
@@ -438,12 +510,17 @@ require_once '../src/templates/header.php';
                         </span>
                     </div>
                     <div class="divide-y divide-gray-200">
-                        <?php foreach ($unreadNotifications as $notification): ?>
+                        <?php foreach ($unreadNotifications as $notification):
+                            $color = $notification['color'] ?? 'blue';
+                            $bgClass = $notificationBgColors[$color] ?? 'bg-blue-100';
+                            $textClass = $notificationTextColors[$color] ?? 'text-blue-600';
+                            $icon = $notification['icon'] ?? 'fas fa-bell';
+                        ?>
                             <div class="p-4 hover:bg-gray-50 transition">
                                 <div class="flex items-start">
                                     <div class="flex-shrink-0">
-                                        <div class="w-10 h-10 bg-<?= sanitize($notification['color']) ?>-100 rounded-full flex items-center justify-center">
-                                            <i class="<?= sanitize($notification['icon']) ?> text-<?= sanitize($notification['color']) ?>-600"></i>
+                                        <div class="w-10 h-10 <?= $bgClass ?> rounded-full flex items-center justify-center">
+                                            <i class="<?= sanitize($icon) ?> <?= $textClass ?>"></i>
                                         </div>
                                     </div>
                                     <div class="ml-3 flex-1">
@@ -458,7 +535,7 @@ require_once '../src/templates/header.php';
                                             <?= timeAgo($notification['created_at']) ?>
                                         </p>
                                     </div>
-                                    <?php if ($notification['link']): ?>
+                                    <?php if (!empty($notification['link'])): ?>
                                         <a href="<?= url($notification['link']) ?>"
                                            class="ml-4 text-primary-600 hover:text-primary-700">
                                             <i class="fas fa-arrow-right"></i>
@@ -509,17 +586,38 @@ require_once '../src/templates/header.php';
                             <i class="fas fa-book text-primary-600 w-8"></i>
                             <span class="text-gray-700">Browse Courses</span>
                         </a>
-                        <a href="<?= url('my-courses.php') ?>" 
+                        <a href="<?= url('my-courses.php') ?>"
                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition">
                             <i class="fas fa-graduation-cap text-green-600 w-8"></i>
                             <span class="text-gray-700">My Courses</span>
                         </a>
-                        <a href="<?= url('my-certificates.php') ?>" 
+                        <a href="<?= url('my-payments.php') ?>"
+                           class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition <?= $totalBalance > 0 ? 'bg-red-50' : '' ?>">
+                            <i class="fas fa-credit-card text-red-600 w-8"></i>
+                            <span class="text-gray-700">My Payments</span>
+                            <?php if ($totalBalance > 0): ?>
+                            <span class="ml-auto text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Due</span>
+                            <?php endif; ?>
+                        </a>
+                        <a href="<?= url('student/assignments.php') ?>"
+                           class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition">
+                            <i class="fas fa-file-alt text-orange-600 w-8"></i>
+                            <span class="text-gray-700">My Assignments</span>
+                            <?php if (!empty($upcomingDeadlines)): ?>
+                            <span class="ml-auto text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full"><?= count($upcomingDeadlines) ?> due</span>
+                            <?php endif; ?>
+                        </a>
+                        <a href="<?= url('student/quizzes.php') ?>"
+                           class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition">
+                            <i class="fas fa-question-circle text-indigo-600 w-8"></i>
+                            <span class="text-gray-700">My Quizzes</span>
+                        </a>
+                        <a href="<?= url('my-certificates.php') ?>"
                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition">
                             <i class="fas fa-certificate text-purple-600 w-8"></i>
                             <span class="text-gray-700">My Certificates</span>
                         </a>
-                        <a href="<?= url('edit-profile.php') ?>" 
+                        <a href="<?= url('edit-profile.php') ?>"
                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition">
                             <i class="fas fa-cog text-gray-600 w-8"></i>
                             <span class="text-gray-700">Settings</span>

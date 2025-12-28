@@ -65,6 +65,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <a href="<?= url('my-courses.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 <i class="fas fa-book mr-2"></i> My Courses
                             </a>
+                            <a href="<?= url('my-payments.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-credit-card mr-2"></i> My Payments
+                            </a>
                             <a href="<?= url('my-certificates.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 <i class="fas fa-certificate mr-2"></i> Certificates
                             </a>
@@ -138,6 +141,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                     <a href="<?= url('my-courses.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
                         <i class="fas fa-book mr-2"></i> My Courses
+                    </a>
+                    <a href="<?= url('my-payments.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
+                        <i class="fas fa-credit-card mr-2"></i> My Payments
                     </a>
                     <a href="<?= url('my-certificates.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
                         <i class="fas fa-certificate mr-2"></i> Certificates

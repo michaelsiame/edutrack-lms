@@ -477,7 +477,7 @@ function courseThumbnail($thumbnail = null) {
         return uploadUrl('courses/thumbnails/' . $thumbnail);
     }
     
-    return asset('images/default-course.jpg');
+    return asset('images/course-placeholder.jpg');
 }
 
 /**
