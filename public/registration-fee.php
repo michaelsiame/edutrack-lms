@@ -269,7 +269,7 @@ require_once '../src/templates/header.php';
                 </div>
                 <div>
                     <h4 class="font-medium text-gray-900">Need help?</h4>
-                    <p class="text-gray-600 text-sm">Contact us at <a href="mailto:info@edutrack.edu" class="text-primary-600 hover:underline">info@edutrack.edu</a> or call +260 XXX XXX XXX</p>
+                    <p class="text-gray-600 text-sm">Contact us at <a href="mailto:<?= SITE_EMAIL ?>" class="text-primary-600 hover:underline"><?= SITE_EMAIL ?></a> or call <?= SITE_PHONE ?></p>
                 </div>
             </div>
         </div>
