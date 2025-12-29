@@ -307,6 +307,85 @@ class Notification {
         ]);
     }
 
+    /**
+     * Notification helper - Live Session Scheduled
+     */
+    public static function notifyLiveSessionScheduled($userId, $lessonTitle, $scheduledTime, $sessionId) {
+        $formattedTime = date('M d, Y \a\t g:i A', strtotime($scheduledTime));
+        return self::create([
+            'user_id' => $userId,
+            'type' => 'live_session',
+            'title' => 'Live Session Scheduled',
+            'message' => "A live session for '$lessonTitle' has been scheduled for $formattedTime",
+            'link' => 'live-session.php?session_id=' . $sessionId,
+            'icon' => 'fa-video',
+            'color' => 'blue'
+        ]);
+    }
+
+    /**
+     * Notification helper - Live Session Reminder (30 min before)
+     */
+    public static function notifyLiveSessionReminder($userId, $lessonTitle, $scheduledTime, $sessionId) {
+        $formattedTime = date('g:i A', strtotime($scheduledTime));
+        return self::create([
+            'user_id' => $userId,
+            'type' => 'live_session_reminder',
+            'title' => 'Live Session Starting Soon',
+            'message' => "Reminder: '$lessonTitle' live session starts at $formattedTime (30 minutes from now)",
+            'link' => 'live-session.php?session_id=' . $sessionId,
+            'icon' => 'fa-clock',
+            'color' => 'orange'
+        ]);
+    }
+
+    /**
+     * Notification helper - Live Session Starting Now
+     */
+    public static function notifyLiveSessionStarting($userId, $lessonTitle, $sessionId) {
+        return self::create([
+            'user_id' => $userId,
+            'type' => 'live_session_starting',
+            'title' => 'Live Session Starting Now!',
+            'message' => "The live session for '$lessonTitle' is starting now. Join now!",
+            'link' => 'live-session.php?session_id=' . $sessionId,
+            'icon' => 'fa-play-circle',
+            'color' => 'green'
+        ]);
+    }
+
+    /**
+     * Notification helper - Live Session Cancelled
+     */
+    public static function notifyLiveSessionCancelled($userId, $lessonTitle, $scheduledTime) {
+        $formattedTime = date('M d, Y \a\t g:i A', strtotime($scheduledTime));
+        return self::create([
+            'user_id' => $userId,
+            'type' => 'live_session_cancelled',
+            'title' => 'Live Session Cancelled',
+            'message' => "The live session for '$lessonTitle' scheduled for $formattedTime has been cancelled",
+            'link' => 'my-courses.php',
+            'icon' => 'fa-times-circle',
+            'color' => 'red'
+        ]);
+    }
+
+    /**
+     * Notification helper - Live Session Rescheduled
+     */
+    public static function notifyLiveSessionRescheduled($userId, $lessonTitle, $oldTime, $newTime, $sessionId) {
+        $formattedNewTime = date('M d, Y \a\t g:i A', strtotime($newTime));
+        return self::create([
+            'user_id' => $userId,
+            'type' => 'live_session_rescheduled',
+            'title' => 'Live Session Rescheduled',
+            'message' => "The live session for '$lessonTitle' has been rescheduled to $formattedNewTime",
+            'link' => 'live-session.php?session_id=' . $sessionId,
+            'icon' => 'fa-calendar-alt',
+            'color' => 'blue'
+        ]);
+    }
+
     // Getters
     public function getId() { return $this->data['id'] ?? null; }
     public function getUserId() { return $this->data['user_id'] ?? null; }

@@ -123,6 +123,38 @@ try {
     $recentGradedAssignments = [];
 }
 
+// Get upcoming live sessions
+$upcomingLiveSessions = [];
+try {
+    $upcomingLiveSessions = $db->fetchAll("
+        SELECT
+            ls.id,
+            ls.scheduled_start_time,
+            ls.duration_minutes,
+            ls.status,
+            ls.meeting_room_id,
+            l.title as lesson_title,
+            c.title as course_title,
+            c.slug as course_slug,
+            CONCAT(u.first_name, ' ', u.last_name) as instructor_name
+        FROM live_sessions ls
+        JOIN lessons l ON ls.lesson_id = l.id
+        JOIN modules m ON l.module_id = m.id
+        JOIN courses c ON m.course_id = c.id
+        JOIN enrollments e ON e.course_id = c.id
+        JOIN instructors i ON ls.instructor_id = i.id
+        JOIN users u ON i.user_id = u.id
+        WHERE e.user_id = ?
+          AND e.status = 'enrolled'
+          AND ls.status IN ('scheduled', 'in_progress', 'live')
+          AND ls.scheduled_start_time >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+        ORDER BY ls.scheduled_start_time ASC
+        LIMIT 5
+    ", [$userId]);
+} catch (Exception $e) {
+    // Live sessions table might not exist
+}
+
 // Get payment/fees information
 $totalBalance = 0;
 $totalFees = 0;
@@ -198,6 +230,97 @@ require_once '../src/templates/header.php';
                 <a href="<?= url('my-payments.php') ?>" class="px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 font-medium">
                     <i class="fas fa-credit-card mr-1"></i> View Payments
                 </a>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Upcoming Live Sessions Alert -->
+        <?php if (!empty($upcomingLiveSessions)): ?>
+        <div class="mb-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 rounded-xl shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <div class="bg-white/20 rounded-full p-3 mr-4">
+                        <i class="fas fa-video text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold">Upcoming Live Sessions</h3>
+                        <p class="text-purple-200 text-sm">Join your scheduled classes</p>
+                    </div>
+                </div>
+                <span class="bg-white/20 text-white text-sm font-semibold px-3 py-1 rounded-full">
+                    <?= count($upcomingLiveSessions) ?> session<?= count($upcomingLiveSessions) > 1 ? 's' : '' ?>
+                </span>
+            </div>
+
+            <div class="space-y-3">
+                <?php foreach ($upcomingLiveSessions as $session):
+                    $startTime = strtotime($session['scheduled_start_time']);
+                    $now = time();
+                    $minutesUntilStart = ($startTime - $now) / 60;
+                    $isLive = in_array($session['status'], ['live', 'in_progress']) || $minutesUntilStart <= 0;
+                    $canJoin = $minutesUntilStart <= 15; // Can join 15 minutes before
+                ?>
+                <div class="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <?php if ($isLive): ?>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-500 text-white animate-pulse">
+                                    <span class="w-2 h-2 bg-white rounded-full mr-1"></span>
+                                    LIVE NOW
+                                </span>
+                                <?php elseif ($canJoin): ?>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-500 text-white">
+                                    <i class="fas fa-door-open mr-1"></i>
+                                    Open
+                                </span>
+                                <?php else: ?>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-white/30 text-white">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    Scheduled
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                            <h4 class="font-semibold text-lg"><?= sanitize($session['lesson_title']) ?></h4>
+                            <p class="text-purple-200 text-sm">
+                                <?= sanitize($session['course_title']) ?> • <?= sanitize($session['instructor_name']) ?>
+                            </p>
+                            <p class="text-white/80 text-sm mt-1">
+                                <i class="fas fa-calendar-alt mr-1"></i>
+                                <?= date('M j, Y', $startTime) ?> at <?= date('g:i A', $startTime) ?>
+                                <span class="ml-2">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <?= $session['duration_minutes'] ?> mins
+                                </span>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <?php if ($isLive || $canJoin): ?>
+                            <a href="<?= url('live-session.php?session_id=' . $session['id']) ?>"
+                               class="inline-flex items-center px-6 py-3 bg-white text-purple-700 font-bold rounded-lg hover:bg-purple-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <i class="fas fa-play-circle mr-2"></i>
+                                <?= $isLive ? 'Join Now' : 'Enter Waiting Room' ?>
+                            </a>
+                            <?php else: ?>
+                            <div class="text-center">
+                                <p class="text-white/80 text-sm mb-1">Starts in</p>
+                                <p class="text-xl font-bold">
+                                    <?php
+                                    if ($minutesUntilStart > 1440) {
+                                        echo ceil($minutesUntilStart / 1440) . ' days';
+                                    } elseif ($minutesUntilStart > 60) {
+                                        echo ceil($minutesUntilStart / 60) . ' hrs';
+                                    } else {
+                                        echo ceil($minutesUntilStart) . ' min';
+                                    }
+                                    ?>
+                                </p>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
             </div>
         </div>
         <?php endif; ?>

@@ -218,6 +218,11 @@
 <!-- Custom JavaScript -->
 <script src="<?= asset('js/main.js') ?>"></script>
 
+<?php if (isLoggedIn()): ?>
+<!-- Real-time Notifications -->
+<script src="<?= asset('js/notifications.js') ?>"></script>
+<?php endif; ?>
+
 <?php if (isset($extra_js)): ?>
     <?= $extra_js ?>
 <?php endif; ?>

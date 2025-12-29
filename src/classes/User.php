@@ -147,53 +147,157 @@ class User {
     }
     
     /**
-     * Get role
-     * Optimized to query the new user_roles table
+     * Get all roles for user
+     * Returns array of normalized role names
+     */
+    public function getAllRoles() {
+        if (isset($this->data['_cached_all_roles'])) {
+            return $this->data['_cached_all_roles'];
+        }
+
+        $rolesData = $this->db->fetchAll("
+            SELECT r.id as role_id, r.role_name, r.permissions
+            FROM user_roles ur
+            JOIN roles r ON ur.role_id = r.id
+            WHERE ur.user_id = ?
+            ORDER BY r.id ASC
+        ", [$this->id]);
+
+        $roles = [];
+        foreach ($rolesData as $roleData) {
+            $roleName = strtolower($roleData['role_name']);
+            $normalized = $this->normalizeRoleName($roleName);
+            $roles[] = [
+                'id' => $roleData['role_id'],
+                'name' => $roleData['role_name'],
+                'normalized' => $normalized,
+                'permissions' => json_decode($roleData['permissions'] ?? '{}', true)
+            ];
+        }
+
+        // Default to student if no roles
+        if (empty($roles)) {
+            $roles[] = [
+                'id' => 4,
+                'name' => 'Student',
+                'normalized' => 'student',
+                'permissions' => []
+            ];
+        }
+
+        $this->data['_cached_all_roles'] = $roles;
+        return $roles;
+    }
+
+    /**
+     * Normalize role name to standard format
+     */
+    private function normalizeRoleName($roleName) {
+        $roleName = strtolower($roleName);
+        if (strpos($roleName, 'super') !== false || strpos($roleName, 'admin') !== false) {
+            return 'admin';
+        } elseif (strpos($roleName, 'instructor') !== false) {
+            return 'instructor';
+        } elseif (strpos($roleName, 'finance') !== false) {
+            return 'finance';
+        } elseif (strpos($roleName, 'content') !== false) {
+            return 'content_creator';
+        }
+        return 'student';
+    }
+
+    /**
+     * Get current active role
+     * Uses session if set, otherwise returns first/primary role
      */
     public function getRole() {
-        // Return cached role if available to save queries
+        // Check if user has a selected role in session
+        if (isset($_SESSION['active_role']) && $_SESSION['user_id'] == $this->id) {
+            return $_SESSION['active_role'];
+        }
+
+        // Return cached role if available
         if (isset($this->data['_cached_role'])) {
             return $this->data['_cached_role'];
         }
 
-        // Query user_roles table
-        $roleData = $this->db->fetchOne("
-            SELECT r.role_name
-            FROM user_roles ur
-            JOIN roles r ON ur.role_id = r.id
-            WHERE ur.user_id = ?
-            LIMIT 1
-        ", [$this->id]);
-
-        if ($roleData) {
-            $roleName = strtolower($roleData['role_name']);
-            // Normalize role names for code checks
-            if (strpos($roleName, 'admin') !== false || strpos($roleName, 'super') !== false) {
-                $role = 'admin';
-            } elseif (strpos($roleName, 'instructor') !== false) {
-                $role = 'instructor';
-            } elseif (strpos($roleName, 'finance') !== false) {
-                $role = 'finance';
-            } else {
-                $role = 'student';
-            }
-        } else {
-            $role = 'student'; // Default fallback
-        }
+        // Get all roles and return the first one (highest priority)
+        $roles = $this->getAllRoles();
+        $role = $roles[0]['normalized'] ?? 'student';
 
         $this->data['_cached_role'] = $role;
         return $role;
     }
 
     /**
-     * Check if user has specific role
+     * Get current active role details (full info)
+     */
+    public function getActiveRoleDetails() {
+        $activeRole = $this->getRole();
+        $allRoles = $this->getAllRoles();
+
+        foreach ($allRoles as $role) {
+            if ($role['normalized'] === $activeRole) {
+                return $role;
+            }
+        }
+
+        return $allRoles[0] ?? null;
+    }
+
+    /**
+     * Check if user has multiple roles
+     */
+    public function hasMultipleRoles() {
+        return count($this->getAllRoles()) > 1;
+    }
+
+    /**
+     * Switch to a different role
+     * Returns true if successful, false if user doesn't have that role
+     */
+    public function switchRole($targetRole) {
+        $roles = $this->getAllRoles();
+
+        foreach ($roles as $role) {
+            if ($role['normalized'] === $targetRole || $role['name'] === $targetRole) {
+                $_SESSION['active_role'] = $role['normalized'];
+                $_SESSION['active_role_name'] = $role['name'];
+                $_SESSION['active_role_id'] = $role['id'];
+
+                // Clear cached role
+                unset($this->data['_cached_role']);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user has specific role (checks ALL roles, not just active)
      */
     public function hasRole($role) {
-        $userRole = $this->getRole();
+        $allRoles = $this->getAllRoles();
+        $normalizedRoles = array_column($allRoles, 'normalized');
+
         if (is_array($role)) {
-            return in_array($userRole, $role);
+            return !empty(array_intersect($role, $normalizedRoles));
         }
-        return $userRole === $role;
+
+        return in_array($role, $normalizedRoles);
+    }
+
+    /**
+     * Check if current active role matches
+     */
+    public function isActiveRole($role) {
+        $activeRole = $this->getRole();
+        if (is_array($role)) {
+            return in_array($activeRole, $role);
+        }
+        return $activeRole === $role;
     }
     
     public function isEmailVerified() {

@@ -6,6 +6,19 @@
 
 // Get current page
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// Check for multiple roles if user is logged in
+$userRoles = [];
+$hasMultipleRoles = false;
+$activeRole = null;
+if (isLoggedIn()) {
+    $user = User::current();
+    if ($user) {
+        $userRoles = $user->getAllRoles();
+        $hasMultipleRoles = $user->hasMultipleRoles();
+        $activeRole = $user->getRole();
+    }
+}
 ?>
 
 <nav class="bg-white shadow-md sticky top-0 z-50" x-data="{ mobileMenuOpen: false }">
@@ -48,17 +61,53 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </button>
                         
                         <!-- Dropdown Menu -->
-                        <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                            <?php if (hasRole('admin')): ?>
-                                <a href="<?= url('admin/index.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-tachometer-alt mr-2"></i> Admin Panel
-                                </a>
-                            <?php elseif (hasRole('instructor')): ?>
-                                <a href="<?= url('instructor/index.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-chalkboard-teacher mr-2"></i> Instructor Panel
-                                </a>
+                        <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50">
+                            <?php if ($hasMultipleRoles): ?>
+                                <!-- Role Switcher Section -->
+                                <div class="px-4 py-2 border-b border-gray-100">
+                                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Switch Role</p>
+                                    <div class="mt-2 space-y-1">
+                                        <?php foreach ($userRoles as $role): ?>
+                                            <?php
+                                            $isActive = ($role['normalized'] === $activeRole);
+                                            $roleIcon = match($role['normalized']) {
+                                                'admin' => 'fa-shield-alt',
+                                                'instructor' => 'fa-chalkboard-teacher',
+                                                'student' => 'fa-user-graduate',
+                                                default => 'fa-user'
+                                            };
+                                            $roleColor = match($role['normalized']) {
+                                                'admin' => 'text-red-600',
+                                                'instructor' => 'text-blue-600',
+                                                'student' => 'text-green-600',
+                                                default => 'text-gray-600'
+                                            };
+                                            ?>
+                                            <button
+                                                onclick="switchRole('<?= $role['normalized'] ?>')"
+                                                class="w-full flex items-center px-2 py-1.5 text-sm rounded-md transition-colors <?= $isActive ? 'bg-primary-50 text-primary-700 font-medium' : 'text-gray-600 hover:bg-gray-100' ?>"
+                                            >
+                                                <i class="fas <?= $roleIcon ?> w-5 <?= $roleColor ?>"></i>
+                                                <span class="ml-2"><?= sanitize(ucfirst($role['normalized'])) ?></span>
+                                                <?php if ($isActive): ?>
+                                                    <i class="fas fa-check ml-auto text-primary-600 text-xs"></i>
+                                                <?php endif; ?>
+                                            </button>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <?php if (hasRole('admin')): ?>
+                                    <a href="<?= url('admin/index.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-tachometer-alt mr-2"></i> Admin Panel
+                                    </a>
+                                <?php elseif (hasRole('instructor')): ?>
+                                    <a href="<?= url('instructor/index.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-chalkboard-teacher mr-2"></i> Instructor Panel
+                                    </a>
+                                <?php endif; ?>
                             <?php endif; ?>
-                            
+
                             <a href="<?= url('dashboard.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 <i class="fas fa-th-large mr-2"></i> Dashboard
                             </a>
@@ -126,14 +175,41 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </div>
                     </div>
                     
-                    <?php if (hasRole('admin')): ?>
-                        <a href="<?= url('admin/index.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
-                            <i class="fas fa-tachometer-alt mr-2"></i> Admin Panel
-                        </a>
-                    <?php elseif (hasRole('instructor')): ?>
-                        <a href="<?= url('instructor/index.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
-                            <i class="fas fa-chalkboard-teacher mr-2"></i> Instructor Panel
-                        </a>
+                    <?php if ($hasMultipleRoles): ?>
+                        <!-- Mobile Role Switcher -->
+                        <div class="px-3 py-2 mb-2">
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Switch Role</p>
+                            <div class="flex flex-wrap gap-2">
+                                <?php foreach ($userRoles as $role): ?>
+                                    <?php
+                                    $isActive = ($role['normalized'] === $activeRole);
+                                    $roleIcon = match($role['normalized']) {
+                                        'admin' => 'fa-shield-alt',
+                                        'instructor' => 'fa-chalkboard-teacher',
+                                        'student' => 'fa-user-graduate',
+                                        default => 'fa-user'
+                                    };
+                                    ?>
+                                    <button
+                                        onclick="switchRole('<?= $role['normalized'] ?>')"
+                                        class="flex items-center px-3 py-1.5 text-sm rounded-full transition-colors <?= $isActive ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>"
+                                    >
+                                        <i class="fas <?= $roleIcon ?> mr-1.5"></i>
+                                        <?= sanitize(ucfirst($role['normalized'])) ?>
+                                    </button>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <?php if (hasRole('admin')): ?>
+                            <a href="<?= url('admin/index.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
+                                <i class="fas fa-tachometer-alt mr-2"></i> Admin Panel
+                            </a>
+                        <?php elseif (hasRole('instructor')): ?>
+                            <a href="<?= url('instructor/index.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
+                                <i class="fas fa-chalkboard-teacher mr-2"></i> Instructor Panel
+                            </a>
+                        <?php endif; ?>
                     <?php endif; ?>
 
                     <a href="<?= url('dashboard.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
@@ -171,3 +247,35 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 <!-- Alpine.js for dropdown functionality -->
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<!-- Role Switching Script -->
+<script>
+function switchRole(targetRole) {
+    // Show loading indicator
+    const buttons = document.querySelectorAll('button[onclick^="switchRole"]');
+    buttons.forEach(btn => btn.disabled = true);
+
+    fetch('<?= url('api/switch-role.php') ?>', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ role: targetRole })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Redirect to appropriate dashboard
+            window.location.href = data.redirect_url || '<?= url('dashboard.php') ?>';
+        } else {
+            alert(data.error || 'Failed to switch role');
+            buttons.forEach(btn => btn.disabled = false);
+        }
+    })
+    .catch(error => {
+        console.error('Error switching role:', error);
+        alert('An error occurred while switching roles');
+        buttons.forEach(btn => btn.disabled = false);
+    });
+}
+</script>
