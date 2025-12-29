@@ -29,10 +29,10 @@ try {
             // Get all users with roles
             $db = Database::getInstance();
             $users = $db->fetchAll("
-                SELECT 
-                    u.id, u.username, u.email, u.first_name, u.last_name, 
+                SELECT
+                    u.id, u.username, u.email, u.first_name, u.last_name,
                     u.status, u.created_at,
-                    GROUP_CONCAT(r.name SEPARATOR ', ') as role_name
+                    GROUP_CONCAT(r.role_name SEPARATOR ', ') as role_name
                 FROM users u
                 LEFT JOIN user_roles ur ON u.id = ur.user_id
                 LEFT JOIN roles r ON ur.role_id = r.id

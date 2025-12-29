@@ -36,10 +36,11 @@ function sendCertificateNotification($certificateId) {
 }
 
 /**
- * Send welcome email
+ * Queue welcome email for async sending via EmailNotificationService
  * Call this after user registration
+ * Note: Use this instead of sendWelcomeEmail() from email.php for queued emails
  */
-function sendWelcomeEmail($userId) {
+function queueWelcomeEmail($userId) {
     $service = new EmailNotificationService();
     return $service->sendWelcomeEmail($userId);
 }
