@@ -81,10 +81,22 @@ function registerUser($data) {
         $db->query($profileSql, [$userId]);
 
         $db->commit();
-        
+
         // Log activity (using the string format we fixed earlier)
         if (function_exists('logActivity')) {
             logActivity("New user registration: $email ($username)", 'info');
+        }
+
+        // Send welcome email
+        try {
+            $mailer = new Email();
+            $mailer->sendWelcome([
+                'first_name' => $firstName,
+                'email' => $email
+            ]);
+        } catch (Exception $emailEx) {
+            // Don't fail registration if email fails
+            error_log("Welcome email failed: " . $emailEx->getMessage());
         }
 
         return ['success' => true, 'message' => 'Account created successfully. Please login.'];

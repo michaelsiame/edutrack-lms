@@ -18,13 +18,12 @@ $userId = $user->getId();
 // Get all certificates for the student
 $certificates = $db->fetchAll("
     SELECT cert.*, c.title as course_title, c.slug as course_slug,
-           c.thumbnail, c.instructor_id,
+           c.thumbnail_url, c.instructor_id,
            u.first_name as instructor_first_name, u.last_name as instructor_last_name,
            e.enrolled_at, e.completed_at as course_completed_at
     FROM certificates cert
     JOIN courses c ON cert.course_id = c.id
-    LEFT JOIN instructors i ON c.instructor_id = i.id
-    LEFT JOIN users u ON i.user_id = u.id
+    LEFT JOIN users u ON c.instructor_id = u.id
     LEFT JOIN enrollments e ON e.course_id = c.id AND e.user_id = cert.user_id
     WHERE cert.user_id = ?
     ORDER BY cert.issued_at DESC

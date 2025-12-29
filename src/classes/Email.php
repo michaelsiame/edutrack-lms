@@ -14,7 +14,11 @@ class Email {
 
     public function __construct() {
         // Try to load PHPMailer if available
-        $vendorAutoload = dirname(__DIR__) . '/vendor/autoload.php';
+        // Check root vendor directory first, then src/vendor as fallback
+        $rootVendor = dirname(__DIR__, 2) . '/vendor/autoload.php';
+        $srcVendor = dirname(__DIR__) . '/vendor/autoload.php';
+
+        $vendorAutoload = file_exists($rootVendor) ? $rootVendor : $srcVendor;
 
         if (file_exists($vendorAutoload)) {
             require_once $vendorAutoload;
