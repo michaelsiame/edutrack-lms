@@ -17,8 +17,8 @@ Thumbs.db
 
 # Composer
 /vendor/
-composer.lock
 composer.phar
+# Note: composer.lock is committed for consistent deployments
 
 # NPM & Node
 /node_modules/
