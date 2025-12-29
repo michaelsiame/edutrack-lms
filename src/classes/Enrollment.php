@@ -248,6 +248,31 @@ class Enrollment {
         return $this->update(['enrollment_status' => 'Dropped']);
     }
 
+    /**
+     * Delete the enrollment and related records
+     */
+    public function delete() {
+        try {
+            $this->db->beginTransaction();
+
+            // Delete payment plan first (foreign key)
+            $this->db->query("DELETE FROM enrollment_payment_plans WHERE enrollment_id = ?", [$this->id]);
+
+            // Delete lesson progress
+            $this->db->query("DELETE FROM lesson_progress WHERE enrollment_id = ?", [$this->id]);
+
+            // Delete the enrollment
+            $this->db->query("DELETE FROM enrollments WHERE id = ?", [$this->id]);
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            error_log("Enrollment::delete Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
     // =====================================================================
     // PROGRESS TRACKING
     // =====================================================================

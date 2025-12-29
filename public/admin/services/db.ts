@@ -139,6 +139,23 @@ class DBService {
     }
   }
 
+  // Helper to normalize role names
+  private normalizeRole(role: string): string {
+    const r = (role || '').toLowerCase();
+    if (r.includes('admin')) return 'Admin';
+    if (r.includes('instructor')) return 'Instructor';
+    return 'Student';
+  }
+
+  // Helper to normalize status values
+  private normalizeStatus(status: string): string {
+    const s = (status || '').toLowerCase();
+    if (s === 'active' || s === 'published') return 'active';
+    if (s === 'inactive' || s === 'draft') return 'inactive';
+    if (s === 'suspended') return 'suspended';
+    return s;
+  }
+
   // --- USERS ---
   async getUsers(): Promise<User[]> {
     const { data, error } = await this.fetch<any[]>('/users.php');
@@ -147,7 +164,7 @@ class DBService {
         id: u.id,
         name: `${u.first_name || ''} ${u.last_name || ''}`.trim() || u.username || 'Unknown',
         email: u.email,
-        role: u.role_name || 'Student',
+        role: this.normalizeRole(u.role_name),
         status: u.status || 'active',
         joined: (u.created_at || '').split('T')[0]
       }));
@@ -216,21 +233,27 @@ class DBService {
   async getCourses(): Promise<Course[]> {
     const { data, error } = await this.fetch<any[]>('/courses.php');
     if (data && !error) {
-      return data.map(c => ({
-        id: c.id,
-        title: c.title,
-        instructor: c.instructor_name || 'Unknown',
-        category: c.category_name || 'General',
-        category_id: c.category_id,
-        instructor_id: c.instructor_id,
-        price: parseFloat(c.price) || 0,
-        status: c.status || 'draft',
-        students: parseInt(c.enrollment_count || '0'),
-        level: c.level || 'Beginner',
-        start_date: c.start_date || '',
-        end_date: c.end_date || '',
-        description: c.description || ''
-      }));
+      return data.map(c => {
+        // Normalize status - API may return 'published', 'Published', 'active', etc.
+        let status = (c.status || 'draft').toLowerCase();
+        if (status === 'active') status = 'published';
+
+        return {
+          id: c.id,
+          title: c.title,
+          instructor: c.instructor_name || 'Unknown',
+          category: c.category_name || 'General',
+          category_id: c.category_id,
+          instructor_id: c.instructor_id,
+          price: parseFloat(c.price) || 0,
+          status: status,
+          students: parseInt(c.enrollment_count || '0'),
+          level: c.level || 'Beginner',
+          start_date: c.start_date || '',
+          end_date: c.end_date || '',
+          description: c.description || ''
+        };
+      });
     }
     await this.delay();
     return this.mock.courses;
@@ -394,15 +417,7 @@ class DBService {
     });
 
     if (error) {
-      // Fallback to mock
-      const newEnrollment = {
-        id: Math.max(...this.mock.enrollments.map(e => e.id), 0) + 1,
-        ...data,
-        enrolled_at: new Date().toISOString().split('T')[0],
-        status: 'Enrolled',
-        progress: 0
-      };
-      this.mock.enrollments.push(newEnrollment);
+      return { success: false, error };
     }
     return { success: true };
   }
@@ -410,11 +425,11 @@ class DBService {
   async updateEnrollmentStatus(id: number, status: string): Promise<{ success: boolean; error?: string }> {
     const { error } = await this.fetch('/enrollments.php', {
       method: 'PUT',
-      body: JSON.stringify({ id, status })
+      body: JSON.stringify({ id, enrollment_status: status })
     });
 
     if (error) {
-      this.mock.enrollments = this.mock.enrollments.map(e => e.id === id ? { ...e, status } : e);
+      return { success: false, error };
     }
     return { success: true };
   }

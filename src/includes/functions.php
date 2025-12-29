@@ -264,6 +264,7 @@ function getUserRole($userId) {
 
 /**
  * Check if current user has role
+ * Uses User::hasRole which checks ALL assigned roles
  *
  * @param string|array $roles Role(s) to check
  * @return bool
@@ -273,6 +274,21 @@ function hasRole($roles) {
         return false;
     }
 
+    // Use User class method which checks all roles
+    $user = User::current();
+    if ($user) {
+        if (is_array($roles)) {
+            foreach ($roles as $role) {
+                if ($user->hasRole($role)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return $user->hasRole($roles);
+    }
+
+    // Fallback to session-based check
     $userRole = currentUserRole();
 
     if (is_array($roles)) {
