@@ -25,12 +25,14 @@ if (!$quizId) {
 // Get quiz details
 $quiz = $db->fetchOne("
     SELECT q.*,
+           q.time_limit_minutes as time_limit,
+           q.passing_score as pass_score,
            c.title as course_title, c.slug as course_slug,
            e.id as enrollment_id
     FROM quizzes q
     JOIN courses c ON q.course_id = c.id
     JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
-    WHERE q.id = ? AND q.status = 'published'
+    WHERE q.id = ? AND q.is_published = 1
 ", [$userId, $quizId]);
 
 if (!$quiz) {

@@ -24,9 +24,9 @@ if ($filter === 'pending') {
     $filterCondition = 'AND a.id NOT IN (SELECT assignment_id FROM assignment_submissions WHERE user_id = ?)';
     $params[] = $userId;
 } elseif ($filter === 'submitted') {
-    $filterCondition = 'AND asub.status = "submitted"';
+    $filterCondition = 'AND asub.status = "Submitted"';
 } elseif ($filter === 'graded') {
-    $filterCondition = 'AND asub.status = "graded"';
+    $filterCondition = 'AND asub.status = "Graded"';
 } elseif ($filter === 'overdue') {
     $filterCondition = 'AND a.due_date < NOW() AND a.id NOT IN (SELECT assignment_id FROM assignment_submissions WHERE user_id = ?)';
     $params[] = $userId;
@@ -48,7 +48,7 @@ $assignments = $db->fetchAll("
     JOIN courses c ON a.course_id = c.id
     JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
     LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.user_id = ?
-    WHERE a.status = 'published' $filterCondition
+    WHERE 1=1 $filterCondition
     ORDER BY a.due_date ASC, a.created_at DESC
 ", array_merge([$userId, $userId], array_slice($params, 1)));
 
@@ -58,28 +58,26 @@ $counts = [
         SELECT a.id FROM assignments a
         JOIN courses c ON a.course_id = c.id
         JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
-        WHERE a.status = 'published'
     ", [$userId])),
     'pending' => count($db->fetchAll("
         SELECT a.id FROM assignments a
         JOIN courses c ON a.course_id = c.id
         JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
-        WHERE a.status = 'published'
-        AND a.id NOT IN (SELECT assignment_id FROM assignment_submissions WHERE user_id = ?)
+        WHERE a.id NOT IN (SELECT assignment_id FROM assignment_submissions WHERE user_id = ?)
     ", [$userId, $userId])),
     'submitted' => count($db->fetchAll("
         SELECT a.id FROM assignments a
         JOIN courses c ON a.course_id = c.id
         JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
         JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.user_id = ?
-        WHERE a.status = 'published' AND asub.status = 'submitted'
+        WHERE asub.status = 'Submitted'
     ", [$userId, $userId])),
     'graded' => count($db->fetchAll("
         SELECT a.id FROM assignments a
         JOIN courses c ON a.course_id = c.id
         JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
         JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.user_id = ?
-        WHERE a.status = 'published' AND asub.status = 'graded'
+        WHERE asub.status = 'Graded'
     ", [$userId, $userId]))
 ];
 
@@ -139,8 +137,8 @@ require_once '../../src/templates/header.php';
                 <?php foreach ($assignments as $assignment): ?>
                     <?php
                     $isOverdue = $assignment['due_date'] && strtotime($assignment['due_date']) < time() && !$assignment['submission_id'];
-                    $isGraded = $assignment['submission_status'] === 'graded';
-                    $isSubmitted = $assignment['submission_status'] === 'submitted';
+                    $isGraded = $assignment['submission_status'] === 'Graded';
+                    $isSubmitted = $assignment['submission_status'] === 'Submitted';
                     $scorePercentage = $isGraded && $assignment['max_points'] > 0 ? ($assignment['points_earned'] / $assignment['max_points']) * 100 : 0;
                     ?>
                     <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
