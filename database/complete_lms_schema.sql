@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 28, 2025 at 06:58 PM
+-- Generation Time: Jan 09, 2026 at 02:15 PM
 -- Server version: 11.8.3-MariaDB-log
 -- PHP Version: 7.2.34
 
@@ -545,7 +545,11 @@ INSERT INTO `enrollments` (`id`, `user_id`, `student_id`, `course_id`, `enrolled
 (28, 19, 12, 5, '2025-01-20', '2025-01-21', 10.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 360, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
 (29, 19, 12, 3, '2025-01-20', '2025-01-21', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 288, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
 (30, 26, 13, 1, '2025-11-23', '2025-11-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2025-11-23 11:45:51', '2025-12-09 13:26:07'),
-(31, 39, 33, 1, '2025-12-28', '2025-12-28', 0.00, NULL, 'In Progress', '', 0.00, NULL, 0, 1, NULL, 0, '2025-12-28 18:42:19', '2025-12-28 18:42:19');
+(31, 39, 33, 1, '2025-12-28', '2025-12-28', 0.00, NULL, 'In Progress', '', 0.00, NULL, 0, 1, NULL, 0, '2025-12-28 18:42:19', '2025-12-28 18:42:19'),
+(32, 43, 37, 1, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 500.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:40:44', '2026-01-09 04:40:44'),
+(33, 40, 34, 1, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 500.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:40:44', '2026-01-09 04:40:44'),
+(34, 43, 37, 1, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 0.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
+(35, 40, 34, 1, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 0.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:42:00', '2026-01-09 04:42:00');
 
 -- --------------------------------------------------------
 
@@ -603,7 +607,11 @@ INSERT INTO `enrollment_payment_plans` (`id`, `enrollment_id`, `user_id`, `cours
 (27, 28, 19, 5, 3000.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
 (28, 29, 19, 3, 850.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
 (29, 30, 26, 1, 2500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
-(32, 31, 39, 1, 2500.00, 1000.00, 'ZMW', 'partial', NULL, 'Payment plan for Microsoft Office Suite', '2025-12-28 18:42:19', '2025-12-28 18:42:19');
+(32, 31, 39, 1, 2500.00, 1000.00, 'ZMW', 'partial', NULL, 'Payment plan for Microsoft Office Suite', '2025-12-28 18:42:19', '2025-12-28 18:42:19'),
+(33, 31, 43, 1, 2500.00, 0.00, 'ZMW', 'partial', NULL, 'Betty - Tuition Plan', '2026-01-09 04:40:44', '2026-01-09 04:40:44'),
+(34, 32, 40, 1, 2500.00, 0.00, 'ZMW', 'partial', NULL, 'Sharon - Tuition Plan', '2026-01-09 04:40:44', '2026-01-09 04:40:44'),
+(35, 34, 43, 1, 2500.00, 500.00, 'ZMW', 'partial', NULL, 'Betty - Tuition Plan', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
+(36, 35, 40, 1, 2500.00, 500.00, 'ZMW', 'partial', NULL, 'Sharon - Tuition Plan', '2026-01-09 04:42:00', '2026-01-09 04:42:00');
 
 -- --------------------------------------------------------
 
@@ -958,6 +966,8 @@ CREATE TABLE `notifications` (
   `is_read` tinyint(1) DEFAULT 0,
   `read_at` timestamp NULL DEFAULT NULL,
   `action_url` varchar(255) DEFAULT NULL,
+  `icon` varchar(50) DEFAULT NULL,
+  `color` varchar(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -965,14 +975,14 @@ CREATE TABLE `notifications` (
 -- Dumping data for table `notifications`
 --
 
-INSERT INTO `notifications` (`notification_id`, `user_id`, `title`, `message`, `notification_type`, `is_read`, `read_at`, `action_url`, `created_at`) VALUES
-(1, 8, 'Welcome to EduTrack!', 'Your account has been successfully created. Start exploring courses now!', 'Success', 1, NULL, '/dashboard', '2025-11-18 22:21:01'),
-(2, 8, 'Assignment Graded', 'Your assignment \"Python Basics Project\" has been graded. Score: 95/100', 'Grade', 1, NULL, '/courses/5/assignments/1', '2025-11-18 22:21:01'),
-(3, 9, 'New Announcement', 'Project deadline has been extended to March 23, 2025', 'Announcement', 1, NULL, '/courses/7/announcements', '2025-11-18 22:21:01'),
-(4, 11, 'Assignment Due Soon', 'Assignment \"Data Structures Assignment\" is due in 3 days', 'Warning', 0, NULL, '/courses/5/assignments/2', '2025-11-18 22:21:01'),
-(5, 4, 'Certificate Ready', 'Your certificate for Python Programming is ready for download!', 'Success', 1, NULL, '/certificates/5', '2025-11-18 22:21:01'),
-(6, 2, 'New Reply to Your Discussion', 'Sarah Banda replied to your discussion about responsive design', 'Info', 0, NULL, '/courses/7/discussions/3', '2025-11-18 22:21:01'),
-(7, 10, 'Payment Successful', 'Your payment of $380.00 for Graphic Designing course was successful', 'Success', 1, NULL, '/payments/5', '2025-11-18 22:21:01');
+INSERT INTO `notifications` (`notification_id`, `user_id`, `title`, `message`, `notification_type`, `is_read`, `read_at`, `action_url`, `icon`, `color`, `created_at`) VALUES
+(1, 8, 'Welcome to EduTrack!', 'Your account has been successfully created. Start exploring courses now!', 'Success', 1, NULL, '/dashboard', NULL, NULL, '2025-11-18 22:21:01'),
+(2, 8, 'Assignment Graded', 'Your assignment \"Python Basics Project\" has been graded. Score: 95/100', 'Grade', 1, NULL, '/courses/5/assignments/1', NULL, NULL, '2025-11-18 22:21:01'),
+(3, 9, 'New Announcement', 'Project deadline has been extended to March 23, 2025', 'Announcement', 1, NULL, '/courses/7/announcements', NULL, NULL, '2025-11-18 22:21:01'),
+(4, 11, 'Assignment Due Soon', 'Assignment \"Data Structures Assignment\" is due in 3 days', 'Warning', 0, NULL, '/courses/5/assignments/2', NULL, NULL, '2025-11-18 22:21:01'),
+(5, 4, 'Certificate Ready', 'Your certificate for Python Programming is ready for download!', 'Success', 1, NULL, '/certificates/5', NULL, NULL, '2025-11-18 22:21:01'),
+(6, 2, 'New Reply to Your Discussion', 'Sarah Banda replied to your discussion about responsive design', 'Info', 0, NULL, '/courses/7/discussions/3', NULL, NULL, '2025-11-18 22:21:01'),
+(7, 10, 'Payment Successful', 'Your payment of $380.00 for Graphic Designing course was successful', 'Success', 1, NULL, '/payments/5', NULL, NULL, '2025-11-18 22:21:01');
 
 -- --------------------------------------------------------
 
@@ -1021,7 +1031,9 @@ INSERT INTO `payments` (`payment_id`, `student_id`, `course_id`, `enrollment_id`
 (14, 5, 12, 14, NULL, 400.00, 'USD', 2, 'course_fee', NULL, 'Completed', 'TXN-2025-000014', NULL, NULL, '2025-01-25 16:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (16, 7, 13, 19, NULL, 540.00, 'USD', 1, 'course_fee', NULL, 'Pending', 'TXN-2025-000016', NULL, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (17, 13, 1, 30, NULL, 250.00, 'ZMW', NULL, 'course_fee', NULL, 'Completed', '1234', NULL, NULL, '2025-11-25 18:37:20', '2025-11-23 11:45:51', '2025-11-25 16:37:20'),
-(18, 33, 1, 31, 32, 1000.00, 'ZMW', NULL, 'partial_payment', 1, 'Completed', 'TXN-20251228-039', NULL, 'Initial payment for Microsoft Office Suite - K1000', '2025-12-28 18:42:19', '2025-12-28 18:42:19', '2025-12-28 18:42:19');
+(18, 33, 1, 31, 32, 1000.00, 'ZMW', NULL, 'partial_payment', 1, 'Completed', 'TXN-20251228-039', NULL, 'Initial payment for Microsoft Office Suite - K1000', '2025-12-28 18:42:19', '2025-12-28 18:42:19', '2025-12-28 18:42:19'),
+(20, 37, 1, 34, 35, 500.00, 'ZMW', NULL, 'partial_payment', 1, 'Completed', NULL, NULL, 'Tuition payment - Betty', '2026-01-09 04:42:00', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
+(21, 34, 1, 35, 36, 500.00, 'ZMW', NULL, 'partial_payment', 1, 'Completed', NULL, NULL, 'Tuition payment - Sharon', '2026-01-09 04:42:00', '2026-01-09 04:42:00', '2026-01-09 04:42:00');
 
 --
 -- Triggers `payments`
@@ -1304,7 +1316,11 @@ CREATE TABLE `registration_fees` (
 --
 
 INSERT INTO `registration_fees` (`id`, `user_id`, `student_id`, `amount`, `currency`, `payment_status`, `payment_method`, `bank_reference`, `bank_name`, `deposit_date`, `verified_by`, `verified_at`, `notes`, `created_at`, `updated_at`) VALUES
-(1, 39, 33, 150.00, 'ZMW', 'completed', 'bank_deposit', 'REG-039-001', NULL, '2025-12-28', 1, '2025-12-28 18:42:19', 'Registration fee payment for Given Mutwena', '2025-12-28 18:42:19', '2025-12-28 18:42:19');
+(1, 39, 33, 150.00, 'ZMW', 'completed', 'bank_deposit', 'REG-039-001', NULL, '2025-12-28', 1, '2025-12-28 18:42:19', 'Registration fee payment for Given Mutwena', '2025-12-28 18:42:19', '2025-12-28 18:42:19'),
+(2, 43, 37, 150.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-01-09', 1, NULL, 'Registration fee paid - Betty', '2026-01-09 04:40:44', '2026-01-09 04:40:44'),
+(3, 40, 34, 150.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-01-09', 1, NULL, 'Registration fee paid - Sharon', '2026-01-09 04:40:44', '2026-01-09 04:40:44'),
+(4, 43, 37, 150.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-01-09', 1, NULL, 'Registration fee paid - Betty', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
+(5, 40, 34, 150.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-01-09', 1, NULL, 'Registration fee paid - Sharon', '2026-01-09 04:42:00', '2026-01-09 04:42:00');
 
 -- --------------------------------------------------------
 
@@ -1393,7 +1409,11 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (30, 36, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-22', 0, 0, 0, '2025-12-22 16:20:20', '2025-12-22 16:20:20'),
 (31, 37, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-23', 0, 0, 0, '2025-12-23 07:18:25', '2025-12-23 07:18:25'),
 (32, 38, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-25', 0, 0, 0, '2025-12-25 10:05:01', '2025-12-25 10:05:01'),
-(33, 39, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-28', 0, 0, 0, '2025-12-28 15:13:44', '2025-12-28 15:13:44');
+(33, 39, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-28', 0, 0, 0, '2025-12-28 15:13:44', '2025-12-28 15:13:44'),
+(34, 40, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-29', 0, 0, 0, '2025-12-29 10:01:21', '2025-12-29 10:01:21'),
+(35, 41, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-30', 0, 0, 0, '2025-12-30 12:45:53', '2025-12-30 12:45:53'),
+(36, 42, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-31', 0, 0, 0, '2025-12-31 09:03:33', '2025-12-31 09:03:33'),
+(37, 43, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-08', 0, 0, 0, '2026-01-08 10:47:56', '2026-01-08 10:47:56');
 
 -- --------------------------------------------------------
 
@@ -1560,13 +1580,13 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `avatar_url`, `status`, `email_verification_token`, `email_verification_expires`, `email_verified`, `last_login`, `last_login_ip`, `failed_login_attempts`, `account_locked_until`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@edutrack.edu', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2025-12-25 10:18:26', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 08:18:26'),
+(1, 'admin', 'admin@edutrack.edu', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-01-09 15:00:19', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-01-09 13:00:19'),
 (6, 'michael.siame', 'michael.siame@edutrack.edu', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, '2025-12-25 21:53:14', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 19:53:14'),
 (25, 'taona', 'taona@gmail.com', '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
 (26, 'jaysiame076', 'jaysiame076@gmail.com', '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:32:59', NULL, 0, NULL, '2025-11-23 11:05:46', '2025-12-09 09:32:59'),
-(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', '$2y$10$uTNe95f2nXGaFBDyrBtrQeCaYHRNQBr67kFd7Fugt2dfWZX59fQom', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2025-12-19 13:48:58', NULL, 0, NULL, '2025-12-04 20:34:20', '2025-12-19 11:48:58'),
+(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', '$2y$10$uTNe95f2nXGaFBDyrBtrQeCaYHRNQBr67kFd7Fugt2dfWZX59fQom', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2025-12-29 11:52:23', NULL, 0, NULL, '2025-12-04 20:34:20', '2025-12-29 09:52:23'),
 (28, 'it', 'it@witmanmiyande.com', '$2y$10$kbm0yafbxD0Iu0Vk7uZYoOKTaqE1DTV47I7FHEFmeRESglBLmnWve', 'Witman', 'Miyande', '+260976062621', NULL, 'active', NULL, NULL, 0, '2025-12-08 13:07:32', NULL, 0, NULL, '2025-12-05 14:38:37', '2025-12-08 17:45:29'),
-(29, 'edwardmusole76', 'edwardmusole76@gmail.com', '$2y$10$WAgkucanVQ4OuVJtxfZeIuH2gxPk4lH7tTmhKT0I8awfPWiBBakdC', 'Edward', 'Musole', '+260978605960', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:34:48', NULL, 0, NULL, '2025-12-05 14:42:37', '2025-12-09 09:34:48'),
+(29, 'edwardmusole76', 'edwardmusole76@gmail.com', '$2y$10$WAgkucanVQ4OuVJtxfZeIuH2gxPk4lH7tTmhKT0I8awfPWiBBakdC', 'Edward', 'Musole', '+260978605960', NULL, 'active', NULL, NULL, 0, '2025-12-29 12:47:56', NULL, 0, NULL, '2025-12-05 14:42:37', '2025-12-29 10:47:56'),
 (30, 'siamem570', 'siamem570@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, '2025-12-25 12:19:17', NULL, 0, NULL, '2025-12-09 11:30:29', '2025-12-25 10:19:17'),
 (31, 'anthony.nampute', 'anthony.nampute@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Anthony', 'Nampute', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
 (32, 'inutu.simasiku', 'inutu.simasiku@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Inutu', 'Simasiku', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
@@ -1576,7 +1596,11 @@ INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `first_name`, `
 (36, 'moseschanda084', 'moseschanda084@gmail.com', '$2y$10$/COC.FYEkun5lNEdR7l1wePpKqi5dvtCRvr9nIXWBN3gZ6/QxZndK', 'Moses', 'Mulunda chanda', '+260971848021', NULL, 'active', NULL, NULL, 0, '2025-12-22 18:20:55', NULL, 0, NULL, '2025-12-22 16:20:20', '2025-12-22 16:20:55'),
 (37, 'sampayainnocent15', 'sampayainnocent15@gmail.com', '$2y$10$smRux7NyqHoywLOV0Djiy.0ydzMqz9JoAMS/5Nwg0RN0AYtA8qM2e', 'Innocent', 'Sampaya', '+260771717517', NULL, 'active', NULL, NULL, 0, '2025-12-23 09:19:00', NULL, 0, NULL, '2025-12-23 07:18:25', '2025-12-23 07:19:00'),
 (38, 'emmanuelgoma6', 'emmanuelgoma6@gmail.com', '$2y$10$G//nDjkNfzXuLGpLa6CnD.q0V4LOg4JYmwb.fJ5zq9UFz9vMWoNEa', 'Emmanuel', 'Goma', '+260967780685', NULL, 'active', NULL, NULL, 0, '2025-12-25 12:05:33', NULL, 0, NULL, '2025-12-25 10:05:01', '2025-12-25 10:05:33'),
-(39, 'givenmutwena60', 'givenmutwena60@gmail.com', '$2y$10$D8mDR5UD98Bl5zLPEqpH1O3kAo/wnmKBcT7vdn1Woz9PNzuSsRU7.', 'GIVEN', 'MUTWENA', '+260971077923', NULL, 'active', NULL, NULL, 0, '2025-12-28 17:22:09', NULL, 0, NULL, '2025-12-28 15:13:44', '2025-12-28 15:22:09');
+(39, 'givenmutwena60', 'givenmutwena60@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'GIVEN', 'MUTWENA', '+260971077923', NULL, 'active', NULL, NULL, 0, '2026-01-02 11:36:54', NULL, 0, NULL, '2025-12-28 15:13:44', '2026-01-02 09:36:54'),
+(40, 'lumbongosharon', 'lumbongosharon@gmail.com', '$2y$10$z7ha9/pweOV5FhWUJOritOdYC4aYTWtZVxP6yjNGUxaTJTehx66JK', 'SHARON', 'LUMBONGO', '+260975854731', NULL, 'active', NULL, NULL, 0, '2026-01-06 20:58:09', NULL, 0, NULL, '2025-12-29 10:01:21', '2026-01-06 18:58:09'),
+(41, 'simanyangamooya', 'simanyangamooya@gmail.com', '$2y$10$TMW22nvE0bHFYMDnZfQ3nO9Ehb9rcUiFXLWOEBY5/1v5mtYDqKGlm', 'MOOYA', 'SIMANYANGA', '+260975803528', NULL, 'active', NULL, NULL, 0, '2025-12-30 14:46:43', NULL, 0, NULL, '2025-12-30 12:45:53', '2025-12-30 12:46:43'),
+(42, 'najibib465', 'najibib465@hudisk.com', '$2y$10$8FQVQC8clPVMiyGEeSJDGebcAlNa42BrNKG6dDGgR7QyTVbWFtA1m', 'Doe', 'John', '', NULL, 'active', NULL, NULL, 0, '2025-12-31 11:04:08', NULL, 0, NULL, '2025-12-31 09:03:33', '2025-12-31 09:04:08'),
+(43, 'bettylumbongo60', 'bettylumbongo60@gmail.com', '$2y$10$s1KFx4SOeeRUvJlV8XKxMOHzt9YqtJTTNRCzHaT00Lu9QSoW8wqXG', 'Betty', 'Lumbongo', '+260975179897', NULL, 'active', NULL, NULL, 0, '2026-01-08 13:07:43', NULL, 0, NULL, '2026-01-08 10:47:56', '2026-01-08 11:07:43');
 
 -- --------------------------------------------------------
 
@@ -1642,7 +1666,11 @@ INSERT INTO `user_profiles` (`id`, `user_id`, `bio`, `phone`, `date_of_birth`, `
 (49, 36, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-22 16:20:20', '2025-12-22 16:20:20', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (50, 37, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-23 07:18:25', '2025-12-23 07:18:25', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (51, 38, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-25 10:05:01', '2025-12-25 10:05:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(52, 39, 'My name is Given mutwena,am a female.Am a primary teacher , working from kalulushi at kameme central primary school', '+260971077923', '1987-09-28', 'Female', 'Kalulushi Paterson area behind local court', 'Kalulushi', 'Zambia', '', NULL, '2025-12-28 15:13:44', '2025-12-28 15:58:19', NULL, 'Copperbelt', '103695/97/1', 'Bachelor\'s Degree', 'Teacher', '', '', '');
+(52, 39, 'My name is Given mutwena,am a female.Am a primary teacher , working from kalulushi at kameme central primary school', '+260971077923', '1987-09-28', 'Female', 'Kalulushi Paterson area behind local court', 'Kalulushi', 'Zambia', '', NULL, '2025-12-28 15:13:44', '2025-12-28 15:58:19', NULL, 'Copperbelt', '103695/97/1', 'Bachelor\'s Degree', 'Teacher', '', '', ''),
+(53, 40, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-29 10:01:21', '2025-12-29 10:01:21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(54, 41, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-30 12:45:53', '2025-12-30 12:45:53', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(55, 42, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-31 09:03:33', '2025-12-31 09:03:33', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(56, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-08 10:47:56', '2026-01-08 10:47:56', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1684,7 +1712,7 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`, `assigned_b
 (19, 19, 4, '2025-11-18 22:21:01', 1),
 (25, 25, 2, '2025-11-22 09:07:23', NULL),
 (26, 26, 4, '2025-11-23 11:05:46', NULL),
-(27, 27, 4, '2025-12-08 17:45:29', NULL),
+(27, 27, 2, '2025-12-08 17:45:29', NULL),
 (28, 28, 4, '2025-12-08 17:45:29', NULL),
 (29, 29, 4, '2025-12-08 17:45:29', NULL),
 (30, 0, 4, '2025-12-09 11:25:06', NULL),
@@ -1703,7 +1731,11 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`, `assigned_b
 (64, 36, 4, '2025-12-22 16:20:20', NULL),
 (65, 37, 4, '2025-12-23 07:18:25', NULL),
 (66, 38, 4, '2025-12-25 10:05:01', NULL),
-(67, 39, 4, '2025-12-28 15:13:44', NULL);
+(67, 39, 4, '2025-12-28 15:13:44', NULL),
+(68, 40, 4, '2025-12-29 10:01:21', NULL),
+(69, 41, 4, '2025-12-30 12:45:53', NULL),
+(70, 42, 4, '2025-12-31 09:03:33', NULL),
+(71, 43, 4, '2026-01-08 10:47:56', NULL);
 
 -- --------------------------------------------------------
 
@@ -1727,12 +1759,12 @@ CREATE TABLE `user_sessions` (
 --
 
 INSERT INTO `user_sessions` (`id`, `user_id`, `session_token`, `ip_address`, `user_agent`, `expires_at`, `created_at`, `updated_at`) VALUES
-(1, 29, 'd7b648d8453dc74a04bee2da99b2d981fb3040b2663552dcbe6926021557edc3', '45.215.252.142', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/140.0.7339.122 Mobile/15E148 Safari/604.1', '2026-01-08 11:34:48', '2025-12-09 09:34:48', '2025-12-09 09:34:48'),
 (11, 34, '91bfdeccc6b5f864eafec843bf557ed9b858a9caa1721076e71a9d1ff24f70af', '102.212.183.105', 'Mozilla/5.0 (Linux; Android 13; Infinix X6525 Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.34 Mobile Safari/537.36[FBAN/EMA;FBLC/en_US;FBAV/485.0.0.19.109;FBCX/modulariab;]', '2026-01-19 15:22:34', '2025-12-20 13:22:34', '2025-12-20 13:22:34'),
 (13, 36, 'c40cdda662683aa736bed1c20bdc2be71a8090a0824cea31ec73f288720f3931', '102.145.233.11', 'Mozilla/5.0 (Linux; Android 13; Infinix X6837 Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.34 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/536.0.0.46.216;]', '2026-01-21 18:20:55', '2025-12-22 16:20:55', '2025-12-22 16:20:55'),
 (15, 37, '8a62872aafab3cf6be6cac47fbd87aedb48c77c42e7ae078be2ba06ae2da661b', '41.223.118.42', 'Mozilla/5.0 (Linux; Android 13; Infinix X6528 Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.34 Mobile Safari/537.36[FBAN/EMA;FBLC/en_US;FBAV/489.0.0.12.109;FBCX/modulariab;]', '2026-01-22 09:19:00', '2025-12-23 07:19:00', '2025-12-23 07:19:00'),
-(25, 39, '43025c63d4708d831c3f79c3a71f5091f033819b77cd79bd6dfa7574cfc889e4', '102.147.26.64', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', '2025-12-28 19:13:59', '2025-12-28 15:13:59', '2025-12-28 15:13:59'),
-(26, 39, 'a1dba154c3a2e24a47847e20d5392fc2921ea89f084a6f6eda74bf4c56d0052f', '45.215.237.208', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Mobile Safari/537.36', '2025-12-28 19:22:09', '2025-12-28 15:22:09', '2025-12-28 15:22:09');
+(35, 39, '104f644c7e9a39acab262d5e67577c8351d341509e1e322dcd6a09ae88b5bf8e', '45.215.253.201', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', '2026-01-28 12:57:03', '2025-12-29 10:57:03', '2025-12-29 10:57:03'),
+(39, 41, 'fa97413f2aed9c6a9bf39c82fdc140c4a3951c8b2c24731ee83f00d6986cc044', '41.216.86.41', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', '2026-01-29 14:46:43', '2025-12-30 12:46:43', '2025-12-30 12:46:43'),
+(50, 1, 'ccf13c854b0d757c90d8336426d0a133d21936a58a24d65935ff4d0741caacce', '102.208.221.209', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', '2026-01-09 17:00:19', '2026-01-09 13:00:19', '2026-01-09 13:00:19');
 
 -- --------------------------------------------------------
 
@@ -2172,13 +2204,13 @@ ALTER TABLE `email_templates`
 -- AUTO_INCREMENT for table `enrollments`
 --
 ALTER TABLE `enrollments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `enrollment_payment_plans`
 --
 ALTER TABLE `enrollment_payment_plans`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `instructors`
@@ -2244,7 +2276,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `payment_methods`
@@ -2280,7 +2312,7 @@ ALTER TABLE `quiz_attempts`
 -- AUTO_INCREMENT for table `registration_fees`
 --
 ALTER TABLE `registration_fees`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `remember_tokens`
@@ -2298,7 +2330,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `system_settings`
@@ -2316,25 +2348,25 @@ ALTER TABLE `team_members`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 -- --------------------------------------------------------
 
