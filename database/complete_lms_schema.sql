@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 25, 2025 at 09:47 AM
+-- Generation Time: Dec 28, 2025 at 06:58 PM
 -- Server version: 11.8.3-MariaDB-log
 -- PHP Version: 7.2.34
 
@@ -334,7 +334,6 @@ CREATE TABLE `course_instructors` (
 --
 
 INSERT INTO `course_instructors` (`id`, `course_id`, `instructor_id`, `role`, `assigned_date`, `created_at`) VALUES
-(1, 1, 1, 'Lead', '2024-12-01', '2025-11-18 22:21:01'),
 (3, 3, 1, 'Lead', '2024-12-01', '2025-11-18 22:21:01'),
 (4, 4, 1, 'Lead', '2024-12-01', '2025-11-18 22:21:01'),
 (5, 5, 2, 'Lead', '2024-12-01', '2025-11-18 22:21:01'),
@@ -545,7 +544,8 @@ INSERT INTO `enrollments` (`id`, `user_id`, `student_id`, `course_id`, `enrolled
 (27, 18, 11, 4, '2025-02-15', '2025-02-16', 30.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 864, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
 (28, 19, 12, 5, '2025-01-20', '2025-01-21', 10.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 360, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
 (29, 19, 12, 3, '2025-01-20', '2025-01-21', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 288, '2025-11-18 22:21:01', '2025-12-09 13:26:07'),
-(30, 26, 13, 1, '2025-11-23', '2025-11-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2025-11-23 11:45:51', '2025-12-09 13:26:07');
+(30, 26, 13, 1, '2025-11-23', '2025-11-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2025-11-23 11:45:51', '2025-12-09 13:26:07'),
+(31, 39, 33, 1, '2025-12-28', '2025-12-28', 0.00, NULL, 'In Progress', '', 0.00, NULL, 0, 1, NULL, 0, '2025-12-28 18:42:19', '2025-12-28 18:42:19');
 
 -- --------------------------------------------------------
 
@@ -602,7 +602,8 @@ INSERT INTO `enrollment_payment_plans` (`id`, `enrollment_id`, `user_id`, `cours
 (26, 27, 18, 4, 1500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
 (27, 28, 19, 5, 3000.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
 (28, 29, 19, 3, 850.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
-(29, 30, 26, 1, 2500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07');
+(29, 30, 26, 1, 2500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
+(32, 31, 39, 1, 2500.00, 1000.00, 'ZMW', 'partial', NULL, 'Payment plan for Microsoft Office Suite', '2025-12-28 18:42:19', '2025-12-28 18:42:19');
 
 -- --------------------------------------------------------
 
@@ -641,6 +642,51 @@ INSERT INTO `instructors` (`id`, `user_id`, `bio`, `specialization`, `years_expe
 (8, 27, 'Principal of Edutrack Computer Training College', 'Educational Administration', NULL, NULL, NULL, 0.00, 0, 0, 1, '2025-12-25 09:40:13', '2025-12-25 09:40:13'),
 (9, 28, 'Instructor at Edutrack Computer Training College', 'General', NULL, NULL, NULL, 0.00, 0, 0, 1, '2025-12-25 09:40:13', '2025-12-25 09:40:13'),
 (10, 31, 'Instructor at Edutrack Computer Training College', 'General', NULL, NULL, NULL, 0.00, 0, 0, 1, '2025-12-25 09:40:13', '2025-12-25 09:40:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lenco_transactions`
+--
+
+CREATE TABLE `lenco_transactions` (
+  `id` int(11) NOT NULL,
+  `reference` varchar(100) NOT NULL COMMENT 'Unique payment reference (LENCO-XXXX-TIMESTAMP)',
+  `user_id` int(11) NOT NULL COMMENT 'FK to users table',
+  `enrollment_id` int(11) DEFAULT NULL COMMENT 'FK to enrollments table',
+  `course_id` int(11) DEFAULT NULL COMMENT 'FK to courses table',
+  `amount` decimal(15,2) NOT NULL COMMENT 'Expected payment amount',
+  `currency` varchar(3) NOT NULL DEFAULT 'ZMW' COMMENT 'Currency code (ZMW, NGN, USD)',
+  `virtual_account_number` varchar(50) DEFAULT NULL COMMENT 'Lenco virtual account number',
+  `virtual_account_bank` varchar(100) DEFAULT NULL COMMENT 'Bank name for virtual account',
+  `virtual_account_name` varchar(255) DEFAULT NULL COMMENT 'Account name displayed to payer',
+  `lenco_account_id` varchar(100) DEFAULT NULL COMMENT 'Lenco internal account ID',
+  `lenco_transaction_id` varchar(100) DEFAULT NULL COMMENT 'Lenco transaction ID (set on completion)',
+  `status` enum('pending','successful','failed','expired','reversed') NOT NULL DEFAULT 'pending',
+  `paid_at` datetime DEFAULT NULL COMMENT 'When payment was confirmed',
+  `expires_at` datetime DEFAULT NULL COMMENT 'When this payment request expires',
+  `metadata` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Additional transaction metadata' CHECK (json_valid(`metadata`)),
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tracks Lenco payment gateway transactions';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lenco_webhook_logs`
+--
+
+CREATE TABLE `lenco_webhook_logs` (
+  `id` int(11) NOT NULL,
+  `event_type` varchar(100) NOT NULL COMMENT 'Webhook event type',
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'Raw webhook payload' CHECK (json_valid(`payload`)),
+  `signature` varchar(255) DEFAULT NULL COMMENT 'Webhook signature',
+  `signature_valid` tinyint(1) DEFAULT NULL COMMENT 'Was signature valid?',
+  `processed` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Has this been processed?',
+  `error_message` text DEFAULT NULL COMMENT 'Error if processing failed',
+  `ip_address` varchar(45) DEFAULT NULL COMMENT 'Source IP address',
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Logs incoming Lenco webhooks for debugging';
 
 -- --------------------------------------------------------
 
@@ -689,7 +735,14 @@ INSERT INTO `lessons` (`id`, `module_id`, `title`, `content`, `lesson_type`, `du
 (17, 8, 'CSS Basics and Selectors', 'Introduction to CSS syntax and selectors', 'Video', 30, 1, NULL, NULL, 0, 1, 15, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (18, 8, 'Box Model and Layout', 'Understanding the CSS box model', 'Video', 35, 2, NULL, NULL, 0, 1, 15, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (19, 8, 'Flexbox Layout', 'Modern layout with Flexbox', 'Reading', 40, 3, NULL, NULL, 0, 1, 20, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(20, 8, 'Responsive Design with Media Queries', 'Creating responsive layouts', 'Video', 45, 4, NULL, NULL, 0, 1, 20, '2025-11-18 22:21:01', '2025-11-18 22:21:01');
+(20, 8, 'Responsive Design with Media Queries', 'Creating responsive layouts', 'Video', 45, 4, NULL, NULL, 0, 1, 20, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(21, 11, 'Welcome to Microsoft Office Suite', '### Welcome to the Course!\r\n\r\n**Learning Objectives:**\r\n- Understand the components of Microsoft Office Suite\r\n- Learn about Word, Excel, PowerPoint, and Publisher\r\n- Identify common use cases for each application\r\n\r\n**What You Will Learn:**\r\nIn this lesson, we provide an overview of the Microsoft Office Suite and introduce you to each application you\'ll be mastering throughout this course.\r\n\r\n**Get Started:**\r\n1. Watch the welcome video below\r\n2. Download the course syllabus (PDF)\r\n3. Download the Office Suite overview guide\r\n4. Review the getting started checklist\r\n\r\n**Note:** All detailed course materials are available as downloadable resources below the video.', 'Video', 15, 1, 'YOUR_YOUTUBE_VIDEO_ID', NULL, 1, 1, 5, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
+(22, 11, 'Common Interface Elements', '### Mastering the Office Interface\r\n\r\n**Learning Objectives:**\r\n- Navigate the Ribbon interface\r\n- Use the Quick Access Toolbar\r\n- Understand the File menu (Backstage View)\r\n- Learn essential keyboard shortcuts\r\n\r\n**What You\'ll Learn:**\r\nAll Microsoft Office applications share a common interface design. Understanding these elements will help you work efficiently across Word, Excel, PowerPoint, and Publisher.\r\n\r\n**Study Materials:**\r\nDownload the interface guide (PDF) and the keyboard shortcuts reference sheet. Practice identifying interface elements in the practice workbook.\r\n\r\n**Practice Exercise:**\r\nAfter watching the video and reviewing the materials, complete the interface identification exercise (included in the practice file).', 'Video', 25, 2, 'YOUR_YOUTUBE_VIDEO_ID_2', NULL, 1, 1, 15, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
+(23, 11, 'File Management Basics', '### Working with Office Files\r\n\r\n**Learning Objectives:**\r\n- Create, save, and open documents\r\n- Understand file formats (.docx, .xlsx, .pptx)\r\n- Organize files effectively\r\n- Use AutoSave and version history\r\n\r\n**Key Topics:**\r\n- Creating new documents\r\n- Saving with descriptive names\r\n- File format options\r\n- Folder organization best practices\r\n\r\n**Practice:**\r\nDownload the file management exercise kit which includes practice files and a folder structure template.', 'Video', 20, 3, 'YOUR_YOUTUBE_VIDEO_ID_3', NULL, 0, 1, 10, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
+(24, 12, 'Introduction to Microsoft Word', '### Getting Started with Word\r\n\r\n**What You Will Learn:**\r\n- The Word interface and views\r\n- Creating your first document\r\n- Basic text entry and editing\r\n- Saving and printing documents\r\n\r\n**Course Materials:**\r\nThis lesson includes comprehensive PDF guides and practice documents. Download all materials before starting the video tutorial.\r\n\r\n**Practice Exercise:**\r\nComplete the \"My First Document\" exercise using the provided template.', 'Video', 30, 1, 'YOUR_YOUTUBE_VIDEO_ID_4', NULL, 0, 1, 10, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
+(25, 12, 'Character and Paragraph Formatting', '### Making Your Documents Look Professional\r\n\r\n**Learning Objectives:**\r\n- Apply character formatting (font, size, color, bold, italic)\r\n- Use paragraph alignment and spacing\r\n- Work with bullets and numbering\r\n- Apply borders and shading\r\n\r\n**What\'s Included:**\r\n- Video tutorial demonstrating all formatting techniques\r\n- Formatting reference guide (PDF)\r\n- Practice documents with exercises\r\n- Professional document examples\r\n\r\n**Practice Assignment:**\r\nFormat the provided unformatted document using the techniques learned. Compare your result with the example solution.', 'Video', 40, 2, 'YOUR_YOUTUBE_VIDEO_ID_5', NULL, 0, 1, 20, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
+(26, 13, 'Introduction to Microsoft Excel', '### Excel Fundamentals\r\n\r\n**Learning Objectives:**\r\n- Navigate the Excel interface\r\n- Understand workbooks, worksheets, cells, rows, and columns\r\n- Enter and edit data\r\n- Use basic Excel features\r\n\r\n**Course Materials:**\r\nThis lesson includes:\r\n- Excel interface guide (PDF)\r\n- Practice workbook with guided exercises\r\n- Sample data files for practice\r\n- Quick reference sheet\r\n\r\n**Get Started:**\r\nWatch the introduction video, then download the practice workbook and follow along with the exercises.', 'Video', 30, 1, 'YOUR_YOUTUBE_VIDEO_ID_6', NULL, 0, 1, 10, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
+(27, 13, 'Basic Formulas and Functions', '### Calculating with Excel\r\n\r\n**What You Will Learn:**\r\n- Write basic formulas using arithmetic operators\r\n- Use SUM, AVERAGE, COUNT, MAX, MIN functions\r\n- Understand cell references (relative vs. absolute)\r\n- Copy formulas effectively\r\n\r\n**Practice Materials:**\r\n- Formula reference guide (PDF)\r\n- Practice workbook with exercises\r\n- Real-world examples (budget, grade book)\r\n- Answer keys for self-checking\r\n\r\n**Assignment:**\r\nComplete the formula exercises in the practice workbook. Check your answers with the provided solution file.', 'Video', 45, 2, 'YOUR_YOUTUBE_VIDEO_ID_7', NULL, 0, 1, 20, '2025-12-25 19:40:26', '2025-12-25 19:40:26');
 
 -- --------------------------------------------------------
 
@@ -743,6 +796,38 @@ CREATE TABLE `lesson_resources` (
   `download_count` int(11) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `lesson_resources`
+--
+
+INSERT INTO `lesson_resources` (`id`, `lesson_id`, `title`, `description`, `resource_type`, `file_url`, `file_size_kb`, `download_count`, `created_at`) VALUES
+(1, 21, 'Course Syllabus (PDF)', 'Complete course outline including modules, lessons, and assessment schedule', 'PDF', 'https://example.com/materials/office-suite-syllabus.pdf', 250, 0, '2025-12-25 19:40:26'),
+(2, 21, 'Office Suite Overview Guide', 'Comprehensive PDF guide introducing all Office applications with screenshots', 'PDF', 'https://example.com/materials/office-overview-guide.pdf', 1500, 0, '2025-12-25 19:40:26'),
+(3, 21, 'Getting Started Checklist', 'Step-by-step checklist to prepare for the course', 'PDF', 'https://example.com/materials/getting-started-checklist.pdf', 150, 0, '2025-12-25 19:40:26'),
+(4, 22, 'Office Interface Guide (PDF)', 'Visual guide with labeled screenshots of the Office interface', 'PDF', 'https://example.com/materials/interface-guide.pdf', 800, 0, '2025-12-25 19:40:26'),
+(5, 22, 'Keyboard Shortcuts Reference', 'Complete list of essential Office keyboard shortcuts', 'PDF', 'https://example.com/materials/office-shortcuts.pdf', 200, 0, '2025-12-25 19:40:26'),
+(6, 22, 'Interface Practice Workbook', 'Interactive exercise to identify and practice using interface elements', 'Document', 'https://example.com/materials/interface-practice.docx', 150, 0, '2025-12-25 19:40:26'),
+(7, 23, 'File Management Guide (PDF)', 'Best practices for naming, organizing, and backing up Office files', 'PDF', 'https://example.com/materials/file-management-guide.pdf', 500, 0, '2025-12-25 19:40:26'),
+(8, 23, 'Practice Files Package', 'Sample files for practicing file operations', 'Archive', 'https://example.com/materials/practice-files.zip', 2500, 0, '2025-12-25 19:40:26'),
+(9, 23, 'Folder Structure Template', 'Recommended folder organization system for Office documents', 'Document', 'https://example.com/materials/folder-template.docx', 100, 0, '2025-12-25 19:40:26'),
+(10, 24, 'Word Basics Guide (PDF)', 'Complete beginner\'s guide to Microsoft Word with screenshots', 'PDF', 'https://example.com/materials/word-basics-guide.pdf', 2000, 0, '2025-12-25 19:40:26'),
+(11, 24, 'Practice Document Template', 'Starter template for your first Word document', 'Document', 'https://example.com/materials/first-document-template.docx', 50, 0, '2025-12-25 19:40:26'),
+(12, 24, 'Word Exercise - My First Document', 'Guided exercise with step-by-step instructions', 'Document', 'https://example.com/materials/word-exercise-1.docx', 120, 0, '2025-12-25 19:40:26'),
+(13, 24, 'Exercise Answer Key', 'Completed example of the practice exercise', 'Document', 'https://example.com/materials/word-exercise-1-answers.docx', 150, 0, '2025-12-25 19:40:26'),
+(14, 25, 'Formatting Reference Guide (PDF)', 'Quick reference for all Word formatting options', 'PDF', 'https://example.com/materials/word-formatting-guide.pdf', 1200, 0, '2025-12-25 19:40:26'),
+(15, 25, 'Unformatted Practice Document', 'Document to practice formatting techniques', 'Document', 'https://example.com/materials/format-practice.docx', 80, 0, '2025-12-25 19:40:26'),
+(16, 25, 'Formatted Example', 'Professionally formatted version showing best practices', 'Document', 'https://example.com/materials/format-example.docx', 120, 0, '2025-12-25 19:40:26'),
+(17, 25, 'Professional Document Templates', 'Collection of formatted document templates', 'Archive', 'https://example.com/materials/word-templates.zip', 800, 0, '2025-12-25 19:40:26'),
+(18, 26, 'Excel Interface Guide (PDF)', 'Visual guide to Excel interface with labeled components', 'PDF', 'https://example.com/materials/excel-interface-guide.pdf', 1000, 0, '2025-12-25 19:40:26'),
+(19, 26, 'Practice Workbook - Getting Started', 'Guided exercises for Excel beginners', 'Spreadsheet', 'https://example.com/materials/excel-practice-1.xlsx', 150, 0, '2025-12-25 19:40:26'),
+(20, 26, 'Sample Data Files', 'Various data sets for practice exercises', 'Archive', 'https://example.com/materials/excel-sample-data.zip', 500, 0, '2025-12-25 19:40:26'),
+(21, 26, 'Excel Quick Reference (PDF)', 'One-page cheat sheet for Excel basics', 'PDF', 'https://example.com/materials/excel-quick-reference.pdf', 200, 0, '2025-12-25 19:40:26'),
+(22, 27, 'Formula Reference Guide (PDF)', 'Complete guide to basic Excel formulas with examples', 'PDF', 'https://example.com/materials/excel-formulas-guide.pdf', 1500, 0, '2025-12-25 19:40:26'),
+(23, 27, 'Formula Practice Workbook', 'Exercises covering all basic formulas and functions', 'Spreadsheet', 'https://example.com/materials/formula-practice.xlsx', 200, 0, '2025-12-25 19:40:26'),
+(24, 27, 'Budget Template with Formulas', 'Real-world example: Monthly budget spreadsheet', 'Spreadsheet', 'https://example.com/materials/budget-template.xlsx', 120, 0, '2025-12-25 19:40:26'),
+(25, 27, 'Grade Book Example', 'Grade calculation spreadsheet demonstrating formulas', 'Spreadsheet', 'https://example.com/materials/gradebook-example.xlsx', 150, 0, '2025-12-25 19:40:26'),
+(26, 27, 'Practice Exercise Solutions', 'Answer key for all formula exercises', 'Spreadsheet', 'https://example.com/materials/formula-answers.xlsx', 250, 0, '2025-12-25 19:40:26');
 
 -- --------------------------------------------------------
 
@@ -853,7 +938,10 @@ INSERT INTO `modules` (`id`, `course_id`, `title`, `description`, `display_order
 (7, 7, 'HTML5 Fundamentals', 'Introduction to HTML5 structure, elements, and semantic markup', 1, 400, 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (8, 7, 'CSS3 Styling', 'Styling web pages with CSS3, layouts, and responsive design', 2, 480, 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (9, 7, 'JavaScript Basics', 'JavaScript fundamentals, DOM manipulation, and events', 3, 540, 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(10, 7, 'Modern JavaScript', 'ES6+ features, async programming, and APIs', 4, 600, 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01');
+(10, 7, 'Modern JavaScript', 'ES6+ features, async programming, and APIs', 4, 600, 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(11, 1, 'Introduction to Microsoft Office Suite', 'Overview of Microsoft Office applications and common features', 1, 240, 1, NULL, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
+(12, 1, 'Microsoft Word - Document Creation', 'Master document creation, formatting, and basic editing in Microsoft Word', 2, 480, 1, NULL, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
+(13, 1, 'Microsoft Excel - Fundamentals', 'Introduction to spreadsheets, data entry, basic formulas, and formatting', 4, 540, 1, NULL, '2025-12-25 19:40:26', '2025-12-25 19:40:26');
 
 -- --------------------------------------------------------
 
@@ -932,7 +1020,8 @@ INSERT INTO `payments` (`payment_id`, `student_id`, `course_id`, `enrollment_id`
 (13, 5, 11, 13, NULL, 495.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000013', NULL, NULL, '2025-02-15 13:45:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (14, 5, 12, 14, NULL, 400.00, 'USD', 2, 'course_fee', NULL, 'Completed', 'TXN-2025-000014', NULL, NULL, '2025-01-25 16:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (16, 7, 13, 19, NULL, 540.00, 'USD', 1, 'course_fee', NULL, 'Pending', 'TXN-2025-000016', NULL, NULL, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(17, 13, 1, 30, NULL, 250.00, 'ZMW', NULL, 'course_fee', NULL, 'Completed', '1234', NULL, NULL, '2025-11-25 18:37:20', '2025-11-23 11:45:51', '2025-11-25 16:37:20');
+(17, 13, 1, 30, NULL, 250.00, 'ZMW', NULL, 'course_fee', NULL, 'Completed', '1234', NULL, NULL, '2025-11-25 18:37:20', '2025-11-23 11:45:51', '2025-11-25 16:37:20'),
+(18, 33, 1, 31, 32, 1000.00, 'ZMW', NULL, 'partial_payment', 1, 'Completed', 'TXN-20251228-039', NULL, 'Initial payment for Microsoft Office Suite - K1000', '2025-12-28 18:42:19', '2025-12-28 18:42:19', '2025-12-28 18:42:19');
 
 --
 -- Triggers `payments`
@@ -1009,7 +1098,8 @@ INSERT INTO `payment_methods` (`payment_method_id`, `method_name`, `description`
 (2, 'Mobile Money', 'MTN Mobile Money, Airtel Money', 1, '2025-11-18 22:21:01'),
 (3, 'Bank Transfer', 'Direct bank transfer', 1, '2025-11-18 22:21:01'),
 (4, 'PayPal', 'PayPal payment gateway', 1, '2025-11-18 22:21:01'),
-(5, 'Cash', 'Cash payment at office', 1, '2025-11-18 22:21:01');
+(5, 'Cash', 'Cash payment at office', 1, '2025-11-18 22:21:01'),
+(6, 'Lenco Bank Transfer', 'Pay via bank transfer using Lenco virtual accounts', 1, '2025-12-28 18:58:28');
 
 -- --------------------------------------------------------
 
@@ -1209,6 +1299,13 @@ CREATE TABLE `registration_fees` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `registration_fees`
+--
+
+INSERT INTO `registration_fees` (`id`, `user_id`, `student_id`, `amount`, `currency`, `payment_status`, `payment_method`, `bank_reference`, `bank_name`, `deposit_date`, `verified_by`, `verified_at`, `notes`, `created_at`, `updated_at`) VALUES
+(1, 39, 33, 150.00, 'ZMW', 'completed', 'bank_deposit', 'REG-039-001', NULL, '2025-12-28', 1, '2025-12-28 18:42:19', 'Registration fee payment for Given Mutwena', '2025-12-28 18:42:19', '2025-12-28 18:42:19');
+
 -- --------------------------------------------------------
 
 --
@@ -1294,7 +1391,9 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (28, 34, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-20', 0, 0, 0, '2025-12-20 13:21:55', '2025-12-20 13:21:55'),
 (29, 35, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-21', 0, 0, 0, '2025-12-21 12:57:29', '2025-12-21 12:57:29'),
 (30, 36, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-22', 0, 0, 0, '2025-12-22 16:20:20', '2025-12-22 16:20:20'),
-(31, 37, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-23', 0, 0, 0, '2025-12-23 07:18:25', '2025-12-23 07:18:25');
+(31, 37, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-23', 0, 0, 0, '2025-12-23 07:18:25', '2025-12-23 07:18:25'),
+(32, 38, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-25', 0, 0, 0, '2025-12-25 10:05:01', '2025-12-25 10:05:01'),
+(33, 39, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-28', 0, 0, 0, '2025-12-28 15:13:44', '2025-12-28 15:13:44');
 
 -- --------------------------------------------------------
 
@@ -1462,20 +1561,22 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `avatar_url`, `status`, `email_verification_token`, `email_verification_expires`, `email_verified`, `last_login`, `last_login_ip`, `failed_login_attempts`, `account_locked_until`, `created_at`, `updated_at`) VALUES
 (1, 'admin', 'admin@edutrack.edu', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2025-12-25 10:18:26', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 08:18:26'),
-(6, 'michael.siame', 'michael.siame@edutrack.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(6, 'michael.siame', 'michael.siame@edutrack.edu', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, '2025-12-25 21:53:14', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 19:53:14'),
 (25, 'taona', 'taona@gmail.com', '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
 (26, 'jaysiame076', 'jaysiame076@gmail.com', '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:32:59', NULL, 0, NULL, '2025-11-23 11:05:46', '2025-12-09 09:32:59'),
 (27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', '$2y$10$uTNe95f2nXGaFBDyrBtrQeCaYHRNQBr67kFd7Fugt2dfWZX59fQom', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2025-12-19 13:48:58', NULL, 0, NULL, '2025-12-04 20:34:20', '2025-12-19 11:48:58'),
 (28, 'it', 'it@witmanmiyande.com', '$2y$10$kbm0yafbxD0Iu0Vk7uZYoOKTaqE1DTV47I7FHEFmeRESglBLmnWve', 'Witman', 'Miyande', '+260976062621', NULL, 'active', NULL, NULL, 0, '2025-12-08 13:07:32', NULL, 0, NULL, '2025-12-05 14:38:37', '2025-12-08 17:45:29'),
 (29, 'edwardmusole76', 'edwardmusole76@gmail.com', '$2y$10$WAgkucanVQ4OuVJtxfZeIuH2gxPk4lH7tTmhKT0I8awfPWiBBakdC', 'Edward', 'Musole', '+260978605960', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:34:48', NULL, 0, NULL, '2025-12-05 14:42:37', '2025-12-09 09:34:48'),
-(30, 'siamem570', 'siamem570@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, '2025-12-25 11:44:44', NULL, 0, NULL, '2025-12-09 11:30:29', '2025-12-25 09:44:44'),
+(30, 'siamem570', 'siamem570@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, '2025-12-25 12:19:17', NULL, 0, NULL, '2025-12-09 11:30:29', '2025-12-25 10:19:17'),
 (31, 'anthony.nampute', 'anthony.nampute@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Anthony', 'Nampute', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
 (32, 'inutu.simasiku', 'inutu.simasiku@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Inutu', 'Simasiku', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
 (33, 'nita.sichimwa', 'nita.sichimwa@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Nita', 'Sichimwa', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
 (34, 'jilowahappy19', 'jilowahappy19@gmail.com', '$2y$10$BsJsXUusPmNBJmhfOOj15uzzlP.rFmjhhG.lKeZDTwcOzW62FFHne', 'Happy', 'Jilowa', '+260760054975', NULL, 'active', NULL, NULL, 0, '2025-12-20 15:22:34', NULL, 0, NULL, '2025-12-20 13:21:55', '2025-12-20 13:22:34'),
 (35, 'unparalleledtvstation2.0', 'unparalleledtvstation2.0@gmail.com', '$2y$10$Uc90KkySyrdk/ALa4SYkRuOybANz/FRsFVcAiLQjrUDgMkGdi9UsW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-12-21 12:57:29', '2025-12-21 12:57:29'),
 (36, 'moseschanda084', 'moseschanda084@gmail.com', '$2y$10$/COC.FYEkun5lNEdR7l1wePpKqi5dvtCRvr9nIXWBN3gZ6/QxZndK', 'Moses', 'Mulunda chanda', '+260971848021', NULL, 'active', NULL, NULL, 0, '2025-12-22 18:20:55', NULL, 0, NULL, '2025-12-22 16:20:20', '2025-12-22 16:20:55'),
-(37, 'sampayainnocent15', 'sampayainnocent15@gmail.com', '$2y$10$smRux7NyqHoywLOV0Djiy.0ydzMqz9JoAMS/5Nwg0RN0AYtA8qM2e', 'Innocent', 'Sampaya', '+260771717517', NULL, 'active', NULL, NULL, 0, '2025-12-23 09:19:00', NULL, 0, NULL, '2025-12-23 07:18:25', '2025-12-23 07:19:00');
+(37, 'sampayainnocent15', 'sampayainnocent15@gmail.com', '$2y$10$smRux7NyqHoywLOV0Djiy.0ydzMqz9JoAMS/5Nwg0RN0AYtA8qM2e', 'Innocent', 'Sampaya', '+260771717517', NULL, 'active', NULL, NULL, 0, '2025-12-23 09:19:00', NULL, 0, NULL, '2025-12-23 07:18:25', '2025-12-23 07:19:00'),
+(38, 'emmanuelgoma6', 'emmanuelgoma6@gmail.com', '$2y$10$G//nDjkNfzXuLGpLa6CnD.q0V4LOg4JYmwb.fJ5zq9UFz9vMWoNEa', 'Emmanuel', 'Goma', '+260967780685', NULL, 'active', NULL, NULL, 0, '2025-12-25 12:05:33', NULL, 0, NULL, '2025-12-25 10:05:01', '2025-12-25 10:05:33'),
+(39, 'givenmutwena60', 'givenmutwena60@gmail.com', '$2y$10$D8mDR5UD98Bl5zLPEqpH1O3kAo/wnmKBcT7vdn1Woz9PNzuSsRU7.', 'GIVEN', 'MUTWENA', '+260971077923', NULL, 'active', NULL, NULL, 0, '2025-12-28 17:22:09', NULL, 0, NULL, '2025-12-28 15:13:44', '2025-12-28 15:22:09');
 
 -- --------------------------------------------------------
 
@@ -1539,7 +1640,9 @@ INSERT INTO `user_profiles` (`id`, `user_id`, `bio`, `phone`, `date_of_birth`, `
 (47, 34, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-20 13:21:55', '2025-12-20 13:21:55', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (48, 35, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-21 12:57:29', '2025-12-21 12:57:29', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (49, 36, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-22 16:20:20', '2025-12-22 16:20:20', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(50, 37, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-23 07:18:25', '2025-12-23 07:18:25', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(50, 37, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-23 07:18:25', '2025-12-23 07:18:25', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(51, 38, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-25 10:05:01', '2025-12-25 10:05:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(52, 39, 'My name is Given mutwena,am a female.Am a primary teacher , working from kalulushi at kameme central primary school', '+260971077923', '1987-09-28', 'Female', 'Kalulushi Paterson area behind local court', 'Kalulushi', 'Zambia', '', NULL, '2025-12-28 15:13:44', '2025-12-28 15:58:19', NULL, 'Copperbelt', '103695/97/1', 'Bachelor\'s Degree', 'Teacher', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -1598,7 +1701,9 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`, `assigned_b
 (62, 34, 4, '2025-12-20 13:21:55', NULL),
 (63, 35, 4, '2025-12-21 12:57:29', NULL),
 (64, 36, 4, '2025-12-22 16:20:20', NULL),
-(65, 37, 4, '2025-12-23 07:18:25', NULL);
+(65, 37, 4, '2025-12-23 07:18:25', NULL),
+(66, 38, 4, '2025-12-25 10:05:01', NULL),
+(67, 39, 4, '2025-12-28 15:13:44', NULL);
 
 -- --------------------------------------------------------
 
@@ -1626,7 +1731,8 @@ INSERT INTO `user_sessions` (`id`, `user_id`, `session_token`, `ip_address`, `us
 (11, 34, '91bfdeccc6b5f864eafec843bf557ed9b858a9caa1721076e71a9d1ff24f70af', '102.212.183.105', 'Mozilla/5.0 (Linux; Android 13; Infinix X6525 Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.34 Mobile Safari/537.36[FBAN/EMA;FBLC/en_US;FBAV/485.0.0.19.109;FBCX/modulariab;]', '2026-01-19 15:22:34', '2025-12-20 13:22:34', '2025-12-20 13:22:34'),
 (13, 36, 'c40cdda662683aa736bed1c20bdc2be71a8090a0824cea31ec73f288720f3931', '102.145.233.11', 'Mozilla/5.0 (Linux; Android 13; Infinix X6837 Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.34 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/536.0.0.46.216;]', '2026-01-21 18:20:55', '2025-12-22 16:20:55', '2025-12-22 16:20:55'),
 (15, 37, '8a62872aafab3cf6be6cac47fbd87aedb48c77c42e7ae078be2ba06ae2da661b', '41.223.118.42', 'Mozilla/5.0 (Linux; Android 13; Infinix X6528 Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.34 Mobile Safari/537.36[FBAN/EMA;FBLC/en_US;FBAV/489.0.0.12.109;FBCX/modulariab;]', '2026-01-22 09:19:00', '2025-12-23 07:19:00', '2025-12-23 07:19:00'),
-(20, 30, 'b241ebead5d1c9cc6c8b1bd77b27f8438df3cf49dc5ae7235a6a95c18b3d5dfc', '45.215.251.159', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', '2025-12-25 13:44:44', '2025-12-25 09:44:44', '2025-12-25 09:44:44');
+(25, 39, '43025c63d4708d831c3f79c3a71f5091f033819b77cd79bd6dfa7574cfc889e4', '102.147.26.64', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', '2025-12-28 19:13:59', '2025-12-28 15:13:59', '2025-12-28 15:13:59'),
+(26, 39, 'a1dba154c3a2e24a47847e20d5392fc2921ea89f084a6f6eda74bf4c56d0052f', '45.215.237.208', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Mobile Safari/537.36', '2025-12-28 19:22:09', '2025-12-28 15:22:09', '2025-12-28 15:22:09');
 
 -- --------------------------------------------------------
 
@@ -1774,6 +1880,29 @@ ALTER TABLE `instructors`
   ADD KEY `idx_inst_user` (`user_id`);
 
 --
+-- Indexes for table `lenco_transactions`
+--
+ALTER TABLE `lenco_transactions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `reference` (`reference`),
+  ADD UNIQUE KEY `idx_reference` (`reference`),
+  ADD KEY `idx_user_id` (`user_id`),
+  ADD KEY `idx_enrollment_id` (`enrollment_id`),
+  ADD KEY `idx_course_id` (`course_id`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_virtual_account` (`virtual_account_number`),
+  ADD KEY `idx_expires_at` (`expires_at`);
+
+--
+-- Indexes for table `lenco_webhook_logs`
+--
+ALTER TABLE `lenco_webhook_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_event_type` (`event_type`),
+  ADD KEY `idx_processed` (`processed`),
+  ADD KEY `idx_created_at` (`created_at`);
+
+--
 -- Indexes for table `lessons`
 --
 ALTER TABLE `lessons`
@@ -1830,7 +1959,8 @@ ALTER TABLE `notifications`
 -- Indexes for table `payments`
 --
 ALTER TABLE `payments`
-  ADD PRIMARY KEY (`payment_id`);
+  ADD PRIMARY KEY (`payment_id`),
+  ADD KEY `idx_transaction_id` (`transaction_id`);
 
 --
 -- Indexes for table `payment_methods`
@@ -2042,13 +2172,13 @@ ALTER TABLE `email_templates`
 -- AUTO_INCREMENT for table `enrollments`
 --
 ALTER TABLE `enrollments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `enrollment_payment_plans`
 --
 ALTER TABLE `enrollment_payment_plans`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `instructors`
@@ -2057,10 +2187,22 @@ ALTER TABLE `instructors`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
+-- AUTO_INCREMENT for table `lenco_transactions`
+--
+ALTER TABLE `lenco_transactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `lenco_webhook_logs`
+--
+ALTER TABLE `lenco_webhook_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `lessons`
 --
 ALTER TABLE `lessons`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `lesson_progress`
@@ -2072,7 +2214,7 @@ ALTER TABLE `lesson_progress`
 -- AUTO_INCREMENT for table `lesson_resources`
 --
 ALTER TABLE `lesson_resources`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `live_sessions`
@@ -2090,7 +2232,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `modules`
 --
 ALTER TABLE `modules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -2102,13 +2244,13 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `payment_methods`
 --
 ALTER TABLE `payment_methods`
-  MODIFY `payment_method_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `payment_method_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `questions`
@@ -2138,7 +2280,7 @@ ALTER TABLE `quiz_attempts`
 -- AUTO_INCREMENT for table `registration_fees`
 --
 ALTER TABLE `registration_fees`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `remember_tokens`
@@ -2156,7 +2298,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `system_settings`
@@ -2174,25 +2316,25 @@ ALTER TABLE `team_members`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 -- --------------------------------------------------------
 
@@ -2271,6 +2413,14 @@ ALTER TABLE `instructors`
   ADD CONSTRAINT `fk_inst_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `lenco_transactions`
+--
+ALTER TABLE `lenco_transactions`
+  ADD CONSTRAINT `fk_lenco_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_lenco_enrollment` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_lenco_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `lessons`
 --
 ALTER TABLE `lessons`
@@ -2345,6 +2495,19 @@ ALTER TABLE `user_profiles`
 ALTER TABLE `user_roles`
   ADD CONSTRAINT `fk_ur_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_ur_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+DELIMITER $$
+--
+-- Events
+--
+CREATE DEFINER=`u605780771_root`@`127.0.0.1` EVENT `cleanup_expired_lenco_transactions` ON SCHEDULE EVERY 1 HOUR STARTS '2025-12-28 18:58:28' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+    UPDATE `lenco_transactions`
+    SET `status` = 'expired', `updated_at` = NOW()
+    WHERE `status` = 'pending'
+    AND `expires_at` < NOW();
+END$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
