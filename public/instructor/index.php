@@ -57,13 +57,15 @@ set_exception_handler(function($e) use (&$debug_data) {
 $debug_data['debug_trace'][] = 'Starting script';
 
 try {
-    $debug_data['debug_trace'][] = 'Loading middleware';
-    require_once '../../src/middleware/instructor-only.php';
-    $debug_data['debug_trace'][] = 'Middleware loaded successfully';
-
+    // 1. Load the User class FIRST so hasRole() can use it
     $debug_data['debug_trace'][] = 'Loading User class';
     require_once '../../src/classes/User.php';
     $debug_data['debug_trace'][] = 'User class loaded';
+
+    // 2. NOW load the middleware
+    $debug_data['debug_trace'][] = 'Loading middleware';
+    require_once '../../src/middleware/instructor-only.php'; 
+    $debug_data['debug_trace'][] = 'Middleware loaded successfully';
 
     $debug_data['debug_trace'][] = 'Loading Statistics class';
     require_once '../../src/classes/Statistics.php';
