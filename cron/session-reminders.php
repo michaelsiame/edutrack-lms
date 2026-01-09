@@ -7,10 +7,7 @@
  * - 5 minutes before: "Starting soon" notification
  * - At start time: "Starting now" notification
  *
- * Setup:
- * 1. Add to cron: */5 * * * * /usr/bin/php /path/to/cron/session-reminders.php
- * 2. Or with URL: */5 * * * * curl -s "https://yourdomain.com/cron/session-reminders.php?key=YOUR_SECRET"
- */
+**/
 
 // Prevent web access without secret key
 if (php_sapi_name() !== 'cli') {
