@@ -10,6 +10,9 @@
 // First check authentication
 require_once dirname(__FILE__) . '/authenticate.php';
 
+// Load User class (required by hasRole() function)
+require_once dirname(__DIR__) . '/classes/User.php';
+
 // Check if course ID is provided
 if (!isset($required_course_id)) {
     die('Error: Course ID not specified');
