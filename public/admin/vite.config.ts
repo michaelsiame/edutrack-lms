@@ -6,7 +6,8 @@ export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
       // Base URL for assets (relative to domain root)
-      base: '/admin/',
+      // Must match where the dist files are served from
+      base: '/admin/dist/',
 
       // Development server config
       server: {
