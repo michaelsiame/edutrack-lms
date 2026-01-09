@@ -75,10 +75,16 @@ while (true) {
 
         // Get new notifications since last check
         $notifications = $db->fetchAll("
-            SELECT id, type, title, message, link, icon, color, created_at
+            SELECT 
+                notification_id AS id, 
+                notification_type AS type, 
+                title, 
+                message, 
+                action_url AS link, 
+                created_at
             FROM notifications
-            WHERE user_id = ? AND id > ?
-            ORDER BY id ASC
+            WHERE user_id = ? AND notification_id > ?
+            ORDER BY notification_id ASC
             LIMIT 10
         ", [$userId, $lastNotificationId]);
 

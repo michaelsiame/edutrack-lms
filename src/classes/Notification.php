@@ -21,7 +21,7 @@ class Notification {
      * Load notification data
      */
     private function load() {
-        $sql = "SELECT * FROM notifications WHERE id = ?";
+        $sql = "SELECT * FROM notifications WHERE notification_id = ?";
         $this->data = $this->db->fetchOne($sql, [$this->id]);
     }
 
@@ -162,7 +162,7 @@ class Notification {
      * Delete notification
      */
     public function delete() {
-        $sql = "DELETE FROM notifications WHERE id = ?";
+        $sql = "DELETE FROM notifications WHERE notification_id = ?";
         return $this->db->query($sql, [$this->id]);
     }
 
