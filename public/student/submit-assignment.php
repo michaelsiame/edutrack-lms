@@ -39,7 +39,7 @@ $assignment = $db->fetchOne("
     JOIN courses c ON a.course_id = c.id
     JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
     LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.user_id = ?
-    WHERE a.id = ? AND a.status = 'published'
+    WHERE a.id = ?
 ", [$userId, $userId, $assignmentId]);
 
 if (!$assignment) {
@@ -106,14 +106,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_assignment']))
                         SET submission_text = ?,
                             file_path = COALESCE(?, file_path),
                             submitted_at = NOW(),
-                            status = 'submitted'
+                            status = 'Submitted'
                         WHERE id = ?
                     ", [$submissionText, $filePath, $assignment['submission_id']]);
                 } else {
                     // Create new submission
                     $db->query("
                         INSERT INTO assignment_submissions (user_id, assignment_id, submission_text, file_path, status, submitted_at, created_at)
-                        VALUES (?, ?, ?, ?, 'submitted', NOW(), NOW())
+                        VALUES (?, ?, ?, ?, 'Submitted', NOW(), NOW())
                     ", [$userId, $assignmentId, $submissionText, $filePath]);
                 }
 
@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_assignment']))
 }
 
 $isOverdue = $assignment['due_date'] && strtotime($assignment['due_date']) < time();
-$isGraded = $assignment['submission_status'] === 'graded';
+$isGraded = $assignment['submission_status'] === 'Graded';
 $scorePercentage = $isGraded && $assignment['max_points'] > 0 ? ($assignment['points_earned'] / $assignment['max_points']) * 100 : 0;
 
 $page_title = $assignment['title'] . " - Submit Assignment";
@@ -178,7 +178,7 @@ require_once '../../src/templates/header.php';
                     <span class="px-4 py-2 bg-green-100 text-green-800 text-sm font-semibold rounded-full">
                         <i class="fas fa-check-circle mr-1"></i>Graded
                     </span>
-                <?php elseif ($assignment['submission_status'] === 'submitted'): ?>
+                <?php elseif ($assignment['submission_status'] === 'Submitted'): ?>
                     <span class="px-4 py-2 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-full">
                         <i class="fas fa-clock mr-1"></i>Awaiting Review
                     </span>

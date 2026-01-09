@@ -32,7 +32,7 @@ try {
         FROM assignments a
         JOIN courses c ON a.course_id = c.id
         LEFT JOIN lessons l ON a.lesson_id = l.id
-        WHERE a.id = ? AND a.status = 'published'
+        WHERE a.id = ?
     ", [$assignmentId]);
 
     if (!$assignment) {
@@ -104,11 +104,11 @@ require_once '../src/templates/header.php';
 
                 <!-- Status Badge -->
                 <?php if ($latestSubmission): ?>
-                    <?php if ($latestSubmission['status'] == 'graded'): ?>
+                    <?php if ($latestSubmission['status'] == 'Graded'): ?>
                     <span class="px-4 py-2 bg-green-100 text-green-800 rounded-full font-bold">
                         <i class="fas fa-check-circle mr-1"></i>Graded
                     </span>
-                    <?php elseif ($latestSubmission['status'] == 'submitted'): ?>
+                    <?php elseif ($latestSubmission['status'] == 'Submitted'): ?>
                     <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full font-bold">
                         <i class="fas fa-clock mr-1"></i>Pending Review
                     </span>
@@ -185,7 +185,7 @@ require_once '../src/templates/header.php';
                 </div>
 
                 <!-- Submission Form -->
-                <?php if (!$latestSubmission || $latestSubmission['status'] != 'graded'): ?>
+                <?php if (!$latestSubmission || $latestSubmission['status'] != 'Graded'): ?>
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-xl font-bold text-gray-900 mb-4">
                         <i class="fas fa-upload text-purple-600 mr-2"></i>Submit Your Work
@@ -247,7 +247,7 @@ require_once '../src/templates/header.php';
             <!-- Sidebar -->
             <div class="lg:col-span-1">
                 <!-- Current Score (if graded) -->
-                <?php if ($latestSubmission && $latestSubmission['status'] == 'graded'): ?>
+                <?php if ($latestSubmission && $latestSubmission['status'] == 'Graded'): ?>
                 <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Your Score</h3>
                     <div class="text-center">
@@ -291,10 +291,10 @@ require_once '../src/templates/header.php';
                     </h3>
                     <div class="space-y-3">
                         <?php foreach ($submissions as $index => $submission): ?>
-                        <div class="p-4 bg-gray-50 rounded-lg border-l-4 <?= $submission['status'] == 'graded' ? 'border-green-500' : 'border-blue-500' ?>">
+                        <div class="p-4 bg-gray-50 rounded-lg border-l-4 <?= $submission['status'] == 'Graded' ? 'border-green-500' : 'border-blue-500' ?>">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="font-medium text-gray-900">Submission #<?= count($submissions) - $index ?></span>
-                                <?php if ($submission['status'] == 'graded'): ?>
+                                <?php if ($submission['status'] == 'Graded'): ?>
                                 <span class="text-green-600 font-bold"><?= round($submission['score']) ?> pts</span>
                                 <?php else: ?>
                                 <span class="text-blue-600 text-sm">Pending</span>

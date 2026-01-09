@@ -30,6 +30,8 @@ if ($filter === 'pending') {
 // Get all quizzes from enrolled courses
 $quizzes = $db->fetchAll("
     SELECT q.*,
+           q.time_limit_minutes as time_limit,
+           q.passing_score as pass_score,
            c.title as course_title, c.slug as course_slug,
            COUNT(DISTINCT qa.id) as attempt_count,
            MAX(qa.score) as best_score,
@@ -40,7 +42,7 @@ $quizzes = $db->fetchAll("
     JOIN courses c ON q.course_id = c.id
     JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
     LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.user_id = ?
-    WHERE q.status = 'published'
+    WHERE q.is_published = 1
     GROUP BY q.id
     $havingCondition
     ORDER BY q.created_at DESC
@@ -52,13 +54,13 @@ $counts = [
         SELECT q.id FROM quizzes q
         JOIN courses c ON q.course_id = c.id
         JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
-        WHERE q.status = 'published'
+        WHERE q.is_published = 1
     ", [$userId])),
     'pending' => count($db->fetchAll("
         SELECT q.id FROM quizzes q
         JOIN courses c ON q.course_id = c.id
         JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
-        WHERE q.status = 'published'
+        WHERE q.is_published = 1
         AND q.id NOT IN (SELECT DISTINCT quiz_id FROM quiz_attempts WHERE user_id = ?)
     ", [$userId, $userId])),
     'completed' => count($db->fetchAll("
@@ -66,7 +68,7 @@ $counts = [
         JOIN courses c ON q.course_id = c.id
         JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
         JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.user_id = ?
-        WHERE q.status = 'published'
+        WHERE q.is_published = 1
     ", [$userId, $userId]))
 ];
 

@@ -26,6 +26,7 @@ try {
     // Get quiz details with course info
     $quiz = $db->fetchOne("
         SELECT q.*,
+               q.time_limit_minutes as time_limit,
                c.title as course_title,
                c.slug as course_slug,
                c.id as course_id
@@ -40,7 +41,7 @@ try {
     }
 
     // Check if quiz is published
-    if ($quiz['status'] !== 'published') {
+    if (!$quiz['is_published']) {
         flash('error', 'This quiz is not available yet', 'error');
         redirect('learn.php?course=' . urlencode($quiz['course_slug']));
     }
