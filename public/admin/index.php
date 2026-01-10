@@ -53,7 +53,7 @@ $pendingPayments = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM 
 $pendingAmount = $pendingPayments['total'] ?? 0;
 
 // Get settings
-$settings = $db->fetchOne("SELECT * FROM system_settings WHERE system_id = 1");
+$settings = $db->fetchOne("SELECT * FROM system_settings WHERE setting_id = 1");
 $currency = $settings['currency'] ?? 'ZMW';
 ?>
 <!DOCTYPE html>
