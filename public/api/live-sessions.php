@@ -348,7 +348,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 SELECT e.user_id FROM enrollments e
                 JOIN modules m ON m.course_id = e.course_id
                 JOIN lessons l ON l.module_id = m.id
-                WHERE l.id = ? AND e.status = 'enrolled'
+                WHERE l.id = ? AND e.enrollment_status = 'enrolled'
             ", [$session->lesson_id]);
 
             foreach ($enrolledStudents as $student) {

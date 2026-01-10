@@ -271,7 +271,7 @@ class LiveSession {
                 JOIN lessons l ON l.module_id = m.id
                 WHERE l.id = :lesson_id
                 AND e.user_id = :user_id
-                AND e.status = 'enrolled'";
+                AND e.enrollment_status = 'enrolled'";
 
         $result = $this->db->query($sql, [
             'lesson_id' => $this->data['lesson_id'],

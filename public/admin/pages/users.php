@@ -1,6 +1,7 @@
 <?php
 /**
  * Users Management Page
+ * Uses the proper schema with user_roles table
  */
 
 // Handle actions
@@ -17,54 +18,92 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'delete' && isset($_POST['user_id'])) {
         $userId = (int)$_POST['user_id'];
+        // Delete user roles first
+        $db->delete('user_roles', 'user_id = ?', [$userId]);
         $db->delete('users', 'id = ?', [$userId]);
         header('Location: ?page=users&msg=deleted');
         exit;
     }
 
     if ($action === 'add') {
-        $fullName = trim($_POST['full_name'] ?? '');
+        $firstName = trim($_POST['first_name'] ?? '');
+        $lastName = trim($_POST['last_name'] ?? '');
         $email = trim($_POST['email'] ?? '');
+        $username = strtolower(str_replace(' ', '.', $firstName . '.' . $lastName));
         $phone = trim($_POST['phone'] ?? '');
-        $role = $_POST['role'] ?? 'Student';
+        $roleId = (int)($_POST['role_id'] ?? 4); // Default to Student (4)
         $password = password_hash($_POST['password'] ?? 'password123', PASSWORD_DEFAULT);
 
-        if ($fullName && $email) {
+        if ($firstName && $lastName && $email) {
+            // Insert user
             $db->insert('users', [
-                'full_name' => $fullName,
+                'username' => $username,
+                'first_name' => $firstName,
+                'last_name' => $lastName,
                 'email' => $email,
                 'phone' => $phone,
-                'role' => $role,
-                'password' => $password,
+                'password_hash' => $password,
                 'status' => 'active',
                 'created_at' => date('Y-m-d H:i:s')
             ]);
+            $newUserId = $db->lastInsertId();
+
+            // Assign role
+            if ($newUserId) {
+                $db->insert('user_roles', [
+                    'user_id' => $newUserId,
+                    'role_id' => $roleId,
+                    'assigned_at' => date('Y-m-d H:i:s')
+                ]);
+            }
+
             header('Location: ?page=users&msg=added');
             exit;
         }
     }
 }
 
-// Fetch users
+// Fetch users with their roles
 $search = $_GET['search'] ?? '';
 $roleFilter = $_GET['role'] ?? '';
 
-$sql = "SELECT * FROM users WHERE 1=1";
+$sql = "
+    SELECT
+        u.id,
+        u.username,
+        u.first_name,
+        u.last_name,
+        CONCAT(u.first_name, ' ', u.last_name) as full_name,
+        u.email,
+        u.phone,
+        u.status,
+        u.created_at,
+        r.role_name,
+        r.id as role_id
+    FROM users u
+    LEFT JOIN user_roles ur ON u.id = ur.user_id
+    LEFT JOIN roles r ON ur.role_id = r.id
+    WHERE 1=1
+";
 $params = [];
 
 if ($search) {
-    $sql .= " AND (full_name LIKE ? OR email LIKE ?)";
+    $sql .= " AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ?)";
+    $params[] = "%$search%";
     $params[] = "%$search%";
     $params[] = "%$search%";
 }
 
 if ($roleFilter) {
-    $sql .= " AND role = ?";
+    $sql .= " AND r.role_name = ?";
     $params[] = $roleFilter;
 }
 
-$sql .= " ORDER BY created_at DESC";
+$sql .= " ORDER BY u.created_at DESC";
 $users = $db->fetchAll($sql, $params);
+
+// Get available roles for the dropdown
+$roles = $db->fetchAll("SELECT id, role_name FROM roles ORDER BY id");
 
 $msg = $_GET['msg'] ?? '';
 ?>
@@ -90,9 +129,11 @@ $msg = $_GET['msg'] ?? '';
             <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search by name or email..." class="px-4 py-2 border rounded-lg flex-1">
             <select name="role" class="px-4 py-2 border rounded-lg">
                 <option value="">All Roles</option>
-                <option value="Student" <?= $roleFilter === 'Student' ? 'selected' : '' ?>>Students</option>
-                <option value="Instructor" <?= $roleFilter === 'Instructor' ? 'selected' : '' ?>>Instructors</option>
-                <option value="Admin" <?= $roleFilter === 'Admin' ? 'selected' : '' ?>>Admins</option>
+                <?php foreach ($roles as $role): ?>
+                    <option value="<?= htmlspecialchars($role['role_name']) ?>" <?= $roleFilter === $role['role_name'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($role['role_name']) ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
             <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">Filter</button>
         </form>
@@ -117,15 +158,24 @@ $msg = $_GET['msg'] ?? '';
                         <td class="px-6 py-4">
                             <div class="flex items-center">
                                 <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm mr-3">
-                                    <?= strtoupper(substr($user['full_name'], 0, 1)) ?>
+                                    <?= strtoupper(substr($user['first_name'] ?? 'U', 0, 1)) ?>
                                 </div>
-                                <?= htmlspecialchars($user['full_name']) ?>
+                                <?= htmlspecialchars($user['full_name'] ?? 'Unknown') ?>
                             </div>
                         </td>
                         <td class="px-6 py-4 text-gray-600"><?= htmlspecialchars($user['email']) ?></td>
                         <td class="px-6 py-4">
-                            <span class="px-2 py-1 text-xs rounded-full <?= $user['role'] === 'Admin' ? 'bg-purple-100 text-purple-700' : ($user['role'] === 'Instructor' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700') ?>">
-                                <?= $user['role'] ?>
+                            <?php
+                            $roleName = $user['role_name'] ?? 'No Role';
+                            $roleClass = match($roleName) {
+                                'Super Admin', 'Admin' => 'bg-purple-100 text-purple-700',
+                                'Instructor' => 'bg-blue-100 text-blue-700',
+                                'Student' => 'bg-green-100 text-green-700',
+                                default => 'bg-gray-100 text-gray-700'
+                            };
+                            ?>
+                            <span class="px-2 py-1 text-xs rounded-full <?= $roleClass ?>">
+                                <?= htmlspecialchars($roleName) ?>
                             </span>
                         </td>
                         <td class="px-6 py-4">
@@ -168,9 +218,15 @@ $msg = $_GET['msg'] ?? '';
         <form method="POST">
             <input type="hidden" name="action" value="add">
             <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                    <input type="text" name="full_name" required class="w-full px-3 py-2 border rounded-lg">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <input type="text" name="first_name" required class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <input type="text" name="last_name" required class="w-full px-3 py-2 border rounded-lg">
+                    </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -182,10 +238,12 @@ $msg = $_GET['msg'] ?? '';
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                    <select name="role" class="w-full px-3 py-2 border rounded-lg">
-                        <option value="Student">Student</option>
-                        <option value="Instructor">Instructor</option>
-                        <option value="Admin">Admin</option>
+                    <select name="role_id" class="w-full px-3 py-2 border rounded-lg">
+                        <?php foreach ($roles as $role): ?>
+                            <option value="<?= $role['id'] ?>" <?= $role['role_name'] === 'Student' ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($role['role_name']) ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div>

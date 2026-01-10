@@ -145,7 +145,7 @@ try {
         JOIN instructors i ON ls.instructor_id = i.id
         JOIN users u ON i.user_id = u.id
         WHERE e.user_id = ?
-          AND e.status = 'enrolled'
+          AND e.enrollment_status = 'enrolled'
           AND ls.status IN ('scheduled', 'in_progress', 'live')
           AND ls.scheduled_start_time >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
         ORDER BY ls.scheduled_start_time ASC

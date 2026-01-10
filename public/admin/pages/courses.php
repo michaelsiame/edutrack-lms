@@ -47,7 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Fetch data
 $courses = $db->fetchAll("
-    SELECT c.*, u.full_name as instructor_name, cat.name as category_name,
+    SELECT c.*,
+           CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
+           cat.name as category_name,
            (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrollment_count
     FROM courses c
     LEFT JOIN users u ON c.instructor_id = u.id
@@ -55,7 +57,15 @@ $courses = $db->fetchAll("
     ORDER BY c.created_at DESC
 ");
 
-$instructors = $db->fetchAll("SELECT id, full_name FROM users WHERE role = 'Instructor' ORDER BY full_name");
+// Get instructors (users with Instructor role)
+$instructors = $db->fetchAll("
+    SELECT u.id, CONCAT(u.first_name, ' ', u.last_name) as full_name
+    FROM users u
+    JOIN user_roles ur ON u.id = ur.user_id
+    JOIN roles r ON ur.role_id = r.id
+    WHERE r.role_name = 'Instructor'
+    ORDER BY u.first_name, u.last_name
+");
 $categories = $db->fetchAll("SELECT id, name FROM categories ORDER BY name");
 
 $msg = $_GET['msg'] ?? '';

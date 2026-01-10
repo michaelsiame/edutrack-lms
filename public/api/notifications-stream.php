@@ -128,7 +128,7 @@ while (true) {
             JOIN courses c ON m.course_id = c.id
             JOIN enrollments e ON e.course_id = c.id
             WHERE e.user_id = ?
-              AND e.status = 'enrolled'
+              AND e.enrollment_status = 'enrolled'
               AND ls.status IN ('scheduled', 'in_progress', 'live')
               AND ls.scheduled_start_time BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 5 MINUTE)
             LIMIT 5

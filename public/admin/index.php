@@ -26,11 +26,30 @@ if (!in_array($page, $validPages)) {
 
 // Fetch stats for dashboard
 $db = Database::getInstance();
-$totalStudents = $db->count('users', "role = 'Student'");
-$totalInstructors = $db->count('users', "role = 'Instructor'");
+
+// Count students (users with role_id=4 which is 'Student')
+$totalStudents = $db->fetchColumn("
+    SELECT COUNT(DISTINCT u.id)
+    FROM users u
+    JOIN user_roles ur ON u.id = ur.user_id
+    JOIN roles r ON ur.role_id = r.id
+    WHERE r.role_name = 'Student'
+") ?: 0;
+
+// Count instructors (role_id=3 which is 'Instructor')
+$totalInstructors = $db->fetchColumn("
+    SELECT COUNT(DISTINCT u.id)
+    FROM users u
+    JOIN user_roles ur ON u.id = ur.user_id
+    JOIN roles r ON ur.role_id = r.id
+    WHERE r.role_name = 'Instructor'
+") ?: 0;
+
 $activeCourses = $db->count('courses', "status = 'published'");
 $totalEnrollments = $db->count('enrollments');
-$pendingPayments = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM transactions WHERE status = 'Pending'");
+
+// Pending payments from payments table
+$pendingPayments = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Pending'");
 $pendingAmount = $pendingPayments['total'] ?? 0;
 
 // Get settings
@@ -167,7 +186,7 @@ $currency = $settings['currency'] ?? 'ZMW';
                         <div class="divide-y">
                             <?php
                             $recentEnrollments = $db->fetchAll("
-                                SELECT e.*, u.full_name, c.title
+                                SELECT e.*, CONCAT(u.first_name, ' ', u.last_name) as full_name, c.title
                                 FROM enrollments e
                                 JOIN users u ON e.user_id = u.id
                                 JOIN courses c ON e.course_id = c.id
@@ -177,10 +196,10 @@ $currency = $settings['currency'] ?? 'ZMW';
                             foreach ($recentEnrollments as $enrollment): ?>
                                 <div class="p-4 flex items-center">
                                     <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                                        <?= strtoupper(substr($enrollment['full_name'], 0, 1)) ?>
+                                        <?= strtoupper(substr($enrollment['full_name'] ?? 'U', 0, 1)) ?>
                                     </div>
                                     <div class="ml-4">
-                                        <p class="text-sm font-medium text-gray-800"><?= htmlspecialchars($enrollment['full_name']) ?></p>
+                                        <p class="text-sm font-medium text-gray-800"><?= htmlspecialchars($enrollment['full_name'] ?? 'Unknown') ?></p>
                                         <p class="text-xs text-gray-500">Enrolled in <?= htmlspecialchars($enrollment['title']) ?></p>
                                     </div>
                                     <span class="ml-auto text-xs text-gray-400"><?= date('M j, Y', strtotime($enrollment['enrolled_at'])) ?></span>

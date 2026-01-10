@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'update_status' && isset($_POST['enrollment_id'], $_POST['status'])) {
         $enrollmentId = (int)$_POST['enrollment_id'];
         $status = in_array($_POST['status'], ['active', 'completed', 'cancelled']) ? $_POST['status'] : 'active';
-        $db->update('enrollments', ['status' => $status], 'id = ?', [$enrollmentId]);
+        $db->update('enrollments', ['enrollment_status' => $status], 'id = ?', [$enrollmentId]);
         header('Location: ?page=enrollments&msg=status_updated');
         exit;
     }
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->insert('enrollments', [
                 'user_id' => $userId,
                 'course_id' => $courseId,
-                'status' => 'active',
+                'enrollment_status' => 'active',
                 'enrolled_at' => date('Y-m-d H:i:s')
             ]);
             header('Location: ?page=enrollments&msg=added');
@@ -38,14 +38,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Fetch enrollments
 $enrollments = $db->fetchAll("
-    SELECT e.*, u.full_name, u.email, c.title as course_title
+    SELECT e.*,
+           CONCAT(u.first_name, ' ', u.last_name) as full_name,
+           u.email,
+           c.title as course_title,
+           e.enrollment_status as status
     FROM enrollments e
     JOIN users u ON e.user_id = u.id
     JOIN courses c ON e.course_id = c.id
     ORDER BY e.enrolled_at DESC
 ");
 
-$students = $db->fetchAll("SELECT id, full_name, email FROM users WHERE role = 'Student' ORDER BY full_name");
+// Get students (users with Student role)
+$students = $db->fetchAll("
+    SELECT u.id, CONCAT(u.first_name, ' ', u.last_name) as full_name, u.email
+    FROM users u
+    JOIN user_roles ur ON u.id = ur.user_id
+    JOIN roles r ON ur.role_id = r.id
+    WHERE r.role_name = 'Student'
+    ORDER BY u.first_name, u.last_name
+");
 $courses = $db->fetchAll("SELECT id, title FROM courses WHERE status = 'published' ORDER BY title");
 
 $msg = $_GET['msg'] ?? '';
