@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Fetch current settings
-$settings = $db->fetchOne("SELECT * FROM system_settings WHERE id = 1");
+$settings = $db->fetchOne("SELECT * FROM system_settings WHERE system_id = 1");
 $msg = $_GET['msg'] ?? '';
 ?>
 
