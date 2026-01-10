@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Check if user is enrolled or is instructor
         $isEnrolled = $db->fetchOne("
             SELECT COUNT(*) as count FROM enrollments
-            WHERE course_id = ? AND user_id = ? AND status = 'enrolled'
+            WHERE course_id = ? AND user_id = ? AND enrollment_status = 'enrolled'
         ", [$courseId, $userId]);
 
         $isInstructor = $db->fetchOne("
@@ -224,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Create notification for enrolled students
             $enrolledStudents = $db->fetchAll("
                 SELECT user_id FROM enrollments
-                WHERE course_id = ? AND status = 'enrolled'
+                WHERE course_id = ? AND enrollment_status = 'enrolled'
             ", [$lesson['course_id']]);
 
             foreach ($enrolledStudents as $student) {

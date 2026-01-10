@@ -75,7 +75,7 @@ try {
         // Get enrolled students
         $students = $db->fetchAll("
             SELECT user_id FROM enrollments
-            WHERE course_id = ? AND status = 'enrolled'
+            WHERE course_id = ? AND enrollment_status = 'enrolled'
         ", [$session['course_id']]);
 
         foreach ($students as $student) {
@@ -113,7 +113,7 @@ try {
     foreach ($sessions5Min as $session) {
         $students = $db->fetchAll("
             SELECT user_id FROM enrollments
-            WHERE course_id = ? AND status = 'enrolled'
+            WHERE course_id = ? AND enrollment_status = 'enrolled'
         ", [$session['course_id']]);
 
         foreach ($students as $student) {
@@ -153,7 +153,7 @@ try {
     foreach ($sessionsStartingNow as $session) {
         $students = $db->fetchAll("
             SELECT user_id FROM enrollments
-            WHERE course_id = ? AND status = 'enrolled'
+            WHERE course_id = ? AND enrollment_status = 'enrolled'
         ", [$session['course_id']]);
 
         foreach ($students as $student) {
