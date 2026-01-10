@@ -83,7 +83,7 @@ class EmailNotificationService {
                        pm.method_name
                 FROM transactions t
                 JOIN users u ON t.user_id = u.id
-                LEFT JOIN payment_methods pm ON t.payment_method_id = pm.id
+                LEFT JOIN payment_methods pm ON t.payment_method_id = pm.payment_method_id
                 WHERE t.transaction_id = ?
             ", [$transactionId]);
 

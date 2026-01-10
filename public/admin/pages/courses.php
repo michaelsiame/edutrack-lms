@@ -53,7 +53,7 @@ $courses = $db->fetchAll("
            (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrollment_count
     FROM courses c
     LEFT JOIN users u ON c.instructor_id = u.id
-    LEFT JOIN categories cat ON c.category_id = cat.id
+    LEFT JOIN course_categories cat ON c.category_id = cat.id
     ORDER BY c.created_at DESC
 ");
 
@@ -66,7 +66,7 @@ $instructors = $db->fetchAll("
     WHERE r.role_name = 'Instructor'
     ORDER BY u.first_name, u.last_name
 ");
-$categories = $db->fetchAll("SELECT id, name FROM categories ORDER BY name");
+$categories = $db->fetchAll("SELECT id, name FROM course_categories ORDER BY name");
 
 $msg = $_GET['msg'] ?? '';
 ?>

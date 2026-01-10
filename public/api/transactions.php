@@ -42,7 +42,7 @@ try {
                         pm.method_name as method
                     FROM transactions t
                     INNER JOIN users u ON t.user_id = u.id
-                    LEFT JOIN payment_methods pm ON t.payment_method_id = pm.id
+                    LEFT JOIN payment_methods pm ON t.payment_method_id = pm.payment_method_id
                     ORDER BY t.processed_at DESC";
 
             $transactions = $db->fetchAll($sql);

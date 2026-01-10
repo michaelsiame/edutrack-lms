@@ -55,7 +55,7 @@ $sql = "
     FROM payments p
     LEFT JOIN users u ON p.student_id = u.id
     LEFT JOIN courses c ON p.course_id = c.id
-    LEFT JOIN payment_methods pm ON p.payment_method_id = pm.id
+    LEFT JOIN payment_methods pm ON p.payment_method_id = pm.payment_method_id
 ";
 
 if ($statusFilter) {
