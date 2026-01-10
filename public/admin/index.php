@@ -24,8 +24,149 @@ if (!in_array($page, $validPages)) {
     $page = 'dashboard';
 }
 
-// Fetch stats for dashboard
+// Fetch database and settings early
 $db = Database::getInstance();
+$settings = $db->fetchOne("SELECT * FROM system_settings WHERE setting_id = 1");
+$currency = $settings['currency'] ?? 'ZMW';
+
+// ============================================
+// PROCESS AJAX/POST REQUESTS BEFORE HTML OUTPUT
+// ============================================
+
+// Process Users page handlers
+if ($page === 'users') {
+    // Handle AJAX requests
+    if (isset($_GET['ajax'])) {
+        header('Content-Type: application/json');
+
+        if ($_GET['ajax'] === 'get_user' && isset($_GET['id'])) {
+            $user = $db->fetchOne("
+                SELECT u.*, ur.role_id
+                FROM users u
+                LEFT JOIN user_roles ur ON u.id = ur.user_id
+                WHERE u.id = ?
+            ", [(int)$_GET['id']]);
+            echo json_encode($user ?: ['error' => 'User not found']);
+            exit;
+        }
+    }
+
+    // Handle form submissions
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        include 'handlers/users_handler.php';
+    }
+}
+
+// Process Courses page handlers
+if ($page === 'courses') {
+    if (isset($_GET['ajax'])) {
+        header('Content-Type: application/json');
+
+        if ($_GET['ajax'] === 'get_course' && isset($_GET['id'])) {
+            $course = $db->fetchOne("SELECT * FROM courses WHERE id = ?", [(int)$_GET['id']]);
+            echo json_encode($course ?: ['error' => 'Course not found']);
+            exit;
+        }
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        include 'handlers/courses_handler.php';
+    }
+}
+
+// Process Modules page handlers
+if ($page === 'modules') {
+    $courseId = (int)($_GET['course_id'] ?? 0);
+
+    if (isset($_GET['ajax'])) {
+        header('Content-Type: application/json');
+
+        if ($_GET['ajax'] === 'get_module' && isset($_GET['id'])) {
+            $module = $db->fetchOne("SELECT * FROM modules WHERE id = ?", [(int)$_GET['id']]);
+            echo json_encode($module ?: ['error' => 'Module not found']);
+            exit;
+        }
+
+        if ($_GET['ajax'] === 'get_lesson' && isset($_GET['id'])) {
+            $lesson = $db->fetchOne("SELECT * FROM lessons WHERE id = ?", [(int)$_GET['id']]);
+            echo json_encode($lesson ?: ['error' => 'Lesson not found']);
+            exit;
+        }
+
+        if ($_GET['ajax'] === 'reorder_modules' && isset($_POST['order'])) {
+            $order = json_decode($_POST['order'], true);
+            foreach ($order as $index => $moduleId) {
+                $db->update('modules', ['display_order' => $index + 1], 'id = ?', [(int)$moduleId]);
+            }
+            echo json_encode(['success' => true]);
+            exit;
+        }
+
+        if ($_GET['ajax'] === 'reorder_lessons' && isset($_POST['order'], $_POST['module_id'])) {
+            $order = json_decode($_POST['order'], true);
+            $moduleId = (int)$_POST['module_id'];
+            foreach ($order as $index => $lessonId) {
+                $db->update('lessons', ['display_order' => $index + 1, 'module_id' => $moduleId], 'id = ?', [(int)$lessonId]);
+            }
+            echo json_encode(['success' => true]);
+            exit;
+        }
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        include 'handlers/modules_handler.php';
+    }
+}
+
+// Process Financials page handlers
+if ($page === 'financials') {
+    if (isset($_GET['ajax'])) {
+        header('Content-Type: application/json');
+
+        if ($_GET['ajax'] === 'get_payment' && isset($_GET['id'])) {
+            $payment = $db->fetchOne("SELECT * FROM payments WHERE payment_id = ?", [(int)$_GET['id']]);
+            echo json_encode($payment ?: ['error' => 'Payment not found']);
+            exit;
+        }
+
+        if ($_GET['ajax'] === 'get_students') {
+            $students = $db->fetchAll("
+                SELECT u.id, CONCAT(u.first_name, ' ', u.last_name) as full_name, u.email
+                FROM users u
+                JOIN user_roles ur ON u.id = ur.user_id
+                JOIN roles r ON ur.role_id = r.id
+                WHERE r.role_name = 'Student'
+                ORDER BY u.first_name, u.last_name
+            ");
+            echo json_encode($students);
+            exit;
+        }
+
+        if ($_GET['ajax'] === 'export') {
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="payments_export_' . date('Y-m-d') . '.csv"');
+
+            $sql = "SELECT p.payment_id, CONCAT(u.first_name, ' ', u.last_name) as student, u.email, c.title as course, p.amount, p.currency, p.payment_status, p.payment_type, p.transaction_id, p.created_at FROM payments p LEFT JOIN users u ON p.student_id = u.id LEFT JOIN courses c ON p.course_id = c.id ORDER BY p.created_at DESC";
+            $payments = $db->fetchAll($sql);
+
+            $output = fopen('php://output', 'w');
+            fputcsv($output, ['ID', 'Student', 'Email', 'Course', 'Amount', 'Currency', 'Status', 'Type', 'Reference', 'Date']);
+            foreach ($payments as $p) {
+                fputcsv($output, $p);
+            }
+            fclose($output);
+            exit;
+        }
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        include 'handlers/financials_handler.php';
+    }
+}
+
+// ============================================
+// FETCH DASHBOARD STATS
+// ============================================
 
 // Count students (users with role_id=4 which is 'Student')
 $totalStudents = $db->fetchColumn("
@@ -52,9 +193,6 @@ $totalEnrollments = $db->count('enrollments');
 $pendingPayments = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Pending'");
 $pendingAmount = $pendingPayments['total'] ?? 0;
 
-// Get settings
-$settings = $db->fetchOne("SELECT * FROM system_settings WHERE setting_id = 1");
-$currency = $settings['currency'] ?? 'ZMW';
 ?>
 <!DOCTYPE html>
 <html lang="en">
