@@ -19,7 +19,7 @@ if (!hasRole('admin')) {
 
 // Get current page
 $page = $_GET['page'] ?? 'dashboard';
-$validPages = ['dashboard', 'users', 'courses', 'enrollments', 'financials', 'settings', 'announcements'];
+$validPages = ['dashboard', 'users', 'courses', 'modules', 'enrollments', 'financials', 'settings', 'announcements'];
 if (!in_array($page, $validPages)) {
     $page = 'dashboard';
 }
@@ -68,58 +68,88 @@ $currency = $settings['currency'] ?? 'ZMW';
 <body class="bg-gray-100 min-h-screen">
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <aside class="w-64 bg-slate-800 text-white flex-shrink-0">
+        <aside class="w-64 bg-slate-800 text-white flex-shrink-0 min-h-screen">
             <div class="p-6 border-b border-slate-700">
-                <h1 class="text-xl font-bold">EduTrack Admin</h1>
+                <h1 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fas fa-graduation-cap text-blue-400"></i>
+                    EduTrack Admin
+                </h1>
             </div>
-            <nav class="p-4">
-                <ul class="space-y-2">
-                    <li>
-                        <a href="?page=dashboard" class="flex items-center px-4 py-2 rounded-lg <?= $page === 'dashboard' ? 'bg-slate-700' : 'hover:bg-slate-700' ?>">
-                            <i class="fas fa-home w-5 mr-3"></i> Dashboard
-                        </a>
-                    </li>
-                    <li>
-                        <a href="?page=users" class="flex items-center px-4 py-2 rounded-lg <?= $page === 'users' ? 'bg-slate-700' : 'hover:bg-slate-700' ?>">
-                            <i class="fas fa-users w-5 mr-3"></i> Users
-                        </a>
-                    </li>
-                    <li>
-                        <a href="?page=courses" class="flex items-center px-4 py-2 rounded-lg <?= $page === 'courses' ? 'bg-slate-700' : 'hover:bg-slate-700' ?>">
-                            <i class="fas fa-book w-5 mr-3"></i> Courses
-                        </a>
-                    </li>
-                    <li>
-                        <a href="?page=enrollments" class="flex items-center px-4 py-2 rounded-lg <?= $page === 'enrollments' ? 'bg-slate-700' : 'hover:bg-slate-700' ?>">
-                            <i class="fas fa-user-graduate w-5 mr-3"></i> Enrollments
-                        </a>
-                    </li>
-                    <li>
-                        <a href="?page=financials" class="flex items-center px-4 py-2 rounded-lg <?= $page === 'financials' ? 'bg-slate-700' : 'hover:bg-slate-700' ?>">
-                            <i class="fas fa-money-bill w-5 mr-3"></i> Financials
-                        </a>
-                    </li>
-                    <li>
-                        <a href="?page=announcements" class="flex items-center px-4 py-2 rounded-lg <?= $page === 'announcements' ? 'bg-slate-700' : 'hover:bg-slate-700' ?>">
-                            <i class="fas fa-bullhorn w-5 mr-3"></i> Announcements
-                        </a>
-                    </li>
-                    <li>
-                        <a href="?page=settings" class="flex items-center px-4 py-2 rounded-lg <?= $page === 'settings' ? 'bg-slate-700' : 'hover:bg-slate-700' ?>">
-                            <i class="fas fa-cog w-5 mr-3"></i> Settings
-                        </a>
-                    </li>
-                    <li class="pt-4 border-t border-slate-700 mt-4">
-                        <a href="<?= url('index.php') ?>" class="flex items-center px-4 py-2 rounded-lg hover:bg-slate-700">
-                            <i class="fas fa-arrow-left w-5 mr-3"></i> Back to Site
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?= url('logout.php') ?>" class="flex items-center px-4 py-2 rounded-lg hover:bg-red-600">
-                            <i class="fas fa-sign-out-alt w-5 mr-3"></i> Logout
-                        </a>
-                    </li>
-                </ul>
+            <nav class="p-4 flex flex-col h-[calc(100vh-80px)]">
+                <!-- Main Navigation -->
+                <div class="flex-1">
+                    <p class="text-xs uppercase text-slate-500 font-semibold mb-2 px-4">Main</p>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="?page=dashboard" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?= $page === 'dashboard' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' ?>">
+                                <i class="fas fa-home w-5 mr-3"></i> Dashboard
+                            </a>
+                        </li>
+                    </ul>
+
+                    <p class="text-xs uppercase text-slate-500 font-semibold mb-2 px-4 mt-6">Management</p>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="?page=users" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?= $page === 'users' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' ?>">
+                                <i class="fas fa-users w-5 mr-3"></i> Users
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?page=courses" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?= $page === 'courses' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' ?>">
+                                <i class="fas fa-book w-5 mr-3"></i> Courses
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?page=modules" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?= $page === 'modules' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' ?>">
+                                <i class="fas fa-layer-group w-5 mr-3"></i> Modules
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?page=enrollments" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?= $page === 'enrollments' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' ?>">
+                                <i class="fas fa-user-graduate w-5 mr-3"></i> Enrollments
+                            </a>
+                        </li>
+                    </ul>
+
+                    <p class="text-xs uppercase text-slate-500 font-semibold mb-2 px-4 mt-6">Finance & Communication</p>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="?page=financials" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?= $page === 'financials' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' ?>">
+                                <i class="fas fa-money-bill-wave w-5 mr-3"></i> Financials
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?page=announcements" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?= $page === 'announcements' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' ?>">
+                                <i class="fas fa-bullhorn w-5 mr-3"></i> Announcements
+                            </a>
+                        </li>
+                    </ul>
+
+                    <p class="text-xs uppercase text-slate-500 font-semibold mb-2 px-4 mt-6">System</p>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="?page=settings" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?= $page === 'settings' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' ?>">
+                                <i class="fas fa-cog w-5 mr-3"></i> Settings
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Bottom Navigation -->
+                <div class="pt-4 border-t border-slate-700 mt-4">
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="<?= url('index.php') ?>" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors">
+                                <i class="fas fa-external-link-alt w-5 mr-3"></i> View Site
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?= url('logout.php') ?>" class="flex items-center px-4 py-2.5 rounded-lg text-slate-300 hover:bg-red-600 hover:text-white transition-colors">
+                                <i class="fas fa-sign-out-alt w-5 mr-3"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </nav>
         </aside>
 
@@ -234,6 +264,8 @@ $currency = $settings['currency'] ?? 'ZMW';
                 <?php include 'pages/users.php'; ?>
             <?php elseif ($page === 'courses'): ?>
                 <?php include 'pages/courses.php'; ?>
+            <?php elseif ($page === 'modules'): ?>
+                <?php include 'pages/modules.php'; ?>
             <?php elseif ($page === 'enrollments'): ?>
                 <?php include 'pages/enrollments.php'; ?>
             <?php elseif ($page === 'financials'): ?>
