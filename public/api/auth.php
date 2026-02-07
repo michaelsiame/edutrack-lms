@@ -110,7 +110,7 @@ function handleGet() {
 }
 
 /**
- * DELETE - Logout (invalidate token)
+ * DELETE - Logout (invalidate token via blacklist)
  */
 function handleDelete() {
     $token = getBearerToken();
@@ -121,13 +121,58 @@ function handleDelete() {
         exit;
     }
 
-    // In a production system, you'd add this token to a blacklist/revocation list
-    // For now, we'll just return success as JWT tokens expire naturally
+    // Blacklist the token so it cannot be reused
+    blacklistToken($token);
 
     echo json_encode([
         'success' => true,
         'message' => 'Logged out successfully'
     ]);
+}
+
+/**
+ * Blacklist a JWT token
+ */
+function blacklistToken($token) {
+    try {
+        $db = Database::getInstance();
+        $tokenHash = hash('sha256', $token);
+
+        // Decode to get expiry for automatic cleanup
+        $parts = explode('.', $token);
+        $payload = json_decode(base64UrlDecode($parts[1] ?? ''), true);
+        $expiresAt = isset($payload['exp']) ? date('Y-m-d H:i:s', $payload['exp']) : date('Y-m-d H:i:s', time() + 86400);
+
+        $db->query(
+            "INSERT IGNORE INTO token_blacklist (token_hash, expires_at, created_at) VALUES (?, ?, NOW())",
+            [$tokenHash, $expiresAt]
+        );
+    } catch (Exception $e) {
+        error_log('Failed to blacklist token: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Check if a token is blacklisted
+ */
+function isTokenBlacklisted($token) {
+    try {
+        $db = Database::getInstance();
+        $tokenHash = hash('sha256', $token);
+
+        // Clean up expired entries
+        $db->query("DELETE FROM token_blacklist WHERE expires_at < NOW()");
+
+        $result = $db->fetchOne(
+            "SELECT 1 FROM token_blacklist WHERE token_hash = ?",
+            [$tokenHash]
+        );
+
+        return !empty($result);
+    } catch (Exception $e) {
+        // If table doesn't exist yet, token is not blacklisted
+        return false;
+    }
 }
 
 /**
@@ -140,6 +185,13 @@ function handleLogin($data) {
     if (empty($email) || empty($password)) {
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Email and password are required']);
+        exit;
+    }
+
+    // Rate limit login attempts
+    if (!checkRateLimit('api_login_' . $email, 5, 900)) {
+        http_response_code(429);
+        echo json_encode(['success' => false, 'error' => 'Too many login attempts. Please try again later.']);
         exit;
     }
 
@@ -400,7 +452,7 @@ function generateRefreshToken($userId, $expiresIn = 2592000) { // 30 days
 /**
  * Verify JWT token
  */
-function verifyJWT($token) {
+function verifyJWT($token, $expectedType = 'access') {
     $parts = explode('.', $token);
 
     if (count($parts) !== 3) {
@@ -409,16 +461,36 @@ function verifyJWT($token) {
 
     list($header, $payload, $signature) = $parts;
 
-    $validSignature = base64UrlEncode(hash_hmac('sha256', "$header.$payload", getJWTSecret(), true));
+    try {
+        $validSignature = base64UrlEncode(hash_hmac('sha256', "$header.$payload", getJWTSecret(), true));
+    } catch (RuntimeException $e) {
+        return false;
+    }
 
-    if ($signature !== $validSignature) {
+    // Use hash_equals to prevent timing attacks
+    if (!hash_equals($validSignature, $signature)) {
         return false;
     }
 
     $payload = json_decode(base64UrlDecode($payload), true);
 
+    if (!$payload) {
+        return false;
+    }
+
     // Check expiration
     if (isset($payload['exp']) && $payload['exp'] < time()) {
+        return false;
+    }
+
+    // Check token type to prevent refresh tokens from being used as access tokens
+    $tokenType = $payload['type'] ?? 'access';
+    if ($tokenType !== $expectedType) {
+        return false;
+    }
+
+    // Check for blacklisted tokens
+    if (isTokenBlacklisted($token)) {
         return false;
     }
 
@@ -429,9 +501,9 @@ function verifyJWT($token) {
  * Verify refresh token
  */
 function verifyRefreshToken($token) {
-    $payload = verifyJWT($token);
+    $payload = verifyJWT($token, 'refresh');
 
-    if (!$payload || ($payload['type'] ?? '') !== 'refresh') {
+    if (!$payload) {
         return false;
     }
 
@@ -474,9 +546,12 @@ function getJWTSecret() {
     $secret = getenv('JWT_SECRET');
 
     if (!$secret) {
-        // Fallback to APP_KEY or generate warning
-        $secret = getenv('APP_KEY') ?: 'CHANGE_THIS_SECRET_KEY_IN_PRODUCTION';
-        error_log('Warning: JWT_SECRET not set in environment. Using fallback.');
+        $secret = getenv('APP_KEY');
+    }
+
+    if (!$secret) {
+        error_log('CRITICAL: Neither JWT_SECRET nor APP_KEY is set in environment.');
+        throw new RuntimeException('JWT secret not configured');
     }
 
     return $secret;

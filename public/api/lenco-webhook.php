@@ -59,15 +59,41 @@ try {
     error_log('Failed to log webhook: ' . $e->getMessage());
 }
 
-// Verify webhook signature (if configured)
+// Verify webhook signature (REQUIRED in production)
 $webhookSecret = env('LENCO_WEBHOOK_SECRET', '');
-$signatureValid = true;
+$signatureValid = false;
 
-if (!empty($webhookSecret) && !empty($signature)) {
+if (empty($webhookSecret)) {
+    // Webhook secret not configured - reject in production
+    if (getenv('APP_ENV') !== 'development') {
+        error_log('CRITICAL: LENCO_WEBHOOK_SECRET not configured. Rejecting webhook.');
+        if ($logId) {
+            $db->query(
+                "UPDATE lenco_webhook_logs SET signature_valid = 0, error_message = 'Webhook secret not configured' WHERE id = :id",
+                ['id' => $logId]
+            );
+        }
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => 'Webhook verification not configured']);
+        exit;
+    }
+    // In development, allow unsigned webhooks
+    $signatureValid = true;
+} elseif (empty($signature)) {
+    // Signature header missing - reject
+    if ($logId) {
+        $db->query(
+            "UPDATE lenco_webhook_logs SET signature_valid = 0, error_message = 'Missing signature header' WHERE id = :id",
+            ['id' => $logId]
+        );
+    }
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Missing signature']);
+    exit;
+} else {
     $signatureValid = $lenco->verifyWebhookSignature($payload, $signature);
 
     if (!$signatureValid) {
-        // Update log with signature validation result
         if ($logId) {
             $db->query(
                 "UPDATE lenco_webhook_logs SET signature_valid = 0, error_message = 'Invalid signature' WHERE id = :id",

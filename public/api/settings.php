@@ -8,15 +8,7 @@ require_once '../../src/bootstrap.php';
 require_once '../../src/middleware/admin-only.php';
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-
-// Handle preflight requests
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
+setCorsHeaders();
 
 $method = $_SERVER['REQUEST_METHOD'];
 $input = json_decode(file_get_contents('php://input'), true);

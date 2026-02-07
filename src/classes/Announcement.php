@@ -143,9 +143,10 @@ class Announcement {
             $params[] = $filters['priority'];
         }
 
-        // Order by
-        $orderBy = $filters['order_by'] ?? 'created_at';
-        $orderDir = $filters['order_dir'] ?? 'DESC';
+        // Order by (whitelist to prevent SQL injection)
+        $allowedOrderColumns = ['created_at', 'updated_at', 'title', 'priority', 'published_at', 'announcement_type'];
+        $orderBy = (isset($filters['order_by']) && in_array($filters['order_by'], $allowedOrderColumns)) ? $filters['order_by'] : 'created_at';
+        $orderDir = (isset($filters['order_dir']) && strtoupper($filters['order_dir']) === 'ASC') ? 'ASC' : 'DESC';
         $sql .= " ORDER BY a.{$orderBy} {$orderDir}";
 
         // Limit

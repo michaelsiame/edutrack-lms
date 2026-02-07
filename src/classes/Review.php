@@ -57,9 +57,10 @@ class Review {
         }
 
         // Validate rating
-        if ($data['rating'] < 1 || $data['rating'] > 5) {
-            throw new Exception('Rating must be between 1 and 5');
+        if (!is_numeric($data['rating']) || $data['rating'] < 1 || $data['rating'] > 5) {
+            throw new Exception('Rating must be a number between 1 and 5');
         }
+        $data['rating'] = (int) $data['rating'];
 
         $sql = "INSERT INTO course_reviews (
             course_id, user_id, rating, review, created_at
@@ -155,14 +156,14 @@ class Review {
             $params[] = $filters['rating'];
         }
 
-        // Order by
+        // Order by (whitelist to prevent SQL injection)
         $orderBy = $filters['order_by'] ?? 'created_at';
-        $orderDir = $filters['order_dir'] ?? 'DESC';
+        $orderDir = (isset($filters['order_dir']) && strtoupper($filters['order_dir']) === 'ASC') ? 'ASC' : 'DESC';
 
         if ($orderBy === 'rating') {
-            $sql .= " ORDER BY r.rating $orderDir, r.created_at DESC";
+            $sql .= " ORDER BY r.rating {$orderDir}, r.created_at DESC";
         } else {
-            $sql .= " ORDER BY r.created_at $orderDir";
+            $sql .= " ORDER BY r.created_at {$orderDir}";
         }
 
         // Limit

@@ -22,13 +22,8 @@
 
 </IfModule>
 
-# Security Headers
+# Security Headers (CORS handled by PHP setCorsHeaders() - not duplicated here)
 <IfModule mod_headers.c>
-    # CORS headers for API
-    Header set Access-Control-Allow-Origin "*"
-    Header set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
-
     # Security headers
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "DENY"

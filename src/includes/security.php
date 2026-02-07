@@ -138,8 +138,8 @@ function xssClean($string) {
 }
 
 /**
- * Rate limiting check
- * 
+ * Rate limiting check (database-backed, not bypassable by clearing cookies)
+ *
  * @param string $key Unique key for the action
  * @param int $maxAttempts Maximum attempts allowed
  * @param int $timeWindow Time window in seconds
@@ -149,29 +149,57 @@ function checkRateLimit($key, $maxAttempts = 5, $timeWindow = 900) {
     if (!config('rate_limit.enabled', true)) {
         return true;
     }
-    
-    $storageKey = 'rate_limit_' . md5($key);
-    
-    // Get current attempts
-    $attempts = $_SESSION[$storageKey] ?? [
-        'count' => 0,
-        'reset_at' => time() + $timeWindow
-    ];
-    
-    // Reset if time window expired
-    if (time() > $attempts['reset_at']) {
-        $attempts = [
-            'count' => 0,
-            'reset_at' => time() + $timeWindow
-        ];
+
+    try {
+        $db = Database::getInstance();
+        $ip = getClientIp();
+        $identifier = md5($key . '_' . $ip);
+
+        // Clean up old entries
+        $db->query(
+            "DELETE FROM rate_limits WHERE expires_at < NOW()"
+        );
+
+        // Check current count
+        $result = $db->fetchOne(
+            "SELECT attempt_count, expires_at FROM rate_limits WHERE identifier = ?",
+            [$identifier]
+        );
+
+        if (!$result) {
+            // First attempt
+            $db->query(
+                "INSERT INTO rate_limits (identifier, attempt_count, expires_at) VALUES (?, 1, DATE_ADD(NOW(), INTERVAL ? SECOND))",
+                [$identifier, $timeWindow]
+            );
+            return true;
+        }
+
+        if ($result['attempt_count'] >= $maxAttempts) {
+            return false;
+        }
+
+        // Increment
+        $db->query(
+            "UPDATE rate_limits SET attempt_count = attempt_count + 1 WHERE identifier = ?",
+            [$identifier]
+        );
+
+        return true;
+    } catch (Exception $e) {
+        // Fallback to session-based if DB fails
+        $storageKey = 'rate_limit_' . md5($key);
+        $attempts = $_SESSION[$storageKey] ?? ['count' => 0, 'reset_at' => time() + $timeWindow];
+
+        if (time() > $attempts['reset_at']) {
+            $attempts = ['count' => 0, 'reset_at' => time() + $timeWindow];
+        }
+
+        $attempts['count']++;
+        $_SESSION[$storageKey] = $attempts;
+
+        return $attempts['count'] <= $maxAttempts;
     }
-    
-    // Increment attempts
-    $attempts['count']++;
-    $_SESSION[$storageKey] = $attempts;
-    
-    // Check if exceeded
-    return $attempts['count'] <= $maxAttempts;
 }
 
 /**
@@ -240,8 +268,8 @@ function encryptData($data) {
     $key = base64_decode($key);
     
     $iv = random_bytes(16);
-    $encrypted = openssl_encrypt($data, 'AES-256-CBC', $key, 0, $iv);
-    
+    $encrypted = openssl_encrypt($data, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+
     return base64_encode($iv . $encrypted);
 }
 
@@ -265,8 +293,8 @@ function decryptData($data) {
     $data = base64_decode($data);
     $iv = substr($data, 0, 16);
     $encrypted = substr($data, 16);
-    
-    return openssl_decrypt($encrypted, 'AES-256-CBC', $key, 0, $iv);
+
+    return openssl_decrypt($encrypted, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
 }
 
 /**
@@ -328,8 +356,84 @@ function escapeString($string) {
 }
 
 /**
+ * Set secure CORS headers
+ * Whitelists allowed origins instead of reflecting arbitrary origins
+ */
+function setCorsHeaders() {
+    $allowedOrigins = [
+        'https://edutrackzambia.com',
+        'https://www.edutrackzambia.com',
+    ];
+
+    // In development, allow localhost
+    if (getenv('APP_ENV') === 'development' || getenv('APP_DEBUG') === 'true') {
+        $allowedOrigins[] = 'http://localhost';
+        $allowedOrigins[] = 'http://localhost:3000';
+        $allowedOrigins[] = 'http://localhost:8080';
+        $allowedOrigins[] = 'http://127.0.0.1';
+    }
+
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+    if (in_array($origin, $allowedOrigins)) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+        header('Access-Control-Allow-Credentials: true');
+    } else {
+        // For non-credentialed requests from unknown origins, use restrictive default
+        header('Access-Control-Allow-Origin: https://edutrackzambia.com');
+    }
+
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-CSRF-Token');
+    header('Access-Control-Max-Age: 86400');
+
+    // Handle preflight
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(204);
+        exit;
+    }
+}
+
+/**
+ * Verify CSRF token for API requests
+ * Checks X-CSRF-Token header or csrf_token in POST body
+ */
+function verifyCsrfTokenApi() {
+    // Skip for GET/OPTIONS/HEAD (safe methods)
+    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    if (in_array($method, ['GET', 'OPTIONS', 'HEAD'])) {
+        return true;
+    }
+
+    // Check header first, then POST body
+    $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+    if (!$token) {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $tokenName = config('security.csrf_token_name', 'csrf_token');
+        $token = $input[$tokenName] ?? $_POST[$tokenName] ?? '';
+    }
+
+    if (empty($_SESSION['csrf_token']) || !$token) {
+        return false;
+    }
+
+    return hash_equals($_SESSION['csrf_token'], $token);
+}
+
+/**
+ * Require valid CSRF token for API or return JSON error
+ */
+function requireCsrfTokenApi() {
+    if (!verifyCsrfTokenApi()) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'CSRF token validation failed']);
+        exit;
+    }
+}
+
+/**
  * Check if request is AJAX
- * 
+ *
  * @return bool
  */
 function isAjax() {

@@ -123,61 +123,80 @@ class Database {
     }
     
     /**
+     * Validate identifier (table/column name) to prevent SQL injection
+     */
+    private function validateIdentifier($name) {
+        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $name)) {
+            throw new InvalidArgumentException("Invalid SQL identifier: " . substr($name, 0, 50));
+        }
+        return $name;
+    }
+
+    /**
      * Insert record and return last insert ID
      */
     public function insert($table, $data) {
-        $columns = implode(', ', array_keys($data));
-        $placeholders = ':' . implode(', :', array_keys($data));
-        
+        $this->validateIdentifier($table);
+        $validatedColumns = [];
+        foreach (array_keys($data) as $col) {
+            $this->validateIdentifier($col);
+            $validatedColumns[] = $col;
+        }
+
+        $columns = implode(', ', $validatedColumns);
+        $placeholders = ':' . implode(', :', $validatedColumns);
+
         $sql = "INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})";
-        
+
         $this->query($sql, $data);
         return $this->pdo->lastInsertId();
     }
-    
+
     /**
      * Update records
      */
     public function update($table, $data, $where, $whereParams = []) {
-    $setParts = [];
-    $params = [];
-    
-    // Build SET clause with positional parameters
-    $index = 1;
-    foreach ($data as $column => $value) {
-        $setParts[] = "{$column} = ?";
-        $params[] = $value;
+        $this->validateIdentifier($table);
+
+        $setParts = [];
+        $params = [];
+
+        foreach ($data as $column => $value) {
+            $this->validateIdentifier($column);
+            $setParts[] = "{$column} = ?";
+            $params[] = $value;
+        }
+        $setClause = implode(', ', $setParts);
+
+        foreach ($whereParams as $param) {
+            $params[] = $param;
+        }
+
+        $sql = "UPDATE {$table} SET {$setClause} WHERE {$where}";
+        $stmt = $this->query($sql, $params);
+
+        return $stmt->rowCount();
     }
-    $setClause = implode(', ', $setParts);
-    
-    // Add WHERE parameters
-    foreach ($whereParams as $param) {
-        $params[] = $param;
-    }
-    
-    $sql = "UPDATE {$table} SET {$setClause} WHERE {$where}";
-    $stmt = $this->query($sql, $params);
-    
-    return $stmt->rowCount();
-}
-    
+
     /**
      * Delete records
      */
     public function delete($table, $where, $params = []) {
+        $this->validateIdentifier($table);
         $sql = "DELETE FROM {$table} WHERE {$where}";
         $stmt = $this->query($sql, $params);
         return $stmt->rowCount();
     }
-    
+
     /**
      * Count records
      */
     public function count($table, $where = '1=1', $params = []) {
+        $this->validateIdentifier($table);
         $sql = "SELECT COUNT(*) FROM {$table} WHERE {$where}";
         return (int) $this->fetchColumn($sql, $params);
     }
-    
+
     /**
      * Check if record exists
      */

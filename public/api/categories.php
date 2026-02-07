@@ -9,15 +9,7 @@ require_once '../../src/middleware/admin-only.php';
 require_once '../../src/classes/Category.php';
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: ' . ($_SERVER['HTTP_ORIGIN'] ?? '*'));
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-header('Access-Control-Allow-Credentials: true');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
+setCorsHeaders();
 
 $method = $_SERVER['REQUEST_METHOD'];
 $input = json_decode(file_get_contents('php://input'), true);

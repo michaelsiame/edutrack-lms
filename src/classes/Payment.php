@@ -197,9 +197,14 @@ class Payment {
             $params['payment_method_id'] = $options['payment_method_id'];
         }
 
-        // Apply ordering
-        if (isset($options['order'])) {
-            $sql .= " ORDER BY p." . $options['order'];
+        // Apply ordering (whitelist to prevent SQL injection)
+        $allowedOrderColumns = [
+            'created_at', 'amount', 'payment_status', 'payment_date',
+            'payment_id', 'updated_at', 'currency'
+        ];
+        if (isset($options['order']) && in_array($options['order'], $allowedOrderColumns)) {
+            $orderDir = (isset($options['order_dir']) && strtoupper($options['order_dir']) === 'ASC') ? 'ASC' : 'DESC';
+            $sql .= " ORDER BY p." . $options['order'] . " " . $orderDir;
         } else {
             $sql .= " ORDER BY p.created_at DESC";
         }
