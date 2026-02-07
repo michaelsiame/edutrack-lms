@@ -27,9 +27,10 @@ class Module {
                 JOIN courses c ON m.course_id = c.id
                 WHERE m.id = :id";
         
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $result = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $this->data = $result ?: [];
     }
-    
+
     /**
      * Check if module exists
      */
@@ -66,16 +67,16 @@ class Module {
         $db = Database::getInstance();
 
         $sql = "INSERT INTO modules (
-            course_id, title, description, order_index
+            course_id, title, description, display_order
         ) VALUES (
-            :course_id, :title, :description, :order_index
+            :course_id, :title, :description, :display_order
         )";
 
         $params = [
             'course_id' => $data['course_id'],
             'title' => $data['title'],
             'description' => $data['description'] ?? '',
-            'order_index' => $data['order_index'] ?? 0
+            'display_order' => $data['display_order'] ?? $data['order_index'] ?? 0
         ];
 
         if ($db->query($sql, $params)) {
@@ -88,7 +89,7 @@ class Module {
      * Update module
      */
     public function update($data) {
-        $allowed = ['title', 'description', 'order_index'];
+        $allowed = ['title', 'description', 'display_order'];
         
         $updates = [];
         $params = ['id' => $this->id];
@@ -186,7 +187,7 @@ class Module {
     public function getCourseSlug() { return $this->data['course_slug'] ?? ''; }
     public function getTitle() { return $this->data['title'] ?? ''; }
     public function getDescription() { return $this->data['description'] ?? ''; }
-    public function getOrderIndex() { return $this->data['order_index'] ?? 0; }
+    public function getOrderIndex() { return $this->data['display_order'] ?? 0; }
     public function getLessonCount() { return $this->data['lesson_count'] ?? 0; }
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }
     public function getUpdatedAt() { return $this->data['updated_at'] ?? null; }

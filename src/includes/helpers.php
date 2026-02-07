@@ -91,13 +91,13 @@ function getVimeoId($url) {
  */
 function getVideoEmbed($url) {
     if (isYouTube($url)) {
-        $id = getYouTubeId($url);
+        $id = htmlspecialchars(getYouTubeId($url), ENT_QUOTES, 'UTF-8');
         return '<iframe width="100%" height="500" src="https://www.youtube.com/embed/' . $id . '" frameborder="0" allowfullscreen></iframe>';
     } elseif (isVimeo($url)) {
-        $id = getVimeoId($url);
+        $id = htmlspecialchars(getVimeoId($url), ENT_QUOTES, 'UTF-8');
         return '<iframe width="100%" height="500" src="https://player.vimeo.com/video/' . $id . '" frameborder="0" allowfullscreen></iframe>';
     } else {
-        return '<video width="100%" height="500" controls><source src="' . $url . '" type="video/mp4"></video>';
+        return '<video width="100%" height="500" controls><source src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" type="video/mp4"></video>';
     }
 }
 

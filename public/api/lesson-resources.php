@@ -34,6 +34,32 @@ if ($method === 'GET') {
     }
 
     $lessonId = (int)$_GET['lesson_id'];
+
+    // Verify enrollment (admins/instructors can bypass)
+    $lesson = Lesson::find($lessonId);
+    if (!$lesson) {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'message' => 'Lesson not found']);
+        exit;
+    }
+
+    $courseId = $lesson->getCourseId();
+    $isAdmin = ($user['role'] === 'admin');
+    $isInstructor = ($user['role'] === 'instructor');
+
+    if (!$isAdmin && !$isInstructor) {
+        $db = Database::getInstance();
+        $enrolled = $db->fetchOne(
+            "SELECT id FROM enrollments WHERE user_id = ? AND course_id = ? AND enrollment_status IN ('Enrolled', 'In Progress', 'Completed')",
+            [$user['id'], $courseId]
+        );
+        if (!$enrolled) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'You must be enrolled in this course to access lesson resources']);
+            exit;
+        }
+    }
+
     $resources = LessonResource::getByLesson($lessonId);
 
     echo json_encode([

@@ -29,9 +29,10 @@ class Assignment {
                 LEFT JOIN courses c ON m.course_id = c.id
                 WHERE a.id = :id";
         
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $result = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $this->data = $result ?: [];
     }
-    
+
     /**
      * Check if assignment exists
      */
@@ -78,18 +79,19 @@ class Assignment {
      */
     public static function create($data) {
         $db = Database::getInstance();
-        
+
         $sql = "INSERT INTO assignments (
-            lesson_id, title, description, instructions,
+            course_id, lesson_id, title, description, instructions,
             max_points, due_date, allow_late_submission,
-            max_file_size, allowed_file_types
+            max_file_size_mb, allowed_file_types
         ) VALUES (
-            :lesson_id, :title, :description, :instructions,
+            :course_id, :lesson_id, :title, :description, :instructions,
             :max_points, :due_date, :allow_late_submission,
-            :max_file_size, :allowed_file_types
+            :max_file_size_mb, :allowed_file_types
         )";
-        
+
         $params = [
+            'course_id' => $data['course_id'] ?? null,
             'lesson_id' => $data['lesson_id'],
             'title' => $data['title'],
             'description' => $data['description'] ?? '',
@@ -97,7 +99,7 @@ class Assignment {
             'max_points' => $data['max_points'] ?? 100,
             'due_date' => $data['due_date'] ?? null,
             'allow_late_submission' => $data['allow_late_submission'] ?? 1,
-            'max_file_size' => $data['max_file_size'] ?? 10485760, // 10MB
+            'max_file_size_mb' => $data['max_file_size_mb'] ?? $data['max_file_size'] ?? 10,
             'allowed_file_types' => $data['allowed_file_types'] ?? 'pdf,doc,docx,txt,zip'
         ];
         
@@ -111,8 +113,8 @@ class Assignment {
      * Update assignment
      */
     public function update($data) {
-        $allowed = ['title', 'description', 'instructions', 'max_points', 
-                   'due_date', 'allow_late_submission', 'max_file_size', 
+        $allowed = ['title', 'description', 'instructions', 'max_points',
+                   'due_date', 'allow_late_submission', 'max_file_size_mb',
                    'allowed_file_types'];
         
         $updates = [];
@@ -165,7 +167,7 @@ class Assignment {
     public function getSubmissions() {
         $sql = "SELECT s.*, u.first_name, u.last_name, u.email
                 FROM assignment_submissions s
-                JOIN users u ON s.user_id = u.id
+                JOIN users u ON s.student_id = u.id
                 WHERE s.assignment_id = :assignment_id
                 ORDER BY s.submitted_at DESC";
         
@@ -178,7 +180,7 @@ class Assignment {
     public function getPendingCount() {
         $sql = "SELECT COUNT(*) as count 
                 FROM assignment_submissions 
-                WHERE assignment_id = :assignment_id AND status = 'submitted'";
+                WHERE assignment_id = :assignment_id AND status = 'Submitted'";
         
         $result = $this->db->query($sql, ['assignment_id' => $this->id])->fetch();
         return $result['count'] ?? 0;
@@ -190,7 +192,7 @@ class Assignment {
     public function getGradedCount() {
         $sql = "SELECT COUNT(*) as count 
                 FROM assignment_submissions 
-                WHERE assignment_id = :assignment_id AND status = 'graded'";
+                WHERE assignment_id = :assignment_id AND status = 'Graded'";
         
         $result = $this->db->query($sql, ['assignment_id' => $this->id])->fetch();
         return $result['count'] ?? 0;
@@ -272,8 +274,8 @@ class Assignment {
     public function getInstructions() { return $this->data['instructions'] ?? ''; }
     public function getMaxPoints() { return $this->data['max_points'] ?? 100; }
     public function getDueDate() { return $this->data['due_date'] ?? null; }
-    public function allowsLateSubmission() { return $this->data['allow_late_submission'] == 1; }
-    public function getMaxFileSize() { return $this->data['max_file_size'] ?? 10485760; }
+    public function allowsLateSubmission() { return ($this->data['allow_late_submission'] ?? 0) == 1; }
+    public function getMaxFileSize() { return $this->data['max_file_size_mb'] ?? 10; }
     public function getAllowedFileTypes() { return $this->data['allowed_file_types'] ?? 'pdf,doc,docx,txt,zip'; }
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }
     public function getUpdatedAt() { return $this->data['updated_at'] ?? null; }

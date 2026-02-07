@@ -32,7 +32,8 @@ class Instructor {
                 JOIN users u ON i.user_id = u.id
                 WHERE i.id = ?";
 
-        $this->data = $this->db->fetchOne($sql, [$this->id]);
+        $result = $this->db->fetchOne($sql, [$this->id]);
+        $this->data = $result ?: [];
 
         if ($this->data) {
             $this->userId = $this->data['user_id'];

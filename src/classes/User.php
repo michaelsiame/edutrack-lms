@@ -28,8 +28,9 @@ class User {
      */
     private function load() {
         // Load core credentials
-        $this->data = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$this->id]);
-        
+        $result = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$this->id]);
+        $this->data = $result ?: [];
+
         // Load extended profile
         if ($this->data) {
             $this->profile = $this->db->fetchOne("SELECT * FROM user_profiles WHERE user_id = ?", [$this->id]);

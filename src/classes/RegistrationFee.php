@@ -30,7 +30,8 @@ class RegistrationFee {
                 JOIN users u ON rf.user_id = u.id
                 WHERE rf.id = :id";
 
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $result = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $this->data = $result ?: [];
     }
 
     /**

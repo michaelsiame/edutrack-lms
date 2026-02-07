@@ -37,9 +37,10 @@ class Certificate {
                 LEFT JOIN users i ON co.instructor_id = i.id
                 WHERE c.id = ?";
         
-        $this->data = $this->db->query($sql, [$this->id])->fetch();
+        $result = $this->db->query($sql, [$this->id])->fetch();
+        $this->data = $result ?: [];
     }
-    
+
     /**
      * Check if certificate exists
      */

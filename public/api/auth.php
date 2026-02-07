@@ -60,6 +60,14 @@ function handlePost() {
             handleVerifyToken($data);
             break;
 
+        case 'forgot_password':
+            handleForgotPassword($data);
+            break;
+
+        case 'reset_password':
+            handleResetPassword($data);
+            break;
+
         default:
             http_response_code(400);
             echo json_encode(['success' => false, 'error' => 'Invalid action']);
@@ -555,4 +563,76 @@ function getJWTSecret() {
     }
 
     return $secret;
+}
+
+/**
+ * Handle forgot password request
+ * Generates a reset token, stores it in users.password_reset_token / password_reset_expires,
+ * and sends the reset email via sendPasswordResetEmail() from email.php.
+ */
+function handleForgotPassword($data) {
+    $email = trim($data['email'] ?? '');
+
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'A valid email address is required']);
+        exit;
+    }
+
+    // Rate limit password reset attempts
+    if (!checkRateLimit('api_forgot_password_' . $email, 3, 900)) {
+        http_response_code(429);
+        echo json_encode(['success' => false, 'error' => 'Too many password reset attempts. Please try again later.']);
+        exit;
+    }
+
+    // Use the existing requestPasswordReset() from src/includes/auth.php
+    // It stores password_reset_token and password_reset_expires in the users table
+    // and calls sendPasswordResetEmail() from src/includes/email.php
+    $result = requestPasswordReset($email);
+
+    // Always return success to prevent email enumeration
+    echo json_encode([
+        'success' => true,
+        'message' => 'If an account exists with this email, you will receive password reset instructions.'
+    ]);
+}
+
+/**
+ * Handle password reset with token
+ * Validates the token against users.password_reset_token / password_reset_expires
+ * and updates the password.
+ */
+function handleResetPassword($data) {
+    $token = trim($data['token'] ?? '');
+    $newPassword = $data['new_password'] ?? '';
+
+    if (empty($token)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Reset token is required']);
+        exit;
+    }
+
+    if (empty($newPassword) || strlen($newPassword) < 8) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Password must be at least 8 characters']);
+        exit;
+    }
+
+    // Use the existing resetPassword() from src/includes/auth.php
+    // It verifies password_reset_token and password_reset_expires, then updates password_hash
+    $result = resetPassword($token, $newPassword);
+
+    if ($result['success']) {
+        echo json_encode([
+            'success' => true,
+            'message' => $result['message']
+        ]);
+    } else {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'error' => $result['message']
+        ]);
+    }
 }

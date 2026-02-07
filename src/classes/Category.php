@@ -26,9 +26,10 @@ class Category {
                 FROM course_categories c
                 WHERE c.id = ?";
 
-        $this->data = $this->db->query($sql, [$this->id])->fetch();
+        $result = $this->db->query($sql, [$this->id])->fetch();
+        $this->data = $result ?: [];
     }
-    
+
     /**
      * Check if category exists
      */

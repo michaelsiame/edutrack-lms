@@ -24,7 +24,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $moduleId = $_GET['module_id'] ?? null;
 
     if ($courseId) {
-        // Get lessons for a course
+        // Verify enrollment (admins/instructors can bypass)
+        $userRoles = $_SESSION['user_roles'] ?? [];
+        $isAdmin = in_array('Super Admin', $userRoles) || in_array('Admin', $userRoles);
+        $isInstructor = in_array('Instructor', $userRoles);
+
+        if (!$isAdmin && !$isInstructor) {
+            $db = Database::getInstance();
+            $enrolled = $db->fetchOne(
+                "SELECT id FROM enrollments WHERE user_id = ? AND course_id = ? AND enrollment_status IN ('Enrolled', 'In Progress', 'Completed')",
+                [$userId, $courseId]
+            );
+            if (!$enrolled) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'message' => 'You must be enrolled in this course to access lessons']);
+                exit;
+            }
+        }
+
         $lessons = Lesson::getByCourse($courseId);
 
         echo json_encode([

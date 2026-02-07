@@ -423,22 +423,18 @@ function pr($data, $die = false) {
  * @return string
  */
 function getClientIp() {
-    $ip = '';
-    
-    if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-        $ip = $_SERVER['HTTP_CLIENT_IP'];
-    } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    } elseif (isset($_SERVER['HTTP_X_FORWARDED'])) {
-        $ip = $_SERVER['HTTP_X_FORWARDED'];
-    } elseif (isset($_SERVER['HTTP_FORWARDED_FOR'])) {
-        $ip = $_SERVER['HTTP_FORWARDED_FOR'];
-    } elseif (isset($_SERVER['HTTP_FORWARDED'])) {
-        $ip = $_SERVER['HTTP_FORWARDED'];
-    } elseif (isset($_SERVER['REMOTE_ADDR'])) {
-        $ip = $_SERVER['REMOTE_ADDR'];
-    }
-    
+    // Only trust REMOTE_ADDR as it cannot be spoofed by the client.
+    // X-Forwarded-For etc. are client-controlled headers and should only be
+    // trusted if there is a known reverse proxy in front of the application.
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+
+    // If behind a trusted reverse proxy, uncomment the following:
+    // $trustedProxies = ['127.0.0.1', '10.0.0.0/8'];
+    // if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && in_array($ip, $trustedProxies)) {
+    //     $forwarded = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+    //     $ip = trim($forwarded[0]);
+    // }
+
     return $ip;
 }
 

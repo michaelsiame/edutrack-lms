@@ -28,9 +28,10 @@ class Lesson {
                 JOIN courses c ON m.course_id = c.id
                 WHERE l.id = :id";
         
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $result = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $this->data = $result ?: [];
     }
-    
+
     /**
      * Check if lesson exists
      */
@@ -154,18 +155,19 @@ class Lesson {
                 FROM lessons l
                 JOIN modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
-                AND (m.display_order > (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id)
-                     OR (m.display_order = (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id) 
+                AND (m.display_order > (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id_1)
+                     OR (m.display_order = (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id_2)
                          AND l.display_order > :display_order))
                 ORDER BY m.display_order ASC, l.display_order ASC
                 LIMIT 1";
-        
+
         $result = $this->db->query($sql, [
             'course_id' => $this->getCourseId(),
-            'module_id' => $this->getModuleId(),
+            'module_id_1' => $this->getModuleId(),
+            'module_id_2' => $this->getModuleId(),
             'display_order' => $this->getOrderIndex()
         ])->fetch();
-        
+
         return $result ? self::find($result['id']) : null;
     }
     
@@ -177,18 +179,19 @@ class Lesson {
                 FROM lessons l
                 JOIN modules m ON l.module_id = m.id
                 WHERE m.course_id = :course_id
-                AND (m.display_order < (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id)
-                     OR (m.display_order = (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id) 
+                AND (m.display_order < (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id_1)
+                     OR (m.display_order = (SELECT m2.display_order FROM modules m2 WHERE m2.id = :module_id_2)
                          AND l.display_order < :display_order))
                 ORDER BY m.display_order DESC, l.display_order DESC
                 LIMIT 1";
-        
+
         $result = $this->db->query($sql, [
             'course_id' => $this->getCourseId(),
-            'module_id' => $this->getModuleId(),
+            'module_id_1' => $this->getModuleId(),
+            'module_id_2' => $this->getModuleId(),
             'display_order' => $this->getOrderIndex()
         ])->fetch();
-        
+
         return $result ? self::find($result['id']) : null;
     }
     
@@ -245,15 +248,18 @@ class Lesson {
         $sql = "INSERT INTO lesson_progress (
             user_id, course_id, lesson_id, progress_seconds, last_position
         ) VALUES (
-            :user_id, :course_id, :lesson_id, :progress, :progress
-        ) ON DUPLICATE KEY UPDATE 
-            progress_seconds = :progress, last_position = :progress, updated_at = NOW()";
-        
+            :user_id, :course_id, :lesson_id, :progress_insert, :position_insert
+        ) ON DUPLICATE KEY UPDATE
+            progress_seconds = :progress_update, last_position = :position_update, updated_at = NOW()";
+
         return $this->db->query($sql, [
             'user_id' => $userId,
             'course_id' => $this->getCourseId(),
             'lesson_id' => $this->id,
-            'progress' => $progress
+            'progress_insert' => $progress,
+            'position_insert' => $progress,
+            'progress_update' => $progress,
+            'position_update' => $progress
         ]);
     }
     
@@ -323,7 +329,7 @@ class Lesson {
     public function getContent() { return $this->data['content'] ?? ''; }
     public function getAttachmentsData() { return $this->data['attachments'] ?? null; }
     public function getOrderIndex() { return $this->data['display_order'] ?? 0; }
-    public function isPreview() { return $this->data['is_preview'] == 1; }
+    public function isPreview() { return ($this->data['is_preview'] ?? 0) == 1; }
     public function getDuration() { return $this->data['duration'] ?? 0; }
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }
     public function getUpdatedAt() { return $this->data['updated_at'] ?? null; }

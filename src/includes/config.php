@@ -30,6 +30,7 @@ if (!defined('CONFIG_PATH')) {
 if (!defined('UPLOAD_PATH')) {
     define('UPLOAD_PATH', PUBLIC_PATH . '/uploads');
 }
+$baseUrl = getenv('APP_URL') ?: ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
 if (!defined('PUBLIC_URL')) define('PUBLIC_URL', $baseUrl . '/public');
 
 if (!defined('UPLOAD_URL')) define('UPLOAD_URL', PUBLIC_URL . '/uploads');
@@ -84,6 +85,10 @@ define('SITE_PHONE', $appConfig['site']['phone']);
 define('SITE_PHONE2', $appConfig['site']['phone2']);
 define('SITE_ADDRESS', $appConfig['site']['address']);
 define('CURRENCY', $appConfig['site']['currency']);
+
+// Currency symbol mapping
+$currencySymbols = ['ZMW' => 'K', 'USD' => '$', 'GBP' => '£', 'EUR' => '€', 'ZAR' => 'R', 'NGN' => '₦'];
+define('CURRENCY_SYMBOL', $currencySymbols[CURRENCY] ?? CURRENCY . ' ');
 
 // Set timezone
 date_default_timezone_set(APP_TIMEZONE);

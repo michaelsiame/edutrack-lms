@@ -215,10 +215,11 @@ class CertificateGenerator {
      */
     public function download() {
         $this->generate();
-        
-        $filename = 'certificate_' . $this->certificate['certificate_number'] . '.pdf';
+
+        $safeCertNum = preg_replace('/[^a-zA-Z0-9_\-]/', '', $this->certificate['certificate_number']);
+        $filename = 'certificate_' . $safeCertNum . '.pdf';
         $filepath = $this->outputPath . $filename;
-        
+
         if (file_exists($filepath)) {
             header('Content-Type: application/pdf');
             header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -233,10 +234,11 @@ class CertificateGenerator {
      */
     public function display() {
         $this->generate();
-        
-        $filename = 'certificate_' . $this->certificate['certificate_number'] . '.pdf';
+
+        $safeCertNum = preg_replace('/[^a-zA-Z0-9_\-]/', '', $this->certificate['certificate_number']);
+        $filename = 'certificate_' . $safeCertNum . '.pdf';
         $filepath = $this->outputPath . $filename;
-        
+
         if (file_exists($filepath)) {
             header('Content-Type: application/pdf');
             header('Content-Disposition: inline; filename="' . $filename . '"');
@@ -259,11 +261,11 @@ class HTMLCertificateGenerator {
     }
     
     public function generateHTML() {
-        $studentName = strtoupper($this->certificate['student_first_name'] . ' ' . $this->certificate['student_last_name']);
-        $courseTitle = $this->certificate['course_title'];
+        $studentName = htmlspecialchars(strtoupper($this->certificate['student_first_name'] . ' ' . $this->certificate['student_last_name']), ENT_QUOTES, 'UTF-8');
+        $courseTitle = htmlspecialchars($this->certificate['course_title'], ENT_QUOTES, 'UTF-8');
         $completionDate = date('F j, Y', strtotime($this->certificate['completion_date']));
-        $certificateNumber = $this->certificate['certificate_number'];
-        $verifyUrl = url('verify-certificate.php?code=' . $this->certificate['verification_code']);
+        $certificateNumber = htmlspecialchars($this->certificate['certificate_number'], ENT_QUOTES, 'UTF-8');
+        $verifyUrl = url('verify-certificate.php?code=' . urlencode($this->certificate['verification_code']));
         
         return <<<HTML
 <!DOCTYPE html>

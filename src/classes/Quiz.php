@@ -29,9 +29,10 @@ class Quiz {
                 LEFT JOIN courses c ON m.course_id = c.id
                 WHERE q.id = :id";
         
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $result = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $this->data = $result ?: [];
     }
-    
+
     /**
      * Check if quiz exists
      */
@@ -78,27 +79,26 @@ class Quiz {
      */
     public static function create($data) {
         $db = Database::getInstance();
-        
+
         $sql = "INSERT INTO quizzes (
             lesson_id, title, description, passing_score,
-            time_limit, max_attempts, show_correct_answers,
-            randomize_questions, randomize_options
+            time_limit_minutes, max_attempts, show_correct_answers,
+            randomize_questions
         ) VALUES (
             :lesson_id, :title, :description, :passing_score,
-            :time_limit, :max_attempts, :show_correct_answers,
-            :randomize_questions, :randomize_options
+            :time_limit_minutes, :max_attempts, :show_correct_answers,
+            :randomize_questions
         )";
-        
+
         $params = [
             'lesson_id' => $data['lesson_id'],
             'title' => $data['title'],
             'description' => $data['description'] ?? '',
             'passing_score' => $data['passing_score'] ?? 70,
-            'time_limit' => $data['time_limit'] ?? null,
+            'time_limit_minutes' => $data['time_limit_minutes'] ?? $data['time_limit'] ?? null,
             'max_attempts' => $data['max_attempts'] ?? null,
             'show_correct_answers' => $data['show_correct_answers'] ?? 1,
-            'randomize_questions' => $data['randomize_questions'] ?? 0,
-            'randomize_options' => $data['randomize_options'] ?? 0
+            'randomize_questions' => $data['randomize_questions'] ?? 0
         ];
         
         if ($db->query($sql, $params)) {
@@ -111,9 +111,8 @@ class Quiz {
      * Update quiz
      */
     public function update($data) {
-        $allowed = ['title', 'description', 'passing_score', 'time_limit', 
-                   'max_attempts', 'show_correct_answers', 'randomize_questions', 
-                   'randomize_options'];
+        $allowed = ['title', 'description', 'passing_score', 'time_limit_minutes',
+                   'max_attempts', 'show_correct_answers', 'randomize_questions'];
         
         $updates = [];
         $params = ['id' => $this->id];
@@ -160,15 +159,19 @@ class Quiz {
      */
     public function getQuestions($randomize = false) {
         require_once __DIR__ . '/Question.php';
-        
-        $sql = "SELECT * FROM quiz_questions WHERE quiz_id = :quiz_id";
-        
+
+        $sql = "SELECT q.*, qq.display_order, qq.points_override,
+                COALESCE(qq.points_override, q.points) as points
+                FROM quiz_questions qq
+                JOIN questions q ON qq.question_id = q.question_id
+                WHERE qq.quiz_id = :quiz_id";
+
         if ($randomize || $this->shouldRandomizeQuestions()) {
             $sql .= " ORDER BY RAND()";
         } else {
-            $sql .= " ORDER BY display_order ASC";
+            $sql .= " ORDER BY qq.display_order ASC";
         }
-        
+
         return $this->db->query($sql, ['quiz_id' => $this->id])->fetchAll();
     }
     
@@ -185,13 +188,13 @@ class Quiz {
      * Get user attempts
      */
     public function getUserAttempts($userId) {
-        $sql = "SELECT * FROM quiz_attempts 
-                WHERE quiz_id = :quiz_id AND user_id = :user_id 
+        $sql = "SELECT * FROM quiz_attempts
+                WHERE quiz_id = :quiz_id AND student_id = :student_id
                 ORDER BY started_at DESC";
-        
+
         return $this->db->query($sql, [
             'quiz_id' => $this->id,
-            'user_id' => $userId
+            'student_id' => $userId
         ])->fetchAll();
     }
     
@@ -199,13 +202,13 @@ class Quiz {
      * Get user's best score
      */
     public function getUserBestScore($userId) {
-        $sql = "SELECT MAX(score) as best_score 
-                FROM quiz_attempts 
-                WHERE quiz_id = :quiz_id AND user_id = :user_id AND status = 'completed'";
-        
+        $sql = "SELECT MAX(score) as best_score
+                FROM quiz_attempts
+                WHERE quiz_id = :quiz_id AND student_id = :student_id AND status IN ('Submitted', 'Graded')";
+
         $result = $this->db->query($sql, [
             'quiz_id' => $this->id,
-            'user_id' => $userId
+            'student_id' => $userId
         ])->fetch();
         
         return $result['best_score'] ?? 0;
@@ -241,17 +244,16 @@ class Quiz {
         if (!$this->canUserTake($userId)) {
             return false;
         }
-        
+
         $sql = "INSERT INTO quiz_attempts (
-            quiz_id, user_id, course_id, status, started_at
+            quiz_id, student_id, status, started_at
         ) VALUES (
-            :quiz_id, :user_id, :course_id, 'in_progress', NOW()
+            :quiz_id, :student_id, 'In Progress', NOW()
         )";
-        
+
         if ($this->db->query($sql, [
             'quiz_id' => $this->id,
-            'user_id' => $userId,
-            'course_id' => $this->getCourseId()
+            'student_id' => $userId
         ])) {
             return $this->db->lastInsertId();
         }
@@ -263,10 +265,10 @@ class Quiz {
      */
     public function submitAttempt($attemptId, $answers) {
         // Get attempt
-        $sql = "SELECT * FROM quiz_attempts WHERE id = :id";
+        $sql = "SELECT * FROM quiz_attempts WHERE attempt_id = :id";
         $attempt = $this->db->query($sql, ['id' => $attemptId])->fetch();
-        
-        if (!$attempt || $attempt['status'] != 'in_progress') {
+
+        if (!$attempt || $attempt['status'] != 'In Progress') {
             return false;
         }
         
@@ -278,17 +280,18 @@ class Quiz {
         
         foreach ($questions as $question) {
             $totalPoints += $question['points'];
-            
-            $userAnswer = $answers[$question['id']] ?? null;
+
+            $questionId = $question['question_id'] ?? $question['id'] ?? null;
+            $userAnswer = $answers[$questionId] ?? null;
             $isCorrect = $this->checkAnswer($question, $userAnswer);
-            
+
             if ($isCorrect) {
                 $earnedPoints += $question['points'];
                 $correctAnswers++;
             }
-            
+
             // Save answer
-            $this->saveAnswer($attemptId, $question['id'], $userAnswer, $isCorrect);
+            $this->saveAnswer($attemptId, $questionId, $userAnswer, $isCorrect);
         }
         
         // Calculate score percentage
@@ -296,20 +299,14 @@ class Quiz {
         $passed = $score >= $this->getPassingScore();
         
         // Update attempt
-        $sql = "UPDATE quiz_attempts SET 
-                status = 'completed',
-                completed_at = NOW(),
-                score = :score,
-                total_questions = :total,
-                correct_answers = :correct,
-                passed = :passed
-                WHERE id = :id";
-        
+        $sql = "UPDATE quiz_attempts SET
+                status = 'Submitted',
+                submitted_at = NOW(),
+                score = :score
+                WHERE attempt_id = :id";
+
         $this->db->query($sql, [
             'score' => $score,
-            'total' => count($questions),
-            'correct' => $correctAnswers,
-            'passed' => $passed ? 1 : 0,
             'id' => $attemptId
         ]);
         
@@ -325,22 +322,34 @@ class Quiz {
      * Check if answer is correct
      */
     private function checkAnswer($question, $userAnswer) {
-        $correctAnswer = json_decode($question['correct_answer'], true);
-        
-        switch ($question['question_type']) {
+        if ($userAnswer === null) {
+            return false;
+        }
+
+        $correctAnswerRaw = $question['correct_answer'] ?? null;
+        if ($correctAnswerRaw === null) {
+            return false;
+        }
+        $correctAnswer = is_string($correctAnswerRaw) ? json_decode($correctAnswerRaw, true) : $correctAnswerRaw;
+
+        switch ($question['question_type'] ?? '') {
             case 'multiple_choice':
             case 'true_false':
                 return $userAnswer == $correctAnswer;
-                
+
             case 'multiple_select':
                 if (!is_array($userAnswer)) return false;
                 sort($userAnswer);
-                sort($correctAnswer);
+                if (is_array($correctAnswer)) {
+                    sort($correctAnswer);
+                }
                 return $userAnswer == $correctAnswer;
-                
+
             case 'short_answer':
-                return strtolower(trim($userAnswer)) == strtolower(trim($correctAnswer));
-                
+                $userStr = is_string($userAnswer) ? $userAnswer : '';
+                $correctStr = is_string($correctAnswer) ? $correctAnswer : '';
+                return strtolower(trim($userStr)) == strtolower(trim($correctStr));
+
             default:
                 return false;
         }
@@ -373,11 +382,10 @@ class Quiz {
     public function getTitle() { return $this->data['title'] ?? ''; }
     public function getDescription() { return $this->data['description'] ?? ''; }
     public function getPassingScore() { return $this->data['passing_score'] ?? 70; }
-    public function getTimeLimit() { return $this->data['time_limit'] ?? null; }
+    public function getTimeLimit() { return $this->data['time_limit_minutes'] ?? null; }
     public function getMaxAttempts() { return $this->data['max_attempts'] ?? null; }
-    public function shouldShowCorrectAnswers() { return $this->data['show_correct_answers'] == 1; }
-    public function shouldRandomizeQuestions() { return $this->data['randomize_questions'] == 1; }
-    public function shouldRandomizeOptions() { return $this->data['randomize_options'] == 1; }
+    public function shouldShowCorrectAnswers() { return ($this->data['show_correct_answers'] ?? 0) == 1; }
+    public function shouldRandomizeQuestions() { return ($this->data['randomize_questions'] ?? 0) == 1; }
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }
     public function getUpdatedAt() { return $this->data['updated_at'] ?? null; }
     

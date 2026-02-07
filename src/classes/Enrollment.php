@@ -285,22 +285,32 @@ class Enrollment {
     }
 
     public function markLessonComplete($lessonId) {
-        // Use ON DUPLICATE KEY UPDATE to handle re-visits
-        $sql = "INSERT INTO lesson_progress 
-                (enrollment_id, lesson_id, status, progress_percentage, started_at, completed_at, last_accessed)
-                VALUES (?, ?, 'Completed', 100, NOW(), NOW(), NOW())
-                ON DUPLICATE KEY UPDATE 
-                status = 'Completed', progress_percentage = 100, completed_at = NOW(), last_accessed = NOW()";
-        
-        $this->db->query($sql, [$this->id, $lessonId]);
-        
-        // Update main progress
-        $this->recalculateProgress();
-        
-        // Log it
-        self::logActivity($this->getUserId(), 'lesson', $lessonId, 'Completed lesson');
-        
-        return true;
+        try {
+            $this->db->beginTransaction();
+
+            // Use ON DUPLICATE KEY UPDATE to handle re-visits
+            $sql = "INSERT INTO lesson_progress
+                    (enrollment_id, lesson_id, status, progress_percentage, started_at, completed_at, last_accessed)
+                    VALUES (?, ?, 'Completed', 100, NOW(), NOW(), NOW())
+                    ON DUPLICATE KEY UPDATE
+                    status = 'Completed', progress_percentage = 100, completed_at = NOW(), last_accessed = NOW()";
+
+            $stmt = $this->db->query($sql, [$this->id, $lessonId]);
+            $result = $stmt && ($stmt->rowCount() > 0);
+
+            // Update main progress
+            $this->recalculateProgress();
+
+            // Log it
+            self::logActivity($this->getUserId(), 'lesson', $lessonId, 'Completed lesson');
+
+            $this->db->commit();
+            return $result;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            error_log("Enrollment::markLessonComplete Error: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function recalculateProgress() {

@@ -25,7 +25,7 @@ class LiveSession {
                 l.title as lesson_title, l.module_id,
                 m.course_id,
                 c.title as course_title,
-                u.name as instructor_name
+                CONCAT(u.first_name, ' ', u.last_name) as instructor_name
                 FROM live_sessions ls
                 JOIN lessons l ON ls.lesson_id = l.id
                 JOIN modules m ON l.module_id = m.id
@@ -34,7 +34,8 @@ class LiveSession {
                 JOIN users u ON i.user_id = u.id
                 WHERE ls.id = :id";
 
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $result = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $this->data = $result ?: [];
     }
 
     /**
@@ -57,7 +58,7 @@ class LiveSession {
      */
     public static function getByLesson($lessonId) {
         $db = Database::getInstance();
-        $sql = "SELECT ls.*, u.name as instructor_name
+        $sql = "SELECT ls.*, CONCAT(u.first_name, ' ', u.last_name) as instructor_name
                 FROM live_sessions ls
                 JOIN instructors i ON ls.instructor_id = i.id
                 JOIN users u ON i.user_id = u.id
@@ -71,7 +72,7 @@ class LiveSession {
      */
     public static function getUpcomingByCourse($courseId, $limit = null) {
         $db = Database::getInstance();
-        $sql = "SELECT ls.*, l.title as lesson_title, u.name as instructor_name
+        $sql = "SELECT ls.*, l.title as lesson_title, CONCAT(u.first_name, ' ', u.last_name) as instructor_name
                 FROM live_sessions ls
                 JOIN lessons l ON ls.lesson_id = l.id
                 JOIN modules m ON l.module_id = m.id
@@ -123,7 +124,12 @@ class LiveSession {
         $roomId = self::generateRoomId($data['lesson_id']);
 
         // Calculate end time from duration
-        $startTime = new DateTime($data['scheduled_start_time']);
+        try {
+            $startTime = new DateTime($data['scheduled_start_time']);
+        } catch (Exception $e) {
+            error_log("LiveSession::create - Invalid start time: " . $e->getMessage());
+            return false;
+        }
         $duration = (int)($data['duration_minutes'] ?? 60);
         $endTime = clone $startTime;
         $endTime->modify("+{$duration} minutes");
@@ -187,16 +193,20 @@ class LiveSession {
 
         // Recalculate end time if start time or duration changed
         if (isset($data['scheduled_start_time']) || isset($data['duration_minutes'])) {
-            $startTime = isset($data['scheduled_start_time'])
-                ? new DateTime($data['scheduled_start_time'])
-                : new DateTime($this->data['scheduled_start_time']);
+            try {
+                $startTime = isset($data['scheduled_start_time'])
+                    ? new DateTime($data['scheduled_start_time'])
+                    : new DateTime($this->data['scheduled_start_time']);
 
-            $duration = $data['duration_minutes'] ?? $this->data['duration_minutes'];
-            $endTime = clone $startTime;
-            $endTime->modify("+{$duration} minutes");
+                $duration = $data['duration_minutes'] ?? $this->data['duration_minutes'];
+                $endTime = clone $startTime;
+                $endTime->modify("+{$duration} minutes");
 
-            $updates[] = "scheduled_end_time = :scheduled_end_time";
-            $params['scheduled_end_time'] = $endTime->format('Y-m-d H:i:s');
+                $updates[] = "scheduled_end_time = :scheduled_end_time";
+                $params['scheduled_end_time'] = $endTime->format('Y-m-d H:i:s');
+            } catch (Exception $e) {
+                error_log("LiveSession::update - Invalid datetime: " . $e->getMessage());
+            }
         }
 
         if (empty($updates)) {
@@ -224,7 +234,7 @@ class LiveSession {
     private static function generateRoomId($lessonId) {
         $prefix = 'edutrack';
         $timestamp = time();
-        $random = substr(md5(uniqid(rand(), true)), 0, 8);
+        $random = bin2hex(random_bytes(8));
         return "{$prefix}_lesson{$lessonId}_{$timestamp}_{$random}";
     }
 
@@ -241,9 +251,13 @@ class LiveSession {
      * Check if session is currently live (within time window)
      */
     public function isLive() {
-        $now = new DateTime();
-        $start = new DateTime($this->data['scheduled_start_time']);
-        $end = new DateTime($this->data['scheduled_end_time']);
+        try {
+            $now = new DateTime();
+            $start = new DateTime($this->data['scheduled_start_time']);
+            $end = new DateTime($this->data['scheduled_end_time']);
+        } catch (Exception $e) {
+            return false;
+        }
 
         // Apply buffer times
         $bufferBefore = (int)($this->data['buffer_minutes_before'] ?? 15);
@@ -316,7 +330,7 @@ class LiveSession {
      * Get attendance records for session
      */
     public function getAttendance() {
-        $sql = "SELECT a.*, u.name, u.email
+        $sql = "SELECT a.*, CONCAT(u.first_name, ' ', u.last_name) as name, u.email
                 FROM live_session_attendance a
                 JOIN users u ON a.user_id = u.id
                 WHERE a.live_session_id = :session_id
@@ -341,9 +355,13 @@ class LiveSession {
      * Update session status based on current time
      */
     public function updateStatus() {
-        $now = new DateTime();
-        $start = new DateTime($this->data['scheduled_start_time']);
-        $end = new DateTime($this->data['scheduled_end_time']);
+        try {
+            $now = new DateTime();
+            $start = new DateTime($this->data['scheduled_start_time']);
+            $end = new DateTime($this->data['scheduled_end_time']);
+        } catch (Exception $e) {
+            return $this->data['status'] ?? 'scheduled';
+        }
 
         $bufferAfter = (int)($this->data['buffer_minutes_after'] ?? 30);
         $end->modify("+{$bufferAfter} minutes");
@@ -370,6 +388,7 @@ class LiveSession {
      */
     public static function getSessionsNeedingNotification($minutesBefore = 30) {
         $db = Database::getInstance();
+        $minutesBefore = (int)$minutesBefore;
         $sql = "SELECT ls.*, l.title as lesson_title, c.id as course_id, c.title as course_title
                 FROM live_sessions ls
                 JOIN lessons l ON ls.lesson_id = l.id
@@ -377,9 +396,9 @@ class LiveSession {
                 JOIN courses c ON m.course_id = c.id
                 WHERE ls.status = 'scheduled'
                 AND ls.scheduled_start_time > NOW()
-                AND ls.scheduled_start_time <= DATE_ADD(NOW(), INTERVAL :minutes MINUTE)";
+                AND ls.scheduled_start_time <= DATE_ADD(NOW(), INTERVAL {$minutesBefore} MINUTE)";
 
-        return $db->query($sql, ['minutes' => $minutesBefore])->fetchAll();
+        return $db->query($sql)->fetchAll();
     }
 
     /**

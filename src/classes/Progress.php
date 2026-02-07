@@ -38,18 +38,18 @@ class Progress {
         
         // Get quiz attempts
         $quizAttempts = $this->db->fetchColumn("
-            SELECT COUNT(*) 
+            SELECT COUNT(*)
             FROM quiz_attempts qa
             JOIN quizzes q ON qa.quiz_id = q.id
-            WHERE qa.user_id = ? AND q.course_id = ?
+            WHERE qa.student_id = ? AND q.course_id = ?
         ", [$userId, $courseId]);
-        
+
         // Get average quiz score
         $avgQuizScore = $this->db->fetchColumn("
             SELECT AVG(qa.score)
             FROM quiz_attempts qa
             JOIN quizzes q ON qa.quiz_id = q.id
-            WHERE qa.user_id = ? AND q.course_id = ?
+            WHERE qa.student_id = ? AND q.course_id = ?
         ", [$userId, $courseId]) ?? 0;
         
         // Calculate percentage
@@ -288,12 +288,13 @@ class Progress {
         
         if ($progress['percentage'] >= 100) {
             // Mark enrollment as completed
-            $sql = "UPDATE enrollments 
-                    SET enrollment_status = 'completed', completed_at = NOW() 
+            $sql = "UPDATE enrollments
+                    SET enrollment_status = 'completed', completed_at = NOW()
                     WHERE user_id = ? AND course_id = ? AND enrollment_status != 'completed'";
-            
-            $updated = $this->db->query($sql, [$userId, $courseId]);
-            
+
+            $stmt = $this->db->query($sql, [$userId, $courseId]);
+            $updated = $stmt && $stmt->rowCount() > 0;
+
             if ($updated) {
                 // Trigger certificate generation
                 require_once __DIR__ . '/Certificate.php';

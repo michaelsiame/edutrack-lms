@@ -291,9 +291,27 @@ class Payment {
      * Send confirmation email
      */
     private function sendConfirmationEmail() {
-        // Implementation will be in mail templates
-        // For now, just log
-        error_log("Payment confirmation email sent for payment ID: " . $this->id);
+        try {
+            if (!function_exists('sendPaymentEmail')) {
+                require_once __DIR__ . '/../includes/email.php';
+            }
+
+            $user = [
+                'first_name' => $this->data['first_name'] ?? '',
+                'last_name' => $this->data['last_name'] ?? '',
+                'email' => $this->data['email'] ?? '',
+            ];
+
+            if (empty($user['email'])) {
+                error_log("Payment confirmation email skipped - no email for payment ID: " . $this->id);
+                return false;
+            }
+
+            return sendPaymentEmail($user, $this->data);
+        } catch (Exception $e) {
+            error_log("Payment confirmation email failed for payment ID {$this->id}: " . $e->getMessage());
+            return false;
+        }
     }
     
     /**
@@ -385,50 +403,174 @@ class Payment {
     
     /**
      * Process MTN Mobile Money
+     * Integrates with MTN MoMo API for Zambia
      */
     private function processMTN($phoneNumber) {
-        // MTN Mobile Money API integration
-        // This is a placeholder - implement actual MTN API
-        
-        $apiUrl = config('payment.mtn.api_url');
-        $apiKey = config('payment.mtn.api_key');
-        
-        // Simulate API call
-        // In production, use actual MTN API
-        
-        return [
-            'success' => true,
-            'message' => 'Payment initiated. Please complete on your phone.',
-            'transaction_id' => 'MTN-' . uniqid()
-        ];
+        $apiKey = getenv('MTN_API_KEY');
+        $apiUser = getenv('MTN_API_USER');
+        $apiSecret = getenv('MTN_API_SECRET');
+        $baseUrl = getenv('MTN_API_URL') ?: 'https://sandbox.momodeveloper.mtn.com';
+        $environment = getenv('MTN_ENVIRONMENT') ?: 'sandbox';
+
+        if (!$apiKey || !$apiUser || !$apiSecret) {
+            error_log('MTN MoMo: API credentials not configured');
+            return ['success' => false, 'message' => 'MTN MoMo payment not configured. Please contact support.'];
+        }
+
+        try {
+            // Get access token
+            $authHeader = base64_encode("{$apiUser}:{$apiSecret}");
+            $ch = curl_init("{$baseUrl}/collection/token/");
+            curl_setopt_array($ch, [
+                CURLOPT_POST => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER => [
+                    "Authorization: Basic {$authHeader}",
+                    "Ocp-Apim-Subscription-Key: {$apiKey}",
+                ],
+            ]);
+            $tokenResponse = json_decode(curl_exec($ch), true);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode !== 200 || empty($tokenResponse['access_token'])) {
+                return ['success' => false, 'message' => 'Payment service temporarily unavailable'];
+            }
+
+            // Request to pay
+            $referenceId = bin2hex(random_bytes(16));
+            $ch = curl_init("{$baseUrl}/collection/v1_0/requesttopay");
+            curl_setopt_array($ch, [
+                CURLOPT_POST => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POSTFIELDS => json_encode([
+                    'amount' => (string) ($this->data['amount'] ?? 0),
+                    'currency' => 'ZMW',
+                    'externalId' => $this->data['transaction_id'] ?? $referenceId,
+                    'payer' => ['partyIdType' => 'MSISDN', 'partyId' => preg_replace('/[^0-9]/', '', $phoneNumber)],
+                    'payerMessage' => 'EduTrack Course Payment',
+                    'payeeNote' => 'Payment ID: ' . ($this->data['payment_id'] ?? 'N/A'),
+                ]),
+                CURLOPT_HTTPHEADER => [
+                    "Authorization: Bearer " . $tokenResponse['access_token'],
+                    "X-Reference-Id: {$referenceId}",
+                    "X-Target-Environment: {$environment}",
+                    "Content-Type: application/json",
+                    "Ocp-Apim-Subscription-Key: {$apiKey}",
+                ],
+            ]);
+            curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode === 202) {
+                return [
+                    'success' => true,
+                    'transaction_id' => $referenceId,
+                    'message' => 'Payment initiated. Please approve the payment on your phone.',
+                ];
+            }
+
+            return ['success' => false, 'message' => 'Failed to initiate MTN MoMo payment'];
+        } catch (Exception $e) {
+            error_log('MTN MoMo error: ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Payment processing error. Please try again.'];
+        }
     }
-    
+
     /**
      * Process Airtel Money
+     * Integrates with Airtel Africa API
      */
     private function processAirtel($phoneNumber) {
-        // Airtel Money API integration
-        // This is a placeholder - implement actual Airtel API
-        
-        return [
-            'success' => true,
-            'message' => 'Payment initiated. Please complete on your phone.',
-            'transaction_id' => 'AIRTEL-' . uniqid()
-        ];
+        $clientId = getenv('AIRTEL_CLIENT_ID');
+        $clientSecret = getenv('AIRTEL_CLIENT_SECRET');
+        $baseUrl = getenv('AIRTEL_API_URL') ?: 'https://openapiuat.airtel.africa';
+
+        if (!$clientId || !$clientSecret) {
+            error_log('Airtel Money: API credentials not configured');
+            return ['success' => false, 'message' => 'Airtel Money payment not configured. Please contact support.'];
+        }
+
+        try {
+            // Get access token
+            $ch = curl_init("{$baseUrl}/auth/oauth2/token");
+            curl_setopt_array($ch, [
+                CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POSTFIELDS => json_encode(['client_id' => $clientId, 'client_secret' => $clientSecret, 'grant_type' => 'client_credentials']),
+                CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+            ]);
+            $tokenResponse = json_decode(curl_exec($ch), true);
+            curl_close($ch);
+
+            if (empty($tokenResponse['access_token'])) {
+                return ['success' => false, 'message' => 'Payment service temporarily unavailable'];
+            }
+
+            $reference = 'AIRTEL-' . bin2hex(random_bytes(8));
+            $ch = curl_init("{$baseUrl}/merchant/v1/payments/");
+            curl_setopt_array($ch, [
+                CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POSTFIELDS => json_encode([
+                    'reference' => $reference,
+                    'subscriber' => ['country' => 'ZM', 'currency' => 'ZMW', 'msisdn' => preg_replace('/[^0-9]/', '', $phoneNumber)],
+                    'transaction' => ['amount' => $this->data['amount'] ?? 0, 'country' => 'ZM', 'currency' => 'ZMW', 'id' => $reference],
+                ]),
+                CURLOPT_HTTPHEADER => ["Authorization: Bearer " . $tokenResponse['access_token'], "Content-Type: application/json", "X-Country: ZM", "X-Currency: ZMW"],
+            ]);
+            $response = json_decode(curl_exec($ch), true);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode === 200 && ($response['status']['success'] ?? false)) {
+                return ['success' => true, 'transaction_id' => $reference, 'message' => 'Payment initiated. Please approve on your phone.'];
+            }
+
+            return ['success' => false, 'message' => $response['status']['message'] ?? 'Failed to initiate Airtel Money payment'];
+        } catch (Exception $e) {
+            error_log('Airtel Money error: ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Payment processing error. Please try again.'];
+        }
     }
-    
+
     /**
      * Process Zamtel Kwacha
      */
     private function processZamtel($phoneNumber) {
-        // Zamtel Kwacha API integration
-        // This is a placeholder - implement actual Zamtel API
-        
-        return [
-            'success' => true,
-            'message' => 'Payment initiated. Please complete on your phone.',
-            'transaction_id' => 'ZAMTEL-' . uniqid()
-        ];
+        $apiKey = getenv('ZAMTEL_API_KEY');
+        $apiSecret = getenv('ZAMTEL_API_SECRET');
+        $baseUrl = getenv('ZAMTEL_API_URL') ?: 'https://api.zamtel.co.zm';
+
+        if (!$apiKey || !$apiSecret) {
+            error_log('Zamtel Kwacha: API credentials not configured');
+            return ['success' => false, 'message' => 'Zamtel Kwacha payment not configured. Please contact support.'];
+        }
+
+        try {
+            $reference = 'ZAMTEL-' . bin2hex(random_bytes(8));
+            $ch = curl_init("{$baseUrl}/payments/request");
+            curl_setopt_array($ch, [
+                CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POSTFIELDS => json_encode([
+                    'amount' => $this->data['amount'] ?? 0, 'currency' => 'ZMW',
+                    'phoneNumber' => preg_replace('/[^0-9]/', '', $phoneNumber),
+                    'reference' => $reference, 'description' => 'EduTrack Course Payment',
+                ]),
+                CURLOPT_HTTPHEADER => ["Authorization: Bearer {$apiKey}", "Content-Type: application/json", "X-API-Secret: {$apiSecret}"],
+            ]);
+            $response = json_decode(curl_exec($ch), true);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode >= 200 && $httpCode < 300 && ($response['success'] ?? false)) {
+                return ['success' => true, 'transaction_id' => $response['transactionId'] ?? $reference, 'message' => 'Payment initiated. Please approve on your phone.'];
+            }
+
+            return ['success' => false, 'message' => $response['message'] ?? 'Failed to initiate Zamtel Kwacha payment'];
+        } catch (Exception $e) {
+            error_log('Zamtel Kwacha error: ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Payment processing error. Please try again.'];
+        }
     }
     
     // Getters

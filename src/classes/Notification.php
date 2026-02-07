@@ -22,7 +22,8 @@ class Notification {
      */
     private function load() {
         $sql = "SELECT * FROM notifications WHERE notification_id = ?";
-        $this->data = $this->db->fetchOne($sql, [$this->id]);
+        $result = $this->db->fetchOne($sql, [$this->id]);
+        $this->data = $result ?: [];
     }
 
     /**
@@ -82,25 +83,54 @@ class Notification {
     /**
      * Create notification
      */
+    /**
+     * Map internal type keys to valid notification_type enum values
+     */
+    private static function mapNotificationType($type) {
+        $mapping = [
+            'enrollment' => 'Info',
+            'payment' => 'Success',
+            'certificate' => 'Success',
+            'assignment' => 'Assignment',
+            'quiz' => 'Info',
+            'message' => 'Info',
+            'live_session' => 'Info',
+            'live_session_reminder' => 'Warning',
+            'live_session_starting' => 'Info',
+            'live_session_cancelled' => 'Error',
+            'live_session_rescheduled' => 'Info',
+            'announcement' => 'Announcement',
+            'success' => 'Success',
+            'error' => 'Error',
+            'warning' => 'Warning',
+            'info' => 'Info',
+            'grade' => 'Grade',
+        ];
+        return $mapping[$type] ?? 'Info';
+    }
+
     public static function create($data) {
         $db = Database::getInstance();
 
+        $internalType = $data['type'] ?? 'info';
+        $notificationType = self::mapNotificationType($internalType);
+
         $sql = "INSERT INTO notifications (
-            user_id, type, title, message, link,
+            user_id, notification_type, title, message, action_url,
             icon, color, created_at
         ) VALUES (
-            :user_id, :type, :title, :message, :link,
+            :user_id, :notification_type, :title, :message, :action_url,
             :icon, :color, NOW()
         )";
 
         $params = [
             'user_id' => $data['user_id'],
-            'type' => $data['type'] ?? 'info',
+            'notification_type' => $notificationType,
             'title' => $data['title'],
             'message' => $data['message'],
-            'link' => $data['link'] ?? null,
-            'icon' => $data['icon'] ?? self::getDefaultIcon($data['type'] ?? 'info'),
-            'color' => $data['color'] ?? self::getDefaultColor($data['type'] ?? 'info')
+            'action_url' => $data['link'] ?? $data['action_url'] ?? null,
+            'icon' => $data['icon'] ?? self::getDefaultIcon($internalType),
+            'color' => $data['color'] ?? self::getDefaultColor($internalType)
         ];
 
         if ($db->query($sql, $params)) {
@@ -138,7 +168,7 @@ class Notification {
      * Mark as read
      */
     public function markAsRead() {
-        $sql = "UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ?";
+        $sql = "UPDATE notifications SET is_read = 1, read_at = NOW() WHERE notification_id = ?";
 
         if ($this->db->query($sql, [$this->id])) {
             $this->load();
@@ -387,12 +417,12 @@ class Notification {
     }
 
     // Getters
-    public function getId() { return $this->data['id'] ?? null; }
+    public function getId() { return $this->data['notification_id'] ?? null; }
     public function getUserId() { return $this->data['user_id'] ?? null; }
-    public function getType() { return $this->data['type'] ?? 'info'; }
+    public function getType() { return $this->data['notification_type'] ?? 'Info'; }
     public function getTitle() { return $this->data['title'] ?? ''; }
     public function getMessage() { return $this->data['message'] ?? ''; }
-    public function getLink() { return $this->data['link'] ?? null; }
+    public function getLink() { return $this->data['action_url'] ?? null; }
     public function getIcon() { return $this->data['icon'] ?? 'fa-bell'; }
     public function getColor() { return $this->data['color'] ?? 'gray'; }
     public function isRead() { return ($this->data['is_read'] ?? 0) == 1; }

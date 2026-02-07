@@ -25,12 +25,13 @@ class Submission {
                 u.first_name, u.last_name, u.email
                 FROM assignment_submissions s
                 JOIN assignments a ON s.assignment_id = a.id
-                JOIN users u ON s.user_id = u.id
+                JOIN users u ON s.student_id = u.id
                 WHERE s.id = :id";
         
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $result = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $this->data = $result ?: [];
     }
-    
+
     /**
      * Check if submission exists
      */
@@ -51,11 +52,11 @@ class Submission {
      */
     public static function findByUserAndAssignment($userId, $assignmentId) {
         $db = Database::getInstance();
-        $sql = "SELECT id FROM assignment_submissions 
-                WHERE user_id = :user_id AND assignment_id = :assignment_id";
-        
+        $sql = "SELECT id FROM assignment_submissions
+                WHERE student_id = :student_id AND assignment_id = :assignment_id";
+
         $result = $db->query($sql, [
-            'user_id' => $userId,
+            'student_id' => $userId,
             'assignment_id' => $assignmentId
         ])->fetch();
         
@@ -67,23 +68,20 @@ class Submission {
      */
     public static function create($data) {
         $db = Database::getInstance();
-        
+
         $sql = "INSERT INTO assignment_submissions (
-            assignment_id, user_id, course_id, submission_text,
-            file_path, file_name, file_size, status, submitted_at
+            assignment_id, student_id, submission_text,
+            file_url, status, submitted_at
         ) VALUES (
-            :assignment_id, :user_id, :course_id, :submission_text,
-            :file_path, :file_name, :file_size, 'submitted', NOW()
+            :assignment_id, :student_id, :submission_text,
+            :file_url, 'Submitted', NOW()
         )";
-        
+
         $params = [
             'assignment_id' => $data['assignment_id'],
-            'user_id' => $data['user_id'],
-            'course_id' => $data['course_id'],
+            'student_id' => $data['user_id'] ?? $data['student_id'],
             'submission_text' => $data['submission_text'] ?? null,
-            'file_path' => $data['file_path'] ?? null,
-            'file_name' => $data['file_name'] ?? null,
-            'file_size' => $data['file_size'] ?? null
+            'file_url' => $data['file_url'] ?? $data['file_path'] ?? null
         ];
         
         if ($db->query($sql, $params)) {
@@ -96,7 +94,7 @@ class Submission {
      * Update submission
      */
     public function update($data) {
-        $allowed = ['submission_text', 'file_path', 'file_name', 'file_size', 'status'];
+        $allowed = ['submission_text', 'file_url', 'status'];
         
         $updates = [];
         $params = ['id' => $this->id];
@@ -128,7 +126,7 @@ class Submission {
         $sql = "UPDATE assignment_submissions SET 
                 points_earned = :points,
                 feedback = :feedback,
-                status = 'graded',
+                status = 'Graded',
                 graded_at = NOW()
                 WHERE id = :id";
         
@@ -148,13 +146,14 @@ class Submission {
      */
     public function delete() {
         // Delete file if exists
-        if ($this->getFilePath()) {
-            $filePath = PUBLIC_PATH . '/uploads/assignments/submissions/' . $this->getFilePath();
+        if ($this->getFileUrl()) {
+            $safeFilename = basename($this->getFileUrl());
+            $filePath = PUBLIC_PATH . '/uploads/assignments/submissions/' . $safeFilename;
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
         }
-        
+
         $sql = "DELETE FROM assignment_submissions WHERE id = :id";
         return $this->db->query($sql, ['id' => $this->id]);
     }
@@ -212,39 +211,41 @@ class Submission {
      * Get download URL
      */
     public function getDownloadUrl() {
-        if (!$this->getFilePath()) {
+        if (!$this->getFileUrl()) {
             return null;
         }
-        
+
         return url('api/download.php?type=submission&id=' . $this->getId());
     }
-    
+
     // Getters
     public function getId() { return $this->data['id'] ?? null; }
     public function getAssignmentId() { return $this->data['assignment_id'] ?? null; }
     public function getAssignmentTitle() { return $this->data['assignment_title'] ?? ''; }
-    public function getUserId() { return $this->data['user_id'] ?? null; }
-    public function getUserName() { 
+    public function getStudentId() { return $this->data['student_id'] ?? null; }
+    public function getUserId() { return $this->data['student_id'] ?? null; }
+    public function getUserName() {
         return trim(($this->data['first_name'] ?? '') . ' ' . ($this->data['last_name'] ?? ''));
     }
     public function getUserEmail() { return $this->data['email'] ?? ''; }
-    public function getCourseId() { return $this->data['course_id'] ?? null; }
     public function getSubmissionText() { return $this->data['submission_text'] ?? ''; }
-    public function getFilePath() { return $this->data['file_path'] ?? null; }
-    public function getFileName() { return $this->data['file_name'] ?? null; }
-    public function getFileSize() { return $this->data['file_size'] ?? 0; }
-    public function getStatus() { return $this->data['status'] ?? 'submitted'; }
+    public function getFileUrl() { return $this->data['file_url'] ?? null; }
+    public function getFilePath() { return $this->data['file_url'] ?? null; }
+    public function getStatus() { return $this->data['status'] ?? 'Submitted'; }
     public function getPointsEarned() { return $this->data['points_earned'] ?? null; }
     public function getMaxPoints() { return $this->data['max_points'] ?? 100; }
     public function getFeedback() { return $this->data['feedback'] ?? ''; }
     public function getSubmittedAt() { return $this->data['submitted_at'] ?? null; }
     public function getGradedAt() { return $this->data['graded_at'] ?? null; }
+    public function getGradedBy() { return $this->data['graded_by'] ?? null; }
+    public function getAttemptNumber() { return $this->data['attempt_number'] ?? 1; }
+    public function getIsLate() { return $this->data['is_late'] ?? false; }
     
     /**
      * Check if graded
      */
     public function isGraded() {
-        return $this->getStatus() == 'graded';
+        return $this->getStatus() == 'Graded';
     }
     
     /**
@@ -262,6 +263,6 @@ class Submission {
      * Get formatted file size
      */
     public function getFormattedFileSize() {
-        return formatFileSize($this->getFileSize());
+        return '';
     }
 }

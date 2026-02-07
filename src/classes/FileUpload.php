@@ -117,12 +117,36 @@ class FileUpload {
         // Create upload directory if not exists
         $uploadPath = PUBLIC_PATH . '/uploads/' . $this->uploadDir;
         if (!file_exists($uploadPath)) {
-            mkdir($uploadPath, 0777, true);
+            mkdir($uploadPath, 0755, true);
         }
-        
-        // Generate unique filename
+
+        // Verify MIME type matches extension
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $detectedMime = finfo_file($finfo, $this->file['tmp_name']);
+        finfo_close($finfo);
+
+        $extensionMimeMap = [
+            'pdf' => ['application/pdf'],
+            'doc' => ['application/msword'],
+            'docx' => ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+            'txt' => ['text/plain'],
+            'zip' => ['application/zip', 'application/x-zip-compressed'],
+            'jpg' => ['image/jpeg'],
+            'jpeg' => ['image/jpeg'],
+            'png' => ['image/png'],
+            'gif' => ['image/gif']
+        ];
+
         $extension = strtolower(pathinfo($this->file['name'], PATHINFO_EXTENSION));
-        $filename = uniqid() . '_' . time() . '.' . $extension;
+        $allowedMimesForExt = $extensionMimeMap[$extension] ?? [];
+
+        if (!empty($allowedMimesForExt) && !in_array($detectedMime, $allowedMimesForExt)) {
+            $this->errors[] = 'File MIME type does not match its extension';
+            return false;
+        }
+
+        // Generate unpredictable filename
+        $filename = bin2hex(random_bytes(16)) . '.' . $extension;
         $filepath = $uploadPath . '/' . $filename;
         
         // Move uploaded file

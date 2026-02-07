@@ -29,7 +29,8 @@ class PaymentPlan {
                 JOIN courses c ON epp.course_id = c.id
                 WHERE epp.id = :id";
 
-        $this->data = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $result = $this->db->query($sql, ['id' => $this->id])->fetch();
+        $this->data = $result ?: [];
     }
 
     /**
