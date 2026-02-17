@@ -553,6 +553,89 @@ function videoEmbed($url, $platform = 'youtube') {
  * @param string $message Log message
  * @param string $level Log level (info, warning, error)
  */
+/**
+ * Generate a unique student number in format: PREFIX-YYYY-NNNN
+ * e.g., EST-2026-0001
+ *
+ * @param Database|null $db Database instance
+ * @return string Generated student number
+ */
+function generateStudentNumber($db = null) {
+    if (!$db) {
+        $db = Database::getInstance();
+    }
+
+    // Get prefix from settings, default to 'EST'
+    $prefix = 'EST';
+    try {
+        $setting = $db->fetchOne("SELECT student_id_prefix FROM settings WHERE id = 1");
+        if ($setting && !empty($setting['student_id_prefix'])) {
+            $prefix = $setting['student_id_prefix'];
+        }
+    } catch (Exception $e) {
+        // Use default prefix if settings table doesn't have the column yet
+    }
+
+    $year = date('Y');
+
+    // Find the highest existing number for this year
+    $pattern = $prefix . '-' . $year . '-%';
+    $lastNumber = $db->fetchColumn(
+        "SELECT student_number FROM students WHERE student_number LIKE ? ORDER BY student_number DESC LIMIT 1",
+        [$pattern]
+    );
+
+    if ($lastNumber) {
+        // Extract the sequence number from the last student number
+        $parts = explode('-', $lastNumber);
+        $sequence = (int)end($parts) + 1;
+    } else {
+        $sequence = 1;
+    }
+
+    return sprintf('%s-%s-%04d', $prefix, $year, $sequence);
+}
+
+/**
+ * Get student number for a user
+ *
+ * @param int $userId User ID
+ * @return string|null Student number or null
+ */
+function getStudentNumber($userId) {
+    $db = Database::getInstance();
+    $result = $db->fetchOne("SELECT student_number FROM students WHERE user_id = ?", [$userId]);
+    return $result['student_number'] ?? null;
+}
+
+/**
+ * Generate a random secure password
+ *
+ * @param int $length Password length (minimum 10)
+ * @return string Generated password
+ */
+function generateRandomPassword($length = 12) {
+    $upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    $lower = 'abcdefghjkmnpqrstuvwxyz';
+    $digits = '23456789';
+    $special = '!@#$%&*';
+
+    // Ensure at least one of each type
+    $password = $upper[random_int(0, strlen($upper) - 1)]
+              . $lower[random_int(0, strlen($lower) - 1)]
+              . $digits[random_int(0, strlen($digits) - 1)]
+              . $special[random_int(0, strlen($special) - 1)];
+
+    // Fill the rest randomly
+    $all = $upper . $lower . $digits . $special;
+    for ($i = 4; $i < $length; $i++) {
+        $password .= $all[random_int(0, strlen($all) - 1)];
+    }
+
+    // Shuffle
+    return str_shuffle($password);
+}
+
 function logActivity($message, $level = 'info') {
     $logDir = STORAGE_PATH . '/logs';
     

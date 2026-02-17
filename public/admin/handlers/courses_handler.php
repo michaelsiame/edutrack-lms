@@ -5,6 +5,12 @@
 
 $action = $_POST['action'] ?? '';
 
+// CSRF protection
+if (!verifyCsrfToken()) {
+    header('Location: ?page=courses&msg=csrf_error');
+    exit;
+}
+
 // Update course status
 if ($action === 'update_status' && isset($_POST['course_id'], $_POST['status'])) {
     $courseId = (int)$_POST['course_id'];

@@ -5,6 +5,12 @@
 
 $action = $_POST['action'] ?? '';
 
+// CSRF protection
+if (!verifyCsrfToken()) {
+    header('Location: ?page=modules&msg=csrf_error');
+    exit;
+}
+
 // Add module
 if ($action === 'add_module') {
     $title = trim($_POST['title'] ?? '');

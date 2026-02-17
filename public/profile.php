@@ -18,6 +18,9 @@ $userId = $user->getId();
 // Get user statistics from Statistics class
 $studentStats = Statistics::getStudentStats($userId);
 
+// Get student number if available
+$studentNumber = getStudentNumber($userId);
+
 $stats = [
     'active_courses' => $studentStats['in_progress_courses'],
     'completed_courses' => $studentStats['completed_courses'],
@@ -60,6 +63,14 @@ require_once '../src/templates/header.php';
                                 <p class="text-gray-600 flex items-center mt-1">
                                     <i class="fas fa-phone mr-2"></i>
                                     <?= sanitize($user->phone) ?>
+                                </p>
+                            <?php endif; ?>
+                            <?php if ($studentNumber): ?>
+                                <p class="flex items-center mt-2">
+                                    <span class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 border border-indigo-200 rounded-lg">
+                                        <i class="fas fa-id-card text-indigo-600"></i>
+                                        <span class="font-mono font-semibold text-indigo-700 text-sm"><?= sanitize($studentNumber) ?></span>
+                                    </span>
                                 </p>
                             <?php endif; ?>
                         </div>

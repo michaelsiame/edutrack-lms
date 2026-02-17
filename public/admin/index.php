@@ -19,7 +19,7 @@ if (!hasRole('admin')) {
 
 // Get current page
 $page = $_GET['page'] ?? 'dashboard';
-$validPages = ['dashboard', 'users', 'courses', 'modules', 'enrollments', 'financials', 'settings', 'announcements'];
+$validPages = ['dashboard', 'users', 'courses', 'modules', 'enrollments', 'financials', 'settings', 'announcements', 'departments', 'reports'];
 if (!in_array($page, $validPages)) {
     $page = 'dashboard';
 }
@@ -164,6 +164,36 @@ if ($page === 'financials') {
     }
 }
 
+// Process Departments page handlers
+if ($page === 'departments') {
+    if (isset($_GET['ajax'])) {
+        header('Content-Type: application/json');
+        if ($_GET['ajax'] === 'get_department' && isset($_GET['id'])) {
+            $dept = $db->fetchOne("SELECT * FROM departments WHERE id = ?", [(int)$_GET['id']]);
+            echo json_encode($dept ?: ['error' => 'Department not found']);
+            exit;
+        }
+    }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        include 'handlers/departments_handler.php';
+    }
+}
+
+// Process Announcements page handlers
+if ($page === 'announcements') {
+    if (isset($_GET['ajax'])) {
+        header('Content-Type: application/json');
+        if ($_GET['ajax'] === 'get_announcement' && isset($_GET['id'])) {
+            $announcement = $db->fetchOne("SELECT * FROM announcements WHERE announcement_id = ?", [(int)$_GET['id']]);
+            echo json_encode($announcement ?: ['error' => 'Announcement not found']);
+            exit;
+        }
+    }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        include 'handlers/announcements_handler.php';
+    }
+}
+
 // ============================================
 // FETCH DASHBOARD STATS
 // ============================================
@@ -245,6 +275,20 @@ $pendingAmount = $pendingPayments['total'] ?? 0;
                         <li>
                             <a href="?page=enrollments" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?= $page === 'enrollments' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' ?>">
                                 <i class="fas fa-user-graduate w-5 mr-3"></i> Enrollments
+                            </a>
+                        </li>
+                    </ul>
+
+                    <p class="text-xs uppercase text-slate-500 font-semibold mb-2 px-4 mt-6">Organization</p>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="?page=departments" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?= $page === 'departments' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' ?>">
+                                <i class="fas fa-building w-5 mr-3"></i> Departments
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?page=reports" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?= $page === 'reports' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white' ?>">
+                                <i class="fas fa-chart-bar w-5 mr-3"></i> Reports
                             </a>
                         </li>
                     </ul>
@@ -412,6 +456,10 @@ $pendingAmount = $pendingPayments['total'] ?? 0;
                 <?php include 'pages/announcements.php'; ?>
             <?php elseif ($page === 'settings'): ?>
                 <?php include 'pages/settings.php'; ?>
+            <?php elseif ($page === 'departments'): ?>
+                <?php include 'pages/departments.php'; ?>
+            <?php elseif ($page === 'reports'): ?>
+                <?php include 'pages/reports.php'; ?>
             <?php endif; ?>
         </main>
     </div>

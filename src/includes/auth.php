@@ -71,10 +71,10 @@ function registerUser($data) {
         $roleSql = "INSERT INTO user_roles (user_id, role_id, assigned_at) VALUES (?, 4, NOW())";
         $db->query($roleSql, [$userId]);
 
-        // 6. Create Student Profile Record
-        // (Assuming you have a students table that links to users)
-        $studentSql = "INSERT INTO students (user_id, enrollment_date, created_at) VALUES (?, CURDATE(), NOW())";
-        $db->query($studentSql, [$userId]);
+        // 6. Create Student Profile Record with auto-generated student number
+        $studentNumber = generateStudentNumber($db);
+        $studentSql = "INSERT INTO students (user_id, student_number, enrollment_date, created_at) VALUES (?, ?, CURDATE(), NOW())";
+        $db->query($studentSql, [$userId, $studentNumber]);
 
         // 7. Create User Profile
         $profileSql = "INSERT INTO user_profiles (user_id, created_at) VALUES (?, NOW())";

@@ -5,6 +5,12 @@
 
 $action = $_POST['action'] ?? '';
 
+// CSRF protection
+if (!verifyCsrfToken()) {
+    header('Location: ?page=financials&msg=csrf_error');
+    exit;
+}
+
 // Add payment
 if ($action === 'add') {
     $studentId = (int)($_POST['student_id'] ?? 0);
