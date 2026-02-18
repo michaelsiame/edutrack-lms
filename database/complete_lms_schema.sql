@@ -2,8 +2,8 @@
 -- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: Jan 09, 2026 at 02:15 PM
+-- Host: 127.0.0.1
+-- Generation Time: Feb 18, 2026 at 01:45 AM
 -- Server version: 11.8.3-MariaDB-log
 -- PHP Version: 7.2.34
 
@@ -210,6 +210,23 @@ INSERT INTO `certificates` (`certificate_id`, `enrollment_id`, `certificate_numb
 (4, 9, 'EDTRK-2025-000004', '2025-04-12', NULL, 'VRF-004-MNOP3456', 1, NULL, '2025-11-18 22:21:01'),
 (5, 10, 'EDTRK-2025-000005', '2025-04-05', NULL, 'VRF-005-QRST7890', 1, NULL, '2025-11-18 22:21:01'),
 (6, 21, 'EDTRK-2025-000006', '2025-03-15', NULL, 'VRF-006-UVWX1234', 1, NULL, '2025-11-18 22:21:01');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contacts`
+--
+
+CREATE TABLE `contacts` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `subject` varchar(200) NOT NULL,
+  `message` text NOT NULL,
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -649,7 +666,8 @@ INSERT INTO `instructors` (`id`, `user_id`, `bio`, `specialization`, `years_expe
 (7, 30, NULL, NULL, NULL, NULL, NULL, 0.00, 0, 0, 0, '2025-12-25 08:20:56', '2025-12-25 08:20:56'),
 (8, 27, 'Principal of Edutrack Computer Training College', 'Educational Administration', NULL, NULL, NULL, 0.00, 0, 0, 1, '2025-12-25 09:40:13', '2025-12-25 09:40:13'),
 (9, 28, 'Instructor at Edutrack Computer Training College', 'General', NULL, NULL, NULL, 0.00, 0, 0, 1, '2025-12-25 09:40:13', '2025-12-25 09:40:13'),
-(10, 31, 'Instructor at Edutrack Computer Training College', 'General', NULL, NULL, NULL, 0.00, 0, 0, 1, '2025-12-25 09:40:13', '2025-12-25 09:40:13');
+(10, 31, 'Instructor at Edutrack Computer Training College', 'General', NULL, NULL, NULL, 0.00, 0, 0, 1, '2025-12-25 09:40:13', '2025-12-25 09:40:13'),
+(12, 1, NULL, NULL, NULL, NULL, NULL, 0.00, 0, 0, 0, '2026-01-09 19:06:16', '2026-01-09 19:06:16');
 
 -- --------------------------------------------------------
 
@@ -744,13 +762,21 @@ INSERT INTO `lessons` (`id`, `module_id`, `title`, `content`, `lesson_type`, `du
 (18, 8, 'Box Model and Layout', 'Understanding the CSS box model', 'Video', 35, 2, NULL, NULL, 0, 1, 15, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (19, 8, 'Flexbox Layout', 'Modern layout with Flexbox', 'Reading', 40, 3, NULL, NULL, 0, 1, 20, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (20, 8, 'Responsive Design with Media Queries', 'Creating responsive layouts', 'Video', 45, 4, NULL, NULL, 0, 1, 20, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(21, 11, 'Welcome to Microsoft Office Suite', '### Welcome to the Course!\r\n\r\n**Learning Objectives:**\r\n- Understand the components of Microsoft Office Suite\r\n- Learn about Word, Excel, PowerPoint, and Publisher\r\n- Identify common use cases for each application\r\n\r\n**What You Will Learn:**\r\nIn this lesson, we provide an overview of the Microsoft Office Suite and introduce you to each application you\'ll be mastering throughout this course.\r\n\r\n**Get Started:**\r\n1. Watch the welcome video below\r\n2. Download the course syllabus (PDF)\r\n3. Download the Office Suite overview guide\r\n4. Review the getting started checklist\r\n\r\n**Note:** All detailed course materials are available as downloadable resources below the video.', 'Video', 15, 1, 'YOUR_YOUTUBE_VIDEO_ID', NULL, 1, 1, 5, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
-(22, 11, 'Common Interface Elements', '### Mastering the Office Interface\r\n\r\n**Learning Objectives:**\r\n- Navigate the Ribbon interface\r\n- Use the Quick Access Toolbar\r\n- Understand the File menu (Backstage View)\r\n- Learn essential keyboard shortcuts\r\n\r\n**What You\'ll Learn:**\r\nAll Microsoft Office applications share a common interface design. Understanding these elements will help you work efficiently across Word, Excel, PowerPoint, and Publisher.\r\n\r\n**Study Materials:**\r\nDownload the interface guide (PDF) and the keyboard shortcuts reference sheet. Practice identifying interface elements in the practice workbook.\r\n\r\n**Practice Exercise:**\r\nAfter watching the video and reviewing the materials, complete the interface identification exercise (included in the practice file).', 'Video', 25, 2, 'YOUR_YOUTUBE_VIDEO_ID_2', NULL, 1, 1, 15, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
-(23, 11, 'File Management Basics', '### Working with Office Files\r\n\r\n**Learning Objectives:**\r\n- Create, save, and open documents\r\n- Understand file formats (.docx, .xlsx, .pptx)\r\n- Organize files effectively\r\n- Use AutoSave and version history\r\n\r\n**Key Topics:**\r\n- Creating new documents\r\n- Saving with descriptive names\r\n- File format options\r\n- Folder organization best practices\r\n\r\n**Practice:**\r\nDownload the file management exercise kit which includes practice files and a folder structure template.', 'Video', 20, 3, 'YOUR_YOUTUBE_VIDEO_ID_3', NULL, 0, 1, 10, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
-(24, 12, 'Introduction to Microsoft Word', '### Getting Started with Word\r\n\r\n**What You Will Learn:**\r\n- The Word interface and views\r\n- Creating your first document\r\n- Basic text entry and editing\r\n- Saving and printing documents\r\n\r\n**Course Materials:**\r\nThis lesson includes comprehensive PDF guides and practice documents. Download all materials before starting the video tutorial.\r\n\r\n**Practice Exercise:**\r\nComplete the \"My First Document\" exercise using the provided template.', 'Video', 30, 1, 'YOUR_YOUTUBE_VIDEO_ID_4', NULL, 0, 1, 10, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
-(25, 12, 'Character and Paragraph Formatting', '### Making Your Documents Look Professional\r\n\r\n**Learning Objectives:**\r\n- Apply character formatting (font, size, color, bold, italic)\r\n- Use paragraph alignment and spacing\r\n- Work with bullets and numbering\r\n- Apply borders and shading\r\n\r\n**What\'s Included:**\r\n- Video tutorial demonstrating all formatting techniques\r\n- Formatting reference guide (PDF)\r\n- Practice documents with exercises\r\n- Professional document examples\r\n\r\n**Practice Assignment:**\r\nFormat the provided unformatted document using the techniques learned. Compare your result with the example solution.', 'Video', 40, 2, 'YOUR_YOUTUBE_VIDEO_ID_5', NULL, 0, 1, 20, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
-(26, 13, 'Introduction to Microsoft Excel', '### Excel Fundamentals\r\n\r\n**Learning Objectives:**\r\n- Navigate the Excel interface\r\n- Understand workbooks, worksheets, cells, rows, and columns\r\n- Enter and edit data\r\n- Use basic Excel features\r\n\r\n**Course Materials:**\r\nThis lesson includes:\r\n- Excel interface guide (PDF)\r\n- Practice workbook with guided exercises\r\n- Sample data files for practice\r\n- Quick reference sheet\r\n\r\n**Get Started:**\r\nWatch the introduction video, then download the practice workbook and follow along with the exercises.', 'Video', 30, 1, 'YOUR_YOUTUBE_VIDEO_ID_6', NULL, 0, 1, 10, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
-(27, 13, 'Basic Formulas and Functions', '### Calculating with Excel\r\n\r\n**What You Will Learn:**\r\n- Write basic formulas using arithmetic operators\r\n- Use SUM, AVERAGE, COUNT, MAX, MIN functions\r\n- Understand cell references (relative vs. absolute)\r\n- Copy formulas effectively\r\n\r\n**Practice Materials:**\r\n- Formula reference guide (PDF)\r\n- Practice workbook with exercises\r\n- Real-world examples (budget, grade book)\r\n- Answer keys for self-checking\r\n\r\n**Assignment:**\r\nComplete the formula exercises in the practice workbook. Check your answers with the provided solution file.', 'Video', 45, 2, 'YOUR_YOUTUBE_VIDEO_ID_7', NULL, 0, 1, 20, '2025-12-25 19:40:26', '2025-12-25 19:40:26');
+(28, 20, 'Word Module Notes (Download)', '<h3>Course Material</h3><p>Please download the <strong>Complete Word Mastery Guide</strong> from the resources section below. This PDF covers all topics in this module.</p>', 'Reading', NULL, 1, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(29, 20, 'Getting Started & Text Basics', 'Overview of the interface and basic text entry.', 'Video', NULL, 2, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(30, 20, 'Formatting & Paragraph Layouts', 'Mastering fonts, colors, spacing, and lists.', 'Video', NULL, 3, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(31, 20, 'Working with Objects & Tables', 'Inserting images, shapes, and organizing data in tables.', 'Video', NULL, 4, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(32, 20, 'Word Practical Project', 'Create a professional CV using the skills learned.', 'Assignment', NULL, 5, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(33, 21, 'Excel Module Notes (Download)', '<h3>Course Material</h3><p>Please download the <strong>Complete Excel Mastery Guide</strong> from the resources section below. This PDF covers all topics in this module.</p>', 'Reading', NULL, 1, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(34, 21, 'Interface & Cell Basics', 'Understanding rows, columns, and data entry.', 'Video', NULL, 2, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(35, 21, 'Essential Formulas & Functions', 'Learning SUM, AVERAGE, and basic arithmetic formulas.', 'Video', NULL, 3, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(36, 21, 'Data Analysis & Charts', 'Visualizing data with charts and sorting information.', 'Video', NULL, 4, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(37, 21, 'Excel Budget Project', 'Create a monthly budget spreadsheet with formulas.', 'Assignment', NULL, 5, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(38, 22, 'PPT & Publisher Notes (Download)', '<h3>Course Material</h3><p>Please download the <strong>Presentation & Design Guide</strong> from the resources section below. This PDF covers both PowerPoint and Publisher.</p>', 'Reading', NULL, 1, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(39, 22, 'PowerPoint Essentials', 'Creating slides, adding content, and using themes.', 'Video', NULL, 2, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(40, 22, 'Transitions & Presenting', 'Animating slides and managing the presenter view.', 'Video', NULL, 3, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(41, 22, 'Publisher & Graphic Design', 'Creating brochures and flyers using Publisher.', 'Video', NULL, 4, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(42, 22, 'Final Course Assessment', 'Final exam covering Word, Excel, PowerPoint, and Publisher.', 'Quiz', NULL, 5, NULL, NULL, 0, 1, 0, '2026-01-10 14:31:51', '2026-01-10 14:31:51');
 
 -- --------------------------------------------------------
 
@@ -835,7 +861,10 @@ INSERT INTO `lesson_resources` (`id`, `lesson_id`, `title`, `description`, `reso
 (23, 27, 'Formula Practice Workbook', 'Exercises covering all basic formulas and functions', 'Spreadsheet', 'https://example.com/materials/formula-practice.xlsx', 200, 0, '2025-12-25 19:40:26'),
 (24, 27, 'Budget Template with Formulas', 'Real-world example: Monthly budget spreadsheet', 'Spreadsheet', 'https://example.com/materials/budget-template.xlsx', 120, 0, '2025-12-25 19:40:26'),
 (25, 27, 'Grade Book Example', 'Grade calculation spreadsheet demonstrating formulas', 'Spreadsheet', 'https://example.com/materials/gradebook-example.xlsx', 150, 0, '2025-12-25 19:40:26'),
-(26, 27, 'Practice Exercise Solutions', 'Answer key for all formula exercises', 'Spreadsheet', 'https://example.com/materials/formula-answers.xlsx', 250, 0, '2025-12-25 19:40:26');
+(26, 27, 'Practice Exercise Solutions', 'Answer key for all formula exercises', 'Spreadsheet', 'https://example.com/materials/formula-answers.xlsx', 250, 0, '2025-12-25 19:40:26'),
+(27, 28, 'Complete Word Mastery Guide (PDF)', 'Full module notes covering interface, formatting, layout, and tables.', 'PDF', 'https://drive.google.com/file/d/18NQIttk_FSbTIt2cmzTG5mkUus0gK-4D/view?usp=drive_link', NULL, 0, '2026-01-10 14:40:43'),
+(28, 33, 'Complete Excel Mastery Guide (PDF)', 'Full module notes covering basics, formulas, functions, and charts.', 'PDF', 'https://drive.google.com/file/d/1J5FyYwxVuhyc7w3VCMOWsMXzqvgh6BwK/view?usp=sharing', NULL, 0, '2026-01-10 14:40:43'),
+(29, 38, 'Presentation & Design Guide (PDF)', 'Full module notes covering PowerPoint slides and Publisher designs.', 'PDF', 'https://drive.google.com/file/d/1CSlWRdUVH1IDw8XsZlSUVtEknWo6RWL3/view?usp=sharing', NULL, 0, '2026-01-10 14:40:43');
 
 -- --------------------------------------------------------
 
@@ -947,9 +976,9 @@ INSERT INTO `modules` (`id`, `course_id`, `title`, `description`, `display_order
 (8, 7, 'CSS3 Styling', 'Styling web pages with CSS3, layouts, and responsive design', 2, 480, 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (9, 7, 'JavaScript Basics', 'JavaScript fundamentals, DOM manipulation, and events', 3, 540, 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (10, 7, 'Modern JavaScript', 'ES6+ features, async programming, and APIs', 4, 600, 1, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(11, 1, 'Introduction to Microsoft Office Suite', 'Overview of Microsoft Office applications and common features', 1, 240, 1, NULL, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
-(12, 1, 'Microsoft Word - Document Creation', 'Master document creation, formatting, and basic editing in Microsoft Word', 2, 480, 1, NULL, '2025-12-25 19:40:26', '2025-12-25 19:40:26'),
-(13, 1, 'Microsoft Excel - Fundamentals', 'Introduction to spreadsheets, data entry, basic formulas, and formatting', 4, 540, 1, NULL, '2025-12-25 19:40:26', '2025-12-25 19:40:26');
+(20, 1, 'Microsoft Word Mastery', 'Comprehensive guide to document creation, formatting, and professional layout.', 1, NULL, 1, NULL, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(21, 1, 'Microsoft Excel Mastery', 'Complete training on spreadsheets, formulas, functions, and data analysis.', 2, NULL, 1, NULL, '2026-01-10 14:31:51', '2026-01-10 14:31:51'),
+(22, 1, 'Presentation & Design (PowerPoint + Publisher)', 'Mastering visual presentations and desktop publishing for print.', 3, NULL, 1, NULL, '2026-01-10 14:31:51', '2026-01-10 14:31:51');
 
 -- --------------------------------------------------------
 
@@ -1015,9 +1044,6 @@ CREATE TABLE `payments` (
 --
 
 INSERT INTO `payments` (`payment_id`, `student_id`, `course_id`, `enrollment_id`, `payment_plan_id`, `amount`, `currency`, `payment_method_id`, `payment_type`, `recorded_by`, `payment_status`, `transaction_id`, `phone_number`, `notes`, `payment_date`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 1, NULL, 250.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000001', NULL, NULL, '2025-01-15 08:30:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(2, 1, 5, 2, NULL, 315.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000002', NULL, NULL, '2025-01-15 08:35:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(3, 1, 10, 3, NULL, 360.00, 'USD', 2, 'course_fee', NULL, 'Completed', 'TXN-2025-000003', NULL, NULL, '2025-01-20 10:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (4, 2, 7, 4, NULL, 342.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000004', NULL, NULL, '2025-01-15 09:00:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (5, 2, 15, 5, NULL, 380.00, 'USD', 1, 'course_fee', NULL, 'Completed', 'TXN-2025-000005', NULL, NULL, '2025-01-15 09:10:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (6, 2, 17, 6, NULL, 320.00, 'USD', 2, 'course_fee', NULL, 'Completed', 'TXN-2025-000006', NULL, NULL, '2025-01-20 11:30:00', '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
@@ -1413,7 +1439,15 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (34, 40, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-29', 0, 0, 0, '2025-12-29 10:01:21', '2025-12-29 10:01:21'),
 (35, 41, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-30', 0, 0, 0, '2025-12-30 12:45:53', '2025-12-30 12:45:53'),
 (36, 42, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-31', 0, 0, 0, '2025-12-31 09:03:33', '2025-12-31 09:03:33'),
-(37, 43, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-08', 0, 0, 0, '2026-01-08 10:47:56', '2026-01-08 10:47:56');
+(37, 43, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-08', 0, 0, 0, '2026-01-08 10:47:56', '2026-01-08 10:47:56'),
+(38, 44, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-11', 0, 0, 0, '2026-01-11 17:02:07', '2026-01-11 17:02:07'),
+(39, 45, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13', 0, 0, 0, '2026-01-13 16:02:31', '2026-01-13 16:02:31'),
+(40, 46, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13', 0, 0, 0, '2026-01-13 16:04:02', '2026-01-13 16:04:02'),
+(41, 47, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-21', 0, 0, 0, '2026-01-21 20:00:01', '2026-01-21 20:00:01'),
+(42, 48, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-04', 0, 0, 0, '2026-02-04 12:42:22', '2026-02-04 12:42:22'),
+(43, 49, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-14', 0, 0, 0, '2026-02-14 02:09:56', '2026-02-14 02:09:56'),
+(44, 50, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-14', 0, 0, 0, '2026-02-14 09:01:12', '2026-02-14 09:01:12'),
+(45, 51, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-17', 0, 0, 0, '2026-02-17 18:48:45', '2026-02-17 18:48:45');
 
 -- --------------------------------------------------------
 
@@ -1580,11 +1614,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `avatar_url`, `status`, `email_verification_token`, `email_verification_expires`, `email_verified`, `last_login`, `last_login_ip`, `failed_login_attempts`, `account_locked_until`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@edutrack.edu', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-01-09 15:00:19', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-01-09 13:00:19'),
+(1, 'admin', 'admin@edutrack.edu', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-01-11 19:07:48', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-01-11 17:07:48'),
 (6, 'michael.siame', 'michael.siame@edutrack.edu', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, '2025-12-25 21:53:14', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 19:53:14'),
 (25, 'taona', 'taona@gmail.com', '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
 (26, 'jaysiame076', 'jaysiame076@gmail.com', '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:32:59', NULL, 0, NULL, '2025-11-23 11:05:46', '2025-12-09 09:32:59'),
-(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', '$2y$10$uTNe95f2nXGaFBDyrBtrQeCaYHRNQBr67kFd7Fugt2dfWZX59fQom', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2025-12-29 11:52:23', NULL, 0, NULL, '2025-12-04 20:34:20', '2025-12-29 09:52:23'),
+(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2026-01-10 16:11:40', NULL, 0, NULL, '2025-12-04 20:34:20', '2026-01-10 14:11:40'),
 (28, 'it', 'it@witmanmiyande.com', '$2y$10$kbm0yafbxD0Iu0Vk7uZYoOKTaqE1DTV47I7FHEFmeRESglBLmnWve', 'Witman', 'Miyande', '+260976062621', NULL, 'active', NULL, NULL, 0, '2025-12-08 13:07:32', NULL, 0, NULL, '2025-12-05 14:38:37', '2025-12-08 17:45:29'),
 (29, 'edwardmusole76', 'edwardmusole76@gmail.com', '$2y$10$WAgkucanVQ4OuVJtxfZeIuH2gxPk4lH7tTmhKT0I8awfPWiBBakdC', 'Edward', 'Musole', '+260978605960', NULL, 'active', NULL, NULL, 0, '2025-12-29 12:47:56', NULL, 0, NULL, '2025-12-05 14:42:37', '2025-12-29 10:47:56'),
 (30, 'siamem570', 'siamem570@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, '2025-12-25 12:19:17', NULL, 0, NULL, '2025-12-09 11:30:29', '2025-12-25 10:19:17'),
@@ -1596,11 +1630,19 @@ INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `first_name`, `
 (36, 'moseschanda084', 'moseschanda084@gmail.com', '$2y$10$/COC.FYEkun5lNEdR7l1wePpKqi5dvtCRvr9nIXWBN3gZ6/QxZndK', 'Moses', 'Mulunda chanda', '+260971848021', NULL, 'active', NULL, NULL, 0, '2025-12-22 18:20:55', NULL, 0, NULL, '2025-12-22 16:20:20', '2025-12-22 16:20:55'),
 (37, 'sampayainnocent15', 'sampayainnocent15@gmail.com', '$2y$10$smRux7NyqHoywLOV0Djiy.0ydzMqz9JoAMS/5Nwg0RN0AYtA8qM2e', 'Innocent', 'Sampaya', '+260771717517', NULL, 'active', NULL, NULL, 0, '2025-12-23 09:19:00', NULL, 0, NULL, '2025-12-23 07:18:25', '2025-12-23 07:19:00'),
 (38, 'emmanuelgoma6', 'emmanuelgoma6@gmail.com', '$2y$10$G//nDjkNfzXuLGpLa6CnD.q0V4LOg4JYmwb.fJ5zq9UFz9vMWoNEa', 'Emmanuel', 'Goma', '+260967780685', NULL, 'active', NULL, NULL, 0, '2025-12-25 12:05:33', NULL, 0, NULL, '2025-12-25 10:05:01', '2025-12-25 10:05:33'),
-(39, 'givenmutwena60', 'givenmutwena60@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'GIVEN', 'MUTWENA', '+260971077923', NULL, 'active', NULL, NULL, 0, '2026-01-02 11:36:54', NULL, 0, NULL, '2025-12-28 15:13:44', '2026-01-02 09:36:54'),
-(40, 'lumbongosharon', 'lumbongosharon@gmail.com', '$2y$10$z7ha9/pweOV5FhWUJOritOdYC4aYTWtZVxP6yjNGUxaTJTehx66JK', 'SHARON', 'LUMBONGO', '+260975854731', NULL, 'active', NULL, NULL, 0, '2026-01-06 20:58:09', NULL, 0, NULL, '2025-12-29 10:01:21', '2026-01-06 18:58:09'),
+(39, 'givenmutwena60', 'givenmutwena60@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'GIVEN', 'MUTWENA', '+260971077923', NULL, 'active', NULL, NULL, 0, '2026-01-10 17:21:28', NULL, 0, NULL, '2025-12-28 15:13:44', '2026-01-10 15:21:28'),
+(40, 'lumbongosharon', 'lumbongosharon@gmail.com', '$2y$10$z7ha9/pweOV5FhWUJOritOdYC4aYTWtZVxP6yjNGUxaTJTehx66JK', 'SHARON', 'LUMBONGO', '+260975854731', NULL, 'active', NULL, NULL, 0, '2026-01-10 20:40:08', NULL, 0, NULL, '2025-12-29 10:01:21', '2026-01-10 18:40:08'),
 (41, 'simanyangamooya', 'simanyangamooya@gmail.com', '$2y$10$TMW22nvE0bHFYMDnZfQ3nO9Ehb9rcUiFXLWOEBY5/1v5mtYDqKGlm', 'MOOYA', 'SIMANYANGA', '+260975803528', NULL, 'active', NULL, NULL, 0, '2025-12-30 14:46:43', NULL, 0, NULL, '2025-12-30 12:45:53', '2025-12-30 12:46:43'),
 (42, 'najibib465', 'najibib465@hudisk.com', '$2y$10$8FQVQC8clPVMiyGEeSJDGebcAlNa42BrNKG6dDGgR7QyTVbWFtA1m', 'Doe', 'John', '', NULL, 'active', NULL, NULL, 0, '2025-12-31 11:04:08', NULL, 0, NULL, '2025-12-31 09:03:33', '2025-12-31 09:04:08'),
-(43, 'bettylumbongo60', 'bettylumbongo60@gmail.com', '$2y$10$s1KFx4SOeeRUvJlV8XKxMOHzt9YqtJTTNRCzHaT00Lu9QSoW8wqXG', 'Betty', 'Lumbongo', '+260975179897', NULL, 'active', NULL, NULL, 0, '2026-01-08 13:07:43', NULL, 0, NULL, '2026-01-08 10:47:56', '2026-01-08 11:07:43');
+(43, 'bettylumbongo60', 'bettylumbongo60@gmail.com', '$2y$10$s1KFx4SOeeRUvJlV8XKxMOHzt9YqtJTTNRCzHaT00Lu9QSoW8wqXG', 'Betty', 'Lumbongo', '+260975179897', NULL, 'active', NULL, NULL, 0, '2026-02-06 09:09:53', NULL, 0, NULL, '2026-01-08 10:47:56', '2026-02-06 07:09:53'),
+(44, 'chikombichilobe', 'chikombichilobe@gmail.com', '$2y$10$ksBUfZYnFagnGCFAcCwyjet0bXfWLkipATUDlSXQ1zSSJc.cHBV86', 'Chilobe', 'Chikombi', '+260777615153', NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2026-01-11 17:02:07', '2026-01-11 17:02:07'),
+(45, 'oscarchinyemba', 'oscarchinyemba@gmail.com', '$2y$10$2Q07DAXzZ4PQSCO/cC7cVeZYAUkrUKpph3DqfYZ1tg/IJXjDW/yF.', 'Oscar Mukwakwa', 'Chinyemba', '+260975812995', NULL, 'active', NULL, NULL, 0, '2026-01-13 18:03:04', NULL, 0, NULL, '2026-01-13 16:02:31', '2026-01-13 16:03:04'),
+(46, 'mutintaschinyemba', 'mutintaschinyemba@gmail.com', '$2y$10$jzfxcM7td1SAcJ/0CeNCCObTSWV.q8qRBwCxpoZJA1KVjAbmYR82a', 'Mutinta', 'Simwami', '+260979578041', NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2026-01-13 16:04:02', '2026-01-13 16:04:02'),
+(47, 'Eunicechola2001', 'Eunicechola2001@gmail.com', '$2y$10$7vXazCAcNErbHUBG/JVsHutPYiNWerQsr.1KejkPiM0d9AnIRl4rW', 'Eunice', 'Chola', '+260761835168', NULL, 'active', NULL, NULL, 0, '2026-01-22 06:17:17', NULL, 0, NULL, '2026-01-21 20:00:01', '2026-01-22 04:17:17'),
+(48, 'LweendoChizyuka7', 'LweendoChizyuka7@gmail.com', '$2y$10$WwLYFWrAKxpcLkonsCl6L.4UEC1eG9UbrVfjg4gv/utMIZ5QWVxg.', 'Lweendo', 'Chizyuka', '+260976396235', NULL, 'active', NULL, NULL, 0, '2026-02-04 14:43:04', NULL, 0, NULL, '2026-02-04 12:42:22', '2026-02-04 12:43:04'),
+(49, 'cetronmichelo', 'cetronmichelo@gmail.com', '$2y$10$ELKpFIbHn4oBJNukHOyQXO0dL2ew9hzL.wvjHLJZLgsIHY6lGCqu2', 'Cetron', 'Michelo', '+260974194846', NULL, 'active', NULL, NULL, 0, '2026-02-14 04:10:26', NULL, 0, NULL, '2026-02-14 02:09:56', '2026-02-14 02:10:26'),
+(50, 'choolwelubaya1', 'choolwelubaya1@gmail.com', '$2y$10$m1wtqrAHzw0oGfNz9sbOReBgm8r8lWhvepO370YramoQyJC.15J9S', 'Choolwe', 'Lubaya', '+260770602779', NULL, 'active', NULL, NULL, 0, '2026-02-17 21:54:57', NULL, 0, NULL, '2026-02-14 09:01:12', '2026-02-17 19:54:57'),
+(51, 'mubangajames45', 'mubangajames45@gmail.com', '$2y$10$FWVkEgoSjZ33wG3jQTubDum8rXJ9LMcuOO3mTU8WDcSowmbqbeJTK', 'James', 'Mubanga', '+260767248479', NULL, 'active', NULL, NULL, 0, '2026-02-17 20:56:04', NULL, 0, NULL, '2026-02-17 18:48:45', '2026-02-17 18:56:04');
 
 -- --------------------------------------------------------
 
@@ -1670,7 +1712,15 @@ INSERT INTO `user_profiles` (`id`, `user_id`, `bio`, `phone`, `date_of_birth`, `
 (53, 40, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-29 10:01:21', '2025-12-29 10:01:21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (54, 41, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-30 12:45:53', '2025-12-30 12:45:53', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (55, 42, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-31 09:03:33', '2025-12-31 09:03:33', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(56, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-08 10:47:56', '2026-01-08 10:47:56', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(56, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-08 10:47:56', '2026-01-08 10:47:56', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(57, 44, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-11 17:02:07', '2026-01-11 17:02:07', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(58, 45, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13 16:02:31', '2026-01-13 16:02:31', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(59, 46, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13 16:04:02', '2026-01-13 16:04:02', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(60, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-21 20:00:01', '2026-01-21 20:00:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(61, 48, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-04 12:42:22', '2026-02-04 12:42:22', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(62, 49, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-14 02:09:56', '2026-02-14 02:09:56', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(63, 50, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-14 09:01:12', '2026-02-14 09:01:12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(64, 51, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-17 18:48:45', '2026-02-17 18:48:45', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1735,7 +1785,15 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`, `assigned_b
 (68, 40, 4, '2025-12-29 10:01:21', NULL),
 (69, 41, 4, '2025-12-30 12:45:53', NULL),
 (70, 42, 4, '2025-12-31 09:03:33', NULL),
-(71, 43, 4, '2026-01-08 10:47:56', NULL);
+(71, 43, 4, '2026-01-08 10:47:56', NULL),
+(72, 44, 4, '2026-01-11 17:02:07', NULL),
+(73, 45, 4, '2026-01-13 16:02:31', NULL),
+(74, 46, 4, '2026-01-13 16:04:02', NULL),
+(75, 47, 4, '2026-01-21 20:00:01', NULL),
+(76, 48, 4, '2026-02-04 12:42:22', NULL),
+(77, 49, 4, '2026-02-14 02:09:56', NULL),
+(78, 50, 4, '2026-02-14 09:01:12', NULL),
+(79, 51, 4, '2026-02-17 18:48:45', NULL);
 
 -- --------------------------------------------------------
 
@@ -1759,12 +1817,10 @@ CREATE TABLE `user_sessions` (
 --
 
 INSERT INTO `user_sessions` (`id`, `user_id`, `session_token`, `ip_address`, `user_agent`, `expires_at`, `created_at`, `updated_at`) VALUES
-(11, 34, '91bfdeccc6b5f864eafec843bf557ed9b858a9caa1721076e71a9d1ff24f70af', '102.212.183.105', 'Mozilla/5.0 (Linux; Android 13; Infinix X6525 Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.34 Mobile Safari/537.36[FBAN/EMA;FBLC/en_US;FBAV/485.0.0.19.109;FBCX/modulariab;]', '2026-01-19 15:22:34', '2025-12-20 13:22:34', '2025-12-20 13:22:34'),
-(13, 36, 'c40cdda662683aa736bed1c20bdc2be71a8090a0824cea31ec73f288720f3931', '102.145.233.11', 'Mozilla/5.0 (Linux; Android 13; Infinix X6837 Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.34 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/536.0.0.46.216;]', '2026-01-21 18:20:55', '2025-12-22 16:20:55', '2025-12-22 16:20:55'),
-(15, 37, '8a62872aafab3cf6be6cac47fbd87aedb48c77c42e7ae078be2ba06ae2da661b', '41.223.118.42', 'Mozilla/5.0 (Linux; Android 13; Infinix X6528 Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.34 Mobile Safari/537.36[FBAN/EMA;FBLC/en_US;FBAV/489.0.0.12.109;FBCX/modulariab;]', '2026-01-22 09:19:00', '2025-12-23 07:19:00', '2025-12-23 07:19:00'),
-(35, 39, '104f644c7e9a39acab262d5e67577c8351d341509e1e322dcd6a09ae88b5bf8e', '45.215.253.201', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', '2026-01-28 12:57:03', '2025-12-29 10:57:03', '2025-12-29 10:57:03'),
-(39, 41, 'fa97413f2aed9c6a9bf39c82fdc140c4a3951c8b2c24731ee83f00d6986cc044', '41.216.86.41', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', '2026-01-29 14:46:43', '2025-12-30 12:46:43', '2025-12-30 12:46:43'),
-(50, 1, 'ccf13c854b0d757c90d8336426d0a133d21936a58a24d65935ff4d0741caacce', '102.208.221.209', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', '2026-01-09 17:00:19', '2026-01-09 13:00:19', '2026-01-09 13:00:19');
+(65, 49, '341939420a1404d685eb9bd3f0f58f603782ecddbff480d292ddba23106610de', '212.96.24.85', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-03-16 04:10:26', '2026-02-14 02:10:26', '2026-02-14 02:10:26'),
+(68, 51, 'f0b0ad1c027cb90688c9f1711b0256386a575b76a5819dd6e7d62e56e5b503bd', '102.212.183.79', 'Mozilla/5.0 (Linux; Android 12; TECNO BE8 Build/SP1A.210812.016) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.7559.132 Mobile Safari/537.36', '2026-02-17 22:49:20', '2026-02-17 18:49:20', '2026-02-17 18:49:20'),
+(69, 51, 'e4a109ffb894a459710956315289d3d4df8fde3bd91a9db710e4e0d801214cb7', '41.223.118.41', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36', '2026-02-17 22:56:04', '2026-02-17 18:56:04', '2026-02-17 18:56:04'),
+(70, 50, 'f94bbc44471947c0f55cd0a8a049d4c52afd7aceda7a38b5a8095b2cd599f7d2', '45.215.249.132', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36', '2026-02-17 23:54:57', '2026-02-17 19:54:57', '2026-02-17 19:54:57');
 
 -- --------------------------------------------------------
 
@@ -1827,6 +1883,14 @@ ALTER TABLE `badges`
 --
 ALTER TABLE `certificates`
   ADD PRIMARY KEY (`certificate_id`);
+
+--
+-- Indexes for table `contacts`
+--
+ALTER TABLE `contacts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_contacts_created_at` (`created_at`),
+  ADD KEY `idx_contacts_is_read` (`is_read`);
 
 --
 -- Indexes for table `courses`
@@ -2165,6 +2229,12 @@ ALTER TABLE `certificates`
   MODIFY `certificate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT for table `contacts`
+--
+ALTER TABLE `contacts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `course_categories`
 --
 ALTER TABLE `course_categories`
@@ -2216,7 +2286,7 @@ ALTER TABLE `enrollment_payment_plans`
 -- AUTO_INCREMENT for table `instructors`
 --
 ALTER TABLE `instructors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `lenco_transactions`
@@ -2234,7 +2304,7 @@ ALTER TABLE `lenco_webhook_logs`
 -- AUTO_INCREMENT for table `lessons`
 --
 ALTER TABLE `lessons`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `lesson_progress`
@@ -2246,7 +2316,7 @@ ALTER TABLE `lesson_progress`
 -- AUTO_INCREMENT for table `lesson_resources`
 --
 ALTER TABLE `lesson_resources`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `live_sessions`
@@ -2264,7 +2334,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `modules`
 --
 ALTER TABLE `modules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -2330,7 +2400,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `system_settings`
@@ -2348,25 +2418,25 @@ ALTER TABLE `team_members`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 -- --------------------------------------------------------
 
