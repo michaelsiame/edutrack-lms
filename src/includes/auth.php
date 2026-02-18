@@ -803,6 +803,11 @@ function getGoogleAuthUrl() {
         return '';
     }
 
+    if (!class_exists('Google_Client')) {
+        error_log('Google OAuth unavailable: Google_Client class not found. Run composer install.');
+        return '';
+    }
+
     $client = new Google_Client();
     $client->setClientId($clientId);
     $client->setRedirectUri($redirectUri);

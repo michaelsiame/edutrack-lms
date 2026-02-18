@@ -27,6 +27,10 @@ class GoogleDriveService {
             throw new Exception('Google Drive credentials file not found. Please add google-credentials.json to /config/');
         }
 
+        if (!class_exists('Google_Client')) {
+            throw new Exception('Google API client library not installed. Run composer install.');
+        }
+
         // Initialize Google Client
         $this->client = new Google_Client();
         $this->client->setAuthConfig($credentialsPath);
