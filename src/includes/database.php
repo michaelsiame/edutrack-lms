@@ -86,6 +86,7 @@ class Database {
     
     /**
      * Execute a query and return results
+     * Automatically reconnects on "MySQL server has gone away" (error 2006)
      */
     public function query($sql, $params = []) {
         try {
@@ -93,6 +94,15 @@ class Database {
             $stmt->execute($params);
             return $stmt;
         } catch (PDOException $e) {
+            // Reconnect on "MySQL server has gone away" (error 2006)
+            if (stripos($e->getMessage(), 'server has gone away') !== false
+                || $e->getCode() == 2006) {
+                $this->logError('Connection lost, reconnecting: ' . $e->getMessage());
+                $this->connect();
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute($params);
+                return $stmt;
+            }
             $this->logError('Query Error: ' . $e->getMessage() . ' | SQL: ' . $sql);
             throw $e;
         }

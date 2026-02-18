@@ -38,6 +38,10 @@ if (!defined('CONFIG_PATH')) {
     define('CONFIG_PATH', ROOT_PATH . '/config');
 }
 
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', ROOT_PATH);
+}
+
 // Set security headers FIRST (before any output)
 require_once SRC_PATH . '/includes/security-headers.php';
 

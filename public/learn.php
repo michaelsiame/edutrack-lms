@@ -91,8 +91,8 @@ try {
         $quizzes = $db->fetchAll("
             SELECT q.*,
                    COUNT(DISTINCT qa.id) as attempt_count,
-                   MAX(qa.percentage) as best_score,
-                   MAX(qa.passed) as has_passed
+                   MAX(qa.score) as best_score,
+                   MAX(CASE WHEN qa.score >= q.passing_score THEN 1 ELSE 0 END) as has_passed
             FROM quizzes q
             LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.student_id = ?
             WHERE q.course_id = ? AND q.is_published = 1
@@ -529,7 +529,7 @@ require_once '../src/templates/header.php';
                         <?php endif; ?>
 
                         <!-- Lesson Description -->
-                        <?php if ($currentLesson['description']): ?>
+                        <?php if (!empty($currentLesson['description'] ?? null)): ?>
                         <div class="prose max-w-none">
                             <?= $currentLesson['description'] ?>
                         </div>
