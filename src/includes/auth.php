@@ -625,3 +625,196 @@ function sendVerificationEmail($email, $name, $token) {
  * are now provided by email.php which uses the Email class with PHPMailer.
  * These duplicate functions have been removed to prevent fatal errors.
  */
+
+/**
+ * Login or register a user via Google OAuth
+ *
+ * If the Google account is already linked, log in directly.
+ * If the email exists but isn't linked, link the Google ID and log in.
+ * If the email doesn't exist, create a new student account and log in.
+ *
+ * @param array $googleUser Google user data (id, email, given_name, family_name, picture)
+ * @return array ['success' => bool, 'message' => string, 'redirect' => string]
+ */
+function googleLoginOrRegister($googleUser) {
+    $db = Database::getInstance();
+
+    $googleId    = $googleUser['id'];
+    $email       = $googleUser['email'];
+    $firstName   = $googleUser['given_name'] ?? '';
+    $lastName    = $googleUser['family_name'] ?? '';
+    $avatarUrl   = $googleUser['picture'] ?? null;
+
+    try {
+        // 1. Check if a user is already linked by google_id
+        $user = $db->fetchOne("SELECT * FROM users WHERE google_id = ?", [$googleId]);
+
+        if ($user) {
+            // Existing Google-linked user — log in
+            if ($user['status'] !== 'active') {
+                return ['success' => false, 'message' => 'Your account has been suspended. Please contact support.'];
+            }
+
+            $user['role'] = getUserRole($user['id']);
+            createUserSession($user, false);
+            $db->update('users', ['last_login' => date('Y-m-d H:i:s')], 'id = ?', [$user['id']]);
+            logActivity("Google login: {$email}", 'info');
+
+            return [
+                'success'  => true,
+                'message'  => 'Login successful!',
+                'redirect' => getRedirectUrl($user['role'])
+            ];
+        }
+
+        // 2. Check if a user exists with the same email (registered manually)
+        $user = $db->fetchOne("SELECT * FROM users WHERE email = ?", [$email]);
+
+        if ($user) {
+            if ($user['status'] !== 'active') {
+                return ['success' => false, 'message' => 'Your account has been suspended. Please contact support.'];
+            }
+
+            // Link Google ID to existing account
+            $db->update('users', [
+                'google_id'      => $googleId,
+                'email_verified' => 1,
+                'last_login'     => date('Y-m-d H:i:s')
+            ], 'id = ?', [$user['id']]);
+
+            // Update avatar if user doesn't have one
+            if ($avatarUrl) {
+                $profile = $db->fetchOne("SELECT avatar FROM user_profiles WHERE user_id = ?", [$user['id']]);
+                if ($profile && empty($profile['avatar'])) {
+                    $db->update('user_profiles', ['avatar' => $avatarUrl], 'user_id = ?', [$user['id']]);
+                }
+            }
+
+            $user['role'] = getUserRole($user['id']);
+            createUserSession($user, false);
+            logActivity("Google login (linked existing account): {$email}", 'info');
+
+            return [
+                'success'  => true,
+                'message'  => 'Login successful! Your Google account has been linked.',
+                'redirect' => getRedirectUrl($user['role'])
+            ];
+        }
+
+        // 3. New user — register with student role
+        $db->beginTransaction();
+
+        // Auto-generate username from email
+        $baseUsername = explode('@', $email)[0];
+        $baseUsername = preg_replace('/[^a-zA-Z0-9._-]/', '', $baseUsername);
+        if (empty($baseUsername)) $baseUsername = 'user';
+
+        $username = $baseUsername;
+        $counter  = 1;
+        while ($db->fetchColumn("SELECT COUNT(*) FROM users WHERE username = ?", [$username]) > 0) {
+            $username = $baseUsername . $counter;
+            $counter++;
+        }
+
+        // Generate a random password hash (user will sign in via Google, not password)
+        $passwordHash = password_hash(bin2hex(random_bytes(32)), PASSWORD_DEFAULT);
+
+        $sql = "INSERT INTO users (
+            username, email, google_id, password_hash, first_name, last_name,
+            phone, status, email_verified, created_at, updated_at
+        ) VALUES (
+            :username, :email, :google_id, :password_hash, :first_name, :last_name,
+            '', 'active', 1, NOW(), NOW()
+        )";
+
+        $params = [
+            'username'      => $username,
+            'email'         => $email,
+            'google_id'     => $googleId,
+            'password_hash' => $passwordHash,
+            'first_name'    => $firstName,
+            'last_name'     => $lastName
+        ];
+
+        if (!$db->query($sql, $params)) {
+            throw new Exception("Database insert failed.");
+        }
+
+        $userId = $db->lastInsertId();
+
+        // Assign Student role (role_id = 4)
+        $db->query("INSERT INTO user_roles (user_id, role_id, assigned_at) VALUES (?, 4, NOW())", [$userId]);
+
+        // Create student record
+        $db->query("INSERT INTO students (user_id, enrollment_date, created_at) VALUES (?, CURDATE(), NOW())", [$userId]);
+
+        // Create user profile with Google avatar
+        $db->query(
+            "INSERT INTO user_profiles (user_id, avatar, created_at) VALUES (?, ?, NOW())",
+            [$userId, $avatarUrl]
+        );
+
+        $db->commit();
+
+        logActivity("New Google registration: $email ($username)", 'info');
+
+        // Send welcome email
+        try {
+            $mailer = new Email();
+            $mailer->sendWelcome([
+                'first_name' => $firstName,
+                'email'      => $email
+            ]);
+        } catch (Exception $emailEx) {
+            error_log("Welcome email failed for Google signup: " . $emailEx->getMessage());
+        }
+
+        // Log the new user in
+        $newUser = $db->fetchOne("SELECT * FROM users WHERE id = ?", [$userId]);
+        $newUser['role'] = 'student';
+        createUserSession($newUser, false);
+
+        return [
+            'success'  => true,
+            'message'  => 'Account created successfully! Welcome to Edutrack.',
+            'redirect' => getRedirectUrl('student')
+        ];
+
+    } catch (Exception $e) {
+        try { $db->rollBack(); } catch (Exception $ignored) {}
+        error_log("Google Login/Register Error: " . $e->getMessage());
+        return [
+            'success' => false,
+            'message' => 'An error occurred during Google sign-in. Please try again.'
+        ];
+    }
+}
+
+/**
+ * Build the Google OAuth authorization URL
+ *
+ * @return string The URL to redirect the user to for Google sign-in
+ */
+function getGoogleAuthUrl() {
+    $clientId    = config('google_oauth.client_id');
+    $redirectUri = config('google_oauth.redirect_uri');
+
+    if (empty($clientId) || empty($redirectUri)) {
+        return '';
+    }
+
+    $client = new Google_Client();
+    $client->setClientId($clientId);
+    $client->setRedirectUri($redirectUri);
+    $client->addScope('email');
+    $client->addScope('profile');
+    $client->setAccessType('online');
+    $client->setPrompt('select_account');
+
+    // CSRF protection: store a state token in session
+    $state = bin2hex(random_bytes(16));
+    $_SESSION['google_oauth_state'] = $state;
+    $client->setState($state);
+
+    return $client->createAuthUrl();
+}

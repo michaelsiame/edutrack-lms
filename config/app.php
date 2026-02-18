@@ -131,6 +131,13 @@ return [
         ],
     ],
 
+    // Google OAuth
+    'google_oauth' => [
+        'client_id' => getenv('GOOGLE_CLIENT_ID') ?: '',
+        'client_secret' => getenv('GOOGLE_CLIENT_SECRET') ?: '',
+        'redirect_uri' => getenv('GOOGLE_REDIRECT_URI') ?: '',
+    ],
+
     // Session Configuration
     'session' => [
         'lifetime' => (int) (getenv('SESSION_LIFETIME') ?: 7200),
