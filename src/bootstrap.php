@@ -42,6 +42,12 @@ if (!defined('BASE_PATH')) {
     define('BASE_PATH', ROOT_PATH);
 }
 
+// Load Composer autoloader (required for Google OAuth, PHPMailer, TCPDF, etc.)
+$composerAutoload = ROOT_PATH . '/vendor/autoload.php';
+if (file_exists($composerAutoload)) {
+    require_once $composerAutoload;
+}
+
 // Set security headers FIRST (before any output)
 require_once SRC_PATH . '/includes/security-headers.php';
 
