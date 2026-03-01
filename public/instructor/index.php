@@ -116,7 +116,7 @@ require_once '../../src/templates/instructor-header.php';
 <div class="min-h-screen bg-gray-50/50 pb-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Welcome Section with Date -->
+        <!-- Welcome Section with Date and Help -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">
@@ -124,9 +124,15 @@ require_once '../../src/templates/instructor-header.php';
                 </h1>
                 <p class="text-gray-500 mt-1">Here's what's happening with your classes today.</p>
             </div>
-            <div class="mt-4 md:mt-0 text-right">
-                <p class="text-sm text-gray-500"><?= date('l, F j, Y') ?></p>
-                <p class="text-xs text-gray-400"><?= date('g:i A') ?></p>
+            <div class="mt-4 md:mt-0 flex items-center gap-4">
+                <a href="<?= url('instructor/help.php') ?>" 
+                   class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition text-sm font-medium">
+                    <i class="fas fa-question-circle mr-2 text-blue-500"></i>Help
+                </a>
+                <div class="text-right">
+                    <p class="text-sm text-gray-500"><?= date('l, F j, Y') ?></p>
+                    <p class="text-xs text-gray-400"><?= date('g:i A') ?></p>
+                </div>
             </div>
         </div>
 

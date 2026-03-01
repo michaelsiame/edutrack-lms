@@ -45,7 +45,13 @@ require_once '../../src/templates/header.php';
         
         <!-- Welcome Header -->
         <div class="text-center mb-10">
-            <h1 class="text-3xl font-bold text-gray-900">Student Hub</h1>
+            <div class="flex items-center justify-center gap-4 mb-4">
+                <h1 class="text-3xl font-bold text-gray-900">Student Hub</h1>
+                <a href="<?= url('student/help.php') ?>" 
+                   class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 text-sm rounded-full hover:bg-blue-100 transition">
+                    <i class="fas fa-question-circle mr-1.5"></i>Help
+                </a>
+            </div>
             <p class="text-gray-600 mt-2">Welcome back, <?= sanitize($user->first_name) ?>! What would you like to do today?</p>
         </div>
 
@@ -206,14 +212,14 @@ require_once '../../src/templates/header.php';
                 </div>
             </a>
 
-            <!-- Support/Help -->
-            <a href="<?= url('contact.php') ?>" class="group bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-lg transition-all duration-300">
+            <!-- Help & Support -->
+            <a href="<?= url('student/help.php') ?>" class="group bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-lg transition-all duration-300">
                 <div class="p-6">
                     <div class="w-14 h-14 bg-pink-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-pink-600 transition-colors">
-                        <i class="fas fa-headset text-pink-600 text-2xl group-hover:text-white transition-colors"></i>
+                        <i class="fas fa-question-circle text-pink-600 text-2xl group-hover:text-white transition-colors"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Support</h3>
-                    <p class="text-gray-600 text-sm">Need help? Contact our support team for assistance.</p>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Help & Support</h3>
+                    <p class="text-gray-600 text-sm">Find answers, guides, and contact information for assistance.</p>
                     <div class="mt-4 flex items-center text-pink-600 font-medium">
                         <span>Get Help</span>
                         <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>

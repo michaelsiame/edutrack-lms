@@ -19,7 +19,7 @@ if (!hasRole('admin')) {
 
 // Get current page
 $page = $_GET['page'] ?? 'dashboard';
-$validPages = ['dashboard', 'users', 'courses', 'modules', 'enrollments', 'financials', 'settings', 'announcements'];
+$validPages = ['dashboard', 'users', 'courses', 'modules', 'enrollments', 'financials', 'settings', 'announcements', 'help'];
 if (!in_array($page, $validPages)) {
     $page = 'dashboard';
 }
@@ -348,6 +348,12 @@ $page_title = 'Admin Dashboard';
                     </div>
                     <span>Settings</span>
                 </a>
+                <a href="<?= url('admin/help.php') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white rounded-xl">
+                    <div class="w-8 h-8 rounded-lg bg-slate-700/50 flex items-center justify-center mr-3">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <span>Help</span>
+                </a>
 
                 <hr class="my-4 border-slate-700/50">
                 
@@ -388,6 +394,12 @@ $page_title = 'Admin Dashboard';
                     </button>
                     
                     <div class="flex items-center space-x-4">
+                        <!-- Help Link -->
+                        <a href="<?= url('admin/help.php') ?>" 
+                           class="inline-flex items-center px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition text-sm font-medium">
+                            <i class="fas fa-question-circle mr-2"></i>Help
+                        </a>
+                        
                         <!-- Quick Actions Dropdown -->
                         <div x-data="{ open: false }" class="relative">
                             <button @click="open = !open" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-xl hover:bg-primary-700 transition shadow-sm">
