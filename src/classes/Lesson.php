@@ -77,29 +77,43 @@ class Lesson {
     public static function create($data) {
         $db = Database::getInstance();
         
+        // Map lesson type to database enum values
+        $typeMap = [
+            'video' => 'Video',
+            'text' => 'Reading',
+            'reading' => 'Reading',
+            'mixed' => 'Video',
+            'quiz' => 'Quiz',
+            'assignment' => 'Assignment',
+            'live' => 'Live Session',
+            'download' => 'Download'
+        ];
+        $lessonType = $typeMap[strtolower($data['lesson_type'] ?? 'video')] ?? 'Video';
+        
         $sql = "INSERT INTO lessons (
-            module_id, title, slug, description, lesson_type,
-            video_url, video_duration, content, attachments,
-            display_order, is_preview, duration
+            module_id, title, content, lesson_type,
+            duration_minutes, display_order, video_url, 
+            video_duration, is_preview, is_mandatory, points,
+            created_at, updated_at
         ) VALUES (
-            :module_id, :title, :slug, :description, :lesson_type,
-            :video_url, :video_duration, :content, :attachments,
-            :display_order, :is_preview, :duration
+            :module_id, :title, :content, :lesson_type,
+            :duration_minutes, :display_order, :video_url,
+            :video_duration, :is_preview, :is_mandatory, :points,
+            NOW(), NOW()
         )";
         
         $params = [
             'module_id' => $data['module_id'],
             'title' => $data['title'],
-            'slug' => $data['slug'] ?? slugify($data['title']),
-            'description' => $data['description'] ?? '',
-            'lesson_type' => $data['lesson_type'] ?? 'video',
+            'content' => $data['content'] ?? $data['description'] ?? '',
+            'lesson_type' => $lessonType,
+            'duration_minutes' => $data['duration'] ?? $data['duration_minutes'] ?? $data['video_duration'] ?? null,
+            'display_order' => $data['display_order'] ?? 0,
             'video_url' => $data['video_url'] ?? null,
             'video_duration' => $data['video_duration'] ?? null,
-            'content' => $data['content'] ?? '',
-            'attachments' => $data['attachments'] ?? null,
-            'display_order' => $data['display_order'] ?? 0,
             'is_preview' => $data['is_preview'] ?? 0,
-            'duration' => $data['duration'] ?? 0
+            'is_mandatory' => $data['is_mandatory'] ?? 1,
+            'points' => $data['points'] ?? 0
         ];
         
         if ($db->query($sql, $params)) {
@@ -112,18 +126,49 @@ class Lesson {
      * Update lesson
      */
     public function update($data) {
-        $allowed = ['title', 'slug', 'description', 'lesson_type', 'video_url', 
-                   'video_duration', 'content', 'attachments', 'display_order', 
-                   'is_preview', 'duration'];
-        
         $updates = [];
         $params = ['id' => $this->id];
         
-        foreach ($allowed as $field) {
-            if (isset($data[$field])) {
-                $updates[] = "$field = :$field";
-                $params[$field] = $data[$field];
+        // Field mappings (input field => database field)
+        $fieldMap = [
+            'title' => 'title',
+            'description' => 'content',
+            'content' => 'content',
+            'video_url' => 'video_url',
+            'video_duration' => 'video_duration',
+            'display_order' => 'display_order',
+            'is_preview' => 'is_preview',
+            'is_mandatory' => 'is_mandatory',
+            'points' => 'points'
+        ];
+        
+        foreach ($fieldMap as $inputField => $dbField) {
+            if (isset($data[$inputField])) {
+                $updates[] = "$dbField = :$dbField";
+                $params[$dbField] = $data[$inputField];
             }
+        }
+        
+        // Handle duration fields
+        if (isset($data['duration'])) {
+            $updates[] = "duration_minutes = :duration_minutes";
+            $params['duration_minutes'] = $data['duration'];
+        }
+        
+        // Handle lesson type with mapping
+        if (isset($data['lesson_type'])) {
+            $typeMap = [
+                'video' => 'Video',
+                'text' => 'Reading',
+                'reading' => 'Reading',
+                'mixed' => 'Video',
+                'quiz' => 'Quiz',
+                'assignment' => 'Assignment',
+                'live' => 'Live Session',
+                'download' => 'Download'
+            ];
+            $updates[] = "lesson_type = :lesson_type";
+            $params['lesson_type'] = $typeMap[strtolower($data['lesson_type'])] ?? 'Video';
         }
         
         if (empty($updates)) {

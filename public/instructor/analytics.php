@@ -82,12 +82,12 @@ $recentActivity = $db->fetchAll("
      JOIN courses c ON e.course_id = c.id
      WHERE c.instructor_id = ?)
     UNION ALL
-    (SELECT 'completion' as type, e.completed_at as activity_date,
+    (SELECT 'completion' as type, e.completion_date as activity_date,
             u.first_name, u.last_name, c.title as course_title, NULL as score
      FROM enrollments e
      JOIN users u ON e.user_id = u.id
      JOIN courses c ON e.course_id = c.id
-     WHERE c.instructor_id = ? AND e.completed_at IS NOT NULL)
+     WHERE c.instructor_id = ? AND e.completion_date IS NOT NULL)
     UNION ALL
     (SELECT 'quiz' as type, qa.completed_at as activity_date,
             u.first_name, u.last_name, q.title as course_title, qa.score

@@ -89,7 +89,7 @@ $offset = ($page - 1) * $perPage;
 // Get students with details
 $students = $db->fetchAll("
     SELECT u.id as user_id, u.first_name, u.last_name, u.email, u.avatar_url, u.created_at as joined_date,
-           e.id as enrollment_id, e.enrollment_status, e.progress, e.enrolled_at, e.completed_at,
+           e.id as enrollment_id, e.enrollment_status, e.progress, e.enrolled_at, e.completion_date,
            c.id as course_id, c.title as course_title, c.slug as course_slug
     FROM enrollments e
     JOIN courses c ON e.course_id = c.id

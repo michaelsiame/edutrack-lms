@@ -2,8 +2,8 @@
 -- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Feb 24, 2026 at 09:29 AM
+-- Host: 127.0.0.1:3306
+-- Generation Time: Mar 01, 2026 at 09:34 AM
 -- Server version: 11.8.3-MariaDB-log
 -- PHP Version: 7.2.34
 
@@ -1459,7 +1459,9 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (46, 52, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-18', 0, 0, 0, '2026-02-18 09:13:07', '2026-02-18 09:13:07'),
 (47, 53, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-20', 0, 0, 0, '2026-02-20 11:11:55', '2026-02-20 11:11:55'),
 (48, 54, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-22', 0, 0, 0, '2026-02-22 17:15:58', '2026-02-22 17:15:58'),
-(49, 55, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-23', 0, 0, 0, '2026-02-23 10:27:32', '2026-02-23 10:27:32');
+(49, 55, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-23', 0, 0, 0, '2026-02-23 10:27:32', '2026-02-23 10:27:32'),
+(50, 56, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-25', 0, 0, 0, '2026-02-25 18:15:00', '2026-02-25 18:15:00'),
+(51, 57, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-26', 0, 0, 0, '2026-02-26 20:06:15', '2026-02-26 20:06:15');
 
 -- --------------------------------------------------------
 
@@ -1627,7 +1629,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `password_hash`, `first_name`, `last_name`, `phone`, `avatar_url`, `status`, `email_verification_token`, `email_verification_expires`, `email_verified`, `last_login`, `last_login_ip`, `failed_login_attempts`, `account_locked_until`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-02-18 16:20:33', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-02-18 14:20:33'),
+(1, 'admin', 'admin@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-03-01 11:31:39', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-03-01 09:31:39'),
 (6, 'michael.siame', 'michael.siame@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, '2025-12-25 21:53:14', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 19:53:14'),
 (25, 'taona', 'taona@gmail.com', NULL, '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
 (26, 'jaysiame076', 'jaysiame076@gmail.com', NULL, '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:32:59', NULL, 0, NULL, '2025-11-23 11:05:46', '2025-12-09 09:32:59'),
@@ -1651,7 +1653,7 @@ INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `password_hash`, `f
 (44, 'chikombichilobe', 'chikombichilobe@gmail.com', NULL, '$2y$10$ksBUfZYnFagnGCFAcCwyjet0bXfWLkipATUDlSXQ1zSSJc.cHBV86', 'Chilobe', 'Chikombi', '+260777615153', NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2026-01-11 17:02:07', '2026-01-11 17:02:07'),
 (45, 'oscarchinyemba', 'oscarchinyemba@gmail.com', NULL, '$2y$10$2Q07DAXzZ4PQSCO/cC7cVeZYAUkrUKpph3DqfYZ1tg/IJXjDW/yF.', 'Oscar Mukwakwa', 'Chinyemba', '+260975812995', NULL, 'active', NULL, NULL, 0, '2026-01-13 18:03:04', NULL, 0, NULL, '2026-01-13 16:02:31', '2026-01-13 16:03:04'),
 (46, 'mutintaschinyemba', 'mutintaschinyemba@gmail.com', NULL, '$2y$10$jzfxcM7td1SAcJ/0CeNCCObTSWV.q8qRBwCxpoZJA1KVjAbmYR82a', 'Mutinta', 'Simwami', '+260979578041', NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2026-01-13 16:04:02', '2026-01-13 16:04:02'),
-(47, 'Eunicechola2001', 'Eunicechola2001@gmail.com', NULL, '$2y$10$7vXazCAcNErbHUBG/JVsHutPYiNWerQsr.1KejkPiM0d9AnIRl4rW', 'Eunice', 'Chola', '+260761835168', NULL, 'active', NULL, NULL, 0, '2026-01-22 06:17:17', NULL, 0, NULL, '2026-01-21 20:00:01', '2026-01-22 04:17:17'),
+(47, 'Eunicechola2001', 'Eunicechola2001@gmail.com', '106231105485482941827', '$2y$10$7vXazCAcNErbHUBG/JVsHutPYiNWerQsr.1KejkPiM0d9AnIRl4rW', 'Eunice', 'Chola', '+260761835168', NULL, 'active', NULL, NULL, 1, '2026-02-26 23:04:42', NULL, 0, NULL, '2026-01-21 20:00:01', '2026-02-26 21:04:42'),
 (48, 'LweendoChizyuka7', 'LweendoChizyuka7@gmail.com', NULL, '$2y$10$WwLYFWrAKxpcLkonsCl6L.4UEC1eG9UbrVfjg4gv/utMIZ5QWVxg.', 'Lweendo', 'Chizyuka', '+260976396235', NULL, 'active', NULL, NULL, 0, '2026-02-04 14:43:04', NULL, 0, NULL, '2026-02-04 12:42:22', '2026-02-04 12:43:04'),
 (49, 'cetronmichelo', 'cetronmichelo@gmail.com', '102123028416500529258', '$2y$10$ELKpFIbHn4oBJNukHOyQXO0dL2ew9hzL.wvjHLJZLgsIHY6lGCqu2', 'Cetron', 'Michelo', '+260974194846', NULL, 'active', NULL, NULL, 1, '2026-02-24 08:59:33', NULL, 0, NULL, '2026-02-14 02:09:56', '2026-02-24 06:59:33'),
 (50, 'choolwelubaya1', 'choolwelubaya1@gmail.com', NULL, '$2y$10$m1wtqrAHzw0oGfNz9sbOReBgm8r8lWhvepO370YramoQyJC.15J9S', 'Choolwe', 'Lubaya', '+260770602779', NULL, 'active', NULL, NULL, 0, '2026-02-18 11:08:45', NULL, 0, NULL, '2026-02-14 09:01:12', '2026-02-18 09:08:45'),
@@ -1659,7 +1661,9 @@ INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `password_hash`, `f
 (52, 'edutrackzambia', 'edutrackzambia@gmail.com', '106695613944625113591', '$2y$10$Ps1P1UXhCjl9OEVGD9VDuePvp4S6sf4DTRewfYWMx2KHqRDFfxwOy', 'EdutrackZambia', '', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-02-18 09:13:07', '2026-02-18 09:13:07'),
 (53, 'Hestchilala1', 'Hestchilala1@gmail.com', NULL, '$2y$10$s0VyKX1solGrALrgDMwl7e5NQVDjco/PjXEjPoCsjUBXcwiqoMbri', 'Hest', 'Chilala', '+260973113441', NULL, 'active', NULL, NULL, 0, '2026-02-20 13:12:49', NULL, 0, NULL, '2026-02-20 11:11:55', '2026-02-20 11:12:49'),
 (54, 'musabakaderrick8', 'musabakaderrick8@gmail.com', NULL, '$2y$10$6u1HEzoZZFv4.jRteqpDyOKWjeo5KsHHLC7apxcu/PQLHQLZn/VvC', 'Musabaka', 'Derrick', '+260973838490', NULL, 'active', NULL, NULL, 0, '2026-02-22 19:16:25', NULL, 0, NULL, '2026-02-22 17:15:58', '2026-02-22 17:16:25'),
-(55, 'ackimchikwama02', 'ackimchikwama02@gmail.com', '109526682246921667099', '$2y$10$AXcskk980gX38QtBPg4jBu/janFuGliCTyLQB5Azc3skzz.B4iRyO', 'Ackim', 'chikwama', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-02-23 10:27:32', '2026-02-23 10:27:32');
+(55, 'ackimchikwama02', 'ackimchikwama02@gmail.com', '109526682246921667099', '$2y$10$AXcskk980gX38QtBPg4jBu/janFuGliCTyLQB5Azc3skzz.B4iRyO', 'Ackim', 'chikwama', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-02-23 10:27:32', '2026-02-23 10:27:32'),
+(56, 'MUNSANJEPROTEST', 'MUNSANJEPROTEST@GMAIL.COM', NULL, '$2y$10$ChE1sHck5TBCwD47m64Ik.GECv.4.sN0/U.djm1DrEh4dXz5b0abG', 'Protest', 'Munsanje', '+260974030032', NULL, 'active', NULL, NULL, 0, '2026-02-26 14:01:56', NULL, 0, NULL, '2026-02-25 18:15:00', '2026-02-26 12:01:56'),
+(57, 'sowetoagric', 'sowetoagric@gmail.com', NULL, '$2y$10$UbRtwN70lYtaDT0wo..SZu40U.Y9pxsJSlE43aec6GtcmCxmRHBhq', 'Mwendalubi', 'Chikwikwi', '+260979576624', NULL, 'active', NULL, NULL, 0, '2026-02-26 22:07:38', NULL, 0, NULL, '2026-02-26 20:06:15', '2026-02-26 20:07:38');
 
 -- --------------------------------------------------------
 
@@ -1733,7 +1737,7 @@ INSERT INTO `user_profiles` (`id`, `user_id`, `bio`, `phone`, `date_of_birth`, `
 (57, 44, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-11 17:02:07', '2026-01-11 17:02:07', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (58, 45, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13 16:02:31', '2026-01-13 16:02:31', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (59, 46, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13 16:04:02', '2026-01-13 16:04:02', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(60, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-21 20:00:01', '2026-01-21 20:00:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(60, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-21 20:00:01', '2026-02-26 21:04:42', 'https://lh3.googleusercontent.com/a/ACg8ocKHiy_RMU5WoyphteJFf34DW9Jq8j8_DDaN5esXfNaUUmDKI4LG=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (61, 48, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-04 12:42:22', '2026-02-04 12:42:22', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (62, 49, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-14 02:09:56', '2026-02-24 06:59:33', 'https://lh3.googleusercontent.com/a/ACg8ocJeuzHeoAhgwgbYVXtQHyPnn2fMxN6BxTuXYwNOT8HzR_-Jrhqv=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (63, 50, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-14 09:01:12', '2026-02-14 09:01:12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
@@ -1741,7 +1745,9 @@ INSERT INTO `user_profiles` (`id`, `user_id`, `bio`, `phone`, `date_of_birth`, `
 (65, 52, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-18 09:13:07', '2026-02-18 09:13:07', 'https://lh3.googleusercontent.com/a/ACg8ocJg38ZI5n-yG4ArZnmCvB5bh34XqSM3l80cCouaS5aB_tafnQ=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (66, 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-20 11:11:55', '2026-02-20 11:11:55', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (67, 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-22 17:15:58', '2026-02-22 17:15:58', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(68, 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-23 10:27:32', '2026-02-23 10:27:32', 'https://lh3.googleusercontent.com/a/ACg8ocJGszCBl0lsdLuRN7cLa7IUvcwjrBRNIKKLNW6r6MIqqUOlAg=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(68, 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-23 10:27:32', '2026-02-23 10:27:32', 'https://lh3.googleusercontent.com/a/ACg8ocJGszCBl0lsdLuRN7cLa7IUvcwjrBRNIKKLNW6r6MIqqUOlAg=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(69, 56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-25 18:15:00', '2026-02-25 18:15:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(70, 57, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-26 20:06:15', '2026-02-26 20:06:15', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1818,7 +1824,9 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`, `assigned_b
 (80, 52, 4, '2026-02-18 09:13:07', NULL),
 (81, 53, 4, '2026-02-20 11:11:55', NULL),
 (82, 54, 4, '2026-02-22 17:15:58', NULL),
-(83, 55, 4, '2026-02-23 10:27:32', NULL);
+(83, 55, 4, '2026-02-23 10:27:32', NULL),
+(84, 56, 4, '2026-02-25 18:15:00', NULL),
+(85, 57, 4, '2026-02-26 20:06:15', NULL);
 
 -- --------------------------------------------------------
 
@@ -1845,7 +1853,8 @@ INSERT INTO `user_sessions` (`id`, `user_id`, `session_token`, `ip_address`, `us
 (65, 49, '341939420a1404d685eb9bd3f0f58f603782ecddbff480d292ddba23106610de', '212.96.24.85', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-03-16 04:10:26', '2026-02-14 02:10:26', '2026-02-14 02:10:26'),
 (76, 53, '32be97e1293ec072b75214c106df39fb19672db66bfb6d1f1074f1d000d7ab79', '41.216.82.27', 'Mozilla/5.0 (Linux; Android 15; SM-A057F Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/144.0.7559.132 Mobile Safari/537.36[FBAN/EMA;FBLC/en_GB;FBAV/496.0.0.10.103;FBCX/modulariab;]', '2026-03-22 13:12:49', '2026-02-20 11:12:49', '2026-02-20 11:12:49'),
 (77, 54, 'c274e973d1731a3b801213a4435eb82bf4e991efbd3b80ae8ed14eee361da033', '45.215.224.252', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36', '2026-03-24 19:16:25', '2026-02-22 17:16:25', '2026-02-22 17:16:25'),
-(79, 49, '0ac247d1fb9ce11767d8f138c715237662318d18089fa9d4353cc4254ded4444', '41.216.82.25', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36', '2026-02-24 10:59:33', '2026-02-24 06:59:33', '2026-02-24 06:59:33');
+(80, 56, '72d6855ce8b3f7cfe4ed24c000d6bc367adacc26eb8832a5fbc03c3ad1a991e1', '45.215.252.111', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36', '2026-03-27 20:17:27', '2026-02-25 18:17:27', '2026-02-25 18:17:27'),
+(84, 1, '01f1a65040bfc56754081110b4163df1183ec96db22658c18ac981fb7d1025f6', '45.215.251.147', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', '2026-03-01 13:31:39', '2026-03-01 09:31:39', '2026-03-01 09:31:39');
 
 -- --------------------------------------------------------
 
@@ -2426,7 +2435,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `system_settings`
@@ -2444,25 +2453,25 @@ ALTER TABLE `team_members`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- AUTO_INCREMENT for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 -- --------------------------------------------------------
 

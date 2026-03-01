@@ -213,9 +213,12 @@ require_once '../../../src/templates/instructor-header.php';
                 <div class="divide-y divide-gray-100">
                     <?php foreach ($lessons as $lessonIndex => $lesson): 
                         $typeIcons = [
-                            'video' => 'fa-play-circle text-red-500',
-                            'text' => 'fa-file-alt text-blue-500',
-                            'mixed' => 'fa-layer-group text-purple-500'
+                            'Video' => 'fa-play-circle text-red-500',
+                            'Reading' => 'fa-file-alt text-blue-500',
+                            'Quiz' => 'fa-question-circle text-purple-500',
+                            'Assignment' => 'fa-tasks text-orange-500',
+                            'Live Session' => 'fa-video text-green-500',
+                            'Download' => 'fa-download text-indigo-500'
                         ];
                         $typeIcon = $typeIcons[$lesson['lesson_type']] ?? $typeIcons['text'];
                         
@@ -383,9 +386,11 @@ require_once '../../../src/templates/instructor-header.php';
                     <label class="block text-sm font-medium text-gray-700 mb-2">Lesson Type *</label>
                     <select name="lesson_type" required
                             class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500">
-                        <option value="video">Video</option>
-                        <option value="text">Text/Article</option>
-                        <option value="mixed">Mixed (Video + Text)</option>
+                        <option value="Video">Video</option>
+                        <option value="Reading">Text/Article</option>
+                        <option value="Quiz">Quiz</option>
+                        <option value="Assignment">Assignment</option>
+                        <option value="Download">Downloadable Resource</option>
                     </select>
                 </div>
                 <div>
@@ -463,9 +468,11 @@ require_once '../../../src/templates/instructor-header.php';
                     <label class="block text-sm font-medium text-gray-700 mb-2">Lesson Type *</label>
                     <select name="lesson_type" id="edit_lesson_type" required
                             class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500">
-                        <option value="video">Video</option>
-                        <option value="text">Text/Article</option>
-                        <option value="mixed">Mixed (Video + Text)</option>
+                        <option value="Video">Video</option>
+                        <option value="Reading">Text/Article</option>
+                        <option value="Quiz">Quiz</option>
+                        <option value="Assignment">Assignment</option>
+                        <option value="Download">Downloadable Resource</option>
                     </select>
                 </div>
                 <div>
@@ -532,7 +539,7 @@ function showAddLessonModal(moduleId) {
 function showEditLessonModal(lesson) {
     document.getElementById('edit_lesson_id').value = lesson.id;
     document.getElementById('edit_lesson_title').value = lesson.title;
-    document.getElementById('edit_lesson_type').value = lesson.lesson_type || 'video';
+    document.getElementById('edit_lesson_type').value = lesson.lesson_type || 'Video';
     document.getElementById('edit_lesson_duration').value = lesson.duration || '';
     document.getElementById('edit_lesson_video_url').value = lesson.video_url || '';
     document.getElementById('edit_lesson_description').value = lesson.description || '';

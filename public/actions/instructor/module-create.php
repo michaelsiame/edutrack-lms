@@ -46,15 +46,15 @@ if (!$canEdit) {
 }
 
 // Get next order index
-$maxOrder = $db->fetchColumn("SELECT MAX(order_index) FROM modules WHERE course_id = ?", [$courseId]);
-$orderIndex = ($maxOrder !== null) ? $maxOrder + 1 : 0;
+$maxOrder = $db->fetchColumn("SELECT MAX(display_order) FROM modules WHERE course_id = ?", [$courseId]);
+$displayOrder = ($maxOrder !== null) ? $maxOrder + 1 : 0;
 
 // Create module
 $moduleData = [
     'course_id' => $courseId,
     'title' => $title,
     'description' => $description,
-    'order_index' => $orderIndex
+    'display_order' => $displayOrder
 ];
 
 $moduleId = Module::create($moduleData);

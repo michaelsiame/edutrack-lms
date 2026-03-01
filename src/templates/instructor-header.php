@@ -180,6 +180,9 @@ if ($current_dir === 'instructor') {
                     <a href="<?= url('instructor/courses/create.php') ?>" class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition">
                         <i class="fas fa-plus-circle mr-2 w-4"></i>Create Course
                     </a>
+                    <a href="<?= url('instructor/courses/templates.php') ?>" class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition">
+                        <i class="fas fa-magic mr-2 w-4"></i>Templates
+                    </a>
                 </div>
             </div>
             
@@ -236,6 +239,20 @@ if ($current_dir === 'instructor') {
             <div class="px-4 py-2">
                 <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Quick Links</span>
             </div>
+            
+            <a href="<?= url('instructor/quick-actions.php') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white rounded-xl">
+                <div class="w-8 h-8 rounded-lg bg-gray-700/50 flex items-center justify-center mr-3">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <span>Quick Actions</span>
+            </a>
+            
+            <a href="<?= url('instructor/courses/templates.php') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white rounded-xl">
+                <div class="w-8 h-8 rounded-lg bg-gray-700/50 flex items-center justify-center mr-3">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <span>Templates</span>
+            </a>
             
             <a href="<?= url() ?>" target="_blank" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white rounded-xl">
                 <div class="w-8 h-8 rounded-lg bg-gray-700/50 flex items-center justify-center mr-3">

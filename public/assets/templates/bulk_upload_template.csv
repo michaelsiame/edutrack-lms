@@ -1,0 +1,9 @@
+module,lesson_title,lesson_type,video_url,duration,description
+Introduction,Welcome to the Course,video,https://youtube.com/watch?v=...,5,Overview of what you'll learn
+Introduction,Getting Started,text,,10,Initial setup instructions
+Module 1: Basics,Lesson 1: Core Concepts,video,https://youtube.com/watch?v=...,15,Understanding the fundamentals
+Module 1: Basics,Lesson 2: Practice Exercise,text,,30,Hands-on practice problems
+Module 2: Advanced,Advanced Techniques,video,https://youtube.com/watch/v=...,20,Deeper dive into concepts
+Module 2: Advanced,Case Study,text,,25,Real-world application example
+Assessment,Review Quiz,text,,20,Test your knowledge
+Conclusion,Next Steps,video,https://youtube.com/watch?v=...,10,Where to go from here

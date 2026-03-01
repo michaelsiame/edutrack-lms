@@ -1,7 +1,7 @@
 <?php
 /**
- * Edutrack computer training college
- * Student Dashboard
+ * Student Dashboard - Modern UI
+ * Features: Welcome banner, stat cards, learning progress charts, course cards, upcoming deadlines, notifications
  */
 
 require_once '../src/bootstrap.php';
@@ -13,312 +13,213 @@ if (!isLoggedIn()) {
     redirect('login.php');
 }
 
-// Get current user
 $user = User::current();
 $userId = $user->getId();
 
-// Get comprehensive dashboard statistics using Statistics class
-try {
-    $studentStats = Statistics::getStudentStats($userId);
-} catch (Exception $e) {
-    // If Statistics class or tables don't exist, use default values
-    $studentStats = [
-        'in_progress_courses' => 0,
-        'completed_courses' => 0,
-        'enrolled_courses' => 0,
-        'total_certificates' => 0,
-        'avg_progress' => 0,
-        'avg_quiz_score' => 0,
-        'assignments_submitted' => 0
-    ];
-}
-
-// Build stats array for display
+// Get student statistics
+$studentStats = Statistics::getStudentStats($userId);
 $stats = [
-    'active_courses' => $studentStats['in_progress_courses'],
-    'completed_courses' => $studentStats['completed_courses'],
-    'total_courses' => $studentStats['enrolled_courses'],
-    'certificates' => $studentStats['total_certificates'],
-    'avg_progress' => $studentStats['avg_progress'],
-    'avg_quiz_score' => $studentStats['avg_quiz_score'],
-    'assignments_submitted' => $studentStats['assignments_submitted']
+    'active_courses' => $studentStats['in_progress_courses'] ?? 0,
+    'completed_courses' => $studentStats['completed_courses'] ?? 0,
+    'total_courses' => $studentStats['enrolled_courses'] ?? 0,
+    'certificates' => $studentStats['total_certificates'] ?? 0,
+    'avg_progress' => $studentStats['avg_progress'] ?? 0,
+    'avg_quiz_score' => $studentStats['avg_quiz_score'] ?? 0,
+    'assignments_submitted' => $studentStats['assignments_submitted'] ?? 0,
+    'total_lessons_completed' => $studentStats['total_lessons_completed'] ?? 0
 ];
 
 // Get recent enrollments with course details
-try {
-    $recentEnrollments = $db->fetchAll("
-        SELECT e.*, c.title, c.slug, c.thumbnail_url, c.description,
-               e.last_accessed, e.progress as progress_percentage
-        FROM enrollments e
-        JOIN courses c ON e.course_id = c.id
-        WHERE e.user_id = ? AND e.enrollment_status IN ('Enrolled', 'In Progress')
-        ORDER BY e.last_accessed DESC, e.enrolled_at DESC
-        LIMIT 4
-    ", [$userId]);
-} catch (Exception $e) {
-    $recentEnrollments = [];
+$recentEnrollments = $db->fetchAll("
+    SELECT e.*, c.title, c.slug, c.thumbnail_url, c.description, c.price,
+           CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
+           e.last_accessed, e.progress as progress_percentage
+    FROM enrollments e
+    JOIN courses c ON e.course_id = c.id
+    LEFT JOIN instructors i ON c.instructor_id = i.id
+    LEFT JOIN users u ON i.user_id = u.id
+    WHERE e.user_id = ? AND e.enrollment_status IN ('Enrolled', 'In Progress')
+    ORDER BY e.last_accessed DESC, e.enrolled_at DESC
+    LIMIT 3
+", [$userId]);
+
+// Get weekly learning activity for chart
+$learningActivity = $db->fetchAll("
+    SELECT 
+        DATE(lp.updated_at) as date,
+        COUNT(*) as lessons_completed
+    FROM lesson_progress lp
+    JOIN enrollments e ON lp.enrollment_id = e.id
+    WHERE e.user_id = ? 
+    AND lp.status = 'Completed'
+    AND lp.updated_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    GROUP BY DATE(lp.updated_at)
+    ORDER BY date ASC
+", [$userId]);
+
+$activityLabels = [];
+$activityData = [];
+for ($i = 6; $i >= 0; $i--) {
+    $date = date('Y-m-d', strtotime("-$i days"));
+    $activityLabels[] = date('D', strtotime($date));
+    $found = false;
+    foreach ($learningActivity as $activity) {
+        if ($activity['date'] === $date) {
+            $activityData[] = (int)$activity['lessons_completed'];
+            $found = true;
+            break;
+        }
+    }
+    if (!$found) {
+        $activityData[] = 0;
+    }
 }
 
-// Get upcoming deadlines (assignments due in next 7 days)
-try {
-    $upcomingDeadlines = $db->fetchAll("
-        SELECT a.*, c.title as course_title, c.slug as course_slug
-        FROM assignments a
-        JOIN courses c ON a.course_id = c.id
-        JOIN enrollments e ON e.course_id = c.id
-        WHERE e.user_id = ?
-        AND a.due_date > NOW()
-        AND a.due_date < DATE_ADD(NOW(), INTERVAL 7 DAY)
-        AND a.id NOT IN (
-            SELECT assignment_id FROM assignment_submissions WHERE student_id = e.student_id
-        )
-        ORDER BY a.due_date ASC
-        LIMIT 5
-    ", [$userId]);
-} catch (Exception $e) {
-    $upcomingDeadlines = [];
-}
+// Get upcoming deadlines
+$upcomingDeadlines = $db->fetchAll("
+    SELECT a.*, c.title as course_title, c.slug as course_slug,
+           DATEDIFF(a.due_date, NOW()) as days_left
+    FROM assignments a
+    JOIN courses c ON a.course_id = c.id
+    JOIN enrollments e ON e.course_id = c.id
+    WHERE e.user_id = ?
+    AND a.due_date > NOW()
+    AND a.due_date < DATE_ADD(NOW(), INTERVAL 14 DAY)
+    AND a.id NOT IN (
+        SELECT assignment_id FROM assignment_submissions WHERE student_id = e.student_id
+    )
+    ORDER BY a.due_date ASC
+    LIMIT 5
+", [$userId]);
 
 // Get unread notifications
-try {
-    $unreadNotifications = $db->fetchAll("
-        SELECT * FROM notifications
-        WHERE user_id = ? AND is_read = 0
-        ORDER BY created_at DESC
-        LIMIT 5
-    ", [$userId]);
-} catch (Exception $e) {
-    $unreadNotifications = [];
-}
+$unreadNotifications = $db->fetchAll("
+    SELECT * FROM notifications
+    WHERE user_id = ? AND is_read = 0
+    ORDER BY created_at DESC
+    LIMIT 5
+", [$userId]);
 
-// Get recent quiz attempts
-try {
-    $recentQuizzes = $db->fetchAll("
-        SELECT qa.*, q.title as quiz_title, c.title as course_title, c.slug as course_slug
-        FROM quiz_attempts qa
-        JOIN quizzes q ON qa.quiz_id = q.id
-        JOIN courses c ON q.course_id = c.id
-        JOIN enrollments e ON e.course_id = c.id AND e.user_id = ?
-        WHERE qa.student_id = e.student_id
-        ORDER BY qa.completed_at DESC
-        LIMIT 3
-    ", [$userId]);
-} catch (Exception $e) {
-    $recentQuizzes = [];
-}
+// Get recent achievements/certificates
+$recentAchievements = $db->fetchAll("
+    SELECT cert.*, c.title as course_title, c.thumbnail_url
+    FROM certificates cert
+    JOIN courses c ON cert.course_id = c.id
+    JOIN enrollments e ON e.course_id = c.id AND e.user_id = ?
+    WHERE cert.student_id = e.student_id
+    ORDER BY cert.issued_at DESC
+    LIMIT 3
+", [$userId]);
 
-// Get recent graded assignments
-try {
-    $recentGradedAssignments = $db->fetchAll("
-        SELECT asub.*, a.title as assignment_title, a.max_points, c.title as course_title, c.slug as course_slug
-        FROM assignment_submissions asub
-        JOIN assignments a ON asub.assignment_id = a.id
-        JOIN courses c ON a.course_id = c.id
-        JOIN enrollments e ON e.course_id = c.id AND e.user_id = ?
-        WHERE asub.student_id = e.student_id AND asub.status = 'Graded'
-        ORDER BY asub.graded_at DESC
-        LIMIT 3
-    ", [$userId]);
-} catch (Exception $e) {
-    $recentGradedAssignments = [];
-}
+// Get recommended courses (not enrolled)
+$recommendedCourses = $db->fetchAll("
+    SELECT c.*, CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
+           cat.name as category_name,
+           (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrollment_count
+    FROM courses c
+    LEFT JOIN instructors i ON c.instructor_id = i.id
+    LEFT JOIN users u ON i.user_id = u.id
+    LEFT JOIN course_categories cat ON c.category_id = cat.id
+    WHERE c.status = 'published'
+    AND c.id NOT IN (SELECT course_id FROM enrollments WHERE user_id = ?)
+    ORDER BY c.created_at DESC
+    LIMIT 3
+", [$userId]);
 
-// Get upcoming live sessions
-$upcomingLiveSessions = [];
-try {
-    $upcomingLiveSessions = $db->fetchAll("
-        SELECT
-            ls.id,
-            ls.scheduled_start_time,
-            ls.duration_minutes,
-            ls.status,
-            ls.meeting_room_id,
-            l.title as lesson_title,
-            c.title as course_title,
-            c.slug as course_slug,
-            CONCAT(u.first_name, ' ', u.last_name) as instructor_name
-        FROM live_sessions ls
-        JOIN lessons l ON ls.lesson_id = l.id
-        JOIN modules m ON l.module_id = m.id
-        JOIN courses c ON m.course_id = c.id
-        JOIN enrollments e ON e.course_id = c.id
-        JOIN instructors i ON ls.instructor_id = i.id
-        JOIN users u ON i.user_id = u.id
-        WHERE e.user_id = ?
-          AND e.enrollment_status = 'enrolled'
-          AND ls.status IN ('scheduled', 'in_progress', 'live')
-          AND ls.scheduled_start_time >= DATE_SUB(NOW(), INTERVAL 30 MINUTE)
-        ORDER BY ls.scheduled_start_time ASC
-        LIMIT 5
-    ", [$userId]);
-} catch (Exception $e) {
-    // Live sessions table might not exist
-}
-
-// Get payment/fees information
+// Check payment status
 $totalBalance = 0;
-$totalFees = 0;
-$totalPaid = 0;
 $registrationPaid = true;
-
 try {
-    // Check registration fee status
     $registrationPaid = RegistrationFee::hasPaid($userId);
-
-    // Get payment plans for course fees
     $paymentPlans = PaymentPlan::getByUser($userId);
-
     foreach ($paymentPlans as $plan) {
-        $totalFees += floatval($plan['total_fee']);
-        $totalPaid += floatval($plan['total_paid']);
         $totalBalance += floatval($plan['balance']);
     }
-} catch (Exception $e) {
-    // Payment tables might not exist yet
-}
+} catch (Exception $e) {}
 
 $page_title = "Dashboard - Edutrack";
 require_once '../src/templates/header.php';
 ?>
 
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <!-- Welcome Section -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Welcome back, <?= sanitize($user->first_name) ?>!</h1>
-            <p class="text-gray-600 mt-2">Here's what's happening with your learning journey today.</p>
-        </div>
-
-        <!-- Announcements -->
-        <?php include '../src/templates/announcements.php'; ?>
-
-        <!-- Unread Notifications Alert -->
-        <?php if (!empty($unreadNotifications)): ?>
-        <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <i class="fas fa-bell text-blue-600 mr-3 text-xl"></i>
-                    <div>
-                        <h3 class="font-semibold text-blue-900">You have <?= count($unreadNotifications) ?> unread notification<?= count($unreadNotifications) > 1 ? 's' : '' ?></h3>
-                        <p class="text-sm text-blue-700 mt-1"><?= sanitize($unreadNotifications[0]['title']) ?></p>
-                    </div>
-                </div>
-                <a href="#notifications-section" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
-                    View all <i class="fas fa-arrow-down ml-1"></i>
-                </a>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <!-- Outstanding Balance Alert -->
-        <?php if ($totalBalance > 0 || !$registrationPaid): ?>
-        <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-triangle text-red-600 mr-3 text-xl"></i>
-                    <div>
-                        <?php if (!$registrationPaid): ?>
-                        <h3 class="font-semibold text-red-900">Registration Fee Required</h3>
-                        <p class="text-sm text-red-700 mt-1">Please pay your registration fee to access courses.</p>
+<div class="min-h-screen bg-gray-50">
+    <!-- Welcome Banner -->
+    <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">Welcome back, <?= sanitize($user->first_name) ?>! 👋</h1>
+                    <p class="text-blue-100 mt-2 text-lg">
+                        <?php if ($stats['active_courses'] > 0): ?>
+                            You're making great progress! Keep up the momentum.
                         <?php else: ?>
-                        <h3 class="font-semibold text-red-900">Outstanding Balance: K<?= number_format($totalBalance, 2) ?></h3>
-                        <p class="text-sm text-red-700 mt-1">Please clear your balance to receive your certificate.</p>
+                            Start your learning journey today.
                         <?php endif; ?>
+                    </p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <a href="<?= url('courses.php') ?>" 
+                       class="inline-flex items-center px-6 py-3 bg-white text-indigo-600 font-semibold rounded-lg shadow-lg hover:bg-gray-100 transition transform hover:-translate-y-0.5">
+                        <i class="fas fa-compass mr-2"></i>Explore Courses
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Alerts -->
+        <?php if (!$registrationPaid): ?>
+        <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-600 mr-3 text-xl"></i>
+                    <div>
+                        <h3 class="font-semibold text-red-900">Registration Fee Required</h3>
+                        <p class="text-sm text-red-700">Please pay your registration fee to access courses.</p>
                     </div>
                 </div>
-                <a href="<?= url('my-payments.php') ?>" class="px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 font-medium">
-                    <i class="fas fa-credit-card mr-1"></i> View Payments
+                <a href="<?= url('registration-fee.php') ?>" class="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 font-medium">
+                    Pay Now
+                </a>
+            </div>
+        </div>
+        <?php elseif ($totalBalance > 0): ?>
+        <div class="mb-6 bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-credit-card text-amber-600 mr-3 text-xl"></i>
+                    <div>
+                        <h3 class="font-semibold text-amber-900">Outstanding Balance: K<?= number_format($totalBalance, 2) ?></h3>
+                        <p class="text-sm text-amber-700">Please clear your balance to receive your certificate.</p>
+                    </div>
+                </div>
+                <a href="<?= url('my-payments.php') ?>" class="px-4 py-2 bg-amber-600 text-white text-sm rounded-lg hover:bg-amber-700 font-medium">
+                    View Payments
                 </a>
             </div>
         </div>
         <?php endif; ?>
 
-        <!-- Upcoming Live Sessions Alert -->
-        <?php if (!empty($upcomingLiveSessions)): ?>
-        <div class="mb-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 rounded-xl shadow-lg">
-            <div class="flex items-center justify-between mb-4">
+        <?php if (!empty($unreadNotifications)): ?>
+        <div class="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center">
-                    <div class="bg-white/20 rounded-full p-3 mr-4">
-                        <i class="fas fa-video text-2xl"></i>
+                    <div class="bg-blue-500 text-white rounded-full p-2 mr-3">
+                        <i class="fas fa-bell"></i>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-bold">Upcoming Live Sessions</h3>
-                        <p class="text-purple-200 text-sm">Join your scheduled classes</p>
-                    </div>
+                    <h3 class="font-semibold text-blue-900"><?= count($unreadNotifications) ?> New Notification<?= count($unreadNotifications) > 1 ? 's' : '' ?></h3>
                 </div>
-                <span class="bg-white/20 text-white text-sm font-semibold px-3 py-1 rounded-full">
-                    <?= count($upcomingLiveSessions) ?> session<?= count($upcomingLiveSessions) > 1 ? 's' : '' ?>
-                </span>
+                <button onclick="markAllRead()" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Mark all read</button>
             </div>
-
-            <div class="space-y-3">
-                <?php foreach ($upcomingLiveSessions as $session):
-                    $startTime = strtotime($session['scheduled_start_time']);
-                    $now = time();
-                    $minutesUntilStart = ($startTime - $now) / 60;
-                    $isLive = in_array($session['status'], ['live', 'in_progress']) || $minutesUntilStart <= 0;
-                    $canJoin = $minutesUntilStart <= 15; // Can join 15 minutes before
-                ?>
-                <div class="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <?php if ($isLive): ?>
-                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-500 text-white animate-pulse">
-                                    <span class="w-2 h-2 bg-white rounded-full mr-1"></span>
-                                    LIVE NOW
-                                </span>
-                                <?php elseif ($canJoin): ?>
-                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-500 text-white">
-                                    <i class="fas fa-door-open mr-1"></i>
-                                    Open
-                                </span>
-                                <?php else: ?>
-                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-white/30 text-white">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    Scheduled
-                                </span>
-                                <?php endif; ?>
-                            </div>
-                            <h4 class="font-semibold text-lg"><?= sanitize($session['lesson_title']) ?></h4>
-                            <p class="text-purple-200 text-sm">
-                                <?= sanitize($session['course_title']) ?> • <?= sanitize($session['instructor_name']) ?>
-                            </p>
-                            <p class="text-white/80 text-sm mt-1">
-                                <i class="fas fa-calendar-alt mr-1"></i>
-                                <?= date('M j, Y', $startTime) ?> at <?= date('g:i A', $startTime) ?>
-                                <span class="ml-2">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    <?= $session['duration_minutes'] ?> mins
-                                </span>
-                            </p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <?php if ($isLive || $canJoin): ?>
-                            <a href="<?= url('live-session.php?session_id=' . $session['id']) ?>"
-                               class="inline-flex items-center px-6 py-3 bg-white text-purple-700 font-bold rounded-lg hover:bg-purple-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                                <i class="fas fa-play-circle mr-2"></i>
-                                <?= $isLive ? 'Join Now' : 'Enter Waiting Room' ?>
-                            </a>
-                            <?php else: ?>
-                            <div class="text-center">
-                                <p class="text-white/80 text-sm mb-1">Starts in</p>
-                                <p class="text-xl font-bold">
-                                    <?php
-                                    if ($minutesUntilStart > 1440) {
-                                        echo ceil($minutesUntilStart / 1440) . ' days';
-                                    } elseif ($minutesUntilStart > 60) {
-                                        echo ceil($minutesUntilStart / 60) . ' hrs';
-                                    } else {
-                                        echo ceil($minutesUntilStart) . ' min';
-                                    }
-                                    ?>
-                                </p>
-                            </div>
-                            <?php endif; ?>
-                        </div>
+            <div class="space-y-2">
+                <?php foreach (array_slice($unreadNotifications, 0, 2) as $notif): ?>
+                <div class="flex items-start bg-white rounded-lg p-3 shadow-sm">
+                    <div class="flex-1">
+                        <p class="font-medium text-gray-800"><?= sanitize($notif['title']) ?></p>
+                        <p class="text-sm text-gray-600"><?= sanitize($notif['message']) ?></p>
                     </div>
+                    <span class="text-xs text-gray-400"><?= timeAgo($notif['created_at']) ?></span>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -326,463 +227,349 @@ require_once '../src/templates/header.php';
         <?php endif; ?>
 
         <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Active Courses -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-primary-500">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-xl shadow-sm border p-5 hover:shadow-md transition">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Active Courses</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= $stats['active_courses'] ?></p>
+                        <p class="text-sm text-gray-500 font-medium">Active Courses</p>
+                        <p class="text-2xl font-bold text-gray-800 mt-1"><?= $stats['active_courses'] ?></p>
                     </div>
-                    <div class="bg-primary-100 rounded-full p-3">
-                        <i class="fas fa-book text-primary-600 text-2xl"></i>
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-book-open text-blue-600 text-xl"></i>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <a href="<?= url('my-courses.php') ?>" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
-                        View all courses →
+                <div class="mt-3">
+                    <a href="<?= url('my-courses.php') ?>" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                        View all →
                     </a>
                 </div>
             </div>
-            
-            <!-- Completed Courses -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+
+            <div class="bg-white rounded-xl shadow-sm border p-5 hover:shadow-md transition">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Completed</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= $stats['completed_courses'] ?></p>
+                        <p class="text-sm text-gray-500 font-medium">Completed</p>
+                        <p class="text-2xl font-bold text-gray-800 mt-1"><?= $stats['completed_courses'] ?></p>
                     </div>
-                    <div class="bg-green-100 rounded-full p-3">
-                        <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
                     </div>
                 </div>
-                <div class="mt-4">
+                <div class="mt-3">
                     <a href="<?= url('my-courses.php?status=completed') ?>" class="text-sm text-green-600 hover:text-green-700 font-medium">
-                        View completed →
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Average Progress -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Avg Progress</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2">
-                            <?= round($stats['avg_progress']) ?>%
-                        </p>
-                    </div>
-                    <div class="bg-yellow-100 rounded-full p-3">
-                        <i class="fas fa-chart-line text-yellow-600 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <!-- Mini progress bar -->
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-yellow-500 h-2 rounded-full transition-all"
-                             style="width: <?= round($stats['avg_progress']) ?>%"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Certificates -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Certificates</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= $stats['certificates'] ?></p>
-                    </div>
-                    <div class="bg-purple-100 rounded-full p-3">
-                        <i class="fas fa-certificate text-purple-600 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <a href="<?= url('my-certificates.php') ?>" class="text-sm text-purple-600 hover:text-purple-700 font-medium">
                         View certificates →
                     </a>
                 </div>
             </div>
+
+            <div class="bg-white rounded-xl shadow-sm border p-5 hover:shadow-md transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Avg. Score</p>
+                        <p class="text-2xl font-bold text-gray-800 mt-1"><?= round($stats['avg_quiz_score']) ?>%</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-purple-500 h-2 rounded-full" style="width: <?= round($stats['avg_quiz_score']) ?>%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border p-5 hover:shadow-md transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Certificates</p>
+                        <p class="text-2xl font-bold text-gray-800 mt-1"><?= $stats['certificates'] ?></p>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-certificate text-amber-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="<?= url('my-certificates.php') ?>" class="text-sm text-amber-600 hover:text-amber-700 font-medium">
+                        View all →
+                    </a>
+                </div>
+            </div>
         </div>
-        
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Main Content -->
-            <div class="lg:col-span-2 space-y-6">
+            <!-- Main Content Column -->
+            <div class="lg:col-span-2 space-y-8">
                 
+                <!-- Learning Activity Chart -->
+                <div class="bg-white rounded-xl shadow-sm border p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-bold text-gray-800">Learning Activity</h2>
+                        <span class="text-sm text-gray-500">Last 7 days</span>
+                    </div>
+                    <div class="h-48">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+
                 <!-- Continue Learning -->
                 <?php if (!empty($recentEnrollments)): ?>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                        <h2 class="text-xl font-bold text-gray-900">Continue Learning</h2>
-                        <a href="<?= url('my-courses.php') ?>" class="text-sm text-primary-600 hover:text-primary-700">
-                            View All
-                        </a>
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-gray-800">Continue Learning</h2>
+                        <a href="<?= url('my-courses.php') ?>" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View all</a>
                     </div>
-                    <div class="p-6 space-y-4">
-                        <?php foreach ($recentEnrollments as $enrollment): ?>
-                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-primary-300 transition">
-                                <img src="<?= courseThumbnail($enrollment['thumbnail_url']) ?>"
-                                     alt="<?= sanitize($enrollment['title']) ?>"
-                                     class="w-full sm:w-20 h-32 sm:h-20 object-cover rounded">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-900 mb-1">
-                                        <?= sanitize($enrollment['title']) ?>
-                                    </h3>
-                                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600">
-                                        <span>
-                                            <i class="fas fa-chart-line text-primary-500 mr-1"></i>
-                                            <?= round($enrollment['progress_percentage']) ?>% complete
-                                        </span>
-                                        <?php if ($enrollment['last_accessed']): ?>
-                                            <span>
-                                                <i class="fas fa-clock text-gray-400 mr-1"></i>
-                                                <?= timeAgo($enrollment['last_accessed']) ?>
-                                            </span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <!-- Progress Bar -->
-                                    <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-primary-600 h-2 rounded-full" 
-                                             style="width: <?= round($enrollment['progress_percentage']) ?>%"></div>
+                    <div class="divide-y divide-gray-100">
+                        <?php foreach ($recentEnrollments as $course): ?>
+                        <div class="p-4 hover:bg-gray-50 transition">
+                            <div class="flex gap-4">
+                                <img src="<?= courseThumbnail($course['thumbnail_url']) ?>" 
+                                     alt="" class="w-24 h-16 object-cover rounded-lg">
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-semibold text-gray-800 truncate"><?= sanitize($course['title']) ?></h3>
+                                    <p class="text-sm text-gray-500"><?= sanitize($course['instructor_name']) ?></p>
+                                    <div class="flex items-center gap-3 mt-2">
+                                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full transition-all" 
+                                                 style="width: <?= round($course['progress_percentage']) ? round($course['progress_percentage']) : 0 ?>%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-600"><?= round($course['progress_percentage']) ?>%</span>
                                     </div>
                                 </div>
-                                <a href="<?= url('learn.php?course=' . $enrollment['slug']) ?>"
-                                   class="btn-primary px-4 py-2 rounded-md w-full sm:w-auto text-center">
+                                <a href="<?= url('learn.php?course=' . $course['slug']) ?>" 
+                                   class="self-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
                                     Continue
                                 </a>
                             </div>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
                 <?php else: ?>
-                <div class="bg-white rounded-lg shadow-md p-8">
-                    <?php emptyState(
-                        'fa-book-open',
-                        'No Active Courses',
-                        'Start your learning journey by enrolling in a course',
-                        url('courses.php'),
-                        'Browse Courses'
-                    ); ?>
-                </div>
-                <?php endif; ?>
-                
-                <!-- Upcoming Deadlines -->
-                <?php if (!empty($upcomingDeadlines)): ?>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-xl font-bold text-gray-900">
-                            <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
-                            Upcoming Deadlines
-                        </h2>
+                <div class="bg-white rounded-xl shadow-sm border p-8 text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-book-open text-blue-600 text-2xl"></i>
                     </div>
-                    <div class="divide-y divide-gray-200">
-                        <?php foreach ($upcomingDeadlines as $deadline): ?>
-                            <div class="p-4 hover:bg-gray-50">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900">
-                                            <?= sanitize($deadline['title']) ?>
-                                        </h4>
-                                        <p class="text-sm text-gray-600">
-                                            <?= sanitize($deadline['course_title']) ?>
-                                        </p>
-                                    </div>
-                                    <div class="text-right ml-4">
-                                        <p class="text-sm font-medium text-red-600">
-                                            <i class="fas fa-clock mr-1"></i>
-                                            Due <?= formatDate($deadline['due_date'], 'M j') ?>
-                                        </p>
-                                        <p class="text-xs text-gray-500">
-                                            <?= timeAgo($deadline['due_date']) ?>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Start Your Learning Journey</h3>
+                    <p class="text-gray-600 mb-4">Enroll in a course to begin tracking your progress.</p>
+                    <a href="<?= url('courses.php') ?>" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
+                        <i class="fas fa-search mr-2"></i>Browse Courses
+                    </a>
                 </div>
                 <?php endif; ?>
 
-                <!-- Recent Quiz Scores -->
-                <?php if (!empty($recentQuizzes)): ?>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-xl font-bold text-gray-900">
-                            <i class="fas fa-question-circle text-blue-500 mr-2"></i>
-                            Recent Quiz Results
-                        </h2>
+                <!-- Recommended Courses -->
+                <?php if (!empty($recommendedCourses)): ?>
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <h2 class="text-lg font-bold text-gray-800">Recommended For You</h2>
                     </div>
-                    <div class="divide-y divide-gray-200">
-                        <?php foreach ($recentQuizzes as $quiz): ?>
-                            <?php
-                                $scorePercentage = ($quiz['score'] / $quiz['total_score']) * 100;
-                                $scoreClass = $scorePercentage >= 80 ? 'text-green-600' : ($scorePercentage >= 60 ? 'text-yellow-600' : 'text-red-600');
-                            ?>
-                            <div class="p-4 hover:bg-gray-50">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900">
-                                            <?= sanitize($quiz['quiz_title']) ?>
-                                        </h4>
-                                        <p class="text-sm text-gray-600">
-                                            <?= sanitize($quiz['course_title']) ?>
-                                        </p>
-                                        <p class="text-xs text-gray-500 mt-1">
-                                            <i class="fas fa-clock mr-1"></i>
-                                            <?= timeAgo($quiz['completed_at']) ?>
-                                        </p>
-                                    </div>
-                                    <div class="text-right ml-4">
-                                        <p class="text-2xl font-bold <?= $scoreClass ?>">
-                                            <?= round($scorePercentage) ?>%
-                                        </p>
-                                        <p class="text-xs text-gray-500">
-                                            <?= $quiz['score'] ?> / <?= $quiz['total_score'] ?> points
-                                        </p>
-                                    </div>
-                                </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+                        <?php foreach ($recommendedCourses as $course): ?>
+                        <div class="p-4 hover:bg-gray-50 transition">
+                            <img src="<?= courseThumbnail($course['thumbnail_url']) ?>" 
+                                 alt="" class="w-full h-24 object-cover rounded-lg mb-3">
+                            <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                <?= sanitize($course['category_name']) ?>
+                            </span>
+                            <h3 class="font-semibold text-gray-800 mt-2 line-clamp-1"><?= sanitize($course['title']) ?></h3>
+                            <p class="text-sm text-gray-500"><?= sanitize($course['instructor_name']) ?></p>
+                            <div class="flex items-center justify-between mt-3">
+                                <span class="font-bold text-gray-800">K<?= number_format($course['price'], 2) ?></span>
+                                <a href="<?= url('course.php?id=' . $course['id']) ?>" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                    Details →
+                                </a>
                             </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                <?php endif; ?>
-
-                <!-- Recent Graded Assignments -->
-                <?php if (!empty($recentGradedAssignments)): ?>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-xl font-bold text-gray-900">
-                            <i class="fas fa-file-alt text-green-500 mr-2"></i>
-                            Recent Assignment Grades
-                        </h2>
-                    </div>
-                    <div class="divide-y divide-gray-200">
-                        <?php foreach ($recentGradedAssignments as $assignment): ?>
-                            <?php
-                                $scorePercentage = ($assignment['points_earned'] / $assignment['max_points']) * 100;
-                                $gradeClass = $scorePercentage >= 80 ? 'text-green-600' : ($scorePercentage >= 60 ? 'text-yellow-600' : 'text-red-600');
-                            ?>
-                            <div class="p-4 hover:bg-gray-50">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900">
-                                            <?= sanitize($assignment['assignment_title']) ?>
-                                        </h4>
-                                        <p class="text-sm text-gray-600">
-                                            <?= sanitize($assignment['course_title']) ?>
-                                        </p>
-                                        <?php if ($assignment['feedback']): ?>
-                                            <p class="text-sm text-gray-700 mt-2 italic">
-                                                "<?= sanitize(substr($assignment['feedback'], 0, 100)) ?><?= strlen($assignment['feedback']) > 100 ? '...' : '' ?>"
-                                            </p>
-                                        <?php endif; ?>
-                                        <p class="text-xs text-gray-500 mt-1">
-                                            <i class="fas fa-clock mr-1"></i>
-                                            Graded <?= timeAgo($assignment['graded_at']) ?>
-                                        </p>
-                                    </div>
-                                    <div class="text-right ml-4">
-                                        <p class="text-2xl font-bold <?= $gradeClass ?>">
-                                            <?= round($scorePercentage) ?>%
-                                        </p>
-                                        <p class="text-xs text-gray-500">
-                                            <?= $assignment['points_earned'] ?> / <?= $assignment['max_points'] ?> points
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                <?php endif; ?>
-
-                <!-- Notifications Section -->
-                <?php if (!empty($unreadNotifications)): ?>
-                <?php
-                // Notification color mappings for Tailwind CSS
-                $notificationBgColors = [
-                    'green' => 'bg-green-100',
-                    'red' => 'bg-red-100',
-                    'blue' => 'bg-blue-100',
-                    'yellow' => 'bg-yellow-100',
-                    'orange' => 'bg-orange-100',
-                    'purple' => 'bg-purple-100',
-                    'indigo' => 'bg-indigo-100',
-                    'gray' => 'bg-gray-100',
-                    'primary' => 'bg-blue-100'
-                ];
-                $notificationTextColors = [
-                    'green' => 'text-green-600',
-                    'red' => 'text-red-600',
-                    'blue' => 'text-blue-600',
-                    'yellow' => 'text-yellow-600',
-                    'orange' => 'text-orange-600',
-                    'purple' => 'text-purple-600',
-                    'indigo' => 'text-indigo-600',
-                    'gray' => 'text-gray-600',
-                    'primary' => 'text-blue-600'
-                ];
-                ?>
-                <div id="notifications-section" class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                        <h2 class="text-xl font-bold text-gray-900">
-                            <i class="fas fa-bell text-blue-500 mr-2"></i>
-                            Notifications
-                        </h2>
-                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                            <?= count($unreadNotifications) ?> new
-                        </span>
-                    </div>
-                    <div class="divide-y divide-gray-200">
-                        <?php foreach ($unreadNotifications as $notification):
-                            $color = $notification['color'] ?? 'blue';
-                            $bgClass = $notificationBgColors[$color] ?? 'bg-blue-100';
-                            $textClass = $notificationTextColors[$color] ?? 'text-blue-600';
-                            $icon = $notification['icon'] ?? 'fas fa-bell';
-                        ?>
-                            <div class="p-4 hover:bg-gray-50 transition">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0">
-                                        <div class="w-10 h-10 <?= $bgClass ?> rounded-full flex items-center justify-center">
-                                            <i class="<?= sanitize($icon) ?> <?= $textClass ?>"></i>
-                                        </div>
-                                    </div>
-                                    <div class="ml-3 flex-1">
-                                        <h4 class="font-semibold text-gray-900">
-                                            <?= sanitize($notification['title']) ?>
-                                        </h4>
-                                        <p class="text-sm text-gray-600 mt-1">
-                                            <?= sanitize($notification['message']) ?>
-                                        </p>
-                                        <p class="text-xs text-gray-500 mt-1">
-                                            <i class="fas fa-clock mr-1"></i>
-                                            <?= timeAgo($notification['created_at']) ?>
-                                        </p>
-                                    </div>
-                                    <?php if (!empty($notification['link'])): ?>
-                                        <a href="<?= url($notification['link']) ?>"
-                                           class="ml-4 text-primary-600 hover:text-primary-700">
-                                            <i class="fas fa-arrow-right"></i>
-                                        </a>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
                 <?php endif; ?>
             </div>
-            
+
             <!-- Sidebar -->
             <div class="space-y-6">
                 
-                <!-- Profile Card -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="bg-gradient-to-r from-primary-600 to-primary-800 h-24"></div>
+                <!-- Profile Summary -->
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div class="bg-gradient-to-br from-blue-500 to-purple-600 h-20"></div>
                     <div class="px-6 pb-6">
-                        <div class="-mt-12 mb-4">
-                            <img src="<?= $user->getAvatarUrl() ?>" 
-                                 alt="Avatar"
-                                 class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
+                        <div class="-mt-10 mb-3">
+                            <img src="<?= $user->getAvatarUrl() ?>" alt="" 
+                                 class="w-20 h-20 rounded-full border-4 border-white shadow-md">
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900"><?= sanitize($user->getFullName()) ?></h3>
-                        <p class="text-gray-600 text-sm"><?= sanitize($user->email) ?></p>
-                        <div class="mt-2">
-                            <?php teveta_badge(); ?>
+                        <h3 class="text-lg font-bold text-gray-800"><?= sanitize($user->getFullName()) ?></h3>
+                        <p class="text-sm text-gray-500"><?= sanitize($user->email) ?></p>
+                        <div class="mt-4 grid grid-cols-2 gap-3 text-center">
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-lg font-bold text-gray-800"><?= $stats['total_lessons_completed'] ?></p>
+                                <p class="text-xs text-gray-500">Lessons Done</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-lg font-bold text-gray-800"><?= round($stats['avg_progress']) ?>%</p>
+                                <p class="text-xs text-gray-500">Avg Progress</p>
+                            </div>
                         </div>
-                        <div class="mt-4 pt-4 border-t border-gray-200">
-                            <a href="<?= url('profile.php') ?>" 
-                               class="block text-center py-2 px-4 bg-primary-50 text-primary-600 rounded-md hover:bg-primary-100 transition font-medium">
-                                <i class="fas fa-user mr-2"></i>View Profile
+                        <a href="<?= url('profile.php') ?>" class="block mt-4 text-center py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium">
+                            Edit Profile
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Upcoming Deadlines -->
+                <?php if (!empty($upcomingDeadlines)): ?>
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <h3 class="font-bold text-gray-800">Upcoming Deadlines</h3>
+                        <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full"><?= count($upcomingDeadlines) ?></span>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        <?php foreach ($upcomingDeadlines as $deadline): 
+                            $urgencyClass = $deadline['days_left'] <= 2 ? 'text-red-600 bg-red-50' : ($deadline['days_left'] <= 5 ? 'text-amber-600 bg-amber-50' : 'text-blue-600 bg-blue-50');
+                        ?>
+                        <div class="p-4 hover:bg-gray-50 transition">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-medium text-gray-800 text-sm truncate"><?= sanitize($deadline['title']) ?></h4>
+                                    <p class="text-xs text-gray-500"><?= sanitize($deadline['course_title']) ?></p>
+                                </div>
+                                <span class="text-xs font-medium <?= $urgencyClass ?> px-2 py-1 rounded whitespace-nowrap ml-2">
+                                    <?= $deadline['days_left'] == 0 ? 'Today' : ($deadline['days_left'] == 1 ? 'Tomorrow' : $deadline['days_left'] . ' days') ?>
+                                </span>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="px-5 py-3 bg-gray-50 border-t border-gray-100">
+                        <a href="<?= url('student/assignments.php') ?>" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                            View all assignments →
+                        </a>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- Quick Links -->
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div class="px-5 py-4 border-b border-gray-100">
+                        <h3 class="font-bold text-gray-800">Quick Links</h3>
+                    </div>
+                    <div class="p-2">
+                        <a href="<?= url('my-courses.php') ?>" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+                            <div class="w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-graduation-cap text-blue-600"></i>
+                            </div>
+                            <span class="text-gray-700 font-medium">My Courses</span>
+                        </a>
+                        <a href="<?= url('student/assignments.php') ?>" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+                            <div class="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-file-alt text-orange-600"></i>
+                            </div>
+                            <span class="text-gray-700 font-medium">Assignments</span>
+                            <?php if (!empty($upcomingDeadlines)): ?>
+                            <span class="ml-auto text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full"><?= count($upcomingDeadlines) ?></span>
+                            <?php endif; ?>
+                        </a>
+                        <a href="<?= url('student/quizzes.php') ?>" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+                            <div class="w-9 h-9 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-question-circle text-purple-600"></i>
+                            </div>
+                            <span class="text-gray-700 font-medium">Quizzes</span>
+                        </a>
+                        <a href="<?= url('my-certificates.php') ?>" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+                            <div class="w-9 h-9 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-certificate text-green-600"></i>
+                            </div>
+                            <span class="text-gray-700 font-medium">Certificates</span>
+                            <?php if ($stats['certificates'] > 0): ?>
+                            <span class="ml-auto text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full"><?= $stats['certificates'] ?></span>
+                            <?php endif; ?>
+                        </a>
+                        <a href="<?= url('my-payments.php') ?>" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition <?= $totalBalance > 0 ? 'bg-red-50' : '' ?>">
+                            <div class="w-9 h-9 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-credit-card text-red-600"></i>
+                            </div>
+                            <span class="text-gray-700 font-medium">Payments</span>
+                            <?php if ($totalBalance > 0): ?>
+                            <span class="ml-auto text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">K<?= number_format($totalBalance, 0) ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recent Achievements -->
+                <?php if (!empty($recentAchievements)): ?>
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div class="px-5 py-4 border-b border-gray-100">
+                        <h3 class="font-bold text-gray-800">Recent Achievements</h3>
+                    </div>
+                    <div class="p-4">
+                        <?php foreach ($recentAchievements as $cert): ?>
+                        <div class="flex items-center gap-3 mb-3 last:mb-0">
+                            <div class="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-trophy text-white"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-800 text-sm truncate"><?= sanitize($cert['course_title']) ?></p>
+                                <p class="text-xs text-gray-500"><?= timeAgo($cert['issued_at']) ?></p>
+                            </div>
+                            <a href="<?= url('download-certificate.php?id=' . $cert['id']) ?>" class="text-amber-600 hover:text-amber-700">
+                                <i class="fas fa-download"></i>
                             </a>
                         </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-                
-                <!-- Quick Links -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-bold text-gray-900">Quick Links</h2>
-                    </div>
-                    <div class="p-4 space-y-2">
-                        <a href="<?= url('courses.php') ?>" 
-                           class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition">
-                            <i class="fas fa-book text-primary-600 w-8"></i>
-                            <span class="text-gray-700">Browse Courses</span>
-                        </a>
-                        <a href="<?= url('my-courses.php') ?>"
-                           class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition">
-                            <i class="fas fa-graduation-cap text-green-600 w-8"></i>
-                            <span class="text-gray-700">My Courses</span>
-                        </a>
-                        <a href="<?= url('my-payments.php') ?>"
-                           class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition <?= $totalBalance > 0 ? 'bg-red-50' : '' ?>">
-                            <i class="fas fa-credit-card text-red-600 w-8"></i>
-                            <span class="text-gray-700">My Payments</span>
-                            <?php if ($totalBalance > 0): ?>
-                            <span class="ml-auto text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Due</span>
-                            <?php endif; ?>
-                        </a>
-                        <a href="<?= url('student/assignments.php') ?>"
-                           class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition">
-                            <i class="fas fa-file-alt text-orange-600 w-8"></i>
-                            <span class="text-gray-700">My Assignments</span>
-                            <?php if (!empty($upcomingDeadlines)): ?>
-                            <span class="ml-auto text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full"><?= count($upcomingDeadlines) ?> due</span>
-                            <?php endif; ?>
-                        </a>
-                        <a href="<?= url('student/quizzes.php') ?>"
-                           class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition">
-                            <i class="fas fa-question-circle text-indigo-600 w-8"></i>
-                            <span class="text-gray-700">My Quizzes</span>
-                        </a>
-                        <a href="<?= url('my-certificates.php') ?>"
-                           class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition">
-                            <i class="fas fa-certificate text-purple-600 w-8"></i>
-                            <span class="text-gray-700">My Certificates</span>
-                        </a>
-                        <a href="<?= url('edit-profile.php') ?>"
-                           class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition">
-                            <i class="fas fa-cog text-gray-600 w-8"></i>
-                            <span class="text-gray-700">Settings</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Learning Stats Card -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-bold text-gray-900">Learning Stats</h2>
-                    </div>
-                    <div class="p-4 space-y-4">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Quiz Average</span>
-                            <span class="text-lg font-bold text-primary-600">
-                                <?= round($stats['avg_quiz_score']) ?>%
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Assignments Submitted</span>
-                            <span class="text-lg font-bold text-green-600">
-                                <?= $stats['assignments_submitted'] ?>
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Total Courses</span>
-                            <span class="text-lg font-bold text-gray-900">
-                                <?= $stats['total_courses'] ?>
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Completion Rate</span>
-                            <span class="text-lg font-bold text-purple-600">
-                                <?= $stats['total_courses'] > 0 ? round(($stats['completed_courses'] / $stats['total_courses']) * 100) : 0 ?>%
-                            </span>
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Learning Activity Chart
+const ctx = document.getElementById('activityChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: <?= json_encode($activityLabels) ?>,
+        datasets: [{
+            label: 'Lessons Completed',
+            data: <?= json_encode($activityData) ?>,
+            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 0,
+            borderRadius: 6,
+            borderSkipped: false
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { stepSize: 1 },
+                grid: { color: 'rgba(0,0,0,0.05)' }
+            },
+            x: {
+                grid: { display: false }
+            }
+        }
+    }
+});
+
+// Mark all notifications as read
+function markAllRead() {
+    fetch('<?= url('api/notifications.php') ?>', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'mark_all_read' })
+    }).then(() => location.reload());
+}
+</script>
 
 <?php require_once '../src/templates/footer.php'; ?>
