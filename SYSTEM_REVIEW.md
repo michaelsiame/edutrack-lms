@@ -628,21 +628,21 @@ Migrations are raw SQL files run manually. No tracking of which migrations have 
 ## Prioritized Action Plan
 
 ### Immediate (Week 1) — Security Critical
-1. Delete `verify-setup.php`, `check-credentials.php`, `install.php`
-2. Add user-ownership checks to `Quiz::submitAttempt()` and `Assignment` submission
-3. Wrap `Payment::markSuccessful()` flow in a database transaction
+1. ~~Delete `verify-setup.php`, `check-credentials.php`, `install.php`~~ **DONE**
+2. ~~Add user-ownership checks to `Quiz::submitAttempt()` and `Assignment` submission~~ **PARTIALLY DONE** (see Post-Fix Review below)
+3. ~~Wrap `Payment::markSuccessful()` flow in a database transaction~~ **DONE**
 4. Add webhook idempotency and always-on signature verification
-5. Add CSRF validation to all admin handlers and state-changing APIs
+5. ~~Add CSRF validation to all admin handlers and state-changing APIs~~ **DONE**
 6. Remove hardcoded secrets; rotate all exposed credentials
-7. Fix path traversal in file download and avatar deletion
+7. ~~Fix path traversal in file download and avatar deletion~~ **DONE**
 
 ### Short-Term (Weeks 2-3) — Stability & Integrity
-8. Add `UNIQUE` constraints for enrollment, review, and certificate deduplication
+8. ~~Add `UNIQUE` constraints for enrollment, review, and certificate deduplication~~ **DONE**
 9. Replace loose `!=` / `in_array()` with strict comparisons everywhere
-10. Restrict instructor content access to owned courses
+10. ~~Restrict instructor content access to owned courses~~ **DONE**
 11. Consolidate duplicate functions, email systems, and certificate generators
 12. Move email sending to async queue (use existing `email_queue` table)
-13. Add composite database indexes per the table above
+13. ~~Add composite database indexes per the table above~~ **DONE**
 
 ### Medium-Term (Month 2) — Performance & Architecture
 14. Rewrite N+1 queries in `Course::all()`, `Instructor::all()`, `Progress::getCourseProgress()`
@@ -659,3 +659,119 @@ Migrations are raw SQL files run manually. No tracking of which migrations have 
 23. Adopt a formal migration tool
 24. Implement distributed rate limiting with Redis
 25. Add cursor-based pagination to all listing APIs
+
+---
+
+## Post-Fix Review (2026-03-01) — Issues in the Latest Changes
+
+After pulling the latest `main` commit (`2e2d39c`), a follow-up review of the 15 changed files identified the following remaining issues.
+
+### Resolved Items (11/15 original critical findings addressed)
+- Debug scripts deleted
+- `.htaccess` security headers and sensitive file blocking added
+- CSRF protection added to all admin handlers
+- Path traversal fixed in `download-resource.php` and `User::deleteAvatarFile()`
+- Assignment enrollment check added in `canUserSubmit()`
+- Quiz ownership verification added (with caveat below)
+- Instructor access scoped to owned courses in both `Enrollment::canAccessContent()` and `enrolled-only.php`
+- Payment flow wrapped in transaction with rollback
+- Enrollment creation wrapped in transaction
+- Database unique constraints and composite indexes added via migration
+
+### Remaining Issues
+
+#### PF-1. HIGH — Quiz Ownership Check is Optional (Bypass via Default Parameter)
+**File:** `src/classes/Quiz.php:270-282`
+
+The `$studentId` parameter defaults to `null`. When callers omit it, the ownership check is entirely skipped via the "backward compatibility" branch. Any code path that calls `$quiz->submitAttempt($attemptId, $answers)` without the third argument bypasses the security fix.
+
+**Fix:** Make `$studentId` required (remove default value). Remove the `else` branch that skips the ownership check. Audit all callers to pass the current user's ID.
+
+#### PF-2. HIGH — Hardcoded Default Password `password123`
+**File:** `public/admin/handlers/users_handler.php:51, 162`
+
+```php
+$password = password_hash($_POST['password'] ?? 'password123', PASSWORD_DEFAULT);
+$newPassword = 'password123';
+```
+
+Admin-created users silently get `password123` if the password field is empty. Password resets also hardcode this value. Attackers who discover any admin-created account can attempt this default.
+
+**Fix:** Generate a random temporary password via `bin2hex(random_bytes(8))`. Send it to the user via email. Force a password change on first login.
+
+#### PF-3. HIGH — Enrollment Status Mismatch Between Create and Middleware
+**File:** `src/middleware/enrolled-only.php:24` vs `src/classes/Enrollment.php:117`
+
+The middleware checks:
+```sql
+enrollment_status IN ('active', 'completed')
+```
+
+But `Enrollment::create()` sets `enrollment_status = 'Enrolled'`. A freshly enrolled student **cannot access course content** because `'Enrolled'` is not in `('active', 'completed')`.
+
+The actual enum values used in the codebase are: `'Enrolled'`, `'In Progress'`, `'Completed'`, `'Dropped'`, `'Expired'`.
+
+**Fix:** Change the middleware query to:
+```sql
+enrollment_status IN ('Enrolled', 'In Progress', 'Completed')
+```
+
+#### PF-4. MEDIUM — Nested Transaction Conflict in Payment → Enrollment Flow
+**Files:** `src/classes/Payment.php:233` and `src/classes/Enrollment.php:109`
+
+`Payment::markSuccessful()` calls `$db->beginTransaction()`, then calls `Enrollment::create()` which also calls `$db->beginTransaction()`. MySQL/InnoDB does not support true nested transactions. The inner `beginTransaction()` either throws an exception or is silently ignored. If the inner `rollBack()` fires, it rolls back the **outer** transaction too.
+
+**Fix:** Check `$db->inTransaction()` before starting a new transaction in `Enrollment::create()`:
+```php
+$ownTransaction = !$db->inTransaction();
+if ($ownTransaction) $db->beginTransaction();
+// ... work ...
+if ($ownTransaction) $db->commit();
+```
+
+#### PF-5. MEDIUM — Admin Financial Handler Lacks Transaction Safety
+**File:** `public/admin/handlers/financials_handler.php:47-55, 84-101, 116-138`
+
+The "add payment", "verify payment", and "refund payment" actions all perform a read-modify-write on `enrollments.amount_paid` without a transaction. Two concurrent requests will read the same `amount_paid`, compute different new values, and the last write wins (lost update).
+
+**Fix:** Wrap each financial operation in a transaction with `SELECT ... FOR UPDATE` on the enrollment row.
+
+#### PF-6. MEDIUM — Payment Reference Still Uses Predictable `uniqid()`
+**File:** `src/classes/Payment.php:348`
+
+```php
+return 'PAY-' . strtoupper(uniqid()) . '-' . time();
+```
+
+`uniqid()` is based on microsecond timestamps and is predictable. This was flagged in the original review but not addressed.
+
+**Fix:** `return 'PAY-' . strtoupper(bin2hex(random_bytes(12))) . '-' . time();`
+
+#### PF-7. MEDIUM — Loose Type Comparisons Persist
+**Files:** Multiple
+
+| File | Line | Expression | Risk |
+|------|------|-----------|------|
+| `enrolled-only.php` | 46 | `$instructorRecord['id'] == $course['instructor_id']` | Type juggling |
+| `Enrollment.php` | 188 | same pattern | Type juggling |
+| `Quiz.php` | 284 | `$attempt['status'] != 'In Progress'` | Minor |
+| `User.php` | 216 | `$_SESSION['user_id'] == $this->id` | Type juggling on user ID |
+
+**Fix:** Replace all `==`/`!=` with `===`/`!==` for ID and status comparisons.
+
+#### PF-8. LOW — `Enrollment::all()` Still Has No Default Limit
+**File:** `src/classes/Enrollment.php:466-472`
+
+Unlike `User::all()` which now defaults to `LIMIT 100`, `Enrollment::all()` applies a limit only when explicitly passed via `$filters['limit']`. With thousands of enrollments, admin listing pages will fetch unbounded result sets.
+
+**Fix:** Add `$sql .= " LIMIT " . (int)($filters['limit'] ?? 100);`
+
+### Post-Fix Summary
+
+| Severity | Count | Status |
+|----------|-------|--------|
+| Original Critical/High | 15 | 11 resolved, 4 remaining |
+| New issues from fix | 8 | All open |
+| **Total open** | **8** | PF-1 through PF-8 |
+
+Priority order for next iteration: **PF-3** (breaks enrollment flow — functional bug), **PF-1** (security bypass), **PF-2** (credential weakness), **PF-4** (transaction corruption), then PF-5 through PF-8.
