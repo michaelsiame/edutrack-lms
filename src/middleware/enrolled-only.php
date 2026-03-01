@@ -25,8 +25,31 @@ $enrollment = $db->fetchOne(
     [currentUserId(), $required_course_id]
 );
 
-// Allow access if enrolled or if user is admin/instructor
-if (!$enrollment && !hasRole(['admin', 'instructor'])) {
+// Allow access if enrolled or if user is admin
+// Instructors must be enrolled OR be the course instructor
+$allowAccess = false;
+if ($enrollment) {
+    $allowAccess = true;
+} elseif (hasRole('admin')) {
+    $allowAccess = true;
+} elseif (hasRole('instructor')) {
+    // Check if this instructor owns the course
+    $course = $db->fetchOne(
+        "SELECT instructor_id FROM courses WHERE id = ?",
+        [$required_course_id]
+    );
+    if ($course) {
+        $instructorRecord = $db->fetchOne(
+            "SELECT id FROM instructors WHERE user_id = ?",
+            [currentUserId()]
+        );
+        if ($instructorRecord && $instructorRecord['id'] == $course['instructor_id']) {
+            $allowAccess = true;
+        }
+    }
+}
+
+if (!$allowAccess) {
     http_response_code(403);
     
     // Get course details

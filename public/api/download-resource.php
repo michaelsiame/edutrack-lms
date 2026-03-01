@@ -69,10 +69,30 @@ if (!$resource->isLocalFile()) {
 // Local file - serve for download
 $filePath = $resource->getFilePath();
 
-if (!file_exists($filePath)) {
+// Security: Prevent path traversal attacks
+// Validate that the resolved path is within the allowed uploads directory
+$uploadsBaseDir = realpath(BASE_PATH . '/public/uploads');
+$resolvedPath = realpath($filePath);
+
+if ($resolvedPath === false) {
     http_response_code(404);
     die('File not found on server');
 }
+
+// Ensure the resolved path is within the uploads directory
+if (strpos($resolvedPath, $uploadsBaseDir) !== 0) {
+    http_response_code(403);
+    error_log('Path traversal attempt blocked: ' . $filePath);
+    die('Access denied');
+}
+
+if (!file_exists($resolvedPath)) {
+    http_response_code(404);
+    die('File not found on server');
+}
+
+// Use the resolved path for all file operations
+$filePath = $resolvedPath;
 
 // Increment download count
 $resource->incrementDownloadCount();

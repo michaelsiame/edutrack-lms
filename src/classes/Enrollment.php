@@ -162,21 +162,42 @@ class Enrollment {
 
     /**
      * Check if student can access course content
-     * Logic: Must be Admin OR Instructor OR (Paid >= 30%)
+     * Logic: Must be Admin OR (Instructor who owns the course) OR (Paid >= 30%)
      */
     public function canAccessContent() {
-        // 1. Admins & Instructors bypass checks
+        // 1. Admins bypass checks
         $currentUser = User::current();
-        if ($currentUser && ($currentUser->hasRole('admin') || $currentUser->hasRole('instructor'))) {
+        if ($currentUser && $currentUser->hasRole('admin')) {
             return true;
         }
+        
+        // 2. Instructors can only access their own courses
+        if ($currentUser && $currentUser->hasRole('instructor')) {
+            $courseId = $this->data['course_id'] ?? null;
+            if ($courseId) {
+                // Check if this instructor teaches this course
+                $sql = "SELECT instructor_id FROM courses WHERE id = :course_id";
+                $course = $this->db->fetchOne($sql, ['course_id' => $courseId]);
+                
+                if ($course) {
+                    $instructorRecord = $this->db->fetchOne(
+                        "SELECT id FROM instructors WHERE user_id = :user_id",
+                        ['user_id' => $currentUser->getId()]
+                    );
+                    
+                    if ($instructorRecord && $instructorRecord['id'] == $course['instructor_id']) {
+                        return true;
+                    }
+                }
+            }
+        }
 
-        // 2. Completed courses are always accessible
+        // 3. Completed courses are always accessible
         if ($this->data['enrollment_status'] === 'Completed') {
             return true;
         }
 
-        // 3. Check Financials
+        // 4. Check Financials
         $totalFee = (float) $this->paymentPlan['total_fee'];
         $totalPaid = (float) $this->paymentPlan['total_paid'];
 

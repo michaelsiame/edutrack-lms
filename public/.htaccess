@@ -1,0 +1,51 @@
+# EduTrack LMS - Apache Configuration
+
+# Protect sensitive files
+<FilesMatch "\.(env|json|lock|md|sql|sqlite)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Disable PHP execution in uploads directory
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Redirect to HTTPS (uncomment in production)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+    
+    # Pretty URLs
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Deny access to sensitive directories
+RedirectMatch 403 ^/uploads/.*\.php$
+RedirectMatch 403 ^/vendor/.*$
+RedirectMatch 403 ^/src/.*$
+RedirectMatch 403 ^/config/.*$
+RedirectMatch 403 ^/database/.*$
+RedirectMatch 403 ^/migrations/.*$
+RedirectMatch 403 ^/cron/.*$
+
+# Disable server signature
+ServerSignature Off
+
+# Protect against common exploits
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# PHP settings (if running as Apache module)
+<IfModule mod_php.c>
+    php_flag display_errors off
+    php_flag log_errors on
+    php_value upload_max_filesize 64M
+    php_value post_max_size 64M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>

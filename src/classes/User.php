@@ -449,8 +449,18 @@ class User {
      */
     private function deleteAvatarFile() {
         $oldAvatar = $this->profile['avatar'] ?? null;
-        if ($oldAvatar && defined('UPLOAD_PATH') && file_exists(UPLOAD_PATH . '/users/avatars/' . $oldAvatar)) {
-            @unlink(UPLOAD_PATH . '/users/avatars/' . $oldAvatar);
+        if ($oldAvatar && defined('UPLOAD_PATH')) {
+            // Security: Use basename() to prevent path traversal
+            $safeFilename = basename($oldAvatar);
+            $filePath = UPLOAD_PATH . '/users/avatars/' . $safeFilename;
+            
+            // Additional validation: ensure resolved path is within avatars directory
+            $resolvedPath = realpath($filePath);
+            $avatarsDir = realpath(UPLOAD_PATH . '/users/avatars');
+            
+            if ($resolvedPath && strpos($resolvedPath, $avatarsDir) === 0 && file_exists($resolvedPath)) {
+                @unlink($resolvedPath);
+            }
         }
     }
     

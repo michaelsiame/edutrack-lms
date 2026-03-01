@@ -211,8 +211,21 @@ class Assignment {
     
     /**
      * Check if user can submit
+     * @param int $userId The user ID
+     * @return bool True if user can submit
      */
     public function canUserSubmit($userId) {
+        // Check if user is enrolled in the course
+        $courseId = $this->getCourseId();
+        if (!$courseId) {
+            return false;
+        }
+        
+        // Verify enrollment
+        if (!Enrollment::isEnrolled($userId, $courseId)) {
+            return false;
+        }
+        
         // Check if already submitted
         $submission = $this->getUserSubmission($userId);
         if ($submission && $submission->exists()) {
