@@ -1,182 +1,105 @@
 <?php
 /**
  * Instructor Dashboard
- * Main dashboard showing overview, stats, and recent activities
+ * Modern dashboard with class management focus
  */
 
-// Debug mode - set to false for production
-$DEBUG_MODE = false;
+require_once '../../src/bootstrap.php';
+require_once '../../src/middleware/instructor-only.php';
+require_once '../../src/classes/User.php';
+require_once '../../src/classes/Statistics.php';
 
-// Only enable error display in debug mode
-if ($DEBUG_MODE) {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-} else {
-    ini_set('display_errors', 0);
-    error_reporting(0);
-}
-$page_start_time = microtime(true);
-$page_start_memory = memory_get_usage();
-$debug_data = [
-    'page' => 'instructor/index.php',
-    'timestamp' => date('Y-m-d H:i:s'),
-    'queries' => [],
-    'errors' => [],
-    'debug_trace' => []
-];
-
-// Custom error handler that captures all errors
-set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$debug_data) {
-    $debug_data['errors'][] = [
-        'type' => $errno,
-        'message' => $errstr,
-        'file' => $errfile,
-        'line' => $errline
-    ];
-    // Also log to error log
-    error_log("PHP Error [$errno]: $errstr in $errfile on line $errline");
-    return false; // Continue with normal error handling
-});
-
-// Set exception handler
-set_exception_handler(function($e) use (&$debug_data) {
-    $debug_data['errors'][] = [
-        'type' => 'Exception',
-        'message' => $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine(),
-        'trace' => $e->getTraceAsString()
-    ];
-    error_log("Uncaught Exception: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
-    echo "<pre>Exception: " . htmlspecialchars($e->getMessage()) . "\n";
-    echo "File: " . htmlspecialchars($e->getFile()) . " Line: " . $e->getLine() . "\n";
-    echo "Trace:\n" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
-});
-
-$debug_data['debug_trace'][] = 'Starting script';
-
-try {
-    // 1. Load the User class FIRST so hasRole() can use it
-    $debug_data['debug_trace'][] = 'Loading User class';
-    require_once '../../src/classes/User.php';
-    $debug_data['debug_trace'][] = 'User class loaded';
-
-    // 2. NOW load the middleware
-    $debug_data['debug_trace'][] = 'Loading middleware';
-    require_once '../../src/middleware/instructor-only.php'; 
-    $debug_data['debug_trace'][] = 'Middleware loaded successfully';
-
-    $debug_data['debug_trace'][] = 'Loading Statistics class';
-    require_once '../../src/classes/Statistics.php';
-    $debug_data['debug_trace'][] = 'Statistics class loaded';
-
-} catch (Exception $e) {
-    die("<pre>Error loading dependencies: " . htmlspecialchars($e->getMessage()) . "\nTrace: " . htmlspecialchars($e->getTraceAsString()) . "</pre>");
-}
-
-$debug_data['debug_trace'][] = 'Initializing database';
-
-// Initialize database connection
 $db = Database::getInstance();
-
-$debug_data['debug_trace'][] = 'Database initialized';
-
-// Debug: Log user info
-$debug_data['user'] = [
-    'id' => $_SESSION['user_id'] ?? null,
-    'email' => $_SESSION['user_email'] ?? null,
-    'role' => $_SESSION['user_role'] ?? null
-];
-
-$debug_data['debug_trace'][] = 'Getting current user';
-
 $user = User::current();
 if (!$user) {
     redirect(url('login.php'));
     exit;
 }
 
-$debug_data['debug_trace'][] = 'User found, getting instructor ID';
-
 $userId = $user->getId();
-$debug_data['debug_trace'][] = 'User ID: ' . $userId;
 
-// Get instructor ID from instructors table (instructor_id in courses references instructors.id, not users.id)
+// Get instructor ID from instructors table
 $instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
 $instructorId = $instructorRecord ? $instructorRecord['id'] : $userId;
-
-$debug_data['debug_trace'][] = 'Instructor ID (from instructors table): ' . $instructorId;
-
-// Debug: Log IDs
-if ($DEBUG_MODE) {
-    $debug_data['user_id'] = $userId;
-    $debug_data['instructor_id'] = $instructorId;
-}
 
 // Get comprehensive instructor statistics
 $stats = Statistics::getInstructorStats($instructorId);
 
-// Debug: Log stats data
-if ($DEBUG_MODE) {
-    $debug_data['data']['stats'] = $stats;
-}
-
-// Get recent enrollments in instructor's courses
+// Get recent enrollments
 $recentEnrollments = $db->fetchAll("
     SELECT e.*, c.title as course_title, c.slug as course_slug,
-           u.first_name, u.last_name, u.email
+           u.first_name, u.last_name, u.email, u.avatar_url
     FROM enrollments e
     JOIN courses c ON e.course_id = c.id
     JOIN users u ON e.user_id = u.id
     WHERE c.instructor_id = ?
     ORDER BY e.enrolled_at DESC
-    LIMIT 10
+    LIMIT 6
 ", [$instructorId]);
 
 // Get pending assignment submissions
 $pendingAssignments = $db->fetchAll("
-    SELECT asub.*, a.title as assignment_title, a.max_points,
+    SELECT asub.*, a.title as assignment_title, a.max_points, a.due_date,
            c.title as course_title, c.slug as course_slug,
-           u.first_name, u.last_name
+           u.first_name, u.last_name, u.email
     FROM assignment_submissions asub
     JOIN assignments a ON asub.assignment_id = a.id
     JOIN courses c ON a.course_id = c.id
     JOIN students st ON asub.student_id = st.id
     JOIN users u ON st.user_id = u.id
-    WHERE c.instructor_id = ? AND asub.status = 'Submitted'
+    WHERE c.instructor_id = ? AND asub.status = 'submitted'
     ORDER BY asub.submitted_at DESC
-    LIMIT 10
+    LIMIT 5
 ", [$instructorId]);
 
-// Get instructor's courses with enrollment count
+// Get instructor's courses with detailed metrics
 $courses = $db->fetchAll("
-    SELECT c.*, COUNT(DISTINCT e.id) as student_count,
+    SELECT c.*, cat.name as category_name,
+           COUNT(DISTINCT e.id) as student_count,
            COUNT(DISTINCT m.id) as module_count,
-           COUNT(DISTINCT l.id) as lesson_count
+           COUNT(DISTINCT l.id) as lesson_count,
+           AVG(e.progress) as avg_progress
     FROM courses c
+    LEFT JOIN course_categories cat ON c.category_id = cat.id
     LEFT JOIN enrollments e ON c.id = e.course_id
     LEFT JOIN modules m ON c.id = m.course_id
     LEFT JOIN lessons l ON m.id = l.module_id
     WHERE c.instructor_id = ?
     GROUP BY c.id
     ORDER BY c.created_at DESC
-    LIMIT 6
+    LIMIT 4
 ", [$instructorId]);
 
-// Get recent reviews
-$recentReviews = $db->fetchAll("
-    SELECT cr.*, c.title as course_title, c.slug as course_slug,
+// Get upcoming live sessions
+$upcomingSessions = $db->fetchAll("
+    SELECT ls.*, l.title as lesson_title, c.title as course_title, c.slug as course_slug
+    FROM live_sessions ls
+    JOIN lessons l ON ls.lesson_id = l.id
+    JOIN modules m ON l.module_id = m.id
+    JOIN courses c ON m.course_id = c.id
+    WHERE c.instructor_id = ? AND ls.status IN ('scheduled', 'live')
+    AND ls.scheduled_start_time >= NOW()
+    ORDER BY ls.scheduled_start_time ASC
+    LIMIT 3
+", [$instructorId]);
+
+// Get recent quiz attempts
+$recentQuizAttempts = $db->fetchAll("
+    SELECT qa.*, q.title as quiz_title, c.title as course_title,
            u.first_name, u.last_name
-    FROM course_reviews cr
-    JOIN courses c ON cr.course_id = c.id
-    JOIN users u ON cr.user_id = u.id
-    WHERE c.instructor_id = ?
-    ORDER BY cr.created_at DESC
+    FROM quiz_attempts qa
+    JOIN quizzes q ON qa.quiz_id = q.id
+    JOIN lessons l ON q.lesson_id = l.id
+    JOIN modules m ON l.module_id = m.id
+    JOIN courses c ON m.course_id = c.id
+    JOIN students st ON qa.student_id = st.id
+    JOIN users u ON st.user_id = u.id
+    WHERE c.instructor_id = ? AND qa.status = 'completed'
+    ORDER BY qa.completed_at DESC
     LIMIT 5
 ", [$instructorId]);
 
-// Calculate revenue (if applicable)
+// Calculate revenue
 $revenue = $db->fetchOne("
     SELECT
         COALESCE(SUM(CASE WHEN e.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN c.price ELSE 0 END), 0) as monthly_revenue,
@@ -186,168 +109,210 @@ $revenue = $db->fetchOne("
     WHERE c.instructor_id = ? AND e.payment_status = 'completed'
 ", [$instructorId]);
 
-// Debug: Log all fetched data counts
-if ($DEBUG_MODE) {
-    $debug_data['data']['recent_enrollments_count'] = count($recentEnrollments);
-    $debug_data['data']['pending_assignments_count'] = count($pendingAssignments);
-    $debug_data['data']['courses_count'] = count($courses);
-    $debug_data['data']['recent_reviews_count'] = count($recentReviews);
-    $debug_data['data']['revenue'] = $revenue;
-}
-
-$page_title = 'Instructor Dashboard - Edutrack';
+$page_title = 'Dashboard';
 require_once '../../src/templates/instructor-header.php';
 ?>
 
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-50/50 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Welcome Section -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">
-                Welcome back, <?= htmlspecialchars($user->first_name) ?>!
-            </h1>
-            <p class="text-gray-600 mt-2">Here's what's happening with your courses today.</p>
+        <!-- Welcome Section with Date -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    Welcome back, <?= htmlspecialchars($user->first_name) ?>! 👋
+                </h1>
+                <p class="text-gray-500 mt-1">Here's what's happening with your classes today.</p>
+            </div>
+            <div class="mt-4 md:mt-0 text-right">
+                <p class="text-sm text-gray-500"><?= date('l, F j, Y') ?></p>
+                <p class="text-xs text-gray-400"><?= date('g:i A') ?></p>
+            </div>
         </div>
 
-        <!-- Announcements -->
-        <?php include '../../src/templates/announcements.php'; ?>
-
-        <!-- Quick Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <!-- Total Courses -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+            <div class="stat-card bg-white rounded-2xl p-6 shadow-card border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Total Courses</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= $stats['total_courses'] ?></p>
+                        <p class="text-sm font-medium text-gray-500">Total Courses</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1"><?= $stats['total_courses'] ?? 0 ?></p>
+                        <p class="text-xs text-green-600 mt-1">
+                            <i class="fas fa-arrow-up mr-1"></i><?= $stats['published_courses'] ?? 0 ?> Published
+                        </p>
                     </div>
-                    <div class="bg-blue-100 rounded-full p-3">
-                        <i class="fas fa-book text-blue-600 text-2xl"></i>
+                    <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-book text-blue-500 text-2xl"></i>
                     </div>
-                </div>
-                <div class="mt-4 text-sm">
-                    <span class="text-green-600 font-medium"><?= $stats['published_courses'] ?> Published</span>
                 </div>
             </div>
 
             <!-- Total Students -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+            <div class="stat-card bg-white rounded-2xl p-6 shadow-card border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Total Students</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= $stats['total_students'] ?></p>
+                        <p class="text-sm font-medium text-gray-500">Total Students</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1"><?= $stats['total_students'] ?? 0 ?></p>
+                        <p class="text-xs text-purple-600 mt-1">
+                            <i class="fas fa-users mr-1"></i>Active learners
+                        </p>
                     </div>
-                    <div class="bg-purple-100 rounded-full p-3">
-                        <i class="fas fa-users text-purple-600 text-2xl"></i>
+                    <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-users text-purple-500 text-2xl"></i>
                     </div>
-                </div>
-                <div class="mt-4">
-                    <a href="<?= url('instructor/students.php') ?>" class="text-sm text-purple-600 hover:text-purple-700 font-medium">
-                        View all students →
-                    </a>
                 </div>
             </div>
 
             <!-- Pending Reviews -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500">
+            <div class="stat-card bg-white rounded-2xl p-6 shadow-card border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Pending Grading</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= count($pendingAssignments) ?></p>
+                        <p class="text-sm font-medium text-gray-500">Pending Grading</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1"><?= count($pendingAssignments) ?></p>
+                        <p class="text-xs text-orange-600 mt-1">
+                            <i class="fas fa-clock mr-1"></i>Needs attention
+                        </p>
                     </div>
-                    <div class="bg-orange-100 rounded-full p-3">
-                        <i class="fas fa-tasks text-orange-600 text-2xl"></i>
+                    <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-clipboard-check text-orange-500 text-2xl"></i>
                     </div>
-                </div>
-                <div class="mt-4">
-                    <a href="<?= url('instructor/assignments.php') ?>" class="text-sm text-orange-600 hover:text-orange-700 font-medium">
-                        Review assignments →
-                    </a>
                 </div>
             </div>
 
             <!-- Monthly Revenue -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+            <div class="stat-card bg-white rounded-2xl p-6 shadow-card border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Monthly Revenue</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2">
-                            K<?= number_format($revenue['monthly_revenue'] ?? 0, 2) ?>
+                        <p class="text-sm font-medium text-gray-500">Monthly Revenue</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">
+                            K<?= number_format($revenue['monthly_revenue'] ?? 0, 0) ?>
+                        </p>
+                        <p class="text-xs text-gray-400 mt-1">
+                            Total: K<?= number_format($revenue['total_revenue'] ?? 0, 0) ?>
                         </p>
                     </div>
-                    <div class="bg-green-100 rounded-full p-3">
-                        <i class="fas fa-dollar-sign text-green-600 text-2xl"></i>
+                    <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-wallet text-green-500 text-2xl"></i>
                     </div>
-                </div>
-                <div class="mt-4 text-sm text-gray-600">
-                    Total: K<?= number_format($revenue['total_revenue'] ?? 0, 2) ?>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Main Content -->
-            <div class="lg:col-span-2 space-y-6">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            <!-- Main Content Column -->
+            <div class="xl:col-span-2 space-y-8">
 
-                <!-- My Courses -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                        <h2 class="text-xl font-bold text-gray-900">My Courses</h2>
-                        <a href="<?= url('instructor/courses.php') ?>" class="text-sm text-primary-600 hover:text-primary-700">
-                            View All
+                <!-- Quick Actions Bar -->
+                <div class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-6 text-white shadow-lg">
+                    <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <a href="<?= url('instructor/courses/create.php') ?>" 
+                           class="flex flex-col items-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition text-center">
+                            <i class="fas fa-plus-circle text-2xl mb-2"></i>
+                            <span class="text-sm font-medium">New Course</span>
+                        </a>
+                        <a href="<?= url('instructor/live-sessions.php') ?>" 
+                           class="flex flex-col items-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition text-center">
+                            <i class="fas fa-video text-2xl mb-2"></i>
+                            <span class="text-sm font-medium">Schedule Live</span>
+                        </a>
+                        <a href="<?= url('instructor/assignments.php') ?>" 
+                           class="flex flex-col items-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition text-center">
+                            <i class="fas fa-tasks text-2xl mb-2"></i>
+                            <span class="text-sm font-medium">Grade Work</span>
+                        </a>
+                        <a href="<?= url('instructor/students.php') ?>" 
+                           class="flex flex-col items-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition text-center">
+                            <i class="fas fa-user-plus text-2xl mb-2"></i>
+                            <span class="text-sm font-medium">View Students</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- My Courses Section -->
+                <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                                <i class="fas fa-book text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-bold text-gray-900">My Courses</h2>
+                                <p class="text-sm text-gray-500">Manage your active courses</p>
+                            </div>
+                        </div>
+                        <a href="<?= url('instructor/courses.php') ?>" 
+                           class="text-sm font-medium text-primary-600 hover:text-primary-700">
+                            View All <i class="fas fa-arrow-right ml-1"></i>
                         </a>
                     </div>
 
                     <?php if (empty($courses)): ?>
                     <div class="p-12 text-center">
-                        <i class="fas fa-book-open text-6xl text-gray-300 mb-4"></i>
-                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No Courses Yet</h3>
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-book-open text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No Courses Yet</h3>
                         <p class="text-gray-500 mb-6">Create your first course to start teaching</p>
-                        <a href="<?= url('instructor/courses/create.php') ?>" class="btn-primary px-6 py-3 rounded-lg inline-block">
+                        <a href="<?= url('instructor/courses/create.php') ?>" 
+                           class="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition shadow-lg shadow-primary-500/30">
                             <i class="fas fa-plus mr-2"></i> Create Your First Course
                         </a>
                     </div>
                     <?php else: ?>
-                    <div class="p-6 space-y-4">
+                    <div class="divide-y divide-gray-100">
                         <?php foreach ($courses as $course): ?>
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-primary-300 transition">
-                            <div class="w-full sm:w-20 h-32 sm:h-20 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
-                                <?php if (!empty($course['thumbnail_url'])): ?>
-                                <img src="<?= htmlspecialchars($course['thumbnail_url']) ?>"
-                                     alt="<?= htmlspecialchars($course['title']) ?>"
-                                     class="w-full h-full object-cover rounded-lg">
-                                <?php else: ?>
-                                <i class="fas fa-book text-white text-3xl"></i>
-                                <?php endif; ?>
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="font-semibold text-gray-900 mb-1">
-                                    <?= htmlspecialchars($course['title']) ?>
-                                </h3>
-                                <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                                    <span>
-                                        <i class="fas fa-users text-purple-500 mr-1"></i>
-                                        <?= $course['student_count'] ?> students
-                                    </span>
-                                    <span>
-                                        <i class="fas fa-book-open text-blue-500 mr-1"></i>
-                                        <?= $course['lesson_count'] ?> lessons
-                                    </span>
-                                    <span class="px-2 py-1 rounded-full text-xs <?= $course['status'] == 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' ?>">
-                                        <?= ucfirst($course['status']) ?>
-                                    </span>
+                        <div class="p-6 hover:bg-gray-50/50 transition">
+                            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                                <!-- Course Thumbnail -->
+                                <div class="w-full md:w-48 h-28 rounded-xl overflow-hidden bg-gradient-to-br from-primary-400 to-primary-600 flex-shrink-0">
+                                    <?php if (!empty($course['thumbnail_url'])): ?>
+                                    <img src="<?= htmlspecialchars($course['thumbnail_url']) ?>" 
+                                         alt="<?= htmlspecialchars($course['title']) ?>"
+                                         class="w-full h-full object-cover">
+                                    <?php else: ?>
+                                    <div class="w-full h-full flex items-center justify-center">
+                                        <i class="fas fa-book text-white text-3xl"></i>
+                                    </div>
+                                    <?php endif; ?>
                                 </div>
-                            </div>
-                            <div class="flex gap-2 w-full sm:w-auto">
-                                <a href="<?= url('instructor/course-edit.php?id=' . $course['id']) ?>"
-                                   class="flex-1 sm:flex-initial text-center px-4 py-2 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition text-sm font-medium">
-                                    <i class="fas fa-edit mr-1"></i>Edit
-                                </a>
-                                <a href="<?= url('course.php?slug=' . $course['slug']) ?>"
-                                   class="flex-1 sm:flex-initial text-center px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition text-sm font-medium">
-                                    <i class="fas fa-eye mr-1"></i>View
-                                </a>
+                                
+                                <!-- Course Info -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="px-2 py-1 rounded-lg text-xs font-medium <?= $course['status'] == 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' ?>">
+                                            <?= ucfirst($course['status']) ?>
+                                        </span>
+                                        <?php if ($course['category_name']): ?>
+                                        <span class="text-xs text-gray-500"><?= htmlspecialchars($course['category_name']) ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <h3 class="font-semibold text-gray-900 text-lg mb-1 truncate">
+                                        <?= htmlspecialchars($course['title']) ?>
+                                    </h3>
+                                    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                        <span><i class="fas fa-users text-purple-500 mr-1"></i><?= $course['student_count'] ?> students</span>
+                                        <span><i class="fas fa-folder text-blue-500 mr-1"></i><?= $course['module_count'] ?> modules</span>
+                                        <span><i class="fas fa-play-circle text-green-500 mr-1"></i><?= $course['lesson_count'] ?> lessons</span>
+                                        <?php if ($course['avg_progress']): ?>
+                                        <span><i class="fas fa-chart-line text-primary-500 mr-1"></i><?= round($course['avg_progress']) ?>% avg progress</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                
+                                <!-- Actions -->
+                                <div class="flex items-center gap-2">
+                                    <a href="<?= url('instructor/course-edit.php?id=' . $course['id']) ?>"
+                                       class="px-4 py-2 bg-primary-50 text-primary-600 rounded-lg hover:bg-primary-100 transition text-sm font-medium">
+                                        <i class="fas fa-edit mr-1"></i>Edit
+                                    </a>
+                                    <a href="<?= url('course.php?slug=' . $course['slug']) ?>"
+                                       target="_blank"
+                                       class="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition text-sm font-medium">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -355,176 +320,217 @@ require_once '../../src/templates/instructor-header.php';
                     <?php endif; ?>
                 </div>
 
-                <!-- Pending Assignment Submissions -->
+                <!-- Pending Assignments Section -->
                 <?php if (!empty($pendingAssignments)): ?>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-xl font-bold text-gray-900">
-                            <i class="fas fa-clipboard-list text-orange-500 mr-2"></i>
-                            Pending Reviews
-                        </h2>
+                <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-orange-50/50">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mr-3">
+                                <i class="fas fa-clipboard-list text-orange-600"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-bold text-gray-900">Pending Submissions</h2>
+                                <p class="text-sm text-gray-500">Assignments waiting for your review</p>
+                            </div>
+                        </div>
+                        <span class="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                            <?= count($pendingAssignments) ?> pending
+                        </span>
                     </div>
-                    <div class="divide-y divide-gray-200">
-                        <?php foreach (array_slice($pendingAssignments, 0, 5) as $submission): ?>
-                        <div class="p-4 hover:bg-gray-50">
-                            <div class="flex items-start justify-between">
-                                <div class="flex-1">
-                                    <h4 class="font-semibold text-gray-900">
-                                        <?= htmlspecialchars($submission['assignment_title']) ?>
-                                    </h4>
-                                    <p class="text-sm text-gray-600 mt-1">
-                                        <?= htmlspecialchars($submission['course_title']) ?>
-                                    </p>
-                                    <p class="text-sm text-gray-500 mt-1">
-                                        <i class="fas fa-user mr-1"></i>
-                                        <?= htmlspecialchars($submission['first_name'] . ' ' . $submission['last_name']) ?>
-                                    </p>
-                                    <p class="text-xs text-gray-400 mt-1">
-                                        <i class="fas fa-clock mr-1"></i>
-                                        Submitted <?= timeAgo($submission['submitted_at']) ?>
-                                    </p>
+                    <div class="divide-y divide-gray-100">
+                        <?php foreach (array_slice($pendingAssignments, 0, 3) as $submission): 
+                            $isLate = $submission['due_date'] && strtotime($submission['submitted_at']) > strtotime($submission['due_date']);
+                        ?>
+                        <div class="p-5 hover:bg-gray-50/50 transition">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex items-start gap-3">
+                                    <img src="<?= getGravatar($submission['email']) ?>" class="w-10 h-10 rounded-full">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900"><?= htmlspecialchars($submission['assignment_title']) ?></h4>
+                                        <p class="text-sm text-gray-500"><?= htmlspecialchars($submission['course_title']) ?></p>
+                                        <div class="flex items-center gap-3 mt-1 text-sm">
+                                            <span class="text-gray-600">
+                                                <i class="fas fa-user mr-1"></i>
+                                                <?= htmlspecialchars($submission['first_name'] . ' ' . $submission['last_name']) ?>
+                                            </span>
+                                            <span class="text-gray-400">
+                                                <i class="fas fa-clock mr-1"></i>
+                                                <?= timeAgo($submission['submitted_at']) ?>
+                                            </span>
+                                            <?php if ($isLate): ?>
+                                            <span class="text-red-500 text-xs font-medium">
+                                                <i class="fas fa-exclamation-circle mr-1"></i>Late
+                                            </span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
                                 </div>
                                 <a href="<?= url('instructor/assignments.php?submission=' . $submission['id']) ?>"
-                                   class="px-4 py-2 bg-orange-50 text-orange-600 rounded-md hover:bg-orange-100 transition text-sm font-medium">
-                                    <i class="fas fa-check-circle mr-1"></i>Review
+                                   class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition text-sm font-medium whitespace-nowrap">
+                                    <i class="fas fa-check-circle mr-1"></i>Grade
                                 </a>
                             </div>
                         </div>
                         <?php endforeach; ?>
                     </div>
+                    <?php if (count($pendingAssignments) > 3): ?>
+                    <div class="px-6 py-4 bg-gray-50 text-center">
+                        <a href="<?= url('instructor/assignments.php') ?>" class="text-sm font-medium text-primary-600 hover:text-primary-700">
+                            View all <?= count($pendingAssignments) ?> pending submissions <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                    <?php endif; ?>
                 </div>
                 <?php endif; ?>
+
             </div>
 
-            <!-- Sidebar -->
-            <div class="lg:col-span-1 space-y-6">
+            <!-- Sidebar Column -->
+            <div class="space-y-8">
 
-                <!-- Recent Enrollments -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-900">Recent Enrollments</h3>
+                <!-- Upcoming Live Sessions -->
+                <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-gray-100">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center mr-3">
+                                <i class="fas fa-video text-red-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">Upcoming Live Sessions</h3>
+                                <p class="text-sm text-gray-500">Your scheduled classes</p>
+                            </div>
+                        </div>
                     </div>
-                    <?php if (empty($recentEnrollments)): ?>
-                    <div class="p-6 text-center text-gray-500">
-                        <i class="fas fa-user-plus text-3xl mb-2"></i>
-                        <p class="text-sm">No enrollments yet</p>
+                    
+                    <?php if (empty($upcomingSessions)): ?>
+                    <div class="p-8 text-center">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-calendar text-gray-400 text-xl"></i>
+                        </div>
+                        <p class="text-gray-500 text-sm">No upcoming sessions</p>
+                        <a href="<?= url('instructor/live-sessions.php') ?>" class="text-primary-600 text-sm font-medium mt-2 inline-block">
+                            Schedule one now
+                        </a>
                     </div>
                     <?php else: ?>
-                    <div class="divide-y divide-gray-200">
-                        <?php foreach (array_slice($recentEnrollments, 0, 5) as $enrollment): ?>
-                        <div class="p-4">
-                            <p class="font-medium text-gray-900 text-sm">
-                                <?= htmlspecialchars($enrollment['first_name'] . ' ' . $enrollment['last_name']) ?>
-                            </p>
-                            <p class="text-xs text-gray-600 mt-1">
-                                <?= htmlspecialchars($enrollment['course_title']) ?>
-                            </p>
-                            <p class="text-xs text-gray-400 mt-1">
-                                <i class="fas fa-clock mr-1"></i>
-                                <?= timeAgo($enrollment['enrolled_at']) ?>
-                            </p>
+                    <div class="divide-y divide-gray-100">
+                        <?php foreach ($upcomingSessions as $session): 
+                            $startTime = new DateTime($session['scheduled_start_time']);
+                            $now = new DateTime();
+                            $isLive = $session['status'] === 'live' || ($startTime <= $now && $session['status'] !== 'ended');
+                        ?>
+                        <div class="p-5 hover:bg-gray-50/50 transition">
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 text-center min-w-[3.5rem]">
+                                    <div class="text-xs font-semibold text-primary-600 uppercase"><?= $startTime->format('M') ?></div>
+                                    <div class="text-2xl font-bold text-gray-900"><?= $startTime->format('j') ?></div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-medium text-gray-900 truncate"><?= htmlspecialchars($session['lesson_title']) ?></h4>
+                                    <p class="text-sm text-gray-500 truncate"><?= htmlspecialchars($session['course_title']) ?></p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-xs text-gray-500">
+                                            <i class="far fa-clock mr-1"></i><?= $startTime->format('g:i A') ?> (<?= $session['duration_minutes'] ?> min)
+                                        </span>
+                                        <?php if ($isLive): ?>
+                                        <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full animate-pulse">
+                                            LIVE
+                                        </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <a href="<?= url('live-session.php?session_id=' . $session['id']) ?>" 
+                                   target="_blank"
+                                   class="flex-shrink-0 w-10 h-10 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center hover:bg-primary-200 transition">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                            </div>
                         </div>
                         <?php endforeach; ?>
+                    </div>
+                    <div class="px-6 py-4 bg-gray-50">
+                        <a href="<?= url('instructor/live-sessions.php') ?>" class="text-sm font-medium text-primary-600 hover:text-primary-700 text-center block">
+                            Manage all sessions
+                        </a>
                     </div>
                     <?php endif; ?>
                 </div>
 
-                <!-- Recent Reviews -->
-                <?php if (!empty($recentReviews)): ?>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-900">Recent Reviews</h3>
-                    </div>
-                    <div class="divide-y divide-gray-200">
-                        <?php foreach ($recentReviews as $review): ?>
-                        <div class="p-4">
-                            <div class="flex items-center mb-2">
-                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <i class="fas fa-star <?= $i <= $review['rating'] ? 'text-yellow-400' : 'text-gray-300' ?> text-sm"></i>
-                                <?php endfor; ?>
+                <!-- Recent Enrollments -->
+                <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                                    <i class="fas fa-user-plus text-green-600"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-gray-900">Recent Enrollments</h3>
                             </div>
-                            <p class="text-sm text-gray-700 mb-2 line-clamp-2">
-                                "<?= htmlspecialchars($review['review_text']) ?>"
-                            </p>
-                            <p class="text-xs text-gray-500">
-                                - <?= htmlspecialchars($review['first_name']) ?> on <?= htmlspecialchars($review['course_title']) ?>
-                            </p>
+                        </div>
+                    </div>
+                    
+                    <?php if (empty($recentEnrollments)): ?>
+                    <div class="p-8 text-center">
+                        <p class="text-gray-500 text-sm">No enrollments yet</p>
+                    </div>
+                    <?php else: ?>
+                    <div class="divide-y divide-gray-100">
+                        <?php foreach ($recentEnrollments as $enrollment): ?>
+                        <div class="p-4 hover:bg-gray-50/50 transition">
+                            <div class="flex items-center gap-3">
+                                <img src="<?= getGravatar($enrollment['email']) ?>" class="w-10 h-10 rounded-full">
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-gray-900 text-sm truncate">
+                                        <?= htmlspecialchars($enrollment['first_name'] . ' ' . $enrollment['last_name']) ?>
+                                    </p>
+                                    <p class="text-xs text-gray-500 truncate"><?= htmlspecialchars($enrollment['course_title']) ?></p>
+                                </div>
+                                <span class="text-xs text-gray-400 whitespace-nowrap">
+                                    <?= timeAgo($enrollment['enrolled_at']) ?>
+                                </span>
+                            </div>
                         </div>
                         <?php endforeach; ?>
                     </div>
+                    <div class="px-6 py-4 bg-gray-50">
+                        <a href="<?= url('instructor/students.php') ?>" class="text-sm font-medium text-primary-600 hover:text-primary-700 text-center block">
+                            View all students
+                        </a>
+                    </div>
+                    <?php endif; ?>
                 </div>
-                <?php endif; ?>
 
-                <!-- Quick Actions -->
-                <div class="bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg shadow-md p-6 text-white">
-                    <h3 class="text-lg font-bold mb-4">Quick Actions</h3>
+                <!-- Quick Links Card -->
+                <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-white">
+                    <h3 class="text-lg font-bold mb-4">
+                        <i class="fas fa-bolt text-yellow-400 mr-2"></i>Quick Links
+                    </h3>
                     <div class="space-y-3">
-                        <a href="<?= url('instructor/courses/create.php') ?>"
-                           class="block w-full px-4 py-3 bg-white/20 hover:bg-white/30 rounded-lg transition text-center backdrop-blur-sm">
-                            <i class="fas fa-plus mr-2"></i>Create New Course
+                        <a href="<?= url('instructor/courses/create.php') ?>" 
+                           class="flex items-center p-3 bg-white/10 rounded-xl hover:bg-white/20 transition">
+                            <i class="fas fa-plus w-6"></i>
+                            <span>Create New Course</span>
+                            <i class="fas fa-arrow-right ml-auto text-sm opacity-50"></i>
                         </a>
-                        <a href="<?= url('instructor/assignments.php') ?>"
-                           class="block w-full px-4 py-3 bg-white/20 hover:bg-white/30 rounded-lg transition text-center backdrop-blur-sm">
-                            <i class="fas fa-tasks mr-2"></i>Review Assignments
+                        <a href="<?= url('instructor/quizzes.php') ?>" 
+                           class="flex items-center p-3 bg-white/10 rounded-xl hover:bg-white/20 transition">
+                            <i class="fas fa-question-circle w-6"></i>
+                            <span>Manage Quizzes</span>
+                            <i class="fas fa-arrow-right ml-auto text-sm opacity-50"></i>
                         </a>
-                        <a href="<?= url('instructor/students.php') ?>"
-                           class="block w-full px-4 py-3 bg-white/20 hover:bg-white/30 rounded-lg transition text-center backdrop-blur-sm">
-                            <i class="fas fa-users mr-2"></i>View Students
-                        </a>
-                        <a href="<?= url('instructor/analytics.php') ?>"
-                           class="block w-full px-4 py-3 bg-white/20 hover:bg-white/30 rounded-lg transition text-center backdrop-blur-sm">
-                            <i class="fas fa-chart-line mr-2"></i>View Analytics
+                        <a href="<?= url('instructor/analytics.php') ?>" 
+                           class="flex items-center p-3 bg-white/10 rounded-xl hover:bg-white/20 transition">
+                            <i class="fas fa-chart-line w-6"></i>
+                            <span>View Analytics</span>
+                            <i class="fas fa-arrow-right ml-auto text-sm opacity-50"></i>
                         </a>
                     </div>
                 </div>
+
             </div>
         </div>
 
     </div>
 </div>
-
-<?php
-// Debug panel output
-if ($DEBUG_MODE) {
-    $debug_data['performance'] = [
-        'execution_time' => round((microtime(true) - $page_start_time) * 1000, 2) . 'ms',
-        'memory_used' => round((memory_get_usage() - $page_start_memory) / 1024, 2) . 'KB',
-        'peak_memory' => round(memory_get_peak_usage() / 1024 / 1024, 2) . 'MB'
-    ];
-?>
-<!-- Debug Panel -->
-<div id="debug-panel" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white text-xs z-50 max-h-96 overflow-y-auto" style="display: none;">
-    <div class="flex items-center justify-between p-2 bg-gray-800 sticky top-0">
-        <span class="font-bold"><i class="fas fa-bug mr-2"></i>Debug Panel - <?= $debug_data['page'] ?></span>
-        <div class="flex items-center space-x-4">
-            <span class="text-green-400">Time: <?= $debug_data['performance']['execution_time'] ?></span>
-            <span class="text-blue-400">Memory: <?= $debug_data['performance']['memory_used'] ?></span>
-            <button onclick="document.getElementById('debug-panel').style.display='none'" class="text-red-400 hover:text-red-300">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    </div>
-    <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div>
-            <h4 class="font-bold text-yellow-400 mb-2">User Info</h4>
-            <pre class="bg-gray-800 p-2 rounded overflow-x-auto"><?= json_encode($debug_data['user'] ?? [], JSON_PRETTY_PRINT) ?></pre>
-        </div>
-        <div>
-            <h4 class="font-bold text-yellow-400 mb-2">Data Counts</h4>
-            <pre class="bg-gray-800 p-2 rounded overflow-x-auto"><?= json_encode($debug_data['data'] ?? [], JSON_PRETTY_PRINT) ?></pre>
-        </div>
-        <?php if (!empty($debug_data['errors'])): ?>
-        <div>
-            <h4 class="font-bold text-red-400 mb-2">Errors (<?= count($debug_data['errors']) ?>)</h4>
-            <pre class="bg-gray-800 p-2 rounded overflow-x-auto text-red-300"><?= json_encode($debug_data['errors'], JSON_PRETTY_PRINT) ?></pre>
-        </div>
-        <?php endif; ?>
-    </div>
-</div>
-<button onclick="document.getElementById('debug-panel').style.display = document.getElementById('debug-panel').style.display === 'none' ? 'block' : 'none'"
-        class="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 z-50" title="Toggle Debug Panel">
-    <i class="fas fa-bug"></i>
-</button>
-<?php } ?>
 
 <?php require_once '../../src/templates/instructor-footer.php'; ?>

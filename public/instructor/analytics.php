@@ -1,58 +1,20 @@
 <?php
 /**
  * Instructor - Analytics Dashboard
- * View course performance and student engagement metrics
+ * Enhanced course performance and student engagement metrics
  */
 
-// Debug initialization
-$DEBUG_MODE = defined('DEBUG_MODE') ? $DEBUG_MODE : ($_ENV['DEBUG_MODE'] ?? false);
-$page_start_time = microtime(true);
-$page_start_memory = memory_get_usage();
-$debug_data = [
-    'page' => 'instructor/analytics.php',
-    'timestamp' => date('Y-m-d H:i:s'),
-    'queries' => [],
-    'errors' => []
-];
-
-// Error handler for debugging
-if ($DEBUG_MODE) {
-    set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$debug_data) {
-        $debug_data['errors'][] = [
-            'type' => $errno,
-            'message' => $errstr,
-            'file' => $errfile,
-            'line' => $errline
-        ];
-        return false;
-    });
-}
-
+require_once '../../src/bootstrap.php';
 require_once '../../src/middleware/instructor-only.php';
 require_once '../../src/classes/Course.php';
 require_once '../../src/classes/Statistics.php';
 
-// Debug: Log user info
-if ($DEBUG_MODE) {
-    $debug_data['user'] = [
-        'id' => $_SESSION['user_id'] ?? null,
-        'email' => $_SESSION['user_email'] ?? null,
-        'role' => $_SESSION['user_role'] ?? null
-    ];
-}
-
 $db = Database::getInstance();
 $userId = currentUserId();
 
-// Get instructor ID from instructors table (instructor_id in courses references instructors.id, not users.id)
+// Get instructor ID
 $instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
 $instructorId = $instructorRecord ? $instructorRecord['id'] : $userId;
-
-// Debug: Log instructor ID
-if ($DEBUG_MODE) {
-    $debug_data['user_id'] = $userId;
-    $debug_data['instructor_id'] = $instructorId;
-}
 
 // Get instructor stats
 $stats = Statistics::getInstructorStats($instructorId);
@@ -69,7 +31,7 @@ $courseMetrics = $db->fetchAll("
     LEFT JOIN enrollments e ON c.id = e.course_id
     LEFT JOIN course_reviews cr ON c.id = cr.course_id
     WHERE c.instructor_id = ?
-    GROUP BY c.id, c.title, c.slug, c.status, c.price, c.created_at
+    GROUP BY c.id
     ORDER BY total_enrollments DESC
 ", [$instructorId]);
 
@@ -85,7 +47,7 @@ $enrollmentTrend = $db->fetchAll("
     ORDER BY month ASC
 ", [$instructorId]);
 
-// Calculate revenue from enrollments
+// Calculate revenue
 $revenueData = $db->fetchOne("
     SELECT
         COALESCE(SUM(c.price), 0) as total_revenue,
@@ -95,202 +57,334 @@ $revenueData = $db->fetchOne("
     WHERE c.instructor_id = ? AND e.payment_status = 'completed'
 ", [$instructorId]);
 
-// Debug: Log analytics data
-if ($DEBUG_MODE) {
-    $debug_data['data'] = [
-        'stats' => $stats,
-        'course_metrics_count' => count($courseMetrics),
-        'enrollment_trend_count' => count($enrollmentTrend),
-        'revenue' => $revenueData
-    ];
-}
+// Get top performing students
+$topStudents = $db->fetchAll("
+    SELECT u.first_name, u.last_name, u.email, u.avatar_url,
+           COUNT(DISTINCT e.id) as courses_enrolled,
+           AVG(e.progress) as avg_progress,
+           SUM(CASE WHEN e.enrollment_status = 'Completed' THEN 1 ELSE 0 END) as courses_completed
+    FROM users u
+    JOIN enrollments e ON u.id = e.user_id
+    JOIN courses c ON e.course_id = c.id
+    WHERE c.instructor_id = ?
+    GROUP BY u.id
+    HAVING avg_progress > 50
+    ORDER BY avg_progress DESC, courses_completed DESC
+    LIMIT 5
+", [$instructorId]);
 
-$page_title = 'Analytics - Instructor';
+// Get recent activity
+$recentActivity = $db->fetchAll("
+    (SELECT 'enrollment' as type, e.enrolled_at as activity_date, 
+            u.first_name, u.last_name, c.title as course_title, NULL as score
+     FROM enrollments e
+     JOIN users u ON e.user_id = u.id
+     JOIN courses c ON e.course_id = c.id
+     WHERE c.instructor_id = ?)
+    UNION ALL
+    (SELECT 'completion' as type, e.completed_at as activity_date,
+            u.first_name, u.last_name, c.title as course_title, NULL as score
+     FROM enrollments e
+     JOIN users u ON e.user_id = u.id
+     JOIN courses c ON e.course_id = c.id
+     WHERE c.instructor_id = ? AND e.completed_at IS NOT NULL)
+    UNION ALL
+    (SELECT 'quiz' as type, qa.completed_at as activity_date,
+            u.first_name, u.last_name, q.title as course_title, qa.score
+     FROM quiz_attempts qa
+     JOIN students st ON qa.student_id = st.id
+     JOIN users u ON st.user_id = u.id
+     JOIN quizzes q ON qa.quiz_id = q.id
+     JOIN lessons l ON q.lesson_id = l.id
+     JOIN modules m ON l.module_id = m.id
+     JOIN courses c ON m.course_id = c.id
+     WHERE c.instructor_id = ? AND qa.status = 'completed')
+    ORDER BY activity_date DESC
+    LIMIT 10
+", [$instructorId, $instructorId, $instructorId]);
+
+$page_title = 'Analytics';
 require_once '../../src/templates/instructor-header.php';
 ?>
 
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-50/50 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <div class="mb-6">
-            <h1 class="text-3xl font-bold text-gray-900">
-                <i class="fas fa-chart-line text-primary-600 mr-3"></i>Analytics
-            </h1>
-            <p class="text-gray-600 mt-2">Track your course performance and student engagement</p>
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
+                <p class="text-gray-500 mt-1">Track your course performance and student engagement</p>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <button onclick="window.print()" 
+                        class="inline-flex items-center px-4 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition">
+                    <i class="fas fa-print mr-2"></i>Print Report
+                </button>
+            </div>
         </div>
 
         <!-- Overview Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-600">Total Courses</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-1"><?= $stats['total_courses'] ?></p>
+                        <p class="text-sm text-gray-500">Total Courses</p>
+                        <p class="text-2xl font-bold text-gray-900"><?= $stats['total_courses'] ?? 0 ?></p>
                     </div>
-                    <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-book text-blue-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-book text-blue-500"></i>
                     </div>
                 </div>
             </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-600">Total Students</p>
-                        <p class="text-3xl font-bold text-purple-600 mt-1"><?= $stats['total_students'] ?></p>
+                        <p class="text-sm text-gray-500">Total Students</p>
+                        <p class="text-2xl font-bold text-purple-600"><?= $stats['total_students'] ?? 0 ?></p>
                     </div>
-                    <div class="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-users text-purple-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-users text-purple-500"></i>
                     </div>
                 </div>
             </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-600">Total Revenue</p>
-                        <p class="text-3xl font-bold text-green-600 mt-1">K<?= number_format($revenueData['total_revenue'] ?? 0, 2) ?></p>
+                        <p class="text-sm text-gray-500">Total Revenue</p>
+                        <p class="text-2xl font-bold text-green-600">K<?= number_format($revenueData['total_revenue'] ?? 0, 0) ?></p>
                     </div>
-                    <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-wallet text-green-500"></i>
                     </div>
                 </div>
             </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-600">Avg Rating</p>
-                        <p class="text-3xl font-bold text-yellow-600 mt-1">
-                            <?= number_format($stats['avg_rating'] ?? 0, 1) ?>
-                            <i class="fas fa-star text-lg"></i>
-                        </p>
+                        <p class="text-sm text-gray-500">Avg Rating</p>
+                        <p class="text-2xl font-bold text-yellow-600"><?= number_format($stats['avg_rating'] ?? 0, 1) ?></p>
                     </div>
-                    <div class="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-star text-yellow-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-star text-yellow-500"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <!-- Enrollment Trend Chart -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-lg font-bold text-gray-900 mb-4">Enrollment Trend (6 Months)</h2>
-                <div style="position: relative; height: 250px; width: 100%;">
-                    <canvas id="enrollmentChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Quick Stats -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-lg font-bold text-gray-900 mb-4">Performance Summary</h2>
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
-                            <span class="text-gray-700">Published Courses</span>
-                        </div>
-                        <span class="text-xl font-bold text-gray-900"><?= $stats['published_courses'] ?></span>
-                    </div>
-
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-graduation-cap text-purple-500 text-xl mr-3"></i>
-                            <span class="text-gray-700">Total Enrollments</span>
-                        </div>
-                        <span class="text-xl font-bold text-gray-900"><?= $stats['total_enrollments'] ?></span>
-                    </div>
-
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-trophy text-yellow-500 text-xl mr-3"></i>
-                            <span class="text-gray-700">Course Completions</span>
-                        </div>
-                        <span class="text-xl font-bold text-gray-900"><?= $stats['completed_enrollments'] ?? 0 ?></span>
-                    </div>
-
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-money-bill-wave text-green-500 text-xl mr-3"></i>
-                            <span class="text-gray-700">This Month Revenue</span>
-                        </div>
-                        <span class="text-xl font-bold text-gray-900">K<?= number_format($revenueData['monthly_revenue'] ?? 0, 2) ?></span>
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            <!-- Main Content -->
+            <div class="xl:col-span-2 space-y-8">
+                
+                <!-- Enrollment Trend Chart -->
+                <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">Enrollment Trend (6 Months)</h2>
+                    <div class="h-64">
+                        <canvas id="enrollmentChart"></canvas>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Course Performance Table -->
-        <div class="bg-white rounded-lg shadow overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-lg font-bold text-gray-900">Course Performance</h2>
+                <!-- Course Performance Table -->
+                <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-gray-100">
+                        <h2 class="text-lg font-bold text-gray-900">Course Performance</h2>
+                    </div>
+
+                    <?php if (empty($courseMetrics)): ?>
+                    <div class="p-12 text-center">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-bar text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No Courses Yet</h3>
+                        <p class="text-gray-500">Create your first course to see analytics.</p>
+                    </div>
+                    <?php else: ?>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-50 border-b border-gray-100">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Course</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Enrollments</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Completions</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Progress</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <?php foreach ($courseMetrics as $course): ?>
+                                <tr class="hover:bg-gray-50/50 transition">
+                                    <td class="px-6 py-4">
+                                        <a href="<?= url('instructor/course-edit.php?id=' . $course['id']) ?>" 
+                                           class="font-medium text-primary-600 hover:text-primary-700">
+                                            <?= htmlspecialchars($course['title']) ?>
+                                        </a>
+                                        <span class="ml-2 px-2 py-0.5 rounded text-xs <?= $course['status'] == 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' ?>">
+                                            <?= ucfirst($course['status']) ?>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 font-semibold"><?= $course['total_enrollments'] ?></td>
+                                    <td class="px-6 py-4">
+                                        <span class="text-green-600 font-medium"><?= $course['completions'] ?></span>
+                                        <?php if ($course['total_enrollments'] > 0): ?>
+                                        <span class="text-xs text-gray-400 ml-1">
+                                            (<?= round(($course['completions'] / $course['total_enrollments']) * 100) ?>%)
+                                        </span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-16 bg-gray-200 rounded-full h-2">
+                                                <div class="bg-primary-500 h-2 rounded-full" style="width: <?= round($course['avg_progress'] ?? 0) ?>"></div>
+                                            </div>
+                                            <span class="text-sm"><?= round($course['avg_progress'] ?? 0) ?>%</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <?php if ($course['review_count'] > 0): ?>
+                                            <div class="flex items-center">
+                                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                                <span class="font-medium"><?= number_format($course['avg_rating'], 1) ?></span>
+                                                <span class="text-gray-400 text-sm ml-1">(<?= $course['review_count'] ?>)</span>
+                                            </div>
+                                        <?php else: ?>
+                                            <span class="text-gray-400 text-sm">No reviews</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
             </div>
 
-            <?php if (empty($courseMetrics)): ?>
-            <div class="p-12 text-center">
-                <i class="fas fa-chart-bar text-gray-300 text-6xl mb-4"></i>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">No Courses Yet</h3>
-                <p class="text-gray-600">Create your first course to see analytics.</p>
-                <a href="<?= url('instructor/courses/create.php') ?>" class="mt-4 inline-block px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">
-                    <i class="fas fa-plus mr-2"></i>Create Course
-                </a>
-            </div>
-            <?php else: ?>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Enrollments</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Completions</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Avg Progress</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <?php foreach ($courseMetrics as $course): ?>
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">
-                                <a href="<?= url('instructor/course-edit.php?id=' . $course['id']) ?>" class="text-primary-600 hover:text-primary-900 font-medium">
-                                    <?= htmlspecialchars($course['title']) ?>
-                                </a>
-                            </td>
-                            <td class="px-6 py-4">
-                                <?php if ($course['status'] == 'published'): ?>
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Published</span>
-                                <?php else: ?>
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800"><?= ucfirst($course['status']) ?></span>
-                                <?php endif; ?>
-                            </td>
-                            <td class="px-6 py-4 font-medium"><?= $course['total_enrollments'] ?></td>
-                            <td class="px-6 py-4"><?= $course['completions'] ?></td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                                        <div class="bg-primary-600 h-2 rounded-full" style="width: <?= round($course['avg_progress'] ?? 0) ?>%"></div>
-                                    </div>
-                                    <span class="text-sm"><?= round($course['avg_progress'] ?? 0) ?>%</span>
+            <!-- Sidebar -->
+            <div class="space-y-8">
+                
+                <!-- Performance Summary -->
+                <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">Performance Summary</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-green-50 rounded-xl">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                                    <i class="fas fa-check-circle text-green-600"></i>
                                 </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <?php if ($course['review_count'] > 0): ?>
-                                    <div class="flex items-center">
-                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                        <span class="font-medium"><?= number_format($course['avg_rating'], 1) ?></span>
-                                        <span class="text-gray-500 text-sm ml-1">(<?= $course['review_count'] ?>)</span>
-                                    </div>
-                                <?php else: ?>
-                                    <span class="text-gray-400">No reviews</span>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
+                                <span class="text-gray-700 font-medium">Published Courses</span>
+                            </div>
+                            <span class="text-xl font-bold text-gray-900"><?= $stats['published_courses'] ?? 0 ?></span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-purple-50 rounded-xl">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
+                                    <i class="fas fa-graduation-cap text-purple-600"></i>
+                                </div>
+                                <span class="text-gray-700 font-medium">Total Enrollments</span>
+                            </div>
+                            <span class="text-xl font-bold text-gray-900"><?= $stats['total_enrollments'] ?? 0 ?></span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                                    <i class="fas fa-trophy text-blue-600"></i>
+                                </div>
+                                <span class="text-gray-700 font-medium">Completions</span>
+                            </div>
+                            <span class="text-xl font-bold text-gray-900"><?= $stats['completed_enrollments'] ?? 0 ?></span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-orange-50 rounded-xl">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mr-3">
+                                    <i class="fas fa-money-bill-wave text-orange-600"></i>
+                                </div>
+                                <span class="text-gray-700 font-medium">Monthly Revenue</span>
+                            </div>
+                            <span class="text-xl font-bold text-gray-900">K<?= number_format($revenueData['monthly_revenue'] ?? 0, 0) ?></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Students -->
+                <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-gray-100">
+                        <h3 class="text-lg font-bold text-gray-900">Top Students</h3>
+                    </div>
+                    <?php if (empty($topStudents)): ?>
+                    <div class="p-8 text-center">
+                        <p class="text-gray-500 text-sm">No student data yet</p>
+                    </div>
+                    <?php else: ?>
+                    <div class="divide-y divide-gray-100">
+                        <?php foreach ($topStudents as $student): ?>
+                        <div class="p-4 hover:bg-gray-50/50 transition">
+                            <div class="flex items-center gap-3">
+                                <img src="<?= getGravatar($student['email']) ?>" class="w-10 h-10 rounded-full">
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-gray-900 text-sm truncate">
+                                        <?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?>
+                                    </p>
+                                    <p class="text-xs text-gray-500"><?= $student['courses_completed'] ?> completed</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm font-bold text-primary-600"><?= round($student['avg_progress']) ?>%</span>
+                                </div>
+                            </div>
+                        </div>
                         <?php endforeach; ?>
-                    </tbody>
-                </table>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-gray-100">
+                        <h3 class="text-lg font-bold text-gray-900">Recent Activity</h3>
+                    </div>
+                    <?php if (empty($recentActivity)): ?>
+                    <div class="p-8 text-center">
+                        <p class="text-gray-500 text-sm">No recent activity</p>
+                    </div>
+                    <?php else: ?>
+                    <div class="divide-y divide-gray-100 max-h-80 overflow-y-auto">
+                        <?php foreach ($recentActivity as $activity): 
+                            $icons = [
+                                'enrollment' => ['fa-user-plus', 'text-blue-500', 'bg-blue-100'],
+                                'completion' => ['fa-graduation-cap', 'text-green-500', 'bg-green-100'],
+                                'quiz' => ['fa-question-circle', 'text-purple-500', 'bg-purple-100']
+                            ];
+                            $icon = $icons[$activity['type']] ?? $icons['enrollment'];
+                        ?>
+                        <div class="p-4 hover:bg-gray-50/50 transition">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 <?= $icon[2] ?> rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas <?= $icon[0] ?> <?= $icon[1] ?> text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm text-gray-900">
+                                        <span class="font-medium"><?= htmlspecialchars($activity['first_name'] . ' ' . $activity['last_name']) ?></span>
+                                        <?php if ($activity['type'] === 'enrollment'): ?>
+                                            enrolled in <span class="font-medium"><?= htmlspecialchars($activity['course_title']) ?></span>
+                                        <?php elseif ($activity['type'] === 'completion'): ?>
+                                            completed <span class="font-medium"><?= htmlspecialchars($activity['course_title']) ?></span>
+                                        <?php elseif ($activity['type'] === 'quiz'): ?>
+                                            scored <?= round($activity['score'], 1) ?>% on <span class="font-medium"><?= htmlspecialchars($activity['course_title']) ?></span>
+                                        <?php endif; ?>
+                                    </p>
+                                    <p class="text-xs text-gray-400 mt-1"><?= timeAgo($activity['activity_date']) ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
             </div>
-            <?php endif; ?>
         </div>
 
     </div>
@@ -299,83 +393,63 @@ require_once '../../src/templates/instructor-header.php';
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const chartElement = document.getElementById('enrollmentChart');
-    if (!chartElement) return;
+    const ctx = document.getElementById('enrollmentChart');
+    if (!ctx) return;
 
     const enrollmentData = <?= json_encode($enrollmentTrend) ?>;
 
     if (enrollmentData.length === 0) {
-        chartElement.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">No enrollment data available</div>';
+        ctx.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">No enrollment data available</div>';
         return;
     }
 
-    new Chart(chartElement.getContext('2d'), {
+    new Chart(ctx, {
         type: 'line',
         data: {
-            labels: enrollmentData.map(d => d.month),
+            labels: enrollmentData.map(d => {
+                const [year, month] = d.month.split('-');
+                return new Date(year, month - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+            }),
             datasets: [{
                 label: 'Enrollments',
                 data: enrollmentData.map(d => d.enrollments),
-                borderColor: '#2E70DA',
-                backgroundColor: 'rgba(46, 112, 218, 0.1)',
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 fill: true,
-                tension: 0.4
+                tension: 0.4,
+                borderWidth: 2,
+                pointBackgroundColor: '#3B82F6',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { 
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1F2937',
+                    padding: 12,
+                    cornerRadius: 8,
+                    displayColors: false
+                }
+            },
             scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                y: { 
+                    beginAtZero: true, 
+                    ticks: { stepSize: 1 },
+                    grid: { color: '#F3F4F6' }
+                },
+                x: {
+                    grid: { display: false }
+                }
             }
         }
     });
 });
 </script>
-
-<?php
-// Debug panel output
-if ($DEBUG_MODE) {
-    $debug_data['performance'] = [
-        'execution_time' => round((microtime(true) - $page_start_time) * 1000, 2) . 'ms',
-        'memory_used' => round((memory_get_usage() - $page_start_memory) / 1024, 2) . 'KB',
-        'peak_memory' => round(memory_get_peak_usage() / 1024 / 1024, 2) . 'MB'
-    ];
-?>
-<!-- Debug Panel -->
-<div id="debug-panel" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white text-xs z-50 max-h-96 overflow-y-auto" style="display: none;">
-    <div class="flex items-center justify-between p-2 bg-gray-800 sticky top-0">
-        <span class="font-bold"><i class="fas fa-bug mr-2"></i>Debug Panel - <?= $debug_data['page'] ?></span>
-        <div class="flex items-center space-x-4">
-            <span class="text-green-400">Time: <?= $debug_data['performance']['execution_time'] ?></span>
-            <span class="text-blue-400">Memory: <?= $debug_data['performance']['memory_used'] ?></span>
-            <button onclick="document.getElementById('debug-panel').style.display='none'" class="text-red-400 hover:text-red-300">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    </div>
-    <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div>
-            <h4 class="font-bold text-yellow-400 mb-2">User Info</h4>
-            <pre class="bg-gray-800 p-2 rounded overflow-x-auto"><?= json_encode($debug_data['user'] ?? [], JSON_PRETTY_PRINT) ?></pre>
-        </div>
-        <div>
-            <h4 class="font-bold text-yellow-400 mb-2">Analytics Data</h4>
-            <pre class="bg-gray-800 p-2 rounded overflow-x-auto"><?= json_encode($debug_data['data'] ?? [], JSON_PRETTY_PRINT) ?></pre>
-        </div>
-        <?php if (!empty($debug_data['errors'])): ?>
-        <div>
-            <h4 class="font-bold text-red-400 mb-2">Errors (<?= count($debug_data['errors']) ?>)</h4>
-            <pre class="bg-gray-800 p-2 rounded overflow-x-auto text-red-300"><?= json_encode($debug_data['errors'], JSON_PRETTY_PRINT) ?></pre>
-        </div>
-        <?php endif; ?>
-    </div>
-</div>
-<button onclick="document.getElementById('debug-panel').style.display = document.getElementById('debug-panel').style.display === 'none' ? 'block' : 'none'"
-        class="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 z-50" title="Toggle Debug Panel">
-    <i class="fas fa-bug"></i>
-</button>
-<?php } ?>
 
 <?php require_once '../../src/templates/instructor-footer.php'; ?>

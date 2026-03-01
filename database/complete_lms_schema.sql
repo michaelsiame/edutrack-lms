@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 18, 2026 at 01:45 AM
+-- Generation Time: Feb 24, 2026 at 09:29 AM
 -- Server version: 11.8.3-MariaDB-log
 -- PHP Version: 7.2.34
 
@@ -227,6 +227,14 @@ CREATE TABLE `contacts` (
   `is_read` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `contacts`
+--
+
+INSERT INTO `contacts` (`id`, `name`, `email`, `phone`, `subject`, `message`, `is_read`, `created_at`) VALUES
+(1, 'Donaldvem', 'no.reply.MarcusMaes@gmail.com', '87647721245', 'general', 'Greetings! edutrackzambia.com \r\n \r\nDid you know that it is possible to send appeal perfectly lawfully and wholly? \r\nWhen such letters are sent, no personal data is used, and messages are sent to forms specifically designed to receive messages and appeals securely. Messages sent with Feedback Forms are not regarded as spam, as they are seen as crucial. \r\nWe offer you the chance to try out our service for free. \r\nWe are able to transmit up to 50,000 messages in your name. \r\n \r\nThe cost of sending one million messages is $59. \r\n \r\nThis message was automatically generated. \r\n \r\nContact us. \r\nTelegram - https://t.me/FeedbackFormEU \r\nSkype  live:contactform_18 \r\nWhatsApp - +375259112693 \r\nWhatsApp  https://wa.me/+375259112693 \r\nWe only use chat for communication.', 0, '2026-02-18 02:46:24'),
+(2, 'AndrewTok', 'no.reply.Lars-OlofMoore@gmail.com', '81795162781', 'general', 'Hey there! edutrackzambia.com \r\n \r\nDid you know that it is possible to send message whollСѓ in lawful manner? \r\nWhen such commercial offers are sent, no personal data is used and messages are sent to forms that are specifically designed to receive messages and appeals in an efficient manner. Feedback Forms guarantee that messages won\'t be marked as spam, since they are considered important. \r\nWe offer you the chance to try out our service for free. \r\nOn your behalf, we can deliver up to 50,000 messages. \r\n \r\nThe cost of sending one million messages is $59. \r\n \r\nThis letter is automatically generated. \r\n \r\nContact us. \r\nTelegram - https://t.me/FeedbackFormEU \r\nWhatsApp - +375259112693 \r\nWhatsApp  https://wa.me/+375259112693 \r\nWe only use chat for communication.', 0, '2026-02-20 18:15:42');
 
 -- --------------------------------------------------------
 
@@ -1447,7 +1455,11 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (42, 48, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-04', 0, 0, 0, '2026-02-04 12:42:22', '2026-02-04 12:42:22'),
 (43, 49, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-14', 0, 0, 0, '2026-02-14 02:09:56', '2026-02-14 02:09:56'),
 (44, 50, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-14', 0, 0, 0, '2026-02-14 09:01:12', '2026-02-14 09:01:12'),
-(45, 51, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-17', 0, 0, 0, '2026-02-17 18:48:45', '2026-02-17 18:48:45');
+(45, 51, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-17', 0, 0, 0, '2026-02-17 18:48:45', '2026-02-17 18:48:45'),
+(46, 52, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-18', 0, 0, 0, '2026-02-18 09:13:07', '2026-02-18 09:13:07'),
+(47, 53, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-20', 0, 0, 0, '2026-02-20 11:11:55', '2026-02-20 11:11:55'),
+(48, 54, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-22', 0, 0, 0, '2026-02-22 17:15:58', '2026-02-22 17:15:58'),
+(49, 55, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-23', 0, 0, 0, '2026-02-23 10:27:32', '2026-02-23 10:27:32');
 
 -- --------------------------------------------------------
 
@@ -1592,6 +1604,7 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
+  `google_id` varchar(255) DEFAULT NULL,
   `password_hash` varchar(255) NOT NULL,
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
@@ -1613,36 +1626,40 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `avatar_url`, `status`, `email_verification_token`, `email_verification_expires`, `email_verified`, `last_login`, `last_login_ip`, `failed_login_attempts`, `account_locked_until`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@edutrack.edu', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-01-11 19:07:48', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-01-11 17:07:48'),
-(6, 'michael.siame', 'michael.siame@edutrack.edu', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, '2025-12-25 21:53:14', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 19:53:14'),
-(25, 'taona', 'taona@gmail.com', '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
-(26, 'jaysiame076', 'jaysiame076@gmail.com', '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:32:59', NULL, 0, NULL, '2025-11-23 11:05:46', '2025-12-09 09:32:59'),
-(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2026-01-10 16:11:40', NULL, 0, NULL, '2025-12-04 20:34:20', '2026-01-10 14:11:40'),
-(28, 'it', 'it@witmanmiyande.com', '$2y$10$kbm0yafbxD0Iu0Vk7uZYoOKTaqE1DTV47I7FHEFmeRESglBLmnWve', 'Witman', 'Miyande', '+260976062621', NULL, 'active', NULL, NULL, 0, '2025-12-08 13:07:32', NULL, 0, NULL, '2025-12-05 14:38:37', '2025-12-08 17:45:29'),
-(29, 'edwardmusole76', 'edwardmusole76@gmail.com', '$2y$10$WAgkucanVQ4OuVJtxfZeIuH2gxPk4lH7tTmhKT0I8awfPWiBBakdC', 'Edward', 'Musole', '+260978605960', NULL, 'active', NULL, NULL, 0, '2025-12-29 12:47:56', NULL, 0, NULL, '2025-12-05 14:42:37', '2025-12-29 10:47:56'),
-(30, 'siamem570', 'siamem570@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, '2025-12-25 12:19:17', NULL, 0, NULL, '2025-12-09 11:30:29', '2025-12-25 10:19:17'),
-(31, 'anthony.nampute', 'anthony.nampute@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Anthony', 'Nampute', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
-(32, 'inutu.simasiku', 'inutu.simasiku@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Inutu', 'Simasiku', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
-(33, 'nita.sichimwa', 'nita.sichimwa@edutrack.edu', '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Nita', 'Sichimwa', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
-(34, 'jilowahappy19', 'jilowahappy19@gmail.com', '$2y$10$BsJsXUusPmNBJmhfOOj15uzzlP.rFmjhhG.lKeZDTwcOzW62FFHne', 'Happy', 'Jilowa', '+260760054975', NULL, 'active', NULL, NULL, 0, '2025-12-20 15:22:34', NULL, 0, NULL, '2025-12-20 13:21:55', '2025-12-20 13:22:34'),
-(35, 'unparalleledtvstation2.0', 'unparalleledtvstation2.0@gmail.com', '$2y$10$Uc90KkySyrdk/ALa4SYkRuOybANz/FRsFVcAiLQjrUDgMkGdi9UsW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-12-21 12:57:29', '2025-12-21 12:57:29'),
-(36, 'moseschanda084', 'moseschanda084@gmail.com', '$2y$10$/COC.FYEkun5lNEdR7l1wePpKqi5dvtCRvr9nIXWBN3gZ6/QxZndK', 'Moses', 'Mulunda chanda', '+260971848021', NULL, 'active', NULL, NULL, 0, '2025-12-22 18:20:55', NULL, 0, NULL, '2025-12-22 16:20:20', '2025-12-22 16:20:55'),
-(37, 'sampayainnocent15', 'sampayainnocent15@gmail.com', '$2y$10$smRux7NyqHoywLOV0Djiy.0ydzMqz9JoAMS/5Nwg0RN0AYtA8qM2e', 'Innocent', 'Sampaya', '+260771717517', NULL, 'active', NULL, NULL, 0, '2025-12-23 09:19:00', NULL, 0, NULL, '2025-12-23 07:18:25', '2025-12-23 07:19:00'),
-(38, 'emmanuelgoma6', 'emmanuelgoma6@gmail.com', '$2y$10$G//nDjkNfzXuLGpLa6CnD.q0V4LOg4JYmwb.fJ5zq9UFz9vMWoNEa', 'Emmanuel', 'Goma', '+260967780685', NULL, 'active', NULL, NULL, 0, '2025-12-25 12:05:33', NULL, 0, NULL, '2025-12-25 10:05:01', '2025-12-25 10:05:33'),
-(39, 'givenmutwena60', 'givenmutwena60@gmail.com', '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'GIVEN', 'MUTWENA', '+260971077923', NULL, 'active', NULL, NULL, 0, '2026-01-10 17:21:28', NULL, 0, NULL, '2025-12-28 15:13:44', '2026-01-10 15:21:28'),
-(40, 'lumbongosharon', 'lumbongosharon@gmail.com', '$2y$10$z7ha9/pweOV5FhWUJOritOdYC4aYTWtZVxP6yjNGUxaTJTehx66JK', 'SHARON', 'LUMBONGO', '+260975854731', NULL, 'active', NULL, NULL, 0, '2026-01-10 20:40:08', NULL, 0, NULL, '2025-12-29 10:01:21', '2026-01-10 18:40:08'),
-(41, 'simanyangamooya', 'simanyangamooya@gmail.com', '$2y$10$TMW22nvE0bHFYMDnZfQ3nO9Ehb9rcUiFXLWOEBY5/1v5mtYDqKGlm', 'MOOYA', 'SIMANYANGA', '+260975803528', NULL, 'active', NULL, NULL, 0, '2025-12-30 14:46:43', NULL, 0, NULL, '2025-12-30 12:45:53', '2025-12-30 12:46:43'),
-(42, 'najibib465', 'najibib465@hudisk.com', '$2y$10$8FQVQC8clPVMiyGEeSJDGebcAlNa42BrNKG6dDGgR7QyTVbWFtA1m', 'Doe', 'John', '', NULL, 'active', NULL, NULL, 0, '2025-12-31 11:04:08', NULL, 0, NULL, '2025-12-31 09:03:33', '2025-12-31 09:04:08'),
-(43, 'bettylumbongo60', 'bettylumbongo60@gmail.com', '$2y$10$s1KFx4SOeeRUvJlV8XKxMOHzt9YqtJTTNRCzHaT00Lu9QSoW8wqXG', 'Betty', 'Lumbongo', '+260975179897', NULL, 'active', NULL, NULL, 0, '2026-02-06 09:09:53', NULL, 0, NULL, '2026-01-08 10:47:56', '2026-02-06 07:09:53'),
-(44, 'chikombichilobe', 'chikombichilobe@gmail.com', '$2y$10$ksBUfZYnFagnGCFAcCwyjet0bXfWLkipATUDlSXQ1zSSJc.cHBV86', 'Chilobe', 'Chikombi', '+260777615153', NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2026-01-11 17:02:07', '2026-01-11 17:02:07'),
-(45, 'oscarchinyemba', 'oscarchinyemba@gmail.com', '$2y$10$2Q07DAXzZ4PQSCO/cC7cVeZYAUkrUKpph3DqfYZ1tg/IJXjDW/yF.', 'Oscar Mukwakwa', 'Chinyemba', '+260975812995', NULL, 'active', NULL, NULL, 0, '2026-01-13 18:03:04', NULL, 0, NULL, '2026-01-13 16:02:31', '2026-01-13 16:03:04'),
-(46, 'mutintaschinyemba', 'mutintaschinyemba@gmail.com', '$2y$10$jzfxcM7td1SAcJ/0CeNCCObTSWV.q8qRBwCxpoZJA1KVjAbmYR82a', 'Mutinta', 'Simwami', '+260979578041', NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2026-01-13 16:04:02', '2026-01-13 16:04:02'),
-(47, 'Eunicechola2001', 'Eunicechola2001@gmail.com', '$2y$10$7vXazCAcNErbHUBG/JVsHutPYiNWerQsr.1KejkPiM0d9AnIRl4rW', 'Eunice', 'Chola', '+260761835168', NULL, 'active', NULL, NULL, 0, '2026-01-22 06:17:17', NULL, 0, NULL, '2026-01-21 20:00:01', '2026-01-22 04:17:17'),
-(48, 'LweendoChizyuka7', 'LweendoChizyuka7@gmail.com', '$2y$10$WwLYFWrAKxpcLkonsCl6L.4UEC1eG9UbrVfjg4gv/utMIZ5QWVxg.', 'Lweendo', 'Chizyuka', '+260976396235', NULL, 'active', NULL, NULL, 0, '2026-02-04 14:43:04', NULL, 0, NULL, '2026-02-04 12:42:22', '2026-02-04 12:43:04'),
-(49, 'cetronmichelo', 'cetronmichelo@gmail.com', '$2y$10$ELKpFIbHn4oBJNukHOyQXO0dL2ew9hzL.wvjHLJZLgsIHY6lGCqu2', 'Cetron', 'Michelo', '+260974194846', NULL, 'active', NULL, NULL, 0, '2026-02-14 04:10:26', NULL, 0, NULL, '2026-02-14 02:09:56', '2026-02-14 02:10:26'),
-(50, 'choolwelubaya1', 'choolwelubaya1@gmail.com', '$2y$10$m1wtqrAHzw0oGfNz9sbOReBgm8r8lWhvepO370YramoQyJC.15J9S', 'Choolwe', 'Lubaya', '+260770602779', NULL, 'active', NULL, NULL, 0, '2026-02-17 21:54:57', NULL, 0, NULL, '2026-02-14 09:01:12', '2026-02-17 19:54:57'),
-(51, 'mubangajames45', 'mubangajames45@gmail.com', '$2y$10$FWVkEgoSjZ33wG3jQTubDum8rXJ9LMcuOO3mTU8WDcSowmbqbeJTK', 'James', 'Mubanga', '+260767248479', NULL, 'active', NULL, NULL, 0, '2026-02-17 20:56:04', NULL, 0, NULL, '2026-02-17 18:48:45', '2026-02-17 18:56:04');
+INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `password_hash`, `first_name`, `last_name`, `phone`, `avatar_url`, `status`, `email_verification_token`, `email_verification_expires`, `email_verified`, `last_login`, `last_login_ip`, `failed_login_attempts`, `account_locked_until`, `created_at`, `updated_at`) VALUES
+(1, 'admin', 'admin@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-02-18 16:20:33', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-02-18 14:20:33'),
+(6, 'michael.siame', 'michael.siame@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, '2025-12-25 21:53:14', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 19:53:14'),
+(25, 'taona', 'taona@gmail.com', NULL, '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
+(26, 'jaysiame076', 'jaysiame076@gmail.com', NULL, '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:32:59', NULL, 0, NULL, '2025-11-23 11:05:46', '2025-12-09 09:32:59'),
+(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2026-01-10 16:11:40', NULL, 0, NULL, '2025-12-04 20:34:20', '2026-01-10 14:11:40'),
+(28, 'it', 'it@witmanmiyande.com', NULL, '$2y$10$kbm0yafbxD0Iu0Vk7uZYoOKTaqE1DTV47I7FHEFmeRESglBLmnWve', 'Witman', 'Miyande', '+260976062621', NULL, 'active', NULL, NULL, 0, '2025-12-08 13:07:32', NULL, 0, NULL, '2025-12-05 14:38:37', '2025-12-08 17:45:29'),
+(29, 'edwardmusole76', 'edwardmusole76@gmail.com', NULL, '$2y$10$WAgkucanVQ4OuVJtxfZeIuH2gxPk4lH7tTmhKT0I8awfPWiBBakdC', 'Edward', 'Musole', '+260978605960', NULL, 'active', NULL, NULL, 0, '2025-12-29 12:47:56', NULL, 0, NULL, '2025-12-05 14:42:37', '2025-12-29 10:47:56'),
+(30, 'siamem570', 'siamem570@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, '2025-12-25 12:19:17', NULL, 0, NULL, '2025-12-09 11:30:29', '2025-12-25 10:19:17'),
+(31, 'anthony.nampute', 'anthony.nampute@edutrack.edu', NULL, '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Anthony', 'Nampute', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
+(32, 'inutu.simasiku', 'inutu.simasiku@edutrack.edu', NULL, '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Inutu', 'Simasiku', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
+(33, 'nita.sichimwa', 'nita.sichimwa@edutrack.edu', NULL, '$2y$10$uLoLKLK2Pcv08rJbNgPzhufsUVrhwhFR6IbSeGea6CKRuwU1NRbk.', 'Nita', 'Sichimwa', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2025-12-18 19:10:22', '2025-12-18 19:10:22'),
+(34, 'jilowahappy19', 'jilowahappy19@gmail.com', NULL, '$2y$10$BsJsXUusPmNBJmhfOOj15uzzlP.rFmjhhG.lKeZDTwcOzW62FFHne', 'Happy', 'Jilowa', '+260760054975', NULL, 'active', NULL, NULL, 0, '2025-12-20 15:22:34', NULL, 0, NULL, '2025-12-20 13:21:55', '2025-12-20 13:22:34'),
+(35, 'unparalleledtvstation2.0', 'unparalleledtvstation2.0@gmail.com', NULL, '$2y$10$Uc90KkySyrdk/ALa4SYkRuOybANz/FRsFVcAiLQjrUDgMkGdi9UsW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-12-21 12:57:29', '2025-12-21 12:57:29'),
+(36, 'moseschanda084', 'moseschanda084@gmail.com', NULL, '$2y$10$/COC.FYEkun5lNEdR7l1wePpKqi5dvtCRvr9nIXWBN3gZ6/QxZndK', 'Moses', 'Mulunda chanda', '+260971848021', NULL, 'active', NULL, NULL, 0, '2025-12-22 18:20:55', NULL, 0, NULL, '2025-12-22 16:20:20', '2025-12-22 16:20:55'),
+(37, 'sampayainnocent15', 'sampayainnocent15@gmail.com', NULL, '$2y$10$smRux7NyqHoywLOV0Djiy.0ydzMqz9JoAMS/5Nwg0RN0AYtA8qM2e', 'Innocent', 'Sampaya', '+260771717517', NULL, 'active', NULL, NULL, 0, '2025-12-23 09:19:00', NULL, 0, NULL, '2025-12-23 07:18:25', '2025-12-23 07:19:00'),
+(38, 'emmanuelgoma6', 'emmanuelgoma6@gmail.com', NULL, '$2y$10$G//nDjkNfzXuLGpLa6CnD.q0V4LOg4JYmwb.fJ5zq9UFz9vMWoNEa', 'Emmanuel', 'Goma', '+260967780685', NULL, 'active', NULL, NULL, 0, '2025-12-25 12:05:33', NULL, 0, NULL, '2025-12-25 10:05:01', '2025-12-25 10:05:33'),
+(39, 'givenmutwena60', 'givenmutwena60@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'GIVEN', 'MUTWENA', '+260971077923', NULL, 'active', NULL, NULL, 0, '2026-02-18 03:47:53', NULL, 0, NULL, '2025-12-28 15:13:44', '2026-02-18 01:47:53'),
+(40, 'lumbongosharon', 'lumbongosharon@gmail.com', NULL, '$2y$10$z7ha9/pweOV5FhWUJOritOdYC4aYTWtZVxP6yjNGUxaTJTehx66JK', 'SHARON', 'LUMBONGO', '+260975854731', NULL, 'active', NULL, NULL, 0, '2026-01-10 20:40:08', NULL, 0, NULL, '2025-12-29 10:01:21', '2026-01-10 18:40:08'),
+(41, 'simanyangamooya', 'simanyangamooya@gmail.com', NULL, '$2y$10$TMW22nvE0bHFYMDnZfQ3nO9Ehb9rcUiFXLWOEBY5/1v5mtYDqKGlm', 'MOOYA', 'SIMANYANGA', '+260975803528', NULL, 'active', NULL, NULL, 0, '2025-12-30 14:46:43', NULL, 0, NULL, '2025-12-30 12:45:53', '2025-12-30 12:46:43'),
+(42, 'najibib465', 'najibib465@hudisk.com', NULL, '$2y$10$8FQVQC8clPVMiyGEeSJDGebcAlNa42BrNKG6dDGgR7QyTVbWFtA1m', 'Doe', 'John', '', NULL, 'active', NULL, NULL, 0, '2025-12-31 11:04:08', NULL, 0, NULL, '2025-12-31 09:03:33', '2025-12-31 09:04:08'),
+(43, 'bettylumbongo60', 'bettylumbongo60@gmail.com', NULL, '$2y$10$s1KFx4SOeeRUvJlV8XKxMOHzt9YqtJTTNRCzHaT00Lu9QSoW8wqXG', 'Betty', 'Lumbongo', '+260975179897', NULL, 'active', NULL, NULL, 0, '2026-02-06 09:09:53', NULL, 0, NULL, '2026-01-08 10:47:56', '2026-02-06 07:09:53'),
+(44, 'chikombichilobe', 'chikombichilobe@gmail.com', NULL, '$2y$10$ksBUfZYnFagnGCFAcCwyjet0bXfWLkipATUDlSXQ1zSSJc.cHBV86', 'Chilobe', 'Chikombi', '+260777615153', NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2026-01-11 17:02:07', '2026-01-11 17:02:07'),
+(45, 'oscarchinyemba', 'oscarchinyemba@gmail.com', NULL, '$2y$10$2Q07DAXzZ4PQSCO/cC7cVeZYAUkrUKpph3DqfYZ1tg/IJXjDW/yF.', 'Oscar Mukwakwa', 'Chinyemba', '+260975812995', NULL, 'active', NULL, NULL, 0, '2026-01-13 18:03:04', NULL, 0, NULL, '2026-01-13 16:02:31', '2026-01-13 16:03:04'),
+(46, 'mutintaschinyemba', 'mutintaschinyemba@gmail.com', NULL, '$2y$10$jzfxcM7td1SAcJ/0CeNCCObTSWV.q8qRBwCxpoZJA1KVjAbmYR82a', 'Mutinta', 'Simwami', '+260979578041', NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2026-01-13 16:04:02', '2026-01-13 16:04:02'),
+(47, 'Eunicechola2001', 'Eunicechola2001@gmail.com', NULL, '$2y$10$7vXazCAcNErbHUBG/JVsHutPYiNWerQsr.1KejkPiM0d9AnIRl4rW', 'Eunice', 'Chola', '+260761835168', NULL, 'active', NULL, NULL, 0, '2026-01-22 06:17:17', NULL, 0, NULL, '2026-01-21 20:00:01', '2026-01-22 04:17:17'),
+(48, 'LweendoChizyuka7', 'LweendoChizyuka7@gmail.com', NULL, '$2y$10$WwLYFWrAKxpcLkonsCl6L.4UEC1eG9UbrVfjg4gv/utMIZ5QWVxg.', 'Lweendo', 'Chizyuka', '+260976396235', NULL, 'active', NULL, NULL, 0, '2026-02-04 14:43:04', NULL, 0, NULL, '2026-02-04 12:42:22', '2026-02-04 12:43:04'),
+(49, 'cetronmichelo', 'cetronmichelo@gmail.com', '102123028416500529258', '$2y$10$ELKpFIbHn4oBJNukHOyQXO0dL2ew9hzL.wvjHLJZLgsIHY6lGCqu2', 'Cetron', 'Michelo', '+260974194846', NULL, 'active', NULL, NULL, 1, '2026-02-24 08:59:33', NULL, 0, NULL, '2026-02-14 02:09:56', '2026-02-24 06:59:33'),
+(50, 'choolwelubaya1', 'choolwelubaya1@gmail.com', NULL, '$2y$10$m1wtqrAHzw0oGfNz9sbOReBgm8r8lWhvepO370YramoQyJC.15J9S', 'Choolwe', 'Lubaya', '+260770602779', NULL, 'active', NULL, NULL, 0, '2026-02-18 11:08:45', NULL, 0, NULL, '2026-02-14 09:01:12', '2026-02-18 09:08:45'),
+(51, 'mubangajames45', 'mubangajames45@gmail.com', NULL, '$2y$10$FWVkEgoSjZ33wG3jQTubDum8rXJ9LMcuOO3mTU8WDcSowmbqbeJTK', 'James', 'Mubanga', '+260767248479', NULL, 'active', NULL, NULL, 0, '2026-02-19 20:56:42', NULL, 0, NULL, '2026-02-17 18:48:45', '2026-02-19 18:56:42'),
+(52, 'edutrackzambia', 'edutrackzambia@gmail.com', '106695613944625113591', '$2y$10$Ps1P1UXhCjl9OEVGD9VDuePvp4S6sf4DTRewfYWMx2KHqRDFfxwOy', 'EdutrackZambia', '', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-02-18 09:13:07', '2026-02-18 09:13:07'),
+(53, 'Hestchilala1', 'Hestchilala1@gmail.com', NULL, '$2y$10$s0VyKX1solGrALrgDMwl7e5NQVDjco/PjXEjPoCsjUBXcwiqoMbri', 'Hest', 'Chilala', '+260973113441', NULL, 'active', NULL, NULL, 0, '2026-02-20 13:12:49', NULL, 0, NULL, '2026-02-20 11:11:55', '2026-02-20 11:12:49'),
+(54, 'musabakaderrick8', 'musabakaderrick8@gmail.com', NULL, '$2y$10$6u1HEzoZZFv4.jRteqpDyOKWjeo5KsHHLC7apxcu/PQLHQLZn/VvC', 'Musabaka', 'Derrick', '+260973838490', NULL, 'active', NULL, NULL, 0, '2026-02-22 19:16:25', NULL, 0, NULL, '2026-02-22 17:15:58', '2026-02-22 17:16:25'),
+(55, 'ackimchikwama02', 'ackimchikwama02@gmail.com', '109526682246921667099', '$2y$10$AXcskk980gX38QtBPg4jBu/janFuGliCTyLQB5Azc3skzz.B4iRyO', 'Ackim', 'chikwama', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-02-23 10:27:32', '2026-02-23 10:27:32');
 
 -- --------------------------------------------------------
 
@@ -1718,9 +1735,13 @@ INSERT INTO `user_profiles` (`id`, `user_id`, `bio`, `phone`, `date_of_birth`, `
 (59, 46, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13 16:04:02', '2026-01-13 16:04:02', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (60, 47, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-21 20:00:01', '2026-01-21 20:00:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (61, 48, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-04 12:42:22', '2026-02-04 12:42:22', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(62, 49, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-14 02:09:56', '2026-02-14 02:09:56', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(62, 49, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-14 02:09:56', '2026-02-24 06:59:33', 'https://lh3.googleusercontent.com/a/ACg8ocJeuzHeoAhgwgbYVXtQHyPnn2fMxN6BxTuXYwNOT8HzR_-Jrhqv=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (63, 50, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-14 09:01:12', '2026-02-14 09:01:12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(64, 51, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-17 18:48:45', '2026-02-17 18:48:45', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(64, 51, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-17 18:48:45', '2026-02-17 18:48:45', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(65, 52, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-18 09:13:07', '2026-02-18 09:13:07', 'https://lh3.googleusercontent.com/a/ACg8ocJg38ZI5n-yG4ArZnmCvB5bh34XqSM3l80cCouaS5aB_tafnQ=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(66, 53, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-20 11:11:55', '2026-02-20 11:11:55', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(67, 54, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-22 17:15:58', '2026-02-22 17:15:58', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(68, 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-23 10:27:32', '2026-02-23 10:27:32', 'https://lh3.googleusercontent.com/a/ACg8ocJGszCBl0lsdLuRN7cLa7IUvcwjrBRNIKKLNW6r6MIqqUOlAg=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1793,7 +1814,11 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`, `assigned_b
 (76, 48, 4, '2026-02-04 12:42:22', NULL),
 (77, 49, 4, '2026-02-14 02:09:56', NULL),
 (78, 50, 4, '2026-02-14 09:01:12', NULL),
-(79, 51, 4, '2026-02-17 18:48:45', NULL);
+(79, 51, 4, '2026-02-17 18:48:45', NULL),
+(80, 52, 4, '2026-02-18 09:13:07', NULL),
+(81, 53, 4, '2026-02-20 11:11:55', NULL),
+(82, 54, 4, '2026-02-22 17:15:58', NULL),
+(83, 55, 4, '2026-02-23 10:27:32', NULL);
 
 -- --------------------------------------------------------
 
@@ -1818,9 +1843,9 @@ CREATE TABLE `user_sessions` (
 
 INSERT INTO `user_sessions` (`id`, `user_id`, `session_token`, `ip_address`, `user_agent`, `expires_at`, `created_at`, `updated_at`) VALUES
 (65, 49, '341939420a1404d685eb9bd3f0f58f603782ecddbff480d292ddba23106610de', '212.96.24.85', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-03-16 04:10:26', '2026-02-14 02:10:26', '2026-02-14 02:10:26'),
-(68, 51, 'f0b0ad1c027cb90688c9f1711b0256386a575b76a5819dd6e7d62e56e5b503bd', '102.212.183.79', 'Mozilla/5.0 (Linux; Android 12; TECNO BE8 Build/SP1A.210812.016) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.7559.132 Mobile Safari/537.36', '2026-02-17 22:49:20', '2026-02-17 18:49:20', '2026-02-17 18:49:20'),
-(69, 51, 'e4a109ffb894a459710956315289d3d4df8fde3bd91a9db710e4e0d801214cb7', '41.223.118.41', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36', '2026-02-17 22:56:04', '2026-02-17 18:56:04', '2026-02-17 18:56:04'),
-(70, 50, 'f94bbc44471947c0f55cd0a8a049d4c52afd7aceda7a38b5a8095b2cd599f7d2', '45.215.249.132', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36', '2026-02-17 23:54:57', '2026-02-17 19:54:57', '2026-02-17 19:54:57');
+(76, 53, '32be97e1293ec072b75214c106df39fb19672db66bfb6d1f1074f1d000d7ab79', '41.216.82.27', 'Mozilla/5.0 (Linux; Android 15; SM-A057F Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/144.0.7559.132 Mobile Safari/537.36[FBAN/EMA;FBLC/en_GB;FBAV/496.0.0.10.103;FBCX/modulariab;]', '2026-03-22 13:12:49', '2026-02-20 11:12:49', '2026-02-20 11:12:49'),
+(77, 54, 'c274e973d1731a3b801213a4435eb82bf4e991efbd3b80ae8ed14eee361da033', '45.215.224.252', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36', '2026-03-24 19:16:25', '2026-02-22 17:16:25', '2026-02-22 17:16:25'),
+(79, 49, '0ac247d1fb9ce11767d8f138c715237662318d18089fa9d4353cc4254ded4444', '41.216.82.25', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Mobile Safari/537.36', '2026-02-24 10:59:33', '2026-02-24 06:59:33', '2026-02-24 06:59:33');
 
 -- --------------------------------------------------------
 
@@ -2162,6 +2187,7 @@ ALTER TABLE `transactions`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idx_users_google_id` (`google_id`),
   ADD KEY `idx_users_email_search` (`email`),
   ADD KEY `idx_users_ver_token` (`email_verification_token`),
   ADD KEY `id` (`id`);
@@ -2232,7 +2258,7 @@ ALTER TABLE `certificates`
 -- AUTO_INCREMENT for table `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `course_categories`
@@ -2400,7 +2426,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `system_settings`
@@ -2418,25 +2444,25 @@ ALTER TABLE `team_members`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- AUTO_INCREMENT for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 -- --------------------------------------------------------
 

@@ -1,58 +1,21 @@
 <?php
 /**
- * Instructor - Assignment Submissions & Grading
+ * Instructor - Assignment Management & Grading
+ * Enhanced assignment review and grading system
  */
 
-// Debug initialization
-$DEBUG_MODE = defined('DEBUG_MODE') ? $DEBUG_MODE : ($_ENV['DEBUG_MODE'] ?? false);
-$page_start_time = microtime(true);
-$page_start_memory = memory_get_usage();
-$debug_data = [
-    'page' => 'instructor/assignments.php',
-    'timestamp' => date('Y-m-d H:i:s'),
-    'queries' => [],
-    'errors' => []
-];
-
-// Error handler for debugging
-if ($DEBUG_MODE) {
-    set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$debug_data) {
-        $debug_data['errors'][] = [
-            'type' => $errno,
-            'message' => $errstr,
-            'file' => $errfile,
-            'line' => $errline
-        ];
-        return false;
-    });
-}
-
+require_once '../../src/bootstrap.php';
 require_once '../../src/middleware/instructor-only.php';
 require_once '../../src/classes/Course.php';
 require_once '../../src/classes/Assignment.php';
 require_once '../../src/classes/Submission.php';
 
-// Debug: Log user info
-if ($DEBUG_MODE) {
-    $debug_data['user'] = [
-        'id' => $_SESSION['user_id'] ?? null,
-        'email' => $_SESSION['user_email'] ?? null,
-        'role' => $_SESSION['user_role'] ?? null
-    ];
-}
-
 $db = Database::getInstance();
 $userId = currentUserId();
 
-// Get instructor ID from instructors table (instructor_id in courses references instructors.id, not users.id)
+// Get instructor ID
 $instructorRecord = $db->fetchOne("SELECT id FROM instructors WHERE user_id = ?", [$userId]);
 $instructorId = $instructorRecord ? $instructorRecord['id'] : $userId;
-
-// Debug: Log instructor ID
-if ($DEBUG_MODE) {
-    $debug_data['user_id'] = $userId;
-    $debug_data['instructor_id'] = $instructorId;
-}
 
 // Handle grading submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'grade') {
@@ -62,48 +25,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
     $pointsEarned = $_POST['points_earned'] ?? null;
     $feedback = trim($_POST['feedback'] ?? '');
 
-    if (!$submissionId || !is_numeric($pointsEarned)) {
-        flash('message', 'Invalid submission or points', 'error');
-    } else {
+    if ($submissionId && is_numeric($pointsEarned)) {
         $submission = Submission::find($submissionId);
-
-        if (!$submission) {
-            flash('message', 'Submission not found', 'error');
-        } else {
-            // Verify instructor owns the course
+        
+        if ($submission) {
             $assignment = Assignment::find($submission->getAssignmentId());
             $course = Course::find($assignment->getCourseId());
 
-            if ($course->getInstructorId() != $instructorId && !hasRole('admin')) {
-                flash('message', 'Unauthorized', 'error');
-            } else {
+            // Verify instructor owns the course
+            if ($course->getInstructorId() == $instructorId || hasRole('admin')) {
                 if ($submission->grade($pointsEarned, $feedback)) {
                     flash('message', 'Submission graded successfully!', 'success');
-
-                    // Send notification to student
+                    
+                    // Send notification
                     if (class_exists('Notification')) {
                         Notification::notifyAssignmentGraded(
                             $submission->getUserId(),
                             $assignment->getTitle(),
-                            "$pointsEarned / " . $submission->getMaxPoints(),
+                            "$pointsEarned / " . $assignment->getMaxPoints(),
                             $submissionId
                         );
-                    }
-
-                    // Send email notification
-                    if (class_exists('Email')) {
-                        try {
-                            $email = new Email();
-                            $user = User::find($submission->getUserId());
-                            if ($user) {
-                                $email->sendAssignmentGraded([
-                                    'email' => $user->getEmail(),
-                                    'first_name' => $user->getFirstName()
-                                ], $submission);
-                            }
-                        } catch (Exception $e) {
-                            error_log("Failed to send grading email: " . $e->getMessage());
-                        }
                     }
                 } else {
                     flash('message', 'Failed to grade submission', 'error');
@@ -111,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
             }
         }
     }
-
     redirect($_SERVER['REQUEST_URI']);
 }
 
@@ -119,6 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
 $courseFilter = $_GET['course'] ?? '';
 $assignmentFilter = $_GET['assignment'] ?? '';
 $statusFilter = $_GET['status'] ?? '';
+$page = max(1, (int)($_GET['page'] ?? 1));
+$perPage = 10;
 
 // Get instructor's courses
 $courses = Course::getByInstructor($instructorId);
@@ -127,17 +69,17 @@ $courses = Course::getByInstructor($instructorId);
 $where = [];
 $params = [];
 
-if ($courseFilter) {
+// Only show submissions from instructor's courses
+$courseIds = array_map(fn($c) => $c['id'], $courses);
+if (empty($courseIds)) {
+    $courseIds = [0];
+}
+$where[] = 'a.course_id IN (' . implode(',', array_fill(0, count($courseIds), '?')) . ')';
+$params = array_merge($params, $courseIds);
+
+if ($courseFilter && in_array($courseFilter, $courseIds)) {
     $where[] = 'a.course_id = ?';
     $params[] = $courseFilter;
-} else {
-    // Only show submissions from instructor's courses
-    $courseIds = array_map(function($c) { return $c['id']; }, $courses);
-    if (empty($courseIds)) {
-        $courseIds = [0]; // No courses
-    }
-    $where[] = 'a.course_id IN (' . implode(',', array_fill(0, count($courseIds), '?')) . ')';
-    $params = array_merge($params, $courseIds);
 }
 
 if ($assignmentFilter) {
@@ -152,12 +94,23 @@ if ($statusFilter) {
 
 $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
+// Get total count
+$totalSubmissions = (int) $db->fetchColumn("
+    SELECT COUNT(*)
+    FROM assignment_submissions s
+    JOIN assignments a ON s.assignment_id = a.id
+    $whereClause
+", $params);
+
+$totalPages = ceil($totalSubmissions / $perPage);
+$offset = ($page - 1) * $perPage;
+
 // Get submissions
 $submissions = $db->fetchAll("
     SELECT s.*,
            a.title as assignment_title, a.max_points, a.due_date,
            c.title as course_title, c.slug as course_slug,
-           u.first_name, u.last_name, u.email
+           u.first_name, u.last_name, u.email, u.avatar_url
     FROM assignment_submissions s
     JOIN assignments a ON s.assignment_id = a.id
     JOIN courses c ON a.course_id = c.id
@@ -165,7 +118,8 @@ $submissions = $db->fetchAll("
     JOIN users u ON st.user_id = u.id
     $whereClause
     ORDER BY s.submitted_at DESC
-", $params);
+    LIMIT ? OFFSET ?
+", array_merge($params, [$perPage, $offset]));
 
 // Get assignments for filter dropdown
 $assignments = [];
@@ -178,89 +132,82 @@ if ($courseFilter) {
 }
 
 // Statistics
-$stats = [
-    'total' => count($submissions),
-    'pending' => count(array_filter($submissions, fn($s) => $s['status'] == 'submitted')),
-    'graded' => count(array_filter($submissions, fn($s) => $s['status'] == 'graded'))
-];
-
-// Debug: Log submissions and stats data
-if ($DEBUG_MODE) {
-    $debug_data['data'] = [
-        'submissions_count' => count($submissions),
-        'courses_count' => count($courses),
-        'assignments_count' => count($assignments),
-        'stats' => $stats
-    ];
-    $debug_data['filters'] = [
-        'course' => $courseFilter,
-        'assignment' => $assignmentFilter,
-        'status' => $statusFilter
-    ];
-}
+$stats = $db->fetchOne("
+    SELECT 
+        COUNT(*) as total,
+        SUM(CASE WHEN s.status = 'submitted' THEN 1 ELSE 0 END) as pending,
+        SUM(CASE WHEN s.status = 'graded' THEN 1 ELSE 0 END) as graded
+    FROM assignment_submissions s
+    JOIN assignments a ON s.assignment_id = a.id
+    JOIN courses c ON a.course_id = c.id
+    WHERE c.instructor_id = ?
+", [$instructorId]);
 
 $page_title = 'Assignment Submissions';
 require_once '../../src/templates/instructor-header.php';
 ?>
 
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-50/50 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <!-- Header -->
-        <div class="mb-6">
-            <h1 class="text-3xl font-bold text-gray-900">
-                <i class="fas fa-file-alt text-primary-600 mr-3"></i>
-                Assignment Submissions
-            </h1>
-            <p class="text-gray-600 mt-2">Grade and provide feedback on student submissions</p>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Assignment Submissions</h1>
+                <p class="text-gray-500 mt-1">Review and grade student work</p>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="<?= url('instructor/courses.php') ?>" 
+                   class="inline-flex items-center px-4 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Courses
+                </a>
+            </div>
         </div>
 
-        <!-- Statistics -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div class="bg-white rounded-lg shadow p-6">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-3 gap-4 mb-8">
+            <div class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-600">Total Submissions</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-1"><?= $stats['total'] ?></p>
+                        <p class="text-sm text-gray-500">Total</p>
+                        <p class="text-2xl font-bold text-gray-900"><?= $stats['total'] ?? 0 ?></p>
                     </div>
-                    <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-file-alt text-blue-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-file-alt text-blue-500"></i>
                     </div>
                 </div>
             </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-600">Pending Grading</p>
-                        <p class="text-3xl font-bold text-orange-600 mt-1"><?= $stats['pending'] ?></p>
+                        <p class="text-sm text-gray-500">Pending</p>
+                        <p class="text-2xl font-bold text-orange-600"><?= $stats['pending'] ?? 0 ?></p>
                     </div>
-                    <div class="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-clock text-orange-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-clock text-orange-500"></i>
                     </div>
                 </div>
             </div>
-
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="bg-white rounded-xl p-5 shadow-card border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-600">Graded</p>
-                        <p class="text-3xl font-bold text-green-600 mt-1"><?= $stats['graded'] ?></p>
+                        <p class="text-sm text-gray-500">Graded</p>
+                        <p class="text-2xl font-bold text-green-600"><?= $stats['graded'] ?? 0 ?></p>
                     </div>
-                    <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-500"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Filters -->
-        <div class="bg-white rounded-lg shadow mb-6 p-6">
+        <div class="bg-white rounded-xl shadow-card border border-gray-100 p-5 mb-6">
             <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Course</label>
                     <select name="course" onchange="this.form.submit()"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500">
                         <option value="">All Courses</option>
                         <?php foreach ($courses as $course): ?>
                             <option value="<?= $course['id'] ?>" <?= $courseFilter == $course['id'] ? 'selected' : '' ?>>
@@ -270,11 +217,10 @@ require_once '../../src/templates/instructor-header.php';
                     </select>
                 </div>
 
-                <?php if (!empty($assignments)): ?>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Assignment</label>
                     <select name="assignment" onchange="this.form.submit()"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 <?= empty($assignments) ? 'opacity-50' : '' ?>">
                         <option value="">All Assignments</option>
                         <?php foreach ($assignments as $assignment): ?>
                             <option value="<?= $assignment['id'] ?>" <?= $assignmentFilter == $assignment['id'] ? 'selected' : '' ?>>
@@ -283,60 +229,60 @@ require_once '../../src/templates/instructor-header.php';
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <?php endif; ?>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
                     <select name="status" onchange="this.form.submit()"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
-                        <option value="">All Statuses</option>
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500">
+                        <option value="">All Status</option>
                         <option value="submitted" <?= $statusFilter == 'submitted' ? 'selected' : '' ?>>Pending</option>
                         <option value="graded" <?= $statusFilter == 'graded' ? 'selected' : '' ?>>Graded</option>
                     </select>
                 </div>
 
-                <?php if ($courseFilter || $assignmentFilter || $statusFilter): ?>
                 <div class="flex items-end">
-                    <a href="assignments.php" class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-center">
+                    <?php if ($courseFilter || $assignmentFilter || $statusFilter): ?>
+                    <a href="assignments.php" class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center">
                         <i class="fas fa-times mr-2"></i>Clear Filters
                     </a>
+                    <?php endif; ?>
                 </div>
-                <?php endif; ?>
             </form>
         </div>
 
         <!-- Submissions List -->
         <?php if (empty($submissions)): ?>
-        <div class="bg-white rounded-lg shadow p-12 text-center">
-            <i class="fas fa-inbox text-gray-300 text-6xl mb-4"></i>
+        <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-12 text-center">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-inbox text-gray-400 text-4xl"></i>
+            </div>
             <h3 class="text-xl font-semibold text-gray-900 mb-2">No Submissions Found</h3>
-            <p class="text-gray-600">There are no assignment submissions matching your filters.</p>
+            <p class="text-gray-500">There are no assignment submissions matching your filters.</p>
         </div>
         <?php else: ?>
-        <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50 border-b border-gray-100">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assignment</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Student</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Assignment</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Submitted</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Score</th>
+                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="divide-y divide-gray-100">
                         <?php foreach ($submissions as $sub):
                             $isLate = $sub['due_date'] && strtotime($sub['submitted_at']) > strtotime($sub['due_date']);
                         ?>
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 whitespace-nowrap">
+                        <tr class="hover:bg-gray-50/50 transition">
+                            <td class="px-6 py-4">
                                 <div class="flex items-center">
-                                    <img src="<?= getGravatar($sub['email']) ?>" class="h-10 w-10 rounded-full mr-3">
+                                    <img src="<?= getGravatar($sub['email']) ?>" class="w-10 h-10 rounded-full mr-3">
                                     <div>
-                                        <div class="text-sm font-medium text-gray-900">
+                                        <div class="font-medium text-gray-900">
                                             <?= sanitize($sub['first_name'] . ' ' . $sub['last_name']) ?>
                                         </div>
                                         <div class="text-sm text-gray-500"><?= sanitize($sub['email']) ?></div>
@@ -344,39 +290,32 @@ require_once '../../src/templates/instructor-header.php';
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-sm font-medium text-gray-900"><?= sanitize($sub['assignment_title']) ?></div>
-                                <?php if ($sub['file_name']): ?>
-                                    <div class="text-sm text-gray-500">
-                                        <i class="fas fa-paperclip mr-1"></i><?= sanitize($sub['file_name']) ?>
-                                    </div>
-                                <?php endif; ?>
+                                <div class="font-medium text-gray-900"><?= sanitize($sub['assignment_title']) ?></div>
+                                <div class="text-sm text-gray-500"><?= sanitize($sub['course_title']) ?></div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900"><?= sanitize($sub['course_title']) ?></div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-6 py-4">
                                 <div class="text-sm text-gray-900"><?= date('M j, Y', strtotime($sub['submitted_at'])) ?></div>
                                 <div class="text-sm text-gray-500"><?= date('g:i A', strtotime($sub['submitted_at'])) ?></div>
                                 <?php if ($isLate): ?>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 mt-1">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700 mt-1">
                                         <i class="fas fa-clock mr-1"></i>Late
                                     </span>
                                 <?php endif; ?>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-6 py-4">
                                 <?php if ($sub['status'] == 'graded'): ?>
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
                                         <i class="fas fa-check mr-1"></i>Graded
                                     </span>
                                 <?php else: ?>
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
                                         <i class="fas fa-clock mr-1"></i>Pending
                                     </span>
                                 <?php endif; ?>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-6 py-4">
                                 <?php if ($sub['status'] == 'graded'): ?>
-                                    <div class="text-sm font-bold text-gray-900">
+                                    <div class="font-bold text-gray-900">
                                         <?= $sub['points_earned'] ?> / <?= $sub['max_points'] ?>
                                     </div>
                                     <div class="text-sm text-gray-500">
@@ -386,15 +325,17 @@ require_once '../../src/templates/instructor-header.php';
                                     <span class="text-sm text-gray-400">Not graded</span>
                                 <?php endif; ?>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button onclick="viewSubmission(<?= $sub['id'] ?>)"
-                                        class="text-primary-600 hover:text-primary-900 mr-3">
-                                    <i class="fas fa-eye mr-1"></i>View
-                                </button>
-                                <button onclick="gradeSubmission(<?= $sub['id'] ?>)"
-                                        class="text-green-600 hover:text-green-900">
-                                    <i class="fas fa-edit mr-1"></i><?= $sub['status'] == 'graded' ? 'Edit Grade' : 'Grade' ?>
-                                </button>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button onclick="viewSubmission(<?= $sub['id'] ?>)"
+                                            class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button onclick="gradeSubmission(<?= $sub['id'] ?>)"
+                                            class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition" title="Grade">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -402,15 +343,34 @@ require_once '../../src/templates/instructor-header.php';
                 </table>
             </div>
         </div>
+
+        <!-- Pagination -->
+        <?php if ($totalPages > 1): ?>
+        <div class="mt-6 flex items-center justify-between">
+            <p class="text-sm text-gray-500">
+                Showing <?= (($page - 1) * $perPage) + 1 ?> - <?= min($page * $perPage, $totalSubmissions) ?> of <?= $totalSubmissions ?> submissions
+            </p>
+            <div class="flex items-center gap-2">
+                <?php if ($page > 1): ?>
+                <a href="?page=<?= $page - 1 ?>&course=<?= $courseFilter ?>&assignment=<?= $assignmentFilter ?>&status=<?= $statusFilter ?>" 
+                   class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition">Previous</a>
+                <?php endif; ?>
+                <?php if ($page < $totalPages): ?>
+                <a href="?page=<?= $page + 1 ?>&course=<?= $courseFilter ?>&assignment=<?= $assignmentFilter ?>&status=<?= $statusFilter ?>" 
+                   class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition">Next</a>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
         <?php endif; ?>
 
     </div>
 </div>
 
 <!-- View Submission Modal -->
-<div id="viewModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+<div id="viewModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-container modal-overlay">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white">
             <h3 class="text-lg font-bold text-gray-900">Submission Details</h3>
             <button onclick="closeModal('viewModal')" class="text-gray-400 hover:text-gray-600">
                 <i class="fas fa-times text-xl"></i>
@@ -423,9 +383,9 @@ require_once '../../src/templates/instructor-header.php';
 </div>
 
 <!-- Grade Submission Modal -->
-<div id="gradeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+<div id="gradeModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 modal-container modal-overlay">
+    <div class="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white">
             <h3 class="text-lg font-bold text-gray-900">Grade Submission</h3>
             <button onclick="closeModal('gradeModal')" class="text-gray-400 hover:text-gray-600">
                 <i class="fas fa-times text-xl"></i>
@@ -445,11 +405,19 @@ function viewSubmission(id) {
     if (!submission) return;
 
     let html = `
-        <div class="space-y-4">
-            <div>
-                <h4 class="font-semibold text-gray-900 mb-2">Student</h4>
-                <p class="text-gray-700">${escapeHtml(submission.first_name + ' ' + submission.last_name)}</p>
-                <p class="text-sm text-gray-500">${escapeHtml(submission.email)}</p>
+        <div class="space-y-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <p class="text-sm text-gray-500 mb-1">Student</p>
+                    <div class="flex items-center">
+                        <img src="${getGravatar(submission.email)}" class="w-8 h-8 rounded-full mr-2">
+                        <span class="font-medium text-gray-900">${escapeHtml(submission.first_name + ' ' + submission.last_name)}</span>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <p class="text-sm text-gray-500 mb-1">Submitted</p>
+                    <p class="font-medium text-gray-900">${new Date(submission.submitted_at).toLocaleString()}</p>
+                </div>
             </div>
 
             <div>
@@ -457,18 +425,13 @@ function viewSubmission(id) {
                 <p class="text-gray-700">${escapeHtml(submission.assignment_title)}</p>
                 <p class="text-sm text-gray-500">Course: ${escapeHtml(submission.course_title)}</p>
             </div>
-
-            <div>
-                <h4 class="font-semibold text-gray-900 mb-2">Submission Date</h4>
-                <p class="text-gray-700">${new Date(submission.submitted_at).toLocaleString()}</p>
-            </div>
     `;
 
     if (submission.submission_text) {
         html += `
             <div>
                 <h4 class="font-semibold text-gray-900 mb-2">Submission Text</h4>
-                <div class="bg-gray-50 p-4 rounded border border-gray-200 whitespace-pre-wrap">${escapeHtml(submission.submission_text)}</div>
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 whitespace-pre-wrap">${escapeHtml(submission.submission_text)}</div>
             </div>
         `;
     }
@@ -478,21 +441,22 @@ function viewSubmission(id) {
             <div>
                 <h4 class="font-semibold text-gray-900 mb-2">Attached File</h4>
                 <a href="<?= url('api/download.php') ?>?type=submission&id=${submission.id}"
-                   class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">
+                   class="inline-flex items-center px-4 py-2 bg-primary-50 text-primary-600 rounded-xl hover:bg-primary-100 transition">
                     <i class="fas fa-download mr-2"></i>
                     ${escapeHtml(submission.file_name)}
                 </a>
-                <p class="text-sm text-gray-500 mt-1">Size: ${formatFileSize(submission.file_size)}</p>
             </div>
         `;
     }
 
     if (submission.status == 'graded') {
         html += `
-            <div>
-                <h4 class="font-semibold text-gray-900 mb-2">Grade</h4>
-                <p class="text-2xl font-bold text-gray-900">${submission.points_earned} / ${submission.max_points}</p>
-                <p class="text-gray-600">${Math.round((submission.points_earned / submission.max_points) * 100)}%</p>
+            <div class="bg-green-50 rounded-xl p-4 border border-green-100">
+                <h4 class="font-semibold text-green-900 mb-2">Grade</h4>
+                <div class="flex items-center gap-4">
+                    <span class="text-3xl font-bold text-green-700">${submission.points_earned} / ${submission.max_points}</span>
+                    <span class="text-lg text-green-600">${Math.round((submission.points_earned / submission.max_points) * 100)}%</span>
+                </div>
             </div>
         `;
 
@@ -500,7 +464,7 @@ function viewSubmission(id) {
             html += `
                 <div>
                     <h4 class="font-semibold text-gray-900 mb-2">Feedback</h4>
-                    <div class="bg-gray-50 p-4 rounded border border-gray-200 whitespace-pre-wrap">${escapeHtml(submission.feedback)}</div>
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 whitespace-pre-wrap">${escapeHtml(submission.feedback)}</div>
                 </div>
             `;
         }
@@ -509,7 +473,7 @@ function viewSubmission(id) {
     html += `</div>`;
 
     document.getElementById('viewModalContent').innerHTML = html;
-    document.getElementById('viewModal').classList.remove('hidden');
+    openModal('viewModal');
 }
 
 function gradeSubmission(id) {
@@ -517,45 +481,48 @@ function gradeSubmission(id) {
     if (!submission) return;
 
     const html = `
-        <form method="POST" class="space-y-4">
+        <form method="POST" class="space-y-6">
             <?= csrfField() ?>
             <input type="hidden" name="action" value="grade">
             <input type="hidden" name="submission_id" value="${submission.id}">
 
-            <div>
-                <h4 class="font-semibold text-gray-900 mb-2">Student</h4>
-                <p class="text-gray-700">${escapeHtml(submission.first_name + ' ' + submission.last_name)}</p>
-            </div>
-
-            <div>
-                <h4 class="font-semibold text-gray-900 mb-2">Assignment</h4>
-                <p class="text-gray-700">${escapeHtml(submission.assignment_title)}</p>
+            <div class="bg-gray-50 rounded-xl p-4">
+                <div class="flex items-center mb-3">
+                    <img src="${getGravatar(submission.email)}" class="w-10 h-10 rounded-full mr-3">
+                    <div>
+                        <p class="font-medium text-gray-900">${escapeHtml(submission.first_name + ' ' + submission.last_name)}</p>
+                        <p class="text-sm text-gray-500">${escapeHtml(submission.assignment_title)}</p>
+                    </div>
+                </div>
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                     Points Earned <span class="text-red-500">*</span>
                 </label>
-                <input type="number" name="points_earned" required min="0" max="${submission.max_points}"
-                       step="0.5" value="${submission.points_earned || ''}"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                       placeholder="0 - ${submission.max_points}">
+                <div class="flex items-center gap-4">
+                    <input type="number" name="points_earned" required min="0" max="${submission.max_points}"
+                           step="0.5" value="${submission.points_earned || ''}"
+                           class="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 text-lg font-semibold"
+                           placeholder="0">
+                    <span class="text-xl text-gray-500 font-medium">/ ${submission.max_points}</span>
+                </div>
                 <p class="text-sm text-gray-500 mt-1">Maximum points: ${submission.max_points}</p>
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Feedback</label>
-                <textarea name="feedback" rows="6"
-                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                          placeholder="Provide feedback to the student...">${submission.feedback || ''}</textarea>
+                <textarea name="feedback" rows="4"
+                          class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500"
+                          placeholder="Provide constructive feedback to the student...">${submission.feedback || ''}</textarea>
             </div>
 
-            <div class="flex justify-end space-x-3 pt-4">
+            <div class="flex gap-3 pt-4">
                 <button type="button" onclick="closeModal('gradeModal')"
-                        class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        class="flex-1 px-4 py-3 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 font-medium transition">
                     Cancel
                 </button>
-                <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                <button type="submit" class="flex-1 px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-medium transition">
                     <i class="fas fa-check mr-2"></i>Save Grade
                 </button>
             </div>
@@ -563,74 +530,19 @@ function gradeSubmission(id) {
     `;
 
     document.getElementById('gradeModalContent').innerHTML = html;
-    document.getElementById('gradeModal').classList.remove('hidden');
+    openModal('gradeModal');
 }
 
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.add('hidden');
+function getGravatar(email) {
+    return 'https://www.gravatar.com/avatar/' + (email ? btoa(email.toLowerCase().trim()) : '') + '?d=mp&s=100';
 }
 
 function escapeHtml(text) {
+    if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
-
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-}
 </script>
-
-<?php
-// Debug panel output
-if ($DEBUG_MODE) {
-    $debug_data['performance'] = [
-        'execution_time' => round((microtime(true) - $page_start_time) * 1000, 2) . 'ms',
-        'memory_used' => round((memory_get_usage() - $page_start_memory) / 1024, 2) . 'KB',
-        'peak_memory' => round(memory_get_peak_usage() / 1024 / 1024, 2) . 'MB'
-    ];
-?>
-<!-- Debug Panel -->
-<div id="debug-panel" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white text-xs z-50 max-h-96 overflow-y-auto" style="display: none;">
-    <div class="flex items-center justify-between p-2 bg-gray-800 sticky top-0">
-        <span class="font-bold"><i class="fas fa-bug mr-2"></i>Debug Panel - <?= $debug_data['page'] ?></span>
-        <div class="flex items-center space-x-4">
-            <span class="text-green-400">Time: <?= $debug_data['performance']['execution_time'] ?></span>
-            <span class="text-blue-400">Memory: <?= $debug_data['performance']['memory_used'] ?></span>
-            <button onclick="document.getElementById('debug-panel').style.display='none'" class="text-red-400 hover:text-red-300">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    </div>
-    <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div>
-            <h4 class="font-bold text-yellow-400 mb-2">User Info</h4>
-            <pre class="bg-gray-800 p-2 rounded overflow-x-auto"><?= json_encode($debug_data['user'] ?? [], JSON_PRETTY_PRINT) ?></pre>
-        </div>
-        <div>
-            <h4 class="font-bold text-yellow-400 mb-2">Data</h4>
-            <pre class="bg-gray-800 p-2 rounded overflow-x-auto"><?= json_encode($debug_data['data'] ?? [], JSON_PRETTY_PRINT) ?></pre>
-        </div>
-        <div>
-            <h4 class="font-bold text-yellow-400 mb-2">Filters</h4>
-            <pre class="bg-gray-800 p-2 rounded overflow-x-auto"><?= json_encode($debug_data['filters'] ?? [], JSON_PRETTY_PRINT) ?></pre>
-        </div>
-        <?php if (!empty($debug_data['errors'])): ?>
-        <div>
-            <h4 class="font-bold text-red-400 mb-2">Errors (<?= count($debug_data['errors']) ?>)</h4>
-            <pre class="bg-gray-800 p-2 rounded overflow-x-auto text-red-300"><?= json_encode($debug_data['errors'], JSON_PRETTY_PRINT) ?></pre>
-        </div>
-        <?php endif; ?>
-    </div>
-</div>
-<button onclick="document.getElementById('debug-panel').style.display = document.getElementById('debug-panel').style.display === 'none' ? 'block' : 'none'"
-        class="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 z-50" title="Toggle Debug Panel">
-    <i class="fas fa-bug"></i>
-</button>
-<?php } ?>
 
 <?php require_once '../../src/templates/instructor-footer.php'; ?>
