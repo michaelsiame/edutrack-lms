@@ -485,6 +485,12 @@ function userAvatar($avatar = null, $email = '') {
  * @return string
  */
 function courseThumbnail($thumbnail = null) {
+    // If it's a full URL (starts with http), return as-is
+    if ($thumbnail && (strpos($thumbnail, 'http://') === 0 || strpos($thumbnail, 'https://') === 0)) {
+        return $thumbnail;
+    }
+    
+    // If it's a local file
     if ($thumbnail && file_exists(UPLOAD_PATH . '/courses/thumbnails/' . $thumbnail)) {
         return uploadUrl('courses/thumbnails/' . $thumbnail);
     }
