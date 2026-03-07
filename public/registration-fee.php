@@ -1,7 +1,7 @@
 <?php
 /**
- * Registration Fee Payment Page
- * K150 one-time registration fee (must be paid to bank)
+ * Registration Fee Payment Page - Modern Design
+ * K150 one-time registration fee
  */
 
 require_once '../src/bootstrap.php';
@@ -19,8 +19,6 @@ $user = User::current();
 // Check if already paid
 if (RegistrationFee::hasPaid($userId)) {
     setFlashMessage('Your registration fee has already been paid.', 'success');
-
-    // Redirect to intended course if set
     if (isset($_SESSION['intended_course_id'])) {
         $courseId = $_SESSION['intended_course_id'];
         unset($_SESSION['intended_course_id']);
@@ -41,206 +39,310 @@ $bankDetails = RegistrationFee::getBankDetails();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCSRF();
 
+    $paymentMethod = $_POST['payment_method'] ?? 'bank';
     $bankReference = trim($_POST['bank_reference'] ?? '');
     $bankName = trim($_POST['bank_name'] ?? '');
     $depositDate = $_POST['deposit_date'] ?? '';
+    $phoneNumber = trim($_POST['phone_number'] ?? '');
     $notes = trim($_POST['notes'] ?? '');
 
-    // Validation
     $errors = [];
 
-    if (empty($bankReference)) {
-        $errors[] = 'Bank reference/deposit slip number is required';
-    }
-
-    if (empty($bankName)) {
-        $errors[] = 'Bank name is required';
-    }
-
-    if (empty($depositDate)) {
-        $errors[] = 'Deposit date is required';
+    if ($paymentMethod === 'bank') {
+        if (empty($bankReference)) {
+            $errors[] = 'Bank reference/deposit slip number is required';
+        }
+        if (empty($bankName)) {
+            $errors[] = 'Bank name is required';
+        }
+        if (empty($depositDate)) {
+            $errors[] = 'Deposit date is required';
+        }
+    } else {
+        // Mobile money validation
+        if (empty($phoneNumber)) {
+            $errors[] = 'Phone number is required for mobile money payment';
+        }
     }
 
     if (empty($errors)) {
         $data = [
             'user_id' => $userId,
             'amount' => $feeAmount,
+            'payment_method' => $paymentMethod === 'bank' ? 'bank_deposit' : 'mobile_money',
             'bank_reference' => $bankReference,
             'bank_name' => $bankName,
             'deposit_date' => $depositDate,
+            'phone_number' => $phoneNumber,
             'notes' => $notes
         ];
 
         if ($hasPending) {
-            // Update existing record
             $existingFee->update($data);
             $feeId = $existingFee->getId();
         } else {
-            // Create new record
             $feeId = RegistrationFee::create($data);
         }
 
         if ($feeId) {
-            setFlashMessage('Registration fee submitted successfully! Your payment will be verified within 24 hours.', 'success');
+            setFlashMessage('Payment details submitted successfully! Your payment will be verified within 24 hours.', 'success');
             redirect('registration-fee.php');
         } else {
-            setFlashMessage('Failed to submit registration fee. Please try again.', 'error');
+            setFlashMessage('Failed to submit payment details. Please try again.', 'error');
         }
     } else {
         setFlashMessage(implode('<br>', $errors), 'error');
     }
 }
 
-$page_title = 'Registration Fee';
+$page_title = 'Registration Fee Payment';
 require_once '../src/templates/header.php';
 ?>
 
-<div class="min-h-screen bg-gray-50 py-12">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Registration Fee</h1>
-            <p class="mt-2 text-gray-600">One-time registration fee required before course enrollment</p>
+            <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-user-check text-blue-600 text-2xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Complete Your Registration</h1>
+            <p class="mt-2 text-gray-600">Pay the one-time registration fee to access all courses</p>
         </div>
 
         <?php if ($hasPending): ?>
-        <!-- Pending Status -->
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+        <!-- Pending Status Alert -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-6">
             <div class="flex items-start">
-                <div class="flex-shrink-0">
-                    <i class="fas fa-clock text-yellow-500 text-2xl"></i>
+                <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-clock text-amber-600 text-xl"></i>
                 </div>
-                <div class="ml-4">
-                    <h3 class="text-lg font-semibold text-yellow-800">Payment Pending Verification</h3>
-                    <p class="mt-1 text-yellow-700">
-                        Your registration fee payment is being verified. This usually takes 24 hours.
+                <div class="ml-4 flex-1">
+                    <h3 class="text-lg font-semibold text-amber-900">Payment Verification in Progress</h3>
+                    <p class="mt-1 text-amber-700">
+                        Your registration fee payment has been submitted and is being verified by our team. 
+                        This usually takes 24 hours during business days.
                     </p>
-                    <div class="mt-4 text-sm text-yellow-700">
-                        <p><strong>Reference:</strong> <?= sanitize($existingFee->getBankReference()) ?></p>
-                        <p><strong>Amount:</strong> K<?= number_format($existingFee->getAmount(), 2) ?></p>
-                        <p><strong>Submitted:</strong> <?= date('d M Y, H:i', strtotime($existingFee->getCreatedAt())) ?></p>
+                    <div class="mt-4 bg-white rounded-lg p-4 border border-amber-200">
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-500">Reference:</span>
+                                <p class="font-medium text-gray-900"><?= sanitize($existingFee->getBankReference()) ?></p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Amount:</span>
+                                <p class="font-medium text-gray-900"><?= $existingFee->getFormattedAmount() ?></p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Submitted:</span>
+                                <p class="font-medium text-gray-900"><?= date('d M Y', strtotime($existingFee->getCreatedAt())) ?></p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Status:</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                    Pending Verification
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <?php endif; ?>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Bank Details Card -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">
-                    <i class="fas fa-university text-primary-600 mr-2"></i>
-                    Bank Payment Details
-                </h2>
-
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                    <p class="text-sm text-blue-800 mb-2">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        Please make payment to the following bank account:
-                    </p>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="flex justify-between py-2 border-b border-gray-100">
-                        <span class="text-gray-600">Account Name</span>
-                        <span class="font-semibold text-gray-900"><?= sanitize($bankDetails['account_name'] ?? 'EDUTRACK Computer Training') ?></span>
+        <!-- Fee Summary Card -->
+        <div class="bg-white rounded-xl border overflow-hidden mb-6">
+            <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                <h2 class="font-semibold text-gray-900">Registration Fee Summary</h2>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">One-time Registration Fee</p>
+                        <p class="text-xs text-gray-400 mt-1">Required before enrolling in any course</p>
                     </div>
-                    <div class="flex justify-between py-2 border-b border-gray-100">
-                        <span class="text-gray-600">Bank Name</span>
-                        <span class="font-semibold text-gray-900"><?= sanitize($bankDetails['name'] ?? 'Contact Admin') ?></span>
-                    </div>
-                    <div class="flex justify-between py-2 border-b border-gray-100">
-                        <span class="text-gray-600">Account Number</span>
-                        <span class="font-semibold text-gray-900"><?= sanitize($bankDetails['account_number'] ?? 'Contact Admin') ?></span>
-                    </div>
-                    <div class="flex justify-between py-2 border-b border-gray-100">
-                        <span class="text-gray-600">Branch</span>
-                        <span class="font-semibold text-gray-900"><?= sanitize($bankDetails['branch'] ?? 'Main Branch') ?></span>
-                    </div>
-                    <div class="flex justify-between py-2">
-                        <span class="text-gray-600">Amount</span>
-                        <span class="text-2xl font-bold text-primary-600">K<?= number_format($feeAmount, 2) ?></span>
+                    <div class="text-right">
+                        <p class="text-3xl font-bold text-blue-600">K<?= number_format($feeAmount, 2) ?></p>
+                        <p class="text-xs text-gray-400">ZMW</p>
                     </div>
                 </div>
-
-                <div class="mt-6 bg-gray-50 rounded-lg p-4">
-                    <h4 class="font-medium text-gray-900 mb-2">Payment Reference</h4>
-                    <p class="text-sm text-gray-600">
-                        When making your deposit, please use your full name as the reference:
-                    </p>
-                    <p class="mt-2 font-mono bg-white px-3 py-2 rounded border border-gray-200">
-                        <?= sanitize($user['first_name'] . ' ' . $user['last_name']) ?>
-                    </p>
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                        <span>This fee is payable once and allows you to enroll in unlimited courses</span>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Payment Confirmation Form -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">
-                    <i class="fas fa-receipt text-primary-600 mr-2"></i>
-                    <?= $hasPending ? 'Update Payment Details' : 'Confirm Payment' ?>
-                </h2>
-
-                <p class="text-gray-600 mb-6">
-                    After making your bank deposit, please fill in the details below so we can verify your payment.
-                </p>
+        <!-- Payment Methods -->
+        <div class="bg-white rounded-xl border overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100">
+                <h2 class="font-semibold text-gray-900">Select Payment Method</h2>
+            </div>
+            
+            <div class="p-6">
+                <!-- Payment Method Tabs -->
+                <div class="flex space-x-4 mb-6 border-b border-gray-200">
+                    <button type="button" id="tab-bank" onclick="switchTab('bank')" 
+                            class="pb-3 px-2 text-sm font-medium border-b-2 border-blue-600 text-blue-600 transition">
+                        <i class="fas fa-university mr-2"></i>Bank Transfer
+                    </button>
+                    <button type="button" id="tab-mobile" onclick="switchTab('mobile')" 
+                            class="pb-3 px-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition">
+                        <i class="fas fa-mobile-alt mr-2"></i>Mobile Money
+                    </button>
+                </div>
 
                 <form method="POST" class="space-y-6">
                     <?= csrfField() ?>
+                    <input type="hidden" name="payment_method" id="payment_method" value="bank">
 
-                    <div>
-                        <label for="bank_reference" class="block text-sm font-medium text-gray-700 mb-1">
-                            Deposit Slip Number / Reference <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="bank_reference" name="bank_reference"
-                               value="<?= sanitize($existingFee ? $existingFee->getBankReference() : '') ?>"
-                               required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                               placeholder="e.g., DEP123456789">
-                        <p class="mt-1 text-xs text-gray-500">Found on your deposit slip or bank receipt</p>
+                    <!-- Bank Transfer Section -->
+                    <div id="section-bank" class="space-y-6">
+                        <!-- Bank Details -->
+                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                            <h3 class="font-medium text-gray-900 mb-4 flex items-center">
+                                <i class="fas fa-building-columns text-gray-400 mr-2"></i>
+                                Bank Account Details
+                            </h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                                    <span class="text-sm text-gray-600">Account Name</span>
+                                    <span class="font-medium text-gray-900"><?= sanitize($bankDetails['account_name'] ?? 'EDUTRACK Computer Training') ?></span>
+                                </div>
+                                <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                                    <span class="text-sm text-gray-600">Bank</span>
+                                    <span class="font-medium text-gray-900"><?= sanitize($bankDetails['name'] ?? 'Contact Admin') ?></span>
+                                </div>
+                                <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                                    <span class="text-sm text-gray-600">Account Number</span>
+                                    <div class="flex items-center">
+                                        <span class="font-mono font-medium text-gray-900 mr-2"><?= sanitize($bankDetails['account_number'] ?? 'Contact Admin') ?></span>
+                                        <?php if (!empty($bankDetails['account_number'])): ?>
+                                        <button type="button" onclick="copyToClipboard('<?= $bankDetails['account_number'] ?>')" 
+                                                class="text-blue-600 hover:text-blue-800 text-xs" title="Copy">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center py-2">
+                                    <span class="text-sm text-gray-600">Branch</span>
+                                    <span class="font-medium text-gray-900"><?= sanitize($bankDetails['branch'] ?? 'Main Branch') ?></span>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <p class="text-sm text-blue-800">
+                                    <i class="fas fa-lightbulb mr-1"></i>
+                                    <strong>Reference:</strong> Use your full name "<?= sanitize($user['first_name'] . ' ' . $user['last_name']) ?>" when making the deposit
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Bank Payment Form -->
+                        <div class="space-y-4">
+                            <div>
+                                <label for="bank_reference" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Deposit Slip / Reference Number <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="bank_reference" name="bank_reference"
+                                       value="<?= sanitize($existingFee ? $existingFee->getBankReference() : '') ?>"
+                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                       placeholder="e.g., DEP123456789">
+                                <p class="mt-1 text-xs text-gray-500">Found on your deposit slip or bank receipt</p>
+                            </div>
+
+                            <div>
+                                <label for="bank_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Bank Used <span class="text-red-500">*</span>
+                                </label>
+                                <select id="bank_name" name="bank_name"
+                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                                    <option value="">Select bank...</option>
+                                    <option value="Zanaco" <?= ($existingFee && $existingFee->getBankName() === 'Zanaco') ? 'selected' : '' ?>>Zanaco</option>
+                                    <option value="Stanbic Bank" <?= ($existingFee && $existingFee->getBankName() === 'Stanbic Bank') ? 'selected' : '' ?>>Stanbic Bank</option>
+                                    <option value="Standard Chartered" <?= ($existingFee && $existingFee->getBankName() === 'Standard Chartered') ? 'selected' : '' ?>>Standard Chartered</option>
+                                    <option value="FNB" <?= ($existingFee && $existingFee->getBankName() === 'FNB') ? 'selected' : '' ?>>FNB Zambia</option>
+                                    <option value="Absa" <?= ($existingFee && $existingFee->getBankName() === 'Absa') ? 'selected' : '' ?>>Absa Bank</option>
+                                    <option value="Access Bank" <?= ($existingFee && $existingFee->getBankName() === 'Access Bank') ? 'selected' : '' ?>>Access Bank</option>
+                                    <option value="Indo Zambia Bank" <?= ($existingFee && $existingFee->getBankName() === 'Indo Zambia Bank') ? 'selected' : '' ?>>Indo Zambia Bank</option>
+                                    <option value="Atlas Mara" <?= ($existingFee && $existingFee->getBankName() === 'Atlas Mara') ? 'selected' : '' ?>>Atlas Mara</option>
+                                    <option value="Bank of Zambia" <?= ($existingFee && $existingFee->getBankName() === 'Bank of Zambia') ? 'selected' : '' ?>>Bank of Zambia</option>
+                                    <option value="Other" <?= ($existingFee && $existingFee->getBankName() === 'Other') ? 'selected' : '' ?>>Other</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="deposit_date" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Date of Deposit <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" id="deposit_date" name="deposit_date"
+                                       value="<?= sanitize($existingFee ? $existingFee->getDepositDate() : date('Y-m-d')) ?>"
+                                       max="<?= date('Y-m-d') ?>"
+                                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="bank_name" class="block text-sm font-medium text-gray-700 mb-1">
-                            Bank Name <span class="text-red-500">*</span>
-                        </label>
-                        <select id="bank_name" name="bank_name" required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
-                            <option value="">Select bank...</option>
-                            <option value="Zanaco" <?= ($existingFee && $existingFee->getBankName() === 'Zanaco') ? 'selected' : '' ?>>Zanaco</option>
-                            <option value="Stanbic Bank" <?= ($existingFee && $existingFee->getBankName() === 'Stanbic Bank') ? 'selected' : '' ?>>Stanbic Bank</option>
-                            <option value="Standard Chartered" <?= ($existingFee && $existingFee->getBankName() === 'Standard Chartered') ? 'selected' : '' ?>>Standard Chartered</option>
-                            <option value="FNB" <?= ($existingFee && $existingFee->getBankName() === 'FNB') ? 'selected' : '' ?>>FNB Zambia</option>
-                            <option value="Barclays/Absa" <?= ($existingFee && $existingFee->getBankName() === 'Barclays/Absa') ? 'selected' : '' ?>>Barclays/Absa</option>
-                            <option value="Access Bank" <?= ($existingFee && $existingFee->getBankName() === 'Access Bank') ? 'selected' : '' ?>>Access Bank</option>
-                            <option value="Indo Zambia Bank" <?= ($existingFee && $existingFee->getBankName() === 'Indo Zambia Bank') ? 'selected' : '' ?>>Indo Zambia Bank</option>
-                            <option value="Atlas Mara" <?= ($existingFee && $existingFee->getBankName() === 'Atlas Mara') ? 'selected' : '' ?>>Atlas Mara</option>
-                            <option value="Other" <?= ($existingFee && $existingFee->getBankName() === 'Other') ? 'selected' : '' ?>>Other</option>
-                        </select>
+                    <!-- Mobile Money Section -->
+                    <div id="section-mobile" class="space-y-6 hidden">
+                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                            <h3 class="font-medium text-gray-900 mb-4 flex items-center">
+                                <i class="fas fa-mobile-screen text-gray-400 mr-2"></i>
+                                Mobile Money Payment
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center p-3 bg-white rounded-lg border">
+                                    <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-money-bill-wave text-yellow-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">MTN Mobile Money</p>
+                                        <p class="text-sm text-gray-500">Send to: <span class="font-mono"><?= SITE_PHONE ?? '+260 XXX XXX XXX' ?></span></p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center p-3 bg-white rounded-lg border">
+                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-money-bill-wave text-red-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">Airtel Money</p>
+                                        <p class="text-sm text-gray-500">Send to: <span class="font-mono"><?= SITE_PHONE ?? '+260 XXX XXX XXX' ?></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <p class="text-sm text-blue-800">
+                                    <i class="fas fa-lightbulb mr-1"></i>
+                                    <strong>Reference:</strong> Include your full name "<?= sanitize($user['first_name'] . ' ' . $user['last_name']) ?>" in the message
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-1">
+                                Mobile Money Number <span class="text-red-500">*</span>
+                            </label>
+                            <input type="tel" id="phone_number" name="phone_number"
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                   placeholder="e.g., +260 97X XXX XXX">
+                            <p class="mt-1 text-xs text-gray-500">The phone number used to make the payment</p>
+                        </div>
                     </div>
 
-                    <div>
-                        <label for="deposit_date" class="block text-sm font-medium text-gray-700 mb-1">
-                            Date of Deposit <span class="text-red-500">*</span>
-                        </label>
-                        <input type="date" id="deposit_date" name="deposit_date"
-                               value="<?= sanitize($existingFee ? $existingFee->getDepositDate() : date('Y-m-d')) ?>"
-                               required
-                               max="<?= date('Y-m-d') ?>"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
-                    </div>
-
+                    <!-- Common Fields -->
                     <div>
                         <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">
                             Additional Notes (Optional)
                         </label>
                         <textarea id="notes" name="notes" rows="3"
-                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                  placeholder="Any additional information..."><?= sanitize($existingFee ? $existingFee->getNotes() : '') ?></textarea>
+                                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                  placeholder="Any additional information to help us verify your payment..."><?= sanitize($existingFee ? $existingFee->getNotes() : '') ?></textarea>
                     </div>
 
-                    <button type="submit" class="w-full btn btn-primary py-3">
+                    <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition flex items-center justify-center">
                         <i class="fas fa-paper-plane mr-2"></i>
                         <?= $hasPending ? 'Update Payment Details' : 'Submit for Verification' ?>
                     </button>
@@ -248,33 +350,88 @@ require_once '../src/templates/header.php';
             </div>
         </div>
 
-        <!-- Help Section -->
-        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                <i class="fas fa-question-circle text-primary-600 mr-2"></i>
-                Frequently Asked Questions
-            </h3>
-            <div class="space-y-4">
-                <div>
-                    <h4 class="font-medium text-gray-900">Is this a one-time fee?</h4>
-                    <p class="text-gray-600 text-sm">Yes, the K150 registration fee is a one-time payment that allows you to enroll in any course.</p>
-                </div>
-                <div>
-                    <h4 class="font-medium text-gray-900">How long does verification take?</h4>
-                    <p class="text-gray-600 text-sm">Verification usually takes 24 hours during business days.</p>
-                </div>
-                <div>
-                    <h4 class="font-medium text-gray-900">Why can't I pay with mobile money?</h4>
-                    <p class="text-gray-600 text-sm">Registration fees must be paid directly to our bank account for record-keeping purposes. Course fees can be paid via mobile money.</p>
-                </div>
-                <div>
-                    <h4 class="font-medium text-gray-900">Need help?</h4>
-                    <p class="text-gray-600 text-sm">Contact us at <a href="mailto:<?= SITE_EMAIL ?>" class="text-primary-600 hover:underline"><?= SITE_EMAIL ?></a> or call <?= SITE_PHONE ?></p>
+        <!-- FAQ Section -->
+        <div class="mt-8 bg-white rounded-xl border overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100">
+                <h3 class="font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-circle-question text-gray-400 mr-2"></i>
+                    Frequently Asked Questions
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <details class="group">
+                        <summary class="flex justify-between items-center cursor-pointer font-medium text-gray-900 hover:text-blue-600 transition">
+                            <span>Is this a one-time fee?</span>
+                            <i class="fas fa-chevron-down text-gray-400 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="mt-2 text-gray-600 text-sm">Yes, the K150 registration fee is a one-time payment that allows you to enroll in any number of courses on the platform.</p>
+                    </details>
+                    <hr class="border-gray-100">
+                    <details class="group">
+                        <summary class="flex justify-between items-center cursor-pointer font-medium text-gray-900 hover:text-blue-600 transition">
+                            <span>How long does verification take?</span>
+                            <i class="fas fa-chevron-down text-gray-400 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="mt-2 text-gray-600 text-sm">Payment verification typically takes 24 hours during business days. You will receive an email notification once your payment is verified.</p>
+                    </details>
+                    <hr class="border-gray-100">
+                    <details class="group">
+                        <summary class="flex justify-between items-center cursor-pointer font-medium text-gray-900 hover:text-blue-600 transition">
+                            <span>What if my payment is not verified?</span>
+                            <i class="fas fa-chevron-down text-gray-400 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="mt-2 text-gray-600 text-sm">If there's an issue with your payment verification, our team will contact you via email or phone. You can also reach out to us at <?= SITE_EMAIL ?>.</p>
+                    </details>
+                    <hr class="border-gray-100">
+                    <details class="group">
+                        <summary class="flex justify-between items-center cursor-pointer font-medium text-gray-900 hover:text-blue-600 transition">
+                            <span>Need help?</span>
+                            <i class="fas fa-chevron-down text-gray-400 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="mt-2 text-gray-600 text-sm">Contact us at <a href="mailto:<?= SITE_EMAIL ?>" class="text-blue-600 hover:underline"><?= SITE_EMAIL ?></a> or call <?= SITE_PHONE ?> for assistance.</p>
+                    </details>
                 </div>
             </div>
         </div>
 
     </div>
 </div>
+
+<script>
+function switchTab(method) {
+    const bankTab = document.getElementById('tab-bank');
+    const mobileTab = document.getElementById('tab-mobile');
+    const bankSection = document.getElementById('section-bank');
+    const mobileSection = document.getElementById('section-mobile');
+    const paymentMethod = document.getElementById('payment_method');
+
+    if (method === 'bank') {
+        bankTab.classList.add('border-blue-600', 'text-blue-600');
+        bankTab.classList.remove('border-transparent', 'text-gray-500');
+        mobileTab.classList.remove('border-blue-600', 'text-blue-600');
+        mobileTab.classList.add('border-transparent', 'text-gray-500');
+        bankSection.classList.remove('hidden');
+        mobileSection.classList.add('hidden');
+        paymentMethod.value = 'bank';
+    } else {
+        mobileTab.classList.add('border-blue-600', 'text-blue-600');
+        mobileTab.classList.remove('border-transparent', 'text-gray-500');
+        bankTab.classList.remove('border-blue-600', 'text-blue-600');
+        bankTab.classList.add('border-transparent', 'text-gray-500');
+        mobileSection.classList.remove('hidden');
+        bankSection.classList.add('hidden');
+        paymentMethod.value = 'mobile';
+    }
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Account number copied to clipboard!');
+    }).catch(err => {
+        console.error('Failed to copy:', err);
+    });
+}
+</script>
 
 <?php require_once '../src/templates/footer.php'; ?>

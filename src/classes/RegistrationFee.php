@@ -102,10 +102,10 @@ class RegistrationFee {
 
         $sql = "INSERT INTO registration_fees (
             user_id, student_id, amount, currency, payment_method,
-            bank_reference, bank_name, deposit_date, notes
+            bank_reference, bank_name, deposit_date, phone_number, notes
         ) VALUES (
             :user_id, :student_id, :amount, :currency, :payment_method,
-            :bank_reference, :bank_name, :deposit_date, :notes
+            :bank_reference, :bank_name, :deposit_date, :phone_number, :notes
         )";
 
         $params = [
@@ -117,6 +117,7 @@ class RegistrationFee {
             'bank_reference' => $data['bank_reference'] ?? null,
             'bank_name' => $data['bank_name'] ?? null,
             'deposit_date' => $data['deposit_date'] ?? null,
+            'phone_number' => $data['phone_number'] ?? null,
             'notes' => $data['notes'] ?? null
         ];
 
@@ -130,8 +131,8 @@ class RegistrationFee {
      * Update registration fee
      */
     public function update($data) {
-        $allowed = ['payment_status', 'bank_reference', 'bank_name',
-                   'deposit_date', 'verified_by', 'verified_at', 'notes'];
+        $allowed = ['payment_status', 'bank_reference', 'bank_name', 'payment_method',
+                   'deposit_date', 'phone_number', 'verified_by', 'verified_at', 'notes'];
 
         $updates = [];
         $params = ['id' => $this->id];
@@ -304,6 +305,7 @@ class RegistrationFee {
     public function getVerifiedBy() { return $this->data['verified_by'] ?? null; }
     public function getVerifiedAt() { return $this->data['verified_at'] ?? null; }
     public function getNotes() { return $this->data['notes'] ?? ''; }
+    public function getPhoneNumber() { return $this->data['phone_number'] ?? ''; }
     public function getCreatedAt() { return $this->data['created_at'] ?? null; }
 
     // User getters
