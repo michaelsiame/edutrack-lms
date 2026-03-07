@@ -162,6 +162,17 @@ class Enrollment {
             if ($ownTransaction) {
                 $db->commit();
             }
+
+            // Send admin notification about new enrollment
+            try {
+                require_once __DIR__ . '/EmailNotificationService.php';
+                $notificationService = new EmailNotificationService();
+                $notificationService->sendAdminEnrollmentNotification($enrollmentId);
+            } catch (Exception $adminNotifEx) {
+                // Don't fail enrollment if admin notification fails
+                error_log("Admin enrollment notification failed: " . $adminNotifEx->getMessage());
+            }
+
             return $enrollmentId;
 
         } catch (Exception $e) {

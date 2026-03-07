@@ -391,6 +391,19 @@ class Lenco {
         if ($paymentResult['success']) {
             // Send confirmation email
             $this->sendPaymentConfirmation($pendingTx, $data);
+
+            // Send admin notification about payment
+            try {
+                require_once __DIR__ . '/EmailNotificationService.php';
+                $notificationService = new EmailNotificationService();
+                $notificationService->sendAdminPaymentNotification(
+                    $paymentResult['payment_id'], 
+                    'lenco'
+                );
+            } catch (Exception $adminNotifEx) {
+                // Don't fail webhook if admin notification fails
+                error_log("Admin payment notification failed (Lenco webhook): " . $adminNotifEx->getMessage());
+            }
         }
 
         return $paymentResult;

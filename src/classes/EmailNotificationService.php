@@ -215,10 +215,194 @@ class EmailNotificationService {
             'payment' => 10,
             'certificate' => 8,
             'password_reset' => 10,
-            'notification' => 1
+            'notification' => 1,
+            'admin_alert' => 10
         ];
 
         return $priorities[$type] ?? 1;
+    }
+
+    // =====================================================================
+    // ADMIN NOTIFICATION METHODS
+    // =====================================================================
+
+    /**
+     * Send admin notification when a new user registers
+     * @param int $userId The new user's ID
+     * @return bool
+     */
+    public function sendAdminNewUserNotification($userId) {
+        try {
+            $user = $this->db->fetchOne("
+                SELECT u.*, GROUP_CONCAT(r.role_name) as roles
+                FROM users u
+                LEFT JOIN user_roles ur ON u.id = ur.user_id
+                LEFT JOIN roles r ON ur.role_id = r.id
+                WHERE u.id = ?
+                GROUP BY u.id
+            ", [$userId]);
+
+            if (!$user) return false;
+
+            $adminEmails = $this->getAdminEmails();
+            if (empty($adminEmails)) return false;
+
+            $subject = "New User Registration - " . $user['first_name'] . ' ' . $user['last_name'];
+            $body = $this->loadTemplate('admin-new-user', [
+                'admin_name' => 'Admin',
+                'user_name' => $user['first_name'] . ' ' . $user['last_name'],
+                'user_email' => $user['email'],
+                'user_phone' => $user['phone'] ?: 'Not provided',
+                'user_roles' => $user['roles'] ?: 'Student',
+                'registration_date' => date('F j, Y g:i A', strtotime($user['created_at'])),
+                'user_profile_url' => (getenv('APP_URL') ?: 'https://edutrackzambia.com') . '/admin/pages/users.php?action=view&id=' . $userId
+            ]);
+
+            foreach ($adminEmails as $adminEmail) {
+                $this->queueEmail($adminEmail, $subject, $body, 'admin_alert');
+            }
+            return true;
+        } catch (Exception $e) {
+            error_log("Failed to send admin new user notification: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Send admin notification when a user enrolls in a course
+     * @param int $enrollmentId The enrollment ID
+     * @return bool
+     */
+    public function sendAdminEnrollmentNotification($enrollmentId) {
+        try {
+            $enrollment = $this->db->fetchOne("
+                SELECT e.*, u.first_name, u.last_name, u.email, u.phone,
+                       c.title as course_title, c.price as course_price
+                FROM enrollments e
+                JOIN users u ON e.user_id = u.id
+                JOIN courses c ON e.course_id = c.id
+                WHERE e.id = ?
+            ", [$enrollmentId]);
+
+            if (!$enrollment) return false;
+
+            $adminEmails = $this->getAdminEmails();
+            if (empty($adminEmails)) return false;
+
+            $subject = "New Enrollment - " . $enrollment['course_title'];
+            $body = $this->loadTemplate('admin-enrollment', [
+                'admin_name' => 'Admin',
+                'student_name' => $enrollment['first_name'] . ' ' . $enrollment['last_name'],
+                'student_email' => $enrollment['email'],
+                'student_phone' => $enrollment['phone'] ?: 'Not provided',
+                'course_title' => $enrollment['course_title'],
+                'course_price' => number_format($enrollment['course_price'], 2),
+                'currency' => getenv('CURRENCY') ?: 'ZMW',
+                'enrollment_status' => $enrollment['enrollment_status'],
+                'payment_status' => $enrollment['payment_status'],
+                'enrollment_date' => date('F j, Y g:i A', strtotime($enrollment['enrolled_at'])),
+                'enrollment_url' => (getenv('APP_URL') ?: 'https://edutrackzambia.com') . '/admin/pages/enrollments.php?action=view&id=' . $enrollmentId
+            ]);
+
+            foreach ($adminEmails as $adminEmail) {
+                $this->queueEmail($adminEmail, $subject, $body, 'admin_alert');
+            }
+            return true;
+        } catch (Exception $e) {
+            error_log("Failed to send admin enrollment notification: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Send admin notification when a payment is received
+     * @param int $paymentId The payment/transaction ID
+     * @param string $paymentType 'lenco', 'manual', 'other'
+     * @return bool
+     */
+    public function sendAdminPaymentNotification($paymentId, $paymentType = 'other') {
+        try {
+            // Try to get from transactions table first
+            $payment = $this->db->fetchOne("
+                SELECT t.*, u.first_name, u.last_name, u.email,
+                       pm.method_name, c.title as course_title
+                FROM transactions t
+                JOIN users u ON t.user_id = u.id
+                LEFT JOIN payment_methods pm ON t.payment_method_id = pm.payment_method_id
+                LEFT JOIN courses c ON t.course_id = c.id
+                WHERE t.transaction_id = ?
+            ", [$paymentId]);
+
+            // If not found, try payments table
+            if (!$payment) {
+                $payment = $this->db->fetchOne("
+                    SELECT p.*, u.first_name, u.last_name, u.email,
+                           c.title as course_title
+                    FROM payments p
+                    JOIN users u ON p.user_id = u.id
+                    LEFT JOIN courses c ON p.course_id = c.id
+                    WHERE p.id = ?
+                ", [$paymentId]);
+                
+                if ($payment) {
+                    $payment['method_name'] = $payment['payment_method'] ?: 'N/A';
+                    $payment['reference_number'] = $payment['reference'] ?: 'N/A';
+                }
+            }
+
+            if (!$payment) return false;
+
+            $adminEmails = $this->getAdminEmails();
+            if (empty($adminEmails)) return false;
+
+            $subject = "Payment Received - " . $payment['method_name'] . ' ' . number_format($payment['amount'], 2);
+            $body = $this->loadTemplate('admin-payment', [
+                'admin_name' => 'Admin',
+                'student_name' => $payment['first_name'] . ' ' . $payment['last_name'],
+                'student_email' => $payment['email'],
+                'course_title' => $payment['course_title'] ?: 'N/A',
+                'amount' => number_format($payment['amount'], 2),
+                'currency' => $payment['currency'] ?: (getenv('CURRENCY') ?: 'ZMW'),
+                'payment_method' => $payment['method_name'] ?: 'N/A',
+                'reference_number' => $payment['reference_number'] ?: 'N/A',
+                'transaction_id' => $payment['transaction_id'] ?? $paymentId,
+                'payment_status' => $payment['status'] ?: $payment['payment_status'] ?: 'completed',
+                'payment_date' => date('F j, Y g:i A', strtotime($payment['processed_at'] ?? $payment['created_at'])),
+                'payment_type' => $paymentType,
+                'payment_url' => (getenv('APP_URL') ?: 'https://edutrackzambia.com') . '/admin/pages/financials.php'
+            ]);
+
+            foreach ($adminEmails as $adminEmail) {
+                $this->queueEmail($adminEmail, $subject, $body, 'admin_alert');
+            }
+            return true;
+        } catch (Exception $e) {
+            error_log("Failed to send admin payment notification: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get all admin email addresses
+     * @return array
+     */
+    private function getAdminEmails() {
+        try {
+            $admins = $this->db->fetchAll("
+                SELECT DISTINCT u.email
+                FROM users u
+                JOIN user_roles ur ON u.id = ur.user_id
+                JOIN roles r ON ur.role_id = r.id
+                WHERE r.role_name IN ('admin', 'finance')
+                AND u.status = 'active'
+                AND u.email IS NOT NULL
+            ");
+
+            return array_column($admins, 'email');
+        } catch (Exception $e) {
+            error_log("Failed to get admin emails: " . $e->getMessage());
+            return [];
+        }
     }
 
     /**

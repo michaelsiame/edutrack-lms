@@ -99,6 +99,16 @@ function registerUser($data) {
             error_log("Welcome email failed: " . $emailEx->getMessage());
         }
 
+        // Send admin notification about new user
+        try {
+            require_once __DIR__ . '/../classes/EmailNotificationService.php';
+            $notificationService = new EmailNotificationService();
+            $notificationService->sendAdminNewUserNotification($userId);
+        } catch (Exception $adminNotifEx) {
+            // Don't fail registration if admin notification fails
+            error_log("Admin notification failed: " . $adminNotifEx->getMessage());
+        }
+
         return ['success' => true, 'message' => 'Account created successfully. Please login.'];
 
     } catch (Exception $e) {

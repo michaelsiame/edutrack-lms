@@ -276,6 +276,26 @@ class Payment {
                 $this->sendConfirmationEmail();
             }
 
+            // Send admin notification about payment
+            try {
+                require_once __DIR__ . '/EmailNotificationService.php';
+                $notificationService = new EmailNotificationService();
+                
+                // Determine payment type based on available data
+                $paymentType = 'other';
+                if ($transactionId) {
+                    $paymentType = strpos($transactionId, 'lenco') !== false ? 'lenco' : 'other';
+                }
+                
+                $notificationService->sendAdminPaymentNotification(
+                    $this->getId() ?: $transactionId, 
+                    $paymentType
+                );
+            } catch (Exception $adminNotifEx) {
+                // Don't fail payment if admin notification fails
+                error_log("Admin payment notification failed: " . $adminNotifEx->getMessage());
+            }
+
             return $result;
             
         } catch (Exception $e) {
