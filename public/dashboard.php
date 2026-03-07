@@ -104,10 +104,10 @@ $unreadNotifications = $db->fetchAll("
 $recentAchievements = $db->fetchAll("
     SELECT cert.*, c.title as course_title, c.thumbnail_url
     FROM certificates cert
-    JOIN courses c ON cert.course_id = c.id
-    JOIN enrollments e ON e.course_id = c.id AND e.user_id = ?
-    WHERE cert.student_id = e.student_id
-    ORDER BY cert.issued_at DESC
+    JOIN enrollments e ON cert.enrollment_id = e.id
+    JOIN courses c ON e.course_id = c.id
+    WHERE e.user_id = ?
+    ORDER BY cert.issued_date DESC
     LIMIT 3
 ", [$userId]);
 

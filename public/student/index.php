@@ -28,7 +28,7 @@ $stats = [
     ", [$userId]) ?? 0,
     'certificates' => $db->fetchColumn("
         SELECT COUNT(*) FROM certificates cert
-        JOIN enrollments e ON cert.student_id = e.student_id
+        JOIN enrollments e ON cert.enrollment_id = e.id
         WHERE e.user_id = ?
     ", [$userId]) ?? 0,
     'avg_progress' => $db->fetchColumn("
@@ -242,10 +242,10 @@ require_once '../../src/templates/header.php';
             JOIN enrollments e ON qa.student_id = e.student_id
             WHERE e.user_id = ?
             UNION ALL
-            SELECT 'certificate' as type, c.title, cert.issued_at as date
+            SELECT 'certificate' as type, c.title, cert.issued_date as date
             FROM certificates cert
-            JOIN courses c ON cert.course_id = c.id
-            JOIN enrollments e ON cert.student_id = e.student_id
+            JOIN enrollments e ON cert.enrollment_id = e.id
+            JOIN courses c ON e.course_id = c.id
             WHERE e.user_id = ?
             ORDER BY date DESC
             LIMIT 5

@@ -99,7 +99,7 @@ $counts = [
 $totalProgress = $db->fetchColumn("SELECT AVG(progress) FROM enrollments WHERE user_id = ?", [$userId]) ?? 0;
 $certificatesCount = $db->fetchColumn("
     SELECT COUNT(*) FROM certificates cert
-    JOIN enrollments e ON cert.student_id = e.student_id
+    JOIN enrollments e ON cert.enrollment_id = e.id
     WHERE e.user_id = ?
 ", [$userId]) ?? 0;
 

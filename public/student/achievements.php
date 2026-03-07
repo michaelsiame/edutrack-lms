@@ -16,12 +16,12 @@ $userId = $user->getId();
 // Get certificates
 $certificates = $db->fetchAll("
     SELECT cert.*, c.title as course_title, c.thumbnail_url, c.slug as course_slug,
-           cert.issued_at, cert.certificate_number
+           cert.issued_date, cert.certificate_number
     FROM certificates cert
-    JOIN courses c ON cert.course_id = c.id
-    JOIN enrollments e ON cert.student_id = e.student_id
+    JOIN enrollments e ON cert.enrollment_id = e.id
+    JOIN courses c ON e.course_id = c.id
     WHERE e.user_id = ?
-    ORDER BY cert.issued_at DESC
+    ORDER BY cert.issued_date DESC
 ", [$userId]);
 
 // Get learning stats
@@ -180,10 +180,10 @@ $milestones = $db->fetchAll("
     JOIN courses c ON e.course_id = c.id
     WHERE e.user_id = ? AND e.enrollment_status = 'Completed' AND e.completion_date IS NOT NULL
     UNION ALL
-    SELECT 'certificate' as type, c.title, cert.issued_at as date, 'Earned certificate' as description
+    SELECT 'certificate' as type, c.title, cert.issued_date as date, 'Earned certificate' as description
     FROM certificates cert
-    JOIN courses c ON cert.course_id = c.id
-    JOIN enrollments e ON cert.student_id = e.student_id
+    JOIN enrollments e ON cert.enrollment_id = e.id
+    JOIN courses c ON e.course_id = c.id
     WHERE e.user_id = ?
     UNION ALL
     SELECT 'quiz_high' as type, q.title, qa.completed_at as date, CONCAT('Scored ', ROUND((qa.score/qa.total_score)*100), '% on quiz') as description
