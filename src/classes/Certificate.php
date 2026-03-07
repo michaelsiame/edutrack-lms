@@ -94,48 +94,65 @@ class Certificate {
     
     /**
      * Generate certificate for a student
+     * Uses transaction to prevent race conditions on duplicate certificates
      */
     public static function generate($userId, $courseId) {
         $db = Database::getInstance();
         
-        // Check if certificate already exists
-        $existing = self::getByUserAndCourse($userId, $courseId);
-        if ($existing) {
-            return $existing;
-        }
-        
-        // Verify course completion
-        require_once __DIR__ . '/Enrollment.php';
-        $enrollment = Enrollment::getByUserAndCourse($userId, $courseId);
-        
-        if (!$enrollment || $enrollment['progress'] < 100) {
+        try {
+            $db->beginTransaction();
+            
+            // Check if certificate already exists (WITHIN transaction with FOR UPDATE)
+            $existing = $db->fetchOne(
+                "SELECT id FROM certificates WHERE user_id = ? AND course_id = ? FOR UPDATE",
+                [$userId, $courseId]
+            );
+            
+            if ($existing) {
+                $db->commit(); // Nothing to do, return existing
+                return new self($existing['id']);
+            }
+            
+            // Verify course completion
+            require_once __DIR__ . '/Enrollment.php';
+            $enrollment = Enrollment::getByUserAndCourse($userId, $courseId);
+            
+            if (!$enrollment || $enrollment['progress'] < 100) {
+                $db->rollBack();
+                return false;
+            }
+            
+            // Generate certificate number and verification code
+            $certNumber = self::generateCertificateNumber();
+            $verifyCode = self::generateVerificationCode();
+            
+            // Create certificate record
+            $sql = "INSERT INTO certificates (
+                user_id, course_id, certificate_number, verification_code,
+                final_score, issued_at
+            ) VALUES (?, ?, ?, ?, ?, NOW())";
+            
+            $params = [
+                $userId,
+                $courseId,
+                $certNumber,
+                $verifyCode,
+                $enrollment['final_score'] ?? 0
+            ];
+            
+            if (!$db->query($sql, $params)) {
+                throw new Exception('Failed to create certificate record');
+            }
+            
+            $certId = $db->lastInsertId();
+            $db->commit();
+            return new self($certId);
+            
+        } catch (Exception $e) {
+            $db->rollBack();
+            error_log('Certificate generation failed: ' . $e->getMessage());
             return false;
         }
-        
-        // Generate certificate number and verification code
-        $certNumber = self::generateCertificateNumber();
-        $verifyCode = self::generateVerificationCode();
-        
-        // Create certificate record
-        $sql = "INSERT INTO certificates (
-            user_id, course_id, certificate_number, verification_code,
-            final_score, issued_at
-        ) VALUES (?, ?, ?, ?, ?, NOW())";
-        
-        $params = [
-            $userId,
-            $courseId,
-            $certNumber,
-            $verifyCode,
-            $enrollment['final_score'] ?? 0
-        ];
-        
-        if ($db->query($sql, $params)) {
-            $certId = $db->lastInsertId();
-            return new self($certId);
-        }
-        
-        return false;
     }
     
     /**

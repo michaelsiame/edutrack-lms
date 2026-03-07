@@ -48,7 +48,9 @@ if ($action === 'add') {
     $username = strtolower(str_replace(' ', '.', $firstName . '.' . $lastName));
     $phone = trim($_POST['phone'] ?? '');
     $roleId = (int)($_POST['role_id'] ?? 4);
-    $password = password_hash($_POST['password'] ?? 'password123', PASSWORD_DEFAULT);
+    // Generate random temporary password if not provided
+$plainPassword = $_POST['password'] ?? bin2hex(random_bytes(8));
+$password = password_hash($plainPassword, PASSWORD_DEFAULT);
     $address = trim($_POST['address'] ?? '');
     $bio = trim($_POST['bio'] ?? '');
 
@@ -159,8 +161,9 @@ if ($action === 'edit' && isset($_POST['user_id'])) {
 // Reset password
 if ($action === 'reset_password' && isset($_POST['user_id'])) {
     $userId = (int)$_POST['user_id'];
-    $newPassword = 'password123';
+    $newPassword = bin2hex(random_bytes(8));
     $db->update('users', ['password_hash' => password_hash($newPassword, PASSWORD_DEFAULT)], 'id = ?', [$userId]);
+    // TODO: Send email to user with new password
     header('Location: ?page=users&msg=password_reset');
     exit;
 }

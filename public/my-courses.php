@@ -122,7 +122,7 @@ require_once '../src/templates/header.php';
                         <span class="text-sm text-gray-500">Overall Progress</span>
                         <div class="flex items-center gap-2">
                             <div class="w-24 bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-500 h-2 rounded-full" style="width: <?= round($totalProgress) ? round($totalProgress) : 0 %>%"></div>
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: <?= round($totalProgress) ? round($totalProgress) : 0 ?>%"></div>
                             </div>
                             <span class="font-bold text-gray-800"><?= round($totalProgress) ?>%</span>
                         </div>

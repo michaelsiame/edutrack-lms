@@ -21,7 +21,7 @@ if (!isset($required_course_id)) {
 // Check if user is enrolled in the course
 global $db;
 $enrollment = $db->fetchOne(
-    "SELECT * FROM enrollments WHERE user_id = ? AND course_id = ? AND enrollment_status IN ('active', 'completed')",
+    "SELECT * FROM enrollments WHERE user_id = ? AND course_id = ? AND enrollment_status IN ('Enrolled', 'In Progress', 'Completed')",
     [currentUserId(), $required_course_id]
 );
 

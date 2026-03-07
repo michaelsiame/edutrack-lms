@@ -80,16 +80,13 @@ class Enrollment {
     /**
      * CORE LOGIC: Create New Enrollment + Payment Plan
      * This runs inside a transaction to ensure financial data is created.
+     * Uses INSERT IGNORE to prevent race conditions with duplicate enrollments.
      */
     public static function create($data) {
         $db = Database::getInstance();
 
-        // 1. Check Duplicates
-        if (self::isEnrolled($data['user_id'], $data['course_id'])) {
-            return false;
-        }
-
-        // 2. Ensure Student Record Exists (Foreign Key Requirement)
+        // 1. Ensure Student Record Exists (Foreign Key Requirement)
+        // Do this before transaction to minimize lock time
         $student = $db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$data['user_id']]);
         if (!$student) {
             $db->insert('students', [
@@ -101,12 +98,27 @@ class Enrollment {
             $studentId = $student['id'];
         }
 
-        // 3. Get Course Price for Payment Plan
+        // 2. Get Course Price for Payment Plan
         $course = $db->fetchOne("SELECT price FROM courses WHERE id = ?", [$data['course_id']]);
         $coursePrice = $course['price'] ?? 0;
 
         try {
-            $db->beginTransaction();
+            // Check if we're already in a transaction (to handle nested transaction calls)
+            $ownTransaction = !$db->inTransaction();
+            if ($ownTransaction) {
+                $db->beginTransaction();
+            }
+
+            // 3. Check for existing enrollment WITHIN transaction (prevents race condition)
+            $existing = $db->fetchOne(
+                "SELECT id FROM enrollments WHERE user_id = ? AND course_id = ? FOR UPDATE",
+                [$data['user_id'], $data['course_id']]
+            );
+            
+            if ($existing) {
+                $db->rollBack();
+                return false; // Already enrolled
+            }
 
             // 4. Insert Enrollment
             // Default status 'Enrolled' implies "Waiting for Payment/Deposit"
@@ -146,11 +158,17 @@ class Enrollment {
             // 6. Log Activity
             self::logActivity($data['user_id'], 'enrollment', $data['course_id'], 'Enrolled in course (Pending Deposit)');
 
-            $db->commit();
+            // Only commit if we started the transaction
+            if ($ownTransaction) {
+                $db->commit();
+            }
             return $enrollmentId;
 
         } catch (Exception $e) {
-            $db->rollBack();
+            // Only rollback if we started the transaction
+            if ($ownTransaction) {
+                $db->rollBack();
+            }
             error_log("Enrollment::create Error: " . $e->getMessage());
             return false;
         }
@@ -335,24 +353,13 @@ class Enrollment {
     }
 
     public function recalculateProgress() {
-        // Need Course class to count lessons
-        if (!class_exists('Course')) {
-            require_once __DIR__ . '/Course.php';
-        }
+        // Use Progress class for consistent calculation
+        require_once __DIR__ . '/Progress.php';
+        $progress = new Progress();
         
-        $course = Course::find($this->getCourseId());
-        if (!$course) return;
+        $progressData = $progress->getCourseProgress($this->getUserId(), $this->getCourseId());
+        $percentage = $progressData['percentage'] ?? 0;
         
-        $totalLessons = $course->getTotalLessons();
-        if ($totalLessons == 0) return; // Prevent division by zero
-
-        // Count completed lessons
-        $completed = $this->db->fetchColumn(
-            "SELECT COUNT(*) FROM lesson_progress WHERE enrollment_id = ? AND status = 'Completed'",
-            [$this->id]
-        );
-
-        $percentage = ($completed / $totalLessons) * 100;
         $this->updateProgress($percentage);
 
         // Auto-complete course if 100%

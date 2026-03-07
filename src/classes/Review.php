@@ -27,6 +27,7 @@ class Review {
 
     /**
      * Create a new review
+     * Uses transaction to prevent race conditions on duplicate reviews
      */
     public static function create($data) {
         global $db;
@@ -36,55 +37,66 @@ class Review {
             throw new Exception('Course ID, User ID, and rating are required');
         }
 
-        // Check if user is enrolled
-        $enrollment = $db->fetchOne(
-            "SELECT id FROM enrollments WHERE user_id = ? AND course_id = ?",
-            [$data['user_id'], $data['course_id']]
-        );
-
-        if (!$enrollment) {
-            throw new Exception('User must be enrolled in the course to leave a review');
-        }
-
-        // Check if review already exists
-        $existing = $db->fetchOne(
-            "SELECT id FROM course_reviews WHERE user_id = ? AND course_id = ?",
-            [$data['user_id'], $data['course_id']]
-        );
-
-        if ($existing) {
-            throw new Exception('You have already reviewed this course. Please update your existing review.');
-        }
-
         // Validate rating
         if (!is_numeric($data['rating']) || $data['rating'] < 1 || $data['rating'] > 5) {
             throw new Exception('Rating must be a number between 1 and 5');
         }
         $data['rating'] = (int) $data['rating'];
 
-        $sql = "INSERT INTO course_reviews (
-            course_id, user_id, rating, review, created_at
-        ) VALUES (?, ?, ?, ?, NOW())";
+        try {
+            $db->beginTransaction();
 
-        $params = [
-            $data['course_id'],
-            $data['user_id'],
-            $data['rating'],
-            $data['review'] ?? null
-        ];
+            // Check if user is enrolled
+            $enrollment = $db->fetchOne(
+                "SELECT id FROM enrollments WHERE user_id = ? AND course_id = ?",
+                [$data['user_id'], $data['course_id']]
+            );
 
-        $result = $db->query($sql, $params);
+            if (!$enrollment) {
+                $db->rollBack();
+                throw new Exception('User must be enrolled in the course to leave a review');
+            }
 
-        if ($result) {
+            // Check if review already exists (WITHIN transaction with FOR UPDATE)
+            $existing = $db->fetchOne(
+                "SELECT id FROM course_reviews WHERE user_id = ? AND course_id = ? FOR UPDATE",
+                [$data['user_id'], $data['course_id']]
+            );
+
+            if ($existing) {
+                $db->rollBack();
+                throw new Exception('You have already reviewed this course. Please update your existing review.');
+            }
+
+            $sql = "INSERT INTO course_reviews (
+                course_id, user_id, rating, review, created_at
+            ) VALUES (?, ?, ?, ?, NOW())";
+
+            $params = [
+                $data['course_id'],
+                $data['user_id'],
+                $data['rating'],
+                $data['review'] ?? null
+            ];
+
+            $result = $db->query($sql, $params);
+
+            if (!$result) {
+                throw new Exception('Failed to create review');
+            }
+
             $reviewId = $db->lastInsertId();
 
             // Update course rating statistics
             self::updateCourseRatings($data['course_id']);
 
+            $db->commit();
             return self::find($reviewId);
-        }
 
-        return false;
+        } catch (Exception $e) {
+            $db->rollBack();
+            throw $e;
+        }
     }
 
     /**

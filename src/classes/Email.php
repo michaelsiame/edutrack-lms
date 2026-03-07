@@ -194,36 +194,36 @@ class Email {
 
     /**
      * Send Enrollment Confirmation Email
+     * DEPRECATED: Use EmailNotificationService::sendEnrollmentEmail() instead
      */
     public function sendEnrollmentConfirmation($user, $course) {
-        $subject = "Enrollment Confirmed - " . (defined('APP_NAME') ? APP_NAME : 'Edutrack LMS');
+        // Delegate to EmailNotificationService for consistency
+        require_once __DIR__ . '/EmailNotificationService.php';
+        $service = new EmailNotificationService();
         
+        // Get enrollment ID if available, otherwise send direct
+        $userId = is_object($user) ? ($user->id ?? null) : ($user['id'] ?? null);
+        $courseId = is_object($course) ? ($course->id ?? null) : ($course['id'] ?? null);
+        
+        if ($userId && $courseId) {
+            $db = Database::getInstance();
+            $enrollment = $db->fetchOne(
+                "SELECT id FROM enrollments WHERE user_id = ? AND course_id = ? ORDER BY id DESC LIMIT 1",
+                [$userId, $courseId]
+            );
+            if ($enrollment) {
+                return $service->sendEnrollmentEmail($enrollment['id']);
+            }
+        }
+        
+        // Fallback to direct email if enrollment not found
+        $subject = "Enrollment Confirmed - " . (defined('APP_NAME') ? APP_NAME : 'Edutrack LMS');
         $firstName = is_object($user) ? ($user->first_name ?? 'Student') : ($user['first_name'] ?? 'Student');
         $email = is_object($user) ? ($user->email ?? null) : ($user['email'] ?? null);
         
-        $courseTitle = is_object($course) ? ($course->title ?? 'Course') : ($course['title'] ?? 'Course');
-        $startDate = is_object($course) ? ($course->start_date ?? null) : ($course['start_date'] ?? null);
-
         if (!$email) return false;
 
-        $body = "
-        <h2>Enrollment Confirmed!</h2>
-        <p>Hi " . htmlspecialchars($firstName, ENT_QUOTES, 'UTF-8') . ",</p>
-        <p>You have successfully enrolled in the following course:</p>
-
-        <div style='background: #f5f5f5; padding: 20px; margin: 20px 0; border-left: 4px solid #28a745;'>
-            <h3 style='margin-top:0; color:#28a745;'>" . htmlspecialchars($courseTitle, ENT_QUOTES, 'UTF-8') . "</h3>
-            " . ($startDate ? "<p><strong>Start Date:</strong> " . date('F j, Y', strtotime($startDate)) . "</p>" : "") . "
-            <p>Get ready to start your learning journey!</p>
-        </div>
-
-        <p style='text-align: center; margin: 30px 0;'>
-            <a href='" . $this->url('dashboard.php') . "' style='background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;'>
-                Go to Dashboard
-            </a>
-        </p>
-        ";
-
+        $body = "<h2>Enrollment Confirmed!</h2><p>Hi " . htmlspecialchars($firstName) . ",</p>";
         return $this->send($email, $subject, $body);
     }
 

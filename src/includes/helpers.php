@@ -3,20 +3,22 @@
  * Additional Helper Functions
  * Utility functions for the application
  *
- * Note: Duplicate functions that exist in functions.php have been removed
- * to avoid redeclaration errors. This file now only contains unique helpers.
+ * Note: This file contains unique helpers that don't exist in functions.php.
+ * Functions that existed in both files have been consolidated into functions.php
+ * as the canonical versions.
  */
 
 /**
  * Get user avatar URL (Gravatar)
- *
+ * DEPRECATED: Use gravatar() from functions.php instead
+ * 
  * @param string $email User email
  * @param int $size Avatar size
  * @return string Avatar URL
  */
 function getGravatar($email, $size = 80) {
-    $hash = md5(strtolower(trim($email)));
-    return "https://www.gravatar.com/avatar/{$hash}?s={$size}&d=mp";
+    // Delegate to the canonical gravatar() function in functions.php
+    return gravatar($email, $size);
 }
 
 /**
@@ -85,17 +87,17 @@ function getVimeoId($url) {
 
 /**
  * Get video embed HTML
- *
+ * DEPRECATED: Use videoEmbed() from functions.php instead
+ * 
  * @param string $url Video URL
  * @return string Embed HTML
  */
 function getVideoEmbed($url) {
+    // Delegate to the canonical videoEmbed() function in functions.php
     if (isYouTube($url)) {
-        $id = htmlspecialchars(getYouTubeId($url), ENT_QUOTES, 'UTF-8');
-        return '<iframe width="100%" height="500" src="https://www.youtube.com/embed/' . $id . '" frameborder="0" allowfullscreen></iframe>';
+        return videoEmbed($url, 'youtube');
     } elseif (isVimeo($url)) {
-        $id = htmlspecialchars(getVimeoId($url), ENT_QUOTES, 'UTF-8');
-        return '<iframe width="100%" height="500" src="https://player.vimeo.com/video/' . $id . '" frameborder="0" allowfullscreen></iframe>';
+        return videoEmbed($url, 'vimeo');
     } else {
         return '<video width="100%" height="500" controls><source src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" type="video/mp4"></video>';
     }
@@ -115,12 +117,14 @@ function readingTime($text) {
 
 /**
  * Generate random string
- *
+ * DEPRECATED: Use generateRandomString() from functions.php instead
+ * 
  * @param int $length String length
  * @return string Random string
  */
 function randomString($length = 32) {
-    return bin2hex(random_bytes($length / 2));
+    // Delegate to the canonical generateRandomString() function in functions.php
+    return generateRandomString($length);
 }
 
 

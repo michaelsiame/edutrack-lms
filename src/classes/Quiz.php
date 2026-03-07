@@ -267,19 +267,17 @@ class Quiz {
      * @param int $studentId The student ID (for ownership verification)
      * @return bool|array False on failure, array with score info on success
      */
-    public function submitAttempt($attemptId, $answers, $studentId = null) {
-        // Verify student ownership if provided
-        if ($studentId !== null) {
-            $sql = "SELECT * FROM quiz_attempts WHERE attempt_id = :id AND student_id = :student_id";
-            $attempt = $this->db->query($sql, [
-                'id' => $attemptId,
-                'student_id' => $studentId
-            ])->fetch();
-        } else {
-            // Get attempt without ownership check (for backward compatibility, deprecated)
-            $sql = "SELECT * FROM quiz_attempts WHERE attempt_id = :id";
-            $attempt = $this->db->query($sql, ['id' => $attemptId])->fetch();
+    public function submitAttempt($attemptId, $answers, $studentId) {
+        // Verify student ownership - $studentId is required
+        if (empty($studentId)) {
+            return false;
         }
+        
+        $sql = "SELECT * FROM quiz_attempts WHERE attempt_id = :id AND student_id = :student_id";
+        $attempt = $this->db->query($sql, [
+            'id' => $attemptId,
+            'student_id' => $studentId
+        ])->fetch();
 
         if (!$attempt || $attempt['status'] != 'In Progress') {
             return false;
