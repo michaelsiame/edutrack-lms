@@ -39,7 +39,7 @@ $bankDetails = RegistrationFee::getBankDetails();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCSRF();
 
-    $paymentMethod = $_POST['payment_method'] ?? 'bank';
+    $paymentMethod = $_POST['payment_method'] ?? 'mobile';
     $bankReference = trim($_POST['bank_reference'] ?? '');
     $bankName = trim($_POST['bank_name'] ?? '');
     $depositDate = $_POST['deposit_date'] ?? '';
@@ -128,21 +128,19 @@ require_once '../src/templates/header.php';
                         <div class="grid grid-cols-2 gap-4 text-sm">
                             <div>
                                 <span class="text-gray-500">Reference:</span>
-                                <p class="font-medium text-gray-900"><?= sanitize($existingFee->getBankReference()) ?></p>
+                                <p class="font-medium text-gray-900"><?= sanitize($existingFee->getBankReference() ?: $existingFee->getPhoneNumber()) ?></p>
                             </div>
                             <div>
                                 <span class="text-gray-500">Amount:</span>
                                 <p class="font-medium text-gray-900"><?= $existingFee->getFormattedAmount() ?></p>
                             </div>
                             <div>
-                                <span class="text-gray-500">Submitted:</span>
-                                <p class="font-medium text-gray-900"><?= date('d M Y', strtotime($existingFee->getCreatedAt())) ?></p>
+                                <span class="text-gray-500">Method:</span>
+                                <p class="font-medium text-gray-900"><?= ucwords(str_replace('_', ' ', $existingFee->getPaymentMethod())) ?></p>
                             </div>
                             <div>
-                                <span class="text-gray-500">Status:</span>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                                    Pending Verification
-                                </span>
+                                <span class="text-gray-500">Submitted:</span>
+                                <p class="font-medium text-gray-900"><?= date('d M Y', strtotime($existingFee->getCreatedAt())) ?></p>
                             </div>
                         </div>
                     </div>
@@ -184,23 +182,76 @@ require_once '../src/templates/header.php';
             
             <div class="p-6">
                 <!-- Payment Method Tabs -->
-                <div class="flex space-x-4 mb-6 border-b border-gray-200">
-                    <button type="button" id="tab-bank" onclick="switchTab('bank')" 
-                            class="pb-3 px-2 text-sm font-medium border-b-2 border-blue-600 text-blue-600 transition">
-                        <i class="fas fa-university mr-2"></i>Bank Transfer
-                    </button>
-                    <button type="button" id="tab-mobile" onclick="switchTab('mobile')" 
-                            class="pb-3 px-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition">
+                <div class="flex space-x-4 mb-6 border-b border-gray-200" id="payment-tabs">
+                    <button type="button" data-tab="mobile" 
+                            class="tab-btn pb-3 px-2 text-sm font-medium border-b-2 border-blue-600 text-blue-600 transition">
                         <i class="fas fa-mobile-alt mr-2"></i>Mobile Money
+                    </button>
+                    <button type="button" data-tab="bank" 
+                            class="tab-btn pb-3 px-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition">
+                        <i class="fas fa-university mr-2"></i>Bank Transfer
                     </button>
                 </div>
 
-                <form method="POST" class="space-y-6">
+                <form method="POST" class="space-y-6" id="payment-form">
                     <?= csrfField() ?>
-                    <input type="hidden" name="payment_method" id="payment_method" value="bank">
+                    <input type="hidden" name="payment_method" id="payment_method" value="mobile">
 
-                    <!-- Bank Transfer Section -->
-                    <div id="section-bank" class="space-y-6">
+                    <!-- Mobile Money Section (Default) -->
+                    <div id="section-mobile" class="payment-section space-y-6">
+                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                            <h3 class="font-medium text-gray-900 mb-4 flex items-center">
+                                <i class="fas fa-mobile-screen text-gray-400 mr-2"></i>
+                                Mobile Money Payment
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center p-3 bg-white rounded-lg border">
+                                    <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-money-bill-wave text-yellow-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-gray-900">MTN Mobile Money</p>
+                                        <p class="text-sm text-gray-500">Send to: <span class="font-mono"><?= SITE_PHONE ?? '+260 XXX XXX XXX' ?></span></p>
+                                    </div>
+                                    <button type="button" class="copy-btn text-blue-600 hover:text-blue-800 text-sm" data-copy="<?= SITE_PHONE ?? '+260 XXX XXX XXX' ?>">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <div class="flex items-center p-3 bg-white rounded-lg border">
+                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-money-bill-wave text-red-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-gray-900">Airtel Money</p>
+                                        <p class="text-sm text-gray-500">Send to: <span class="font-mono"><?= SITE_PHONE ?? '+260 XXX XXX XXX' ?></span></p>
+                                    </div>
+                                    <button type="button" class="copy-btn text-blue-600 hover:text-blue-800 text-sm" data-copy="<?= SITE_PHONE ?? '+260 XXX XXX XXX' ?>">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <p class="text-sm text-blue-800">
+                                    <i class="fas fa-lightbulb mr-1"></i>
+                                    <strong>Reference:</strong> Include your full name "<?= sanitize($user['first_name'] . ' ' . $user['last_name']) ?>" in the message
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-1">
+                                Mobile Money Number <span class="text-red-500">*</span>
+                            </label>
+                            <input type="tel" id="phone_number" name="phone_number"
+                                   value="<?= sanitize($existingFee ? $existingFee->getPhoneNumber() : '') ?>"
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                   placeholder="e.g., +260 97X XXX XXX">
+                            <p class="mt-1 text-xs text-gray-500">The phone number used to make the payment</p>
+                        </div>
+                    </div>
+
+                    <!-- Bank Transfer Section (Hidden by default) -->
+                    <div id="section-bank" class="payment-section space-y-6 hidden">
                         <!-- Bank Details -->
                         <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
                             <h3 class="font-medium text-gray-900 mb-4 flex items-center">
@@ -219,10 +270,9 @@ require_once '../src/templates/header.php';
                                 <div class="flex justify-between items-center py-2 border-b border-gray-200">
                                     <span class="text-sm text-gray-600">Account Number</span>
                                     <div class="flex items-center">
-                                        <span class="font-mono font-medium text-gray-900 mr-2"><?= sanitize($bankDetails['account_number'] ?? 'Contact Admin') ?></span>
+                                        <span class="font-mono font-medium text-gray-900 mr-2" id="account-number"><?= sanitize($bankDetails['account_number'] ?? 'Contact Admin') ?></span>
                                         <?php if (!empty($bankDetails['account_number'])): ?>
-                                        <button type="button" onclick="copyToClipboard('<?= $bankDetails['account_number'] ?>')" 
-                                                class="text-blue-600 hover:text-blue-800 text-xs" title="Copy">
+                                        <button type="button" class="copy-btn text-blue-600 hover:text-blue-800 text-xs" data-copy="<?= $bankDetails['account_number'] ?>">
                                             <i class="fas fa-copy"></i>
                                         </button>
                                         <?php endif; ?>
@@ -283,52 +333,6 @@ require_once '../src/templates/header.php';
                                        max="<?= date('Y-m-d') ?>"
                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Mobile Money Section -->
-                    <div id="section-mobile" class="space-y-6 hidden">
-                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
-                            <h3 class="font-medium text-gray-900 mb-4 flex items-center">
-                                <i class="fas fa-mobile-screen text-gray-400 mr-2"></i>
-                                Mobile Money Payment
-                            </h3>
-                            <div class="space-y-4">
-                                <div class="flex items-center p-3 bg-white rounded-lg border">
-                                    <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
-                                        <i class="fas fa-money-bill-wave text-yellow-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-900">MTN Mobile Money</p>
-                                        <p class="text-sm text-gray-500">Send to: <span class="font-mono"><?= SITE_PHONE ?? '+260 XXX XXX XXX' ?></span></p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center p-3 bg-white rounded-lg border">
-                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
-                                        <i class="fas fa-money-bill-wave text-red-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-900">Airtel Money</p>
-                                        <p class="text-sm text-gray-500">Send to: <span class="font-mono"><?= SITE_PHONE ?? '+260 XXX XXX XXX' ?></span></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                                <p class="text-sm text-blue-800">
-                                    <i class="fas fa-lightbulb mr-1"></i>
-                                    <strong>Reference:</strong> Include your full name "<?= sanitize($user['first_name'] . ' ' . $user['last_name']) ?>" in the message
-                                </p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-1">
-                                Mobile Money Number <span class="text-red-500">*</span>
-                            </label>
-                            <input type="tel" id="phone_number" name="phone_number"
-                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                                   placeholder="e.g., +260 97X XXX XXX">
-                            <p class="mt-1 text-xs text-gray-500">The phone number used to make the payment</p>
                         </div>
                     </div>
 
@@ -399,39 +403,48 @@ require_once '../src/templates/header.php';
 </div>
 
 <script>
-function switchTab(method) {
-    const bankTab = document.getElementById('tab-bank');
-    const mobileTab = document.getElementById('tab-mobile');
-    const bankSection = document.getElementById('section-bank');
-    const mobileSection = document.getElementById('section-mobile');
-    const paymentMethod = document.getElementById('payment_method');
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching functionality
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const sections = document.querySelectorAll('.payment-section');
+    const paymentMethodInput = document.getElementById('payment_method');
 
-    if (method === 'bank') {
-        bankTab.classList.add('border-blue-600', 'text-blue-600');
-        bankTab.classList.remove('border-transparent', 'text-gray-500');
-        mobileTab.classList.remove('border-blue-600', 'text-blue-600');
-        mobileTab.classList.add('border-transparent', 'text-gray-500');
-        bankSection.classList.remove('hidden');
-        mobileSection.classList.add('hidden');
-        paymentMethod.value = 'bank';
-    } else {
-        mobileTab.classList.add('border-blue-600', 'text-blue-600');
-        mobileTab.classList.remove('border-transparent', 'text-gray-500');
-        bankTab.classList.remove('border-blue-600', 'text-blue-600');
-        bankTab.classList.add('border-transparent', 'text-gray-500');
-        mobileSection.classList.remove('hidden');
-        bankSection.classList.add('hidden');
-        paymentMethod.value = 'mobile';
-    }
-}
-
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        alert('Account number copied to clipboard!');
-    }).catch(err => {
-        console.error('Failed to copy:', err);
+    tabBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const tab = this.getAttribute('data-tab');
+            
+            // Update active tab styling
+            tabBtns.forEach(function(b) {
+                b.classList.remove('border-blue-600', 'text-blue-600');
+                b.classList.add('border-transparent', 'text-gray-500');
+            });
+            this.classList.remove('border-transparent', 'text-gray-500');
+            this.classList.add('border-blue-600', 'text-blue-600');
+            
+            // Show/hide sections
+            sections.forEach(function(section) {
+                section.classList.add('hidden');
+            });
+            document.getElementById('section-' + tab).classList.remove('hidden');
+            
+            // Update hidden input
+            paymentMethodInput.value = tab;
+        });
     });
-}
+
+    // Copy to clipboard functionality
+    const copyBtns = document.querySelectorAll('.copy-btn');
+    copyBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const text = this.getAttribute('data-copy');
+            navigator.clipboard.writeText(text).then(function() {
+                alert('Copied to clipboard: ' + text);
+            }).catch(function(err) {
+                console.error('Failed to copy:', err);
+            });
+        });
+    });
+});
 </script>
 
 <?php require_once '../src/templates/footer.php'; ?>
