@@ -3,8 +3,17 @@
  * Settings Page
  */
 
+require_once __DIR__ . '/../../../src/includes/security.php';
+
 // Handle save - system_settings uses key-value pairs (setting_key, setting_value)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        validateCsrf();
+    } catch (Exception $e) {
+        header('Location: ?page=settings&msg=csrf_error');
+        exit;
+    }
+
     $settingsToSave = [
         'site_name' => trim($_POST['site_name'] ?? ''),
         'default_currency' => trim($_POST['currency'] ?? 'ZMW'),
@@ -46,13 +55,14 @@ $msg = $_GET['msg'] ?? '';
 <div class="space-y-6">
     <h2 class="text-2xl font-bold text-gray-800">Settings</h2>
 
-    <?php if ($msg === 'saved'): ?>
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-            Settings saved successfully!
+    <?php if ($msg): ?>
+        <div class="<?= $msg === 'csrf_error' ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700' ?> border px-4 py-3 rounded">
+            <?= $msg === 'csrf_error' ? 'Security check failed. Please refresh and try again.' : 'Settings saved successfully!' ?>
         </div>
     <?php endif; ?>
 
     <form method="POST" class="space-y-6">
+            <?= csrfField(); ?>
         <!-- General Settings -->
         <div class="bg-white rounded-lg shadow-sm border p-6">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">General Settings</h3>

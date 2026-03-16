@@ -3,14 +3,30 @@
  * Announcements Management Page
  */
 
+require_once __DIR__ . '/../../../src/includes/security.php';
+
 // Handle actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        validateCsrf();
+    } catch (Exception $e) {
+        header('Location: ?page=announcements&msg=csrf_error');
+        exit;
+    }
+
     $action = $_POST['action'] ?? '';
 
     if ($action === 'add') {
         $title = trim($_POST['title'] ?? '');
         $content = trim($_POST['content'] ?? '');
-        $priority = $_POST['priority'] ?? 'normal';
+        $priorityInput = strtolower(trim($_POST['priority'] ?? 'normal'));
+        $priorityMap = [
+            'low' => 'Low',
+            'normal' => 'Normal',
+            'high' => 'High',
+            'urgent' => 'Urgent'
+        ];
+        $priority = $priorityMap[$priorityInput] ?? 'Normal';
 
         if ($title && $content) {
             $db->insert('announcements', [
@@ -18,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'content' => $content,
                 'priority' => $priority,
                 'is_published' => 1,
-                'posted_by' => $_SESSION['user']['id'] ?? 1,
+                'posted_by' => (int)($_SESSION['user_id'] ?? 1),
                 'created_at' => date('Y-m-d H:i:s')
             ]);
             header('Location: ?page=announcements&msg=added');
@@ -57,8 +73,8 @@ $msg = $_GET['msg'] ?? '';
     </div>
 
     <?php if ($msg): ?>
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-            <?= $msg === 'added' ? 'Announcement created!' : ($msg === 'deleted' ? 'Announcement deleted!' : 'Announcement updated!') ?>
+        <div class="<?= $msg === 'csrf_error' ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700' ?> border px-4 py-3 rounded">
+            <?= $msg === 'added' ? 'Announcement created!' : ($msg === 'deleted' ? 'Announcement deleted!' : ($msg === 'csrf_error' ? 'Security check failed. Please refresh and try again.' : 'Announcement updated!')) ?>
         </div>
     <?php endif; ?>
 
@@ -69,8 +85,9 @@ $msg = $_GET['msg'] ?? '';
                 <div class="flex justify-between items-start mb-3">
                     <div class="flex items-center gap-3">
                         <h3 class="font-semibold text-gray-800 text-lg"><?= htmlspecialchars($ann['title']) ?></h3>
-                        <span class="px-2 py-1 text-xs rounded-full <?= $ann['priority'] === 'high' ? 'bg-red-100 text-red-700' : ($ann['priority'] === 'low' ? 'bg-gray-100 text-gray-700' : 'bg-blue-100 text-blue-700') ?>">
-                            <?= ucfirst($ann['priority']) ?>
+                        <?php $priorityNormalized = strtolower((string)$ann['priority']); ?>
+                        <span class="px-2 py-1 text-xs rounded-full <?= $priorityNormalized === 'urgent' || $priorityNormalized === 'high' ? 'bg-red-100 text-red-700' : ($priorityNormalized === 'low' ? 'bg-gray-100 text-gray-700' : 'bg-blue-100 text-blue-700') ?>">
+                            <?= htmlspecialchars($ann['priority']) ?>
                         </span>
                         <?php if (!$ann['is_published']): ?>
                             <span class="px-2 py-1 text-xs rounded-full bg-gray-200 text-gray-600">Inactive</span>
@@ -81,6 +98,7 @@ $msg = $_GET['msg'] ?? '';
                 <p class="text-gray-600 mb-4"><?= nl2br(htmlspecialchars($ann['content'])) ?></p>
                 <div class="flex gap-2">
                     <form method="POST" class="inline">
+            <?= csrfField(); ?>
                         <input type="hidden" name="action" value="toggle">
                         <input type="hidden" name="announcement_id" value="<?= $ann['announcement_id'] ?>">
                         <button type="submit" class="text-sm px-3 py-1 rounded <?= $ann['is_published'] ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
@@ -88,6 +106,7 @@ $msg = $_GET['msg'] ?? '';
                         </button>
                     </form>
                     <form method="POST" class="inline" onsubmit="return confirm('Delete this announcement?')">
+            <?= csrfField(); ?>
                         <input type="hidden" name="action" value="delete">
                         <input type="hidden" name="announcement_id" value="<?= $ann['announcement_id'] ?>">
                         <button type="submit" class="text-sm px-3 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200">Delete</button>
@@ -109,6 +128,7 @@ $msg = $_GET['msg'] ?? '';
     <div class="bg-white rounded-lg p-6 w-full max-w-lg">
         <h3 class="text-lg font-semibold mb-4">New Announcement</h3>
         <form method="POST">
+            <?= csrfField(); ?>
             <input type="hidden" name="action" value="add">
             <div class="space-y-4">
                 <div>
@@ -125,6 +145,7 @@ $msg = $_GET['msg'] ?? '';
                         <option value="low">Low</option>
                         <option value="normal" selected>Normal</option>
                         <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
                     </select>
                 </div>
             </div>

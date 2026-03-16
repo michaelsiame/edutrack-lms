@@ -99,8 +99,8 @@ $msg = $_GET['msg'] ?? '';
 
     <!-- Alert Messages -->
     <?php if ($msg): ?>
-        <div class="<?= $msg === 'cannot_delete' ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700' ?> border px-4 py-3 rounded-lg flex items-center gap-2">
-            <i class="fas <?= $msg === 'cannot_delete' ? 'fa-exclamation-circle' : 'fa-check-circle' ?>"></i>
+        <div class="<?= in_array($msg, ['cannot_delete', 'csrf_error']) ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700' ?> border px-4 py-3 rounded-lg flex items-center gap-2">
+            <i class="fas <?= in_array($msg, ['cannot_delete', 'csrf_error']) ? 'fa-exclamation-circle' : 'fa-check-circle' ?>"></i>
             <?php
             echo match($msg) {
                 'added' => 'Course created successfully!',
@@ -109,6 +109,7 @@ $msg = $_GET['msg'] ?? '';
                 'status_updated' => 'Course status updated!',
                 'featured_updated' => 'Featured status updated!',
                 'cannot_delete' => 'Cannot delete course with active enrollments!',
+                'csrf_error' => 'Security check failed. Please refresh and try again.',
                 default => 'Action completed!'
             };
             ?>
@@ -284,6 +285,7 @@ $msg = $_GET['msg'] ?? '';
                                         <i class="fas fa-layer-group"></i>
                                     </a>
                                     <form method="POST" class="inline">
+            <?= csrfField(); ?>
                                         <input type="hidden" name="action" value="toggle_featured">
                                         <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
                                         <button type="submit" class="p-2 <?= $course['is_featured'] ? 'text-yellow-500' : 'text-gray-400' ?> hover:bg-yellow-50 rounded-lg" title="Toggle Featured">
@@ -291,6 +293,7 @@ $msg = $_GET['msg'] ?? '';
                                         </button>
                                     </form>
                                     <form method="POST" class="inline">
+            <?= csrfField(); ?>
                                         <input type="hidden" name="action" value="update_status">
                                         <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
                                         <input type="hidden" name="status" value="<?= $course['status'] === 'published' ? 'draft' : 'published' ?>">
@@ -299,6 +302,7 @@ $msg = $_GET['msg'] ?? '';
                                         </button>
                                     </form>
                                     <form method="POST" class="inline" onsubmit="return confirm('Delete this course? This cannot be undone.')">
+            <?= csrfField(); ?>
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
                                         <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
@@ -372,6 +376,7 @@ $msg = $_GET['msg'] ?? '';
                             <i class="fas fa-layer-group mr-1"></i>Modules
                         </a>
                         <form method="POST" class="inline">
+            <?= csrfField(); ?>
                             <input type="hidden" name="action" value="update_status">
                             <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
                             <input type="hidden" name="status" value="<?= $course['status'] === 'published' ? 'draft' : 'published' ?>">
@@ -430,6 +435,7 @@ $msg = $_GET['msg'] ?? '';
             </div>
         </div>
         <form id="courseForm" method="POST" class="p-6">
+            <?= csrfField(); ?>
             <input type="hidden" name="action" id="formAction" value="add">
             <input type="hidden" name="course_id" id="courseId" value="">
 

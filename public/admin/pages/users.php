@@ -90,8 +90,8 @@ $msg = $_GET['msg'] ?? '';
 
     <!-- Alert Messages -->
     <?php if ($msg): ?>
-        <div class="<?= in_array($msg, ['cannot_delete', 'email_exists']) ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700' ?> border px-4 py-3 rounded-lg flex items-center gap-2">
-            <i class="fas <?= in_array($msg, ['cannot_delete', 'email_exists']) ? 'fa-exclamation-circle' : 'fa-check-circle' ?>"></i>
+        <div class="<?= in_array($msg, ['cannot_delete', 'email_exists', 'csrf_error']) ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700' ?> border px-4 py-3 rounded-lg flex items-center gap-2">
+            <i class="fas <?= in_array($msg, ['cannot_delete', 'email_exists', 'csrf_error']) ? 'fa-exclamation-circle' : 'fa-check-circle' ?>"></i>
             <?php
             echo match($msg) {
                 'added' => 'User added successfully!',
@@ -101,6 +101,7 @@ $msg = $_GET['msg'] ?? '';
                 'password_reset' => 'Password reset to "password123"!',
                 'email_exists' => 'Email address already exists!',
                 'cannot_delete' => 'Cannot delete user with active enrollments!',
+                'csrf_error' => 'Security check failed. Please refresh and try again.',
                 default => 'Action completed!'
             };
             ?>
@@ -257,6 +258,7 @@ $msg = $_GET['msg'] ?? '';
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <form method="POST" class="inline">
+            <?= csrfField(); ?>
                                         <input type="hidden" name="action" value="update_status">
                                         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                                         <input type="hidden" name="status" value="<?= $user['status'] === 'active' ? 'suspended' : 'active' ?>">
@@ -265,6 +267,7 @@ $msg = $_GET['msg'] ?? '';
                                         </button>
                                     </form>
                                     <form method="POST" class="inline">
+            <?= csrfField(); ?>
                                         <input type="hidden" name="action" value="reset_password">
                                         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                                         <button type="submit" onclick="return confirm('Reset password to default (password123)?')" class="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors" title="Reset Password">
@@ -272,6 +275,7 @@ $msg = $_GET['msg'] ?? '';
                                         </button>
                                     </form>
                                     <form method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.')">
+            <?= csrfField(); ?>
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                                         <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
@@ -335,6 +339,7 @@ $msg = $_GET['msg'] ?? '';
             </div>
         </div>
         <form id="userForm" method="POST" class="p-6">
+            <?= csrfField(); ?>
             <input type="hidden" name="action" id="formAction" value="add">
             <input type="hidden" name="user_id" id="userId" value="">
 
