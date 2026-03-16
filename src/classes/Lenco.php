@@ -22,12 +22,17 @@ class Lenco {
     const ENDPOINT_BANKS = '/banks';
     const ENDPOINT_TRANSFERS = '/transfers';
     const ENDPOINT_BALANCE = '/balance';
+    
+    // V2 Collection Endpoints
+    const ENDPOINT_V2_COLLECTIONS_MOBILE = '/access/v2/collections/mobile-money';
+    const ENDPOINT_V2_COLLECTIONS_STATUS = '/access/v2/collections';
 
     // Transaction statuses
     const STATUS_PENDING = 'pending';
     const STATUS_SUCCESSFUL = 'successful';
     const STATUS_FAILED = 'failed';
     const STATUS_REVERSED = 'reversed';
+    const STATUS_PAY_OFFLINE = 'pay-offline';
 
     /**
      * Initialize Lenco gateway
@@ -810,5 +815,208 @@ class Lenco {
         $log = sprintf("[%s] ERROR: %s\n", date('Y-m-d H:i:s'), $message);
         file_put_contents($logFile, $log, FILE_APPEND | LOCK_EX);
         error_log('Lenco: ' . $message);
+    }
+
+    // ========================================================================
+    // V2 COLLECTIONS API - Mobile Money
+    // ========================================================================
+
+    /**
+     * Initiate mobile money collection (V2 API)
+     * 
+     * @param array $data Collection data:
+     *   - amount: float (required)
+     *   - currency: string (default: 'ZMW')
+     *   - phone: string (required) - Customer's mobile money number
+     *   - country: string (default: 'ZM')
+     *   - reference: string (optional) - Unique reference
+     *   - bearer: string (optional) - 'merchant' or 'customer' (who pays the fee)
+     * @return array
+     */
+    public function initiateMobileMoneyCollection($data) {
+        $payload = [
+            'amount' => floatval($data['amount']),
+            'currency' => $data['currency'] ?? 'ZMW',
+            'country' => $data['country'] ?? 'ZM',
+            'phone' => $data['phone'],
+            'reference' => $data['reference'] ?? $this->generateReference(),
+            'bearer' => $data['bearer'] ?? 'customer'
+        ];
+
+        $result = $this->request('POST', self::ENDPOINT_V2_COLLECTIONS_MOBILE, $payload);
+
+        if ($result['success']) {
+            $collectionData = $result['data']['data'] ?? $result['data'];
+            
+            // Store collection in database
+            $this->storeMobileMoneyCollection([
+                'lenco_collection_id' => $collectionData['id'] ?? null,
+                'reference' => $payload['reference'],
+                'lenco_reference' => $collectionData['lencoReference'] ?? null,
+                'user_id' => $data['user_id'] ?? null,
+                'amount' => $payload['amount'],
+                'currency' => $payload['currency'],
+                'phone' => $payload['phone'],
+                'country' => $payload['country'],
+                'status' => $collectionData['status'] ?? 'pending',
+                'type' => 'registration_fee',
+                'metadata' => json_encode($data['metadata'] ?? [])
+            ]);
+
+            return [
+                'success' => true,
+                'reference' => $payload['reference'],
+                'collection_id' => $collectionData['id'] ?? null,
+                'status' => $collectionData['status'] ?? 'pending',
+                'message' => $this->getCollectionStatusMessage($collectionData['status'] ?? 'pending'),
+                'data' => $collectionData
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check mobile money collection status (V2 API)
+     * 
+     * @param string $collectionId The Lenco collection ID
+     * @return array
+     */
+    public function checkMobileMoneyCollectionStatus($collectionId) {
+        $endpoint = self::ENDPOINT_V2_COLLECTIONS_STATUS . '/' . $collectionId;
+        $result = $this->request('GET', $endpoint);
+
+        if ($result['success']) {
+            $collectionData = $result['data']['data'] ?? $result['data'];
+            
+            // Update local record
+            $this->updateMobileMoneyCollectionStatus(
+                $collectionId,
+                $collectionData['status'] ?? 'unknown',
+                $collectionData
+            );
+
+            return [
+                'success' => true,
+                'status' => $collectionData['status'] ?? 'unknown',
+                'message' => $this->getCollectionStatusMessage($collectionData['status'] ?? 'unknown'),
+                'data' => $collectionData
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check collection status by reference
+     * 
+     * @param string $reference Your reference
+     * @return array
+     */
+    public function checkCollectionByReference($reference) {
+        // Get from local database first
+        $local = $this->db->fetchOne(
+            "SELECT * FROM lenco_collections WHERE reference = ?",
+            [$reference]
+        );
+
+        if (!$local) {
+            return [
+                'success' => false,
+                'error' => 'Collection not found'
+            ];
+        }
+
+        // Check with Lenco API
+        if ($local['lenco_collection_id']) {
+            return $this->checkMobileMoneyCollectionStatus($local['lenco_collection_id']);
+        }
+
+        return [
+            'success' => true,
+            'status' => $local['status'],
+            'local_data' => $local
+        ];
+    }
+
+    /**
+     * Store mobile money collection in database
+     */
+    private function storeMobileMoneyCollection($data) {
+        $sql = "INSERT INTO lenco_collections (
+            lenco_collection_id, reference, lenco_reference, user_id,
+            amount, currency, phone, country, status, type, metadata, created_at
+        ) VALUES (
+            :lenco_collection_id, :reference, :lenco_reference, :user_id,
+            :amount, :currency, :phone, :country, :status, :type, :metadata, NOW()
+        ) ON DUPLICATE KEY UPDATE
+            status = VALUES(status),
+            updated_at = NOW()";
+
+        return $this->db->query($sql, [
+            'lenco_collection_id' => $data['lenco_collection_id'],
+            'reference' => $data['reference'],
+            'lenco_reference' => $data['lenco_reference'],
+            'user_id' => $data['user_id'],
+            'amount' => $data['amount'],
+            'currency' => $data['currency'],
+            'phone' => $data['phone'],
+            'country' => $data['country'],
+            'status' => $data['status'],
+            'type' => $data['type'],
+            'metadata' => $data['metadata']
+        ]);
+    }
+
+    /**
+     * Update mobile money collection status
+     */
+    private function updateMobileMoneyCollectionStatus($collectionId, $status, $data) {
+        $sql = "UPDATE lenco_collections SET
+            status = :status,
+            operator_transaction_id = :operator_tx_id,
+            completed_at = :completed_at,
+            fee = :fee,
+            settlement_status = :settlement_status,
+            updated_at = NOW()
+        WHERE lenco_collection_id = :collection_id";
+
+        $mobileDetails = $data['mobileMoneyDetails'] ?? [];
+        
+        return $this->db->query($sql, [
+            'collection_id' => $collectionId,
+            'status' => $status,
+            'operator_tx_id' => $mobileDetails['operatorTransactionId'] ?? null,
+            'completed_at' => $data['completedAt'] ?? null,
+            'fee' => $data['fee'] ?? null,
+            'settlement_status' => $data['settlementStatus'] ?? null
+        ]);
+    }
+
+    /**
+     * Get human-readable status message
+     */
+    private function getCollectionStatusMessage($status) {
+        $messages = [
+            'pending' => 'Payment request is being processed.',
+            'pay-offline' => 'Please approve the payment on your mobile phone.',
+            'successful' => 'Payment completed successfully!',
+            'failed' => 'Payment failed. Please try again.',
+            'unknown' => 'Payment status unknown.'
+        ];
+
+        return $messages[$status] ?? $messages['unknown'];
+    }
+
+    /**
+     * Get user's pending mobile money collections
+     */
+    public function getPendingCollections($userId) {
+        $sql = "SELECT * FROM lenco_collections 
+                WHERE user_id = :user_id 
+                AND status IN ('pending', 'pay-offline')
+                ORDER BY created_at DESC";
+
+        return $this->db->query($sql, ['user_id' => $userId])->fetchAll();
     }
 }
