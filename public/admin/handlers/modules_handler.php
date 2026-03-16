@@ -3,6 +3,17 @@
  * Modules Handler - Processes form submissions before HTML output
  */
 
+require_once __DIR__ . '/../../../src/includes/security.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        validateCsrf();
+    } catch (Exception $e) {
+        header("Location: ?page=modules&course_id=$courseId&msg=csrf_error");
+        exit;
+    }
+}
+
 $action = $_POST['action'] ?? '';
 
 // Add module

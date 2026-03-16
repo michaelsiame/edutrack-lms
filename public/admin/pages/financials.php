@@ -123,16 +123,19 @@ $msg = $_GET['msg'] ?? '';
 
     <!-- Alert Messages -->
     <?php if ($msg): ?>
-        <div class="<?= $msg === 'rejected' ? 'bg-yellow-100 border-yellow-400 text-yellow-700' : 'bg-green-100 border-green-400 text-green-700' ?> border px-4 py-3 rounded-lg flex items-center gap-2">
+        <div class="<?= in_array($msg, ['rejected']) ? 'bg-yellow-100 border-yellow-400 text-yellow-700' : (in_array($msg, ['course_required', 'csrf_error']) ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700') ?> border px-4 py-3 rounded-lg flex items-center gap-2">
             <i class="fas fa-check-circle"></i>
             <?php
             echo match($msg) {
                 'added' => 'Payment recorded successfully!',
+                'registration_added' => 'Registration fee recorded successfully.',
                 'updated' => 'Payment updated successfully!',
                 'verified' => 'Payment verified successfully!',
                 'rejected' => 'Payment rejected.',
                 'refunded' => 'Payment refunded successfully!',
                 'deleted' => 'Payment deleted successfully!',
+                'course_required' => 'Please select a course for this payment type.',
+                'csrf_error' => 'Security check failed. Please refresh the page and try again.',
                 default => 'Action completed!'
             };
             ?>
@@ -314,6 +317,7 @@ $msg = $_GET['msg'] ?? '';
                                 <div class="flex items-center justify-end gap-1">
                                     <?php if ($p['payment_status'] === 'Pending'): ?>
                                         <form method="POST" class="inline">
+                                            <?= csrfField(); ?>
                                             <input type="hidden" name="action" value="verify">
                                             <input type="hidden" name="payment_id" value="<?= $p['payment_id'] ?>">
                                             <button type="submit" class="p-2 text-green-600 hover:bg-green-50 rounded-lg" title="Verify">
@@ -321,6 +325,7 @@ $msg = $_GET['msg'] ?? '';
                                             </button>
                                         </form>
                                         <form method="POST" class="inline">
+                                            <?= csrfField(); ?>
                                             <input type="hidden" name="action" value="reject">
                                             <input type="hidden" name="payment_id" value="<?= $p['payment_id'] ?>">
                                             <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Reject">
@@ -337,6 +342,7 @@ $msg = $_GET['msg'] ?? '';
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <form method="POST" class="inline" onsubmit="return confirm('Delete this payment record?')">
+                                        <?= csrfField(); ?>
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="payment_id" value="<?= $p['payment_id'] ?>">
                                         <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
@@ -390,6 +396,7 @@ $msg = $_GET['msg'] ?? '';
             </div>
         </div>
         <form id="paymentForm" method="POST" class="p-6">
+            <?= csrfField(); ?>
             <input type="hidden" name="action" id="paymentFormAction" value="add">
             <input type="hidden" name="payment_id" id="paymentId" value="">
 
@@ -476,6 +483,7 @@ $msg = $_GET['msg'] ?? '';
             </div>
         </div>
         <form method="POST" class="p-6">
+            <?= csrfField(); ?>
             <input type="hidden" name="action" value="refund">
             <input type="hidden" name="payment_id" id="refundPaymentId" value="">
 

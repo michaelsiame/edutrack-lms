@@ -64,7 +64,7 @@ $msg = $_GET['msg'] ?? '';
 
     <!-- Alert Messages -->
     <?php if ($msg): ?>
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg flex items-center gap-2">
+        <div class="<?= $msg === 'csrf_error' ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700' ?> border px-4 py-3 rounded-lg flex items-center gap-2">
             <i class="fas fa-check-circle"></i>
             <?php
             echo match($msg) {
@@ -75,6 +75,7 @@ $msg = $_GET['msg'] ?? '';
                 'lesson_added' => 'Lesson added successfully!',
                 'lesson_updated' => 'Lesson updated successfully!',
                 'lesson_deleted' => 'Lesson deleted successfully!',
+                'csrf_error' => 'Security check failed. Please refresh and try again.',
                 default => 'Action completed!'
             };
             ?>
@@ -177,6 +178,7 @@ $msg = $_GET['msg'] ?? '';
                                 <i class="fas fa-edit"></i>
                             </button>
                             <form method="POST" class="inline">
+            <?= csrfField(); ?>
                                 <input type="hidden" name="action" value="toggle_module">
                                 <input type="hidden" name="module_id" value="<?= $module['id'] ?>">
                                 <button type="submit" class="p-2 <?= $module['is_published'] ? 'text-green-600' : 'text-gray-400' ?> hover:bg-gray-100 rounded-lg" title="<?= $module['is_published'] ? 'Published' : 'Unpublished' ?>">
@@ -184,6 +186,7 @@ $msg = $_GET['msg'] ?? '';
                                 </button>
                             </form>
                             <form method="POST" class="inline" onsubmit="return confirm('Delete this module and all its lessons?')">
+            <?= csrfField(); ?>
                                 <input type="hidden" name="action" value="delete_module">
                                 <input type="hidden" name="module_id" value="<?= $module['id'] ?>">
                                 <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Delete Module">
@@ -248,6 +251,7 @@ $msg = $_GET['msg'] ?? '';
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <form method="POST" class="inline" onsubmit="return confirm('Delete this lesson?')">
+            <?= csrfField(); ?>
                                             <input type="hidden" name="action" value="delete_lesson">
                                             <input type="hidden" name="lesson_id" value="<?= $lesson['id'] ?>">
                                             <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Delete Lesson">
@@ -282,6 +286,7 @@ $msg = $_GET['msg'] ?? '';
             </div>
         </div>
         <form id="moduleForm" method="POST" class="p-6">
+            <?= csrfField(); ?>
             <input type="hidden" name="action" id="moduleFormAction" value="add_module">
             <input type="hidden" name="module_id" id="moduleId" value="">
 
@@ -322,6 +327,7 @@ $msg = $_GET['msg'] ?? '';
             </div>
         </div>
         <form id="lessonForm" method="POST" class="p-6">
+            <?= csrfField(); ?>
             <input type="hidden" name="action" id="lessonFormAction" value="add_lesson">
             <input type="hidden" name="module_id" id="lessonModuleId" value="">
             <input type="hidden" name="lesson_id" id="lessonId" value="">

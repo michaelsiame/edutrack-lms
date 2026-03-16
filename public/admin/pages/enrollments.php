@@ -3,13 +3,31 @@
  * Enrollments Management Page
  */
 
+require_once __DIR__ . '/../../../src/includes/security.php';
+
 // Handle actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        validateCsrf();
+    } catch (Exception $e) {
+        header('Location: ?page=enrollments&msg=csrf_error');
+        exit;
+    }
+
     $action = $_POST['action'] ?? '';
 
     if ($action === 'update_status' && isset($_POST['enrollment_id'], $_POST['status'])) {
         $enrollmentId = (int)$_POST['enrollment_id'];
-        $status = in_array($_POST['status'], ['active', 'completed', 'cancelled']) ? $_POST['status'] : 'active';
+        $statusMap = [
+            'active' => 'In Progress',
+            'in_progress' => 'In Progress',
+            'completed' => 'Completed',
+            'cancelled' => 'Dropped',
+            'dropped' => 'Dropped'
+        ];
+        $statusKey = strtolower(trim($_POST['status'] ?? ''));
+        $status = $statusMap[$statusKey] ?? 'In Progress';
+
         $db->update('enrollments', ['enrollment_status' => $status], 'id = ?', [$enrollmentId]);
         header('Location: ?page=enrollments&msg=status_updated');
         exit;
@@ -22,13 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if already enrolled
         $exists = $db->exists('enrollments', 'user_id = ? AND course_id = ?', [$userId, $courseId]);
         if (!$exists) {
-            $db->insert('enrollments', [
+            $enrollmentId = Enrollment::create([
                 'user_id' => $userId,
-                'course_id' => $courseId,
-                'enrollment_status' => 'active',
-                'enrolled_at' => date('Y-m-d H:i:s')
+                'course_id' => $courseId
             ]);
-            header('Location: ?page=enrollments&msg=added');
+
+            header('Location: ?page=enrollments&msg=' . ($enrollmentId ? 'added' : 'error'));
         } else {
             header('Location: ?page=enrollments&msg=exists');
         }
@@ -72,8 +89,8 @@ $msg = $_GET['msg'] ?? '';
     </div>
 
     <?php if ($msg): ?>
-        <div class="<?= $msg === 'exists' ? 'bg-yellow-100 border-yellow-400 text-yellow-700' : 'bg-green-100 border-green-400 text-green-700' ?> border px-4 py-3 rounded">
-            <?= $msg === 'added' ? 'Student enrolled successfully!' : ($msg === 'exists' ? 'Student is already enrolled in this course.' : 'Status updated!') ?>
+        <div class="<?= $msg === 'exists' ? 'bg-yellow-100 border-yellow-400 text-yellow-700' : ($msg === 'csrf_error' ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700') ?> border px-4 py-3 rounded">
+            <?= $msg === 'added' ? 'Student enrolled successfully!' : ($msg === 'exists' ? 'Student is already enrolled in this course.' : ($msg === 'error' ? 'Failed to enroll student. Please try again.' : ($msg === 'csrf_error' ? 'Security check failed. Please refresh and try again.' : 'Status updated!'))) ?>
         </div>
     <?php endif; ?>
 
@@ -101,8 +118,9 @@ $msg = $_GET['msg'] ?? '';
                         </td>
                         <td class="px-6 py-4 text-gray-600"><?= htmlspecialchars($enrollment['course_title']) ?></td>
                         <td class="px-6 py-4">
-                            <span class="px-2 py-1 text-xs rounded-full <?= $enrollment['status'] === 'active' ? 'bg-green-100 text-green-700' : ($enrollment['status'] === 'completed' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700') ?>">
-                                <?= ucfirst($enrollment['status']) ?>
+                            <?php $status_normalized = strtolower($enrollment['status'] ?? ''); ?>
+                            <span class="px-2 py-1 text-xs rounded-full <?= in_array($status_normalized, ['in progress', 'active']) ? 'bg-green-100 text-green-700' : (in_array($status_normalized, ['completed']) ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700') ?>">
+                                <?= htmlspecialchars($enrollment['status']) ?>
                             </span>
                         </td>
                         <td class="px-6 py-4 text-gray-500 text-sm"><?= date('M j, Y', strtotime($enrollment['enrolled_at'])) ?></td>
@@ -114,8 +132,9 @@ $msg = $_GET['msg'] ?? '';
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex gap-2">
-                                <?php if ($enrollment['status'] === 'active'): ?>
+                                <?php if (strtolower($enrollment['status'] ?? '') !== 'completed'): ?>
                                     <form method="POST" class="inline">
+            <?= csrfField(); ?>
                                         <input type="hidden" name="action" value="update_status">
                                         <input type="hidden" name="enrollment_id" value="<?= $enrollment['id'] ?>">
                                         <input type="hidden" name="status" value="completed">
@@ -123,11 +142,12 @@ $msg = $_GET['msg'] ?? '';
                                     </form>
                                 <?php endif; ?>
                                 <form method="POST" class="inline">
+            <?= csrfField(); ?>
                                     <input type="hidden" name="action" value="update_status">
                                     <input type="hidden" name="enrollment_id" value="<?= $enrollment['id'] ?>">
-                                    <input type="hidden" name="status" value="<?= $enrollment['status'] === 'cancelled' ? 'active' : 'cancelled' ?>">
-                                    <button type="submit" class="text-xs px-2 py-1 rounded <?= $enrollment['status'] === 'cancelled' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' ?>">
-                                        <?= $enrollment['status'] === 'cancelled' ? 'Reactivate' : 'Cancel' ?>
+                                    <input type="hidden" name="status" value="<?= strtolower($enrollment['status'] ?? '') === 'dropped' ? 'in_progress' : 'dropped' ?>">
+                                    <button type="submit" class="text-xs px-2 py-1 rounded <?= strtolower($enrollment['status'] ?? '') === 'dropped' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' ?>">
+                                        <?= strtolower($enrollment['status'] ?? '') === 'dropped' ? 'Reactivate' : 'Drop' ?>
                                     </button>
                                 </form>
                             </div>
@@ -147,6 +167,7 @@ $msg = $_GET['msg'] ?? '';
     <div class="bg-white rounded-lg p-6 w-full max-w-md">
         <h3 class="text-lg font-semibold mb-4">Enroll Student</h3>
         <form method="POST">
+            <?= csrfField(); ?>
             <input type="hidden" name="action" value="add">
             <div class="space-y-4">
                 <div>

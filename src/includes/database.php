@@ -234,6 +234,13 @@ class Database {
     public function rollback() {
         return $this->pdo->rollBack();
     }
+
+    /**
+     * Check if currently in a transaction
+     */
+    public function inTransaction() {
+        return $this->pdo->inTransaction();
+    }
     
     /**
      * Get last insert ID
