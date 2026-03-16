@@ -314,6 +314,7 @@ $msg = $_GET['msg'] ?? '';
                                 <div class="flex items-center justify-end gap-1">
                                     <?php if ($p['payment_status'] === 'Pending'): ?>
                                         <form method="POST" class="inline">
+                                            <?php csrfField(); ?>
                                             <input type="hidden" name="action" value="verify">
                                             <input type="hidden" name="payment_id" value="<?= $p['payment_id'] ?>">
                                             <button type="submit" class="p-2 text-green-600 hover:bg-green-50 rounded-lg" title="Verify">
@@ -321,6 +322,7 @@ $msg = $_GET['msg'] ?? '';
                                             </button>
                                         </form>
                                         <form method="POST" class="inline">
+                                            <?php csrfField(); ?>
                                             <input type="hidden" name="action" value="reject">
                                             <input type="hidden" name="payment_id" value="<?= $p['payment_id'] ?>">
                                             <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Reject">
@@ -337,6 +339,7 @@ $msg = $_GET['msg'] ?? '';
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <form method="POST" class="inline" onsubmit="return confirm('Delete this payment record?')">
+                                        <?php csrfField(); ?>
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="payment_id" value="<?= $p['payment_id'] ?>">
                                         <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
@@ -390,6 +393,7 @@ $msg = $_GET['msg'] ?? '';
             </div>
         </div>
         <form id="paymentForm" method="POST" class="p-6">
+            <?php csrfField(); ?>
             <input type="hidden" name="action" id="paymentFormAction" value="add">
             <input type="hidden" name="payment_id" id="paymentId" value="">
 
@@ -476,6 +480,7 @@ $msg = $_GET['msg'] ?? '';
             </div>
         </div>
         <form method="POST" class="p-6">
+            <?php csrfField(); ?>
             <input type="hidden" name="action" value="refund">
             <input type="hidden" name="payment_id" id="refundPaymentId" value="">
 
