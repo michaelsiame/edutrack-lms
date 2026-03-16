@@ -28,10 +28,50 @@ if ($action === 'add') {
     $transactionId = trim($_POST['transaction_id'] ?? '');
     $notes = trim($_POST['notes'] ?? '');
 
+    // Registration fees are stored in registration_fees table (not payments)
+    if ($paymentType === 'registration' && !$courseId) {
+        $paymentMethod = 'bank_deposit';
+        if ($paymentMethodId) {
+            $method = $db->fetchOne("SELECT method_name FROM payment_methods WHERE payment_method_id = ?", [$paymentMethodId]);
+            $methodName = strtolower($method['method_name'] ?? '');
+            if (strpos($methodName, 'mobile') !== false || strpos($methodName, 'mtn') !== false || strpos($methodName, 'airtel') !== false) {
+                $paymentMethod = 'mobile_money';
+            } elseif (strpos($methodName, 'transfer') !== false) {
+                $paymentMethod = 'bank_transfer';
+            }
+        }
+
+        $registrationFeeId = RegistrationFee::create([
+            'user_id' => $studentId,
+            'amount' => $amount,
+            'currency' => 'ZMW',
+            'payment_method' => $paymentMethod,
+            'bank_reference' => $transactionId ?: null,
+            'notes' => $notes ?: null,
+            'deposit_date' => date('Y-m-d')
+        ]);
+
+        if ($registrationFeeId && $paymentStatus === 'Completed') {
+            $registrationFee = RegistrationFee::find($registrationFeeId);
+            if ($registrationFee) {
+                $registrationFee->verify((int)($_SESSION['user_id'] ?? 0));
+            }
+        }
+
+        header('Location: ?page=financials&msg=registration_added');
+        exit;
+    }
+
+    // payments table requires course_id
+    if (!$courseId) {
+        header('Location: ?page=financials&msg=course_required');
+        exit;
+    }
+
     if ($studentId && $amount > 0) {
         $db->insert('payments', [
             'student_id' => $studentId,
-            'course_id' => $courseId ?: null,
+            'course_id' => $courseId,
             'amount' => $amount,
             'currency' => 'ZMW',
             'payment_type' => $paymentType,
