@@ -4,12 +4,12 @@
  * Main landing page for Edutrack LMS
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/InstitutionPhoto.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/InstitutionPhoto.php';
 
 $page_title = "Edutrack Computer Training College | TEVETA-Certified Tech Training in Zambia";
 
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 
 // Get hero slides from database
 $heroSlides = HeroSlide::getActive();
@@ -477,7 +477,7 @@ updateCountdown();
 setInterval(updateCountdown, 86400000); // Update daily
 </script>
 
-<?php require_once '../src/templates/testimonials-section.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/testimonials-section.php'; ?>
 
 <!-- Why Choose Edutrack Section -->
 <section class="py-20 bg-gray-50">
@@ -517,7 +517,7 @@ setInterval(updateCountdown, 86400000); // Update daily
     </div>
 </section>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>
 
 <style>
     .line-clamp-2 {
