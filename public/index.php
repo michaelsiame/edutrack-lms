@@ -7,7 +7,7 @@
 require_once '../src/bootstrap.php';
 require_once '../src/classes/InstitutionPhoto.php';
 
-$page_title = "Home - Edutrack computer training college";
+$page_title = "Edutrack Computer Training College | TEVETA-Certified Tech Training in Zambia";
 
 require_once '../src/templates/header.php';
 
@@ -232,7 +232,6 @@ try {
             </div>
         </div>
     </div>
-</section>
 </section>
 
 <!-- Explore by Category Section -->

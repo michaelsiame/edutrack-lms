@@ -23,7 +23,7 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <title><?= sanitize($page_title) ?></title>
     
     <!-- Meta Tags -->
-    <meta name="description" content="Edutrack computer training college - TEVETA registered institution offering quality computer training in Zambia. Transform your future with industry-recognized certification programs.">
+    <meta name="description" content="<?= sanitize($page_description ?? 'Edutrack Computer Training College - TEVETA registered institution offering quality computer training in Zambia. Transform your future with industry-recognized certification programs.') ?>">
     <meta name="keywords" content="computer training, TEVETA, Zambia, courses, certification, web development, digital marketing, Lusaka">
     <meta name="author" content="Edutrack computer training college">
     
@@ -31,15 +31,15 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <meta property="og:type" content="website">
     <meta property="og:url" content="<?= url() ?>">
     <meta property="og:title" content="<?= sanitize($page_title) ?>">
-    <meta property="og:description" content="TEVETA registered computer training institution in Zambia">
-    <meta property="og:image" content="<?= asset('images/logo.png') ?>">
+    <meta property="og:description" content="<?= sanitize($page_description ?? 'TEVETA registered computer training institution in Zambia') ?>">
+    <meta property="og:image" content="<?= $og_image ?? asset('images/logo.png') ?>">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="<?= url() ?>">
     <meta property="twitter:title" content="<?= sanitize($page_title) ?>">
-    <meta property="twitter:description" content="TEVETA registered computer training institution in Zambia">
-    <meta property="twitter:image" content="<?= asset('images/logo.png') ?>">
+    <meta property="twitter:description" content="<?= sanitize($page_description ?? 'TEVETA registered computer training institution in Zambia') ?>">
+    <meta property="twitter:image" content="<?= $og_image ?? asset('images/logo.png') ?>">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="<?= asset('images/favicon.ico') ?>">
@@ -178,9 +178,18 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <?php include dirname(__FILE__) . '/navigation.php'; ?>
     
     <!-- Flash Messages -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+    <div id="flash-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <?= getFlash('message') ?>
         <?= getFlash('success') ?>
         <?= getFlash('error') ?>
         <?= getFlash('warning') ?>
     </div>
+    <script>
+    document.querySelectorAll('#flash-container > div').forEach(function(el) {
+        setTimeout(function() {
+            el.style.transition = 'opacity 0.5s ease';
+            el.style.opacity = '0';
+            setTimeout(function() { el.remove(); }, 500);
+        }, 5000);
+    });
+    </script>

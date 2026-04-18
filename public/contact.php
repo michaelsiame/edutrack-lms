@@ -201,16 +201,16 @@ require_once '../src/templates/header.php';
                             <i class="fab fa-facebook-f"></i>
                         </a>
                         <?php endif; ?>
-                        <!-- Static Social Placeholders if config is missing -->
-                        <a href="#" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center text-white hover:bg-pink-700 transition">
+                        <?php if (function_exists('config') && config('social.instagram')): ?>
+                        <a href="<?= config('social.instagram') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center text-white hover:bg-pink-700 transition">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white hover:bg-blue-500 transition">
+                        <?php endif; ?>
+                        <?php if (function_exists('config') && config('social.twitter')): ?>
+                        <a href="<?= config('social.twitter') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white hover:bg-blue-500 transition">
                             <i class="fab fa-twitter"></i>
                         </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
