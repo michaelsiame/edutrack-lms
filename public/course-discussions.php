@@ -3,9 +3,9 @@
  * Course Discussions & Q&A
  */
 
-require_once '../src/middleware/authenticate.php';
-require_once '../src/classes/Course.php';
-require_once '../src/classes/Enrollment.php';
+require_once __DIR__ . '/../src/middleware/authenticate.php';
+require_once __DIR__ . '/../src/classes/Course.php';
+require_once __DIR__ . '/../src/classes/Enrollment.php';
 
 $courseSlug = $_GET['course'] ?? null;
 
@@ -107,7 +107,7 @@ $discussions = $db->fetchAll("
 ", $params);
 
 $page_title = 'Discussions - ' . $course->getTitle();
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gray-50 py-8">
@@ -371,4 +371,4 @@ function hideReplyForm(id) {
 }
 </script>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

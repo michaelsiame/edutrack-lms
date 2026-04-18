@@ -4,7 +4,7 @@
  * Interface for taking a quiz
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Ensure user is authenticated
 if (!isLoggedIn()) {
@@ -104,7 +104,7 @@ try {
     redirect('my-courses.php');
 }
 
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gray-100 py-8">
@@ -321,4 +321,4 @@ document.getElementById('quizForm').addEventListener('submit', function() {
 });
 </script>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

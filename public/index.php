@@ -4,53 +4,64 @@
  * Main landing page for Edutrack LMS
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/InstitutionPhoto.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/InstitutionPhoto.php';
 
 $page_title = "Edutrack Computer Training College | TEVETA-Certified Tech Training in Zambia";
 
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 
-// Get hero slides from database
-$heroSlides = HeroSlide::getActive();
-if (empty($heroSlides)) {
-    // Fallback default slides if none in database
-    $heroSlides = [
-        [
-            'title' => 'Launch Your Tech Career',
-            'subtitle' => 'With Industry-Recognized Skills',
-            'description' => 'Join 5,000+ Zambians who transformed their lives through TEVETA-certified programs.',
-            'image_path' => '',
-            'cta_text' => 'Explore Courses',
-            'cta_link' => 'courses.php',
-            'secondary_cta_text' => 'Visit Campus',
-            'secondary_cta_link' => 'campus.php'
-        ],
-        [
-            'title' => 'State-of-the-Art Facilities',
-            'subtitle' => 'Learn on Modern Equipment',
-            'description' => 'Our computer labs feature the latest hardware and software for hands-on learning.',
-            'image_path' => '',
-            'cta_text' => 'Take a Tour',
-            'cta_link' => 'campus.php',
-            'secondary_cta_text' => 'View Programs',
-            'secondary_cta_link' => 'courses.php'
-        ],
-        [
-            'title' => 'Your Success is Our Mission',
-            'subtitle' => '85% Job Placement Rate',
-            'description' => 'Our graduates work at top companies like MTN, Airtel, and major banks.',
-            'image_path' => '',
-            'cta_text' => 'Apply Now',
-            'cta_link' => 'register.php',
-            'secondary_cta_text' => 'Contact Us',
-            'secondary_cta_link' => 'contact.php'
-        ]
-    ];
+// Fallback default slides if DB query fails or returns no active records
+$heroSlides = [
+    [
+        'title' => 'Launch Your Tech Career',
+        'subtitle' => 'With Industry-Recognized Skills',
+        'description' => 'Join 5,000+ Zambians who transformed their lives through TEVETA-certified programs.',
+        'image_path' => '',
+        'cta_text' => 'Explore Courses',
+        'cta_link' => 'courses.php',
+        'secondary_cta_text' => 'Visit Campus',
+        'secondary_cta_link' => 'campus.php'
+    ],
+    [
+        'title' => 'State-of-the-Art Facilities',
+        'subtitle' => 'Learn on Modern Equipment',
+        'description' => 'Our computer labs feature the latest hardware and software for hands-on learning.',
+        'image_path' => '',
+        'cta_text' => 'Take a Tour',
+        'cta_link' => 'campus.php',
+        'secondary_cta_text' => 'View Programs',
+        'secondary_cta_link' => 'courses.php'
+    ],
+    [
+        'title' => 'Your Success is Our Mission',
+        'subtitle' => '85% Job Placement Rate',
+        'description' => 'Our graduates work at top companies like MTN, Airtel, and major banks.',
+        'image_path' => '',
+        'cta_text' => 'Apply Now',
+        'cta_link' => 'register.php',
+        'secondary_cta_text' => 'Contact Us',
+        'secondary_cta_link' => 'contact.php'
+    ]
+];
+
+// Get hero slides from database (guard against missing table/schema mismatch)
+try {
+    $db_heroSlides = HeroSlide::getActive();
+    if (!empty($db_heroSlides)) {
+        $heroSlides = $db_heroSlides;
+    }
+} catch (Throwable $e) {
+    error_log("Homepage hero slides error: " . $e->getMessage());
 }
 
 // Get featured campus photos
-$featuredPhotos = InstitutionPhoto::getFeatured(4);
+$featuredPhotos = [];
+try {
+    $featuredPhotos = InstitutionPhoto::getFeatured(4);
+} catch (Throwable $e) {
+    error_log("Homepage featured photos error: " . $e->getMessage());
+}
 ?>
 
 <?php
@@ -109,7 +120,7 @@ try {
 ?>
 
 <!-- Hero Carousel Section -->
-<section class="relative h-[600px] md:h-[700px] overflow-hidden" x-data="{ currentSlide: 0, totalSlides: <?= count($heroSlides) ?> }" x-init="setInterval(() => { currentSlide = (currentSlide + 1) % totalSlides }, 6000)">
+<section class="relative h-[500px] sm:h-[560px] md:h-[700px] overflow-hidden" x-data="{ currentSlide: 0, totalSlides: <?= count($heroSlides) ?> }" x-init="setInterval(() => { currentSlide = (currentSlide + 1) % totalSlides }, 6000)">
     
     <!-- Slides -->
     <?php foreach ($heroSlides as $index => $slide): 
@@ -477,7 +488,13 @@ updateCountdown();
 setInterval(updateCountdown, 86400000); // Update daily
 </script>
 
-<?php require_once '../src/templates/testimonials-section.php'; ?>
+<?php
+try {
+    require_once __DIR__ . '/../src/templates/testimonials-section.php';
+} catch (Throwable $e) {
+    error_log("Homepage testimonials section error: " . $e->getMessage());
+}
+?>
 
 <!-- Why Choose Edutrack Section -->
 <section class="py-20 bg-gray-50">
@@ -517,7 +534,7 @@ setInterval(updateCountdown, 86400000); // Update daily
     </div>
 </section>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>
 
 <style>
     .line-clamp-2 {

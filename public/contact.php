@@ -4,7 +4,7 @@
  * Contact form and information
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 $page_title = "Contact Us - Edutrack computer training college";
 
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Page Header -->
@@ -363,4 +363,4 @@ require_once '../src/templates/header.php';
     </div>
 </section>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

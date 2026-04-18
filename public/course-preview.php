@@ -4,7 +4,7 @@
  * Preview free lessons before enrollment
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Get course slug and lesson ID
 $courseSlug = $_GET['course'] ?? '';
@@ -92,7 +92,7 @@ try {
     }
 
     $page_title = 'Preview: ' . $course['title'];
-    require_once '../src/templates/header.php';
+    require_once __DIR__ . '/../src/templates/header.php';
 
 } catch (Exception $e) {
     error_log("Course Preview Error: " . $e->getMessage());
@@ -288,4 +288,4 @@ try {
 
 </div>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

@@ -4,11 +4,11 @@
  * Course Detail Page
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/Course.php';
-require_once '../src/classes/Enrollment.php';
-require_once '../src/classes/Review.php';
-require_once '../src/classes/User.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/Course.php';
+require_once __DIR__ . '/../src/classes/Enrollment.php';
+require_once __DIR__ . '/../src/classes/Review.php';
+require_once __DIR__ . '/../src/classes/User.php';
 
 // 1. Get Course ID or Slug & Validate
 $courseId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -93,7 +93,7 @@ foreach ($relatedCoursesData as $rc) {
 }
 
 $page_title = sanitize($course->getTitle()) . ' - ' . APP_NAME;
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Course Hero Section -->
@@ -663,4 +663,4 @@ require_once '../src/templates/header.php';
     </div>
 </section>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

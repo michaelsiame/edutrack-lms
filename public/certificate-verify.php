@@ -4,7 +4,7 @@
  * Redirects to main verification page
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Forward any verification code to the main page
 $code = $_GET['code'] ?? '';

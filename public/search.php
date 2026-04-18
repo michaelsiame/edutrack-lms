@@ -4,9 +4,9 @@
  * Search for courses with advanced filtering
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/Course.php';
-require_once '../src/classes/Category.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/Course.php';
+require_once __DIR__ . '/../src/classes/Category.php';
 
 // Get search parameters
 $query = trim($_GET['q'] ?? '');
@@ -117,7 +117,7 @@ $courses = $db->fetchAll($sql, $params);
 $categories = Category::all(['active_only' => true]);
 
 $page_title = !empty($query) ? 'Search Results for "' . sanitize($query) . '"' : 'Search Courses';
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gray-50">
@@ -348,4 +348,4 @@ require_once '../src/templates/header.php';
     </div>
 </div>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

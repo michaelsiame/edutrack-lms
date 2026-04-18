@@ -4,7 +4,7 @@
  * Jitsi Meet Integration for Live Lessons
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Require authentication
 if (!isset($_SESSION['user_id'])) {

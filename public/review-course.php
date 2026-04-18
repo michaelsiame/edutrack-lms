@@ -4,10 +4,10 @@
  * Students can review courses they've completed
  */
 
-require_once '../src/middleware/authenticate.php';
-require_once '../src/classes/Course.php';
-require_once '../src/classes/Enrollment.php';
-require_once '../src/classes/Review.php';
+require_once __DIR__ . '/../src/middleware/authenticate.php';
+require_once __DIR__ . '/../src/classes/Course.php';
+require_once __DIR__ . '/../src/classes/Enrollment.php';
+require_once __DIR__ . '/../src/classes/Review.php';
 
 $courseId = $_GET['course_id'] ?? null;
 
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 $page_title = 'Review Course - ' . $course->getTitle();
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gray-50 py-12">
@@ -213,4 +213,4 @@ require_once '../src/templates/header.php';
 
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

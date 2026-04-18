@@ -4,7 +4,7 @@
  * View assignment details and submit work
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Ensure user is authenticated
 if (!isLoggedIn()) {
@@ -76,7 +76,7 @@ try {
     redirect('my-courses.php');
 }
 
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 
 // Set up breadcrumbs
 $breadcrumbs = [
@@ -84,7 +84,7 @@ $breadcrumbs = [
     ['label' => $assignment['course_title'], 'url' => 'course.php?slug=' . urlencode($assignment['course_slug'])],
     ['label' => 'Assignment: ' . $assignment['title']]
 ];
-require_once '../src/templates/breadcrumbs.php';
+require_once __DIR__ . '/../src/templates/breadcrumbs.php';
 ?>
 
 <div class="min-h-screen bg-gray-100 py-8">
@@ -329,4 +329,4 @@ require_once '../src/templates/breadcrumbs.php';
     </div>
 </div>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

@@ -7,7 +7,7 @@
  * Exchanges the authorisation code for user info, then logs in or registers.
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Redirect if already logged in
 if (isLoggedIn()) {

@@ -4,7 +4,7 @@
  * Display quiz attempt results
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Ensure user is authenticated
 if (!isLoggedIn()) {
@@ -64,7 +64,7 @@ try {
     redirect('my-courses.php');
 }
 
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gray-100 py-8">
@@ -225,4 +225,4 @@ require_once '../src/templates/header.php';
     </div>
 </div>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

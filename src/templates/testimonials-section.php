@@ -11,13 +11,18 @@
 
 // Fetch testimonials if not already provided
 if (!isset($testimonials)) {
-    $db = Database::getInstance();
-    $testimonials = $db->fetchAll(
-        "SELECT * FROM testimonials 
-         WHERE status = 'approved' 
-         ORDER BY is_featured DESC, rating DESC, created_at DESC 
-         LIMIT 6"
-    );
+    try {
+        $db = Database::getInstance();
+        $testimonials = $db->fetchAll(
+            "SELECT * FROM testimonials 
+             WHERE status = 'approved' 
+             ORDER BY is_featured DESC, rating DESC, created_at DESC 
+             LIMIT 6"
+        );
+    } catch (Throwable $e) {
+        error_log("Testimonials section query error: " . $e->getMessage());
+        $testimonials = [];
+    }
 }
 
 if (empty($testimonials)) {

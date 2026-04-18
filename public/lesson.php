@@ -4,7 +4,7 @@
  * Redirects to the learn.php interface with the specified lesson
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Get lesson ID from URL
 $lessonId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
