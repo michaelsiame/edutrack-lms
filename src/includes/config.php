@@ -81,6 +81,7 @@ define('TEVETA_VERIFIED', $appConfig['teveta']['verified']);
 
 // Site information
 define('SITE_EMAIL', $appConfig['site']['email']);
+define('SITE_ALT_EMAIL', $appConfig['site']['alt_email'] ?? SITE_EMAIL);
 define('SITE_PHONE', $appConfig['site']['phone']);
 define('SITE_PHONE2', $appConfig['site']['phone2']);
 define('SITE_ADDRESS', $appConfig['site']['address']);

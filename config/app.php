@@ -39,7 +39,7 @@ return [
     // TEVETA Configuration
     'teveta' => [
         'enabled' => true,
-        'institution_code' => getenv('TEVETA_INSTITUTION_CODE') ?: 'TEVETA/XXX/2024',
+        'institution_code' => getenv('TEVETA_INSTITUTION_CODE') ?: 'TVA/2064',
         'institution_name' => getenv('TEVETA_INSTITUTION_NAME') ?: 'Edutrack Computer Training College',
         'registration_url' => getenv('TEVETA_REGISTRATION_URL') ?: 'https://www.teveta.org.zm',
         'verified' => filter_var(getenv('TEVETA_VERIFIED'), FILTER_VALIDATE_BOOLEAN),
@@ -47,9 +47,10 @@ return [
     
     // Site Information
     'site' => [
-        'email' => getenv('SITE_EMAIL') ?: 'info@edutrackzambia.com', // Updated to match domain
-        'phone' => getenv('SITE_PHONE') ?: '+260771216339',
-        'phone2' => getenv('SITE_PHONE2'),
+        'email' => getenv('SITE_EMAIL') ?: 'edutrackcomputertrainingschool@gmail.com',
+        'alt_email' => getenv('SITE_ALT_EMAIL') ?: 'info@edutrackzambia.com',
+        'phone' => getenv('SITE_PHONE') ?: '+260770666937',
+        'phone2' => getenv('SITE_PHONE2') ?: '+260965992967',
         'address' => getenv('SITE_ADDRESS') ?: 'Kalomo, Zambia',
         'currency' => getenv('CURRENCY') ?: 'ZMW',
         'currency_symbol' => getenv('CURRENCY_SYMBOL') ?: 'K',
@@ -62,6 +63,13 @@ return [
         'instagram' => getenv('INSTAGRAM_URL') ?: '',
         'linkedin' => getenv('LINKEDIN_URL') ?: '',
         'youtube' => getenv('YOUTUBE_URL') ?: '',
+    ],
+    
+    // School Management System
+    'school_management' => [
+        'enabled' => true,
+        'url' => 'https://school.edutrackzambia.com',
+        'name' => 'School Portal',
     ],
     
     // Course Settings

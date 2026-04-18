@@ -19,7 +19,7 @@ if (!hasRole('admin')) {
 
 // Get current page
 $page = $_GET['page'] ?? 'dashboard';
-$validPages = ['dashboard', 'users', 'courses', 'modules', 'enrollments', 'financials', 'settings', 'announcements', 'help'];
+$validPages = ['dashboard', 'users', 'courses', 'modules', 'enrollments', 'financials', 'settings', 'announcements', 'help', 'company-profile'];
 if (!in_array($page, $validPages)) {
     $page = 'dashboard';
 }

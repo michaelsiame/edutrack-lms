@@ -139,14 +139,14 @@ require_once '../src/templates/header.php';
                                 <div>
                                     <p class="text-sm font-semibold text-gray-700">Call / WhatsApp:</p>
                                     <p class="text-primary-600 font-bold">
-                                        <a href="tel:0770666937">0770 666 937</a> / 
-                                        <a href="tel:0965992967">0965 992 967</a>
+                                        <a href="tel:<?= SITE_PHONE ?>"><?= SITE_PHONE ?></a> / 
+                                        <a href="tel:<?= SITE_PHONE2 ?>"><?= SITE_PHONE2 ?></a>
                                     </p>
                                 </div>
                                 <div>
                                     <p class="text-sm font-semibold text-gray-700">Email:</p>
                                     <p class="text-sm text-primary-600 break-all">
-                                        <a href="mailto:edutrackcomputertrainingschool@gmail.com">edutrackcomputertrainingschool@gmail.com</a>
+                                        <a href="mailto:<?= SITE_ALT_EMAIL ?>"><?= SITE_ALT_EMAIL ?></a>
                                     </p>
                                 </div>
                             </div>

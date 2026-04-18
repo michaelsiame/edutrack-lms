@@ -47,13 +47,26 @@ $questions = $db->fetchAll("
     ORDER BY order_index ASC, id ASC
 ", [$quizId]);
 
-// Get options for each question
-foreach ($questions as &$question) {
-    $question['options'] = $db->fetchAll("
+// Get all options for questions in a single query (fix N+1)
+$questionIds = array_column($questions, 'id');
+if (!empty($questionIds)) {
+    $placeholders = implode(',', array_fill(0, count($questionIds), '?'));
+    $allOptions = $db->fetchAll("
         SELECT * FROM quiz_question_options
-        WHERE question_id = ?
-        ORDER BY id ASC
-    ", [$question['id']]);
+        WHERE question_id IN ($placeholders)
+        ORDER BY question_id, id ASC
+    ", $questionIds);
+    
+    // Group options by question_id
+    $optionsByQuestion = [];
+    foreach ($allOptions as $opt) {
+        $optionsByQuestion[$opt['question_id']][] = $opt;
+    }
+    
+    // Assign options to each question
+    foreach ($questions as &$question) {
+        $question['options'] = $optionsByQuestion[$question['id']] ?? [];
+    }
 }
 
 // Handle quiz submission

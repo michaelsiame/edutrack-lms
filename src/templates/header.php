@@ -58,10 +58,6 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     
     <!-- Shared Tailwind Config -->
     <script src="<?= asset('js/tailwind-config.js') ?>"></script>
-                }
-            }
-        }
-    </script>
     
     <!-- Custom Styles -->
     <style>

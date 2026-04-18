@@ -106,7 +106,7 @@ function sendAnnouncement($courseId, $message, $instructorId, $db) {
         SELECT u.id, u.first_name, u.email 
         FROM users u
         JOIN enrollments e ON u.id = e.user_id
-        WHERE e.course_id = ? AND e.enrollment_status IN ('Active', 'In Progress', 'Completed')
+        WHERE e.course_id = ? AND e.enrollment_status IN ('Enrolled', 'In Progress', 'Completed')
     ", [$courseId]);
     
     foreach ($students as $student) {

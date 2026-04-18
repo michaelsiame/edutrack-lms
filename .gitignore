@@ -3,8 +3,18 @@
 # ============================================
 
 # Environment & Config
-.env.production
+.env
+.env.*
+!.env.example
 config/local.php
+
+# Office Temporary Files
+~$*
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
 
 # IDE & Editor
 .vscode/

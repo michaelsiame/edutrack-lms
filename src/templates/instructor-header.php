@@ -28,7 +28,7 @@ if ($current_dir === 'instructor') {
     <title><?= $page_title ?? 'Instructor Panel' ?> - <?= APP_NAME ?></title>
     
     <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.1"></script>
     <!-- Shared Tailwind Config -->
     <script src="<?= url('assets/js/tailwind-config.js') ?>"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">

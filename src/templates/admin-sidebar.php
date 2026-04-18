@@ -105,6 +105,15 @@
             </a>
         </div>
 
+        <!-- Company Profile -->
+        <div class="mt-2">
+            <a href="<?= url('admin/index.php?page=company-profile') ?>"
+               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= ($_GET['page'] ?? '') === 'company-profile' ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
+                <i class="fas fa-building w-5"></i>
+                <span class="ml-3">Company Profile</span>
+            </a>
+        </div>
+
         <div class="border-t border-gray-800 mt-6 pt-6">
             <!-- Back to Site -->
             <a href="<?= url('index.php') ?>"
