@@ -30,7 +30,8 @@ class Course {
                        (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) as total_reviews
                 FROM courses c
                 LEFT JOIN course_categories cat ON c.category_id = cat.id
-                LEFT JOIN users u ON c.instructor_id = u.id
+                LEFT JOIN instructors i ON c.instructor_id = i.id
+                LEFT JOIN users u ON i.user_id = u.id
                 WHERE c.id = :id";
 
         $result = $this->db->query($sql, ['id' => $this->id])->fetch();
@@ -81,7 +82,8 @@ class Course {
                        (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) as total_reviews
                 FROM courses c
                 LEFT JOIN course_categories cat ON c.category_id = cat.id
-                LEFT JOIN users u ON c.instructor_id = u.id
+                LEFT JOIN instructors i ON c.instructor_id = i.id
+                LEFT JOIN users u ON i.user_id = u.id
                 WHERE 1=1";
         
         $params = [];

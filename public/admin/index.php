@@ -26,7 +26,8 @@ if (!in_array($page, $validPages)) {
 
 // Fetch database and settings early
 $db = Database::getInstance();
-$settings = $db->fetchOne("SELECT * FROM system_settings WHERE setting_id = 1");
+$settingsRows = $db->fetchAll("SELECT setting_key, setting_value FROM system_settings");
+$settings = array_column($settingsRows, 'setting_value', 'setting_key');
 $currency = $settings['currency'] ?? 'ZMW';
 
 // ============================================
@@ -229,7 +230,7 @@ $page_title = 'Admin Dashboard';
     <title>Admin Dashboard - EduTrack</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
         tailwind.config = {
             theme: {

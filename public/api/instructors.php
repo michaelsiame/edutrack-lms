@@ -15,7 +15,7 @@ try {
         SELECT
             i.id,
             i.user_id,
-            u.name,
+            CONCAT(u.first_name, ' ', u.last_name) as name,
             u.email,
             i.bio,
             i.specialization,
@@ -25,7 +25,7 @@ try {
         FROM instructors i
         JOIN users u ON i.user_id = u.id
         LEFT JOIN team_members tm ON tm.user_id = u.id
-        ORDER BY u.name ASC
+        ORDER BY u.first_name ASC
     ");
 
     echo json_encode([

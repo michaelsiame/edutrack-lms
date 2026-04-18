@@ -29,63 +29,13 @@ if ($current_dir === 'instructor') {
     
     <link rel="icon" type="image/png" href="<?= url('assets/images/favicon.png') ?>">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: { 
-                            50: '#EFF6FF', 
-                            100: '#DBEAFE',
-                            200: '#BFDBFE',
-                            300: '#93C5FD',
-                            400: '#60A5FA',
-                            500: '#3B82F6', 
-                            600: '#2563EB', 
-                            700: '#1D4ED8',
-                            800: '#1E40AF',
-                            900: '#1E3A8A'
-                        },
-                        secondary: { 
-                            500: '#F59E0B', 
-                            600: '#D97706' 
-                        },
-                        success: {
-                            50: '#ECFDF5',
-                            100: '#D1FAE5',
-                            500: '#10B981',
-                            600: '#059669'
-                        },
-                        warning: {
-                            50: '#FFFBEB',
-                            100: '#FEF3C7',
-                            500: '#F59E0B',
-                            600: '#D97706'
-                        },
-                        danger: {
-                            50: '#FEF2F2',
-                            100: '#FEE2E2',
-                            500: '#EF4444',
-                            600: '#DC2626'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
-                        'card': '0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04)',
-                        'card-hover': '0 0 0 1px rgba(0,0,0,0.03), 0 12px 24px rgba(0,0,0,0.08)',
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Shared Tailwind Config -->
+    <script src="<?= url('assets/js/tailwind-config.js') ?>"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
     <style>
         [x-cloak] { display: none !important; }
         body { font-family: 'Inter', sans-serif; }

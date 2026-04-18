@@ -77,6 +77,14 @@ try {
 }
 
 require_once '../src/templates/header.php';
+
+// Set up breadcrumbs
+$breadcrumbs = [
+    ['label' => 'My Courses', 'url' => 'my-courses.php'],
+    ['label' => $assignment['course_title'], 'url' => 'course.php?slug=' . urlencode($assignment['course_slug'])],
+    ['label' => 'Assignment: ' . $assignment['title']]
+];
+require_once '../src/templates/breadcrumbs.php';
 ?>
 
 <div class="min-h-screen bg-gray-100 py-8">

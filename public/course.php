@@ -10,16 +10,22 @@ require_once '../src/classes/Enrollment.php';
 require_once '../src/classes/Review.php';
 require_once '../src/classes/User.php';
 
-// 1. Get Course ID & Validate
+// 1. Get Course ID or Slug & Validate
 $courseId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$courseSlug = $_GET['slug'] ?? null;
 
-if (!$courseId) {
+if (!$courseId && !$courseSlug) {
     setFlashMessage('Invalid course link.', 'error');
     redirect('courses.php');
 }
 
 // 2. Fetch Course Object
-$course = Course::find($courseId);
+if ($courseId) {
+    $course = Course::find($courseId);
+} else {
+    $course = Course::findBySlug($courseSlug);
+    $courseId = $course ? $course->getId() : 0;
+}
 
 if (!$course || !$course->isPublished()) {
     setFlashMessage('Course not found or currently unavailable.', 'error');

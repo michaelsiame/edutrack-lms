@@ -22,12 +22,13 @@ $certificates = $db->fetchAll("
            cert.issued_date as issued_at,
            c.title as course_title, c.slug as course_slug,
            c.thumbnail_url, c.instructor_id,
-           u.first_name as instructor_first_name, u.last_name as instructor_last_name,
+           CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
            e.enrolled_at, e.completion_date as course_completed_at
     FROM certificates cert
     JOIN enrollments e ON cert.enrollment_id = e.id
     JOIN courses c ON e.course_id = c.id
-    LEFT JOIN users u ON c.instructor_id = u.id
+    LEFT JOIN instructors i ON c.instructor_id = i.id
+    LEFT JOIN users u ON i.user_id = u.id
     WHERE e.user_id = ?
     ORDER BY cert.issued_date DESC
 ", [$userId]);

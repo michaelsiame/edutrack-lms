@@ -60,19 +60,35 @@ $enrollments = $db->fetchAll("
     $sortSql
 ", [$userId]);
 
-// Get module completion for each enrollment
-foreach ($enrollments as &$enrollment) {
-    $enrollment['modules'] = $db->fetchAll("
-        SELECT m.id, m.title,
+// Get all module completion data in a single query (fix N+1)
+$enrollmentIds = array_column($enrollments, 'id');
+$courseIds = array_column($enrollments, 'course_id');
+
+if (!empty($enrollmentIds) && !empty($courseIds)) {
+    $placeholders = implode(',', array_fill(0, count($enrollmentIds), '?'));
+    $allModuleProgress = $db->fetchAll("
+        SELECT m.id, m.title, m.course_id, e.id as enrollment_id,
                COUNT(DISTINCT l.id) as total_lessons,
                COUNT(DISTINCT CASE WHEN lp.status = 'Completed' THEN lp.lesson_id END) as completed_lessons
         FROM modules m
+        INNER JOIN enrollments e ON m.course_id = e.course_id
         LEFT JOIN lessons l ON m.id = l.module_id
-        LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.enrollment_id = ?
-        WHERE m.course_id = ?
-        GROUP BY m.id
+        LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.enrollment_id = e.id
+        WHERE e.id IN ($placeholders)
+        GROUP BY m.id, e.id
         ORDER BY m.display_order ASC
-    ", [$enrollment['id'], $enrollment['course_id']]);
+    ", $enrollmentIds);
+    
+    // Group module progress by enrollment_id
+    $moduleProgressByEnrollment = [];
+    foreach ($allModuleProgress as $progress) {
+        $moduleProgressByEnrollment[$progress['enrollment_id']][] = $progress;
+    }
+}
+
+// Assign module progress to each enrollment and calculate estimated completion
+foreach ($enrollments as &$enrollment) {
+    $enrollment['modules'] = $moduleProgressByEnrollment[$enrollment['id']] ?? [];
     
     // Calculate estimated completion
     if ($enrollment['progress_percentage'] > 0 && $enrollment['duration_weeks']) {

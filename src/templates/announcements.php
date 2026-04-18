@@ -88,7 +88,7 @@ if (!empty($announcements)):
 if (!defined('ALPINE_JS_LOADED')):
     define('ALPINE_JS_LOADED', true);
 ?>
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 <?php endif; ?>
 
 <?php endif; ?>

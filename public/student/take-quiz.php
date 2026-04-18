@@ -14,8 +14,8 @@ if (!isLoggedIn()) {
 $user = User::current();
 $userId = $user->getId();
 
-// Get quiz ID
-$quizId = $_GET['id'] ?? null;
+// Get quiz ID (supports both 'id' and 'quiz_id' parameters)
+$quizId = $_GET['quiz_id'] ?? $_GET['id'] ?? null;
 
 if (!$quizId) {
     flash('error', 'Quiz not found.', 'error');

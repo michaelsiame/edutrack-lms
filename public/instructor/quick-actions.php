@@ -45,14 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'grade_all':
             $submissionIds = $_POST['submission_ids'] ?? [];
             $points = $_POST['points'] ?? [];
-            bulkGrade($submissionIds, $points, $db);
+            bulkGrade($submissionIds, $points, $db, $userId);
             flash('message', 'Submissions graded successfully', 'success');
             break;
             
         case 'update_progress':
             $enrollmentIds = $_POST['enrollment_ids'] ?? [];
             $progress = $_POST['progress'] ?? [];
-            bulkUpdateProgress($enrollmentIds, $progress, $db);
+            bulkUpdateProgress($enrollmentIds, $progress, $db, $userId);
             flash('message', 'Student progress updated', 'success');
             break;
     }
@@ -95,30 +95,79 @@ function sendAnnouncement($courseId, $message, $instructorId, $db) {
         [$courseId, 'Quick Announcement', $message, $instructorId]
     );
     
-    // TODO: Send email notifications to enrolled students
+    // Send email notifications to enrolled students
+    require_once '../../src/classes/Email.php';
+    
+    // Get course info
+    $course = $db->fetchOne("SELECT title, slug FROM courses WHERE id = ?", [$courseId]);
+    
+    // Get enrolled students
+    $students = $db->fetchAll("
+        SELECT u.id, u.first_name, u.email 
+        FROM users u
+        JOIN enrollments e ON u.id = e.user_id
+        WHERE e.course_id = ? AND e.enrollment_status IN ('Active', 'In Progress', 'Completed')
+    ", [$courseId]);
+    
+    foreach ($students as $student) {
+        $email = new Email();
+        
+        // Prepare template variables
+        $first_name = $student['first_name'];
+        $course_title = $course['title'];
+        $announcement_title = 'Quick Announcement';
+        $announcement_content = $message;
+        $course_url = url('learn.php?course=' . urlencode($course['slug']));
+        
+        // Get email template
+        ob_start();
+        include '../../src/mail/announcement-notification.php';
+        $body = ob_get_clean();
+        
+        $email->send($student['email'], 'New Announcement: ' . $course['title'], $body);
+    }
 }
 
-function bulkGrade($submissionIds, $points, $db) {
+function bulkGrade($submissionIds, $points, $db, $instructorId) {
     foreach ($submissionIds as $id) {
         if (isset($points[$id])) {
-            $db->query(
-                "UPDATE assignment_submissions SET points_earned = ?, status = 'graded', graded_at = NOW() WHERE id = ?",
-                [$points[$id], $id]
-            );
+            // Verify instructor owns the course for this submission
+            $ownsSubmission = $db->fetchOne("
+                SELECT 1 FROM assignment_submissions asub
+                JOIN assignments a ON asub.assignment_id = a.id
+                JOIN courses c ON a.course_id = c.id
+                WHERE asub.id = ? AND c.instructor_id = ?
+            ", [$id, $instructorId]);
+            
+            if ($ownsSubmission) {
+                $db->query(
+                    "UPDATE assignment_submissions SET points_earned = ?, status = 'graded', graded_at = NOW() WHERE id = ?",
+                    [$points[$id], $id]
+                );
+            }
         }
     }
 }
 
-function bulkUpdateProgress($enrollmentIds, $progress, $db) {
+function bulkUpdateProgress($enrollmentIds, $progress, $db, $instructorId) {
     foreach ($enrollmentIds as $id) {
         if (isset($progress[$id])) {
-            $progressValue = max(0, min(100, (int)$progress[$id]));
-            $status = $progressValue >= 100 ? 'Completed' : ($progressValue > 0 ? 'In Progress' : 'Enrolled');
+            // Verify instructor owns the course for this enrollment
+            $ownsEnrollment = $db->fetchOne("
+                SELECT 1 FROM enrollments e
+                JOIN courses c ON e.course_id = c.id
+                WHERE e.id = ? AND c.instructor_id = ?
+            ", [$id, $instructorId]);
             
-            $db->query(
-                "UPDATE enrollments SET progress = ?, enrollment_status = ? WHERE id = ?",
-                [$progressValue, $status, $id]
-            );
+            if ($ownsEnrollment) {
+                $progressValue = max(0, min(100, (int)$progress[$id]));
+                $status = $progressValue >= 100 ? 'Completed' : ($progressValue > 0 ? 'In Progress' : 'Enrolled');
+                
+                $db->query(
+                    "UPDATE enrollments SET progress = ?, enrollment_status = ? WHERE id = ?",
+                    [$progressValue, $status, $id]
+                );
+            }
         }
     }
 }

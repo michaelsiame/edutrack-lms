@@ -53,7 +53,7 @@ function updateVideoProgress(currentTime, duration) {
     if (Math.floor(currentTime) - lastProgressUpdate >= 10) {
         lastProgressUpdate = Math.floor(currentTime);
         
-        fetch('/api/progress.php', {
+        fetch('/api/lesson-progress.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -99,7 +99,7 @@ function trackTimeSpent() {
         const timeSpent = Math.floor((Date.now() - videoStartTime) / 1000);
         
         if (timeSpent >= 60) {
-            fetch('/api/progress.php', {
+            fetch('/api/lesson-progress.php', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -213,7 +213,7 @@ function toggleFullscreen(element) {
 /**
  * Toggle module section in sidebar
  */
-function toggleModuleSection(moduleId) {
+function toggleModuleSection(moduleId, event) {
     const section = document.getElementById('module-' + moduleId);
     const icon = event.currentTarget.querySelector('.module-toggle-icon');
     

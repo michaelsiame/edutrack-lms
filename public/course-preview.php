@@ -23,7 +23,8 @@ try {
                u.first_name as instructor_fname, u.last_name as instructor_lname
         FROM courses c
         LEFT JOIN course_categories cat ON c.category_id = cat.id
-        LEFT JOIN users u ON c.instructor_id = u.id
+        LEFT JOIN instructors i ON c.instructor_id = i.id
+        LEFT JOIN users u ON i.user_id = u.id
         WHERE c.slug = ? AND c.status = 'Published'
     ", [$courseSlug]);
 

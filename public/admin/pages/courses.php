@@ -24,7 +24,8 @@ $sql = "
            (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrollment_count,
            (SELECT COUNT(*) FROM modules WHERE course_id = c.id) as module_count
     FROM courses c
-    LEFT JOIN users u ON c.instructor_id = u.id
+    LEFT JOIN instructors i ON c.instructor_id = i.id
+    LEFT JOIN users u ON i.user_id = u.id
     LEFT JOIN course_categories cat ON c.category_id = cat.id
     WHERE 1=1
 ";

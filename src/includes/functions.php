@@ -29,16 +29,24 @@ function e($string) {
  * @param string $type Message type (success, error, warning, info)
  */
 function setFlashMessage($message, $type = 'info') {
-    $_SESSION[$type] = $message;
+    // Use the flash() function for consistency
+    flash('message', $message, $type);
 }
 
 /**
  * Get flash message and clear it
  *
- * @param string $type Message type
+ * @param string $type Message type (kept for compatibility, but uses unified flash storage)
  * @return string|null
  */
 function getFlashMessage($type = 'success') {
+    // First check the new unified flash storage
+    $flash = flash('message');
+    if ($flash) {
+        return $flash['message'];
+    }
+    
+    // Fall back to legacy session storage for backward compatibility
     if (isset($_SESSION[$type])) {
         $message = $_SESSION[$type];
         unset($_SESSION[$type]);
@@ -50,10 +58,15 @@ function getFlashMessage($type = 'success') {
 /**
  * Check if flash message exists
  *
- * @param string $type Message type
+ * @param string $type Message type (kept for compatibility)
  * @return bool
  */
 function hasFlashMessage($type = 'success') {
+    // Check unified flash storage first
+    if (hasFlash('message')) {
+        return true;
+    }
+    // Fall back to legacy session storage
     return isset($_SESSION[$type]);
 }
 

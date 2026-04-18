@@ -446,7 +446,8 @@ class Statistics {
             FROM courses c
             LEFT JOIN enrollments e ON c.id = e.course_id
             LEFT JOIN course_reviews r ON c.id = r.course_id
-            LEFT JOIN users u ON c.instructor_id = u.id
+            LEFT JOIN instructors i ON c.instructor_id = i.id
+            LEFT JOIN users u ON i.user_id = u.id
             WHERE c.status = 'published'
             GROUP BY c.id
             ORDER BY enrollment_count DESC

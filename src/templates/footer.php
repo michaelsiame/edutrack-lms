@@ -216,7 +216,7 @@
 </div>
 
 <!-- Custom JavaScript -->
-<script src="<?= asset('js/main.js') ?>"></script>
+<!-- Main JS file removed - was empty. Add back when needed. -->
 
 <?php if (isLoggedIn()): ?>
 <!-- Real-time Notifications -->

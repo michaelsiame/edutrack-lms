@@ -131,7 +131,7 @@
                                 Questions about this payment?
                             </p>
                             <p style="margin: 0 0 20px 0; color: #6f42c1; font-size: 14px; font-weight: 600;">
-                                billing@edutrackzambia.com | +260 XXX XXX XXX
+                                <?= SITE_EMAIL ?> | <?= SITE_PHONE ?>
                             </p>
                             <p style="margin: 0; color: #999999; font-size: 12px; line-height: 1.5;">
                                 © <?= date('Y') ?> Edutrack Computer Training College. All rights reserved.<br>

@@ -246,7 +246,7 @@ if (isLoggedIn()) {
 </nav>
 
 <!-- Alpine.js for dropdown functionality -->
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
 
 <!-- Role Switching Script -->
 <script>

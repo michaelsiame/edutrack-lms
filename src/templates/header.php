@@ -44,47 +44,20 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="<?= asset('images/favicon.ico') ?>">
     
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS CDN (v3.4.1) -->
+    <script src="https://cdn.tailwindcss.com/3.4.1"></script>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= asset('css/main.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/whatsapp-button.css') ?>">
     
-    <!-- Tailwind Config -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#EBF4FF',
-                            100: '#D6E9FF',
-                            200: '#B3D9FF',
-                            300: '#80C3FF',
-                            400: '#4DA8FF',
-                            500: '#2E70DA',
-                            600: '#1E4A8A',
-                            700: '#1A3D73',
-                            800: '#15305C',
-                            900: '#0F2345',
-                        },
-                        secondary: {
-                            50: '#FDF5E6',
-                            100: '#FDEACC',
-                            200: '#FBD599',
-                            300: '#F9C066',
-                            400: '#F7AB33',
-                            500: '#F6B745',
-                            600: '#D89E2E',
-                            700: '#BA8517',
-                            800: '#9C6C00',
-                            900: '#7E5300',
-                        },
-                    }
+    <!-- Shared Tailwind Config -->
+    <script src="<?= asset('js/tailwind-config.js') ?>"></script>
                 }
             }
         }

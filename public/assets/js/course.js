@@ -379,7 +379,7 @@ function trackVideoProgress(courseId, lessonId, currentTime, duration) {
     const progress = (currentTime / duration) * 100;
     
     // Send AJAX request to save progress
-    fetch('/api/progress.php', {
+    fetch('/api/lesson-progress.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

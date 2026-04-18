@@ -76,14 +76,31 @@ try {
             ORDER BY m.display_order ASC, m.id ASC
         ", [$courseId]);
 
-        // Get lessons for each module
-        foreach ($modules as $module) {
-            $lessonsGrouped[$module['id']] = $db->fetchAll("
-                SELECT l.*
-                FROM lessons l
-                WHERE l.module_id = ?
-                ORDER BY l.display_order ASC, l.id ASC
-            ", [$module['id']]);
+        // Get all lessons for the course in a single query (fix N+1)
+        $allLessons = $db->fetchAll("
+            SELECT l.*
+            FROM lessons l
+            JOIN modules m ON l.module_id = m.id
+            WHERE m.course_id = ?
+            ORDER BY l.display_order ASC, l.id ASC
+        ", [$courseId]);
+        
+        // Group lessons by module_id
+        foreach ($allLessons as $lesson) {
+            $lessonsGrouped[$lesson['module_id']][] = $lesson;
+        }
+        
+        // Get lesson progress for the current enrollment (for completion indicators)
+        $lessonProgress = [];
+        if ($course['enrollment_id']) {
+            $progressData = $db->fetchAll("
+                SELECT lesson_id, status 
+                FROM lesson_progress 
+                WHERE enrollment_id = ?
+            ", [$course['enrollment_id']]);
+            foreach ($progressData as $progress) {
+                $lessonProgress[$progress['lesson_id']] = $progress['status'];
+            }
         }
 
         // Get quizzes for this course
@@ -115,7 +132,7 @@ try {
 
         // Get upcoming live sessions for this course
         $liveSessions = $db->fetchAll("
-            SELECT ls.*, l.title as lesson_title, u.name as instructor_name
+            SELECT ls.*, l.title as lesson_title, CONCAT(u.first_name, ' ', u.last_name) as instructor_name
             FROM live_sessions ls
             JOIN lessons l ON ls.lesson_id = l.id
             JOIN modules m ON l.module_id = m.id
@@ -197,6 +214,14 @@ try {
 
 // Include header
 require_once '../src/templates/header.php';
+
+// Set up breadcrumbs
+$breadcrumbs = [
+    ['label' => 'My Courses', 'url' => 'my-courses.php'],
+    ['label' => $course['title'], 'url' => 'course.php?slug=' . urlencode($courseSlug)],
+    ['label' => $currentLesson['title'] ?? 'Learn']
+];
+require_once '../src/templates/breadcrumbs.php';
 ?>
 
 <div class="min-h-screen bg-gray-100">
@@ -258,17 +283,30 @@ require_once '../src/templates/header.php';
                                     elseif ($lesson['lesson_type'] == 'quiz') $icon = 'fa-question-circle';
                                     elseif ($lesson['lesson_type'] == 'assignment') $icon = 'fa-tasks';
                                     elseif ($lesson['lesson_type'] == 'Live Session') $icon = 'fa-video';
+                                    
+                                    // Check if lesson is completed
+                                    $isCompleted = isset($lessonProgress[$lesson['id']]) && $lessonProgress[$lesson['id']] === 'Completed';
+                                    $lessonClasses = $lessonId == $lesson['id'] ? 'text-blue-600 font-semibold' : ($isCompleted ? 'text-green-700' : 'text-gray-700 hover:text-blue-600');
                                 ?>
                                 <li>
                                     <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $lesson['id']) ?>"
-                                       class="flex items-center justify-between text-sm <?= $lessonId == $lesson['id'] ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' ?>">
+                                       class="flex items-center justify-between text-sm <?= $lessonClasses ?>">
                                         <span class="flex items-center">
-                                            <i class="fas <?= $icon ?> mr-2"></i>
+                                            <?php if ($isCompleted): ?>
+                                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                            <?php else: ?>
+                                                <i class="fas <?= $icon ?> mr-2"></i>
+                                            <?php endif; ?>
                                             <?= htmlspecialchars($lesson['title']) ?>
                                         </span>
-                                        <?php if ($lesson['duration_minutes']): ?>
-                                        <span class="text-xs text-gray-500"><?= $lesson['duration_minutes'] ?>m</span>
-                                        <?php endif; ?>
+                                        <span class="flex items-center">
+                                            <?php if ($isCompleted): ?>
+                                                <span class="text-xs text-green-600 mr-2">Done</span>
+                                            <?php endif; ?>
+                                            <?php if ($lesson['duration_minutes']): ?>
+                                            <span class="text-xs text-gray-500"><?= $lesson['duration_minutes'] ?>m</span>
+                                            <?php endif; ?>
+                                        </span>
                                     </a>
                                 </li>
                                 <?php endforeach; ?>
@@ -401,7 +439,7 @@ require_once '../src/templates/header.php';
                         <?php
                         // Get live session for this lesson
                         $liveSessionData = $db->fetchOne("
-                            SELECT ls.*, u.name as instructor_name
+                            SELECT ls.*, CONCAT(u.first_name, ' ', u.last_name) as instructor_name
                             FROM live_sessions ls
                             LEFT JOIN instructors i ON ls.instructor_id = i.id
                             LEFT JOIN users u ON i.user_id = u.id
@@ -654,5 +692,15 @@ require_once '../src/templates/header.php';
     </div>
 
 </div>
+
+<!-- Export PHP variables to JavaScript -->
+<script>
+const courseId = <?= (int)$courseId ?>;
+const lessonId = <?= (int)$lessonId ?>;
+const courseSlug = <?= json_encode($courseSlug) ?>;
+</script>
+
+<!-- Learning interface JavaScript -->
+<script src="<?= asset('js/learning.js') ?>"></script>
 
 <?php require_once '../src/templates/footer.php'; ?>

@@ -19,12 +19,12 @@ $userId = $user->getId();
 $studentStats = Statistics::getStudentStats($userId);
 
 $stats = [
-    'active_courses' => $studentStats['in_progress_courses'],
-    'completed_courses' => $studentStats['completed_courses'],
-    'total_courses' => $studentStats['enrolled_courses'],
-    'certificates' => $studentStats['total_certificates'],
-    'avg_quiz_score' => $studentStats['avg_quiz_score'],
-    'member_since' => formatDate($user->created_at, 'F Y')
+    'active_courses' => $studentStats['in_progress_courses'] ?? 0,
+    'completed_courses' => $studentStats['completed_courses'] ?? 0,
+    'total_courses' => $studentStats['enrolled_courses'] ?? 0,
+    'certificates' => $studentStats['total_certificates'] ?? 0,
+    'avg_quiz_score' => $studentStats['avg_quiz_score'] ?? 0,
+    'member_since' => formatDate($user->created_at ?? null, 'F Y')
 ];
 
 $page_title = "My Profile - Edutrack";

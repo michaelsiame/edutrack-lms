@@ -264,10 +264,10 @@ require_once '../../src/templates/header.php';
                 Can't find what you're looking for? Our support team is ready to assist you.
             </p>
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="mailto:support@edutrack.com" class="inline-flex items-center px-6 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-gray-100 transition">
+                <a href="mailto:<?= SITE_EMAIL ?>" class="inline-flex items-center px-6 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-gray-100 transition">
                     <i class="fas fa-envelope mr-2"></i>Email Support
                 </a>
-                <a href="tel:+260XXXXXXXX" class="inline-flex items-center px-6 py-3 bg-white/20 text-white font-semibold rounded-lg hover:bg-white/30 transition">
+                <a href="tel:<?= SITE_PHONE ?>" class="inline-flex items-center px-6 py-3 bg-white/20 text-white font-semibold rounded-lg hover:bg-white/30 transition">
                     <i class="fas fa-phone mr-2"></i>Call Us
                 </a>
             </div>

@@ -938,7 +938,7 @@ require_once '../../src/templates/header.php';
 
                         <div>
                             <h3 class="font-semibold text-gray-800 mb-2">Who do I contact for technical support?</h3>
-                            <p class="text-gray-600">For technical issues, contact the system administrator at admin@edutrack.com or use the support ticket system.</p>
+                            <p class="text-gray-600">For technical issues, contact the system administrator at <?= SITE_EMAIL ?> or use the support ticket system.</p>
                         </div>
                     </div>
                 </section>
@@ -950,7 +950,7 @@ require_once '../../src/templates/header.php';
                         Can't find what you're looking for? Our support team is here to help you get the most out of the platform.
                     </p>
                     <div class="flex flex-wrap justify-center gap-4">
-                        <a href="mailto:support@edutrack.com" class="inline-flex items-center px-6 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-gray-100 transition">
+                        <a href="mailto:<?= SITE_EMAIL ?>" class="inline-flex items-center px-6 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-gray-100 transition">
                             <i class="fas fa-envelope mr-2"></i>Contact Support
                         </a>
                         <a href="#" class="inline-flex items-center px-6 py-3 bg-white/20 text-white font-semibold rounded-lg hover:bg-white/30 transition">

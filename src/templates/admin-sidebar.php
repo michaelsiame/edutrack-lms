@@ -17,8 +17,8 @@
 
         <!-- Courses -->
         <div class="mt-2">
-            <a href="<?= url('admin/courses/index.php') ?>"
-               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= strpos($_SERVER['PHP_SELF'], '/admin/courses/') !== false ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
+            <a href="<?= url('admin/index.php?page=courses') ?>"
+               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= ($_GET['page'] ?? '') === 'courses' ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
                 <i class="fas fa-book w-5"></i>
                 <span class="ml-3">Courses</span>
             </a>
@@ -26,8 +26,8 @@
 
         <!-- Users -->
         <div class="mt-2">
-            <a href="<?= url('admin/users/index.php') ?>"
-               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= strpos($_SERVER['PHP_SELF'], '/admin/users/') !== false ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
+            <a href="<?= url('admin/index.php?page=users') ?>"
+               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= ($_GET['page'] ?? '') === 'users' ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
                 <i class="fas fa-users w-5"></i>
                 <span class="ml-3">Users</span>
             </a>
@@ -35,8 +35,8 @@
 
         <!-- Enrollments -->
         <div class="mt-2">
-            <a href="<?= url('admin/enrollments/index.php') ?>"
-               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= strpos($_SERVER['PHP_SELF'], '/admin/enrollments/') !== false ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
+            <a href="<?= url('admin/index.php?page=enrollments') ?>"
+               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= ($_GET['page'] ?? '') === 'enrollments' ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
                 <i class="fas fa-user-graduate w-5"></i>
                 <span class="ml-3">Enrollments</span>
             </a>
@@ -44,62 +44,62 @@
 
         <!-- Announcements -->
         <div class="mt-2">
-            <a href="<?= url('admin/announcements/index.php') ?>"
-               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= strpos($_SERVER['PHP_SELF'], '/admin/announcements/') !== false ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
+            <a href="<?= url('admin/index.php?page=announcements') ?>"
+               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= ($_GET['page'] ?? '') === 'announcements' ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
                 <i class="fas fa-bullhorn w-5"></i>
                 <span class="ml-3">Announcements</span>
             </a>
         </div>
 
-        <!-- Categories -->
-        <div class="mt-2">
-            <a href="<?= url('admin/categories/index.php') ?>"
-               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= strpos($_SERVER['PHP_SELF'], '/admin/categories/') !== false ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
+        <!-- Categories - Hidden until implemented -->
+        <!-- <div class="mt-2">
+            <a href="<?= url('admin/index.php?page=categories') ?>"
+               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= ($_GET['page'] ?? '') === 'categories' ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
                 <i class="fas fa-folder w-5"></i>
                 <span class="ml-3">Categories</span>
             </a>
-        </div>
+        </div> -->
 
         <!-- Payments -->
         <div class="mt-2">
-            <a href="<?= url('admin/payments/index.php') ?>"
-               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= strpos($_SERVER['PHP_SELF'], '/admin/payments/') !== false ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
+            <a href="<?= url('admin/index.php?page=financials') ?>"
+               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= in_array($_GET['page'] ?? '', ['financials', 'payments']) ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
                 <i class="fas fa-money-bill-wave w-5"></i>
                 <span class="ml-3">Payments</span>
             </a>
         </div>
 
-        <!-- Reviews -->
-        <div class="mt-2">
-            <a href="<?= url('admin/reviews/index.php') ?>"
-               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= strpos($_SERVER['PHP_SELF'], '/admin/reviews/') !== false ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
+        <!-- Reviews - Hidden until implemented -->
+        <!-- <div class="mt-2">
+            <a href="<?= url('admin/index.php?page=reviews') ?>"
+               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= ($_GET['page'] ?? '') === 'reviews' ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
                 <i class="fas fa-star w-5"></i>
                 <span class="ml-3">Reviews</span>
             </a>
-        </div>
+        </div> -->
 
-        <!-- Certificates -->
-        <div class="mt-2">
-            <a href="<?= url('admin/certificates/index.php') ?>"
-               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= strpos($_SERVER['PHP_SELF'], '/admin/certificates/') !== false ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
+        <!-- Certificates - Hidden until implemented -->
+        <!-- <div class="mt-2">
+            <a href="<?= url('admin/index.php?page=certificates') ?>"
+               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= ($_GET['page'] ?? '') === 'certificates' ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
                 <i class="fas fa-certificate w-5"></i>
                 <span class="ml-3">Certificates</span>
             </a>
-        </div>
+        </div> -->
 
-        <!-- Reports -->
-        <div class="mt-2">
-            <a href="<?= url('admin/reports/index.php') ?>"
-               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= strpos($_SERVER['PHP_SELF'], '/admin/reports/') !== false ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
+        <!-- Reports - Hidden until implemented -->
+        <!-- <div class="mt-2">
+            <a href="<?= url('admin/index.php?page=reports') ?>"
+               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= ($_GET['page'] ?? '') === 'reports' ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
                 <i class="fas fa-chart-bar w-5"></i>
                 <span class="ml-3">Reports</span>
             </a>
-        </div>
+        </div> -->
 
         <!-- Settings -->
         <div class="mt-2">
-            <a href="<?= url('admin/settings/index.php') ?>"
-               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= strpos($_SERVER['PHP_SELF'], '/admin/settings/') !== false ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
+            <a href="<?= url('admin/index.php?page=settings') ?>"
+               class="flex items-center px-6 py-3 hover:bg-gray-800 transition <?= ($_GET['page'] ?? '') === 'settings' ? 'bg-gray-800 border-l-4 border-primary-500' : '' ?>">
                 <i class="fas fa-cog w-5"></i>
                 <span class="ml-3">Settings</span>
             </a>

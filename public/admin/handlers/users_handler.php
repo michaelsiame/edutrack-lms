@@ -163,7 +163,28 @@ if ($action === 'reset_password' && isset($_POST['user_id'])) {
     $userId = (int)$_POST['user_id'];
     $newPassword = bin2hex(random_bytes(8));
     $db->update('users', ['password_hash' => password_hash($newPassword, PASSWORD_DEFAULT)], 'id = ?', [$userId]);
-    // TODO: Send email to user with new password
+    
+    // Send email to user with new password
+    require_once '../../src/classes/Email.php';
+    
+    $user = $db->fetchOne("SELECT first_name, email FROM users WHERE id = ?", [$userId]);
+    if ($user) {
+        $email = new Email();
+        
+        // Prepare template variables
+        $first_name = $user['first_name'];
+        $email_addr = $user['email'];
+        $new_password = $newPassword;
+        $login_url = url('login.php');
+        
+        // Get email template
+        ob_start();
+        include '../../src/mail/password-reset-by-admin.php';
+        $body = ob_get_clean();
+        
+        $email->send($user['email'], 'Your Password Has Been Reset', $body);
+    }
+    
     header('Location: ?page=users&msg=password_reset');
     exit;
 }

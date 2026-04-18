@@ -15,27 +15,8 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#EBF4FF',
-                            100: '#D6E9FF',
-                            500: '#2E70DA',
-                            600: '#2563EB',
-                            700: '#1D4ED8',
-                        },
-                        secondary: {
-                            500: '#F6B745',
-                            600: '#D89E2E',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Shared Tailwind Config -->
+    <script src="<?= url('assets/js/tailwind-config.js') ?>"></script>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -44,7 +25,7 @@
     <link rel="stylesheet" href="<?= url('assets/css/admin.css') ?>">
 
     <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
 
     <!-- Critical Inline Styles -->
     <style>

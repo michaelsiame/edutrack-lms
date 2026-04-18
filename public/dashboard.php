@@ -318,7 +318,7 @@ require_once '../src/templates/header.php';
                                     <div class="flex items-center gap-3 mt-2">
                                         <div class="flex-1 bg-gray-100 rounded-full h-2">
                                             <div class="bg-blue-600 h-2 rounded-full transition-all" 
-                                                 style="width: <?= round($course['progress_percentage']) ? round($course['progress_percentage']) : 0 ?>%"></div>
+                                                 style="width: <?= round($course['progress_percentage'] ?? 0) ?>%"></div>
                                         </div>
                                         <span class="text-sm font-medium text-gray-600"><?= round($course['progress_percentage']) ?>%</span>
                                     </div>
@@ -529,7 +529,7 @@ require_once '../src/templates/header.php';
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 // Learning Activity Chart
 const ctx = document.getElementById('activityChart').getContext('2d');
@@ -569,7 +569,7 @@ function markAllRead() {
     fetch('<?= url('api/notifications.php') ?>', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'mark_all_read' })
+        body: JSON.stringify({ action: 'mark_all_as_read' })
     }).then(() => location.reload());
 }
 </script>
