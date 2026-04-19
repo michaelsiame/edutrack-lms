@@ -11,46 +11,57 @@ $page_title = "Edutrack Computer Training College | TEVETA-Certified Tech Traini
 
 require_once __DIR__ . '/../src/templates/header.php';
 
-// Get hero slides from database
-$heroSlides = HeroSlide::getActive();
-if (empty($heroSlides)) {
-    // Fallback default slides if none in database
-    $heroSlides = [
-        [
-            'title' => 'Launch Your Tech Career',
-            'subtitle' => 'With Industry-Recognized Skills',
-            'description' => 'Join 5,000+ Zambians who transformed their lives through TEVETA-certified programs.',
-            'image_path' => '',
-            'cta_text' => 'Explore Courses',
-            'cta_link' => 'courses.php',
-            'secondary_cta_text' => 'Visit Campus',
-            'secondary_cta_link' => 'campus.php'
-        ],
-        [
-            'title' => 'State-of-the-Art Facilities',
-            'subtitle' => 'Learn on Modern Equipment',
-            'description' => 'Our computer labs feature the latest hardware and software for hands-on learning.',
-            'image_path' => '',
-            'cta_text' => 'Take a Tour',
-            'cta_link' => 'campus.php',
-            'secondary_cta_text' => 'View Programs',
-            'secondary_cta_link' => 'courses.php'
-        ],
-        [
-            'title' => 'Your Success is Our Mission',
-            'subtitle' => '85% Job Placement Rate',
-            'description' => 'Our graduates work at top companies like MTN, Airtel, and major banks.',
-            'image_path' => '',
-            'cta_text' => 'Apply Now',
-            'cta_link' => 'register.php',
-            'secondary_cta_text' => 'Contact Us',
-            'secondary_cta_link' => 'contact.php'
-        ]
-    ];
+// Fallback default slides if DB query fails or returns no active records
+$heroSlides = [
+    [
+        'title' => 'Launch Your Tech Career',
+        'subtitle' => 'With Industry-Recognized Skills',
+        'description' => 'Join 5,000+ Zambians who transformed their lives through TEVETA-certified programs.',
+        'image_path' => '',
+        'cta_text' => 'Explore Courses',
+        'cta_link' => 'courses.php',
+        'secondary_cta_text' => 'Visit Campus',
+        'secondary_cta_link' => 'campus.php'
+    ],
+    [
+        'title' => 'State-of-the-Art Facilities',
+        'subtitle' => 'Learn on Modern Equipment',
+        'description' => 'Our computer labs feature the latest hardware and software for hands-on learning.',
+        'image_path' => '',
+        'cta_text' => 'Take a Tour',
+        'cta_link' => 'campus.php',
+        'secondary_cta_text' => 'View Programs',
+        'secondary_cta_link' => 'courses.php'
+    ],
+    [
+        'title' => 'Your Success is Our Mission',
+        'subtitle' => '85% Job Placement Rate',
+        'description' => 'Our graduates work at top companies like MTN, Airtel, and major banks.',
+        'image_path' => '',
+        'cta_text' => 'Apply Now',
+        'cta_link' => 'register.php',
+        'secondary_cta_text' => 'Contact Us',
+        'secondary_cta_link' => 'contact.php'
+    ]
+];
+
+// Get hero slides from database (guard against missing table/schema mismatch)
+try {
+    $db_heroSlides = HeroSlide::getActive();
+    if (!empty($db_heroSlides)) {
+        $heroSlides = $db_heroSlides;
+    }
+} catch (Throwable $e) {
+    error_log("Homepage hero slides error: " . $e->getMessage());
 }
 
 // Get featured campus photos
-$featuredPhotos = InstitutionPhoto::getFeatured(4);
+$featuredPhotos = [];
+try {
+    $featuredPhotos = InstitutionPhoto::getFeatured(4);
+} catch (Throwable $e) {
+    error_log("Homepage featured photos error: " . $e->getMessage());
+}
 ?>
 
 <?php
