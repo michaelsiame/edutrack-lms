@@ -47,6 +47,12 @@ if (isLoggedIn()) {
                 <a href="<?= url('about.php') ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'about.php' ? 'active text-primary-600' : '' ?>">
                     About Us
                 </a>
+                <a href="<?= url('campus.php') ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'campus.php' ? 'active text-primary-600' : '' ?>">
+                    <i class="fas fa-university mr-1"></i>Campus
+                </a>
+                <a href="<?= url('events.php') ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'events.php' ? 'active text-primary-600' : '' ?>">
+                    <i class="fas fa-calendar-alt mr-1"></i>Events
+                </a>
                 <a href="<?= url('contact.php') ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'contact.php' ? 'active text-primary-600' : '' ?>">
                     Contact
                 </a>
@@ -163,6 +169,12 @@ if (isLoggedIn()) {
             </a>
             <a href="<?= url('about.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'about.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 About Us
+            </a>
+            <a href="<?= url('campus.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'campus.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
+                <i class="fas fa-university mr-2 text-primary-600"></i> Campus
+            </a>
+            <a href="<?= url('events.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'events.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
+                <i class="fas fa-calendar-alt mr-2 text-primary-600"></i> Events
             </a>
             <a href="<?= url('contact.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'contact.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 Contact

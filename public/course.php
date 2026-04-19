@@ -311,6 +311,11 @@ require_once '../src/templates/header.php';
                                     class="px-6 py-4 border-b-2 font-medium text-sm transition">
                                 Curriculum
                             </button>
+                            <button @click="activeTab = 'career'"
+                                    :class="activeTab === 'career' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                                    class="px-6 py-4 border-b-2 font-medium text-sm transition">
+                                Career
+                            </button>
                             <button @click="activeTab = 'reviews'"
                                     :class="activeTab === 'reviews' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                                     class="px-6 py-4 border-b-2 font-medium text-sm transition">
@@ -427,6 +432,115 @@ require_once '../src/templates/header.php';
                                         <p class="text-gray-600">Course curriculum will be available soon.</p>
                                     </div>
                                 <?php endif; ?>
+                            </div>
+
+                            <!-- Career Tab -->
+                            <div x-show="activeTab === 'career'" x-transition>
+                                <h2 class="text-2xl font-bold text-gray-900 mb-6">Career Outcomes</h2>
+                                
+                                <!-- Career Stats -->
+                                <div class="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-6 mb-8">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div class="text-center">
+                                            <div class="text-4xl font-bold text-primary-600 mb-2">85%</div>
+                                            <p class="text-gray-600">Graduates Employed<br><span class="text-sm">within 6 months</span></p>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-4xl font-bold text-primary-600 mb-2">ZMW 6,500</div>
+                                            <p class="text-gray-600">Average Starting<br><span class="text-sm">Monthly Salary</span></p>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-4xl font-bold text-primary-600 mb-2">50+</div>
+                                            <p class="text-gray-600">Hiring Partner<br><span class="text-sm">Companies</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Job Titles -->
+                                <div class="mb-8">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-4">Potential Job Titles</h3>
+                                    <div class="flex flex-wrap gap-3">
+                                        <?php 
+                                        $jobTitles = [
+                                            'IT Support Specialist',
+                                            'Network Administrator', 
+                                            'Systems Analyst',
+                                            'Technical Support',
+                                            'IT Coordinator',
+                                            'Help Desk Technician'
+                                        ];
+                                        foreach ($jobTitles as $title): ?>
+                                        <span class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+                                            <?= $title ?>
+                                        </span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                
+                                <!-- Skills Gained -->
+                                <div class="mb-8">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-4">In-Demand Skills You'll Gain</h3>
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div class="flex items-start">
+                                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                            <span class="text-gray-700">Hands-on technical problem solving</span>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                            <span class="text-gray-700">Industry-standard tools & software</span>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                            <span class="text-gray-700">Professional communication</span>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                            <span class="text-gray-700">Project management basics</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Hiring Partners -->
+                                <div class="mb-8">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-4">Companies That Hire Our Graduates</h3>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                                            <i class="fas fa-building text-3xl text-gray-400 mb-2"></i>
+                                            <p class="text-sm font-medium text-gray-700">MTN Zambia</p>
+                                        </div>
+                                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                                            <i class="fas fa-building text-3xl text-gray-400 mb-2"></i>
+                                            <p class="text-sm font-medium text-gray-700">Airtel</p>
+                                        </div>
+                                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                                            <i class="fas fa-university text-3xl text-gray-400 mb-2"></i>
+                                            <p class="text-sm font-medium text-gray-700">ZNCB</p>
+                                        </div>
+                                        <div class="bg-gray-50 rounded-lg p-4 text-center">
+                                            <i class="fas fa-laptop-code text-3xl text-gray-400 mb-2"></i>
+                                            <p class="text-sm font-medium text-gray-700">BongoHive</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Success Story -->
+                                <div class="bg-white border border-gray-200 rounded-xl p-6">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-4">Graduate Success Story</h3>
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
+                                            M
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-700 italic mb-3">
+                                                "After completing this course, I landed my first IT job within 2 months. 
+                                                The practical skills I learned at Edutrack gave me the confidence to ace 
+                                                my interviews and excel in my role."
+                                            </p>
+                                            <p class="font-semibold text-gray-900">Mwamba Chanda</p>
+                                            <p class="text-sm text-primary-600">IT Support Specialist at MTN Zambia</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Reviews Tab -->

@@ -182,6 +182,48 @@ try {
     </div>
 </section>
 
+<!-- Campus Gallery Preview -->
+<?php
+require_once '../src/classes/InstitutionPhoto.php';
+$campusPhotos = InstitutionPhoto::getFeatured(4);
+if (!empty($campusPhotos)):
+?>
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Our Campus</h2>
+                <p class="text-gray-600">Take a look at our modern facilities and learning environment</p>
+            </div>
+            <a href="campus.php" class="hidden md:inline-flex items-center text-primary-600 font-semibold hover:text-primary-700">
+                View All Photos <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <?php foreach ($campusPhotos as $photoData): 
+                $photo = new InstitutionPhoto($photoData['id']);
+            ?>
+            <a href="campus.php" class="group relative overflow-hidden rounded-xl aspect-square">
+                <img src="<?= $photo->getImageUrl() ?>" 
+                     alt="<?= htmlspecialchars($photo->get('title')) ?>"
+                     class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                    <span class="text-white font-medium"><?= htmlspecialchars($photo->get('title')) ?></span>
+                </div>
+            </a>
+            <?php endforeach; ?>
+        </div>
+        
+        <div class="mt-6 text-center md:hidden">
+            <a href="campus.php" class="inline-flex items-center text-primary-600 font-semibold hover:text-primary-700">
+                View All Photos <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
 <!-- Core Values -->
 <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

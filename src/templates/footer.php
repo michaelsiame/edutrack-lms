@@ -73,6 +73,21 @@
                         </a>
                     </li>
                     <li>
+                        <a href="<?= url('campus.php') ?>" class="text-gray-400 hover:text-secondary-500 transition text-sm">
+                            <i class="fas fa-chevron-right text-xs mr-2"></i>Campus
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= url('events.php') ?>" class="text-gray-400 hover:text-secondary-500 transition text-sm">
+                            <i class="fas fa-chevron-right text-xs mr-2"></i>Events & News
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= url('faq.php') ?>" class="text-gray-400 hover:text-secondary-500 transition text-sm">
+                            <i class="fas fa-chevron-right text-xs mr-2"></i>FAQ
+                        </a>
+                    </li>
+                    <li>
                         <a href="<?= url('contact.php') ?>" class="text-gray-400 hover:text-secondary-500 transition text-sm">
                             <i class="fas fa-chevron-right text-xs mr-2"></i>Contact
                         </a>
