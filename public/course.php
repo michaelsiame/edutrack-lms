@@ -245,13 +245,13 @@ require_once '../src/templates/header.php';
                                 <a href="enroll.php?course_id=<?= $course->getId() ?>"
                                    class="block w-full text-center px-6 py-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition duration-200 shadow-lg">
                                     <i class="fas fa-shopping-cart mr-2"></i>
-                                    Enroll Now
+                                    Enrol Now
                                 </a>
                             <?php else: ?>
                                 <a href="register.php?redirect=course.php?id=<?= $course->getId() ?>"
                                    class="block w-full text-center px-6 py-4 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition duration-200 shadow-lg">
                                     <i class="fas fa-user-plus mr-2"></i>
-                                    Sign Up to Enroll
+                                    Sign Up to Enrol
                                 </a>
                             <?php endif; ?>
                         </div>

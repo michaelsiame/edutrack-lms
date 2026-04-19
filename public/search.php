@@ -314,7 +314,7 @@ require_once '../src/templates/header.php';
                                             </a>
                                             <a href="<?= url('enroll.php?course_id=' . $course['id']) ?>"
                                                class="px-4 py-2 border border-primary-600 text-primary-600 rounded-lg hover:bg-primary-50">
-                                                Enroll Now
+                                                Enrol Now
                                             </a>
                                         </div>
                                     </div>

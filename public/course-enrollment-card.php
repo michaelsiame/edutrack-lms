@@ -33,7 +33,7 @@
         <?php else: ?>
         <a href="<?= $course->getEnrollUrl() ?>" 
            class="block w-full bg-primary-600 text-white text-center py-3 px-6 rounded-lg font-semibold hover:bg-primary-700 transition mb-3">
-            <i class="fas fa-shopping-cart mr-2"></i> Enroll Now
+            <i class="fas fa-shopping-cart mr-2"></i> Enrol Now
         </a>
         <?php endif; ?>
         

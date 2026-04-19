@@ -130,7 +130,7 @@ try {
                     <?php else: ?>
                     <a href="<?= url('course.php?slug=' . urlencode($courseSlug)) ?>"
                        class="inline-flex items-center px-6 py-3 bg-yellow-500 text-yellow-900 font-semibold rounded-lg hover:bg-yellow-400 transition">
-                        <i class="fas fa-graduation-cap mr-2"></i>Enroll Now
+                        <i class="fas fa-graduation-cap mr-2"></i>Enrol Now
                     </a>
                     <?php endif; ?>
                 </div>
@@ -221,11 +221,11 @@ try {
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                         <div class="mb-4 md:mb-0">
                             <h3 class="text-xl font-bold">Ready to Learn More?</h3>
-                            <p class="text-primary-100">Enroll now to access all lessons, quizzes, and get certified.</p>
+                            <p class="text-primary-100">Enrol now to access all lessons, quizzes, and get certified.</p>
                         </div>
                         <a href="<?= url('course.php?slug=' . urlencode($courseSlug)) ?>"
                            class="inline-flex items-center px-6 py-3 bg-white text-primary-600 font-semibold rounded-lg hover:bg-gray-100 transition">
-                            <i class="fas fa-graduation-cap mr-2"></i>Enroll Now
+                            <i class="fas fa-graduation-cap mr-2"></i>Enrol Now
                         </a>
                     </div>
                 </div>
@@ -276,7 +276,7 @@ try {
                     <div class="p-4 bg-gray-50 border-t">
                         <a href="<?= url('course.php?slug=' . urlencode($courseSlug)) ?>"
                            class="block w-full py-3 px-4 bg-primary-600 text-white text-center font-semibold rounded-lg hover:bg-primary-700 transition">
-                            <i class="fas fa-graduation-cap mr-2"></i>Enroll to Unlock All
+                            <i class="fas fa-graduation-cap mr-2"></i>Enrol to Unlock All
                         </a>
                     </div>
                     <?php endif; ?>

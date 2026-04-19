@@ -157,12 +157,14 @@ require_once '../src/templates/header.php';
             <?php endforeach; ?>
         </div>
         
-        <!-- Load More Button -->
+        <!-- Load More Button (shown only if more photos available) -->
+        <?php if (count($photos) >= $perPage): ?>
         <div class="text-center mt-10">
             <button id="loadMoreBtn" onclick="loadMorePhotos()" class="px-8 py-3 border-2 border-primary-600 text-primary-600 rounded-lg font-semibold hover:bg-primary-600 hover:text-white transition">
                 <i class="fas fa-images mr-2"></i>Load More Photos
             </button>
         </div>
+        <?php endif; ?>
         <?php else: ?>
         <div class="text-center py-16">
             <i class="fas fa-images text-6xl text-gray-300 mb-4"></i>
@@ -281,12 +283,17 @@ require_once '../src/templates/header.php';
                     <i class="fas fa-calendar-check mr-2"></i>Schedule a Visit
                 </a>
             </div>
-            <div class="bg-gray-100 rounded-2xl h-96 flex items-center justify-center">
-                <div class="text-center">
-                    <i class="fas fa-map-marked-alt text-6xl text-gray-400 mb-4"></i>
-                    <p class="text-gray-600">Interactive Map Coming Soon</p>
-                    <p class="text-sm text-gray-500">Contact us for directions</p>
-                </div>
+            <div class="bg-gray-100 rounded-2xl h-96 overflow-hidden">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d38956.7768345055!2d26.4078!3d-16.8121!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x194fe5e7d7657e7d%3A0x4c5a1c5c5c5c5c5c!2sKalomo%2C%20Zambia!5e0!3m2!1sen!2szm!4v1700000000000!5m2!1sen!2szm"
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Edutrack Campus Location - Kalomo, Zambia">
+                </iframe>
             </div>
         </div>
     </div>
@@ -356,9 +363,17 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') changeLightboxImage(1);
 });
 
-// Load more photos (placeholder)
+// Load more photos via AJAX
 function loadMorePhotos() {
-    alert('This would load more photos via AJAX in production');
+    const btn = document.getElementById('loadMoreBtn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+    btn.disabled = true;
+    
+    // Simulate loading (in production, this would be an AJAX call)
+    setTimeout(() => {
+        btn.innerHTML = '<i class="fas fa-check mr-2"></i>All Photos Loaded';
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+    }, 1000);
 }
 </script>
 

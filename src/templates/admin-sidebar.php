@@ -3,7 +3,7 @@
     <div class="p-6">
         <a href="<?= url('admin/index.php') ?>" class="flex items-center space-x-2">
             <i class="fas fa-graduation-cap text-2xl text-primary-400"></i>
-            <span class="text-xl font-bold">EduTrack Admin</span>
+            <span class="text-xl font-bold">Edutrack Admin</span>
         </a>
     </div>
 

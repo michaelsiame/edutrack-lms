@@ -237,33 +237,68 @@ require_once '../src/templates/header.php';
         <h2 class="text-3xl font-bold text-gray-900 mb-4">Still Need Help?</h2>
         <p class="text-gray-600 mb-8">Our admissions team is ready to answer your questions and guide you through the enrollment process.</p>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <a href="tel:<?= SITE_PHONE ?>" class="group p-6 bg-gray-50 rounded-xl hover:bg-primary-50 transition">
-                <div class="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-200 transition">
-                    <i class="fas fa-phone text-primary-600 text-xl"></i>
-                </div>
-                <h3 class="font-semibold text-gray-900 mb-2">Call Us</h3>
-                <p class="text-primary-600"><?= SITE_PHONE ?></p>
-                <p class="text-sm text-gray-500 mt-1">Mon-Fri 8AM-5PM</p>
-            </a>
-            
-            <a href="mailto:<?= SITE_EMAIL ?>" class="group p-6 bg-gray-50 rounded-xl hover:bg-primary-50 transition">
-                <div class="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-200 transition">
-                    <i class="fas fa-envelope text-primary-600 text-xl"></i>
-                </div>
-                <h3 class="font-semibold text-gray-900 mb-2">Email Us</h3>
-                <p class="text-primary-600 text-sm"><?= SITE_EMAIL ?></p>
-                <p class="text-sm text-gray-500 mt-1">24hr response time</p>
-            </a>
-            
-            <a href="/contact.php" class="group p-6 bg-gray-50 rounded-xl hover:bg-primary-50 transition">
-                <div class="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-200 transition">
-                    <i class="fas fa-map-marker-alt text-primary-600 text-xl"></i>
-                </div>
-                <h3 class="font-semibold text-gray-900 mb-2">Visit Campus</h3>
-                <p class="text-primary-600">Kalomo, Zambia</p>
-                <p class="text-sm text-gray-500 mt-1">Schedule a tour</p>
-            </a>
+        <!-- Primary Contact (Admissions) -->
+        <div class="bg-primary-50 border border-primary-200 rounded-xl p-6 mb-6">
+            <h3 class="text-lg font-semibold text-primary-900 mb-4 flex items-center">
+                <i class="fas fa-star text-yellow-500 mr-2"></i> Admissions (Primary Contact)
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="tel:<?= SITE_PHONE ?>" class="flex items-center p-4 bg-white rounded-lg hover:shadow transition">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-phone text-green-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Call / WhatsApp</p>
+                        <p class="font-semibold text-gray-900"><?= SITE_PHONE ?></p>
+                    </div>
+                </a>
+                <a href="mailto:<?= SITE_EMAIL ?>" class="flex items-center p-4 bg-white rounded-lg hover:shadow transition">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-envelope text-blue-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Email</p>
+                        <p class="font-semibold text-gray-900 text-sm"><?= SITE_EMAIL ?></p>
+                    </div>
+                </a>
+            </div>
+            <p class="text-sm text-primary-700 mt-4">
+                <i class="fas fa-clock mr-1"></i> Available Mon–Fri, 08:00–17:00 CAT. We typically reply within 4 business hours.
+            </p>
+        </div>
+
+        <!-- Secondary Contact (Support) -->
+        <div class="bg-gray-50 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Student Support</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <a href="tel:<?= SITE_PHONE2 ?>" class="flex items-center p-4 bg-white rounded-lg hover:shadow transition">
+                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-headset text-purple-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Support Line</p>
+                        <p class="font-semibold text-gray-900"><?= SITE_PHONE2 ?></p>
+                    </div>
+                </a>
+                <a href="mailto:<?= SITE_ALT_EMAIL ?>" class="flex items-center p-4 bg-white rounded-lg hover:shadow transition">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-envelope text-blue-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Support Email</p>
+                        <p class="font-semibold text-gray-900 text-sm"><?= SITE_ALT_EMAIL ?></p>
+                    </div>
+                </a>
+                <a href="/contact.php" class="flex items-center p-4 bg-white rounded-lg hover:shadow transition">
+                    <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-map-marker-alt text-orange-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Visit Campus</p>
+                        <p class="font-semibold text-gray-900">Kalomo, Zambia</p>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 </section>

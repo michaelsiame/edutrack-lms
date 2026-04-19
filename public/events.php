@@ -266,13 +266,22 @@ require_once '../src/templates/header.php';
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="text-3xl font-bold text-gray-900 mb-4">Stay Updated</h2>
         <p class="text-gray-600 mb-8">Subscribe to our newsletter to get notified about upcoming events, workshops, and news.</p>
-        <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input type="email" placeholder="Enter your email" 
+        
+        <?php if (isset($_GET['newsletter']) && $_GET['newsletter'] === 'success'): ?>
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4 max-w-md mx-auto">
+            <i class="fas fa-check-circle text-green-600 mr-2"></i>
+            <span class="text-green-800">Thank you for subscribing! Check your inbox for confirmation.</span>
+        </div>
+        <?php else: ?>
+        <form method="POST" action="newsletter-subscribe.php" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input type="email" name="email" placeholder="Enter your email" required
                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
             <button type="submit" class="px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition whitespace-nowrap">
                 <i class="fas fa-paper-plane mr-2"></i> Subscribe
             </button>
         </form>
+        <p class="text-xs text-gray-500 mt-3">We respect your privacy. Unsubscribe anytime.</p>
+        <?php endif; ?>
     </div>
 </section>
 

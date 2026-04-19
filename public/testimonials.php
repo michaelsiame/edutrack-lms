@@ -80,31 +80,18 @@ require_once '../src/templates/header.php';
     </div>
 </section>
 
-<!-- Featured Video Section (placeholder for future video) -->
-<section class="py-16 bg-gray-900">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-                <h2 class="text-3xl font-bold text-white mb-4">See Our Impact</h2>
-                <p class="text-gray-300 text-lg mb-6">
-                    Watch how Edutrack has helped thousands of Zambians build successful careers in technology. 
-                    From complete beginners to industry professionals, our graduates are making a difference.
-                </p>
-                <div class="flex gap-4">
-                    <a href="/courses.php" class="px-6 py-3 bg-yellow-500 text-gray-900 rounded-lg font-semibold hover:bg-yellow-600 transition">
-                        Start Your Journey
-                    </a>
-                    <a href="/contact.php" class="px-6 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition">
-                        Contact Admissions
-                    </a>
-                </div>
-            </div>
-            <div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-video flex items-center justify-center group cursor-pointer">
-                <div class="absolute inset-0 bg-gradient-to-br from-primary-600 to-purple-600 opacity-80"></div>
-                <i class="fas fa-play-circle text-8xl text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition relative z-10"></i>
-                <p class="absolute bottom-4 left-4 right-4 text-white text-center z-10">
-                    <i class="fas fa-info-circle mr-2"></i>Video coming soon
-                </p>
+<!-- Featured Quote Section -->
+<section class="py-16 bg-gradient-to-br from-primary-600 to-purple-700 text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <i class="fas fa-quote-left text-4xl text-yellow-400 mb-6"></i>
+        <blockquote class="text-2xl md:text-3xl font-light italic mb-6">
+            "The best investment I ever made was enrolling at Edutrack. The skills I gained opened doors I never thought possible."
+        </blockquote>
+        <div class="flex items-center justify-center gap-4">
+            <div class="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center text-gray-900 font-bold text-lg">M</div>
+            <div class="text-left">
+                <div class="font-semibold">Mwamba Chanda</div>
+                <div class="text-primary-200 text-sm">IT Security Analyst, ZNCB</div>
             </div>
         </div>
     </div>

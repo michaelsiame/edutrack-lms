@@ -27,7 +27,7 @@
                     <tr>
                         <td style="padding: 40px 30px;">
                             <h2 style="margin: 0 0 20px 0; color: #333333; font-size: 24px; font-weight: 600;">
-                                Hello <?= htmlspecialchars($first_name) ?>! 👋
+                                Hello <?= htmlspecialchars($first_name) ?>, Welcome to Edutrack!
                             </h2>
 
                             <p style="margin: 0 0 16px 0; color: #555555; font-size: 16px; line-height: 1.6;">
@@ -69,9 +69,9 @@
                                 </h3>
                                 <ul style="margin: 0; padding-left: 20px; color: #555555; font-size: 15px; line-height: 1.8;">
                                     <li>Browse our comprehensive course catalog</li>
-                                    <li>Complete your profile to get personalized recommendations</li>
-                                    <li>Enroll in courses that match your interests</li>
-                                    <li>Start learning at your own pace</li>
+                                    <li>Complete your profile with your photo and bio</li>
+                                    <li>Join our WhatsApp community for student updates</li>
+                                    <li>Enrol in your first course and start learning</li>
                                 </ul>
                             </div>
                         </td>

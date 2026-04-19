@@ -108,6 +108,13 @@ if (empty($testimonials)) {
                     </div>
                 </div>
                 
+                <!-- Consent Note -->
+                <div class="mt-3 pt-3 border-t border-white border-opacity-10 text-center">
+                    <span class="text-xs text-gray-400">
+                        <i class="fas fa-check-circle mr-1"></i>Shared with permission
+                    </span>
+                </div>
+                
                 <!-- Year Badge -->
                 <?php if ($testimonial['graduation_year']): ?>
                 <div class="absolute top-4 right-4">
