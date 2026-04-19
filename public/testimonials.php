@@ -80,18 +80,22 @@ require_once '../src/templates/header.php';
     </div>
 </section>
 
-<!-- Featured Quote Section -->
-<section class="py-16 bg-gradient-to-br from-primary-600 to-purple-700 text-white">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <i class="fas fa-quote-left text-4xl text-yellow-400 mb-6"></i>
-        <blockquote class="text-2xl md:text-3xl font-light italic mb-6">
-            "The best investment I ever made was enrolling at Edutrack. The skills I gained opened doors I never thought possible."
-        </blockquote>
-        <div class="flex items-center justify-center gap-4">
-            <div class="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center text-gray-900 font-bold text-lg">M</div>
-            <div class="text-left">
-                <div class="font-semibold">Mwamba Chanda</div>
-                <div class="text-primary-200 text-sm">IT Security Analyst, ZNCB</div>
+<!-- Impact CTA Section -->
+<section class="py-16 bg-gray-900">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h2 class="text-3xl font-bold text-white mb-4">Join Our Growing Community of Graduates</h2>
+            <p class="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+                Thousands of Zambians have built successful careers in technology through Edutrack.
+                From complete beginners to industry professionals, our graduates are making a difference.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="<?= url('courses.php') ?>" class="px-6 py-3 bg-yellow-500 text-gray-900 rounded-lg font-semibold hover:bg-yellow-600 transition">
+                    Start Your Journey
+                </a>
+                <a href="<?= url('contact.php') ?>" class="px-6 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition">
+                    Contact Admissions
+                </a>
             </div>
         </div>
     </div>

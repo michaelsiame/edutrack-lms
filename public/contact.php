@@ -211,16 +211,6 @@ require_once '../src/templates/header.php';
                             <i class="fab fa-twitter"></i>
                         </a>
                         <?php endif; ?>
-                        <?php if (function_exists('config') && config('social.linkedin')): ?>
-                        <a href="<?= config('social.linkedin') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white hover:bg-blue-800 transition">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <?php endif; ?>
-                        <?php if (function_exists('config') && config('social.youtube')): ?>
-                        <a href="<?= config('social.youtube') ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -237,7 +227,7 @@ require_once '../src/templates/header.php';
                                 <div>
                                     <h3 class="text-lg font-semibold text-green-900 mb-2">Message Sent Successfully!</h3>
                                     <p class="text-green-700">
-                                        Thank you for contacting us! We typically reply within 4 business hours (Mon–Fri, 08:00–17:00 CAT). Check your inbox—including your spam folder.
+                                        Thank you for contacting us. We've received your message and will get back to you within 24 hours.
                                     </p>
                                 </div>
                             </div>

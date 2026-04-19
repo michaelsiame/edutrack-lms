@@ -33,6 +33,7 @@ if (isset($_GET['delete_image']) && is_numeric($_GET['delete_image'])) {
 
 // Create/Update event
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    validateCSRF();
     $eventId = $_POST['event_id'] ?? null;
     
     $data = [
@@ -172,6 +173,7 @@ require_once '../../src/templates/admin-header.php';
                     </div>
                     
                     <form method="POST" action="" enctype="multipart/form-data" class="p-6 space-y-6">
+                        <?= csrfField() ?>
                         <input type="hidden" name="event_id" value="<?= $editEvent ? $editEvent->getId() : '' ?>">
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

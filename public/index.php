@@ -7,13 +7,47 @@
 require_once '../src/bootstrap.php';
 require_once '../src/classes/InstitutionPhoto.php';
 
-$page_title = "Edutrack Computer Training College | TEVETA-Certified Tech Training in Zambia"; 
-$og_image = asset('images/og-home.jpg'); // Default OG image for homepage
+$page_title = "Edutrack Computer Training College | TEVETA-Certified Tech Training in Zambia";
 
 require_once '../src/templates/header.php';
 
 // Get hero slides from database
 $heroSlides = HeroSlide::getActive();
+if (empty($heroSlides)) {
+    // Fallback default slides if none in database
+    $heroSlides = [
+        [
+            'title' => 'Launch Your Tech Career',
+            'subtitle' => 'With Industry-Recognized Skills',
+            'description' => 'Join 5,000+ Zambians who transformed their lives through TEVETA-certified programs.',
+            'image_path' => '',
+            'cta_text' => 'Explore Courses',
+            'cta_link' => 'courses.php',
+            'secondary_cta_text' => 'Visit Campus',
+            'secondary_cta_link' => 'campus.php'
+        ],
+        [
+            'title' => 'State-of-the-Art Facilities',
+            'subtitle' => 'Learn on Modern Equipment',
+            'description' => 'Our computer labs feature the latest hardware and software for hands-on learning.',
+            'image_path' => '',
+            'cta_text' => 'Take a Tour',
+            'cta_link' => 'campus.php',
+            'secondary_cta_text' => 'View Programs',
+            'secondary_cta_link' => 'courses.php'
+        ],
+        [
+            'title' => 'Your Success is Our Mission',
+            'subtitle' => '85% Job Placement Rate',
+            'description' => 'Our graduates work at top companies like MTN, Airtel, and major banks.',
+            'image_path' => '',
+            'cta_text' => 'Apply Now',
+            'cta_link' => 'register.php',
+            'secondary_cta_text' => 'Contact Us',
+            'secondary_cta_link' => 'contact.php'
+        ]
+    ];
+}
 
 // Get featured campus photos
 $featuredPhotos = InstitutionPhoto::getFeatured(4);
@@ -74,7 +108,6 @@ try {
 }
 ?>
 
-<?php if (!empty($heroSlides)): ?>
 <!-- Hero Carousel Section -->
 <section class="relative h-[600px] md:h-[700px] overflow-hidden" x-data="{ currentSlide: 0, totalSlides: <?= count($heroSlides) ?> }" x-init="setInterval(() => { currentSlide = (currentSlide + 1) % totalSlides }, 6000)">
     
@@ -93,7 +126,7 @@ try {
         
         <!-- Background Image -->
         <div class="absolute inset-0 bg-cover bg-center" 
-             style="background-image: url('<?= $imageUrl ?: '/assets/images/hero-default.jpg' ?>');">
+             style="background-image: url('<?= $imageUrl ?: '/assets/images/hero-bg-' . ($index + 1) . '.jpg' ?>');">
             <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
         </div>
         
@@ -164,45 +197,6 @@ try {
         <i class="fas fa-chevron-right text-xl"></i>
     </button>
 </section>
-<?php else: ?>
-<!-- Static Hero (when no slides in database) -->
-<section class="relative h-[600px] md:h-[700px] overflow-hidden bg-gradient-to-br from-primary-600 via-blue-800 to-purple-900">
-    <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
-    
-    <div class="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-        <div class="max-w-2xl py-24">
-            <div class="mb-6 animate-fade-in">
-                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-yellow-500 text-gray-900 shadow-lg">
-                    <i class="fas fa-certificate mr-2"></i>
-                    TEVETA Registered Institution
-                </span>
-            </div>
-            
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 animate-fade-in">
-                Launch Your Tech Career
-                <span class="block text-yellow-400 mt-2">With Industry-Recognized Skills</span>
-            </h1>
-            
-            <p class="text-xl md:text-2xl text-gray-200 mb-8 animate-fade-in">
-                Join 5,000+ Zambians who transformed their lives through TEVETA-certified programs in Cybersecurity, Web Development, and Digital Marketing.
-            </p>
-            
-            <div class="flex flex-col sm:flex-row gap-4 animate-fade-in">
-                <a href="courses.php" 
-                   class="inline-flex items-center justify-center px-8 py-4 bg-yellow-500 text-gray-900 font-semibold rounded-lg hover:bg-yellow-600 transition shadow-lg transform hover:-translate-y-1">
-                    <i class="fas fa-rocket mr-2"></i>
-                    Explore Courses
-                </a>
-                <a href="campus.php" 
-                   class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-gray-900 transition">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    Visit Campus
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-<?php endif; ?>
 
 <!-- Trust Indicators Bar -->
 <section class="bg-gray-900 text-white py-8">
@@ -227,7 +221,7 @@ try {
                     <i class="fas fa-briefcase text-2xl text-green-400"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-white">85%</h3>
-                <p class="text-sm text-gray-400">Hired in 6 Months</p>
+                <p class="text-sm text-gray-400">Job Placement</p>
             </div>
             <div class="flex flex-col items-center">
                 <div class="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mb-3">
@@ -238,7 +232,6 @@ try {
             </div>
         </div>
     </div>
-</section>
 </section>
 
 <!-- Explore by Category Section -->
@@ -464,7 +457,7 @@ try {
                     <div class="text-xs uppercase tracking-wide opacity-80">Days Left</div>
                 </div>
                 <a href="courses.php" class="px-8 py-3 bg-white text-orange-600 rounded-lg font-bold hover:bg-gray-100 transition shadow-lg">
-                    Enrol Now <i class="fas fa-arrow-right ml-2"></i>
+                    Enroll Now <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </div>
         </div>

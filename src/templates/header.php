@@ -23,32 +23,23 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <title><?= sanitize($page_title) ?></title>
     
     <!-- Meta Tags -->
-    <?php 
-    // Allow pages to set custom description, fallback to default
-    $meta_description = $page_description ?? 'Edutrack Computer Training College - TEVETA registered institution offering quality computer training in Zambia. Transform your future with industry-recognized certification programs.';
-    // Allow pages to set custom OG image, fallback to default branded image
-    $meta_og_image = $og_image ?? asset('images/og-default.jpg');
-    ?>
-    <meta name="description" content="<?= sanitize($meta_description) ?>">
-    <meta name="keywords" content="computer training, TEVETA, Zambia, courses, certification, web development, digital marketing, Kalomo">
-    <meta name="author" content="Edutrack Computer Training College">
+    <meta name="description" content="<?= sanitize($page_description ?? 'Edutrack Computer Training College - TEVETA registered institution offering quality computer training in Zambia. Transform your future with industry-recognized certification programs.') ?>">
+    <meta name="keywords" content="computer training, TEVETA, Zambia, courses, certification, web development, digital marketing, Lusaka">
+    <meta name="author" content="Edutrack computer training college">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="<?= url() ?>">
     <meta property="og:title" content="<?= sanitize($page_title) ?>">
-    <meta property="og:description" content="<?= sanitize($meta_description) ?>">
-    <meta property="og:image" content="<?= $meta_og_image ?>">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="Edutrack Computer Training College">
+    <meta property="og:description" content="<?= sanitize($page_description ?? 'TEVETA registered computer training institution in Zambia') ?>">
+    <meta property="og:image" content="<?= $og_image ?? asset('images/logo.png') ?>">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="<?= url() ?>">
     <meta property="twitter:title" content="<?= sanitize($page_title) ?>">
-    <meta property="twitter:description" content="<?= sanitize($meta_description) ?>">
-    <meta property="twitter:image" content="<?= $meta_og_image ?>">
+    <meta property="twitter:description" content="<?= sanitize($page_description ?? 'TEVETA registered computer training institution in Zambia') ?>">
+    <meta property="twitter:image" content="<?= $og_image ?? asset('images/logo.png') ?>">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="<?= asset('images/favicon.ico') ?>">
@@ -187,9 +178,18 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <?php include dirname(__FILE__) . '/navigation.php'; ?>
     
     <!-- Flash Messages -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+    <div id="flash-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <?= getFlash('message') ?>
         <?= getFlash('success') ?>
         <?= getFlash('error') ?>
         <?= getFlash('warning') ?>
     </div>
+    <script>
+    document.querySelectorAll('#flash-container > div').forEach(function(el) {
+        setTimeout(function() {
+            el.style.transition = 'opacity 0.5s ease';
+            el.style.opacity = '0';
+            setTimeout(function() { el.remove(); }, 500);
+        }, 5000);
+    });
+    </script>

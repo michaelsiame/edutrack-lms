@@ -182,12 +182,27 @@
             <div class="max-w-2xl mx-auto text-center">
                 <h3 class="text-white text-xl font-bold mb-2">Stay Updated</h3>
                 <p class="text-gray-400 text-sm mb-4">Subscribe to our newsletter for course updates and tech news</p>
-                <form class="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
-                    <input type="email" placeholder="Enter your email" class="flex-1 px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-secondary-500">
-                    <button type="submit" class="btn-secondary px-6 py-2 rounded-md font-medium whitespace-nowrap">
+                <form action="<?= url('api/newsletter-subscribe.php') ?>" method="POST" class="flex flex-col sm:flex-row gap-2 max-w-md mx-auto" onsubmit="return handleNewsletterSubmit(event)">
+                    <?= csrfField() ?>
+                    <input type="email" name="email" required placeholder="Enter your email" class="flex-1 px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-secondary-500">
+                    <button type="submit" id="newsletter-btn" class="btn-secondary px-6 py-2 rounded-md font-medium whitespace-nowrap">
                         <i class="fas fa-paper-plane mr-2"></i>Subscribe
                     </button>
                 </form>
+                <p id="newsletter-msg" class="text-sm text-green-400 mt-2 hidden">Thank you for subscribing!</p>
+                <script>
+                function handleNewsletterSubmit(e) {
+                    e.preventDefault();
+                    var btn = document.getElementById('newsletter-btn');
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Subscribing...';
+                    document.getElementById('newsletter-msg').classList.remove('hidden');
+                    setTimeout(function() {
+                        btn.innerHTML = '<i class="fas fa-check mr-2"></i>Subscribed';
+                    }, 1000);
+                    return false;
+                }
+                </script>
             </div>
         </div>
     </div>
