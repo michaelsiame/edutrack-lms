@@ -4,11 +4,11 @@
  * Information about Edutrack computer training college
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 $page_title = "About Us - Edutrack computer training college";
 
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 
 // Fetch Team Members from Database
 $team_members = [];
@@ -184,7 +184,7 @@ try {
 
 <!-- Campus Gallery Preview -->
 <?php
-require_once '../src/classes/InstitutionPhoto.php';
+require_once __DIR__ . '/../src/classes/InstitutionPhoto.php';
 $campusPhotos = InstitutionPhoto::getFeatured(4);
 if (!empty($campusPhotos)):
 ?>
@@ -459,4 +459,4 @@ if (!empty($campusPhotos)):
     </div>
 </section>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

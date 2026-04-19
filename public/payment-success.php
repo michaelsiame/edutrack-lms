@@ -5,11 +5,11 @@
  * Displayed after successful payment completion
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/Course.php';
-require_once '../src/classes/Enrollment.php';
-require_once '../src/classes/Payment.php';
-require_once '../src/classes/Lenco.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/Course.php';
+require_once __DIR__ . '/../src/classes/Enrollment.php';
+require_once __DIR__ . '/../src/classes/Payment.php';
+require_once __DIR__ . '/../src/classes/Lenco.php';
 
 // Authentication check
 if (!isLoggedIn()) {
@@ -101,7 +101,7 @@ if ($lencoTransaction) {
 $isSuccessful = in_array(strtolower($paymentStatus), ['completed', 'successful', 'success']);
 
 $page_title = 'Payment ' . ($isSuccessful ? 'Successful' : 'Received');
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Confetti Animation for Success -->
@@ -303,4 +303,4 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </section>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

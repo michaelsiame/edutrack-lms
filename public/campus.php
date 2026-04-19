@@ -4,8 +4,8 @@
  * Showcases institution photos, labs, classrooms
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/InstitutionPhoto.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/InstitutionPhoto.php';
 
 $db = Database::getInstance();
 
@@ -35,7 +35,7 @@ $categories = InstitutionPhoto::getCategories();
 
 $page_title = "Campus & Facilities - Edutrack Computer Training College";
 
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Page Header -->
@@ -376,4 +376,4 @@ function loadMorePhotos() {
 }
 </style>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

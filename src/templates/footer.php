@@ -215,12 +215,12 @@
     <!-- Bottom Bar -->
     <div class="bg-gray-950 py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="text-sm text-gray-400 mb-4 md:mb-0">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-sm text-gray-400 text-center md:text-left">
                     <p>&copy; <?= date('Y') ?> Edutrack computer training college. All rights reserved.</p>
                     <p class="text-xs mt-1">TEVETA Registered Institution - <?= TEVETA_CODE ?></p>
                 </div>
-                <div class="flex items-center space-x-4 text-sm">
+                <div class="flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-2 text-sm">
                     <a href="<?= url('privacy.php') ?>" class="text-gray-400 hover:text-secondary-500 transition">Privacy Policy</a>
                     <span class="text-gray-600">|</span>
                     <a href="<?= url('terms.php') ?>" class="text-gray-400 hover:text-secondary-500 transition">Terms of Service</a>

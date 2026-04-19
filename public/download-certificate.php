@@ -4,9 +4,9 @@
  * Allows students to download their certificates
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/Certificate.php';
-require_once '../src/classes/PaymentPlan.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/Certificate.php';
+require_once __DIR__ . '/../src/classes/PaymentPlan.php';
 
 // Must be logged in
 if (!isLoggedIn()) {
@@ -74,7 +74,7 @@ try {
 
     // View certificate details page
     $page_title = 'Certificate - ' . $certificate->getCourseTitle();
-    require_once '../src/templates/header.php';
+    require_once __DIR__ . '/../src/templates/header.php';
 
 } catch (Exception $e) {
     error_log("Download Certificate Error: " . $e->getMessage());
@@ -186,4 +186,4 @@ try {
     </div>
 </div>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

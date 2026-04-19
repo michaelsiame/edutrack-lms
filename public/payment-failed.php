@@ -4,7 +4,7 @@
  * Shown when payment fails
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Get error details from query params
 $errorCode = $_GET['code'] ?? 'unknown';
@@ -32,7 +32,7 @@ if ($courseId) {
 }
 
 $page_title = 'Payment Failed';
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gray-50 py-12">
@@ -140,4 +140,4 @@ require_once '../src/templates/header.php';
     </div>
 </div>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

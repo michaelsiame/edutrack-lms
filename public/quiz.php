@@ -4,7 +4,7 @@
  * Shows quiz details and redirects to take-quiz.php
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Ensure user is authenticated
 if (!isLoggedIn()) {
@@ -82,7 +82,7 @@ try {
     }
 
     $page_title = $quiz['title'] . ' - Quiz';
-    require_once '../src/templates/header.php';
+    require_once __DIR__ . '/../src/templates/header.php';
 } catch (Exception $e) {
     error_log("Quiz.php Error: " . $e->getMessage());
     flash('error', 'An error occurred loading the quiz', 'error');
@@ -180,7 +180,7 @@ try {
                     <a href="<?= url('take-quiz.php?quiz_id=' . $quizId) ?>"
                        class="flex-1 py-3 px-6 bg-indigo-600 text-white text-center font-semibold rounded-lg hover:bg-indigo-700 transition">
                         <i class="fas fa-play mr-2"></i>
-                        <?= $attemptStats['attempt_count'] > 0 ? 'Retry Quiz' : 'Start Quiz' ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>
                     </a>
                     <a href="<?= url('learn.php?course=' . urlencode($quiz['course_slug'])) ?>"
                        class="flex-1 py-3 px-6 bg-gray-200 text-gray-700 text-center font-semibold rounded-lg hover:bg-gray-300 transition">

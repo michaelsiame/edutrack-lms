@@ -120,7 +120,7 @@ try {
 ?>
 
 <!-- Hero Carousel Section -->
-<section class="relative h-[600px] md:h-[700px] overflow-hidden" x-data="{ currentSlide: 0, totalSlides: <?= count($heroSlides) ?> }" x-init="setInterval(() => { currentSlide = (currentSlide + 1) % totalSlides }, 6000)">
+<section class="relative h-[500px] sm:h-[560px] md:h-[700px] overflow-hidden" x-data="{ currentSlide: 0, totalSlides: <?= count($heroSlides) ?> }" x-init="setInterval(() => { currentSlide = (currentSlide + 1) % totalSlides }, 6000)">
     
     <!-- Slides -->
     <?php foreach ($heroSlides as $index => $slide): 
@@ -488,7 +488,13 @@ updateCountdown();
 setInterval(updateCountdown, 86400000); // Update daily
 </script>
 
-<?php require_once __DIR__ . '/../src/templates/testimonials-section.php'; ?>
+<?php
+try {
+    require_once __DIR__ . '/../src/templates/testimonials-section.php';
+} catch (Throwable $e) {
+    error_log("Homepage testimonials section error: " . $e->getMessage());
+}
+?>
 
 <!-- Why Choose Edutrack Section -->
 <section class="py-20 bg-gray-50">

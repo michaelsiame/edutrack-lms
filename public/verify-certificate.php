@@ -4,8 +4,8 @@
  * Public page to verify TEVETA certificates
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/Certificate.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/Certificate.php';
 
 // Get verification code from URL or form
 $verificationCode = trim($_GET['code'] ?? $_POST['code'] ?? '');
@@ -28,7 +28,7 @@ if (!empty($verificationCode)) {
 }
 
 $page_title = 'Verify Certificate - Edutrack';
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gray-50 py-12">
@@ -185,4 +185,4 @@ require_once '../src/templates/header.php';
     </div>
 </div>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

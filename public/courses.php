@@ -4,7 +4,7 @@
  * Enhanced UI/UX Version
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 $page_title = "Browse Courses - " . (defined('APP_NAME') ? APP_NAME : 'EduTrack LMS');
 
@@ -117,7 +117,7 @@ function formatMoney($amount) {
     return 'K' . number_format((float)$amount, 2);
 }
 
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Hero Section -->
@@ -398,4 +398,4 @@ require_once '../src/templates/header.php';
     </div>
 </section>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

@@ -6,10 +6,10 @@
  * Polls for payment confirmation and redirects on success.
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/Lenco.php';
-require_once '../src/classes/Course.php';
-require_once '../src/classes/Enrollment.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/Lenco.php';
+require_once __DIR__ . '/../src/classes/Course.php';
+require_once __DIR__ . '/../src/classes/Enrollment.php';
 
 // Authentication check
 if (!isLoggedIn()) {
@@ -67,7 +67,7 @@ $hoursRemaining = floor($timeRemaining / 3600);
 $minutesRemaining = floor(($timeRemaining % 3600) / 60);
 
 $page_title = 'Complete Payment - Lenco Bank Transfer';
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Header -->
@@ -426,4 +426,4 @@ checkPaymentStatus();
 updateCountdown();
 </script>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

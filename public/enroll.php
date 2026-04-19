@@ -5,10 +5,10 @@
  * Logic: Checks prerequisites -> Creates Pending Enrollment -> Redirects to Payment
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/Course.php';
-require_once '../src/classes/Enrollment.php';
-require_once '../src/classes/RegistrationFee.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/Course.php';
+require_once __DIR__ . '/../src/classes/Enrollment.php';
+require_once __DIR__ . '/../src/classes/RegistrationFee.php';
 
 // 1. Authentication Check
 if (!isLoggedIn()) {

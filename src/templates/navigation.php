@@ -23,21 +23,21 @@ if (isLoggedIn()) {
 
 <nav class="bg-white shadow-md sticky top-0 z-50" x-data="{ mobileMenuOpen: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-20">
+        <div class="flex justify-between items-center h-16 md:h-20">
             
             <!-- Logo -->
-            <div class="flex-shrink-0 flex items-center">
-                <a href="<?= url() ?>" class="flex items-center">
-                    <img src="<?= asset('images/logo.png') ?>" alt="Edutrack Logo" class="h-12 w-auto mr-3">
-                    <div class="flex flex-col">
-                        <span class="text-xl font-bold text-primary-600">Edutrack</span>
-                        <span class="text-xs text-gray-600">TEVETA REGISTERED</span>
+            <div class="flex-shrink-0 flex items-center min-w-0">
+                <a href="<?= url() ?>" class="flex items-center min-w-0">
+                    <img src="<?= asset('images/logo.png') ?>" alt="Edutrack Logo" class="h-10 md:h-12 w-auto mr-2 md:mr-3 shrink-0">
+                    <div class="hidden sm:flex flex-col min-w-0">
+                        <span class="text-lg md:text-xl font-bold text-primary-600 leading-tight">Edutrack</span>
+                        <span class="text-[10px] md:text-xs text-gray-600 truncate">TEVETA REGISTERED</span>
                     </div>
                 </a>
             </div>
             
             <!-- Desktop Navigation -->
-            <div class="hidden md:flex items-center space-x-8">
+            <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
                 <a href="<?= url() ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'index.php' ? 'active text-primary-600' : '' ?>">
                     Home
                 </a>
@@ -148,7 +148,11 @@ if (isLoggedIn()) {
             
             <!-- Mobile Menu Button -->
             <div class="md:hidden">
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-700 hover:text-primary-600 focus:outline-none">
+                <button @click="mobileMenuOpen = !mobileMenuOpen"
+                        :aria-expanded="mobileMenuOpen.toString()"
+                        aria-controls="mobile-nav-menu"
+                        aria-label="Toggle navigation menu"
+                        class="text-gray-700 hover:text-primary-600 focus:outline-none p-2 rounded-md hover:bg-gray-100 transition">
                     <i class="fas fa-bars text-2xl"></i>
                 </button>
             </div>
@@ -156,8 +160,18 @@ if (isLoggedIn()) {
     </div>
     
     <!-- Mobile Menu -->
-    <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false" x-cloak class="md:hidden bg-white border-t">
-        <div class="px-2 pt-2 pb-3 space-y-1">
+    <div id="mobile-nav-menu"
+         x-show="mobileMenuOpen"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-1"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-1"
+         @click.away="mobileMenuOpen = false"
+         x-cloak
+         class="md:hidden bg-white border-t max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain">
+        <div class="px-2 pt-2 pb-4 space-y-1">
             <a href="<?= url() ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'index.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 Home
             </a>

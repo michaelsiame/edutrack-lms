@@ -4,7 +4,7 @@
  * Features: Grid/List view, detailed progress, course timeline, skill tags
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 if (!isLoggedIn()) {
     redirect('login.php');
@@ -120,7 +120,7 @@ $certificatesCount = $db->fetchColumn("
 ", [$userId]) ?? 0;
 
 $page_title = "My Courses - Edutrack";
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gray-50 py-8">
@@ -461,4 +461,4 @@ require_once '../src/templates/header.php';
     </div>
 </div>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

@@ -4,9 +4,9 @@
  * Features: Welcome banner, stat cards, learning progress, course cards, upcoming deadlines, notifications
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/PaymentPlan.php';
-require_once '../src/classes/RegistrationFee.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/PaymentPlan.php';
+require_once __DIR__ . '/../src/classes/RegistrationFee.php';
 
 // Ensure user is authenticated
 if (!isLoggedIn()) {
@@ -138,7 +138,7 @@ try {
 } catch (Exception $e) {}
 
 $page_title = "Dashboard - Edutrack";
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gray-50">
@@ -574,4 +574,4 @@ function markAllRead() {
 }
 </script>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

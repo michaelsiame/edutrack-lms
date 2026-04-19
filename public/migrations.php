@@ -64,7 +64,7 @@ if (!$has_access) {
 }
 
 // Load bootstrap
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 $db = Database::getInstance();
 $message = '';

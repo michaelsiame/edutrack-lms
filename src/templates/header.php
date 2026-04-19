@@ -135,8 +135,8 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <!-- Top Bar -->
     <div class="bg-primary-600 text-white py-2">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col sm:flex-row justify-between items-center text-sm">
-                <div class="flex items-center space-x-4 mb-2 sm:mb-0">
+            <div class="flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm gap-2 sm:gap-0">
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1">
                     <span class="flex items-center">
                         <i class="fas fa-certificate mr-1 text-secondary-500"></i>
                         <strong>TEVETA Registered:</strong> <?= TEVETA_CODE ?>
@@ -146,8 +146,8 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
                         <?= SITE_PHONE ?>
                     </span>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <span class="flex items-center">
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <span class="hidden sm:flex items-center">
                         <i class="fas fa-envelope mr-1"></i>
                         <?= SITE_EMAIL ?>
                     </span>

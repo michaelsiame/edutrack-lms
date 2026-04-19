@@ -4,7 +4,7 @@
  * Student dashboard to view all earned certificates
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Ensure user is authenticated
 if (!isLoggedIn()) {
@@ -34,7 +34,7 @@ $certificates = $db->fetchAll("
 ", [$userId]);
 
 $page_title = "My Certificates - Edutrack";
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gray-50 py-8">
@@ -217,4 +217,4 @@ function shareCertificate(certificateNumber) {
 }
 </script>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

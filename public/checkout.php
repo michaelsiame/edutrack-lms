@@ -9,10 +9,10 @@
  * - Mobile Money (MTN, Airtel, Zamtel)
  */
 
-require_once '../src/bootstrap.php';
-require_once '../src/classes/Course.php';
-require_once '../src/classes/Enrollment.php';
-require_once '../src/classes/Lenco.php';
+require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/classes/Course.php';
+require_once __DIR__ . '/../src/classes/Enrollment.php';
+require_once __DIR__ . '/../src/classes/Lenco.php';
 
 // 1. Authentication Check
 if (!isLoggedIn()) {
@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $page_title = 'Checkout - ' . sanitize($course->getTitle());
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Header -->
@@ -644,4 +644,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php endif; require_once '../src/templates/footer.php'; ?>
+<?php endif; require_once __DIR__ . '/../src/templates/footer.php'; ?>

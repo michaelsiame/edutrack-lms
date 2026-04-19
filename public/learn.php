@@ -4,7 +4,7 @@
  * Main page for taking courses (Simplified with error handling)
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Ensure user is authenticated
 if (!isLoggedIn()) {
@@ -213,7 +213,7 @@ try {
 }
 
 // Include header
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 
 // Set up breadcrumbs
 $breadcrumbs = [
@@ -221,7 +221,7 @@ $breadcrumbs = [
     ['label' => $course['title'], 'url' => 'course.php?slug=' . urlencode($courseSlug)],
     ['label' => $currentLesson['title'] ?? 'Learn']
 ];
-require_once '../src/templates/breadcrumbs.php';
+require_once __DIR__ . '/../src/templates/breadcrumbs.php';
 ?>
 
 <div class="min-h-screen bg-gray-100">
@@ -703,4 +703,4 @@ const courseSlug = <?= json_encode($courseSlug) ?>;
 <!-- Learning interface JavaScript -->
 <script src="<?= asset('js/learning.js') ?>"></script>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

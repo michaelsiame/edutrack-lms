@@ -3,7 +3,7 @@
  * Edutrack Computer Training College - Edit Profile Page
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 if (!isLoggedIn()) {
     redirect('login.php');
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $page_title = "Edit Profile - " . APP_NAME;
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <div class="min-h-screen bg-gray-50 py-8">
@@ -432,4 +432,4 @@ function confirmAvatarDelete() {
 }
 </script>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

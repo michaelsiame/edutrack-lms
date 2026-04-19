@@ -2,10 +2,10 @@
 /**
  * Privacy Policy
  */
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 $page_title = "Privacy Policy - Edutrack Computer Training College";
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <section class="py-16 bg-white">
@@ -117,4 +117,4 @@ require_once '../src/templates/header.php';
     </div>
 </section>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>

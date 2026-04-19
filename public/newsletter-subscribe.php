@@ -3,7 +3,7 @@
  * Newsletter Subscription Handler
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['email'])) {
     redirect('events.php');

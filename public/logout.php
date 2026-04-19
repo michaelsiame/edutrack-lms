@@ -4,7 +4,7 @@
  * Logout Handler
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 // Logout user
 logoutUser();

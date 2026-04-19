@@ -4,7 +4,7 @@
  * Display all student success stories
  */
 
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 $db = Database::getInstance();
 
@@ -39,7 +39,7 @@ $stats = $db->fetchOne(
 
 $page_title = "Student Success Stories - Edutrack Testimonials";
 
-require_once '../src/templates/header.php';
+require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Page Header -->
@@ -223,4 +223,4 @@ require_once '../src/templates/header.php';
 }
 </style>
 
-<?php require_once '../src/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../src/templates/footer.php'; ?>
