@@ -111,36 +111,41 @@ class InstitutionPhoto {
     public static function getAll($filters = []) {
         $db = Database::getInstance();
         
-        $where = ["1=1"];
-        $params = [];
-        
-        if (!empty($filters['category'])) {
-            $where[] = "category = ?";
-            $params[] = $filters['category'];
+        try {
+            $where = ["1=1"];
+            $params = [];
+            
+            if (!empty($filters['category'])) {
+                $where[] = "category = ?";
+                $params[] = $filters['category'];
+            }
+            
+            if (!empty($filters['featured'])) {
+                $where[] = "is_featured = 1";
+            }
+            
+            if (!empty($filters['search'])) {
+                $where[] = "(title LIKE ? OR description LIKE ?)";
+                $searchTerm = '%' . $filters['search'] . '%';
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+            
+            $sql = "SELECT p.*, u.first_name, u.last_name 
+                    FROM institution_photos p 
+                    LEFT JOIN users u ON p.uploaded_by = u.id 
+                    WHERE " . implode(' AND ', $where) . "
+                    ORDER BY p.display_order ASC, p.created_at DESC";
+            
+            if (!empty($filters['limit'])) {
+                $sql .= " LIMIT " . (int)$filters['limit'];
+            }
+            
+            return $db->fetchAll($sql, $params);
+        } catch (Throwable $e) {
+            error_log("InstitutionPhoto::getAll error: " . $e->getMessage());
+            return [];
         }
-        
-        if (!empty($filters['featured'])) {
-            $where[] = "is_featured = 1";
-        }
-        
-        if (!empty($filters['search'])) {
-            $where[] = "(title LIKE ? OR description LIKE ?)";
-            $searchTerm = '%' . $filters['search'] . '%';
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
-        }
-        
-        $sql = "SELECT p.*, u.first_name, u.last_name 
-                FROM institution_photos p 
-                LEFT JOIN users u ON p.uploaded_by = u.id 
-                WHERE " . implode(' AND ', $where) . "
-                ORDER BY p.display_order ASC, p.created_at DESC";
-        
-        if (!empty($filters['limit'])) {
-            $sql .= " LIMIT " . (int)$filters['limit'];
-        }
-        
-        return $db->fetchAll($sql, $params);
     }
 
     public static function getByCategory($category, $limit = null) {
@@ -269,12 +274,17 @@ class HeroSlide {
     }
 
     public static function getActive($limit = null) {
-        $db = Database::getInstance();
-        $sql = "SELECT * FROM hero_slides WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC";
-        if ($limit) {
-            $sql .= " LIMIT " . (int)$limit;
+        try {
+            $db = Database::getInstance();
+            $sql = "SELECT * FROM hero_slides WHERE is_active = 1 ORDER BY display_order ASC, created_at DESC";
+            if ($limit) {
+                $sql .= " LIMIT " . (int)$limit;
+            }
+            return $db->fetchAll($sql);
+        } catch (Throwable $e) {
+            error_log("HeroSlide::getActive error: " . $e->getMessage());
+            return [];
         }
-        return $db->fetchAll($sql);
     }
 
     public static function getAll($filters = []) {

@@ -13,25 +13,32 @@ if (empty($slug)) {
     redirect('events.php');
 }
 
-$event = Event::findBySlug($slug);
-
-if (!$event) {
-    http_response_code(404);
-    setFlashMessage('Event not found.', 'error');
+try {
+    $event = Event::findBySlug($slug);
+    
+    if (!$event) {
+        http_response_code(404);
+        setFlashMessage('Event not found.', 'error');
+        redirect('events.php');
+    }
+    
+    $images = $event->getImages();
+    $page_title = $event->get('title') . ' - Edutrack Events';
+    
+    // Get related events (other events from same year or recent)
+    $db = Database::getInstance();
+    $relatedEvents = $db->fetchAll(
+        "SELECT id, title, slug, cover_image, event_date FROM events 
+         WHERE status = 'published' AND id != ? 
+         ORDER BY event_date DESC LIMIT 3",
+        [$event->getId()]
+    );
+} catch (Throwable $e) {
+    error_log("Event detail page error: " . $e->getMessage());
+    http_response_code(500);
+    setFlashMessage('Unable to load event. Please try again later.', 'error');
     redirect('events.php');
 }
-
-$images = $event->getImages();
-$page_title = $event->get('title') . ' - Edutrack Events';
-
-// Get related events (other events from same year or recent)
-$db = Database::getInstance();
-$relatedEvents = $db->fetchAll(
-    "SELECT id, title, slug, cover_image, event_date FROM events 
-     WHERE status = 'published' AND id != ? 
-     ORDER BY event_date DESC LIMIT 3",
-    [$event->getId()]
-);
 
 require_once __DIR__ . '/../src/templates/header.php';
 ?>

@@ -265,38 +265,43 @@ class Event {
     public static function getAll($filters = []) {
         $db = Database::getInstance();
         
-        $where = ["1=1"];
-        $params = [];
-        
-        if (!empty($filters['status'])) {
-            $where[] = "e.status = ?";
-            $params[] = $filters['status'];
+        try {
+            $where = ["1=1"];
+            $params = [];
+            
+            if (!empty($filters['status'])) {
+                $where[] = "e.status = ?";
+                $params[] = $filters['status'];
+            }
+            
+            if (!empty($filters['featured'])) {
+                $where[] = "e.is_featured = 1";
+            }
+            
+            if (!empty($filters['search'])) {
+                $where[] = "(e.title LIKE ? OR e.summary LIKE ? OR e.story LIKE ?)";
+                $searchTerm = '%' . $filters['search'] . '%';
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+            
+            $sql = "SELECT e.*, u.first_name, u.last_name,
+                    (SELECT COUNT(*) FROM event_images WHERE event_id = e.id) as image_count
+                    FROM events e 
+                    LEFT JOIN users u ON e.created_by = u.id 
+                    WHERE " . implode(' AND ', $where) . "
+                    ORDER BY e.event_date DESC, e.created_at DESC";
+            
+            if (!empty($filters['limit'])) {
+                $sql .= " LIMIT " . (int)$filters['limit'];
+            }
+            
+            return $db->fetchAll($sql, $params);
+        } catch (Throwable $e) {
+            error_log("Event::getAll error: " . $e->getMessage());
+            return [];
         }
-        
-        if (!empty($filters['featured'])) {
-            $where[] = "e.is_featured = 1";
-        }
-        
-        if (!empty($filters['search'])) {
-            $where[] = "(e.title LIKE ? OR e.summary LIKE ? OR e.story LIKE ?)";
-            $searchTerm = '%' . $filters['search'] . '%';
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
-        }
-        
-        $sql = "SELECT e.*, u.first_name, u.last_name,
-                (SELECT COUNT(*) FROM event_images WHERE event_id = e.id) as image_count
-                FROM events e 
-                LEFT JOIN users u ON e.created_by = u.id 
-                WHERE " . implode(' AND ', $where) . "
-                ORDER BY e.event_date DESC, e.created_at DESC";
-        
-        if (!empty($filters['limit'])) {
-            $sql .= " LIMIT " . (int)$filters['limit'];
-        }
-        
-        return $db->fetchAll($sql, $params);
     }
 
     /**
@@ -310,9 +315,14 @@ class Event {
      * Get event by slug
      */
     public static function findBySlug($slug) {
-        $db = Database::getInstance();
-        $result = $db->fetchOne("SELECT id FROM events WHERE slug = ? AND status = 'published'", [$slug]);
-        return $result ? new self($result['id']) : null;
+        try {
+            $db = Database::getInstance();
+            $result = $db->fetchOne("SELECT id FROM events WHERE slug = ? AND status = 'published'", [$slug]);
+            return $result ? new self($result['id']) : null;
+        } catch (Throwable $e) {
+            error_log("Event::findBySlug error: " . $e->getMessage());
+            return null;
+        }
     }
 
     /**
@@ -321,39 +331,49 @@ class Event {
     public static function getPaginated($page = 1, $perPage = 9, $filters = []) {
         $db = Database::getInstance();
         
-        $where = ["status = 'published'"];
-        $params = [];
-        
-        if (!empty($filters['search'])) {
-            $where[] = "(title LIKE ? OR summary LIKE ?)";
-            $searchTerm = '%' . $filters['search'] . '%';
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
+        try {
+            $where = ["status = 'published'"];
+            $params = [];
+            
+            if (!empty($filters['search'])) {
+                $where[] = "(title LIKE ? OR summary LIKE ?)";
+                $searchTerm = '%' . $filters['search'] . '%';
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+            
+            // Get total count
+            $countSql = "SELECT COUNT(*) FROM events WHERE " . implode(' AND ', $where);
+            $total = $db->fetchColumn($countSql, $params);
+            
+            // Get page data
+            $offset = ($page - 1) * $perPage;
+            $sql = "SELECT e.*, 
+                    (SELECT COUNT(*) FROM event_images WHERE event_id = e.id) as image_count
+                    FROM events e 
+                    WHERE " . implode(' AND ', $where) . "
+                    ORDER BY e.event_date DESC, e.created_at DESC
+                    LIMIT ? OFFSET ?";
+            
+            $params[] = $perPage;
+            $params[] = $offset;
+            
+            $events = $db->fetchAll($sql, $params);
+            
+            return [
+                'events' => $events,
+                'total' => $total,
+                'pages' => ceil($total / $perPage),
+                'current_page' => $page
+            ];
+        } catch (Throwable $e) {
+            error_log("Event::getPaginated error: " . $e->getMessage());
+            return [
+                'events' => [],
+                'total' => 0,
+                'pages' => 0,
+                'current_page' => $page
+            ];
         }
-        
-        // Get total count
-        $countSql = "SELECT COUNT(*) FROM events WHERE " . implode(' AND ', $where);
-        $total = $db->fetchColumn($countSql, $params);
-        
-        // Get page data
-        $offset = ($page - 1) * $perPage;
-        $sql = "SELECT e.*, 
-                (SELECT COUNT(*) FROM event_images WHERE event_id = e.id) as image_count
-                FROM events e 
-                WHERE " . implode(' AND ', $where) . "
-                ORDER BY e.event_date DESC, e.created_at DESC
-                LIMIT ? OFFSET ?";
-        
-        $params[] = $perPage;
-        $params[] = $offset;
-        
-        $events = $db->fetchAll($sql, $params);
-        
-        return [
-            'events' => $events,
-            'total' => $total,
-            'pages' => ceil($total / $perPage),
-            'current_page' => $page
-        ];
     }
 }

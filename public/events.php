@@ -15,15 +15,30 @@ if (!empty($search)) {
     $filters['search'] = $search;
 }
 
-// Get paginated events
-$result = Event::getPaginated($page, 9, $filters);
-$events = $result['events'];
-$totalPages = $result['pages'];
-$currentPage = $result['current_page'];
-$totalEvents = $result['total'];
+// Initialize with defaults
+$events = [];
+$totalPages = 0;
+$currentPage = $page;
+$totalEvents = 0;
+$featuredEvents = [];
 
-// Get featured events for hero section
-$featuredEvents = Event::getFeatured(2);
+try {
+    // Get paginated events
+    $result = Event::getPaginated($page, 9, $filters);
+    $events = $result['events'];
+    $totalPages = $result['pages'];
+    $currentPage = $result['current_page'];
+    $totalEvents = $result['total'];
+} catch (Throwable $e) {
+    error_log("Events page error: " . $e->getMessage());
+}
+
+try {
+    // Get featured events for hero section
+    $featuredEvents = Event::getFeatured(2);
+} catch (Throwable $e) {
+    error_log("Events page featured error: " . $e->getMessage());
+}
 
 $page_title = "Recent Events & News - Edutrack computer training college";
 
