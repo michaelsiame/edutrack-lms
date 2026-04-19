@@ -105,6 +105,11 @@
                         </a>
                     </li>
                     <?php endif; ?>
+                    <li>
+                        <a href="https://school.edutrackzambia.com" target="_blank" rel="noopener" class="text-gray-400 hover:text-secondary-500 transition text-sm">
+                            <i class="fas fa-school text-xs mr-2"></i>School Management System
+                        </a>
+                    </li>
                 </ul>
             </div>
             

@@ -56,9 +56,6 @@ if (isLoggedIn()) {
                 <a href="<?= url('contact.php') ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'contact.php' ? 'active text-primary-600' : '' ?>">
                     Contact
                 </a>
-                <a href="https://school.edutrackzambia.com" target="_blank" class="nav-link text-primary-600 hover:text-primary-700 font-medium bg-primary-50 px-3 py-1 rounded-lg">
-                    <i class="fas fa-school mr-1"></i>School Portal
-                </a>
                 
                 <?php if (isLoggedIn()): ?>
                     <!-- Logged In Menu -->
@@ -178,9 +175,6 @@ if (isLoggedIn()) {
             </a>
             <a href="<?= url('contact.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'contact.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 Contact
-            </a>
-            <a href="https://school.edutrackzambia.com" target="_blank" rel="noopener" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
-                <i class="fas fa-graduation-cap mr-2 text-primary-600"></i> School Portal
             </a>
             
             <?php if (isLoggedIn()): ?>

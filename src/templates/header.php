@@ -4,11 +4,10 @@
  * Main Site Header Template
  */
 
-// Load configuration if not already loaded
-if (!defined('EDUTRACK_INIT')) {
-    require_once dirname(__DIR__) . '/includes/config.php';
-    require_once dirname(__DIR__) . '/includes/database.php';
-    require_once dirname(__DIR__) . '/includes/functions.php';  // Load functions for sanitize()
+// This template should be included after bootstrap.php is loaded
+// If bootstrap is not loaded, load it
+if (!defined('APP_BOOTSTRAPPED')) {
+    require_once dirname(__DIR__) . '/bootstrap.php';
 }
 
 // Set page title
