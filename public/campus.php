@@ -14,24 +14,39 @@ $category = $_GET['category'] ?? 'all';
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $perPage = 12;
 
-// Get photos
-$filters = ['limit' => $perPage];
-if ($category !== 'all') {
-    $filters['category'] = $category;
-}
-$photos = InstitutionPhoto::getAll($filters);
-
-// Get counts by category
-$categoryCounts = $db->fetchAll(
-    "SELECT category, COUNT(*) as count FROM institution_photos GROUP BY category"
-);
-$countMap = array_column($categoryCounts, 'count', 'category');
-
-// Get featured photos for hero
-$featuredPhotos = InstitutionPhoto::getFeatured(6);
-
-// Categories
+// Initialize with defaults to prevent errors if tables are missing
+$photos = [];
+$countMap = [];
+$featuredPhotos = [];
 $categories = InstitutionPhoto::getCategories();
+
+try {
+    // Get photos
+    $filters = ['limit' => $perPage];
+    if ($category !== 'all') {
+        $filters['category'] = $category;
+    }
+    $photos = InstitutionPhoto::getAll($filters);
+} catch (Throwable $e) {
+    error_log("Campus page photos error: " . $e->getMessage());
+}
+
+try {
+    // Get counts by category
+    $categoryCounts = $db->fetchAll(
+        "SELECT category, COUNT(*) as count FROM institution_photos GROUP BY category"
+    );
+    $countMap = array_column($categoryCounts, 'count', 'category');
+} catch (Throwable $e) {
+    error_log("Campus page category counts error: " . $e->getMessage());
+}
+
+try {
+    // Get featured photos for hero
+    $featuredPhotos = InstitutionPhoto::getFeatured(6);
+} catch (Throwable $e) {
+    error_log("Campus page featured photos error: " . $e->getMessage());
+}
 
 $page_title = "Campus & Facilities - Edutrack Computer Training College";
 
@@ -40,7 +55,13 @@ require_once __DIR__ . '/../src/templates/header.php';
 
 <!-- Page Header -->
 <section class="relative h-[400px] overflow-hidden">
-    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('<?= !empty($featuredPhotos) ? $featuredPhotos[0]->getImageUrl() : '/assets/images/campus-hero.jpg' ?>');">
+    <?php 
+    $heroImage = '/assets/images/campus-hero.jpg';
+    if (!empty($featuredPhotos) && is_array($featuredPhotos[0])) {
+        $heroImage = !empty($featuredPhotos[0]['image_path']) ? '/uploads/institution/' . $featuredPhotos[0]['image_path'] : '/assets/images/campus-hero.jpg';
+    }
+    ?>
+    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('<?= $heroImage ?>');">
         <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
     </div>
     <div class="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-end pb-16">
@@ -133,20 +154,24 @@ require_once __DIR__ . '/../src/templates/header.php';
         <?php if (!empty($photos)): ?>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="photo-gallery">
             <?php foreach ($photos as $photoData): 
-                $photo = new InstitutionPhoto($photoData['id']);
+                $imageUrl = !empty($photoData['image_path']) ? '/uploads/institution/' . $photoData['image_path'] : '';
+                $photoId = $photoData['id'] ?? 0;
+                $title = $photoData['title'] ?? '';
+                $description = $photoData['description'] ?? '';
+                $category = $photoData['category'] ?? 'campus';
             ?>
-            <div class="group relative overflow-hidden rounded-xl cursor-pointer" onclick="openLightbox(<?= $photo->getId() ?>)">
-                <img src="<?= $photo->getImageUrl() ?>" 
-                     alt="<?= htmlspecialchars($photo->get('title')) ?>"
+            <div class="group relative overflow-hidden rounded-xl cursor-pointer" onclick="openLightbox(<?= $photoId ?>)">
+                <img src="<?= $imageUrl ?>" 
+                     alt="<?= htmlspecialchars($title) ?>"
                      class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500">
                 <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
                     <div class="absolute bottom-0 left-0 right-0 p-6">
                         <span class="text-xs bg-yellow-500 text-gray-900 px-2 py-1 rounded-full font-medium mb-2 inline-block">
-                            <?= $categories[$photo->get('category')] ?? 'Campus' ?>
+                            <?= $categories[$category] ?? 'Campus' ?>
                         </span>
-                        <h3 class="text-white font-semibold text-lg"><?= htmlspecialchars($photo->get('title')) ?></h3>
-                        <?php if ($photo->get('description')): ?>
-                        <p class="text-gray-300 text-sm mt-1 line-clamp-2"><?= htmlspecialchars($photo->get('description')) ?></p>
+                        <h3 class="text-white font-semibold text-lg"><?= htmlspecialchars($title) ?></h3>
+                        <?php if ($description): ?>
+                        <p class="text-gray-300 text-sm mt-1 line-clamp-2"><?= htmlspecialchars($description) ?></p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -315,15 +340,15 @@ require_once __DIR__ . '/../src/templates/header.php';
 </div>
 
 <script>
-let photos = <?= json_encode(array_map(function($p) { 
-    $photo = new InstitutionPhoto($p['id']);
+let photos = <?= json_encode(!empty($photos) ? array_map(function($p) { 
+    $imageUrl = !empty($p['image_path']) ? '/uploads/institution/' . $p['image_path'] : '';
     return [
-        'id' => $p['id'],
-        'url' => $photo->getImageUrl(),
-        'title' => $p['title'],
-        'description' => $p['description']
+        'id' => $p['id'] ?? 0,
+        'url' => $imageUrl,
+        'title' => $p['title'] ?? '',
+        'description' => $p['description'] ?? ''
     ];
-}, $photos)) ?>;
+}, $photos) : []) ?>;
 let currentPhotoIndex = 0;
 
 function openLightbox(photoId) {

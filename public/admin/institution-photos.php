@@ -134,8 +134,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_slide'])) {
 }
 
 // Get data for display
-$photos = InstitutionPhoto::getAll();
-$heroSlides = HeroSlide::getAll();
+$photos = [];
+$heroSlides = [];
+try {
+    $photos = InstitutionPhoto::getAll();
+} catch (Throwable $e) {
+    error_log("Admin photos error: " . $e->getMessage());
+}
+try {
+    $heroSlides = HeroSlide::getAll();
+} catch (Throwable $e) {
+    error_log("Admin hero slides error: " . $e->getMessage());
+}
 $categories = InstitutionPhoto::getCategories();
 
 // Get slide for editing
@@ -415,15 +425,19 @@ require_once '../../src/templates/admin-header.php';
                             <?php if (!empty($photos)): ?>
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 <?php foreach ($photos as $photoData): 
-                                    $photo = new InstitutionPhoto($photoData['id']);
+                                    $photoId = $photoData['id'] ?? 0;
+                                    $imageUrl = !empty($photoData['image_path']) ? '/uploads/institution/' . $photoData['image_path'] : '';
+                                    $title = $photoData['title'] ?? '';
+                                    $category = $photoData['category'] ?? 'campus';
+                                    $isFeatured = $photoData['is_featured'] ?? 0;
                                 ?>
                                 <div class="group relative rounded-lg overflow-hidden">
-                                    <img src="<?= $photo->getImageUrl() ?>" 
-                                         alt="<?= htmlspecialchars($photo->get('title')) ?>"
+                                    <img src="<?= $imageUrl ?>" 
+                                         alt="<?= htmlspecialchars($title) ?>"
                                          class="w-full h-40 object-cover">
                                     <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
                                         <div class="flex gap-2">
-                                            <a href="?delete_photo=<?= $photo->getId() ?>" 
+                                            <a href="?delete_photo=<?= $photoId ?>" 
                                                onclick="return confirm('Delete this photo?')"
                                                class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
                                                title="Delete">
@@ -431,14 +445,14 @@ require_once '../../src/templates/admin-header.php';
                                             </a>
                                         </div>
                                     </div>
-                                    <?php if ($photo->get('is_featured')): ?>
+                                    <?php if ($isFeatured): ?>
                                     <span class="absolute top-2 left-2 bg-yellow-500 text-gray-900 text-xs px-2 py-1 rounded-full font-medium">
                                         <i class="fas fa-star mr-1"></i>Featured
                                     </span>
                                     <?php endif; ?>
                                     <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3">
-                                        <p class="text-white text-sm font-medium truncate"><?= htmlspecialchars($photo->get('title')) ?></p>
-                                        <p class="text-gray-300 text-xs"><?= $categories[$photo->get('category')] ?? 'Campus' ?></p>
+                                        <p class="text-white text-sm font-medium truncate"><?= htmlspecialchars($title) ?></p>
+                                        <p class="text-gray-300 text-xs"><?= $categories[$category] ?? 'Campus' ?></p>
                                     </div>
                                 </div>
                                 <?php endforeach; ?>

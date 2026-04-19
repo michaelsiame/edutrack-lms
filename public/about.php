@@ -185,7 +185,12 @@ try {
 <!-- Campus Gallery Preview -->
 <?php
 require_once __DIR__ . '/../src/classes/InstitutionPhoto.php';
-$campusPhotos = InstitutionPhoto::getFeatured(4);
+$campusPhotos = [];
+try {
+    $campusPhotos = InstitutionPhoto::getFeatured(4);
+} catch (Throwable $e) {
+    error_log("About page campus photos error: " . $e->getMessage());
+}
 if (!empty($campusPhotos)):
 ?>
 <section class="py-16 bg-gray-50">
@@ -202,14 +207,15 @@ if (!empty($campusPhotos)):
         
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <?php foreach ($campusPhotos as $photoData): 
-                $photo = new InstitutionPhoto($photoData['id']);
+                $imageUrl = !empty($photoData['image_path']) ? '/uploads/institution/' . $photoData['image_path'] : '';
+                $title = $photoData['title'] ?? '';
             ?>
             <a href="campus.php" class="group relative overflow-hidden rounded-xl aspect-square">
-                <img src="<?= $photo->getImageUrl() ?>" 
-                     alt="<?= htmlspecialchars($photo->get('title')) ?>"
+                <img src="<?= $imageUrl ?>" 
+                     alt="<?= htmlspecialchars($title) ?>"
                      class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
-                    <span class="text-white font-medium"><?= htmlspecialchars($photo->get('title')) ?></span>
+                    <span class="text-white font-medium"><?= htmlspecialchars($title) ?></span>
                 </div>
             </a>
             <?php endforeach; ?>
