@@ -62,7 +62,7 @@ require_once __DIR__ . '/../src/templates/header.php';
     }
     ?>
     <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('<?= $heroImage ?>');">
-        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+        <div class="absolute inset-0 bg-black/50"></div>
     </div>
     <div class="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-end pb-16">
         <div>
@@ -82,13 +82,13 @@ require_once __DIR__ . '/../src/templates/header.php';
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div class="bg-primary-50 rounded-xl p-6 text-center">
                 <i class="fas fa-desktop text-3xl text-primary-600 mb-3"></i>
-                <div class="text-2xl font-bold text-gray-900">50+</div>
+                <div class="text-2xl font-bold text-gray-900">20</div>
                 <div class="text-sm text-gray-600">Computer Workstations</div>
             </div>
             <div class="bg-green-50 rounded-xl p-6 text-center">
                 <i class="fas fa-chalkboard-teacher text-3xl text-green-600 mb-3"></i>
-                <div class="text-2xl font-bold text-gray-900">8</div>
-                <div class="text-sm text-gray-600">Modern Classrooms</div>
+                <div class="text-2xl font-bold text-gray-900">1</div>
+                <div class="text-sm text-gray-600">Modern Classroom</div>
             </div>
             <div class="bg-purple-50 rounded-xl p-6 text-center">
                 <i class="fas fa-wifi text-3xl text-purple-600 mb-3"></i>
@@ -96,9 +96,9 @@ require_once __DIR__ . '/../src/templates/header.php';
                 <div class="text-sm text-gray-600">High-Speed Internet</div>
             </div>
             <div class="bg-yellow-50 rounded-xl p-6 text-center">
-                <i class="fas fa-book text-3xl text-yellow-600 mb-3"></i>
-                <div class="text-2xl font-bold text-gray-900">Library</div>
-                <div class="text-sm text-gray-600">Digital Resources</div>
+                <i class="fas fa-chart-line text-3xl text-yellow-600 mb-3"></i>
+                <div class="text-2xl font-bold text-gray-900">Growing</div>
+                <div class="text-sm text-gray-600">Expanding Soon</div>
             </div>
         </div>
     </div>
@@ -107,7 +107,7 @@ require_once __DIR__ . '/../src/templates/header.php';
 <!-- Virtual Tour CTA -->
 <section class="py-12 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-gradient-to-r from-primary-600 to-purple-600 rounded-2xl p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="bg-primary-600 rounded-2xl p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
                 <h2 class="text-3xl font-bold mb-3">Can't Visit in Person?</h2>
                 <p class="text-primary-100 text-lg">Schedule a virtual campus tour with our admissions team. We'll show you around via video call.</p>
@@ -164,7 +164,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                 <img src="<?= $imageUrl ?>" 
                      alt="<?= htmlspecialchars($title) ?>"
                      class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500">
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300">
                     <div class="absolute bottom-0 left-0 right-0 p-6">
                         <span class="text-xs bg-yellow-500 text-gray-900 px-2 py-1 rounded-full font-medium mb-2 inline-block">
                             <?= $categories[$category] ?? 'Campus' ?>
@@ -207,57 +207,93 @@ require_once __DIR__ . '/../src/templates/header.php';
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Computer Labs -->
+            <!-- Computer Lab -->
             <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
-                <div class="h-48 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                <div class="h-48 bg-blue-500 flex items-center justify-center">
                     <i class="fas fa-laptop-code text-6xl text-white"></i>
                 </div>
                 <div class="p-6">
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Computer Labs</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Computer Lab</h3>
                     <p class="text-gray-600 mb-4">
-                        Three fully-equipped computer labs with over 50 modern workstations, high-speed internet, and the latest software for hands-on training.
+                        Our computer lab features 20 modern workstations with high-speed internet and industry-standard software for hands-on training.
                     </p>
                     <ul class="space-y-2 text-sm text-gray-600">
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Windows & Linux systems</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>20 modern computers</li>
                         <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>High-speed fiber internet</li>
                         <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Industry software suite</li>
                     </ul>
                 </div>
             </div>
             
-            <!-- Classrooms -->
+            <!-- Classroom -->
             <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
-                <div class="h-48 bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
+                <div class="h-48 bg-green-500 flex items-center justify-center">
                     <i class="fas fa-chalkboard text-6xl text-white"></i>
                 </div>
                 <div class="p-6">
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Modern Classrooms</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Modern Classroom</h3>
                     <p class="text-gray-600 mb-4">
-                        Spacious, air-conditioned classrooms designed for interactive learning with projector systems and comfortable seating.
+                        Our spacious classroom is designed for interactive learning with projector systems and comfortable seating for all students.
                     </p>
                     <ul class="space-y-2 text-sm text-gray-600">
                         <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Projector & display systems</li>
                         <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Air-conditioned comfort</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Interactive whiteboards</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Interactive learning space</li>
                     </ul>
                 </div>
             </div>
             
-            <!-- Library -->
+            <!-- Expansion Plans -->
             <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
-                <div class="h-48 bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-                    <i class="fas fa-book-reader text-6xl text-white"></i>
+                <div class="h-48 bg-purple-500 flex items-center justify-center">
+                    <i class="fas fa-chart-line text-6xl text-white"></i>
                 </div>
                 <div class="p-6">
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Library & Study Area</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Expansion Plans</h3>
                     <p class="text-gray-600 mb-4">
-                        Quiet study spaces with access to digital resources, textbooks, and reference materials for all courses.
+                        Due to growing demand, we are actively seeking investments and grants to expand our facilities and accommodate more students.
                     </p>
                     <ul class="space-y-2 text-sm text-gray-600">
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Digital resource access</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Quiet study zones</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Reference materials</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Additional classrooms planned</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>More computer workstations</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Enhanced learning spaces</li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Investment & Grants Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-secondary-50 border-l-4 border-secondary-500 rounded-r-xl p-8 md:p-12">
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                <div class="w-16 h-16 bg-secondary-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-hand-holding-usd text-3xl text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Open to Investments & Grants</h2>
+                    <p class="text-gray-600 text-lg mb-4">
+                        Due to increasing demand for quality tech education in Kalomo and surrounding areas, we are actively seeking investments and grants to expand our facilities. Our goal is to increase capacity from 20 to 100+ computer workstations and add additional classrooms to serve more students.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <div class="text-3xl font-bold text-secondary-600 mb-1">20 → 100+</div>
+                            <div class="text-sm text-gray-600">Computer Workstations</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <div class="text-3xl font-bold text-secondary-600 mb-1">1 → 4</div>
+                            <div class="text-sm text-gray-600">Classrooms Target</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <div class="text-3xl font-bold text-secondary-600 mb-1">500+</div>
+                            <div class="text-sm text-gray-600">Students Annually</div>
+                        </div>
+                    </div>
+                    <a href="contact.php?subject=Investment/Grant Inquiry" class="inline-flex items-center px-6 py-3 bg-secondary-500 text-white rounded-lg font-semibold hover:bg-secondary-600 transition">
+                        <i class="fas fa-envelope mr-2"></i>Discuss Partnership Opportunities
+                    </a>
                 </div>
             </div>
         </div>

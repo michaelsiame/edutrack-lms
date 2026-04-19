@@ -129,7 +129,7 @@ require_once '../../src/templates/header.php';
                     ?>
                     <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
                         <!-- Header -->
-                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white">
+                        <div class="bg-blue-500 p-4 text-white">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-semibold uppercase tracking-wide">Quiz</span>
                                 <?php if ($quiz['time_limit']): ?>

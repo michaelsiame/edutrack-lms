@@ -22,7 +22,7 @@ try {
 ?>
 
 <!-- Page Header -->
-<section class="bg-gradient-to-br from-primary-600 via-blue-700 to-purple-800 text-white py-20">
+<section class="bg-primary-600 text-white py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">
@@ -40,7 +40,7 @@ try {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
             <!-- Mission -->
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-8 shadow-lg">
+            <div class="bg-blue-50 rounded-xl p-8 shadow-lg">
                 <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-6">
                     <i class="fas fa-bullseye text-white text-2xl"></i>
                 </div>
@@ -53,7 +53,7 @@ try {
             </div>
 
             <!-- Vision -->
-            <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-8 shadow-lg">
+            <div class="bg-purple-50 rounded-xl p-8 shadow-lg">
                 <div class="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mb-6">
                     <i class="fas fa-eye text-white text-2xl"></i>
                 </div>
@@ -214,7 +214,7 @@ if (!empty($campusPhotos)):
                 <img src="<?= $imageUrl ?>" 
                      alt="<?= htmlspecialchars($title) ?>"
                      class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
                     <span class="text-white font-medium"><?= htmlspecialchars($title) ?></span>
                 </div>
             </a>
@@ -289,7 +289,7 @@ if (!empty($campusPhotos)):
 </section>
 
 <!-- TEVETA Accreditation -->
-<section class="py-16 bg-gradient-to-br from-yellow-50 to-orange-50">
+<section class="py-16 bg-yellow-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-xl shadow-xl p-8 md:p-12">
             <div class="flex flex-col md:flex-row items-center gap-8">
@@ -442,7 +442,7 @@ if (!empty($campusPhotos)):
 </section>
 
 <!-- Call to Action -->
-<section class="py-16 bg-gradient-to-br from-primary-600 via-blue-700 to-purple-800 text-white">
+<section class="py-16 bg-primary-600 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="text-3xl md:text-4xl font-bold mb-6">
             Ready to Start Your Learning Journey?

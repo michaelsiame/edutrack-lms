@@ -106,7 +106,7 @@ try {
 
         <!-- Quiz Card -->
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-8 text-white">
+            <div class="bg-indigo-600 px-6 py-8 text-white">
                 <div class="flex items-center mb-4">
                     <i class="fas fa-question-circle text-4xl mr-4"></i>
                     <div>

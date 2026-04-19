@@ -22,7 +22,7 @@ require_once '../../src/templates/header.php';
 
 <div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-slate-800 to-slate-900 text-white">
+    <div class="bg-slate-800 text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <h1 class="text-4xl font-bold mb-4">Administrator Help Center</h1>
             <p class="text-xl text-slate-300 max-w-3xl">
@@ -820,7 +820,7 @@ require_once '../../src/templates/header.php';
                 </section>
 
                 <!-- Need More Help -->
-                <div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl p-8 text-center text-white">
+                <div class="bg-slate-800 rounded-xl p-8 text-center text-white">
                     <h2 class="text-2xl font-bold mb-3">Need Technical Support?</h2>
                     <p class="text-slate-300 mb-6 max-w-2xl mx-auto">
                         For complex issues or system customization, contact the technical team.

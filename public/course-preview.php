@@ -104,7 +104,7 @@ try {
 <div class="min-h-screen bg-gray-100">
 
     <!-- Course Header -->
-    <div class="bg-gradient-to-r from-primary-700 to-primary-900 text-white py-8">
+    <div class="bg-primary-800 text-white py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center text-sm mb-4">
                 <a href="<?= url('courses.php') ?>" class="text-primary-200 hover:text-white">Courses</a>
@@ -217,7 +217,7 @@ try {
 
                 <!-- Enroll CTA -->
                 <?php if (!$isEnrolled): ?>
-                <div class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-lg p-6 text-white">
+                <div class="bg-primary-600 rounded-lg p-6 text-white">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                         <div class="mb-4 md:mb-0">
                             <h3 class="text-xl font-bold">Ready to Learn More?</h3>

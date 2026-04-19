@@ -31,7 +31,7 @@ require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Page Header -->
-<section class="bg-gradient-to-br from-primary-600 via-blue-700 to-purple-800 text-white py-16">
+<section class="bg-primary-600 text-white py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">
@@ -64,7 +64,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                          alt="<?= htmlspecialchars($event->get('title')) ?>"
                          class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                     <?php else: ?>
-                    <div class="w-full h-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center">
+                    <div class="w-full h-full bg-primary-500 flex items-center justify-center">
                         <i class="fas fa-calendar-alt text-6xl text-white opacity-50"></i>
                     </div>
                     <?php endif; ?>
@@ -73,7 +73,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                             <i class="fas fa-star mr-1"></i> Featured
                         </span>
                     </div>
-                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
+                    <div class="absolute bottom-0 left-0 right-0 bg-black/70 p-6">
                         <div class="text-white">
                             <?php if ($event->get('event_date')): ?>
                             <span class="text-sm font-medium text-yellow-400">
@@ -155,7 +155,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                          alt="<?= htmlspecialchars($event->get('title')) ?>"
                          class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                     <?php else: ?>
-                    <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                    <div class="w-full h-full bg-gray-100 flex items-center justify-center">
                         <i class="fas fa-image text-4xl text-gray-400"></i>
                     </div>
                     <?php endif; ?>

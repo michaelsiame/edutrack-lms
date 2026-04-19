@@ -52,7 +52,7 @@ require_once __DIR__ . '/../src/templates/header.php';
         <?php if (!empty($certificates)): ?>
             <!-- Stats Summary -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-gradient-to-r from-primary-600 to-primary-800 rounded-lg shadow-md p-6 text-white">
+                <div class="bg-primary-600 rounded-lg shadow-md p-6 text-white">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-primary-100 text-sm font-medium">Total Certificates</p>
@@ -64,7 +64,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-r from-green-600 to-green-800 rounded-lg shadow-md p-6 text-white">
+                <div class="bg-green-600 rounded-lg shadow-md p-6 text-white">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-green-100 text-sm font-medium">Courses Completed</p>
@@ -76,7 +76,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-r from-purple-600 to-purple-800 rounded-lg shadow-md p-6 text-white">
+                <div class="bg-purple-600 rounded-lg shadow-md p-6 text-white">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-purple-100 text-sm font-medium">TEVETA REGISTERED</p>
@@ -94,7 +94,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                 <?php foreach ($certificates as $certificate): ?>
                     <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition group">
                         <!-- Certificate Preview -->
-                        <div class="relative bg-gradient-to-br from-primary-50 to-secondary-50 p-6 border-b-4 border-primary-600">
+                        <div class="relative bg-primary-50 p-6 border-b-4 border-primary-600">
                             <div class="text-center">
                                 <i class="fas fa-certificate text-primary-600 text-6xl mb-4 opacity-20"></i>
                                 <div class="absolute inset-0 flex items-center justify-center">

@@ -165,7 +165,7 @@ require_once '../../../src/templates/instructor-header.php';
             ?>
             <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
                 <!-- Module Header -->
-                <div class="bg-gradient-to-r from-gray-50 to-white px-6 py-5 border-b border-gray-100">
+                <div class="bg-gray-50 px-6 py-5 border-b border-gray-100">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-4 flex-1">
                             <div class="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">

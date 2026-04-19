@@ -194,7 +194,7 @@ require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Header -->
-<section class="bg-gradient-to-r from-primary-900 to-primary-700 text-white py-10">
+<section class="bg-primary-800 text-white py-10">
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex items-center gap-4">
             <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
@@ -339,7 +339,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                                 <input type="hidden" name="payment_method" value="lenco">
                                 <input type="hidden" name="payment_amount" id="lenco_payment_amount" value="<?= $balance ?>">
 
-                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6">
+                                <div class="bg-blue-50 rounded-xl p-6 mb-6">
                                     <div class="flex items-start gap-4">
                                         <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
                                             <i class="fas fa-bolt text-xl"></i>
@@ -358,7 +358,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                                     </div>
                                 </div>
 
-                                <button type="submit" name="pay_with_lenco" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-[1.02]">
+                                <button type="submit" name="pay_with_lenco" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-[1.02]">
                                     <i class="fas fa-university mr-2"></i>
                                     Pay K<span id="lenco-amount-display"><?= number_format($balance, 2) ?></span> via Bank Transfer
                                 </button>

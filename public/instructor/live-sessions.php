@@ -119,7 +119,7 @@ require_once '../../src/templates/instructor-header.php';
 
         <!-- Live Now Banner -->
         <?php if (!empty($groupedSessions['live'])): ?>
-        <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-2xl p-6 text-white mb-8 shadow-lg shadow-red-500/30">
+        <div class="bg-red-500 rounded-2xl p-6 text-white mb-8 shadow-lg">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mr-4 animate-pulse">

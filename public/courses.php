@@ -124,7 +124,7 @@ require_once __DIR__ . '/../src/templates/header.php';
 <section class="relative bg-primary-900 overflow-hidden">
     <!-- Abstract Background Pattern -->
     <div class="absolute inset-0 opacity-10" style="background-image: url('<?= function_exists('asset') ? asset('images/pattern-dots.svg') : 'assets/images/pattern-dots.svg' ?>'); background-size: cover;"></div>
-    <div class="absolute inset-0 bg-gradient-to-br from-primary-900 via-primary-800 to-indigo-900 opacity-95"></div>
+    <div class="absolute inset-0 bg-primary-800 opacity-95"></div>
     
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
@@ -267,7 +267,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                                 <div class="w-full h-full flex items-center justify-center relative" 
                                      style="background-color: <?= htmlspecialchars($bg_color) ?>20;">
                                     <i class="fas fa-graduation-cap text-5xl opacity-30" style="color: <?= htmlspecialchars($bg_color) ?>"></i>
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+                                    <div class="absolute inset-0 bg-black/10"></div>
                                 </div>
                             <?php endif; ?>
 

@@ -100,7 +100,7 @@ try {
         <!-- Certificate Card -->
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 px-6 py-8 text-center">
+            <div class="bg-yellow-500 px-6 py-8 text-center">
                 <div class="w-20 h-20 bg-white rounded-full mx-auto flex items-center justify-center mb-4">
                     <i class="fas fa-certificate text-yellow-500 text-4xl"></i>
                 </div>

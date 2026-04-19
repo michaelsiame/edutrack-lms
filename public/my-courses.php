@@ -267,7 +267,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                                         <span class="text-lg font-bold text-blue-600"><?= round($course['progress_percentage']) ?>%</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
-                                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all" 
+                                        <div class="bg-blue-500 h-3 rounded-full transition-all" 
                                              style="width: <?= round($course['progress_percentage']) ? round($course['progress_percentage']) : 0 ?>%"></div>
                                     </div>
 
@@ -318,7 +318,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                         
                         <!-- Completion Overlay -->
                         <?php if ($course['enrollment_status'] === 'Completed'): ?>
-                        <div class="absolute inset-0 bg-gradient-to-t from-green-600/90 to-green-500/70 flex items-center justify-center">
+                        <div class="absolute inset-0 bg-green-600/80 flex items-center justify-center">
                             <div class="text-center text-white">
                                 <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2">
                                     <i class="fas fa-check text-3xl"></i>
@@ -357,7 +357,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                         <?php if ($course['enrollment_status'] !== 'Completed'): ?>
                         <div class="mb-4">
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all" 
+                                <div class="bg-blue-500 h-2 rounded-full transition-all" 
                                      style="width: <?= round($course['progress_percentage']) ? round($course['progress_percentage']) : 0 ?>%"></div>
                             </div>
                         </div>

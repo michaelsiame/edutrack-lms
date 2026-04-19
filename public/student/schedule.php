@@ -348,7 +348,7 @@ require_once '../../src/templates/header.php';
                 </div>
 
                 <!-- Study Tips -->
-                <div class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-sm overflow-hidden text-white p-5">
+                <div class="bg-blue-500 rounded-xl shadow-sm overflow-hidden text-white p-5">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
                             <i class="fas fa-lightbulb text-xl"></i>

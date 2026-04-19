@@ -104,7 +104,7 @@ require_once '../../src/templates/header.php';
 
         <!-- Results Summary -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-            <div class="bg-gradient-to-r <?= $passed ? 'from-green-500 to-green-600' : 'from-red-500 to-red-600' ?> p-6 text-white">
+            <div class="bg-<?= $passed ? 'green' : 'red' ?>-500 p-6 text-white">
                 <div class="flex items-center justify-between">
                     <div>
                         <h1 class="text-2xl font-bold mb-2"><?= sanitize($attempt['quiz_title']) ?></h1>

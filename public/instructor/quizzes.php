@@ -327,7 +327,7 @@ require_once '../../src/templates/instructor-header.php';
                 </div>
 
                 <!-- Tips Card -->
-                <div class="bg-gradient-to-br from-primary-600 to-purple-600 rounded-2xl p-6 text-white">
+                <div class="bg-primary-600 rounded-2xl p-6 text-white">
                     <h3 class="text-lg font-bold mb-4">
                         <i class="fas fa-lightbulb text-yellow-300 mr-2"></i>Quiz Tips
                     </h3>

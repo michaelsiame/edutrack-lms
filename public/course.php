@@ -97,7 +97,7 @@ require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Course Hero Section -->
-<section class="bg-gradient-to-br from-primary-600 via-primary-700 to-purple-900 text-white py-16">
+<section class="bg-primary-600 text-white py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left Column - Course Info -->
@@ -184,7 +184,7 @@ require_once __DIR__ . '/../src/templates/header.php';
             <div class="lg:col-span-1">
                 <div class="bg-white rounded-xl shadow-2xl overflow-hidden sticky top-4">
                     <!-- Course Thumbnail -->
-                    <div class="relative h-48 bg-gradient-to-br from-primary-100 to-primary-200">
+                    <div class="relative h-48 bg-primary-100">
                         <?php if ($course->getThumbnailUrl()): ?>
                             <img src="<?= $course->getThumbnailUrl() ?>"
                                  alt="<?= sanitize($course->getTitle()) ?>"
@@ -439,7 +439,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                                 <h2 class="text-2xl font-bold text-gray-900 mb-6">Career Outcomes</h2>
                                 
                                 <!-- Career Stats -->
-                                <div class="bg-gradient-to-br from-primary-50 to-blue-50 rounded-xl p-6 mb-8">
+                                <div class="bg-primary-50 rounded-xl p-6 mb-8">
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                         <div class="text-center">
                                             <div class="text-4xl font-bold text-primary-600 mb-2">85%</div>
@@ -527,7 +527,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                                 <div class="bg-white border border-gray-200 rounded-xl p-6">
                                     <h3 class="text-xl font-bold text-gray-900 mb-4">Graduate Success Story</h3>
                                     <div class="flex items-start gap-4">
-                                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
+                                        <div class="w-16 h-16 rounded-full bg-primary-500 flex items-center justify-center text-white text-2xl font-bold">
                                             M
                                         </div>
                                         <div>
@@ -635,7 +635,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                         <?php foreach ($relatedCourses as $related): ?>
                             <a href="course.php?id=<?= $related->getId() ?>" class="block group">
                                 <div class="flex items-start space-x-3">
-                                    <div class="flex-shrink-0 w-20 h-16 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg flex items-center justify-center">
+                                    <div class="flex-shrink-0 w-20 h-16 bg-primary-100 rounded-lg flex items-center justify-center">
                                         <?php if ($related->getThumbnailUrl()): ?>
                                             <img src="<?= $related->getThumbnailUrl() ?>" 
                                                  alt="<?= sanitize($related->getTitle()) ?>"

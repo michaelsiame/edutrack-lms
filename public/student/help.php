@@ -258,7 +258,7 @@ require_once '../../src/templates/header.php';
         </section>
 
         <!-- Support -->
-        <section id="support" class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-8 text-center text-white">
+        <section id="support" class="bg-blue-600 rounded-xl p-8 text-center text-white">
             <h2 class="text-2xl font-bold mb-3">Still Need Help?</h2>
             <p class="text-blue-100 mb-6">
                 Can't find what you're looking for? Our support team is ready to assist you.

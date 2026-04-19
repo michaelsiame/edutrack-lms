@@ -237,7 +237,7 @@ $msg = $_GET['msg'] ?? '';
                                     <?php if ($course['thumbnail_url']): ?>
                                         <img src="<?= htmlspecialchars($course['thumbnail_url']) ?>" class="w-12 h-12 rounded-lg object-cover" alt="">
                                     <?php else: ?>
-                                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white">
+                                        <div class="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center text-white">
                                             <i class="fas fa-book"></i>
                                         </div>
                                     <?php endif; ?>
@@ -326,7 +326,7 @@ $msg = $_GET['msg'] ?? '';
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         <?php foreach ($courses as $course): ?>
             <div class="bg-white rounded-xl shadow-sm border overflow-hidden group hover:shadow-md transition-shadow">
-                <div class="relative h-36 bg-gradient-to-br from-blue-500 to-purple-600">
+                <div class="relative h-36 bg-blue-500">
                     <?php if ($course['thumbnail_url']): ?>
                         <img src="<?= htmlspecialchars($course['thumbnail_url']) ?>" class="w-full h-full object-cover" alt="">
                     <?php else: ?>

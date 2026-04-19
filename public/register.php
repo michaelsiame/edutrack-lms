@@ -109,7 +109,7 @@ $page_title = "Register - Edutrack computer training college";
 require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
     <!-- Progress Steps -->
     <div class="max-w-2xl mx-auto mb-8">
         <div class="flex items-center justify-center space-x-4">
@@ -458,7 +458,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                     <!-- Submit Button -->
                     <button type="submit" 
                             id="submitBtn"
-                            class="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center">
+                            class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center">
                         <i class="fas fa-user-plus mr-3"></i>
                         <span>Create Account</span>
                         <div id="loadingSpinner" class="hidden ml-3">

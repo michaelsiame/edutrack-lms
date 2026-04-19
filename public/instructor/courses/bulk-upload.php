@@ -549,7 +549,7 @@ Lesson 2: Getting Started | https://youtube.com/watch?v=... | 15"></textarea>
         </div>
 
         <!-- Instructions -->
-        <div class="mt-8 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 text-white">
+        <div class="mt-8 bg-gray-800 rounded-2xl p-6 text-white">
             <h3 class="font-bold text-lg mb-4">
                 <i class="fas fa-lightbulb text-yellow-400 mr-2"></i>Pro Tips
             </h3>

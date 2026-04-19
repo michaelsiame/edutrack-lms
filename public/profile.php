@@ -37,7 +37,7 @@ require_once __DIR__ . '/../src/templates/header.php';
         <!-- Profile Header -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
             <!-- Cover Image -->
-            <div class="bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 h-32 sm:h-48"></div>
+            <div class="bg-primary-700 h-32 sm:h-48"></div>
             
             <!-- Profile Info -->
             <div class="px-6 pb-6">
@@ -252,7 +252,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                 </div>
                 
                 <!-- TEVETA Badge -->
-                <div class="bg-gradient-to-br from-primary-600 to-primary-800 rounded-lg shadow-md p-6 text-center text-white">
+                <div class="bg-primary-600 rounded-lg shadow-md p-6 text-center text-white">
                     <i class="fas fa-certificate text-secondary-500 text-4xl mb-3"></i>
                     <h3 class="font-bold text-lg mb-2">TEVETA REGISTERED</h3>
                     <p class="text-sm text-primary-100 mb-4">

@@ -37,7 +37,7 @@ require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Event Header -->
-<section class="bg-gradient-to-br from-primary-600 via-blue-700 to-purple-800 text-white">
+<section class="bg-primary-600 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <!-- Breadcrumb -->
         <nav class="mb-6 text-sm">
@@ -261,7 +261,7 @@ function copyLink() {
                          alt="<?= htmlspecialchars($related['title']) ?>"
                          class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                     <?php else: ?>
-                    <div class="w-full h-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center">
+                    <div class="w-full h-full bg-primary-500 flex items-center justify-center">
                         <i class="fas fa-calendar-alt text-4xl text-white opacity-50"></i>
                     </div>
                     <?php endif; ?>
@@ -284,7 +284,7 @@ function copyLink() {
 <?php endif; ?>
 
 <!-- CTA Section -->
-<section class="py-16 bg-gradient-to-br from-primary-600 via-blue-700 to-purple-800 text-white">
+<section class="py-16 bg-primary-600 text-white">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="text-3xl font-bold mb-4">Want to Be Part of Our Next Event?</h2>
         <p class="text-xl text-primary-100 mb-8">

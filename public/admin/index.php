@@ -260,7 +260,7 @@ $page_title = 'Admin Dashboard';
         
         <!-- Sidebar -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" 
-               class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static flex flex-col">
+               class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static flex flex-col">
             
             <!-- Logo Section -->
             <div class="flex items-center h-16 px-6 bg-slate-900 border-b border-slate-700">
@@ -369,7 +369,7 @@ $page_title = 'Admin Dashboard';
             <!-- User Profile Summary -->
             <div class="p-4 border-t border-slate-700/50">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                    <div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold">
                         <?= strtoupper(substr($_SESSION['user_first_name'] ?? 'A', 0, 1)) ?>
                     </div>
                     <div class="flex-1 min-w-0">
@@ -564,7 +564,7 @@ $page_title = 'Admin Dashboard';
                                         $initials = strtoupper(substr($enrollment['full_name'] ?? 'U', 0, 1));
                                     ?>
                                         <div class="p-4 flex items-center hover:bg-gray-50/50 transition">
-                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold">
+                                            <div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold">
                                                 <?= $initials ?>
                                             </div>
                                             <div class="ml-4 flex-1">

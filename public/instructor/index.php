@@ -210,7 +210,7 @@ require_once '../../src/templates/instructor-header.php';
             <div class="xl:col-span-2 space-y-8">
 
                 <!-- Quick Actions Bar -->
-                <div class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-6 text-white shadow-lg">
+                <div class="bg-primary-600 rounded-2xl p-6 text-white shadow-lg">
                     <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <a href="<?= url('instructor/courses/create.php') ?>" 
@@ -272,7 +272,7 @@ require_once '../../src/templates/instructor-header.php';
                         <div class="p-6 hover:bg-gray-50/50 transition">
                             <div class="flex flex-col md:flex-row md:items-center gap-4">
                                 <!-- Course Thumbnail -->
-                                <div class="w-full md:w-48 h-28 rounded-xl overflow-hidden bg-gradient-to-br from-primary-400 to-primary-600 flex-shrink-0">
+                                <div class="w-full md:w-48 h-28 rounded-xl overflow-hidden bg-primary-500 flex-shrink-0">
                                     <?php if (!empty($course['thumbnail_url'])): ?>
                                     <img src="<?= htmlspecialchars($course['thumbnail_url']) ?>" 
                                          alt="<?= htmlspecialchars($course['title']) ?>"
@@ -507,7 +507,7 @@ require_once '../../src/templates/instructor-header.php';
                 </div>
 
                 <!-- Quick Links Card -->
-                <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-white">
+                <div class="bg-gray-800 rounded-2xl p-6 text-white">
                     <h3 class="text-lg font-bold mb-4">
                         <i class="fas fa-bolt text-yellow-400 mr-2"></i>Quick Links
                     </h3>

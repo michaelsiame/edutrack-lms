@@ -251,7 +251,7 @@ require_once '../../src/templates/instructor-header.php';
                          alt="<?= htmlspecialchars($course['title']) ?>"
                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <?php else: ?>
-                    <div class="w-full h-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+                    <div class="w-full h-full bg-primary-500 flex items-center justify-center">
                         <i class="fas fa-book text-white text-5xl"></i>
                     </div>
                     <?php endif; ?>

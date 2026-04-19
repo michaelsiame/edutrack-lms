@@ -22,7 +22,7 @@ require_once '../../src/templates/header.php';
 
 <div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+    <div class="bg-blue-600 text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <h1 class="text-4xl font-bold mb-4">Instructor Help Center</h1>
             <p class="text-xl text-blue-100 max-w-3xl">
@@ -944,7 +944,7 @@ require_once '../../src/templates/header.php';
                 </section>
 
                 <!-- Need More Help -->
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-8 text-center text-white">
+                <div class="bg-blue-600 rounded-xl p-8 text-center text-white">
                     <h2 class="text-2xl font-bold mb-3">Still Need Help?</h2>
                     <p class="text-blue-100 mb-6 max-w-2xl mx-auto">
                         Can't find what you're looking for? Our support team is here to help you get the most out of the platform.

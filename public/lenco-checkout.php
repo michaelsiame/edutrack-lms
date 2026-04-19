@@ -71,7 +71,7 @@ require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Header -->
-<section class="bg-gradient-to-r from-primary-900 to-primary-700 text-white py-10">
+<section class="bg-primary-800 text-white py-10">
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex items-center gap-4">
             <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">

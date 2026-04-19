@@ -450,7 +450,7 @@ require_once '../../src/templates/admin-header.php';
                                         <i class="fas fa-star mr-1"></i>Featured
                                     </span>
                                     <?php endif; ?>
-                                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3">
+                                    <div class="absolute bottom-0 left-0 right-0 bg-black/70 p-3">
                                         <p class="text-white text-sm font-medium truncate"><?= htmlspecialchars($title) ?></p>
                                         <p class="text-gray-300 text-xs"><?= $categories[$category] ?? 'Campus' ?></p>
                                     </div>

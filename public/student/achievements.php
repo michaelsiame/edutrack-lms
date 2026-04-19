@@ -250,7 +250,7 @@ require_once '../../src/templates/header.php';
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <?php foreach ($certificates as $cert): ?>
                 <div class="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition">
-                    <div class="h-32 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                    <div class="h-32 bg-green-500 flex items-center justify-center">
                         <i class="fas fa-certificate text-6xl text-white opacity-90"></i>
                     </div>
                     <div class="p-5">

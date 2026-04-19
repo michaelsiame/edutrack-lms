@@ -138,7 +138,7 @@ try {
         <!-- Background Image -->
         <div class="absolute inset-0 bg-cover bg-center" 
              style="background-image: url('<?= $imageUrl ?: '/assets/images/hero-bg-' . ($index + 1) . '.jpg' ?>');">
-            <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
+            <div class="absolute inset-0 bg-black/60"></div>
         </div>
         
         <!-- Content -->
@@ -286,7 +286,7 @@ try {
                             ?>
                                 <div class="group course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                                     <!-- Thumbnail -->
-                                    <div class="relative h-48 bg-gradient-to-br from-<?= $course['category_color'] ?>-50 to-<?= $course['category_color'] ?>-100 overflow-hidden">
+                                    <div class="relative h-48 bg-<?= $course['category_color'] ?>-50 overflow-hidden">
                                         <?php if ($thumbnailUrl): ?>
                                             <img src="<?= htmlspecialchars($thumbnailUrl) ?>" 
                                                  alt="<?= htmlspecialchars($course['title']) ?>" 
@@ -385,13 +385,13 @@ try {
                 ?>
                     <div class="group course-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up animation-delay-<?= $index * 100 ?>">
                         <!-- Thumbnail -->
-                        <div class="relative h-48 bg-gradient-to-br from-<?= $course['category_color'] ?>-50 to-<?= $course['category_color'] ?>-100 overflow-hidden">
+                        <div class="relative h-48 bg-<?= $course['category_color'] ?>-50 overflow-hidden">
                             <?php if ($thumbnailUrl): ?>
                                 <img src="<?= htmlspecialchars($thumbnailUrl) ?>" 
                                      alt="<?= htmlspecialchars($course['title']) ?>" 
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             <?php else: ?>
-                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                                <div class="w-full h-full flex items-center justify-center bg-gray-100">
                                     <i class="fas fa-laptop-code text-4xl text-<?= $course['category_color'] ?>-600"></i>
                                 </div>
                             <?php endif; ?>
@@ -450,7 +450,7 @@ try {
 </section>
 
 <!-- Next Intake Banner -->
-<section class="py-6 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 text-white">
+<section class="py-6 bg-secondary-500 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-4">

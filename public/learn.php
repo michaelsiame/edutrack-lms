@@ -461,7 +461,7 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                             $canJoinNow = ($now >= $canJoinTime && $now <= $endJoinTime && $liveSessionData['status'] !== 'cancelled');
                             $isLive = ($liveSessionData['status'] === 'live');
                         ?>
-                        <div class="bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-200 rounded-lg p-6 mb-6">
+                        <div class="bg-red-50 border-2 border-red-200 rounded-lg p-6 mb-6">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center">
                                     <i class="fas fa-video text-red-600 text-3xl mr-4"></i>

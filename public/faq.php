@@ -115,7 +115,7 @@ $faqCategories = [
             ],
             [
                 'q' => 'What facilities do you have?',
-                'a' => 'Our campus features: (1) Modern computer labs with high-speed internet, (2) Projector-equipped classrooms, (3) Student lounge and study areas, (4) Library with digital resources, and (5) Secure parking.'
+                'a' => 'Our campus features: (1) Computer lab with 20 workstations and high-speed internet, (2) Projector-equipped classroom, (3) Study area with digital resources, and (4) Secure parking. We are currently expanding to accommodate growing demand and welcome investment partnerships.'
             ],
             [
                 'q' => 'What are your operating hours?',
@@ -151,7 +151,7 @@ require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
 <!-- Page Header -->
-<section class="bg-gradient-to-br from-primary-600 via-blue-700 to-purple-800 text-white py-16">
+<section class="bg-primary-600 text-white py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">

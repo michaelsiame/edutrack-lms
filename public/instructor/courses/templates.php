@@ -404,7 +404,7 @@ require_once '../../../src/templates/instructor-header.php';
         </div>
 
         <!-- Custom Template CTA -->
-        <div class="mt-12 bg-gradient-to-r from-primary-600 to-purple-600 rounded-2xl p-8 text-white text-center">
+        <div class="mt-12 bg-primary-600 rounded-2xl p-8 text-white text-center">
             <h3 class="text-2xl font-bold mb-2">Have Your Own Template?</h3>
             <p class="text-white/80 mb-6 max-w-xl mx-auto">
                 Create a course structure that works for you and save it as a reusable template. 

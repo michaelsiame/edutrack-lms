@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php endif; ?>
 
 <!-- Header -->
-<section class="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-12">
+<section class="bg-green-600 text-white py-12">
     <div class="max-w-7xl mx-auto px-4 text-center">
         <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
             <?php if ($isSuccessful): ?>
