@@ -380,19 +380,15 @@ require_once __DIR__ . '/../src/templates/header.php';
 
         <?php else: ?>
             <!-- Empty State -->
-            <div class="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-                    <i class="fas fa-search text-gray-400 text-2xl"></i>
-                </div>
-                <h3 class="text-lg font-medium text-gray-900">No courses found</h3>
-                <p class="mt-1 text-gray-500 max-w-sm mx-auto">
+            <div class="empty-state bg-white rounded-2xl border border-dashed border-gray-300">
+                <i class="fas fa-search empty-state-icon"></i>
+                <h3 class="empty-state-title">No courses found</h3>
+                <p class="empty-state-description">
                     We couldn't find any courses matching your filters. Try removing some filters or search for something else.
                 </p>
-                <div class="mt-6">
-                    <a href="courses.php" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700">
-                        View All Courses
-                    </a>
-                </div>
+                <a href="courses.php" class="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 transition">
+                    <i class="fas fa-list mr-2"></i> View All Courses
+                </a>
             </div>
         <?php endif; ?>
     </div>

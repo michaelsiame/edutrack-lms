@@ -81,95 +81,44 @@
             </a>
             
             <!-- Courses -->
-            <div x-data="{ open: false }">
-                <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
-                    <div class="flex items-center">
-                        <i class="fas fa-book w-6"></i>
-                        <span>Courses</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" :class="open ? 'rotate-180' : ''"></i>
-                </button>
-                <div x-show="open" x-cloak class="ml-6 mt-1 space-y-1">
-                    <a href="<?= url('admin/courses/index.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">All Courses</a>
-                    <a href="<?= url('admin/courses/create.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Create Course</a>
-                    <a href="<?= url('admin/courses/categories.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Categories</a>
-                </div>
-            </div>
+            <a href="<?= url('admin/index.php?page=courses') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                <i class="fas fa-book w-6"></i>
+                <span>Courses</span>
+            </a>
             
             <!-- Users -->
-            <div x-data="{ open: false }">
-                <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
-                    <div class="flex items-center">
-                        <i class="fas fa-users w-6"></i>
-                        <span>Users</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" :class="open ? 'rotate-180' : ''"></i>
-                </button>
-                <div x-show="open" x-cloak class="ml-6 mt-1 space-y-1">
-                    <a href="<?= url('admin/users/index.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">All Users</a>
-                    <a href="<?= url('admin/users/index.php?role=student') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Students</a>
-                    <a href="<?= url('admin/users/index.php?role=instructor') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Instructors</a>
-                    <a href="<?= url('admin/users/create.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Add User</a>
-                </div>
-            </div>
+            <a href="<?= url('admin/index.php?page=users') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                <i class="fas fa-users w-6"></i>
+                <span>Users</span>
+            </a>
             
-            <a href="<?= url('admin/enrollments/index.php') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+            <a href="<?= url('admin/index.php?page=enrollments') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
                 <i class="fas fa-clipboard-list w-6"></i>
                 <span>Enrollments</span>
             </a>
             
             <!-- Payments -->
-            <div x-data="{ open: false }">
-                <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
-                    <div class="flex items-center">
-                        <i class="fas fa-money-bill-wave w-6"></i>
-                        <span>Payments</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" :class="open ? 'rotate-180' : ''"></i>
-                </button>
-                <div x-show="open" x-cloak class="ml-6 mt-1 space-y-1">
-                    <a href="<?= url('admin/payments/index.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">All Payments</a>
-                    <a href="<?= url('admin/payments/verify.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Verify Payments</a>
-                    <a href="<?= url('admin/payments/reports.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Reports</a>
-                </div>
-            </div>
+            <a href="<?= url('admin/index.php?page=financials') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                <i class="fas fa-money-bill-wave w-6"></i>
+                <span>Financials</span>
+            </a>
             
             <!-- Certificates -->
-            <div x-data="{ open: false }">
-                <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
-                    <div class="flex items-center">
-                        <i class="fas fa-certificate w-6"></i>
-                        <span>Certificates</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" :class="open ? 'rotate-180' : ''"></i>
-                </button>
-                <div x-show="open" x-cloak class="ml-6 mt-1 space-y-1">
-                    <a href="<?= url('admin/certificates/index.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">All Certificates</a>
-                    <a href="<?= url('admin/certificates/issue.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Issue Certificate</a>
-                    <a href="<?= url('admin/certificates/verify.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Verify</a>
-                </div>
-            </div>
+            <a href="<?= url('admin/index.php?page=certificates') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                <i class="fas fa-certificate w-6"></i>
+                <span>Certificates</span>
+            </a>
             
-            <a href="<?= url('admin/analytics/index.php') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
-                <i class="fas fa-chart-line w-6"></i>
-                <span>Analytics</span>
+            <a href="<?= url('admin/events.php') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                <i class="fas fa-calendar-alt w-6"></i>
+                <span>Events</span>
             </a>
             
             <!-- Settings -->
-            <div x-data="{ open: false }">
-                <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
-                    <div class="flex items-center">
-                        <i class="fas fa-cog w-6"></i>
-                        <span>Settings</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-xs transition-transform" :class="open ? 'rotate-180' : ''"></i>
-                </button>
-                <div x-show="open" x-cloak class="ml-6 mt-1 space-y-1">
-                    <a href="<?= url('admin/settings/index.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">General</a>
-                    <a href="<?= url('admin/settings/payment-gateways.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Payment Gateways</a>
-                    <a href="<?= url('admin/settings/email.php') ?>" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded">Email Settings</a>
-                </div>
-            </div>
+            <a href="<?= url('admin/index.php?page=settings') ?>" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                <i class="fas fa-cog w-6"></i>
+                <span>Settings</span>
+            </a>
             
             <hr class="my-4 border-gray-700">
             

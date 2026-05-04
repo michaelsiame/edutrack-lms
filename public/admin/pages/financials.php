@@ -5,97 +5,112 @@
  * Note: AJAX and POST handlers are processed in index.php and handlers/financials_handler.php
  */
 
-// Pagination
-$page_num = max(1, (int)($_GET['p'] ?? 1));
-$per_page = 15;
-$offset = ($page_num - 1) * $per_page;
+// Initialize defaults
+$payments = [];
+$totalPayments = 0;
+$totalPages = 0;
+$totalRevenue = ['total' => 0];
+$pendingPayments = ['total' => 0, 'count' => 0];
+$thisMonthRevenue = ['total' => 0];
+$lastMonthRevenue = ['total' => 0];
+$refundedTotal = ['total' => 0];
+$chartData = [];
 
-// Filters
-$statusFilter = $_GET['status'] ?? '';
-$typeFilter = $_GET['type'] ?? '';
-$dateFrom = $_GET['date_from'] ?? '';
-$dateTo = $_GET['date_to'] ?? '';
-$search = $_GET['search'] ?? '';
+try {
+    // Pagination
+    $page_num = max(1, (int)($_GET['p'] ?? 1));
+    $per_page = 15;
+    $offset = ($page_num - 1) * $per_page;
 
-// Build query
-$sql = "
-    SELECT
-        p.payment_id,
-        p.amount,
-        p.currency,
-        p.payment_status,
-        p.payment_type,
-        p.transaction_id as reference,
-        p.notes,
-        p.payment_date,
-        p.created_at,
-        CONCAT(u.first_name, ' ', u.last_name) as full_name,
-        u.email,
-        c.title as course_title,
-        pm.method_name as payment_method
-    FROM payments p
-    LEFT JOIN users u ON p.student_id = u.id
-    LEFT JOIN courses c ON p.course_id = c.id
-    LEFT JOIN payment_methods pm ON p.payment_method_id = pm.payment_method_id
-    WHERE 1=1
-";
-$countSql = "SELECT COUNT(*) FROM payments p LEFT JOIN users u ON p.student_id = u.id WHERE 1=1";
-$params = [];
+    // Filters
+    $statusFilter = $_GET['status'] ?? '';
+    $typeFilter = $_GET['type'] ?? '';
+    $dateFrom = $_GET['date_from'] ?? '';
+    $dateTo = $_GET['date_to'] ?? '';
+    $search = $_GET['search'] ?? '';
 
-if ($statusFilter) {
-    $sql .= " AND p.payment_status = ?";
-    $countSql .= " AND p.payment_status = ?";
-    $params[] = $statusFilter;
+    // Build query
+    $sql = "
+        SELECT
+            p.payment_id,
+            p.amount,
+            p.currency,
+            p.payment_status,
+            p.payment_type,
+            p.transaction_id as reference,
+            p.notes,
+            p.payment_date,
+            p.created_at,
+            CONCAT(u.first_name, ' ', u.last_name) as full_name,
+            u.email,
+            c.title as course_title,
+            pm.method_name as payment_method
+        FROM payments p
+        LEFT JOIN users u ON p.student_id = u.id
+        LEFT JOIN courses c ON p.course_id = c.id
+        LEFT JOIN payment_methods pm ON p.payment_method_id = pm.payment_method_id
+        WHERE 1=1
+    ";
+    $countSql = "SELECT COUNT(*) FROM payments p LEFT JOIN users u ON p.student_id = u.id WHERE 1=1";
+    $params = [];
+
+    if ($statusFilter) {
+        $sql .= " AND p.payment_status = ?";
+        $countSql .= " AND p.payment_status = ?";
+        $params[] = $statusFilter;
+    }
+
+    if ($typeFilter) {
+        $sql .= " AND p.payment_type = ?";
+        $countSql .= " AND p.payment_type = ?";
+        $params[] = $typeFilter;
+    }
+
+    if ($dateFrom) {
+        $sql .= " AND DATE(p.created_at) >= ?";
+        $countSql .= " AND DATE(p.created_at) >= ?";
+        $params[] = $dateFrom;
+    }
+
+    if ($dateTo) {
+        $sql .= " AND DATE(p.created_at) <= ?";
+        $countSql .= " AND DATE(p.created_at) <= ?";
+        $params[] = $dateTo;
+    }
+
+    if ($search) {
+        $sql .= " AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR p.transaction_id LIKE ?)";
+        $countSql .= " AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR p.transaction_id LIKE ?)";
+        $params = array_merge($params, ["%$search%", "%$search%", "%$search%", "%$search%"]);
+    }
+
+    $totalPayments = $db->fetchColumn($countSql, $params) ?: 0;
+    $totalPages = ceil($totalPayments / $per_page);
+
+    $sql .= " ORDER BY p.created_at DESC LIMIT $per_page OFFSET $offset";
+    $payments = $db->fetchAll($sql, $params) ?: [];
+
+    // Statistics
+    $totalRevenue = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Completed'") ?: ['total' => 0];
+    $pendingPayments = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total, COUNT(*) as count FROM payments WHERE payment_status = 'Pending'") ?: ['total' => 0, 'count' => 0];
+    $thisMonthRevenue = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Completed' AND MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())") ?: ['total' => 0];
+    $lastMonthRevenue = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Completed' AND MONTH(created_at) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH)) AND YEAR(created_at) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))") ?: ['total' => 0];
+    $refundedTotal = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Refunded'") ?: ['total' => 0];
+
+    // Chart data - last 6 months
+    $chartData = $db->fetchAll("
+        SELECT
+            DATE_FORMAT(created_at, '%Y-%m') as month,
+            COALESCE(SUM(CASE WHEN payment_status = 'Completed' THEN amount ELSE 0 END), 0) as revenue,
+            COUNT(CASE WHEN payment_status = 'Completed' THEN 1 END) as count
+        FROM payments
+        WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+        GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+        ORDER BY month ASC
+    ") ?: [];
+} catch (Throwable $e) {
+    error_log("Admin financials page error: " . $e->getMessage());
 }
-
-if ($typeFilter) {
-    $sql .= " AND p.payment_type = ?";
-    $countSql .= " AND p.payment_type = ?";
-    $params[] = $typeFilter;
-}
-
-if ($dateFrom) {
-    $sql .= " AND DATE(p.created_at) >= ?";
-    $countSql .= " AND DATE(p.created_at) >= ?";
-    $params[] = $dateFrom;
-}
-
-if ($dateTo) {
-    $sql .= " AND DATE(p.created_at) <= ?";
-    $countSql .= " AND DATE(p.created_at) <= ?";
-    $params[] = $dateTo;
-}
-
-if ($search) {
-    $sql .= " AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR p.transaction_id LIKE ?)";
-    $countSql .= " AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR p.transaction_id LIKE ?)";
-    $params = array_merge($params, ["%$search%", "%$search%", "%$search%", "%$search%"]);
-}
-
-$totalPayments = $db->fetchColumn($countSql, $params);
-$totalPages = ceil($totalPayments / $per_page);
-
-$sql .= " ORDER BY p.created_at DESC LIMIT $per_page OFFSET $offset";
-$payments = $db->fetchAll($sql, $params);
-
-// Statistics
-$totalRevenue = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Completed'");
-$pendingPayments = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total, COUNT(*) as count FROM payments WHERE payment_status = 'Pending'");
-$thisMonthRevenue = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Completed' AND MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())");
-$lastMonthRevenue = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Completed' AND MONTH(created_at) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH)) AND YEAR(created_at) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))");
-$refundedTotal = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Refunded'");
-
-// Chart data - last 6 months
-$chartData = $db->fetchAll("
-    SELECT
-        DATE_FORMAT(created_at, '%Y-%m') as month,
-        COALESCE(SUM(CASE WHEN payment_status = 'Completed' THEN amount ELSE 0 END), 0) as revenue,
-        COUNT(CASE WHEN payment_status = 'Completed' THEN 1 END) as count
-    FROM payments
-    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-    ORDER BY month ASC
-");
 
 // Get supporting data
 $courses = $db->fetchAll("SELECT id, title FROM courses ORDER BY title");

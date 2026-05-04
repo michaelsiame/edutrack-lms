@@ -5,80 +5,95 @@
  * Note: AJAX and POST handlers are processed in index.php and handlers/courses_handler.php
  */
 
-// Pagination
-$page_num = max(1, (int)($_GET['p'] ?? 1));
-$per_page = 12;
-$offset = ($page_num - 1) * $per_page;
+// Initialize defaults
+$courses = [];
+$totalCourses = 0;
+$totalPages = 0;
+$instructors = [];
+$categories = [];
+$publishedCourses = 0;
+$draftCourses = 0;
+$totalEnrollmentsAll = 0;
+$featuredCourses = 0;
 
-// Filters
-$search = $_GET['search'] ?? '';
-$categoryFilter = $_GET['category'] ?? '';
-$statusFilter = $_GET['status'] ?? '';
-$levelFilter = $_GET['level'] ?? '';
-$view = $_GET['view'] ?? 'grid';
+try {
+    // Pagination
+    $page_num = max(1, (int)($_GET['p'] ?? 1));
+    $per_page = 12;
+    $offset = ($page_num - 1) * $per_page;
 
-$sql = "
-    SELECT c.*,
-           CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
-           cat.name as category_name,
-           (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrollment_count,
-           (SELECT COUNT(*) FROM modules WHERE course_id = c.id) as module_count
-    FROM courses c
-    LEFT JOIN instructors i ON c.instructor_id = i.id
-    LEFT JOIN users u ON i.user_id = u.id
-    LEFT JOIN course_categories cat ON c.category_id = cat.id
-    WHERE 1=1
-";
-$countSql = "SELECT COUNT(*) FROM courses c WHERE 1=1";
-$params = [];
+    // Filters
+    $search = $_GET['search'] ?? '';
+    $categoryFilter = $_GET['category'] ?? '';
+    $statusFilter = $_GET['status'] ?? '';
+    $levelFilter = $_GET['level'] ?? '';
+    $view = $_GET['view'] ?? 'grid';
 
-if ($search) {
-    $sql .= " AND (c.title LIKE ? OR c.description LIKE ?)";
-    $countSql .= " AND (c.title LIKE ? OR c.description LIKE ?)";
-    $params[] = "%$search%";
-    $params[] = "%$search%";
+    $sql = "
+        SELECT c.*,
+               CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
+               cat.name as category_name,
+               (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrollment_count,
+               (SELECT COUNT(*) FROM modules WHERE course_id = c.id) as module_count
+        FROM courses c
+        LEFT JOIN instructors i ON c.instructor_id = i.id
+        LEFT JOIN users u ON i.user_id = u.id
+        LEFT JOIN course_categories cat ON c.category_id = cat.id
+        WHERE 1=1
+    ";
+    $countSql = "SELECT COUNT(*) FROM courses c WHERE 1=1";
+    $params = [];
+
+    if ($search) {
+        $sql .= " AND (c.title LIKE ? OR c.description LIKE ?)";
+        $countSql .= " AND (c.title LIKE ? OR c.description LIKE ?)";
+        $params[] = "%$search%";
+        $params[] = "%$search%";
+    }
+
+    if ($categoryFilter) {
+        $sql .= " AND c.category_id = ?";
+        $countSql .= " AND c.category_id = ?";
+        $params[] = (int)$categoryFilter;
+    }
+
+    if ($statusFilter) {
+        $sql .= " AND c.status = ?";
+        $countSql .= " AND c.status = ?";
+        $params[] = $statusFilter;
+    }
+
+    if ($levelFilter) {
+        $sql .= " AND c.level = ?";
+        $countSql .= " AND c.level = ?";
+        $params[] = $levelFilter;
+    }
+
+    $totalCourses = $db->fetchColumn($countSql, $params) ?: 0;
+    $totalPages = ceil($totalCourses / $per_page);
+
+    $sql .= " ORDER BY c.created_at DESC LIMIT $per_page OFFSET $offset";
+    $courses = $db->fetchAll($sql, $params) ?: [];
+
+    // Get instructors and categories
+    $instructors = $db->fetchAll("
+        SELECT u.id, CONCAT(u.first_name, ' ', u.last_name) as full_name
+        FROM users u
+        JOIN user_roles ur ON u.id = ur.user_id
+        JOIN roles r ON ur.role_id = r.id
+        WHERE r.role_name = 'Instructor'
+        ORDER BY u.first_name, u.last_name
+    ") ?: [];
+    $categories = $db->fetchAll("SELECT id, name FROM course_categories ORDER BY name") ?: [];
+
+    // Stats
+    $publishedCourses = $db->fetchColumn("SELECT COUNT(*) FROM courses WHERE status = 'published'") ?: 0;
+    $draftCourses = $db->fetchColumn("SELECT COUNT(*) FROM courses WHERE status = 'draft'") ?: 0;
+    $totalEnrollmentsAll = $db->fetchColumn("SELECT COUNT(*) FROM enrollments") ?: 0;
+    $featuredCourses = $db->fetchColumn("SELECT COUNT(*) FROM courses WHERE is_featured = 1") ?: 0;
+} catch (Throwable $e) {
+    error_log("Admin courses page error: " . $e->getMessage());
 }
-
-if ($categoryFilter) {
-    $sql .= " AND c.category_id = ?";
-    $countSql .= " AND c.category_id = ?";
-    $params[] = (int)$categoryFilter;
-}
-
-if ($statusFilter) {
-    $sql .= " AND c.status = ?";
-    $countSql .= " AND c.status = ?";
-    $params[] = $statusFilter;
-}
-
-if ($levelFilter) {
-    $sql .= " AND c.level = ?";
-    $countSql .= " AND c.level = ?";
-    $params[] = $levelFilter;
-}
-
-$totalCourses = $db->fetchColumn($countSql, $params);
-$totalPages = ceil($totalCourses / $per_page);
-
-$sql .= " ORDER BY c.created_at DESC LIMIT $per_page OFFSET $offset";
-$courses = $db->fetchAll($sql, $params);
-
-// Get instructors and categories
-$instructors = $db->fetchAll("
-    SELECT u.id, CONCAT(u.first_name, ' ', u.last_name) as full_name
-    FROM users u
-    JOIN user_roles ur ON u.id = ur.user_id
-    JOIN roles r ON ur.role_id = r.id
-    WHERE r.role_name = 'Instructor'
-    ORDER BY u.first_name, u.last_name
-");
-$categories = $db->fetchAll("SELECT id, name FROM course_categories ORDER BY name");
-
-// Stats
-$publishedCourses = $db->fetchColumn("SELECT COUNT(*) FROM courses WHERE status = 'published'");
-$draftCourses = $db->fetchColumn("SELECT COUNT(*) FROM courses WHERE status = 'draft'");
-$totalEnrollmentsAll = $db->fetchColumn("SELECT COUNT(*) FROM enrollments");
-$featuredCourses = $db->fetchColumn("SELECT COUNT(*) FROM courses WHERE is_featured = 1");
 
 $msg = $_GET['msg'] ?? '';
 ?>

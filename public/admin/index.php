@@ -167,58 +167,101 @@ if ($page === 'financials') {
 // FETCH DASHBOARD STATS
 // ============================================
 
-// Count students (users with role_id=4 which is 'Student')
-$totalStudents = $db->fetchColumn("
-    SELECT COUNT(DISTINCT u.id)
-    FROM users u
-    JOIN user_roles ur ON u.id = ur.user_id
-    JOIN roles r ON ur.role_id = r.id
-    WHERE r.role_name = 'Student'
-") ?: 0;
+// Initialize defaults
+$totalStudents = 0;
+$totalInstructors = 0;
+$activeCourses = 0;
+$totalEnrollments = 0;
+$pendingAmount = 0;
+$monthlyEnrollments = [];
+$recentActivity = [];
+$completionStats = ['completed' => 0, 'in_progress' => 0, 'not_started' => 0];
 
-// Count instructors (role_id=3 which is 'Instructor')
-$totalInstructors = $db->fetchColumn("
-    SELECT COUNT(DISTINCT u.id)
-    FROM users u
-    JOIN user_roles ur ON u.id = ur.user_id
-    JOIN roles r ON ur.role_id = r.id
-    WHERE r.role_name = 'Instructor'
-") ?: 0;
+try {
+    // Count students (users with role_id=4 which is 'Student')
+    $totalStudents = $db->fetchColumn("
+        SELECT COUNT(DISTINCT u.id)
+        FROM users u
+        JOIN user_roles ur ON u.id = ur.user_id
+        JOIN roles r ON ur.role_id = r.id
+        WHERE r.role_name = 'Student'
+    ") ?: 0;
+} catch (Throwable $e) {
+    error_log("Admin dashboard - student count error: " . $e->getMessage());
+}
 
-$activeCourses = $db->count('courses', "status = 'published'");
-$totalEnrollments = $db->count('enrollments');
+try {
+    // Count instructors (role_id=3 which is 'Instructor')
+    $totalInstructors = $db->fetchColumn("
+        SELECT COUNT(DISTINCT u.id)
+        FROM users u
+        JOIN user_roles ur ON u.id = ur.user_id
+        JOIN roles r ON ur.role_id = r.id
+        WHERE r.role_name = 'Instructor'
+    ") ?: 0;
+} catch (Throwable $e) {
+    error_log("Admin dashboard - instructor count error: " . $e->getMessage());
+}
 
-// Pending payments from payments table
-$pendingPayments = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Pending'");
-$pendingAmount = $pendingPayments['total'] ?? 0;
+try {
+    $activeCourses = $db->count('courses', "status = 'published'") ?: 0;
+} catch (Throwable $e) {
+    error_log("Admin dashboard - courses error: " . $e->getMessage());
+}
 
-// Get monthly enrollment data for chart
-$monthlyEnrollments = $db->fetchAll("
-    SELECT DATE_FORMAT(enrolled_at, '%Y-%m') as month, COUNT(*) as count
-    FROM enrollments
-    WHERE enrolled_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-    GROUP BY DATE_FORMAT(enrolled_at, '%Y-%m')
-    ORDER BY month ASC
-");
+try {
+    $totalEnrollments = $db->count('enrollments') ?: 0;
+} catch (Throwable $e) {
+    error_log("Admin dashboard - enrollments error: " . $e->getMessage());
+}
 
-// Get recent activity
-$recentActivity = $db->fetchAll("
-    SELECT 'enrollment' as type, e.enrolled_at as date, CONCAT(u.first_name, ' ', u.last_name) as user_name, c.title as item_name
-    FROM enrollments e
-    JOIN users u ON e.user_id = u.id
-    JOIN courses c ON e.course_id = c.id
-    ORDER BY e.enrolled_at DESC
-    LIMIT 5
-");
+try {
+    // Pending payments from payments table
+    $pendingPayments = $db->fetchOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE payment_status = 'Pending'");
+    $pendingAmount = $pendingPayments['total'] ?? 0;
+} catch (Throwable $e) {
+    error_log("Admin dashboard - payments error: " . $e->getMessage());
+}
 
-// Get course completion stats
-$completionStats = $db->fetchOne("
-    SELECT 
-        COUNT(CASE WHEN progress = 100 THEN 1 END) as completed,
-        COUNT(CASE WHEN progress > 0 AND progress < 100 THEN 1 END) as in_progress,
-        COUNT(CASE WHEN progress = 0 THEN 1 END) as not_started
-    FROM enrollments
-");
+try {
+    // Get monthly enrollment data for chart
+    $monthlyEnrollments = $db->fetchAll("
+        SELECT DATE_FORMAT(enrolled_at, '%Y-%m') as month, COUNT(*) as count
+        FROM enrollments
+        WHERE enrolled_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+        GROUP BY DATE_FORMAT(enrolled_at, '%Y-%m')
+        ORDER BY month ASC
+    ") ?: [];
+} catch (Throwable $e) {
+    error_log("Admin dashboard - monthly enrollments error: " . $e->getMessage());
+}
+
+try {
+    // Get recent activity
+    $recentActivity = $db->fetchAll("
+        SELECT 'enrollment' as type, e.enrolled_at as date, CONCAT(u.first_name, ' ', u.last_name) as user_name, c.title as item_name
+        FROM enrollments e
+        JOIN users u ON e.user_id = u.id
+        JOIN courses c ON e.course_id = c.id
+        ORDER BY e.enrolled_at DESC
+        LIMIT 5
+    ") ?: [];
+} catch (Throwable $e) {
+    error_log("Admin dashboard - recent activity error: " . $e->getMessage());
+}
+
+try {
+    // Get course completion stats
+    $completionStats = $db->fetchOne("
+        SELECT 
+            COUNT(CASE WHEN progress = 100 THEN 1 END) as completed,
+            COUNT(CASE WHEN progress > 0 AND progress < 100 THEN 1 END) as in_progress,
+            COUNT(CASE WHEN progress = 0 THEN 1 END) as not_started
+        FROM enrollments
+    ") ?: ['completed' => 0, 'in_progress' => 0, 'not_started' => 0];
+} catch (Throwable $e) {
+    error_log("Admin dashboard - completion stats error: " . $e->getMessage());
+}
 
 $page_title = 'Admin Dashboard';
 ?>

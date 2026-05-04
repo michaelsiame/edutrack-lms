@@ -10,67 +10,81 @@ $page_num = max(1, (int)($_GET['p'] ?? 1));
 $per_page = 15;
 $offset = ($page_num - 1) * $per_page;
 
+// Initialize defaults
+$users = [];
+$totalUsers = 0;
+$totalPages = 0;
+$roles = [];
+$totalStudents = 0;
+$totalInstructors = 0;
+$activeUsers = 0;
+$newThisMonth = 0;
+
 // Fetch users with their roles
-$search = $_GET['search'] ?? '';
-$roleFilter = $_GET['role'] ?? '';
-$statusFilter = $_GET['status'] ?? '';
+try {
+    $search = $_GET['search'] ?? '';
+    $roleFilter = $_GET['role'] ?? '';
+    $statusFilter = $_GET['status'] ?? '';
 
-$sql = "
-    SELECT
-        u.id,
-        u.username,
-        u.first_name,
-        u.last_name,
-        CONCAT(u.first_name, ' ', u.last_name) as full_name,
-        u.email,
-        u.phone,
-        u.status,
-        u.created_at,
-        u.last_login,
-        r.role_name,
-        r.id as role_id,
-        (SELECT COUNT(*) FROM enrollments WHERE user_id = u.id) as enrollment_count
-    FROM users u
-    LEFT JOIN user_roles ur ON u.id = ur.user_id
-    LEFT JOIN roles r ON ur.role_id = r.id
-    WHERE 1=1
-";
-$countSql = "SELECT COUNT(DISTINCT u.id) FROM users u LEFT JOIN user_roles ur ON u.id = ur.user_id LEFT JOIN roles r ON ur.role_id = r.id WHERE 1=1";
-$params = [];
+    $sql = "
+        SELECT
+            u.id,
+            u.username,
+            u.first_name,
+            u.last_name,
+            CONCAT(u.first_name, ' ', u.last_name) as full_name,
+            u.email,
+            u.phone,
+            u.status,
+            u.created_at,
+            u.last_login,
+            r.role_name,
+            r.id as role_id,
+            (SELECT COUNT(*) FROM enrollments WHERE user_id = u.id) as enrollment_count
+        FROM users u
+        LEFT JOIN user_roles ur ON u.id = ur.user_id
+        LEFT JOIN roles r ON ur.role_id = r.id
+        WHERE 1=1
+    ";
+    $countSql = "SELECT COUNT(DISTINCT u.id) FROM users u LEFT JOIN user_roles ur ON u.id = ur.user_id LEFT JOIN roles r ON ur.role_id = r.id WHERE 1=1";
+    $params = [];
 
-if ($search) {
-    $searchCondition = " AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)";
-    $sql .= $searchCondition;
-    $countSql .= $searchCondition;
-    $params = array_merge($params, ["%$search%", "%$search%", "%$search%", "%$search%"]);
+    if ($search) {
+        $searchCondition = " AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)";
+        $sql .= $searchCondition;
+        $countSql .= $searchCondition;
+        $params = array_merge($params, ["%$search%", "%$search%", "%$search%", "%$search%"]);
+    }
+
+    if ($roleFilter) {
+        $sql .= " AND r.role_name = ?";
+        $countSql .= " AND r.role_name = ?";
+        $params[] = $roleFilter;
+    }
+
+    if ($statusFilter) {
+        $sql .= " AND u.status = ?";
+        $countSql .= " AND u.status = ?";
+        $params[] = $statusFilter;
+    }
+
+    $totalUsers = $db->fetchColumn($countSql, $params) ?: 0;
+    $totalPages = ceil($totalUsers / $per_page);
+
+    $sql .= " ORDER BY u.created_at DESC LIMIT $per_page OFFSET $offset";
+    $users = $db->fetchAll($sql, $params) ?: [];
+
+    // Get available roles for the dropdown
+    $roles = $db->fetchAll("SELECT id, role_name FROM roles ORDER BY id") ?: [];
+
+    // Stats
+    $totalStudents = $db->fetchColumn("SELECT COUNT(DISTINCT u.id) FROM users u JOIN user_roles ur ON u.id = ur.user_id JOIN roles r ON ur.role_id = r.id WHERE r.role_name = 'Student'") ?: 0;
+    $totalInstructors = $db->fetchColumn("SELECT COUNT(DISTINCT u.id) FROM users u JOIN user_roles ur ON u.id = ur.user_id JOIN roles r ON ur.role_id = r.id WHERE r.role_name = 'Instructor'") ?: 0;
+    $activeUsers = $db->fetchColumn("SELECT COUNT(*) FROM users WHERE status = 'active'") ?: 0;
+    $newThisMonth = $db->fetchColumn("SELECT COUNT(*) FROM users WHERE MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())") ?: 0;
+} catch (Throwable $e) {
+    error_log("Admin users page error: " . $e->getMessage());
 }
-
-if ($roleFilter) {
-    $sql .= " AND r.role_name = ?";
-    $countSql .= " AND r.role_name = ?";
-    $params[] = $roleFilter;
-}
-
-if ($statusFilter) {
-    $sql .= " AND u.status = ?";
-    $countSql .= " AND u.status = ?";
-    $params[] = $statusFilter;
-}
-
-$totalUsers = $db->fetchColumn($countSql, $params);
-$totalPages = ceil($totalUsers / $per_page);
-
-$sql .= " ORDER BY u.created_at DESC LIMIT $per_page OFFSET $offset";
-$users = $db->fetchAll($sql, $params);
-
-// Get available roles for the dropdown
-$roles = $db->fetchAll("SELECT id, role_name FROM roles ORDER BY id");
-
-// Stats
-$totalStudents = $db->fetchColumn("SELECT COUNT(DISTINCT u.id) FROM users u JOIN user_roles ur ON u.id = ur.user_id JOIN roles r ON ur.role_id = r.id WHERE r.role_name = 'Student'");
-$totalInstructors = $db->fetchColumn("SELECT COUNT(DISTINCT u.id) FROM users u JOIN user_roles ur ON u.id = ur.user_id JOIN roles r ON ur.role_id = r.id WHERE r.role_name = 'Instructor'");
-$activeUsers = $db->fetchColumn("SELECT COUNT(*) FROM users WHERE status = 'active'");
-$newThisMonth = $db->fetchColumn("SELECT COUNT(*) FROM users WHERE MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())");
 
 $msg = $_GET['msg'] ?? '';
 ?>
@@ -288,11 +302,14 @@ $msg = $_GET['msg'] ?? '';
                     <?php endforeach; ?>
                     <?php if (empty($users)): ?>
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center">
-                                <div class="text-gray-400">
-                                    <i class="fas fa-users text-4xl mb-3"></i>
-                                    <p class="text-lg font-medium">No users found</p>
-                                    <p class="text-sm">Try adjusting your search or filter criteria</p>
+                            <td colspan="7" class="px-6 py-12">
+                                <div class="empty-state">
+                                    <i class="fas fa-users empty-state-icon"></i>
+                                    <h3 class="empty-state-title">No users found</h3>
+                                    <p class="empty-state-description">Try adjusting your search or filter criteria, or add a new user to get started.</p>
+                                    <button onclick="openAddModal()" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                        <i class="fas fa-user-plus mr-2"></i> Add First User
+                                    </button>
                                 </div>
                             </td>
                         </tr>

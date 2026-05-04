@@ -370,29 +370,8 @@ function getFlash($key = 'message') {
     $flash = flash($key);
     
     if ($flash) {
-        $alertClass = [
-            'success' => 'bg-green-50 border-green-500 text-green-800',
-            'error' => 'bg-red-50 border-red-500 text-red-800',
-            'warning' => 'bg-yellow-50 border-yellow-500 text-yellow-800',
-            'info' => 'bg-blue-50 border-blue-500 text-blue-800',
-        ];
-        
-        $iconClass = [
-            'success' => 'fa-check-circle',
-            'error' => 'fa-exclamation-circle',
-            'warning' => 'fa-exclamation-triangle',
-            'info' => 'fa-info-circle',
-        ];
-        
-        $class = $alertClass[$flash['type']] ?? $alertClass['info'];
-        $icon = $iconClass[$flash['type']] ?? $iconClass['info'];
-        
-        return '<div class="' . $class . ' border-l-4 p-4 mb-4 rounded">
-                    <div class="flex items-center">
-                        <i class="fas ' . $icon . ' mr-3"></i>
-                        <p>' . sanitize($flash['message']) . '</p>
-                    </div>
-                </div>';
+        // Output toast-compatible data attributes
+        return '<div data-flash-message="' . htmlspecialchars($flash['message'], ENT_QUOTES) . '" data-type="' . $flash['type'] . '" style="display:none;"></div>';
     }
     
     return '';
