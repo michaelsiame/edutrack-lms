@@ -2,8 +2,8 @@
 -- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: May 05, 2026 at 07:14 AM
+-- Host: 127.0.0.1:3306
+-- Generation Time: May 05, 2026 at 09:17 AM
 -- Server version: 11.8.6-MariaDB-log
 -- PHP Version: 7.2.34
 
@@ -191,11 +191,15 @@ INSERT INTO `badges` (`badge_id`, `badge_name`, `description`, `badge_icon_url`,
 
 CREATE TABLE `certificates` (
   `certificate_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `course_id` int(11) DEFAULT NULL,
   `enrollment_id` int(11) NOT NULL,
   `certificate_number` varchar(50) NOT NULL,
   `issued_date` date NOT NULL,
   `certificate_url` varchar(255) DEFAULT NULL,
   `verification_code` varchar(100) DEFAULT NULL,
+  `final_score` decimal(5,2) DEFAULT 0.00,
+  `issued_at` datetime DEFAULT NULL,
   `is_verified` tinyint(1) DEFAULT 1,
   `expiry_date` date DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -205,13 +209,13 @@ CREATE TABLE `certificates` (
 -- Dumping data for table `certificates`
 --
 
-INSERT INTO `certificates` (`certificate_id`, `enrollment_id`, `certificate_number`, `issued_date`, `certificate_url`, `verification_code`, `is_verified`, `expiry_date`, `created_at`) VALUES
-(1, 1, 'EDTRK-2025-000001', '2025-04-10', NULL, 'VRF-001-ABCD1234', 1, NULL, '2025-11-18 22:21:01'),
-(2, 4, 'EDTRK-2025-000002', '2025-04-25', NULL, 'VRF-002-EFGH5678', 1, NULL, '2025-11-18 22:21:01'),
-(3, 7, 'EDTRK-2025-000003', '2025-04-08', NULL, 'VRF-003-IJKL9012', 1, NULL, '2025-11-18 22:21:01'),
-(4, 9, 'EDTRK-2025-000004', '2025-04-12', NULL, 'VRF-004-MNOP3456', 1, NULL, '2025-11-18 22:21:01'),
-(5, 10, 'EDTRK-2025-000005', '2025-04-05', NULL, 'VRF-005-QRST7890', 1, NULL, '2025-11-18 22:21:01'),
-(6, 21, 'EDTRK-2025-000006', '2025-03-15', NULL, 'VRF-006-UVWX1234', 1, NULL, '2025-11-18 22:21:01');
+INSERT INTO `certificates` (`certificate_id`, `user_id`, `course_id`, `enrollment_id`, `certificate_number`, `issued_date`, `certificate_url`, `verification_code`, `final_score`, `issued_at`, `is_verified`, `expiry_date`, `created_at`) VALUES
+(1, 8, 1, 1, 'EDTRK-2025-000001', '2025-04-10', NULL, 'VRF-001-ABCD1234', 0.00, '2025-04-10 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(2, 9, 7, 4, 'EDTRK-2025-000002', '2025-04-25', NULL, 'VRF-002-EFGH5678', 0.00, '2025-04-25 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(3, 10, 18, 7, 'EDTRK-2025-000003', '2025-04-08', NULL, 'VRF-003-IJKL9012', 0.00, '2025-04-08 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(4, 10, 1, 9, 'EDTRK-2025-000004', '2025-04-12', NULL, 'VRF-004-MNOP3456', 0.00, '2025-04-12 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(5, 11, 5, 10, 'EDTRK-2025-000005', '2025-04-05', NULL, 'VRF-005-QRST7890', 0.00, '2025-04-05 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(6, 15, 3, 21, 'EDTRK-2025-000006', '2025-03-15', NULL, 'VRF-006-UVWX1234', 0.00, '2025-03-15 00:00:00', 1, NULL, '2025-11-18 22:21:01');
 
 -- --------------------------------------------------------
 
@@ -678,7 +682,6 @@ INSERT INTO `enrollment_payment_plans` (`id`, `enrollment_id`, `user_id`, `cours
 (28, 29, 19, 3, 850.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
 (29, 30, 26, 1, 2500.00, 0.00, 'ZMW', 'partial', NULL, NULL, '2025-12-09 13:26:07', '2025-12-09 13:26:07'),
 (32, 31, 39, 1, 2500.00, 1000.00, 'ZMW', 'partial', NULL, 'Payment plan for Microsoft Office Suite', '2025-12-28 18:42:19', '2025-12-28 18:42:19'),
-(33, 31, 43, 1, 2500.00, 0.00, 'ZMW', 'partial', NULL, 'Betty - Tuition Plan', '2026-01-09 04:40:44', '2026-01-09 04:40:44'),
 (34, 32, 40, 1, 2500.00, 0.00, 'ZMW', 'partial', NULL, 'Sharon - Tuition Plan', '2026-01-09 04:40:44', '2026-01-09 04:40:44'),
 (35, 34, 43, 1, 2500.00, 500.00, 'ZMW', 'partial', NULL, 'Betty - Tuition Plan', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (36, 35, 40, 1, 2500.00, 500.00, 'ZMW', 'partial', NULL, 'Sharon - Tuition Plan', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
@@ -1800,7 +1803,6 @@ CREATE TABLE `quiz_answers` (
 --
 
 CREATE TABLE `quiz_attempts` (
-  `attempt_id` int(11) NOT NULL,
   `quiz_id` int(11) NOT NULL,
   `student_id` int(11) NOT NULL,
   `attempt_number` int(11) NOT NULL,
@@ -1818,11 +1820,11 @@ CREATE TABLE `quiz_attempts` (
 -- Dumping data for table `quiz_attempts`
 --
 
-INSERT INTO `quiz_attempts` (`attempt_id`, `quiz_id`, `student_id`, `attempt_number`, `started_at`, `submitted_at`, `score`, `status`, `time_spent_minutes`, `ip_address`, `id`, `completed_at`) VALUES
-(1, 1, 1, 1, '2025-01-25 12:00:00', '2025-01-25 12:28:00', 85.00, 'Graded', 28, NULL, 1, NULL),
-(2, 1, 4, 1, '2025-01-26 08:00:00', '2025-01-26 08:25:00', 92.00, 'Graded', 25, NULL, 2, NULL),
-(3, 1, 4, 2, '2025-01-27 13:00:00', '2025-01-27 13:20:00', 98.00, 'Graded', 20, NULL, 3, NULL),
-(4, 3, 2, 1, '2025-02-10 09:00:00', '2025-02-10 09:40:00', 88.00, 'Graded', 40, NULL, 4, NULL);
+INSERT INTO `quiz_attempts` (`quiz_id`, `student_id`, `attempt_number`, `started_at`, `submitted_at`, `score`, `status`, `time_spent_minutes`, `ip_address`, `id`, `completed_at`) VALUES
+(1, 1, 1, '2025-01-25 12:00:00', '2025-01-25 12:28:00', 85.00, 'Graded', 28, NULL, 1, NULL),
+(1, 4, 1, '2025-01-26 08:00:00', '2025-01-26 08:25:00', 92.00, 'Graded', 25, NULL, 2, NULL),
+(1, 4, 2, '2025-01-27 13:00:00', '2025-01-27 13:20:00', 98.00, 'Graded', 20, NULL, 3, NULL),
+(3, 2, 1, '2025-02-10 09:00:00', '2025-02-10 09:40:00', 88.00, 'Graded', 40, NULL, 4, NULL);
 
 -- --------------------------------------------------------
 
@@ -1908,6 +1910,305 @@ INSERT INTO `quiz_questions` (`quiz_question_id`, `quiz_id`, `question_id`, `dis
 (63, 24, 69, 13, NULL),
 (64, 24, 70, 14, NULL),
 (65, 24, 71, 15, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_question_options`
+--
+
+CREATE TABLE `quiz_question_options` (
+  `id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL,
+  `option_text` text NOT NULL,
+  `is_correct` tinyint(1) DEFAULT 0,
+  `display_order` int(11) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `quiz_question_options`
+--
+
+INSERT INTO `quiz_question_options` (`id`, `question_id`, `option_text`, `is_correct`, `display_order`, `created_at`) VALUES
+(1, 1, '.pyth', 0, 1, '2026-05-05 07:36:29'),
+(2, 1, '.py', 1, 2, '2026-05-05 07:36:29'),
+(3, 1, '.pt', 0, 3, '2026-05-05 07:36:29'),
+(4, 1, '.python', 0, 4, '2026-05-05 07:36:29'),
+(5, 2, 'String', 0, 1, '2026-05-05 07:36:29'),
+(6, 2, 'Tuple', 0, 2, '2026-05-05 07:36:29'),
+(7, 2, 'List', 1, 3, '2026-05-05 07:36:29'),
+(8, 2, 'Integer', 0, 4, '2026-05-05 07:36:29'),
+(9, 3, 'True', 0, 1, '2026-05-05 07:36:29'),
+(10, 3, 'False', 1, 2, '2026-05-05 07:36:29'),
+(11, 4, 'HyperText Markup Language', 1, 1, '2026-05-05 07:36:29'),
+(12, 4, 'High Tech Modern Language', 0, 2, '2026-05-05 07:36:29'),
+(13, 4, 'Home Tool Markup Language', 0, 3, '2026-05-05 07:36:29'),
+(14, 4, 'Hyperlinks and Text Markup Language', 0, 4, '2026-05-05 07:36:29'),
+(15, 5, 'font-color', 0, 1, '2026-05-05 07:36:29'),
+(16, 5, 'text-color', 0, 2, '2026-05-05 07:36:29'),
+(17, 5, 'color', 1, 3, '2026-05-05 07:36:29'),
+(18, 5, 'foreground-color', 0, 4, '2026-05-05 07:36:29'),
+(19, 7, 'Control', 0, 1, '2026-05-05 07:36:29'),
+(20, 7, 'Confidentiality', 1, 2, '2026-05-05 07:36:29'),
+(21, 7, 'Certification', 0, 3, '2026-05-05 07:36:29'),
+(22, 7, 'Compliance', 0, 4, '2026-05-05 07:36:29'),
+(23, 8, 'Script Kiddie', 0, 1, '2026-05-05 07:36:29'),
+(24, 8, 'Cybercriminal', 0, 2, '2026-05-05 07:36:29'),
+(25, 8, 'System Administrator', 1, 3, '2026-05-05 07:36:29'),
+(26, 8, 'State-Sponsored Actor', 0, 4, '2026-05-05 07:36:29'),
+(27, 9, 'Threat', 0, 1, '2026-05-05 07:36:29'),
+(28, 9, 'Risk', 0, 2, '2026-05-05 07:36:29'),
+(29, 9, 'Vulnerability', 1, 3, '2026-05-05 07:36:29'),
+(30, 9, 'Exploit', 0, 4, '2026-05-05 07:36:29'),
+(31, 10, 'Political change', 0, 1, '2026-05-05 07:36:29'),
+(32, 10, 'Social justice', 0, 2, '2026-05-05 07:36:29'),
+(33, 10, 'Financial gain', 1, 3, '2026-05-05 07:36:29'),
+(34, 10, 'Personal recognition', 0, 4, '2026-05-05 07:36:29'),
+(35, 11, 'Confidentiality', 0, 1, '2026-05-05 07:36:29'),
+(36, 11, 'Integrity', 0, 2, '2026-05-05 07:36:29'),
+(37, 11, 'Availability', 1, 3, '2026-05-05 07:36:29'),
+(38, 11, 'Authentication', 0, 4, '2026-05-05 07:36:29'),
+(39, 12, 'Control', 0, 1, '2026-05-05 07:36:29'),
+(40, 12, 'Confidentiality', 1, 2, '2026-05-05 07:36:29'),
+(41, 12, 'Certification', 0, 3, '2026-05-05 07:36:29'),
+(42, 12, 'Compliance', 0, 4, '2026-05-05 07:36:29'),
+(43, 13, 'Script Kiddie', 0, 1, '2026-05-05 07:36:29'),
+(44, 13, 'Cybercriminal', 0, 2, '2026-05-05 07:36:29'),
+(45, 13, 'System Administrator', 1, 3, '2026-05-05 07:36:29'),
+(46, 13, 'State-Sponsored Actor', 0, 4, '2026-05-05 07:36:29'),
+(47, 14, 'Threat', 0, 1, '2026-05-05 07:36:29'),
+(48, 14, 'Risk', 0, 2, '2026-05-05 07:36:29'),
+(49, 14, 'Vulnerability', 1, 3, '2026-05-05 07:36:29'),
+(50, 14, 'Exploit', 0, 4, '2026-05-05 07:36:29'),
+(51, 15, 'Political change', 0, 1, '2026-05-05 07:36:29'),
+(52, 15, 'Social justice', 0, 2, '2026-05-05 07:36:29'),
+(53, 15, 'Financial gain', 1, 3, '2026-05-05 07:36:29'),
+(54, 15, 'Personal recognition', 0, 4, '2026-05-05 07:36:29'),
+(55, 16, 'Confidentiality', 0, 1, '2026-05-05 07:36:29'),
+(56, 16, 'Integrity', 0, 2, '2026-05-05 07:36:29'),
+(57, 16, 'Availability', 1, 3, '2026-05-05 07:36:29'),
+(58, 16, 'Authentication', 0, 4, '2026-05-05 07:36:29'),
+(59, 17, 'Layer 2', 0, 1, '2026-05-05 07:36:29'),
+(60, 17, 'Layer 3', 1, 2, '2026-05-05 07:36:29'),
+(61, 17, 'Layer 4', 0, 3, '2026-05-05 07:36:29'),
+(62, 17, 'Layer 7', 0, 4, '2026-05-05 07:36:29'),
+(63, 18, 'HTTP', 0, 1, '2026-05-05 07:36:29'),
+(64, 18, 'FTP', 0, 2, '2026-05-05 07:36:29'),
+(65, 18, 'HTTPS', 1, 3, '2026-05-05 07:36:29'),
+(66, 18, 'SSH', 0, 4, '2026-05-05 07:36:29'),
+(67, 19, 'Address Resolution Protocol', 1, 1, '2026-05-05 07:36:29'),
+(68, 19, 'Advanced Routing Protocol', 0, 2, '2026-05-05 07:36:29'),
+(69, 19, 'Application Resource Protocol', 0, 3, '2026-05-05 07:36:29'),
+(70, 19, 'Automatic Response Procedure', 0, 4, '2026-05-05 07:36:29'),
+(71, 20, 'FTP', 0, 1, '2026-05-05 07:36:29'),
+(72, 20, 'SSH', 1, 2, '2026-05-05 07:36:29'),
+(73, 20, 'HTTP', 0, 3, '2026-05-05 07:36:29'),
+(74, 20, 'SMTP', 0, 4, '2026-05-05 07:36:29'),
+(75, 21, 'Increasing internet speed', 0, 1, '2026-05-05 07:36:29'),
+(76, 21, 'Limiting attack spread', 1, 2, '2026-05-05 07:36:29'),
+(77, 21, 'Reducing cable costs', 0, 3, '2026-05-05 07:36:29'),
+(78, 21, 'Improving wireless signal', 0, 4, '2026-05-05 07:36:29'),
+(79, 22, 'Virus', 0, 1, '2026-05-05 07:36:29'),
+(80, 22, 'Worm', 0, 2, '2026-05-05 07:36:29'),
+(81, 22, 'Ransomware', 1, 3, '2026-05-05 07:36:29'),
+(82, 22, 'Spyware', 0, 4, '2026-05-05 07:36:29'),
+(83, 23, 'A network scanning technique', 0, 1, '2026-05-05 07:36:29'),
+(84, 23, 'A fraudulent attempt to obtain sensitive information', 1, 2, '2026-05-05 07:36:29'),
+(85, 23, 'A type of firewall', 0, 3, '2026-05-05 07:36:29'),
+(86, 23, 'A password hashing method', 0, 4, '2026-05-05 07:36:29'),
+(87, 24, 'Reconnaissance', 0, 1, '2026-05-05 07:36:29'),
+(88, 24, 'Weaponization', 0, 2, '2026-05-05 07:36:29'),
+(89, 24, 'Exploitation', 1, 3, '2026-05-05 07:36:29'),
+(90, 24, 'Installation', 0, 4, '2026-05-05 07:36:29'),
+(91, 25, 'SQL Injection', 0, 1, '2026-05-05 07:36:29'),
+(92, 25, 'Tailgating', 1, 2, '2026-05-05 07:36:29'),
+(93, 25, 'Buffer Overflow', 0, 3, '2026-05-05 07:36:29'),
+(94, 25, 'ARP Spoofing', 0, 4, '2026-05-05 07:36:29'),
+(95, 26, 'Encrypt files', 0, 1, '2026-05-05 07:36:29'),
+(96, 26, 'Record keystrokes', 1, 2, '2026-05-05 07:36:29'),
+(97, 26, 'Scan networks', 0, 3, '2026-05-05 07:36:29'),
+(98, 26, 'Block websites', 0, 4, '2026-05-05 07:36:29'),
+(99, 27, 'Asymmetric', 0, 1, '2026-05-05 07:36:29'),
+(100, 27, 'Symmetric', 1, 2, '2026-05-05 07:36:29'),
+(101, 27, 'Hashing', 0, 3, '2026-05-05 07:36:29'),
+(102, 27, 'Public-key', 0, 4, '2026-05-05 07:36:29'),
+(103, 28, 'Multi-Factor Authentication', 1, 1, '2026-05-05 07:36:29'),
+(104, 28, 'Managed Firewall Access', 0, 2, '2026-05-05 07:36:29'),
+(105, 28, 'Multi-Function Application', 0, 3, '2026-05-05 07:36:29'),
+(106, 28, 'Modular Framework Architecture', 0, 4, '2026-05-05 07:36:29'),
+(107, 29, 'User attributes', 0, 1, '2026-05-05 07:36:29'),
+(108, 29, 'Resource ownership', 0, 2, '2026-05-05 07:36:29'),
+(109, 29, 'User roles', 1, 3, '2026-05-05 07:36:29'),
+(110, 29, 'Security labels', 0, 4, '2026-05-05 07:36:29'),
+(111, 30, 'IDS', 0, 1, '2026-05-05 07:36:29'),
+(112, 30, 'IPS', 1, 2, '2026-05-05 07:36:29'),
+(113, 30, 'Firewall', 0, 3, '2026-05-05 07:36:29'),
+(114, 30, 'Proxy', 0, 4, '2026-05-05 07:36:29'),
+(115, 31, 'File compression', 0, 1, '2026-05-05 07:36:29'),
+(116, 31, 'Secure web communication', 1, 2, '2026-05-05 07:36:29'),
+(117, 31, 'Database indexing', 0, 3, '2026-05-05 07:36:29'),
+(118, 31, 'Email routing', 0, 4, '2026-05-05 07:36:29'),
+(119, 32, 'Broken Access Control', 0, 1, '2026-05-05 07:36:29'),
+(120, 32, 'Cryptographic Failures', 0, 2, '2026-05-05 07:36:29'),
+(121, 32, 'Injection', 1, 3, '2026-05-05 07:36:29'),
+(122, 32, 'Insecure Design', 0, 4, '2026-05-05 07:36:29'),
+(123, 33, 'Input validation only', 0, 1, '2026-05-05 07:36:29'),
+(124, 33, 'Parameterized queries', 1, 2, '2026-05-05 07:36:29'),
+(125, 33, 'Firewall rules', 0, 3, '2026-05-05 07:36:29'),
+(126, 33, 'URL encoding', 0, 4, '2026-05-05 07:36:29'),
+(127, 34, 'Reflected XSS', 0, 1, '2026-05-05 07:36:29'),
+(128, 34, 'Stored XSS', 1, 2, '2026-05-05 07:36:29'),
+(129, 34, 'DOM-based XSS', 0, 3, '2026-05-05 07:36:29'),
+(130, 34, 'Blind XSS', 0, 4, '2026-05-05 07:36:29'),
+(131, 35, 'Content-Security-Policy', 0, 1, '2026-05-05 07:36:29'),
+(132, 35, 'X-Frame-Options', 1, 2, '2026-05-05 07:36:29'),
+(133, 35, 'X-XSS-Protection', 0, 3, '2026-05-05 07:36:29'),
+(134, 35, 'Strict-Transport-Security', 0, 4, '2026-05-05 07:36:29'),
+(135, 36, 'Cross-Site Protection', 0, 1, '2026-05-05 07:36:29'),
+(136, 36, 'Content Security Policy', 1, 2, '2026-05-05 07:36:29'),
+(137, 36, 'Client-Side Protocol', 0, 3, '2026-05-05 07:36:29'),
+(138, 36, 'Certificate Signing Process', 0, 4, '2026-05-05 07:36:29'),
+(139, 37, 'Black Hat', 0, 1, '2026-05-05 07:36:29'),
+(140, 37, 'White Hat', 1, 2, '2026-05-05 07:36:29'),
+(141, 37, 'Gray Hat', 0, 3, '2026-05-05 07:36:29'),
+(142, 37, 'Script Kiddie', 0, 4, '2026-05-05 07:36:29'),
+(143, 38, 'Open Source Intelligence', 1, 1, '2026-05-05 07:36:29'),
+(144, 38, 'Operating System Integration', 0, 2, '2026-05-05 07:36:29'),
+(145, 38, 'Online Security Intelligence', 0, 3, '2026-05-05 07:36:29'),
+(146, 38, 'Organizational Security Interface', 0, 4, '2026-05-05 07:36:29'),
+(147, 39, 'Wireshark', 0, 1, '2026-05-05 07:36:29'),
+(148, 39, 'Nmap', 1, 2, '2026-05-05 07:36:29'),
+(149, 39, 'Metasploit', 0, 3, '2026-05-05 07:36:29'),
+(150, 39, 'Burp Suite', 0, 4, '2026-05-05 07:36:29'),
+(151, 40, 'Full knowledge', 0, 1, '2026-05-05 07:36:29'),
+(152, 40, 'No prior knowledge', 1, 2, '2026-05-05 07:36:29'),
+(153, 40, 'Partial knowledge', 0, 3, '2026-05-05 07:36:29'),
+(154, 40, 'Source code access', 0, 4, '2026-05-05 07:36:29'),
+(155, 41, 'Common Vulnerability Enumeration', 0, 1, '2026-05-05 07:36:29'),
+(156, 41, 'Common Vulnerabilities and Exposures', 1, 2, '2026-05-05 07:36:29'),
+(157, 41, 'Critical Vulnerability Entry', 0, 3, '2026-05-05 07:36:29'),
+(158, 41, 'Computer Virus Encyclopedia', 0, 4, '2026-05-05 07:36:29'),
+(159, 42, 'Containment', 0, 1, '2026-05-05 07:36:29'),
+(160, 42, 'Eradication', 1, 2, '2026-05-05 07:36:29'),
+(161, 42, 'Recovery', 0, 3, '2026-05-05 07:36:29'),
+(162, 42, 'Detection', 0, 4, '2026-05-05 07:36:29'),
+(163, 43, 'Speed up investigation', 0, 1, '2026-05-05 07:36:29'),
+(164, 43, 'Ensure evidence admissibility', 1, 2, '2026-05-05 07:36:29'),
+(165, 43, 'Reduce costs', 0, 3, '2026-05-05 07:36:29'),
+(166, 43, 'Identify attackers', 0, 4, '2026-05-05 07:36:29'),
+(167, 44, 'Nmap', 0, 1, '2026-05-05 07:36:29'),
+(168, 44, 'Volatility', 1, 2, '2026-05-05 07:36:29'),
+(169, 44, 'Wireshark', 0, 3, '2026-05-05 07:36:29'),
+(170, 44, 'Nessus', 0, 4, '2026-05-05 07:36:29'),
+(171, 45, 'Format affected systems', 0, 1, '2026-05-05 07:36:29'),
+(172, 45, 'Preserve evidence', 1, 2, '2026-05-05 07:36:29'),
+(173, 45, 'Notify the media', 0, 3, '2026-05-05 07:36:29'),
+(174, 45, 'Update antivirus', 0, 4, '2026-05-05 07:36:29'),
+(175, 46, 'Snapshot', 0, 1, '2026-05-05 07:36:29'),
+(176, 46, 'Disk Image', 1, 2, '2026-05-05 07:36:29'),
+(177, 46, 'Backup', 0, 3, '2026-05-05 07:36:29'),
+(178, 46, 'Archive', 0, 4, '2026-05-05 07:36:29'),
+(179, 47, 'Security Information and Event Management', 1, 1, '2026-05-05 07:36:29'),
+(180, 47, 'System Intelligence and Event Monitoring', 0, 2, '2026-05-05 07:36:29'),
+(181, 47, 'Secure Internet and Email Management', 0, 3, '2026-05-05 07:36:29'),
+(182, 47, 'System Integration and Enterprise Monitoring', 0, 4, '2026-05-05 07:36:29'),
+(183, 48, 'Tier 1', 1, 1, '2026-05-05 07:36:29'),
+(184, 48, 'Tier 2', 0, 2, '2026-05-05 07:36:29'),
+(185, 48, 'Tier 3', 0, 3, '2026-05-05 07:36:29'),
+(186, 48, 'Tier 4', 0, 4, '2026-05-05 07:36:29'),
+(187, 49, 'Mean Time to Detect', 1, 1, '2026-05-05 07:36:29'),
+(188, 49, 'Maximum Time to Detection', 0, 2, '2026-05-05 07:36:29'),
+(189, 49, 'Minimum Technical Threat Duration', 0, 3, '2026-05-05 07:36:29'),
+(190, 49, 'Managed Threat Transfer Delay', 0, 4, '2026-05-05 07:36:29'),
+(191, 50, 'Splunk', 0, 1, '2026-05-05 07:36:29'),
+(192, 50, 'QRadar', 0, 2, '2026-05-05 07:36:29'),
+(193, 50, 'Wazuh', 1, 3, '2026-05-05 07:36:29'),
+(194, 50, 'Microsoft Sentinel', 0, 4, '2026-05-05 07:36:29'),
+(195, 51, 'Network routing', 0, 1, '2026-05-05 07:36:29'),
+(196, 51, 'Threat modeling and detection', 1, 2, '2026-05-05 07:36:29'),
+(197, 51, 'Password management', 0, 3, '2026-05-05 07:36:29'),
+(198, 51, 'Data encryption', 0, 4, '2026-05-05 07:36:29'),
+(199, 52, '3', 0, 1, '2026-05-05 07:36:29'),
+(200, 52, '4', 0, 2, '2026-05-05 07:36:29'),
+(201, 52, '5', 1, 3, '2026-05-05 07:36:29'),
+(202, 52, '6', 0, 4, '2026-05-05 07:36:29'),
+(203, 53, 'Payment processing', 0, 1, '2026-05-05 07:36:29'),
+(204, 53, 'Information security management', 1, 2, '2026-05-05 07:36:29'),
+(205, 53, 'Network routing', 0, 3, '2026-05-05 07:36:29'),
+(206, 53, 'Software development', 0, 4, '2026-05-05 07:36:29'),
+(207, 54, 'Threat + Vulnerability', 0, 1, '2026-05-05 07:36:29'),
+(208, 54, 'Likelihood x Impact', 1, 2, '2026-05-05 07:36:29'),
+(209, 54, 'Asset Value - Cost', 0, 3, '2026-05-05 07:36:29'),
+(210, 54, 'Threat - Control', 0, 4, '2026-05-05 07:36:29'),
+(211, 55, 'Accept', 0, 1, '2026-05-05 07:36:29'),
+(212, 55, 'Mitigate', 0, 2, '2026-05-05 07:36:29'),
+(213, 55, 'Transfer', 1, 3, '2026-05-05 07:36:29'),
+(214, 55, 'Avoid', 0, 4, '2026-05-05 07:36:29'),
+(215, 56, 'Identify', 0, 1, '2026-05-05 07:36:29'),
+(216, 56, 'Protect', 0, 2, '2026-05-05 07:36:29'),
+(217, 56, 'Detect', 0, 3, '2026-05-05 07:36:29'),
+(218, 56, 'Respond', 1, 4, '2026-05-05 07:36:29'),
+(219, 57, 'Control, Integrity, Authentication', 0, 1, '2026-05-05 07:36:29'),
+(220, 57, 'Confidentiality, Integrity, Availability', 1, 2, '2026-05-05 07:36:29'),
+(221, 57, 'Certification, Implementation, Assessment', 0, 3, '2026-05-05 07:36:29'),
+(222, 57, 'Compliance, Investigation, Analysis', 0, 4, '2026-05-05 07:36:29'),
+(223, 58, 'Data Link', 0, 1, '2026-05-05 07:36:29'),
+(224, 58, 'Network', 1, 2, '2026-05-05 07:36:29'),
+(225, 58, 'Transport', 0, 3, '2026-05-05 07:36:29'),
+(226, 58, 'Application', 0, 4, '2026-05-05 07:36:29'),
+(227, 59, 'Virus', 0, 1, '2026-05-05 07:36:29'),
+(228, 59, 'Worm', 1, 2, '2026-05-05 07:36:29'),
+(229, 59, 'Trojan', 0, 3, '2026-05-05 07:36:29'),
+(230, 59, 'Rootkit', 0, 4, '2026-05-05 07:36:29'),
+(231, 60, 'RSA', 0, 1, '2026-05-05 07:36:29'),
+(232, 60, 'AES', 1, 2, '2026-05-05 07:36:29'),
+(233, 60, 'ECC', 0, 3, '2026-05-05 07:36:29'),
+(234, 60, 'DSA', 0, 4, '2026-05-05 07:36:29'),
+(235, 61, 'Input validation', 0, 1, '2026-05-05 07:36:29'),
+(236, 61, 'Parameterized queries', 1, 2, '2026-05-05 07:36:29'),
+(237, 61, 'Web Application Firewall', 0, 3, '2026-05-05 07:36:29'),
+(238, 61, 'URL encoding', 0, 4, '2026-05-05 07:36:29'),
+(239, 62, 'Full knowledge of systems', 0, 1, '2026-05-05 07:36:29'),
+(240, 62, 'No prior knowledge', 1, 2, '2026-05-05 07:36:29'),
+(241, 62, 'Source code access', 0, 3, '2026-05-05 07:36:29'),
+(242, 62, 'Administrator credentials', 0, 4, '2026-05-05 07:36:29'),
+(243, 63, 'Detection', 0, 1, '2026-05-05 07:36:29'),
+(244, 63, 'Containment', 1, 2, '2026-05-05 07:36:29'),
+(245, 63, 'Eradication', 0, 3, '2026-05-05 07:36:29'),
+(246, 63, 'Recovery', 0, 4, '2026-05-05 07:36:29'),
+(247, 64, 'Encrypt network traffic', 0, 1, '2026-05-05 07:36:29'),
+(248, 64, 'Collect and analyze security events', 1, 2, '2026-05-05 07:36:29'),
+(249, 64, 'Block malicious websites', 0, 3, '2026-05-05 07:36:29'),
+(250, 64, 'Manage user passwords', 0, 4, '2026-05-05 07:36:29'),
+(251, 65, '3', 0, 1, '2026-05-05 07:36:29'),
+(252, 65, '4', 0, 2, '2026-05-05 07:36:29'),
+(253, 65, '5', 1, 3, '2026-05-05 07:36:29'),
+(254, 65, '6', 0, 4, '2026-05-05 07:36:29'),
+(255, 66, 'DAC', 0, 1, '2026-05-05 07:36:29'),
+(256, 66, 'MAC', 0, 2, '2026-05-05 07:36:29'),
+(257, 66, 'RBAC', 1, 3, '2026-05-05 07:36:29'),
+(258, 66, 'ABAC', 0, 4, '2026-05-05 07:36:29'),
+(259, 67, 'Store backups', 0, 1, '2026-05-05 07:36:29'),
+(260, 67, 'Attract and detect attackers', 1, 2, '2026-05-05 07:36:29'),
+(261, 67, 'Encrypt data', 0, 3, '2026-05-05 07:36:29'),
+(262, 67, 'Speed up networks', 0, 4, '2026-05-05 07:36:29'),
+(263, 68, 'Phishing', 0, 1, '2026-05-05 07:36:29'),
+(264, 68, 'Pretexting', 0, 2, '2026-05-05 07:36:29'),
+(265, 68, 'Tailgating', 1, 3, '2026-05-05 07:36:29'),
+(266, 68, 'Baiting', 0, 4, '2026-05-05 07:36:29'),
+(267, 69, 'Compress files', 0, 1, '2026-05-05 07:36:29'),
+(268, 69, 'Encrypt web traffic', 1, 2, '2026-05-05 07:36:29'),
+(269, 69, 'Scan for viruses', 0, 3, '2026-05-05 07:36:29'),
+(270, 69, 'Route packets', 0, 4, '2026-05-05 07:36:29'),
+(271, 70, 'Open Web Application Security Project', 1, 1, '2026-05-05 07:36:29'),
+(272, 70, 'Online Web Attack and Security Protocol', 0, 2, '2026-05-05 07:36:29'),
+(273, 70, 'Operational Web Application Standard Procedure', 0, 3, '2026-05-05 07:36:29'),
+(274, 70, 'Open Web Authentication Security Program', 0, 4, '2026-05-05 07:36:29'),
+(275, 71, 'Threat + Vulnerability', 0, 1, '2026-05-05 07:36:29'),
+(276, 71, 'Likelihood x Impact', 1, 2, '2026-05-05 07:36:29'),
+(277, 71, 'Asset x Control', 0, 3, '2026-05-05 07:36:29'),
+(278, 71, 'Cost + Benefit', 0, 4, '2026-05-05 07:36:29');
 
 -- --------------------------------------------------------
 
@@ -2421,7 +2722,6 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`, `assigned_b
 (3, 3, 3, '2025-11-18 22:21:01', 1),
 (4, 4, 3, '2025-11-18 22:21:01', 1),
 (5, 5, 3, '2025-11-18 22:21:01', 1),
-(6, 6, 3, '2025-11-18 22:21:01', 1),
 (7, 7, 3, '2025-11-18 22:21:01', 1),
 (8, 8, 4, '2025-11-18 22:21:01', 1),
 (9, 9, 4, '2025-11-18 22:21:01', 1),
@@ -2552,7 +2852,8 @@ ALTER TABLE `activity_logs`
 -- Indexes for table `announcements`
 --
 ALTER TABLE `announcements`
-  ADD PRIMARY KEY (`announcement_id`);
+  ADD PRIMARY KEY (`announcement_id`),
+  ADD KEY `fk_ann_poster` (`posted_by`);
 
 --
 -- Indexes for table `assignments`
@@ -2579,7 +2880,11 @@ ALTER TABLE `badges`
 -- Indexes for table `certificates`
 --
 ALTER TABLE `certificates`
-  ADD PRIMARY KEY (`certificate_id`);
+  ADD PRIMARY KEY (`certificate_id`),
+  ADD UNIQUE KEY `uk_cert_number` (`certificate_number`),
+  ADD UNIQUE KEY `uk_cert_verify` (`verification_code`),
+  ADD KEY `idx_cert_user` (`user_id`),
+  ADD KEY `idx_cert_course` (`course_id`);
 
 --
 -- Indexes for table `contacts`
@@ -2664,13 +2969,15 @@ ALTER TABLE `enrollments`
 -- Indexes for table `enrollment_payment_plans`
 --
 ALTER TABLE `enrollment_payment_plans`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uk_epp_enrollment` (`enrollment_id`);
 
 --
 -- Indexes for table `instructors`
 --
 ALTER TABLE `instructors`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uk_instructors_user` (`user_id`),
   ADD KEY `idx_inst_user` (`user_id`);
 
 --
@@ -2707,19 +3014,24 @@ ALTER TABLE `lessons`
 -- Indexes for table `lesson_progress`
 --
 ALTER TABLE `lesson_progress`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_lp_enroll` (`enrollment_id`),
+  ADD KEY `fk_lp_lesson` (`lesson_id`);
 
 --
 -- Indexes for table `lesson_resources`
 --
 ALTER TABLE `lesson_resources`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_lr_lesson` (`lesson_id`);
 
 --
 -- Indexes for table `live_sessions`
 --
 ALTER TABLE `live_sessions`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_ls_lesson` (`lesson_id`),
+  ADD KEY `fk_ls_instructor` (`instructor_id`);
 
 --
 -- Indexes for table `live_session_attendance`
@@ -2761,7 +3073,12 @@ ALTER TABLE `notifications`
 --
 ALTER TABLE `payments`
   ADD PRIMARY KEY (`payment_id`),
-  ADD KEY `idx_transaction_id` (`transaction_id`);
+  ADD UNIQUE KEY `uk_payments_txn` (`transaction_id`),
+  ADD KEY `idx_transaction_id` (`transaction_id`),
+  ADD KEY `fk_pay_student` (`student_id`),
+  ADD KEY `fk_pay_course` (`course_id`),
+  ADD KEY `fk_pay_enroll` (`enrollment_id`),
+  ADD KEY `fk_pay_method` (`payment_method_id`);
 
 --
 -- Indexes for table `payment_methods`
@@ -2779,7 +3096,8 @@ ALTER TABLE `questions`
 -- Indexes for table `question_options`
 --
 ALTER TABLE `question_options`
-  ADD PRIMARY KEY (`option_id`);
+  ADD PRIMARY KEY (`option_id`),
+  ADD KEY `fk_opt_question` (`question_id`);
 
 --
 -- Indexes for table `quizzes`
@@ -2792,7 +3110,9 @@ ALTER TABLE `quizzes`
 -- Indexes for table `quiz_answers`
 --
 ALTER TABLE `quiz_answers`
-  ADD PRIMARY KEY (`answer_id`);
+  ADD PRIMARY KEY (`answer_id`),
+  ADD KEY `fk_qa_attempt` (`attempt_id`),
+  ADD KEY `fk_qa_question` (`question_id`);
 
 --
 -- Indexes for table `quiz_attempts`
@@ -2806,7 +3126,16 @@ ALTER TABLE `quiz_attempts`
 -- Indexes for table `quiz_questions`
 --
 ALTER TABLE `quiz_questions`
-  ADD PRIMARY KEY (`quiz_question_id`);
+  ADD PRIMARY KEY (`quiz_question_id`),
+  ADD UNIQUE KEY `uk_qq_quiz_question` (`quiz_id`,`question_id`),
+  ADD KEY `fk_qq_question` (`question_id`);
+
+--
+-- Indexes for table `quiz_question_options`
+--
+ALTER TABLE `quiz_question_options`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_qqo_question` (`question_id`);
 
 --
 -- Indexes for table `registration_fees`
@@ -2834,6 +3163,7 @@ ALTER TABLE `roles`
 --
 ALTER TABLE `students`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uk_students_user` (`user_id`),
   ADD KEY `idx_st_user` (`user_id`);
 
 --
@@ -2868,6 +3198,8 @@ ALTER TABLE `transactions`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uk_users_email` (`email`),
+  ADD UNIQUE KEY `uk_users_username` (`username`),
   ADD UNIQUE KEY `idx_users_google_id` (`google_id`),
   ADD KEY `idx_users_email_search` (`email`),
   ADD KEY `idx_users_ver_token` (`email_verification_token`),
@@ -2886,6 +3218,7 @@ ALTER TABLE `user_profiles`
 --
 ALTER TABLE `user_roles`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uk_user_role` (`user_id`,`role_id`),
   ADD KEY `idx_ur_user` (`user_id`),
   ADD KEY `idx_ur_role` (`role_id`);
 
@@ -3092,6 +3425,12 @@ ALTER TABLE `quizzes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
+-- AUTO_INCREMENT for table `quiz_answers`
+--
+ALTER TABLE `quiz_answers`
+  MODIFY `answer_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
@@ -3102,6 +3441,12 @@ ALTER TABLE `quiz_attempts`
 --
 ALTER TABLE `quiz_questions`
   MODIFY `quiz_question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+
+--
+-- AUTO_INCREMENT for table `quiz_question_options`
+--
+ALTER TABLE `quiz_question_options`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=512;
 
 --
 -- AUTO_INCREMENT for table `registration_fees`
@@ -3177,6 +3522,12 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`u605780771_root`@`127.0.0.1` SQL SECURITY DE
 --
 
 --
+-- Constraints for table `announcements`
+--
+ALTER TABLE `announcements`
+  ADD CONSTRAINT `fk_ann_poster` FOREIGN KEY (`posted_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `assignments`
 --
 ALTER TABLE `assignments`
@@ -3188,6 +3539,13 @@ ALTER TABLE `assignments`
 ALTER TABLE `assignment_submissions`
   ADD CONSTRAINT `fk_sub_assign` FOREIGN KEY (`assignment_id`) REFERENCES `assignments` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_sub_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `certificates`
+--
+ALTER TABLE `certificates`
+  ADD CONSTRAINT `fk_cert_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_cert_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `courses`
@@ -3254,6 +3612,26 @@ ALTER TABLE `lessons`
   ADD CONSTRAINT `fk_less_mod` FOREIGN KEY (`module_id`) REFERENCES `modules` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `lesson_progress`
+--
+ALTER TABLE `lesson_progress`
+  ADD CONSTRAINT `fk_lp_enroll` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_lp_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `lesson_resources`
+--
+ALTER TABLE `lesson_resources`
+  ADD CONSTRAINT `fk_lr_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `live_sessions`
+--
+ALTER TABLE `live_sessions`
+  ADD CONSTRAINT `fk_ls_instructor` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_ls_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `messages`
 --
 ALTER TABLE `messages`
@@ -3273,10 +3651,32 @@ ALTER TABLE `notifications`
   ADD CONSTRAINT `fk_notif_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `payments`
+--
+ALTER TABLE `payments`
+  ADD CONSTRAINT `fk_pay_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_pay_enroll` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_pay_method` FOREIGN KEY (`payment_method_id`) REFERENCES `payment_methods` (`payment_method_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_pay_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `question_options`
+--
+ALTER TABLE `question_options`
+  ADD CONSTRAINT `fk_opt_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `quizzes`
 --
 ALTER TABLE `quizzes`
   ADD CONSTRAINT `fk_quiz_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `quiz_answers`
+--
+ALTER TABLE `quiz_answers`
+  ADD CONSTRAINT `fk_qa_attempt` FOREIGN KEY (`attempt_id`) REFERENCES `quiz_attempts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_qa_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `quiz_attempts`
@@ -3284,6 +3684,19 @@ ALTER TABLE `quizzes`
 ALTER TABLE `quiz_attempts`
   ADD CONSTRAINT `fk_att_quiz` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_att_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `quiz_questions`
+--
+ALTER TABLE `quiz_questions`
+  ADD CONSTRAINT `fk_qq_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_qq_quiz` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `quiz_question_options`
+--
+ALTER TABLE `quiz_question_options`
+  ADD CONSTRAINT `fk_qqo_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `remember_tokens`
