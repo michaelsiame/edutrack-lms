@@ -109,8 +109,8 @@ ALTER TABLE `lenco_transactions`
     ADD KEY IF NOT EXISTS `idx_lt_enroll` (`enrollment_id`),
     ADD KEY IF NOT EXISTS `idx_lt_course` (`course_id`);
 
-ALTER TABLE `courses`
-    ADD UNIQUE KEY IF NOT EXISTS `idx_courses_slug` (`slug`);
+-- NOTE: courses.slug has duplicates (e.g. 'cybersecurity-fundamentals').
+-- Clean duplicates manually before adding UNIQUE KEY.
 
 -- ============================================================================
 -- 9. DATA CLEANUP: Remove orphaned duplicate questions
