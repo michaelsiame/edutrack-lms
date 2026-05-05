@@ -40,6 +40,12 @@ if (!$quiz) {
     redirect('quizzes.php');
 }
 
+// Store server-side quiz start time for validation
+if (!isset($_SESSION['quiz_start_time'][$quizId])) {
+    $_SESSION['quiz_start_time'][$quizId] = time();
+}
+$serverStartTime = $_SESSION['quiz_start_time'][$quizId];
+
 // Get quiz questions with their options
 $questions = $db->fetchAll("
     SELECT * FROM quiz_questions
@@ -78,6 +84,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
 
     $answers = $_POST['answers'] ?? [];
     $timeSpent = intval($_POST['time_spent'] ?? 0);
+
+    // Server-side time validation
+    $serverTimeSpent = time() - ($_SESSION['quiz_start_time'][$quizId] ?? time());
+    $timeLimitSeconds = ($quiz['time_limit'] ?? 0) * 60;
+    if ($timeLimitSeconds > 0 && $serverTimeSpent > $timeLimitSeconds + 30) {
+        // 30-second grace period
+        flash('error', 'Quiz time limit exceeded. Your submission was rejected.', 'error');
+        unset($_SESSION['quiz_start_time'][$quizId]);
+        redirect('quizzes.php');
+    }
 
     $totalQuestions = count($questions);
     $correctAnswers = 0;
@@ -130,6 +146,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
                 VALUES (?, ?, ?, ?, NOW())
             ", [$attemptId, $questionId, $userAnswer, $isCorrect ? 1 : 0]);
         }
+
+        // Clear quiz start time from session
+        unset($_SESSION['quiz_start_time'][$quizId]);
 
         flash('success', 'Quiz submitted successfully!', 'success');
         redirect('quiz-results.php?attempt_id=' . $attemptId);

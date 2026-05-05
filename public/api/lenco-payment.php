@@ -14,6 +14,8 @@ require_once '../../src/bootstrap.php';
 require_once '../../src/classes/Lenco.php';
 require_once '../../src/classes/Course.php';
 require_once '../../src/classes/Enrollment.php';
+require_once '../../src/classes/User.php';
+require_once '../../src/includes/access-control.php';
 
 header('Content-Type: application/json');
 
@@ -75,7 +77,7 @@ if ($method === 'GET') {
             }
 
             // Verify user owns this transaction
-            if ($localTx['user_id'] != $userId && $_SESSION['role'] !== 'admin') {
+            if ($localTx['user_id'] != $userId && !hasRole('admin')) {
                 http_response_code(403);
                 echo json_encode([
                     'success' => false,
@@ -116,7 +118,7 @@ if ($method === 'GET') {
             }
 
             // Verify user owns this transaction
-            if ($localTx['user_id'] != $userId && $_SESSION['role'] !== 'admin') {
+            if ($localTx['user_id'] != $userId && !hasRole('admin')) {
                 http_response_code(403);
                 echo json_encode([
                     'success' => false,

@@ -2,8 +2,8 @@
 -- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: May 05, 2026 at 07:14 AM
+-- Host: 127.0.0.1:3306
+-- Generation Time: May 04, 2026 at 07:18 PM
 -- Server version: 11.8.6-MariaDB-log
 -- PHP Version: 7.2.34
 
@@ -326,8 +326,7 @@ INSERT INTO `courses` (`id`, `title`, `slug`, `description`, `short_description`
 (31, 'Certificate in Monitoring & Evaluation', 'monitoring-evaluation', 'Become an expert in program assessment and performance measurement with professional M&E training. Learn monitoring frameworks, evaluation methodologies, indicator development, and data collection techniques. Master logical frameworks, theory of change, results-based management, and impact assessment. Understand quantitative and qualitative research methods, sampling techniques, survey design, and data analysis. Learn M&E planning, reporting standards, stakeholder engagement, and lessons learned documentation. Use M&E software and tools for data visualization and reporting. Perfect for program managers, development professionals, NGO staff, government officials, or consultants working in international development, public health, education, or social programs. Demonstrate program effectiveness and drive evidence-based decision making.', 'Professional M&E: frameworks, data collection, analysis & reporting', 6, 5, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
 (32, 'Certificate in Purchasing & Supply', 'purchasing-supply', 'Master professional procurement and supply chain management for organizational efficiency. Learn strategic sourcing, vendor selection, contract negotiation, and supplier relationship management. Understand purchase order processing, inventory control systems, just-in-time delivery, and warehouse management. Master logistics coordination, demand forecasting, and supply chain optimization. Learn procurement ethics, tender processes, compliance requirements, and risk management. Understand cost analysis, value for money principles, and purchase budgeting. Explore e-procurement systems, supply chain software, and procurement best practices. Perfect for purchasing officers, supply chain coordinators, inventory managers, or business owners managing procurement. Reduce costs while maintaining quality and reliability.', 'Professional procurement, supply chain management & logistics expertise', 6, 5, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
 (33, 'Certificate in E-Commerce & Online Business', 'ecommerce-online-business', 'Launch and grow a successful online business in the booming e-commerce market. Learn e-commerce platforms (Shopify, WooCommerce, Magento), online store setup, product listing optimization, and digital storefront design. Master payment gateway integration, shipping logistics, inventory management, and order fulfillment. Understand online customer service, returns management, and reputation building. Learn digital marketing for e-commerce: SEO, social media advertising, email marketing, and conversion optimization. Explore dropshipping, print-on-demand, and various e-commerce business models. Understand legal requirements, taxation, and international selling. Perfect for entrepreneurs starting online stores, retailers moving online, or anyone entering the e-commerce industry. Build your profitable online business empire.', 'Launch and scale your online store: e-commerce platforms & digital selling strategies', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800', NULL, NULL, NULL, 950.00, NULL, 3, 24.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
-(34, 'Certificate in Secretarial & Office Management', 'secretarial-office-management', 'Become an indispensable administrative professional with comprehensive secretarial and office management training. Master advanced typing skills, business correspondence, minutes taking, and professional communication. Learn office organization, filing systems, records management, and document control. Understand meeting coordination, travel arrangements, calendar management, and executive support. Master business etiquette, telephone techniques, customer service excellence, and professional image. Learn time management, priority setting, and workflow optimization. Understand office technology, database management, and basic bookkeeping. Perfect for executive assistants, office administrators, personal assistants, or professionals in administrative roles. Become the organizational backbone that enables business success.', 'Professional secretarial training: office management, typing & administrative excellence', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42'),
-(35, 'Cybersecurity Fundamentals', 'cybersecurity-fundamentals', '<p>This comprehensive cybersecurity course prepares you for entry-level roles in the rapidly growing field of cybersecurity. You will learn fundamental concepts, network security, threat detection, ethical hacking basics, and security operations.</p><p>By the end of this course, you will understand how to protect systems, detect threats, and respond to security incidents using industry-standard tools and frameworks.</p>', 'Master cybersecurity fundamentals and protect digital assets from cyber threats', 12, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800', NULL, NULL, NULL, 4500.00, NULL, 12, 96.00, 30, 0, 'draft', 1, 0.00, 0, 'Basic computer literacy, Understanding of operating systems (Windows/Linux)', 'Understand cybersecurity principles and the threat landscape|Identify and mitigate common network vulnerabilities|Implement security controls and defense strategies|Detect and respond to security incidents|Understand ethical hacking basics|Apply security frameworks like NIST', '2026-05-04 21:14:27', '2026-05-04 23:15:16');
+(34, 'Certificate in Secretarial & Office Management', 'secretarial-office-management', 'Become an indispensable administrative professional with comprehensive secretarial and office management training. Master advanced typing skills, business correspondence, minutes taking, and professional communication. Learn office organization, filing systems, records management, and document control. Understand meeting coordination, travel arrangements, calendar management, and executive support. Master business etiquette, telephone techniques, customer service excellence, and professional image. Learn time management, priority setting, and workflow optimization. Understand office technology, database management, and basic bookkeeping. Perfect for executive assistants, office administrators, personal assistants, or professionals in administrative roles. Become the organizational backbone that enables business success.', 'Professional secretarial training: office management, typing & administrative excellence', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42');
 
 -- --------------------------------------------------------
 
@@ -360,8 +359,7 @@ INSERT INTO `course_categories` (`id`, `name`, `category_description`, `parent_c
 (5, 'Digital Media & Design', 'Creative and digital content courses covering graphic design, multimedia, and digital marketing', NULL, NULL, 5, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01', '#333333'),
 (6, 'Business & Management', 'Business administration, entrepreneurship, project management, and professional development courses', NULL, NULL, 6, 1, '2025-11-18 22:21:01', '2025-11-18 22:21:01', '#333333'),
 (7, 'Cybersecurity', 'Learn to protect systems, networks, and data from cyber threats', NULL, 'fa-shield-alt', 4, 1, '2026-05-04 18:42:11', '2026-05-04 18:42:11', '#DC2626'),
-(8, 'Cybersecurity', 'Learn to protect systems, networks, and data from cyber threats', NULL, 'fa-shield-alt', 4, 1, '2026-05-04 18:50:46', '2026-05-04 18:50:46', '#DC2626'),
-(12, 'Cybersecurity', 'Learn to protect systems, networks, and data from cyber threats', NULL, 'fa-shield-alt', 4, 1, '2026-05-04 21:14:27', '2026-05-04 21:14:27', '#DC2626');
+(8, 'Cybersecurity', 'Learn to protect systems, networks, and data from cyber threats', NULL, 'fa-shield-alt', 4, 1, '2026-05-04 18:50:46', '2026-05-04 18:50:46', '#DC2626');
 
 -- --------------------------------------------------------
 
@@ -870,47 +868,7 @@ INSERT INTO `lessons` (`id`, `module_id`, `title`, `content`, `lesson_type`, `du
 (78, 31, 'Module 9: Knowledge Check', '<h2>Module 9 Knowledge Check</h2>\n<p>Test your GRC knowledge.</p>', 'Quiz', 25, 4, NULL, NULL, 0, 1, 25, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
 (79, 32, 'Capstone Project Overview', '<h2>Capstone Project Overview</h2>\n<p>This capstone project allows you to apply all the skills you have learned throughout the course to a real-world scenario.</p>\n<h3>Project Scenario</h3>\n<p>You are hired as a Junior Security Analyst for a small financial services company in Lusaka. The company has 50 employees and processes mobile money transactions. They have recently experienced a phishing attack and want to improve their security posture.</p>\n<h3>Your Tasks</h3>\n<ol>\n<li><strong>Risk Assessment:</strong> Identify and assess key risks to the organization</li>\n<li><strong>Security Policy:</strong> Create an acceptable use policy</li>\n<li><strong>Network Design:</strong> Propose a secure network architecture</li>\n<li><strong>Incident Response Plan:</strong> Develop a basic incident response plan</li>\n<li><strong>Security Awareness:</strong> Create a training outline for employees</li>\n</ol>', 'Assignment', 45, 1, NULL, NULL, 0, 1, 100, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
 (80, 32, 'Career Preparation and Next Steps', '<h2>Career Preparation and Next Steps</h2>\n<p>Congratulations on completing the Cybersecurity Fundamentals course!</p>\n<h3>What You Have Learned</h3>\n<ul>\n<li>Core cybersecurity principles (CIA Triad, threat landscape)</li>\n<li>Networking fundamentals and security</li>\n<li>Malware, social engineering, and attack vectors</li>\n<li>Security controls (firewalls, encryption, access control)</li>\n<li>Web application security and secure coding</li>\n<li>Ethical hacking basics and methodology</li>\n<li>Incident response and digital forensics</li>\n<li>Security operations and SIEM</li>\n<li>Governance, risk, and compliance</li>\n</ul>\n<h3>Recommended Next Steps</h3>\n<ol>\n<li><strong>Hands-On Practice:</strong> Set up a home lab with virtual machines</li>\n<li><strong>Online Platforms:</strong> TryHackMe, Hack The Box, PortSwigger Web Security Academy</li>\n<li><strong>Certification Path:</strong> Consider CompTIA Security+</li>\n<li><strong>Networking:</strong> Join cybersecurity communities and attend local events</li>\n</ol>', 'Video', 25, 2, NULL, NULL, 0, 1, 10, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(81, 32, 'Final Assessment', '<h2>Final Assessment</h2>\n<p>Comprehensive final examination covering all modules.</p>', 'Quiz', 60, 3, NULL, NULL, 0, 1, 150, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(82, 33, 'What is Cybersecurity?', '<h2>What is Cybersecurity?</h2><p>Cybersecurity is the practice of protecting systems, networks, and programs from digital attacks.</p><h3>The CIA Triad</h3><ul><li><strong>Confidentiality:</strong> Ensuring information is accessible only to authorized users</li><li><strong>Integrity:</strong> Maintaining the accuracy and completeness of data</li><li><strong>Availability:</strong> Ensuring systems and data are accessible when needed</li></ul><h3>Key Terminology</h3><ul><li><strong>Asset:</strong> Anything of value to an organization</li><li><strong>Vulnerability:</strong> A weakness that could be exploited</li><li><strong>Threat:</strong> A potential danger to an asset</li><li><strong>Risk:</strong> The likelihood and impact of a threat exploiting a vulnerability</li></ul>', 'Video', 30, 1, NULL, NULL, 1, 1, 10, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(83, 33, 'The Cyber Threat Landscape', '<h2>The Cyber Threat Landscape</h2><h3>Types of Threat Actors</h3><ul><li><strong>Script Kiddies:</strong> Unskilled attackers using existing tools</li><li><strong>Hacktivists:</strong> Attackers motivated by political or social causes</li><li><strong>Cybercriminals:</strong> Organized groups seeking financial gain</li><li><strong>State-Sponsored Actors:</strong> Nation-state backed attackers</li><li><strong>Insider Threats:</strong> Malicious or negligent employees</li></ul><h3>Statistics in Zambia and Africa</h3><p>Africa is experiencing rapid digital transformation, making cybersecurity increasingly important.</p>', 'Video', 25, 2, NULL, NULL, 0, 1, 10, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(84, 33, 'Cybersecurity Career Paths', '<h2>Cybersecurity Career Paths</h2><h3>Entry-Level Roles</h3><ul><li><strong>Security Analyst:</strong> Monitor systems for threats</li><li><strong>Junior Penetration Tester:</strong> Test systems for vulnerabilities</li><li><strong>SOC Analyst:</strong> Work in Security Operations Centers</li></ul><h3>Certifications</h3><ul><li>CompTIA Security+</li><li>CEH - Certified Ethical Hacker</li><li>CISSP</li></ul>', 'Video', 20, 3, NULL, NULL, 0, 1, 10, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(85, 33, 'Module 1: Knowledge Check', '<h2>Module 1 Knowledge Check</h2><p>Test your understanding of cybersecurity fundamentals.</p>', 'Quiz', 20, 4, NULL, NULL, 0, 1, 25, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(86, 34, 'The OSI Model', '<h2>The OSI Model</h2><table class=\"w-full border-collapse border\"><tr><th class=\"border p-2\">Layer</th><th class=\"border p-2\">Name</th><th class=\"border p-2\">Function</th></tr><tr><td class=\"border p-2\">7</td><td class=\"border p-2\">Application</td><td class=\"border p-2\">HTTP, FTP, SMTP</td></tr><tr><td class=\"border p-2\">6</td><td class=\"border p-2\">Presentation</td><td class=\"border p-2\">Data formatting</td></tr><tr><td class=\"border p-2\">5</td><td class=\"border p-2\">Session</td><td class=\"border p-2\">Session management</td></tr><tr><td class=\"border p-2\">4</td><td class=\"border p-2\">Transport</td><td class=\"border p-2\">TCP, UDP</td></tr><tr><td class=\"border p-2\">3</td><td class=\"border p-2\">Network</td><td class=\"border p-2\">IP, routing</td></tr><tr><td class=\"border p-2\">2</td><td class=\"border p-2\">Data Link</td><td class=\"border p-2\">MAC addresses</td></tr><tr><td class=\"border p-2\">1</td><td class=\"border p-2\">Physical</td><td class=\"border p-2\">Cables, signals</td></tr></table>', 'Video', 35, 1, NULL, NULL, 1, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(87, 34, 'TCP/IP and Network Protocols', '<h2>TCP/IP and Network Protocols</h2><ul><li><strong>HTTP (Port 80):</strong> Unencrypted web traffic</li><li><strong>HTTPS (Port 443):</strong> Encrypted web traffic</li><li><strong>FTP (Port 21):</strong> File transfer - credentials in plaintext</li><li><strong>SSH (Port 22):</strong> Secure remote access</li><li><strong>DNS (Port 53):</strong> Domain resolution</li><li><strong>SMTP (Port 25):</strong> Email sending</li></ul>', 'Video', 30, 2, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(88, 34, 'Network Security Basics', '<h2>Network Security Basics</h2><h3>Common Network Attacks</h3><ul><li><strong>Man-in-the-Middle (MitM):</strong> Intercepting communication</li><li><strong>ARP Spoofing:</strong> Falsifying ARP messages</li><li><strong>DNS Spoofing:</strong> Corrupting DNS cache</li><li><strong>Packet Sniffing:</strong> Capturing network traffic</li></ul><h3>Wireshark Basics</h3><p>Wireshark is a free network protocol analyzer used to capture and inspect network traffic.</p>', 'Video', 35, 3, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(89, 34, 'Module 2: Knowledge Check', '<h2>Module 2 Knowledge Check</h2><p>Test your networking knowledge.</p>', 'Quiz', 25, 4, NULL, NULL, 0, 1, 25, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(90, 35, 'Types of Malware', '<h2>Types of Malware</h2><ul><li><strong>Virus:</strong> Self-replicating code attaching to programs</li><li><strong>Worm:</strong> Self-spreading, no host needed</li><li><strong>Trojan:</strong> Disguised as legitimate software</li><li><strong>Ransomware:</strong> Encrypts files, demands payment</li><li><strong>Spyware:</strong> Secretly monitors activity</li><li><strong>Keylogger:</strong> Records keystrokes</li></ul><h3>Famous Examples</h3><ul><li><strong>WannaCry (2017):</strong> 200,000+ computers affected</li><li><strong>Stuxnet (2010):</strong> First known cyberweapon</li></ul>', 'Video', 30, 1, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(91, 35, 'Social Engineering Attacks', '<h2>Social Engineering Attacks</h2><ul><li><strong>Phishing:</strong> Fraudulent emails</li><li><strong>Spear Phishing:</strong> Targeted phishing</li><li><strong>Whaling:</strong> Targeting executives</li><li><strong>Tailgating:</strong> Following someone into secure areas</li></ul><h3>Red Flags</h3><ul><li>Urgent or threatening language</li><li>Requests for personal information</li><li>Suspicious sender addresses</li></ul>', 'Video', 30, 2, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(92, 35, 'Attack Vectors and Exploits', '<h2>Attack Vectors and Exploits</h2><h3>The Cyber Kill Chain</h3><ol><li>Reconnaissance</li><li>Weaponization</li><li>Delivery</li><li>Exploitation</li><li>Installation</li><li>Command and Control</li><li>Actions on Objectives</li></ol>', 'Video', 35, 3, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(93, 35, 'Module 3: Knowledge Check', '<h2>Module 3 Knowledge Check</h2><p>Test your knowledge of cyber threats.</p>', 'Quiz', 25, 4, NULL, NULL, 0, 1, 25, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(94, 36, 'Firewalls and Network Defense', '<h2>Firewalls and Network Defense</h2><h3>Types of Firewalls</h3><ul><li><strong>Packet-Filtering:</strong> IP/port rules</li><li><strong>Stateful Inspection:</strong> Tracks connections</li><li><strong>Proxy Firewall:</strong> Intermediary</li><li><strong>NGFW:</strong> Includes IDS/IPS</li></ul><h3>IDS vs IPS</h3><ul><li><strong>IDS:</strong> Detects and alerts</li><li><strong>IPS:</strong> Actively blocks</li></ul>', 'Video', 35, 1, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(95, 36, 'Encryption and Cryptography', '<h2>Encryption and Cryptography</h2><ul><li><strong>Symmetric:</strong> Same key (AES)</li><li><strong>Asymmetric:</strong> Public/private pair (RSA)</li><li><strong>Hashing:</strong> One-way (SHA-256)</li></ul><h3>PKI</h3><ul><li><strong>CA:</strong> Issues certificates</li><li><strong>SSL/TLS:</strong> Enables HTTPS</li></ul>', 'Video', 40, 2, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(96, 36, 'Access Control and Authentication', '<h2>Access Control and Authentication</h2><h3>Authentication Factors</h3><ul><li>Something you know (password)</li><li>Something you have (token)</li><li>Something you are (biometric)</li></ul><h3>MFA</h3><p>Multi-Factor Authentication significantly reduces account compromise.</p><h3>RBAC</h3><p>Role-Based Access Control grants permissions based on user roles.</p>', 'Video', 35, 3, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(97, 36, 'Module 4: Knowledge Check', '<h2>Module 4 Knowledge Check</h2><p>Test your knowledge of security controls.</p>', 'Quiz', 25, 4, NULL, NULL, 0, 1, 25, '2026-05-04 21:14:27', '2026-05-04 21:14:27');
-INSERT INTO `lessons` (`id`, `module_id`, `title`, `content`, `lesson_type`, `duration_minutes`, `display_order`, `video_url`, `video_duration`, `is_preview`, `is_mandatory`, `points`, `created_at`, `updated_at`) VALUES
-(98, 37, 'OWASP Top 10 Vulnerabilities', '<h2>OWASP Top 10 (2021)</h2><ol><li>Broken Access Control</li><li>Cryptographic Failures</li><li>Injection</li><li>Insecure Design</li><li>Security Misconfiguration</li><li>Vulnerable Components</li><li>Authentication Failures</li><li>Data Integrity Failures</li><li>Logging Failures</li><li>SSRF</li></ol>', 'Video', 40, 1, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(99, 37, 'SQL Injection and XSS', '<h2>SQL Injection and XSS</h2><h3>SQL Injection</h3><p>Occurs when untrusted input is concatenated into SQL queries. Defense: parameterized queries.</p><h3>XSS Types</h3><ul><li><strong>Stored:</strong> Script stored on server</li><li><strong>Reflected:</strong> Script in URL</li><li><strong>DOM-based:</strong> Client-side manipulation</li></ul>', 'Video', 40, 2, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(100, 37, 'Secure Coding Practices', '<h2>Secure Coding Practices</h2><ul><li>Validate all input server-side</li><li>Use whitelist validation</li><li>Output encoding</li><li>Use security headers (CSP, X-Frame-Options)</li><li>Never expose stack traces</li></ul>', 'Video', 35, 3, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(101, 37, 'Module 5: Knowledge Check', '<h2>Module 5 Knowledge Check</h2><p>Test your web security knowledge.</p>', 'Quiz', 30, 4, NULL, NULL, 0, 1, 25, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(102, 38, 'Introduction to Ethical Hacking', '<h2>Introduction to Ethical Hacking</h2><h3>Hat Types</h3><ul><li><strong>White Hat:</strong> Authorized, helps improve security</li><li><strong>Black Hat:</strong> Malicious, illegal</li><li><strong>Gray Hat:</strong> Unauthorized but not malicious</li></ul><h3>Testing Types</h3><ul><li><strong>Black Box:</strong> No prior knowledge</li><li><strong>White Box:</strong> Full knowledge</li><li><strong>Gray Box:</strong> Partial knowledge</li></ul>', 'Video', 30, 1, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(103, 38, 'Reconnaissance and Scanning', '<h2>Reconnaissance and Scanning</h2><h3>Passive</h3><ul><li>OSINT</li><li>Google Dorking</li><li>Whois/DNS records</li></ul><h3>Active</h3><ul><li>Port scanning (Nmap)</li><li>Service enumeration</li></ul><h3>Nmap</h3><pre>nmap -sS target.com\nnmap -sV target.com</pre>', 'Video', 40, 2, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(104, 38, 'Vulnerability Exploitation Basics', '<h2>Vulnerability Exploitation Basics</h2><h3>Resources</h3><ul><li>Exploit-DB</li><li>CVE</li></ul><h3>Metasploit</h3><p>World\'s most used penetration testing framework.</p><h3>Responsible Disclosure</h3><ol><li>Notify privately</li><li>Allow time to fix</li><li>Coordinate disclosure</li></ol>', 'Video', 35, 3, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(105, 38, 'Module 6: Knowledge Check', '<h2>Module 6 Knowledge Check</h2><p>Test your ethical hacking knowledge.</p>', 'Quiz', 25, 4, NULL, NULL, 0, 1, 25, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(106, 39, 'Incident Response Process', '<h2>Incident Response Process</h2><h3>NIST Lifecycle</h3><ol><li>Preparation</li><li>Detection and Analysis</li><li>Containment</li><li>Eradication</li><li>Recovery</li><li>Post-Incident Activity</li></ol>', 'Video', 35, 1, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(107, 39, 'Digital Forensics Fundamentals', '<h2>Digital Forensics</h2><h3>Principles</h3><ul><li>Evidence integrity</li><li>Documentation</li><li>Repeatability</li></ul><h3>Tools</h3><ul><li>Autopsy</li><li>Volatility</li></ul>', 'Video', 35, 2, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(108, 39, 'Incident Reporting and Documentation', '<h2>Incident Reporting</h2><h3>Components</h3><ul><li>Executive summary</li><li>Timeline</li><li>Technical details</li><li>Impact assessment</li><li>Root cause analysis</li><li>Recommendations</li></ul><h3>Zambia DPA</h3><p>Data breach notification requirements.</p>', 'Video', 25, 3, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(109, 39, 'Module 7: Knowledge Check', '<h2>Module 7 Knowledge Check</h2><p>Test your incident response knowledge.</p>', 'Quiz', 25, 4, NULL, NULL, 0, 1, 25, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(110, 40, 'Introduction to SIEM', '<h2>Introduction to SIEM</h2><h3>What SIEM Does</h3><ul><li>Log collection</li><li>Correlation</li><li>Alerting</li><li>Dashboards</li></ul><h3>Tools</h3><ul><li>Splunk</li><li>Microsoft Sentinel</li><li>Elastic Stack (ELK)</li><li>Wazuh</li></ul>', 'Video', 30, 1, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(111, 40, 'Log Analysis and Monitoring', '<h2>Log Analysis</h2><h3>Log Sources</h3><ul><li>OS logs</li><li>Firewall logs</li><li>Web server logs</li><li>Authentication logs</li></ul><h3>What to Look For</h3><ul><li>Multiple failed logins</li><li>Off-hours logins</li><li>Unusual data transfers</li><li>Known malicious IPs</li></ul>', 'Video', 30, 2, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(112, 40, 'SOC Operations and Workflow', '<h2>SOC Operations</h2><h3>Tiers</h3><ul><li><strong>Tier 1:</strong> Alert triage</li><li><strong>Tier 2:</strong> Incident response</li><li><strong>Tier 3:</strong> Threat hunting</li></ul><h3>Metrics</h3><ul><li>MTTD - Mean Time to Detect</li><li>MTTR - Mean Time to Respond</li></ul><h3>MITRE ATT&CK</h3><p>Knowledge base of adversary tactics and techniques.</p>', 'Video', 35, 3, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(113, 40, 'Module 8: Knowledge Check', '<h2>Module 8 Knowledge Check</h2><p>Test your SOC knowledge.</p>', 'Quiz', 25, 4, NULL, NULL, 0, 1, 25, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(114, 41, 'Security Frameworks and Standards', '<h2>Security Frameworks</h2><h3>NIST CSF</h3><ul><li>Identify</li><li>Protect</li><li>Detect</li><li>Respond</li><li>Recover</li></ul><h3>ISO 27001</h3><p>Information Security Management Systems.</p><h3>CIS Controls</h3><p>20 prioritized security controls.</p>', 'Video', 30, 1, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(115, 41, 'Risk Management', '<h2>Risk Management</h2><h3>Assessment</h3><ol><li>Asset identification</li><li>Threat identification</li><li>Vulnerability assessment</li><li>Risk calculation: Likelihood x Impact</li></ol><h3>Treatment</h3><ul><li>Accept</li><li>Mitigate</li><li>Transfer</li><li>Avoid</li></ul>', 'Video', 30, 2, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(116, 41, 'Compliance and Audit', '<h2>Compliance and Audit</h2><h3>Audit Types</h3><ul><li>Internal</li><li>External</li><li>Regulatory</li></ul><h3>Zambia DPA</h3><ul><li>Lawful processing</li><li>Data subject rights</li><li>Breach notification</li></ul>', 'Video', 25, 3, NULL, NULL, 0, 1, 15, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(117, 41, 'Module 9: Knowledge Check', '<h2>Module 9 Knowledge Check</h2><p>Test your GRC knowledge.</p>', 'Quiz', 25, 4, NULL, NULL, 0, 1, 25, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(118, 42, 'Capstone Project Overview', '<h2>Capstone Project</h2><p>You are hired as a Junior Security Analyst for a company in Lusaka. They experienced a phishing attack and want to improve security.</p><h3>Tasks</h3><ol><li>Risk Assessment</li><li>Security Policy</li><li>Network Design</li><li>Incident Response Plan</li><li>Security Awareness Training</li></ol>', 'Assignment', 45, 1, NULL, NULL, 0, 1, 100, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(119, 42, 'Career Preparation and Next Steps', '<h2>Career Preparation</h2><h3>Next Steps</h3><ol><li>Set up a home lab</li><li>TryHackMe, Hack The Box</li><li>CompTIA Security+</li><li>Join cybersecurity communities</li></ol>', 'Video', 25, 2, NULL, NULL, 0, 1, 10, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(120, 42, 'Final Assessment', '<h2>Final Assessment</h2><p>Comprehensive final examination covering all modules.</p>', 'Quiz', 60, 3, NULL, NULL, 0, 1, 150, '2026-05-04 21:14:27', '2026-05-04 21:14:27');
+(81, 32, 'Final Assessment', '<h2>Final Assessment</h2>\n<p>Comprehensive final examination covering all modules.</p>', 'Quiz', 60, 3, NULL, NULL, 0, 1, 150, '2026-05-04 18:50:46', '2026-05-04 18:50:46');
 
 -- --------------------------------------------------------
 
@@ -1157,17 +1115,7 @@ INSERT INTO `modules` (`id`, `course_id`, `title`, `description`, `display_order
 (29, 8, 'Module 7: Incident Response and Forensics', 'Incident handling process, digital forensics fundamentals, and reporting', 7, 285, 1, NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
 (30, 8, 'Module 8: Security Operations (SOC)', 'SIEM tools, log analysis, monitoring, and SOC workflows', 8, 285, 1, NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
 (31, 8, 'Module 9: Governance, Risk, and Compliance', 'Security frameworks, risk management, and compliance standards', 9, 255, 1, NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(32, 8, 'Module 10: Capstone Project', 'Apply your skills to a real-world cybersecurity scenario', 10, 135, 1, NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(33, 35, 'Module 1: Introduction to Cybersecurity', 'Understanding the cybersecurity landscape, key concepts, and career paths', 1, 225, 1, NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(34, 35, 'Module 2: Networking Fundamentals', 'OSI model, TCP/IP, network protocols, and basic network security', 2, 300, 1, NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(35, 35, 'Module 3: Cyber Threats and Attacks', 'Types of malware, attack vectors, social engineering, and threat actors', 3, 285, 1, NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(36, 35, 'Module 4: Security Controls and Defense', 'Firewalls, IDS/IPS, encryption, access control, and defense strategies', 4, 330, 1, NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(37, 35, 'Module 5: Web Application Security', 'OWASP Top 10, secure coding, and web vulnerability assessment', 5, 345, 1, NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(38, 35, 'Module 6: Ethical Hacking Basics', 'Penetration testing methodology, reconnaissance, and vulnerability scanning', 6, 315, 1, NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(39, 35, 'Module 7: Incident Response and Forensics', 'Incident handling process, digital forensics fundamentals, and reporting', 7, 285, 1, NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(40, 35, 'Module 8: Security Operations (SOC)', 'SIEM tools, log analysis, monitoring, and SOC workflows', 8, 285, 1, NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(41, 35, 'Module 9: Governance, Risk, and Compliance', 'Security frameworks, risk management, and compliance standards', 9, 255, 1, NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(42, 35, 'Module 10: Capstone Project', 'Apply your skills to a real-world cybersecurity scenario', 10, 135, 1, NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27');
+(32, 8, 'Module 10: Capstone Project', 'Apply your skills to a real-world cybersecurity scenario', 10, 135, 1, NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46');
 
 -- --------------------------------------------------------
 
@@ -1361,67 +1309,7 @@ INSERT INTO `questions` (`question_id`, `question_type`, `question_text`, `point
 (8, 'Multiple Choice', 'Which of the following is NOT a type of threat actor?', 1, 'System Administrators are typically defenders, not threat actors.', '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
 (9, 'Multiple Choice', 'A weakness in a system that could be exploited is called a(n):', 1, 'A vulnerability is a weakness in a system. A threat is a potential danger. Risk is the combination of threat and vulnerability.', '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
 (10, 'Multiple Choice', 'What is the primary motivation of cybercriminals?', 1, 'Cybercriminals are primarily motivated by financial gain through activities like ransomware, fraud, and data theft.', '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(11, 'Multiple Choice', 'Which principle ensures data is accessible when needed?', 1, 'Availability ensures that systems and data are accessible to authorized users when they need them.', '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(12, 'Multiple Choice', 'What does the \"C\" in the CIA Triad stand for?', 1, 'The CIA Triad consists of Confidentiality, Integrity, and Availability.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(13, 'Multiple Choice', 'Which of the following is NOT a type of threat actor?', 1, 'System Administrators are defenders, not threat actors.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(14, 'Multiple Choice', 'A weakness in a system that could be exploited is called a(n):', 1, 'A vulnerability is a weakness in a system.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(15, 'Multiple Choice', 'What is the primary motivation of cybercriminals?', 1, 'Cybercriminals are primarily motivated by financial gain.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(16, 'Multiple Choice', 'Which principle ensures data is accessible when needed?', 1, 'Availability ensures systems and data are accessible.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(17, 'Multiple Choice', 'At which OSI layer does routing occur?', 1, 'Routing occurs at Layer 3 (Network Layer).', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(18, 'Multiple Choice', 'Which protocol uses port 443 by default?', 1, 'HTTPS uses port 443.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(19, 'Multiple Choice', 'What does ARP stand for?', 1, 'ARP maps IP addresses to MAC addresses.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(20, 'Multiple Choice', 'Which is the encrypted alternative to Telnet?', 1, 'SSH provides encrypted remote access.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(21, 'Multiple Choice', 'Network segmentation using VLANs primarily helps with:', 1, 'VLANs segment networks to contain breaches.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(22, 'Multiple Choice', 'Which malware type encrypts files and demands payment?', 1, 'Ransomware encrypts files and demands payment.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(23, 'Multiple Choice', 'What is phishing?', 1, 'Phishing is a fraudulent attempt to obtain sensitive information.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(24, 'Multiple Choice', 'In the Cyber Kill Chain, what comes after \"Delivery\"?', 1, 'The phases are: Reconnaissance -> Weaponization -> Delivery -> Exploitation.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(25, 'Multiple Choice', 'Which of the following is a social engineering technique?', 1, 'Tailgating is a physical social engineering technique.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(26, 'Multiple Choice', 'What is the primary purpose of a keylogger?', 1, 'A keylogger records keystrokes to capture passwords.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(27, 'Multiple Choice', 'Which encryption type uses the same key for encryption and decryption?', 1, 'Symmetric encryption uses a single shared key.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(28, 'Multiple Choice', 'What does MFA stand for?', 1, 'Multi-Factor Authentication requires two or more verification factors.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(29, 'Multiple Choice', 'In RBAC, access is determined by:', 1, 'Role-Based Access Control grants access based on user roles.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(30, 'Multiple Choice', 'Which system actively blocks detected threats in real-time?', 1, 'IPS actively blocks threats while IDS only detects and alerts.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(31, 'Multiple Choice', 'TLS is used for:', 1, 'TLS encrypts web traffic and enables HTTPS.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(32, 'Multiple Choice', 'Which OWASP Top 10 item involves untrusted data sent to interpreters?', 1, 'Injection flaws occur when untrusted data is sent to interpreters.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(33, 'Multiple Choice', 'What is the best defense against SQL Injection?', 1, 'Parameterized queries separate SQL code from data.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(34, 'Multiple Choice', 'Which XSS type stores the malicious script on the server?', 1, 'Stored (Persistent) XSS stores scripts permanently on the server.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(35, 'Multiple Choice', 'Which header prevents clickjacking attacks?', 1, 'X-Frame-Options controls whether a page can be displayed in frames.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(36, 'Multiple Choice', 'What does CSP stand for in web security?', 1, 'Content Security Policy helps prevent XSS and data injection.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(37, 'Multiple Choice', 'Which type of hacker is authorized to test systems?', 1, 'White Hat hackers have authorization to test and improve security.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(38, 'Multiple Choice', 'What does OSINT stand for?', 1, 'OSINT refers to intelligence gathered from publicly available sources.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(39, 'Multiple Choice', 'Which tool is commonly used for port scanning?', 1, 'Nmap is the industry-standard tool for port scanning.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(40, 'Multiple Choice', 'In a Black Box test, the tester has:', 1, 'Black Box testing simulates an external attacker with no prior knowledge.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(41, 'Multiple Choice', 'What does CVE stand for?', 1, 'CVE provides standardized identifiers for known vulnerabilities.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(42, 'Multiple Choice', 'Which NIST phase involves removing threats and vulnerabilities?', 1, 'Eradication removes threats and eliminates vulnerabilities.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(43, 'Multiple Choice', 'What is the primary purpose of chain of custody?', 1, 'Chain of custody ensures digital evidence is admissible in court.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(44, 'Multiple Choice', 'Which tool is used for memory forensics?', 1, 'Volatility is an open-source memory forensics framework.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(45, 'Multiple Choice', 'What should be done FIRST when responding to an incident?', 1, 'Preserving evidence is critical for investigation.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(46, 'Multiple Choice', 'A bit-for-bit copy of storage media is called a:', 1, 'A disk image preserves all data including deleted files.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(47, 'Multiple Choice', 'What does SIEM stand for?', 1, 'SIEM collects, correlates, and analyzes security events.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(48, 'Multiple Choice', 'Which SOC tier is responsible for initial alert review?', 1, 'Tier 1 analysts handle initial alert triage.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(49, 'Multiple Choice', 'MTTD stands for:', 1, 'MTTD measures average time to detect threats.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(50, 'Multiple Choice', 'Which of the following is an open-source SIEM tool?', 1, 'Wazuh is an open-source security monitoring platform.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(51, 'Multiple Choice', 'What is the MITRE ATT&CK framework used for?', 1, 'MITRE ATT&CK is used for threat modeling and detection.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(52, 'Multiple Choice', 'The NIST CSF consists of how many core functions?', 1, 'NIST CSF has 5 core functions.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(53, 'Multiple Choice', 'ISO 27001 is a standard for:', 1, 'ISO 27001 is for Information Security Management Systems.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(54, 'Multiple Choice', 'Risk is calculated as:', 1, 'Risk = Likelihood x Impact.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(55, 'Multiple Choice', 'Which risk treatment involves transferring risk to a third party?', 1, 'Risk transfer moves financial consequence to another party.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(56, 'Multiple Choice', 'Which NIST function involves taking action on detected incidents?', 1, 'The Respond function includes taking action on incidents.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(57, 'Multiple Choice', 'The three principles of the CIA Triad are:', 1, 'Confidentiality, Integrity, and Availability.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(58, 'Multiple Choice', 'Which layer of the OSI model handles routing?', 1, 'Layer 3 (Network Layer).', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(59, 'Multiple Choice', 'Which malware type does NOT need a host program?', 1, 'Worms are self-replicating and do not need a host.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(60, 'Multiple Choice', 'Which encryption algorithm is symmetric?', 1, 'AES is symmetric. RSA and ECC are asymmetric.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(61, 'Multiple Choice', 'What is the primary defense against SQL Injection?', 1, 'Parameterized queries are the most effective defense.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(62, 'Multiple Choice', 'In a Black Box penetration test, the tester has:', 1, 'No prior knowledge.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(63, 'Multiple Choice', 'Which phase of incident response involves limiting damage?', 1, 'Containment isolates the incident.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(64, 'Multiple Choice', 'What does a SIEM system primarily do?', 1, 'Collects and analyzes security events.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(65, 'Multiple Choice', 'The NIST Cybersecurity Framework has how many functions?', 1, 'NIST CSF has 5 functions.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(66, 'Multiple Choice', 'Which access control model grants permissions based on user roles?', 1, 'RBAC grants permissions based on roles.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(67, 'Multiple Choice', 'What is the purpose of a honeypot?', 1, 'A honeypot attracts and detects attackers.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(68, 'Multiple Choice', 'Which social engineering technique involves following someone into a secure area?', 1, 'Tailgating follows someone into restricted areas.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(69, 'Multiple Choice', 'TLS is used to:', 1, 'TLS encrypts web traffic for HTTPS.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(70, 'Multiple Choice', 'What does OWASP stand for?', 1, 'Open Web Application Security Project.', '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(71, 'Multiple Choice', 'Risk is best defined as:', 1, 'Risk = Likelihood x Impact.', '2026-05-04 21:14:27', '2026-05-04 21:14:27');
+(11, 'Multiple Choice', 'Which principle ensures data is accessible when needed?', 1, 'Availability ensures that systems and data are accessible to authorized users when they need them.', '2026-05-04 18:50:46', '2026-05-04 18:50:46');
 
 -- --------------------------------------------------------
 
@@ -1479,247 +1367,7 @@ INSERT INTO `question_options` (`option_id`, `question_id`, `option_text`, `is_c
 (35, 11, 'Confidentiality', 0, 1),
 (36, 11, 'Integrity', 0, 2),
 (37, 11, 'Availability', 1, 3),
-(38, 11, 'Authentication', 0, 4),
-(39, 12, 'Control', 0, 1),
-(40, 12, 'Confidentiality', 1, 2),
-(41, 12, 'Certification', 0, 3),
-(42, 12, 'Compliance', 0, 4),
-(43, 13, 'Script Kiddie', 0, 1),
-(44, 13, 'Cybercriminal', 0, 2),
-(45, 13, 'System Administrator', 1, 3),
-(46, 13, 'State-Sponsored Actor', 0, 4),
-(47, 14, 'Threat', 0, 1),
-(48, 14, 'Risk', 0, 2),
-(49, 14, 'Vulnerability', 1, 3),
-(50, 14, 'Exploit', 0, 4),
-(51, 15, 'Political change', 0, 1),
-(52, 15, 'Social justice', 0, 2),
-(53, 15, 'Financial gain', 1, 3),
-(54, 15, 'Personal recognition', 0, 4),
-(55, 16, 'Confidentiality', 0, 1),
-(56, 16, 'Integrity', 0, 2),
-(57, 16, 'Availability', 1, 3),
-(58, 16, 'Authentication', 0, 4),
-(59, 17, 'Layer 2', 0, 1),
-(60, 17, 'Layer 3', 1, 2),
-(61, 17, 'Layer 4', 0, 3),
-(62, 17, 'Layer 7', 0, 4),
-(63, 18, 'HTTP', 0, 1),
-(64, 18, 'FTP', 0, 2),
-(65, 18, 'HTTPS', 1, 3),
-(66, 18, 'SSH', 0, 4),
-(67, 19, 'Address Resolution Protocol', 1, 1),
-(68, 19, 'Advanced Routing Protocol', 0, 2),
-(69, 19, 'Application Resource Protocol', 0, 3),
-(70, 19, 'Automatic Response Procedure', 0, 4),
-(71, 20, 'FTP', 0, 1),
-(72, 20, 'SSH', 1, 2),
-(73, 20, 'HTTP', 0, 3),
-(74, 20, 'SMTP', 0, 4),
-(75, 21, 'Increasing internet speed', 0, 1),
-(76, 21, 'Limiting attack spread', 1, 2),
-(77, 21, 'Reducing cable costs', 0, 3),
-(78, 21, 'Improving wireless signal', 0, 4),
-(79, 22, 'Virus', 0, 1),
-(80, 22, 'Worm', 0, 2),
-(81, 22, 'Ransomware', 1, 3),
-(82, 22, 'Spyware', 0, 4),
-(83, 23, 'A network scanning technique', 0, 1),
-(84, 23, 'A fraudulent attempt to obtain sensitive information', 1, 2),
-(85, 23, 'A type of firewall', 0, 3),
-(86, 23, 'A password hashing method', 0, 4),
-(87, 24, 'Reconnaissance', 0, 1),
-(88, 24, 'Weaponization', 0, 2),
-(89, 24, 'Exploitation', 1, 3),
-(90, 24, 'Installation', 0, 4),
-(91, 25, 'SQL Injection', 0, 1),
-(92, 25, 'Tailgating', 1, 2),
-(93, 25, 'Buffer Overflow', 0, 3),
-(94, 25, 'ARP Spoofing', 0, 4),
-(95, 26, 'Encrypt files', 0, 1),
-(96, 26, 'Record keystrokes', 1, 2),
-(97, 26, 'Scan networks', 0, 3),
-(98, 26, 'Block websites', 0, 4),
-(99, 27, 'Asymmetric', 0, 1),
-(100, 27, 'Symmetric', 1, 2),
-(101, 27, 'Hashing', 0, 3),
-(102, 27, 'Public-key', 0, 4),
-(103, 28, 'Multi-Factor Authentication', 1, 1),
-(104, 28, 'Managed Firewall Access', 0, 2),
-(105, 28, 'Multi-Function Application', 0, 3),
-(106, 28, 'Modular Framework Architecture', 0, 4),
-(107, 29, 'User attributes', 0, 1),
-(108, 29, 'Resource ownership', 0, 2),
-(109, 29, 'User roles', 1, 3),
-(110, 29, 'Security labels', 0, 4),
-(111, 30, 'IDS', 0, 1),
-(112, 30, 'IPS', 1, 2),
-(113, 30, 'Firewall', 0, 3),
-(114, 30, 'Proxy', 0, 4),
-(115, 31, 'File compression', 0, 1),
-(116, 31, 'Secure web communication', 1, 2),
-(117, 31, 'Database indexing', 0, 3),
-(118, 31, 'Email routing', 0, 4),
-(119, 32, 'Broken Access Control', 0, 1),
-(120, 32, 'Cryptographic Failures', 0, 2),
-(121, 32, 'Injection', 1, 3),
-(122, 32, 'Insecure Design', 0, 4),
-(123, 33, 'Input validation only', 0, 1),
-(124, 33, 'Parameterized queries', 1, 2),
-(125, 33, 'Firewall rules', 0, 3),
-(126, 33, 'URL encoding', 0, 4),
-(127, 34, 'Reflected XSS', 0, 1),
-(128, 34, 'Stored XSS', 1, 2),
-(129, 34, 'DOM-based XSS', 0, 3),
-(130, 34, 'Blind XSS', 0, 4),
-(131, 35, 'Content-Security-Policy', 0, 1),
-(132, 35, 'X-Frame-Options', 1, 2),
-(133, 35, 'X-XSS-Protection', 0, 3),
-(134, 35, 'Strict-Transport-Security', 0, 4),
-(135, 36, 'Cross-Site Protection', 0, 1),
-(136, 36, 'Content Security Policy', 1, 2),
-(137, 36, 'Client-Side Protocol', 0, 3),
-(138, 36, 'Certificate Signing Process', 0, 4),
-(139, 37, 'Black Hat', 0, 1),
-(140, 37, 'White Hat', 1, 2),
-(141, 37, 'Gray Hat', 0, 3),
-(142, 37, 'Script Kiddie', 0, 4),
-(143, 38, 'Open Source Intelligence', 1, 1),
-(144, 38, 'Operating System Integration', 0, 2),
-(145, 38, 'Online Security Intelligence', 0, 3),
-(146, 38, 'Organizational Security Interface', 0, 4),
-(147, 39, 'Wireshark', 0, 1),
-(148, 39, 'Nmap', 1, 2),
-(149, 39, 'Metasploit', 0, 3),
-(150, 39, 'Burp Suite', 0, 4),
-(151, 40, 'Full knowledge', 0, 1),
-(152, 40, 'No prior knowledge', 1, 2),
-(153, 40, 'Partial knowledge', 0, 3),
-(154, 40, 'Source code access', 0, 4),
-(155, 41, 'Common Vulnerability Enumeration', 0, 1),
-(156, 41, 'Common Vulnerabilities and Exposures', 1, 2),
-(157, 41, 'Critical Vulnerability Entry', 0, 3),
-(158, 41, 'Computer Virus Encyclopedia', 0, 4),
-(159, 42, 'Containment', 0, 1),
-(160, 42, 'Eradication', 1, 2),
-(161, 42, 'Recovery', 0, 3),
-(162, 42, 'Detection', 0, 4),
-(163, 43, 'Speed up investigation', 0, 1),
-(164, 43, 'Ensure evidence admissibility', 1, 2),
-(165, 43, 'Reduce costs', 0, 3),
-(166, 43, 'Identify attackers', 0, 4),
-(167, 44, 'Nmap', 0, 1),
-(168, 44, 'Volatility', 1, 2),
-(169, 44, 'Wireshark', 0, 3),
-(170, 44, 'Nessus', 0, 4),
-(171, 45, 'Format affected systems', 0, 1),
-(172, 45, 'Preserve evidence', 1, 2),
-(173, 45, 'Notify the media', 0, 3),
-(174, 45, 'Update antivirus', 0, 4),
-(175, 46, 'Snapshot', 0, 1),
-(176, 46, 'Disk Image', 1, 2),
-(177, 46, 'Backup', 0, 3),
-(178, 46, 'Archive', 0, 4),
-(179, 47, 'Security Information and Event Management', 1, 1),
-(180, 47, 'System Intelligence and Event Monitoring', 0, 2),
-(181, 47, 'Secure Internet and Email Management', 0, 3),
-(182, 47, 'System Integration and Enterprise Monitoring', 0, 4),
-(183, 48, 'Tier 1', 1, 1),
-(184, 48, 'Tier 2', 0, 2),
-(185, 48, 'Tier 3', 0, 3),
-(186, 48, 'Tier 4', 0, 4),
-(187, 49, 'Mean Time to Detect', 1, 1),
-(188, 49, 'Maximum Time to Detection', 0, 2),
-(189, 49, 'Minimum Technical Threat Duration', 0, 3),
-(190, 49, 'Managed Threat Transfer Delay', 0, 4),
-(191, 50, 'Splunk', 0, 1),
-(192, 50, 'QRadar', 0, 2),
-(193, 50, 'Wazuh', 1, 3),
-(194, 50, 'Microsoft Sentinel', 0, 4),
-(195, 51, 'Network routing', 0, 1),
-(196, 51, 'Threat modeling and detection', 1, 2),
-(197, 51, 'Password management', 0, 3),
-(198, 51, 'Data encryption', 0, 4),
-(199, 52, '3', 0, 1),
-(200, 52, '4', 0, 2),
-(201, 52, '5', 1, 3),
-(202, 52, '6', 0, 4),
-(203, 53, 'Payment processing', 0, 1),
-(204, 53, 'Information security management', 1, 2),
-(205, 53, 'Network routing', 0, 3),
-(206, 53, 'Software development', 0, 4),
-(207, 54, 'Threat + Vulnerability', 0, 1),
-(208, 54, 'Likelihood x Impact', 1, 2),
-(209, 54, 'Asset Value - Cost', 0, 3),
-(210, 54, 'Threat - Control', 0, 4),
-(211, 55, 'Accept', 0, 1),
-(212, 55, 'Mitigate', 0, 2),
-(213, 55, 'Transfer', 1, 3),
-(214, 55, 'Avoid', 0, 4),
-(215, 56, 'Identify', 0, 1),
-(216, 56, 'Protect', 0, 2),
-(217, 56, 'Detect', 0, 3),
-(218, 56, 'Respond', 1, 4),
-(219, 57, 'Control, Integrity, Authentication', 0, 1),
-(220, 57, 'Confidentiality, Integrity, Availability', 1, 2),
-(221, 57, 'Certification, Implementation, Assessment', 0, 3),
-(222, 57, 'Compliance, Investigation, Analysis', 0, 4),
-(223, 58, 'Data Link', 0, 1),
-(224, 58, 'Network', 1, 2),
-(225, 58, 'Transport', 0, 3),
-(226, 58, 'Application', 0, 4),
-(227, 59, 'Virus', 0, 1),
-(228, 59, 'Worm', 1, 2),
-(229, 59, 'Trojan', 0, 3),
-(230, 59, 'Rootkit', 0, 4),
-(231, 60, 'RSA', 0, 1),
-(232, 60, 'AES', 1, 2),
-(233, 60, 'ECC', 0, 3),
-(234, 60, 'DSA', 0, 4),
-(235, 61, 'Input validation', 0, 1),
-(236, 61, 'Parameterized queries', 1, 2),
-(237, 61, 'Web Application Firewall', 0, 3),
-(238, 61, 'URL encoding', 0, 4),
-(239, 62, 'Full knowledge of systems', 0, 1),
-(240, 62, 'No prior knowledge', 1, 2),
-(241, 62, 'Source code access', 0, 3),
-(242, 62, 'Administrator credentials', 0, 4),
-(243, 63, 'Detection', 0, 1),
-(244, 63, 'Containment', 1, 2),
-(245, 63, 'Eradication', 0, 3),
-(246, 63, 'Recovery', 0, 4),
-(247, 64, 'Encrypt network traffic', 0, 1),
-(248, 64, 'Collect and analyze security events', 1, 2),
-(249, 64, 'Block malicious websites', 0, 3),
-(250, 64, 'Manage user passwords', 0, 4),
-(251, 65, '3', 0, 1),
-(252, 65, '4', 0, 2),
-(253, 65, '5', 1, 3),
-(254, 65, '6', 0, 4),
-(255, 66, 'DAC', 0, 1),
-(256, 66, 'MAC', 0, 2),
-(257, 66, 'RBAC', 1, 3),
-(258, 66, 'ABAC', 0, 4),
-(259, 67, 'Store backups', 0, 1),
-(260, 67, 'Attract and detect attackers', 1, 2),
-(261, 67, 'Encrypt data', 0, 3),
-(262, 67, 'Speed up networks', 0, 4),
-(263, 68, 'Phishing', 0, 1),
-(264, 68, 'Pretexting', 0, 2),
-(265, 68, 'Tailgating', 1, 3),
-(266, 68, 'Baiting', 0, 4),
-(267, 69, 'Compress files', 0, 1),
-(268, 69, 'Encrypt web traffic', 1, 2),
-(269, 69, 'Scan for viruses', 0, 3),
-(270, 69, 'Route packets', 0, 4),
-(271, 70, 'Open Web Application Security Project', 1, 1),
-(272, 70, 'Online Web Attack and Security Protocol', 0, 2),
-(273, 70, 'Operational Web Application Standard Procedure', 0, 3),
-(274, 70, 'Open Web Authentication Security Program', 0, 4),
-(275, 71, 'Threat + Vulnerability', 0, 1),
-(276, 71, 'Likelihood x Impact', 1, 2),
-(277, 71, 'Asset x Control', 0, 3),
-(278, 71, 'Cost + Benefit', 0, 4);
+(38, 11, 'Authentication', 0, 4);
 
 -- --------------------------------------------------------
 
@@ -1764,17 +1412,7 @@ INSERT INTO `quizzes` (`id`, `course_id`, `lesson_id`, `title`, `description`, `
 (11, 8, NULL, 'Module 7 Quiz: Incident Response and Forensics', 'Test your incident response knowledge', 'Graded', 25, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
 (12, 8, NULL, 'Module 8 Quiz: Security Operations', 'Test your SOC knowledge', 'Graded', 25, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
 (13, 8, NULL, 'Module 9 Quiz: Governance, Risk, and Compliance', 'Test your GRC knowledge', 'Graded', 25, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(14, 8, NULL, 'Final Assessment: Cybersecurity Fundamentals', 'Comprehensive final assessment covering all modules', 'Final Exam', 60, 2, 75.00, 1, 0, NULL, NULL, 1, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(15, 35, NULL, 'Module 1 Quiz: Introduction to Cybersecurity', 'Test your understanding of cybersecurity fundamentals', 'Graded', 20, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(16, 35, NULL, 'Module 2 Quiz: Networking Fundamentals', 'Test your networking knowledge', 'Graded', 25, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(17, 35, NULL, 'Module 3 Quiz: Cyber Threats and Attacks', 'Test your knowledge of cyber threats', 'Graded', 25, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(18, 35, NULL, 'Module 4 Quiz: Security Controls and Defense', 'Test your knowledge of security controls', 'Graded', 25, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(19, 35, NULL, 'Module 5 Quiz: Web Application Security', 'Test your web security knowledge', 'Graded', 30, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(20, 35, NULL, 'Module 6 Quiz: Ethical Hacking Basics', 'Test your ethical hacking knowledge', 'Graded', 25, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(21, 35, NULL, 'Module 7 Quiz: Incident Response and Forensics', 'Test your incident response knowledge', 'Graded', 25, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(22, 35, NULL, 'Module 8 Quiz: Security Operations', 'Test your SOC knowledge', 'Graded', 25, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(23, 35, NULL, 'Module 9 Quiz: Governance, Risk, and Compliance', 'Test your GRC knowledge', 'Graded', 25, 3, 70.00, 1, 1, NULL, NULL, 1, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(24, 35, NULL, 'Final Assessment: Cybersecurity Fundamentals', 'Comprehensive final assessment covering all modules', 'Final Exam', 60, 2, 75.00, 1, 0, NULL, NULL, 1, '2026-05-04 21:14:27', '2026-05-04 21:14:27');
+(14, 8, NULL, 'Final Assessment: Cybersecurity Fundamentals', 'Comprehensive final assessment covering all modules', 'Final Exam', 60, 2, 75.00, 1, 0, NULL, NULL, 1, '2026-05-04 18:50:46', '2026-05-04 18:50:46');
 
 -- --------------------------------------------------------
 
@@ -1847,67 +1485,7 @@ INSERT INTO `quiz_questions` (`quiz_question_id`, `quiz_id`, `question_id`, `dis
 (2, 1, 2, 2, NULL),
 (3, 1, 3, 3, NULL),
 (4, 3, 4, 1, NULL),
-(5, 3, 5, 2, NULL),
-(6, 15, 12, 1, NULL),
-(7, 15, 13, 2, NULL),
-(8, 15, 14, 3, NULL),
-(9, 15, 15, 4, NULL),
-(10, 15, 16, 5, NULL),
-(11, 16, 17, 1, NULL),
-(12, 16, 18, 2, NULL),
-(13, 16, 19, 3, NULL),
-(14, 16, 20, 4, NULL),
-(15, 16, 21, 5, NULL),
-(16, 17, 22, 1, NULL),
-(17, 17, 23, 2, NULL),
-(18, 17, 24, 3, NULL),
-(19, 17, 25, 4, NULL),
-(20, 17, 26, 5, NULL),
-(21, 18, 27, 1, NULL),
-(22, 18, 28, 2, NULL),
-(23, 18, 29, 3, NULL),
-(24, 18, 30, 4, NULL),
-(25, 18, 31, 5, NULL),
-(26, 19, 32, 1, NULL),
-(27, 19, 33, 2, NULL),
-(28, 19, 34, 3, NULL),
-(29, 19, 35, 4, NULL),
-(30, 19, 36, 5, NULL),
-(31, 20, 37, 1, NULL),
-(32, 20, 38, 2, NULL),
-(33, 20, 39, 3, NULL),
-(34, 20, 40, 4, NULL),
-(35, 20, 41, 5, NULL),
-(36, 21, 42, 1, NULL),
-(37, 21, 43, 2, NULL),
-(38, 21, 44, 3, NULL),
-(39, 21, 45, 4, NULL),
-(40, 21, 46, 5, NULL),
-(41, 22, 47, 1, NULL),
-(42, 22, 48, 2, NULL),
-(43, 22, 49, 3, NULL),
-(44, 22, 50, 4, NULL),
-(45, 22, 51, 5, NULL),
-(46, 23, 52, 1, NULL),
-(47, 23, 53, 2, NULL),
-(48, 23, 54, 3, NULL),
-(49, 23, 55, 4, NULL),
-(50, 23, 56, 5, NULL),
-(51, 24, 57, 1, NULL),
-(52, 24, 58, 2, NULL),
-(53, 24, 59, 3, NULL),
-(54, 24, 60, 4, NULL),
-(55, 24, 61, 5, NULL),
-(56, 24, 62, 6, NULL),
-(57, 24, 63, 7, NULL),
-(58, 24, 64, 8, NULL),
-(59, 24, 65, 9, NULL),
-(60, 24, 66, 10, NULL),
-(61, 24, 67, 11, NULL),
-(62, 24, 68, 12, NULL),
-(63, 24, 69, 13, NULL),
-(64, 24, 70, 14, NULL),
-(65, 24, 71, 15, NULL);
+(5, 3, 5, 2, NULL);
 
 -- --------------------------------------------------------
 
@@ -2239,7 +1817,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `password_hash`, `first_name`, `last_name`, `phone`, `avatar_url`, `status`, `email_verification_token`, `email_verification_expires`, `email_verified`, `last_login`, `last_login_ip`, `failed_login_attempts`, `account_locked_until`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-05-04 23:15:00', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-05-04 21:15:00'),
+(1, 'admin', 'admin@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-05-04 20:39:57', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-05-04 18:39:57'),
 (6, 'michael.siame', 'michael.siame@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, '2025-12-25 21:53:14', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 19:53:14'),
 (25, 'taona', 'taona@gmail.com', NULL, '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
 (26, 'jaysiame076', 'jaysiame076@gmail.com', NULL, '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:32:59', NULL, 0, NULL, '2025-11-23 11:05:46', '2025-12-09 09:32:59'),
@@ -2517,7 +2095,8 @@ CREATE TABLE `user_sessions` (
 --
 
 INSERT INTO `user_sessions` (`id`, `user_id`, `session_token`, `ip_address`, `user_agent`, `expires_at`, `created_at`, `updated_at`) VALUES
-(130, 72, 'fab8d5924eb5b89571985bd47bad9aa974add414641a392d4a0a9e3d446b400b', '165.58.129.66', 'Mozilla/5.0 (Linux; Android 13; SM-A145P Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/146.0.7680.164 Mobile Safari/537.36[FBAN/EMA;FBLC/en_US;FBAV/503.0.0.10.107;FBCX/modulariab;]', '2026-05-12 13:27:36', '2026-04-12 11:27:36', '2026-04-12 11:27:36');
+(130, 72, 'fab8d5924eb5b89571985bd47bad9aa974add414641a392d4a0a9e3d446b400b', '165.58.129.66', 'Mozilla/5.0 (Linux; Android 13; SM-A145P Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/146.0.7680.164 Mobile Safari/537.36[FBAN/EMA;FBLC/en_US;FBAV/503.0.0.10.107;FBCX/modulariab;]', '2026-05-12 13:27:36', '2026-04-12 11:27:36', '2026-04-12 11:27:36'),
+(137, 1, 'a26262f2e00ee58c3bd283119de1a4c40002fa56b7ec68ff99792a2062db013d', '45.215.254.41', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', '2026-05-04 22:39:57', '2026-05-04 18:39:57', '2026-05-04 18:39:57');
 
 -- --------------------------------------------------------
 
@@ -2942,16 +2521,10 @@ ALTER TABLE `contacts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
--- AUTO_INCREMENT for table `courses`
---
-ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
-
---
 -- AUTO_INCREMENT for table `course_categories`
 --
 ALTER TABLE `course_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `course_instructors`
@@ -3017,7 +2590,7 @@ ALTER TABLE `lenco_webhook_logs`
 -- AUTO_INCREMENT for table `lessons`
 --
 ALTER TABLE `lessons`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `lesson_progress`
@@ -3053,7 +2626,7 @@ ALTER TABLE `migrations_log`
 -- AUTO_INCREMENT for table `modules`
 --
 ALTER TABLE `modules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -3077,19 +2650,19 @@ ALTER TABLE `payment_methods`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `question_options`
 --
 ALTER TABLE `question_options`
-  MODIFY `option_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=279;
+  MODIFY `option_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `quizzes`
 --
 ALTER TABLE `quizzes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `quiz_attempts`
@@ -3101,7 +2674,7 @@ ALTER TABLE `quiz_attempts`
 -- AUTO_INCREMENT for table `quiz_questions`
 --
 ALTER TABLE `quiz_questions`
-  MODIFY `quiz_question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `quiz_question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `registration_fees`
@@ -3161,7 +2734,7 @@ ALTER TABLE `user_roles`
 -- AUTO_INCREMENT for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=138;
 
 -- --------------------------------------------------------
 

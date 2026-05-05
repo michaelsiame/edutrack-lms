@@ -373,6 +373,22 @@ class Lenco {
             return ['success' => false, 'error' => 'Transaction not found'];
         }
 
+        // IDEMPOTENCY CHECK: Already processed?
+        if ($pendingTx['status'] === self::STATUS_SUCCESSFUL) {
+            $this->logWebhook('transaction.successful', ['message' => 'Duplicate webhook ignored', 'reference' => $reference]);
+            return ['success' => true, 'message' => 'Payment already processed', 'payment_id' => $pendingTx['payment_id'] ?? null];
+        }
+
+        // IDEMPOTENCY CHECK: Payment record already exists?
+        $existingPayment = $this->db->query(
+            "SELECT payment_id FROM payments WHERE transaction_id = :ref AND payment_status = 'Completed' LIMIT 1",
+            ['ref' => $reference]
+        )->fetch();
+        if ($existingPayment) {
+            $this->logWebhook('transaction.successful', ['message' => 'Duplicate payment record found', 'reference' => $reference]);
+            return ['success' => true, 'message' => 'Payment already recorded', 'payment_id' => $existingPayment['payment_id']];
+        }
+
         // Verify amount matches (with small tolerance for fees)
         $expectedAmount = floatval($pendingTx['amount']);
         $receivedAmount = floatval($data['amount'] ?? 0);
@@ -434,11 +450,17 @@ class Lenco {
         $reference = $data['tx_ref'] ?? $data['reference'] ?? null;
 
         if ($reference) {
+            // IDEMPOTENCY CHECK: Already reversed?
+            $existingTx = $this->getPendingTransaction($reference);
+            if ($existingTx && $existingTx['status'] === self::STATUS_REVERSED) {
+                return ['success' => true, 'message' => 'Reversal already processed'];
+            }
+
             $this->updateTransactionStatus($reference, self::STATUS_REVERSED);
 
             // Mark payment as refunded
             $payment = Payment::findByReference($reference);
-            if ($payment) {
+            if ($payment && $payment->get('payment_status') !== 'Refunded') {
                 $payment->update(['payment_status' => 'Refunded']);
             }
         }

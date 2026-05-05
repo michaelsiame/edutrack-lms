@@ -9,7 +9,7 @@
  */
 
 // Prevent any output buffering issues
-ob_clean();
+ob_start();
 
 require_once '../../src/bootstrap.php';
 require_once '../../src/classes/Lenco.php';

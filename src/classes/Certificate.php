@@ -163,22 +163,30 @@ class Certificate {
         $prefix = 'EDUTRACK-' . date('Ym');
         
         $db = Database::getInstance();
-        $lastNumber = $db->fetchColumn("
-            SELECT certificate_number 
-            FROM certificates 
-            WHERE certificate_number LIKE ?
-            ORDER BY id DESC 
-            LIMIT 1
-        ", [$prefix . '-%']);
         
-        if ($lastNumber) {
-            $parts = explode('-', $lastNumber);
-            $sequence = (int)end($parts) + 1;
-        } else {
-            $sequence = 1;
+        // Advisory lock to prevent race conditions on certificate number generation
+        $db->query("SELECT GET_LOCK('cert_number_gen', 10)");
+        
+        try {
+            $lastNumber = $db->fetchColumn("
+                SELECT certificate_number 
+                FROM certificates 
+                WHERE certificate_number LIKE ?
+                ORDER BY id DESC 
+                LIMIT 1
+            ", [$prefix . '-%']);
+            
+            if ($lastNumber) {
+                $parts = explode('-', $lastNumber);
+                $sequence = (int)end($parts) + 1;
+            } else {
+                $sequence = 1;
+            }
+            
+            return $prefix . '-' . str_pad($sequence, 5, '0', STR_PAD_LEFT);
+        } finally {
+            $db->query("SELECT RELEASE_LOCK('cert_number_gen')");
         }
-        
-        return $prefix . '-' . str_pad($sequence, 5, '0', STR_PAD_LEFT);
     }
     
     /**
@@ -253,7 +261,8 @@ class Certificate {
         
         $pdf->SetFont('helvetica', '', 10);
         $pdf->SetTextColor(100, 100, 100);
-        $pdf->Cell(0, 5, 'TEVETA Registered Institution', 0, 1, 'C');
+        $tevetaCode = env('TEVETA_INSTITUTION_CODE', 'TVA/2064');
+        $pdf->Cell(0, 5, 'TEVETA Registered Institution - ' . $tevetaCode, 0, 1, 'C');
         
         // Certificate Title
         $pdf->SetY(60);

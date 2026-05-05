@@ -15,18 +15,20 @@ $action = $_GET['action'] ?? 'photos';
 $message = '';
 $error = '';
 
-// Handle photo deletion
-if (isset($_GET['delete_photo']) && is_numeric($_GET['delete_photo'])) {
-    $photo = new InstitutionPhoto((int)$_GET['delete_photo']);
+// Handle photo deletion (POST + CSRF only)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_photo']) && is_numeric($_POST['delete_photo'])) {
+    validateCSRF();
+    $photo = new InstitutionPhoto((int)$_POST['delete_photo']);
     if ($photo->getId()) {
         $photo->delete();
         $message = "Photo deleted successfully.";
     }
 }
 
-// Handle slide deletion
-if (isset($_GET['delete_slide']) && is_numeric($_GET['delete_slide'])) {
-    $slide = new HeroSlide((int)$_GET['delete_slide']);
+// Handle slide deletion (POST + CSRF only)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_slide']) && is_numeric($_POST['delete_slide'])) {
+    validateCSRF();
+    $slide = new HeroSlide((int)$_POST['delete_slide']);
     if ($slide->getId()) {
         $slide->delete();
         $message = "Hero slide deleted successfully.";
@@ -35,6 +37,7 @@ if (isset($_GET['delete_slide']) && is_numeric($_GET['delete_slide'])) {
 
 // Handle photo upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_photo'])) {
+    validateCSRF();
     $title = trim($_POST['photo_title'] ?? '');
     $description = trim($_POST['photo_description'] ?? '');
     $category = $_POST['photo_category'] ?? 'campus';
@@ -76,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_photo'])) {
 
 // Handle hero slide creation/update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_slide'])) {
+    validateCSRF();
     $slideId = $_POST['slide_id'] ?? null;
     $data = [
         'title' => trim($_POST['slide_title'] ?? ''),
@@ -205,6 +209,7 @@ require_once '../../src/templates/admin-header.php';
                             </h2>
                             
                             <form method="POST" action="" enctype="multipart/form-data" class="space-y-4">
+                                <?= csrfField() ?>
                                 <input type="hidden" name="slide_id" value="<?= $editSlide ? $editSlide->getId() : '' ?>">
                                 
                                 <div>
@@ -348,12 +353,13 @@ require_once '../../src/templates/admin-header.php';
                                                    title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="?action=hero&delete_slide=<?= $slide['id'] ?>" 
-                                                   onclick="return confirm('Delete this slide?')"
-                                                   class="w-8 h-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-200 transition"
-                                                   title="Delete">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
+                                                <form method="POST" action="" style="display:inline" onsubmit="return confirm('Delete this slide?')">
+                                                    <?= csrfField() ?>
+                                                    <input type="hidden" name="delete_slide" value="<?= $slide['id'] ?>">
+                                                    <button type="submit" class="w-8 h-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-200 transition bg-transparent border-0 cursor-pointer" title="Delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -373,6 +379,7 @@ require_once '../../src/templates/admin-header.php';
                             <h2 class="text-xl font-bold text-gray-900 mb-6">Upload New Photo</h2>
                             
                             <form method="POST" action="" enctype="multipart/form-data" class="space-y-4">
+                                <?= csrfField() ?>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Photo Title *</label>
                                     <input type="text" name="photo_title" required
@@ -437,12 +444,13 @@ require_once '../../src/templates/admin-header.php';
                                          class="w-full h-40 object-cover">
                                     <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
                                         <div class="flex gap-2">
-                                            <a href="?delete_photo=<?= $photoId ?>" 
-                                               onclick="return confirm('Delete this photo?')"
-                                               class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
-                                               title="Delete">
-                                                <i class="fas fa-trash text-sm"></i>
-                                            </a>
+                                            <form method="POST" action="" style="display:inline" onsubmit="return confirm('Delete this photo?')">
+                                                <?= csrfField() ?>
+                                                <input type="hidden" name="delete_photo" value="<?= $photoId ?>">
+                                                <button type="submit" class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition bg-transparent border-0 cursor-pointer" title="Delete">
+                                                    <i class="fas fa-trash text-sm"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                     <?php if ($isFeatured): ?>

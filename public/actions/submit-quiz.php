@@ -37,6 +37,21 @@ try {
         redirect('my-courses.php');
     }
 
+    // Server-side time validation
+    $serverStartTime = $_SESSION['quiz_start_time'][$quizId] ?? null;
+    if (!$serverStartTime) {
+        $_SESSION['quiz_start_time'][$quizId] = $startTime ?: time();
+        $serverStartTime = $_SESSION['quiz_start_time'][$quizId];
+    }
+    $serverTimeSpent = time() - $serverStartTime;
+    $quizDetails = $db->fetchOne("SELECT time_limit_minutes FROM quizzes WHERE id = ?", [$quizId]);
+    $timeLimitSeconds = ($quizDetails['time_limit_minutes'] ?? 0) * 60;
+    if ($timeLimitSeconds > 0 && $serverTimeSpent > $timeLimitSeconds + 30) {
+        flash('error', 'Quiz time limit exceeded. Your submission was rejected.', 'error');
+        unset($_SESSION['quiz_start_time'][$quizId]);
+        redirect('my-courses.php');
+    }
+
     // Get quiz details
     $quiz = $db->fetchOne("
         SELECT q.*, c.slug as course_slug
@@ -194,6 +209,9 @@ try {
             $response['points_earned']
         ]);
     }
+
+    // Clear quiz start time from session
+    unset($_SESSION['quiz_start_time'][$quizId]);
 
     // Show result message
     if ($passed) {

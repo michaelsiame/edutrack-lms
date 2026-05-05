@@ -16,18 +16,20 @@ $action = $_GET['action'] ?? 'list';
 $message = '';
 $error = '';
 
-// Delete event
-if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
-    $event = new Event((int)$_GET['delete']);
+// Delete event (POST + CSRF only)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_event']) && is_numeric($_POST['delete_event'])) {
+    validateCSRF();
+    $event = new Event((int)$_POST['delete_event']);
     if ($event->getId()) {
         $event->delete();
         $message = "Event deleted successfully.";
     }
 }
 
-// Delete image
-if (isset($_GET['delete_image']) && is_numeric($_GET['delete_image'])) {
-    Event::deleteImage((int)$_GET['delete_image']);
+// Delete image (POST + CSRF only)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_image']) && is_numeric($_POST['delete_image'])) {
+    validateCSRF();
+    Event::deleteImage((int)$_POST['delete_image']);
     $message = "Image deleted successfully.";
 }
 
@@ -230,11 +232,14 @@ require_once '../../src/templates/admin-header.php';
                                         <img src="/uploads/events/<?= htmlspecialchars($image['image_path']) ?>" 
                                              alt="Event image" class="w-full h-32 object-cover rounded-lg">
                                         <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition rounded-lg flex items-center justify-center">
-                                            <a href="?delete_image=<?= $image['id'] ?>&edit=<?= $editEvent->getId() ?>" 
-                                               onclick="return confirm('Delete this image?')"
-                                               class="text-white hover:text-red-400">
-                                                <i class="fas fa-trash text-xl"></i>
-                                            </a>
+                                            <form method="POST" action="" style="display:inline" onsubmit="return confirm('Delete this image?')">
+                                                <?= csrfField() ?>
+                                                <input type="hidden" name="delete_image" value="<?= $image['id'] ?>">
+                                                <input type="hidden" name="event_id" value="<?= $editEvent->getId() ?>">
+                                                <button type="submit" class="text-white hover:text-red-400 bg-transparent border-0 cursor-pointer">
+                                                    <i class="fas fa-trash text-xl"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                         <?php if ($editEvent->get('cover_image') === $image['image_path']): ?>
                                         <span class="absolute top-2 left-2 bg-primary-600 text-white text-xs px-2 py-1 rounded">Cover</span>
@@ -392,11 +397,13 @@ require_once '../../src/templates/admin-header.php';
                                                class="text-blue-600 hover:text-blue-800 px-2" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="?delete=<?= $event['id'] ?>" 
-                                               onclick="return confirm('Are you sure you want to delete this event?')"
-                                               class="text-red-600 hover:text-red-800 px-2" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
+                                            <form method="POST" action="" style="display:inline" onsubmit="return confirm('Are you sure you want to delete this event?')">
+                                                <?= csrfField() ?>
+                                                <input type="hidden" name="delete_event" value="<?= $event['id'] ?>">
+                                                <button type="submit" class="text-red-600 hover:text-red-800 px-2 bg-transparent border-0 cursor-pointer" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
