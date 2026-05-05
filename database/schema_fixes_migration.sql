@@ -160,92 +160,78 @@ ALTER TABLE `payments`
 -- ============================================================================
 
 -- certificates -> users, courses
-ALTER TABLE `certificates`
-    DROP FOREIGN KEY IF EXISTS `fk_cert_user`,
-    ADD CONSTRAINT `fk_cert_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-    DROP FOREIGN KEY IF EXISTS `fk_cert_course`,
-    ADD CONSTRAINT `fk_cert_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
+ALTER TABLE `certificates` DROP FOREIGN KEY IF EXISTS `fk_cert_user`;
+ALTER TABLE `certificates` ADD CONSTRAINT `fk_cert_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+ALTER TABLE `certificates` DROP FOREIGN KEY IF EXISTS `fk_cert_course`;
+ALTER TABLE `certificates` ADD CONSTRAINT `fk_cert_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
 
 -- question_options -> questions
-ALTER TABLE `question_options`
-    DROP FOREIGN KEY IF EXISTS `fk_opt_question`,
-    ADD CONSTRAINT `fk_opt_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
+ALTER TABLE `question_options` DROP FOREIGN KEY IF EXISTS `fk_opt_question`;
+ALTER TABLE `question_options` ADD CONSTRAINT `fk_opt_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
 
 -- quiz_questions -> quizzes, questions
-ALTER TABLE `quiz_questions`
-    DROP FOREIGN KEY IF EXISTS `fk_qq_quiz`,
-    ADD CONSTRAINT `fk_qq_quiz` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
-    DROP FOREIGN KEY IF EXISTS `fk_qq_question`,
-    ADD CONSTRAINT `fk_qq_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
+ALTER TABLE `quiz_questions` DROP FOREIGN KEY IF EXISTS `fk_qq_quiz`;
+ALTER TABLE `quiz_questions` ADD CONSTRAINT `fk_qq_quiz` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE;
+ALTER TABLE `quiz_questions` DROP FOREIGN KEY IF EXISTS `fk_qq_question`;
+ALTER TABLE `quiz_questions` ADD CONSTRAINT `fk_qq_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
 
 -- quiz_answers -> quiz_attempts, questions
-ALTER TABLE `quiz_answers`
-    DROP FOREIGN KEY IF EXISTS `fk_qa_attempt`,
-    ADD CONSTRAINT `fk_qa_attempt` FOREIGN KEY (`attempt_id`) REFERENCES `quiz_attempts` (`id`) ON DELETE CASCADE,
-    DROP FOREIGN KEY IF EXISTS `fk_qa_question`,
-    ADD CONSTRAINT `fk_qa_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
+ALTER TABLE `quiz_answers` DROP FOREIGN KEY IF EXISTS `fk_qa_attempt`;
+ALTER TABLE `quiz_answers` ADD CONSTRAINT `fk_qa_attempt` FOREIGN KEY (`attempt_id`) REFERENCES `quiz_attempts` (`id`) ON DELETE CASCADE;
+ALTER TABLE `quiz_answers` DROP FOREIGN KEY IF EXISTS `fk_qa_question`;
+ALTER TABLE `quiz_answers` ADD CONSTRAINT `fk_qa_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
 
 -- quiz_question_options -> questions
-ALTER TABLE `quiz_question_options`
-    DROP FOREIGN KEY IF EXISTS `fk_qqo_question`,
-    ADD CONSTRAINT `fk_qqo_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
+ALTER TABLE `quiz_question_options` DROP FOREIGN KEY IF EXISTS `fk_qqo_question`;
+ALTER TABLE `quiz_question_options` ADD CONSTRAINT `fk_qqo_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
 
 -- announcements -> users (posted_by)
-ALTER TABLE `announcements`
-    DROP FOREIGN KEY IF EXISTS `fk_ann_poster`,
-    ADD CONSTRAINT `fk_ann_poster` FOREIGN KEY (`posted_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+ALTER TABLE `announcements` DROP FOREIGN KEY IF EXISTS `fk_ann_poster`;
+ALTER TABLE `announcements` ADD CONSTRAINT `fk_ann_poster` FOREIGN KEY (`posted_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 -- payments -> students, courses, enrollments, payment_methods
-ALTER TABLE `payments`
-    DROP FOREIGN KEY IF EXISTS `fk_pay_student`,
-    ADD CONSTRAINT `fk_pay_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
-    DROP FOREIGN KEY IF EXISTS `fk_pay_course`,
-    ADD CONSTRAINT `fk_pay_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-    DROP FOREIGN KEY IF EXISTS `fk_pay_enroll`,
-    ADD CONSTRAINT `fk_pay_enroll` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE SET NULL,
-    DROP FOREIGN KEY IF EXISTS `fk_pay_method`,
-    ADD CONSTRAINT `fk_pay_method` FOREIGN KEY (`payment_method_id`) REFERENCES `payment_methods` (`payment_method_id`) ON DELETE SET NULL;
+ALTER TABLE `payments` DROP FOREIGN KEY IF EXISTS `fk_pay_student`;
+ALTER TABLE `payments` ADD CONSTRAINT `fk_pay_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE;
+ALTER TABLE `payments` DROP FOREIGN KEY IF EXISTS `fk_pay_course`;
+ALTER TABLE `payments` ADD CONSTRAINT `fk_pay_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
+ALTER TABLE `payments` DROP FOREIGN KEY IF EXISTS `fk_pay_enroll`;
+ALTER TABLE `payments` ADD CONSTRAINT `fk_pay_enroll` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE SET NULL;
+ALTER TABLE `payments` DROP FOREIGN KEY IF EXISTS `fk_pay_method`;
+ALTER TABLE `payments` ADD CONSTRAINT `fk_pay_method` FOREIGN KEY (`payment_method_id`) REFERENCES `payment_methods` (`payment_method_id`) ON DELETE SET NULL;
 
 -- lesson_progress -> enrollments, lessons
-ALTER TABLE `lesson_progress`
-    DROP FOREIGN KEY IF EXISTS `fk_lp_enroll`,
-    ADD CONSTRAINT `fk_lp_enroll` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE CASCADE,
-    DROP FOREIGN KEY IF EXISTS `fk_lp_lesson`,
-    ADD CONSTRAINT `fk_lp_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
+ALTER TABLE `lesson_progress` DROP FOREIGN KEY IF EXISTS `fk_lp_enroll`;
+ALTER TABLE `lesson_progress` ADD CONSTRAINT `fk_lp_enroll` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE CASCADE;
+ALTER TABLE `lesson_progress` DROP FOREIGN KEY IF EXISTS `fk_lp_lesson`;
+ALTER TABLE `lesson_progress` ADD CONSTRAINT `fk_lp_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
 
 -- lesson_resources -> lessons
-ALTER TABLE `lesson_resources`
-    DROP FOREIGN KEY IF EXISTS `fk_lr_lesson`,
-    ADD CONSTRAINT `fk_lr_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
+ALTER TABLE `lesson_resources` DROP FOREIGN KEY IF EXISTS `fk_lr_lesson`;
+ALTER TABLE `lesson_resources` ADD CONSTRAINT `fk_lr_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
 
 -- live_sessions -> courses, instructors
-ALTER TABLE `live_sessions`
-    DROP FOREIGN KEY IF EXISTS `fk_ls_course`,
-    ADD CONSTRAINT `fk_ls_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-    DROP FOREIGN KEY IF EXISTS `fk_ls_instructor`,
-    ADD CONSTRAINT `fk_ls_instructor` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON DELETE CASCADE;
+ALTER TABLE `live_sessions` DROP FOREIGN KEY IF EXISTS `fk_ls_course`;
+ALTER TABLE `live_sessions` ADD CONSTRAINT `fk_ls_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
+ALTER TABLE `live_sessions` DROP FOREIGN KEY IF EXISTS `fk_ls_instructor`;
+ALTER TABLE `live_sessions` ADD CONSTRAINT `fk_ls_instructor` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON DELETE CASCADE;
 
 -- live_session_attendance -> live_sessions, users
-ALTER TABLE `live_session_attendance`
-    DROP FOREIGN KEY IF EXISTS `fk_lsa_session`,
-    ADD CONSTRAINT `fk_lsa_session` FOREIGN KEY (`session_id`) REFERENCES `live_sessions` (`id`) ON DELETE CASCADE,
-    DROP FOREIGN KEY IF EXISTS `fk_lsa_user`,
-    ADD CONSTRAINT `fk_lsa_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+ALTER TABLE `live_session_attendance` DROP FOREIGN KEY IF EXISTS `fk_lsa_session`;
+ALTER TABLE `live_session_attendance` ADD CONSTRAINT `fk_lsa_session` FOREIGN KEY (`session_id`) REFERENCES `live_sessions` (`id`) ON DELETE CASCADE;
+ALTER TABLE `live_session_attendance` DROP FOREIGN KEY IF EXISTS `fk_lsa_user`;
+ALTER TABLE `live_session_attendance` ADD CONSTRAINT `fk_lsa_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 -- email_queue -> users
-ALTER TABLE `email_queue`
-    DROP FOREIGN KEY IF EXISTS `fk_eq_user`,
-    ADD CONSTRAINT `fk_eq_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+ALTER TABLE `email_queue` DROP FOREIGN KEY IF EXISTS `fk_eq_user`;
+ALTER TABLE `email_queue` ADD CONSTRAINT `fk_eq_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 -- registration_fees -> users
-ALTER TABLE `registration_fees`
-    DROP FOREIGN KEY IF EXISTS `fk_rf_user`,
-    ADD CONSTRAINT `fk_rf_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+ALTER TABLE `registration_fees` DROP FOREIGN KEY IF EXISTS `fk_rf_user`;
+ALTER TABLE `registration_fees` ADD CONSTRAINT `fk_rf_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 -- transactions -> payments
-ALTER TABLE `transactions`
-    DROP FOREIGN KEY IF EXISTS `fk_txn_payment`,
-    ADD CONSTRAINT `fk_txn_payment` FOREIGN KEY (`payment_id`) REFERENCES `payments` (`payment_id`) ON DELETE CASCADE;
+ALTER TABLE `transactions` DROP FOREIGN KEY IF EXISTS `fk_txn_payment`;
+ALTER TABLE `transactions` ADD CONSTRAINT `fk_txn_payment` FOREIGN KEY (`payment_id`) REFERENCES `payments` (`payment_id`) ON DELETE CASCADE;
 
 -- ============================================================================
 -- 7. HIGH: Add missing indexes on foreign key columns
@@ -351,11 +337,9 @@ ALTER TABLE `users`
 -- ============================================================================
 -- 11. LOW: Rename poorly named FK constraint
 -- ============================================================================
-ALTER TABLE `remember_tokens`
-    DROP FOREIGN KEY IF EXISTS `DE`;
-ALTER TABLE `remember_tokens`
-    DROP FOREIGN KEY IF EXISTS `fk_rt_user`,
-    ADD CONSTRAINT `fk_rt_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `remember_tokens` DROP FOREIGN KEY IF EXISTS `DE`;
+ALTER TABLE `remember_tokens` DROP FOREIGN KEY IF EXISTS `fk_rt_user`;
+ALTER TABLE `remember_tokens` ADD CONSTRAINT `fk_rt_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- ============================================================================
 -- 12. CRITICAL: Fix courses.id = 0 (Cybersecurity course)
