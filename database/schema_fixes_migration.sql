@@ -61,13 +61,14 @@ WHERE NOT EXISTS (SELECT 1 FROM `quiz_question_options` LIMIT 1);
 --                   verification_code, certificate_url, is_verified, expiry_date, created_at
 
 -- Add missing columns (keep existing ones for backward compatibility)
+-- Using IF NOT EXISTS because production may already have these columns
 ALTER TABLE `certificates`
-    ADD COLUMN `user_id` int(11) DEFAULT NULL AFTER `certificate_id`,
-    ADD COLUMN `course_id` int(11) DEFAULT NULL AFTER `user_id`,
-    ADD COLUMN `final_score` decimal(5,2) DEFAULT 0 AFTER `verification_code`,
-    ADD COLUMN `issued_at` datetime DEFAULT NULL AFTER `final_score`,
-    ADD KEY `idx_cert_user` (`user_id`),
-    ADD KEY `idx_cert_course` (`course_id`);
+    ADD COLUMN IF NOT EXISTS `user_id` int(11) DEFAULT NULL AFTER `certificate_id`,
+    ADD COLUMN IF NOT EXISTS `course_id` int(11) DEFAULT NULL AFTER `user_id`,
+    ADD COLUMN IF NOT EXISTS `final_score` decimal(5,2) DEFAULT 0 AFTER `verification_code`,
+    ADD COLUMN IF NOT EXISTS `issued_at` datetime DEFAULT NULL AFTER `final_score`,
+    ADD KEY IF NOT EXISTS `idx_cert_user` (`user_id`),
+    ADD KEY IF NOT EXISTS `idx_cert_course` (`course_id`);
 
 -- Migrate data: populate user_id and course_id from enrollments table
 UPDATE `certificates` c
@@ -83,19 +84,19 @@ WHERE c.user_id IS NULL;
 
 -- Prevent duplicate email addresses
 ALTER TABLE `users`
-    ADD UNIQUE KEY `uk_users_email` (`email`);
+    ADD UNIQUE KEY IF NOT EXISTS `uk_users_email` (`email`);
 
 -- Prevent duplicate usernames
 ALTER TABLE `users`
-    ADD UNIQUE KEY `uk_users_username` (`username`);
+    ADD UNIQUE KEY IF NOT EXISTS `uk_users_username` (`username`);
 
 -- One user = one student record
 ALTER TABLE `students`
-    ADD UNIQUE KEY `uk_students_user` (`user_id`);
+    ADD UNIQUE KEY IF NOT EXISTS `uk_students_user` (`user_id`);
 
 -- One user = one instructor record
 ALTER TABLE `instructors`
-    ADD UNIQUE KEY `uk_instructors_user` (`user_id`);
+    ADD UNIQUE KEY IF NOT EXISTS `uk_instructors_user` (`user_id`);
 
 -- One enrollment = one payment plan
 -- First, deduplicate: keep the plan with the most payments per enrollment
@@ -121,27 +122,27 @@ JOIN (
 WHERE epp.id != k.keeper_id;
 
 ALTER TABLE `enrollment_payment_plans`
-    ADD UNIQUE KEY `uk_epp_enrollment` (`enrollment_id`);
+    ADD UNIQUE KEY IF NOT EXISTS `uk_epp_enrollment` (`enrollment_id`);
 
 -- Certificate numbers must be globally unique
 ALTER TABLE `certificates`
-    ADD UNIQUE KEY `uk_cert_number` (`certificate_number`);
+    ADD UNIQUE KEY IF NOT EXISTS `uk_cert_number` (`certificate_number`);
 
 -- Verification codes must be globally unique
 ALTER TABLE `certificates`
-    ADD UNIQUE KEY `uk_cert_verify` (`verification_code`);
+    ADD UNIQUE KEY IF NOT EXISTS `uk_cert_verify` (`verification_code`);
 
 -- Prevent assigning same question to same quiz twice
 ALTER TABLE `quiz_questions`
-    ADD UNIQUE KEY `uk_qq_quiz_question` (`quiz_id`, `question_id`);
+    ADD UNIQUE KEY IF NOT EXISTS `uk_qq_quiz_question` (`quiz_id`, `question_id`);
 
 -- Prevent duplicate role assignments
 ALTER TABLE `user_roles`
-    ADD UNIQUE KEY `uk_user_role` (`user_id`, `role_id`);
+    ADD UNIQUE KEY IF NOT EXISTS `uk_user_role` (`user_id`, `role_id`);
 
 -- Prevent duplicate transaction IDs in payments
 ALTER TABLE `payments`
-    ADD UNIQUE KEY `uk_payments_txn` (`transaction_id`);
+    ADD UNIQUE KEY IF NOT EXISTS `uk_payments_txn` (`transaction_id`);
 
 -- ============================================================================
 -- 6. HIGH: Add missing foreign keys
@@ -149,67 +150,90 @@ ALTER TABLE `payments`
 
 -- certificates -> users, courses
 ALTER TABLE `certificates`
+    DROP FOREIGN KEY IF EXISTS `fk_cert_user`,
     ADD CONSTRAINT `fk_cert_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+    DROP FOREIGN KEY IF EXISTS `fk_cert_course`,
     ADD CONSTRAINT `fk_cert_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
 
 -- question_options -> questions
 ALTER TABLE `question_options`
+    DROP FOREIGN KEY IF EXISTS `fk_opt_question`,
     ADD CONSTRAINT `fk_opt_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
 
 -- quiz_questions -> quizzes, questions
 ALTER TABLE `quiz_questions`
+    DROP FOREIGN KEY IF EXISTS `fk_qq_quiz`,
     ADD CONSTRAINT `fk_qq_quiz` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
+    DROP FOREIGN KEY IF EXISTS `fk_qq_question`,
     ADD CONSTRAINT `fk_qq_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
 
 -- quiz_answers -> quiz_attempts, questions
 ALTER TABLE `quiz_answers`
+    DROP FOREIGN KEY IF EXISTS `fk_qa_attempt`,
     ADD CONSTRAINT `fk_qa_attempt` FOREIGN KEY (`attempt_id`) REFERENCES `quiz_attempts` (`id`) ON DELETE CASCADE,
+    DROP FOREIGN KEY IF EXISTS `fk_qa_question`,
     ADD CONSTRAINT `fk_qa_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
 
 -- quiz_question_options -> questions
 ALTER TABLE `quiz_question_options`
+    DROP FOREIGN KEY IF EXISTS `fk_qqo_question`,
     ADD CONSTRAINT `fk_qqo_question` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`) ON DELETE CASCADE;
 
 -- announcements -> users (posted_by)
 ALTER TABLE `announcements`
+    DROP FOREIGN KEY IF EXISTS `fk_ann_poster`,
     ADD CONSTRAINT `fk_ann_poster` FOREIGN KEY (`posted_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 -- payments -> students, courses, enrollments, payment_methods
 ALTER TABLE `payments`
+    DROP FOREIGN KEY IF EXISTS `fk_pay_student`,
     ADD CONSTRAINT `fk_pay_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+    DROP FOREIGN KEY IF EXISTS `fk_pay_course`,
     ADD CONSTRAINT `fk_pay_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
+    DROP FOREIGN KEY IF EXISTS `fk_pay_enroll`,
     ADD CONSTRAINT `fk_pay_enroll` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE SET NULL,
+    DROP FOREIGN KEY IF EXISTS `fk_pay_method`,
     ADD CONSTRAINT `fk_pay_method` FOREIGN KEY (`payment_method_id`) REFERENCES `payment_methods` (`payment_method_id`) ON DELETE SET NULL;
 
 -- lesson_progress -> users, lessons
 ALTER TABLE `lesson_progress`
+    DROP FOREIGN KEY IF EXISTS `fk_lp_user`,
     ADD CONSTRAINT `fk_lp_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+    DROP FOREIGN KEY IF EXISTS `fk_lp_lesson`,
     ADD CONSTRAINT `fk_lp_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
 
 -- lesson_resources -> lessons
 ALTER TABLE `lesson_resources`
+    DROP FOREIGN KEY IF EXISTS `fk_lr_lesson`,
     ADD CONSTRAINT `fk_lr_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
 
 -- live_sessions -> courses, instructors
 ALTER TABLE `live_sessions`
+    DROP FOREIGN KEY IF EXISTS `fk_ls_course`,
     ADD CONSTRAINT `fk_ls_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
+    DROP FOREIGN KEY IF EXISTS `fk_ls_instructor`,
     ADD CONSTRAINT `fk_ls_instructor` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON DELETE CASCADE;
 
 -- live_session_attendance -> live_sessions, users
 ALTER TABLE `live_session_attendance`
+    DROP FOREIGN KEY IF EXISTS `fk_lsa_session`,
     ADD CONSTRAINT `fk_lsa_session` FOREIGN KEY (`session_id`) REFERENCES `live_sessions` (`id`) ON DELETE CASCADE,
+    DROP FOREIGN KEY IF EXISTS `fk_lsa_user`,
     ADD CONSTRAINT `fk_lsa_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 -- email_queue -> users
 ALTER TABLE `email_queue`
+    DROP FOREIGN KEY IF EXISTS `fk_eq_user`,
     ADD CONSTRAINT `fk_eq_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 -- registration_fees -> users
 ALTER TABLE `registration_fees`
+    DROP FOREIGN KEY IF EXISTS `fk_rf_user`,
     ADD CONSTRAINT `fk_rf_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 -- transactions -> payments
 ALTER TABLE `transactions`
+    DROP FOREIGN KEY IF EXISTS `fk_txn_payment`,
     ADD CONSTRAINT `fk_txn_payment` FOREIGN KEY (`payment_id`) REFERENCES `payments` (`payment_id`) ON DELETE CASCADE;
 
 -- ============================================================================
@@ -218,59 +242,59 @@ ALTER TABLE `transactions`
 
 -- payments
 ALTER TABLE `payments`
-    ADD KEY `idx_pay_student` (`student_id`),
-    ADD KEY `idx_pay_course` (`course_id`),
-    ADD KEY `idx_pay_enroll` (`enrollment_id`),
-    ADD KEY `idx_pay_plan` (`payment_plan_id`),
-    ADD KEY `idx_pay_status` (`payment_status`);
+    ADD KEY IF NOT EXISTS `idx_pay_student` (`student_id`),
+    ADD KEY IF NOT EXISTS `idx_pay_course` (`course_id`),
+    ADD KEY IF NOT EXISTS `idx_pay_enroll` (`enrollment_id`),
+    ADD KEY IF NOT EXISTS `idx_pay_plan` (`payment_plan_id`),
+    ADD KEY IF NOT EXISTS `idx_pay_status` (`payment_status`);
 
 -- certificates
 ALTER TABLE `certificates`
-    ADD KEY `idx_cert_enroll` (`enrollment_id`);
+    ADD KEY IF NOT EXISTS `idx_cert_enroll` (`enrollment_id`);
 
 -- announcements
 ALTER TABLE `announcements`
-    ADD KEY `idx_ann_course` (`course_id`);
+    ADD KEY IF NOT EXISTS `idx_ann_course` (`course_id`);
 
 -- quiz_questions
 ALTER TABLE `quiz_questions`
-    ADD KEY `idx_qq_quiz` (`quiz_id`),
-    ADD KEY `idx_qq_question` (`question_id`);
+    ADD KEY IF NOT EXISTS `idx_qq_quiz` (`quiz_id`),
+    ADD KEY IF NOT EXISTS `idx_qq_question` (`question_id`);
 
 -- quiz_answers
 ALTER TABLE `quiz_answers`
-    ADD KEY `idx_qa_attempt` (`attempt_id`),
-    ADD KEY `idx_qa_question` (`question_id`);
+    ADD KEY IF NOT EXISTS `idx_qa_attempt` (`attempt_id`),
+    ADD KEY IF NOT EXISTS `idx_qa_question` (`question_id`);
 
 -- lesson_progress
 ALTER TABLE `lesson_progress`
-    ADD KEY `idx_lp_user` (`user_id`),
-    ADD KEY `idx_lp_lesson` (`lesson_id`);
+    ADD KEY IF NOT EXISTS `idx_lp_user` (`user_id`),
+    ADD KEY IF NOT EXISTS `idx_lp_lesson` (`lesson_id`);
 
 -- lesson_resources
 ALTER TABLE `lesson_resources`
-    ADD KEY `idx_lr_lesson` (`lesson_id`);
+    ADD KEY IF NOT EXISTS `idx_lr_lesson` (`lesson_id`);
 
 -- live_sessions
 ALTER TABLE `live_sessions`
-    ADD KEY `idx_ls_course` (`course_id`);
+    ADD KEY IF NOT EXISTS `idx_ls_course` (`course_id`);
 
 -- live_session_attendance
 ALTER TABLE `live_session_attendance`
-    ADD KEY `idx_lsa_session` (`session_id`),
-    ADD KEY `idx_lsa_user` (`user_id`);
+    ADD KEY IF NOT EXISTS `idx_lsa_session` (`session_id`),
+    ADD KEY IF NOT EXISTS `idx_lsa_user` (`user_id`);
 
 -- activity_logs
 ALTER TABLE `activity_logs`
-    ADD KEY `idx_al_user` (`user_id`),
-    ADD KEY `idx_al_type` (`activity_type`),
-    ADD KEY `idx_al_created` (`created_at`);
+    ADD KEY IF NOT EXISTS `idx_al_user` (`user_id`),
+    ADD KEY IF NOT EXISTS `idx_al_type` (`activity_type`),
+    ADD KEY IF NOT EXISTS `idx_al_created` (`created_at`);
 
 -- lenco_transactions
 ALTER TABLE `lenco_transactions`
-    ADD KEY `idx_lt_user` (`user_id`),
-    ADD KEY `idx_lt_enroll` (`enrollment_id`),
-    ADD KEY `idx_lt_course` (`course_id`);
+    ADD KEY IF NOT EXISTS `idx_lt_user` (`user_id`),
+    ADD KEY IF NOT EXISTS `idx_lt_enroll` (`enrollment_id`),
+    ADD KEY IF NOT EXISTS `idx_lt_course` (`course_id`);
 
 -- ============================================================================
 -- 8. MEDIUM: Fix payments.currency default to ZMW
@@ -290,16 +314,16 @@ WHERE `currency` = 'USD' AND `amount` > 100;
 
 -- courses.slug is used for public URL lookups
 ALTER TABLE `courses`
-    ADD UNIQUE KEY `idx_courses_slug` (`slug`);
+    ADD UNIQUE KEY IF NOT EXISTS `idx_courses_slug` (`slug`);
 
 -- users.phone is used for mobile money lookups
 ALTER TABLE `users`
-    ADD KEY `idx_users_phone` (`phone`);
+    ADD KEY IF NOT EXISTS `idx_users_phone` (`phone`);
 
 -- enrollment_payment_plans lookup by user/course
 ALTER TABLE `enrollment_payment_plans`
-    ADD KEY `idx_epp_user` (`user_id`),
-    ADD KEY `idx_epp_course` (`course_id`);
+    ADD KEY IF NOT EXISTS `idx_epp_user` (`user_id`),
+    ADD KEY IF NOT EXISTS `idx_epp_course` (`course_id`);
 
 -- ============================================================================
 -- 10. MEDIUM: Drop redundant indexes
@@ -317,8 +341,9 @@ ALTER TABLE `users`
 -- 11. LOW: Rename poorly named FK constraint
 -- ============================================================================
 ALTER TABLE `remember_tokens`
-    DROP FOREIGN KEY `DE`;
+    DROP FOREIGN KEY IF EXISTS `DE`;
 ALTER TABLE `remember_tokens`
+    DROP FOREIGN KEY IF EXISTS `fk_rt_user`,
     ADD CONSTRAINT `fk_rt_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- ============================================================================
