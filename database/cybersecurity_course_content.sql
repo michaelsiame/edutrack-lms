@@ -23,9 +23,8 @@ START TRANSACTION;
 INSERT IGNORE INTO course_categories (name, category_description, color, icon_url, display_order, is_active, created_at)
 VALUES ('Cybersecurity', 'Learn to protect systems, networks, and data from cyber threats', '#DC2626', 'fa-shield-alt', 4, 1, NOW());
 
--- If category already existed, LAST_INSERT_ID() will be 0, so we SELECT it
-SET @category_id = LAST_INSERT_ID();
-SELECT id INTO @category_id FROM course_categories WHERE name = 'Cybersecurity' LIMIT 1;
+-- Get the category ID (whether just inserted or already existed)
+SET @category_id = (SELECT id FROM course_categories WHERE name = 'Cybersecurity' LIMIT 1);
 
 -- ============================================
 -- 2. INSERT CYBERSECURITY COURSE
