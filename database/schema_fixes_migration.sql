@@ -137,6 +137,17 @@ ALTER TABLE `quiz_questions`
     ADD UNIQUE KEY IF NOT EXISTS `uk_qq_quiz_question` (`quiz_id`, `question_id`);
 
 -- Prevent duplicate role assignments
+-- First deduplicate: keep the most recent assignment per (user_id, role_id)
+DELETE ur FROM `user_roles` ur
+JOIN (
+    SELECT user_id, role_id,
+           SUBSTRING_INDEX(GROUP_CONCAT(id ORDER BY assigned_at DESC, id DESC SEPARATOR ','), ',', 1) + 0 AS keeper_id
+    FROM user_roles
+    GROUP BY user_id, role_id
+    HAVING COUNT(*) > 1
+) k ON ur.user_id = k.user_id AND ur.role_id = k.role_id
+WHERE ur.id != k.keeper_id;
+
 ALTER TABLE `user_roles`
     ADD UNIQUE KEY IF NOT EXISTS `uk_user_role` (`user_id`, `role_id`);
 
@@ -195,10 +206,10 @@ ALTER TABLE `payments`
     DROP FOREIGN KEY IF EXISTS `fk_pay_method`,
     ADD CONSTRAINT `fk_pay_method` FOREIGN KEY (`payment_method_id`) REFERENCES `payment_methods` (`payment_method_id`) ON DELETE SET NULL;
 
--- lesson_progress -> users, lessons
+-- lesson_progress -> enrollments, lessons
 ALTER TABLE `lesson_progress`
-    DROP FOREIGN KEY IF EXISTS `fk_lp_user`,
-    ADD CONSTRAINT `fk_lp_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+    DROP FOREIGN KEY IF EXISTS `fk_lp_enroll`,
+    ADD CONSTRAINT `fk_lp_enroll` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollments` (`id`) ON DELETE CASCADE,
     DROP FOREIGN KEY IF EXISTS `fk_lp_lesson`,
     ADD CONSTRAINT `fk_lp_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
 
@@ -268,7 +279,7 @@ ALTER TABLE `quiz_answers`
 
 -- lesson_progress
 ALTER TABLE `lesson_progress`
-    ADD KEY IF NOT EXISTS `idx_lp_user` (`user_id`),
+    ADD KEY IF NOT EXISTS `idx_lp_enroll` (`enrollment_id`),
     ADD KEY IF NOT EXISTS `idx_lp_lesson` (`lesson_id`);
 
 -- lesson_resources
