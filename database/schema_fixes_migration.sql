@@ -209,9 +209,9 @@ ALTER TABLE `lesson_progress` ADD CONSTRAINT `fk_lp_lesson` FOREIGN KEY (`lesson
 ALTER TABLE `lesson_resources` DROP FOREIGN KEY IF EXISTS `fk_lr_lesson`;
 ALTER TABLE `lesson_resources` ADD CONSTRAINT `fk_lr_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
 
--- live_sessions -> courses, instructors
-ALTER TABLE `live_sessions` DROP FOREIGN KEY IF EXISTS `fk_ls_course`;
-ALTER TABLE `live_sessions` ADD CONSTRAINT `fk_ls_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
+-- live_sessions -> lessons, instructors
+ALTER TABLE `live_sessions` DROP FOREIGN KEY IF EXISTS `fk_ls_lesson`;
+ALTER TABLE `live_sessions` ADD CONSTRAINT `fk_ls_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
 ALTER TABLE `live_sessions` DROP FOREIGN KEY IF EXISTS `fk_ls_instructor`;
 ALTER TABLE `live_sessions` ADD CONSTRAINT `fk_ls_instructor` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON DELETE CASCADE;
 
@@ -274,7 +274,7 @@ ALTER TABLE `lesson_resources`
 
 -- live_sessions
 ALTER TABLE `live_sessions`
-    ADD KEY IF NOT EXISTS `idx_ls_course` (`course_id`);
+    ADD KEY IF NOT EXISTS `idx_ls_lesson` (`lesson_id`);
 
 -- live_session_attendance
 ALTER TABLE `live_session_attendance`
