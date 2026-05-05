@@ -6,6 +6,18 @@
 -- Run this after the main schema is installed
 
 -- ============================================
+-- 0. ENSURE quiz_questions TABLE HAS AUTO_INCREMENT
+-- ============================================
+-- Note: ALTER TABLE causes an implicit commit, so it runs outside the transaction
+ALTER TABLE `quiz_questions`
+  MODIFY `quiz_question_id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- ============================================
+-- BEGIN TRANSACTION
+-- ============================================
+START TRANSACTION;
+
+-- ============================================
 -- 1. INSERT COURSE CATEGORY (if not exists)
 -- ============================================
 INSERT IGNORE INTO course_categories (name, category_description, color, icon_url, display_order, is_active, created_at)
@@ -1112,6 +1124,11 @@ INSERT INTO quiz_questions (quiz_id, question_id, display_order) VALUES
 (@quiz_final_id, @qf_1, 1), (@quiz_final_id, @qf_2, 2), (@quiz_final_id, @qf_3, 3), (@quiz_final_id, @qf_4, 4), (@quiz_final_id, @qf_5, 5),
 (@quiz_final_id, @qf_6, 6), (@quiz_final_id, @qf_7, 7), (@quiz_final_id, @qf_8, 8), (@quiz_final_id, @qf_9, 9), (@quiz_final_id, @qf_10, 10),
 (@quiz_final_id, @qf_11, 11), (@quiz_final_id, @qf_12, 12), (@quiz_final_id, @qf_13, 13), (@quiz_final_id, @qf_14, 14), (@quiz_final_id, @qf_15, 15);
+
+-- ============================================
+-- COMMIT TRANSACTION
+-- ============================================
+COMMIT;
 
 -- ============================================
 -- COMPLETION

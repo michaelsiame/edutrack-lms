@@ -62,6 +62,15 @@ header('Content-Type: text/html; charset=utf-8');
                 
                 $log = [];
                 
+                // 0. Ensure quiz_questions has AUTO_INCREMENT
+                try {
+                    $db->query("ALTER TABLE `quiz_questions` MODIFY `quiz_question_id` int(11) NOT NULL AUTO_INCREMENT");
+                    $log[] = "Ensured quiz_questions table has AUTO_INCREMENT";
+                } catch (Exception $e) {
+                    // May already have AUTO_INCREMENT, ignore error
+                    $log[] = "quiz_questions AUTO_INCREMENT check (may already exist)";
+                }
+                
                 // 1. Insert or get category
                 $category = $db->fetch("SELECT id FROM course_categories WHERE name = ?", ['Cybersecurity']);
                 if ($category) {
