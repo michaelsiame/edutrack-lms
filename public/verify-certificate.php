@@ -8,21 +8,27 @@ require_once __DIR__ . '/../src/bootstrap.php';
 require_once __DIR__ . '/../src/classes/Certificate.php';
 
 // Get verification code from URL or form
-$verificationCode = trim($_GET['code'] ?? $_POST['code'] ?? '');
+$rawCode = $_GET['code'] ?? $_POST['code'] ?? '';
+$verificationCode = trim($rawCode);
 $certificate = null;
 $verified = false;
 $error = '';
 
+error_log("[CERT-DEBUG] verify-certificate.php: raw_code='" . substr($rawCode, 0, 50) . "', cleaned='" . substr($verificationCode, 0, 50) . "'");
+
 if (!empty($verificationCode)) {
     // Clean up the verification code
     $verificationCode = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $verificationCode));
+    error_log("[CERT-DEBUG] verify-certificate.php: sanitized code='" . substr($verificationCode, 0, 50) . "'");
 
     // Find certificate by verification code
     $certificate = Certificate::findByVerificationCode($verificationCode);
 
     if ($certificate) {
+        error_log("[CERT-DEBUG] verify-certificate.php: Certificate found. cert_id=" . ($certificate->getId() ?? 'NULL') . ", student=" . $certificate->getStudentName());
         $verified = true;
     } else {
+        error_log("[CERT-DEBUG] verify-certificate.php: Certificate NOT found for code='" . substr($verificationCode, 0, 50) . "'");
         $error = 'No certificate found with this verification code. Please check and try again.';
     }
 }

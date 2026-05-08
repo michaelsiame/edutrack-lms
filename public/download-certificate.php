@@ -20,47 +20,90 @@ $userId = $user->getId();
 $certificateId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$certificateId) {
+    error_log("[CERT-DEBUG] download-certificate.php: Invalid certificate ID from URL");
     flash('error', 'Invalid certificate', 'error');
     redirect('my-certificates.php');
 }
 
+error_log("[CERT-DEBUG] download-certificate.php: Starting for cert_id={$certificateId}, user_id={$userId}");
+
 try {
     // Find the certificate
+    error_log("[CERT-DEBUG] download-certificate.php: Calling Certificate::find({$certificateId})");
     $certificate = Certificate::find($certificateId);
 
     if (!$certificate) {
+        error_log("[CERT-DEBUG] download-certificate.php: Certificate not found for id={$certificateId}");
         flash('error', 'Certificate not found', 'error');
         redirect('my-certificates.php');
     }
+    error_log("[CERT-DEBUG] download-certificate.php: Certificate found. cert_user_id=" . ($certificate->getUserId() ?? 'NULL') . ", course_id=" . ($certificate->getCourseId() ?? 'NULL'));
 
     // Verify ownership (allow admins to view any certificate)
     $isAdmin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
+    error_log("[CERT-DEBUG] download-certificate.php: Ownership check — cert_user_id=" . ($certificate->getUserId() ?? 'NULL') . ", session_user_id={$userId}, isAdmin=" . ($isAdmin ? 'true' : 'false'));
     if ($certificate->getUserId() != $userId && !$isAdmin) {
+        error_log("[CERT-DEBUG] download-certificate.php: Ownership check FAILED. Redirecting.");
         flash('error', 'You do not have permission to access this certificate', 'error');
         redirect('my-certificates.php');
     }
+    error_log("[CERT-DEBUG] download-certificate.php: Ownership check passed");
 
     // Check if fees are fully paid
     $courseId = $certificate->getCourseId();
+    error_log("[CERT-DEBUG] download-certificate.php: Checking payment plan for course_id=" . ($courseId ?? 'NULL') . ", user_id={$userId}");
     $paymentPlan = PaymentPlan::getByCourseAndUser($courseId, $userId);
 
     if ($paymentPlan && $paymentPlan['balance'] > 0) {
+        error_log("[CERT-DEBUG] download-certificate.php: Outstanding balance K" . number_format($paymentPlan['balance'], 2) . ". Redirecting to payments.");
         flash('error', 'Please clear your outstanding balance of K' . number_format($paymentPlan['balance'], 2) . ' to download your certificate.', 'error');
         redirect('my-payments.php');
     }
+    error_log("[CERT-DEBUG] download-certificate.php: Payment plan check passed (balance=0 or no plan)");
 
     // Check if download is requested
     $action = $_GET['action'] ?? 'view';
+    $debugMode = isset($_GET['debug']) && $_GET['debug'] == '1';
+    error_log("[CERT-DEBUG] download-certificate.php: action={$action}, debugMode=" . ($debugMode ? 'true' : 'false'));
+
+    // DEBUG MODE: render raw HTML template instead of PDF
+    if ($debugMode) {
+        error_log("[CERT-DEBUG] download-certificate.php: Entering DEBUG mode — returning raw HTML preview");
+        $html = $certificate->getDebugHtml();
+        if ($html === false) {
+            error_log("[CERT-DEBUG] download-certificate.php: getDebugHtml() returned false");
+            http_response_code(500);
+            echo "<h1>Debug Error</h1><p>Could not generate preview HTML. Check error logs.</p>";
+            exit;
+        }
+        header('Content-Type: text/html; charset=utf-8');
+        echo "<!DOCTYPE html><html><head><title>Certificate Debug Preview</title></head><body style='background:#333; padding:20px;'>";
+        echo "<h2 style='color:#fff; font-family:sans-serif;'>Debug Preview — Certificate ID {$certificateId}</h2>";
+        echo "<div style='background:#fff; padding:20px; max-width:1000px; margin:0 auto; border:2px solid #000;'>";
+        echo $html;
+        echo "</div>";
+        echo "<hr style='margin:20px 0;'><pre style='color:#0f0; background:#000; padding:15px; max-width:1000px; margin:0 auto; font-size:12px; overflow:auto;'>";
+        echo "Certificate Data:\n";
+        print_r($certificate->getData());
+        echo "\n\nSession User ID: {$userId}\n";
+        echo "Is Admin: " . ($isAdmin ? 'Yes' : 'No') . "\n";
+        echo "</pre></body></html>";
+        exit;
+    }
 
     if ($action === 'download' || $action === 'pdf') {
+        error_log("[CERT-DEBUG] download-certificate.php: Generating PDF...");
         // Generate and download PDF
         $pdfContent = $certificate->generatePDF();
 
         if ($pdfContent === false) {
+            error_log("[CERT-DEBUG] download-certificate.php: generatePDF() returned FALSE. PDF generation failed.");
             // PDF generation not available, show alternative
             flash('warning', 'PDF generation is currently unavailable. Please contact the office to collect your physical certificate.', 'warning');
             redirect('my-certificates.php');
         }
+
+        error_log("[CERT-DEBUG] download-certificate.php: PDF generated successfully. Size=" . strlen($pdfContent) . " bytes");
 
         // Set headers for PDF download
         $fileName = 'Certificate_' . $certificate->getCertificateNumber() . '.pdf';
@@ -70,6 +113,7 @@ try {
         header('Pragma: public');
 
         echo $pdfContent;
+        error_log("[CERT-DEBUG] download-certificate.php: PDF streamed to client. Exiting.");
         exit;
     }
 
@@ -78,7 +122,7 @@ try {
     require_once __DIR__ . '/../src/templates/header.php';
 
 } catch (Exception $e) {
-    error_log("Download Certificate Error: " . $e->getMessage());
+    error_log("[CERT-DEBUG] download-certificate.php: EXCEPTION caught: " . get_class($e) . " — " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
     flash('error', 'An error occurred loading the certificate', 'error');
     redirect('my-certificates.php');
 }

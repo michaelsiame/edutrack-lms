@@ -65,9 +65,16 @@ class Certificate {
      * Find certificate by verification code
      */
     public static function findByVerificationCode($code) {
+        error_log("[CERT-DEBUG] Certificate::findByVerificationCode() — code='" . substr($code, 0, 50) . "'");
         $db = Database::getInstance();
         $sql = "SELECT certificate_id FROM certificates WHERE verification_code = ?";
         $id = $db->fetchColumn($sql, [$code]);
+        
+        if ($id) {
+            error_log("[CERT-DEBUG] Certificate::findByVerificationCode() — found cert_id={$id}");
+        } else {
+            error_log("[CERT-DEBUG] Certificate::findByVerificationCode() — no match found");
+        }
         
         return $id ? new self($id) : null;
     }
@@ -206,28 +213,67 @@ class Certificate {
     }
     
     /**
-     * Generate PDF certificate from HTML template
-     * 
-     * The certificate design lives in: src/templates/certificate-pdf.php
-     * Edit that file to change fonts, colors, layout, signatures, etc.
-     * It uses standard HTML/CSS that TCPDF renders to PDF.
+     * Build the certificate HTML with all placeholders replaced.
+     * Useful for debugging the template without involving TCPDF.
      */
-    public function generatePDF() {
+    public function getDebugHtml() {
         if (!$this->exists()) {
+            error_log('[CERT-DEBUG] Certificate::getDebugHtml() — certificate does not exist');
+            return false;
+        }
+
+        $templatePath = SRC_PATH . '/templates/certificate-pdf.php';
+        if (!file_exists($templatePath)) {
+            error_log('[CERT-DEBUG] Certificate::getDebugHtml() — template not found: ' . $templatePath);
+            return false;
+        }
+
+        $html = file_get_contents($templatePath);
+        $html = preg_replace('/<!--.*?-->/s', '', $html);
+
+        $logoPath = PUBLIC_PATH . '/assets/images/logo.png';
+        $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.svg';
+
+        $replacements = [
+            '{{logo_path}}'        => file_exists($logoPath) ? $logoPath : '',
+            '{{teveta_logo_path}}' => file_exists($tevetaLogoPath) ? $tevetaLogoPath : '',
+            '{{teveta_code}}'      => env('TEVETA_INSTITUTION_CODE', 'TVA/2064'),
+            '{{student_name}}'     => strtoupper($this->getStudentName()),
+            '{{course_title}}'     => htmlspecialchars($this->getCourseTitle()),
+            '{{completion_date}}'  => date('F j, Y', strtotime($this->data['issued_at'] ?? $this->data['issued_date'] ?? 'now')),
+            '{{certificate_number}}' => $this->getCertificateNumber(),
+            '{{verify_url}}'       => url('verify-certificate.php?code=' . $this->getVerificationCode()),
+            '{{director_name}}'    => 'Michael Siame',
+            '{{instructor_name}}'  => $this->getInstructorName() ?: 'Course Instructor',
+        ];
+
+        $html = str_replace(array_keys($replacements), array_values($replacements), $html);
+        $html = preg_replace('/<img[^>]+src=""[^>]*>/i', '', $html);
+        return $html;
+    }
+
+    public function generatePDF() {
+        $certId = $this->getId() ?? 'unknown';
+        error_log("[CERT-DEBUG] Certificate::generatePDF() — start for cert_id={$certId}");
+
+        if (!$this->exists()) {
+            error_log("[CERT-DEBUG] Certificate::generatePDF() — certificate does not exist. Returning false.");
             return false;
         }
 
         if (!class_exists('TCPDF')) {
-            error_log('TCPDF library not available. Run: composer install');
+            error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF class not available. Returning false.');
             return false;
         }
+        error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF class is available');
 
         // Load HTML template
         $templatePath = SRC_PATH . '/templates/certificate-pdf.php';
         if (!file_exists($templatePath)) {
-            error_log('Certificate template not found: ' . $templatePath);
+            error_log('[CERT-DEBUG] Certificate::generatePDF() — template not found: ' . $templatePath);
             return false;
         }
+        error_log('[CERT-DEBUG] Certificate::generatePDF() — template loaded: ' . $templatePath);
         
         $html = file_get_contents($templatePath);
         
@@ -238,9 +284,13 @@ class Certificate {
         $logoPath = PUBLIC_PATH . '/assets/images/logo.png';
         $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.svg';
         
+        $logoExists = file_exists($logoPath);
+        $tevetaExists = file_exists($tevetaLogoPath);
+        error_log("[CERT-DEBUG] Certificate::generatePDF() — logo exists={$logoExists} path={$logoPath}, teveta exists={$tevetaExists} path={$tevetaLogoPath}");
+        
         $replacements = [
-            '{{logo_path}}'        => file_exists($logoPath) ? $logoPath : '',
-            '{{teveta_logo_path}}' => file_exists($tevetaLogoPath) ? $tevetaLogoPath : '',
+            '{{logo_path}}'        => $logoExists ? $logoPath : '',
+            '{{teveta_logo_path}}' => $tevetaExists ? $tevetaLogoPath : '',
             '{{teveta_code}}'      => env('TEVETA_INSTITUTION_CODE', 'TVA/2064'),
             '{{student_name}}'     => strtoupper($this->getStudentName()),
             '{{course_title}}'     => htmlspecialchars($this->getCourseTitle()),
@@ -256,25 +306,40 @@ class Certificate {
         // Remove <img> tags with empty src to avoid TCPDF warnings
         $html = preg_replace('/<img[^>]+src=""[^>]*>/i', '', $html);
         
-        // Create PDF
-        $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
-        
-        $pdf->SetCreator('Edutrack LMS');
-        $pdf->SetAuthor('Edutrack Computer Training College');
-        $pdf->SetTitle('Certificate - ' . $this->getCertificateNumber());
-        
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
-        $pdf->SetMargins(10, 10, 10);
-        $pdf->SetAutoPageBreak(false);
-        
-        $pdf->AddPage();
-        
-        // Render HTML to PDF
-        $pdf->writeHTML($html, true, false, true, false, '');
-        
-        // Output as string (on-demand generation, not stored to disk)
-        return $pdf->Output('', 'S');
+        error_log('[CERT-DEBUG] Certificate::generatePDF() — placeholders replaced. HTML length=' . strlen($html));
+
+        try {
+            // Create PDF
+            $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
+            error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF instance created');
+            
+            $pdf->SetCreator('Edutrack LMS');
+            $pdf->SetAuthor('Edutrack Computer Training College');
+            $pdf->SetTitle('Certificate - ' . $this->getCertificateNumber());
+            
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+            $pdf->SetMargins(10, 10, 10);
+            $pdf->SetAutoPageBreak(false);
+            
+            $pdf->AddPage();
+            error_log('[CERT-DEBUG] Certificate::generatePDF() — PDF page added');
+            
+            // Render HTML to PDF
+            $pdf->writeHTML($html, true, false, true, false, '');
+            error_log('[CERT-DEBUG] Certificate::generatePDF() — writeHTML() completed');
+            
+            // Output as string (on-demand generation, not stored to disk)
+            $output = $pdf->Output('', 'S');
+            error_log('[CERT-DEBUG] Certificate::generatePDF() — Output() completed. Size=' . strlen($output) . ' bytes');
+            return $output;
+        } catch (Exception $e) {
+            error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF EXCEPTION: ' . get_class($e) . ' — ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            return false;
+        } catch (Error $e) {
+            error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF ERROR: ' . get_class($e) . ' — ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            return false;
+        }
     }
     
     // Getters
@@ -293,6 +358,13 @@ class Certificate {
         return trim(($this->data['instructor_fname'] ?? '') . ' ' . ($this->data['instructor_lname'] ?? ''));
     }
     
+    /**
+     * Return raw certificate data array (for debugging)
+     */
+    public function getData() {
+        return $this->data;
+    }
+
     public function __get($key) {
         return $this->data[$key] ?? null;
     }
