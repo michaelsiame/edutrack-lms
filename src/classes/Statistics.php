@@ -323,65 +323,44 @@ class Statistics {
     public static function getStudentStats($studentId) {
         $db = self::getDb();
 
-        $stats = [];
+        // Combine enrollment stats into a single query
+        $enrollmentStats = $db->fetchOne("
+            SELECT 
+                COUNT(*) as enrolled_courses,
+                SUM(CASE WHEN enrollment_status = 'Completed' THEN 1 ELSE 0 END) as completed_courses,
+                SUM(CASE WHEN enrollment_status IN ('Enrolled', 'In Progress') THEN 1 ELSE 0 END) as in_progress_courses,
+                AVG(progress) as avg_progress
+            FROM enrollments 
+            WHERE user_id = ?
+        ", [$studentId]);
 
-        // Enrolled courses
-        $stats['enrolled_courses'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE user_id = ?",
-            [$studentId]
-        );
+        // Combine activity stats into a single query
+        $activityStats = $db->fetchOne("
+            SELECT 
+                (SELECT COUNT(*) FROM certificates c 
+                 JOIN enrollments e ON c.enrollment_id = e.id 
+                 WHERE e.user_id = ?) as total_certificates,
+                (SELECT COUNT(*) FROM quiz_attempts qa 
+                 JOIN students s ON qa.student_id = s.id 
+                 WHERE s.user_id = ?) as total_quiz_attempts,
+                (SELECT AVG((qa.score / NULLIF(qa.total_score, 0)) * 100) FROM quiz_attempts qa 
+                 JOIN students s ON qa.student_id = s.id 
+                 WHERE s.user_id = ? AND qa.total_score > 0) as avg_quiz_score,
+                (SELECT COUNT(*) FROM assignment_submissions asub 
+                 JOIN students s ON asub.student_id = s.id 
+                 WHERE s.user_id = ?) as assignments_submitted
+        ", [$studentId, $studentId, $studentId, $studentId]);
 
-        // Completed courses (uses correct schema enum value: 'Completed')
-        $stats['completed_courses'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'Completed'",
-            [$studentId]
-        );
-
-        // In progress courses (uses correct schema enum values: 'Enrolled', 'In Progress')
-        $stats['in_progress_courses'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status IN ('Enrolled', 'In Progress')",
-            [$studentId]
-        );
-
-        // Total certificates (certificates are linked via enrollments)
-        $stats['total_certificates'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM certificates c
-             JOIN enrollments e ON c.enrollment_id = e.id
-             WHERE e.user_id = ?",
-            [$studentId]
-        );
-
-        // Average progress across all courses (uses correct field name: 'progress')
-        $stats['avg_progress'] = (float) $db->fetchColumn(
-            "SELECT AVG(progress) FROM enrollments WHERE user_id = ?",
-            [$studentId]
-        );
-
-        // Total quiz attempts (using student_id from students table)
-        $stats['total_quiz_attempts'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM quiz_attempts qa
-             JOIN students s ON qa.student_id = s.id
-             WHERE s.user_id = ?",
-            [$studentId]
-        );
-
-        // Average quiz score (using student_id from students table)
-        $stats['avg_quiz_score'] = (float) $db->fetchColumn(
-            "SELECT AVG(score) FROM quiz_attempts qa
-             JOIN students s ON qa.student_id = s.id
-             WHERE s.user_id = ?",
-            [$studentId]
-        );
-
-        // Total assignments submitted (using student_id from students table)
-        $stats['assignments_submitted'] = (int) $db->fetchColumn(
-            "SELECT COUNT(*) FROM assignment_submissions asub
-             JOIN students s ON asub.student_id = s.id
-             WHERE s.user_id = ?",
-            [$studentId]
-        );
-
-        return $stats;
+        return [
+            'enrolled_courses' => (int) ($enrollmentStats['enrolled_courses'] ?? 0),
+            'completed_courses' => (int) ($enrollmentStats['completed_courses'] ?? 0),
+            'in_progress_courses' => (int) ($enrollmentStats['in_progress_courses'] ?? 0),
+            'avg_progress' => (float) ($enrollmentStats['avg_progress'] ?? 0),
+            'total_certificates' => (int) ($activityStats['total_certificates'] ?? 0),
+            'total_quiz_attempts' => (int) ($activityStats['total_quiz_attempts'] ?? 0),
+            'avg_quiz_score' => (float) ($activityStats['avg_quiz_score'] ?? 0),
+            'assignments_submitted' => (int) ($activityStats['assignments_submitted'] ?? 0),
+        ];
     }
 
     /**

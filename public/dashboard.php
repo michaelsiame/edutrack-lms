@@ -143,14 +143,19 @@ $recentAchievements = $db->fetchAll("
 $recommendedCourses = $db->fetchAll("
     SELECT c.*, c.thumbnail_url, CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
            cat.name as category_name,
-           (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrollment_count
+           COALESCE(ec.enrollment_count, 0) as enrollment_count
     FROM courses c
     LEFT JOIN instructors i ON c.instructor_id = i.id
     LEFT JOIN users u ON i.user_id = u.id
     LEFT JOIN course_categories cat ON c.category_id = cat.id
+    LEFT JOIN (
+        SELECT course_id, COUNT(*) as enrollment_count 
+        FROM enrollments 
+        GROUP BY course_id
+    ) ec ON c.id = ec.course_id
     WHERE c.status = 'published'
     AND c.id NOT IN (SELECT course_id FROM enrollments WHERE user_id = ?)
-    ORDER BY c.created_at DESC
+    ORDER BY c.is_featured DESC, c.enrollment_count DESC, c.created_at DESC
     LIMIT 3
 ", [$userId]);
 

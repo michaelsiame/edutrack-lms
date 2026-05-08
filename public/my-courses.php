@@ -32,33 +32,92 @@ $sortSql = match($sort) {
     default => "ORDER BY e.last_accessed DESC, e.enrolled_at DESC"
 };
 
+// Get basic enrollment data (avoid massive JOIN)
 $enrollments = $db->fetchAll("
     SELECT e.*, c.title, c.slug, c.thumbnail_url, c.description, c.price,
            c.instructor_id, c.duration_weeks, c.total_hours, c.level,
            CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
-           e.enrolled_at, e.last_accessed, e.progress as progress_percentage, e.enrollment_status,
-           COUNT(DISTINCT l.id) as total_lessons,
-           COUNT(DISTINCT CASE WHEN lp.status = 'Completed' THEN lp.lesson_id END) as completed_lessons,
-           COUNT(DISTINCT a.id) as total_assignments,
-           COUNT(DISTINCT asub.id) as submitted_assignments,
-           COUNT(DISTINCT q.id) as total_quizzes,
-           COUNT(DISTINCT qa.id) as attempted_quizzes,
-           MAX(lp.updated_at) as last_lesson_date
+           e.enrolled_at, e.last_accessed, e.progress as progress_percentage, e.enrollment_status
     FROM enrollments e
     JOIN courses c ON e.course_id = c.id
     LEFT JOIN instructors i ON c.instructor_id = i.id
     LEFT JOIN users u ON i.user_id = u.id
-    LEFT JOIN modules m ON c.id = m.course_id
-    LEFT JOIN lessons l ON m.id = l.module_id
-    LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.enrollment_id = e.id
-    LEFT JOIN assignments a ON c.id = a.course_id
-    LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.student_id = e.student_id
-    LEFT JOIN quizzes q ON c.id = q.course_id AND q.is_published = 1
-    LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.student_id = e.student_id
     WHERE e.user_id = ? $statusFilter
-    GROUP BY e.id, c.id
     $sortSql
 ", [$userId]);
+
+// Get lesson counts per enrollment in a single query
+$enrollmentIds = array_column($enrollments, 'id');
+$lessonCounts = [];
+$assignmentCounts = [];
+$quizCounts = [];
+
+if (!empty($enrollmentIds)) {
+    $placeholders = implode(',', array_fill(0, count($enrollmentIds), '?'));
+    
+    // Lesson counts
+    $lessonData = $db->fetchAll("
+        SELECT 
+            e.id as enrollment_id,
+            COUNT(DISTINCT l.id) as total_lessons,
+            COUNT(DISTINCT CASE WHEN lp.status = 'Completed' THEN lp.lesson_id END) as completed_lessons,
+            MAX(lp.updated_at) as last_lesson_date
+        FROM enrollments e
+        JOIN modules m ON e.course_id = m.course_id
+        LEFT JOIN lessons l ON m.id = l.module_id
+        LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.enrollment_id = e.id
+        WHERE e.id IN ($placeholders)
+        GROUP BY e.id
+    ", $enrollmentIds);
+    foreach ($lessonData as $row) {
+        $lessonCounts[$row['enrollment_id']] = $row;
+    }
+    
+    // Assignment counts
+    $assignmentData = $db->fetchAll("
+        SELECT 
+            e.id as enrollment_id,
+            COUNT(DISTINCT a.id) as total_assignments,
+            COUNT(DISTINCT asub.id) as submitted_assignments
+        FROM enrollments e
+        LEFT JOIN assignments a ON e.course_id = a.course_id
+        LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.student_id = e.student_id
+        WHERE e.id IN ($placeholders)
+        GROUP BY e.id
+    ", $enrollmentIds);
+    foreach ($assignmentData as $row) {
+        $assignmentCounts[$row['enrollment_id']] = $row;
+    }
+    
+    // Quiz counts
+    $quizData = $db->fetchAll("
+        SELECT 
+            e.id as enrollment_id,
+            COUNT(DISTINCT q.id) as total_quizzes,
+            COUNT(DISTINCT qa.id) as attempted_quizzes
+        FROM enrollments e
+        LEFT JOIN quizzes q ON e.course_id = q.course_id AND q.is_published = 1
+        LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.student_id = e.student_id
+        WHERE e.id IN ($placeholders)
+        GROUP BY e.id
+    ", $enrollmentIds);
+    foreach ($quizData as $row) {
+        $quizCounts[$row['enrollment_id']] = $row;
+    }
+}
+
+// Merge counts into enrollments
+foreach ($enrollments as &$enrollment) {
+    $eid = $enrollment['id'];
+    $enrollment['total_lessons'] = $lessonCounts[$eid]['total_lessons'] ?? 0;
+    $enrollment['completed_lessons'] = $lessonCounts[$eid]['completed_lessons'] ?? 0;
+    $enrollment['total_assignments'] = $assignmentCounts[$eid]['total_assignments'] ?? 0;
+    $enrollment['submitted_assignments'] = $assignmentCounts[$eid]['submitted_assignments'] ?? 0;
+    $enrollment['total_quizzes'] = $quizCounts[$eid]['total_quizzes'] ?? 0;
+    $enrollment['attempted_quizzes'] = $quizCounts[$eid]['attempted_quizzes'] ?? 0;
+    $enrollment['last_lesson_date'] = $lessonCounts[$eid]['last_lesson_date'] ?? null;
+}
+unset($enrollment);
 
 // Get all module completion data in a single query (fix N+1)
 $enrollmentIds = array_column($enrollments, 'id');
@@ -104,15 +163,25 @@ foreach ($enrollments as &$enrollment) {
 }
 unset($enrollment);
 
-// Count by status
+// Count by status + overall stats in single query
+$headerStats = $db->fetchOne("
+    SELECT 
+        COUNT(*) as all_count,
+        SUM(CASE WHEN enrollment_status IN ('Enrolled', 'In Progress') THEN 1 ELSE 0 END) as active_count,
+        SUM(CASE WHEN enrollment_status = 'Completed' THEN 1 ELSE 0 END) as completed_count,
+        AVG(progress) as avg_progress
+    FROM enrollments 
+    WHERE user_id = ?
+", [$userId]);
+
 $counts = [
-    'all' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE user_id = ?", [$userId]),
-    'active' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status IN ('Enrolled', 'In Progress')", [$userId]),
-    'completed' => (int) $db->fetchColumn("SELECT COUNT(*) FROM enrollments WHERE user_id = ? AND enrollment_status = 'Completed'", [$userId])
+    'all' => (int) ($headerStats['all_count'] ?? 0),
+    'active' => (int) ($headerStats['active_count'] ?? 0),
+    'completed' => (int) ($headerStats['completed_count'] ?? 0)
 ];
 
-// Get overall stats for header
-$totalProgress = $db->fetchColumn("SELECT AVG(progress) FROM enrollments WHERE user_id = ?", [$userId]) ?? 0;
+$totalProgress = (float) ($headerStats['avg_progress'] ?? 0);
+
 $certificatesCount = $db->fetchColumn("
     SELECT COUNT(*) FROM certificates cert
     JOIN enrollments e ON cert.enrollment_id = e.id

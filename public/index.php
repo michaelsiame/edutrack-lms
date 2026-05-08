@@ -79,7 +79,7 @@ try {
         LEFT JOIN instructors i ON c.instructor_id = i.id
         LEFT JOIN users u ON i.user_id = u.id
         WHERE c.status = 'published' 
-        ORDER BY RAND()
+        ORDER BY c.is_featured DESC, c.enrollment_count DESC, c.created_at DESC
         LIMIT 12
     ");
     $all_featured = $stmt->fetchAll();

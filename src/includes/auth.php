@@ -599,13 +599,17 @@ function validateSession() {
     // Update last activity timestamp
     $_SESSION['last_activity'] = time();
 
-    // Check if user still exists and is active
-    $db = Database::getInstance();
-    $user = $db->fetchOne("SELECT status FROM users WHERE id = ?", [currentUserId()]);
+    // Check if user still exists and is active (throttled to once per 60 seconds)
+    $lastValidation = $_SESSION['last_status_check'] ?? 0;
+    if (time() - $lastValidation > 60) {
+        $db = Database::getInstance();
+        $user = $db->fetchOne("SELECT status FROM users WHERE id = ?", [currentUserId()]);
 
-    if (!$user || $user['status'] !== 'active') {
-        logoutUser();
-        return false;
+        if (!$user || $user['status'] !== 'active') {
+            logoutUser();
+            return false;
+        }
+        $_SESSION['last_status_check'] = time();
     }
 
     return true;
