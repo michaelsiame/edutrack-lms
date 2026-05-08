@@ -14,6 +14,10 @@
     # RewriteCond %{HTTPS} off
     # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
     
+    # Don't rewrite requests for missing static files — return 404 instead of hitting PHP
+    RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|gif|ico|css|js|woff|woff2|ttf|svg|pdf|mp4|webm)$ [NC]
+    RewriteRule ^ - [L]
+
     # Pretty URLs
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
