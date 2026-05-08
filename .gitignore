@@ -104,6 +104,9 @@ secrets.txt
 /build/
 /public/admin/dist/
 /public/admin/node_modules/
+
+# Keep built Tailwind CSS for Hostinger auto-deploy
+!/public/assets/css/tailwind.css
 admin-built.zip
 
 # Temporary Files

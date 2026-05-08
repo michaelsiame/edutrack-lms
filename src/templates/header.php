@@ -44,24 +44,29 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <link rel="icon" type="image/png" href="<?= asset('images/logo.png') ?>">
     <link rel="apple-touch-icon" href="<?= asset('images/logo.png') ?>">
     
-    <!-- Tailwind CSS CDN (v3.4.1) -->
-    <script src="https://cdn.tailwindcss.com/3.4.1"></script>
-    
+    <!-- Preconnect to external CDNs for faster loading -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Tailwind CSS (pre-built for production) -->
+    <link rel="stylesheet" href="<?= asset('css/tailwind.css') ?>">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Design Tokens -->
     <link rel="stylesheet" href="<?= asset('css/tokens.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/progress-ring.css') ?>">
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= asset('css/whatsapp-button.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/ui-fixes.css') ?>">
-    
-    <!-- Shared Tailwind Config -->
+
+    <!-- Shared Tailwind Config (kept for any runtime JS that references theme values) -->
     <script src="<?= asset('js/tailwind-config.js') ?>"></script>
     
     <!-- Toast Notifications -->

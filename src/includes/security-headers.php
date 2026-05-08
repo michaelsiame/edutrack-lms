@@ -66,8 +66,9 @@ $cspDirectives = [
 header('Content-Security-Policy: ' . implode('; ', $cspDirectives));
 
 // Strict Transport Security - Force HTTPS
+// NOTE: preload removed to avoid redirect loops with Hostinger/Cloudflare HTTPS enforcement
 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-    header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
 }
 
 // Disable caching for sensitive pages if requested
