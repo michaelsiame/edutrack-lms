@@ -197,113 +197,75 @@ class Certificate {
     }
     
     /**
-     * Generate PDF certificate
+     * Generate PDF certificate from HTML template
+     * 
+     * The certificate design lives in: src/templates/certificate-pdf.php
+     * Edit that file to change fonts, colors, layout, signatures, etc.
+     * It uses standard HTML/CSS that TCPDF renders to PDF.
      */
     public function generatePDF() {
         if (!$this->exists()) {
             return false;
         }
 
-        // Check if TCPDF is available
         if (!class_exists('TCPDF')) {
             error_log('TCPDF library not available. Run: composer install');
             return false;
         }
 
-        // Create new PDF document
+        // Load HTML template
+        $templatePath = SRC_PATH . '/templates/certificate-pdf.php';
+        if (!file_exists($templatePath)) {
+            error_log('Certificate template not found: ' . $templatePath);
+            return false;
+        }
+        
+        $html = file_get_contents($templatePath);
+        
+        // Remove HTML comments (TCPDF may render them)
+        $html = preg_replace('/<!--.*?-->/s', '', $html);
+        
+        // Build placeholder replacements
+        $logoPath = PUBLIC_PATH . '/assets/images/logo.png';
+        $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.png';
+        
+        $replacements = [
+            '{{logo_path}}'        => file_exists($logoPath) ? $logoPath : '',
+            '{{teveta_logo_path}}' => file_exists($tevetaLogoPath) ? $tevetaLogoPath : '',
+            '{{teveta_code}}'      => env('TEVETA_INSTITUTION_CODE', 'TVA/2064'),
+            '{{student_name}}'     => strtoupper($this->getStudentName()),
+            '{{course_title}}'     => htmlspecialchars($this->getCourseTitle()),
+            '{{completion_date}}'  => date('F j, Y', strtotime($this->data['issued_at'])),
+            '{{certificate_number}}' => $this->getCertificateNumber(),
+            '{{verify_url}}'       => url('verify-certificate.php?code=' . $this->getVerificationCode()),
+            '{{director_name}}'    => 'Michael Siame',
+            '{{instructor_name}}'  => $this->getInstructorName() ?: 'Course Instructor',
+        ];
+        
+        $html = str_replace(array_keys($replacements), array_values($replacements), $html);
+        
+        // Remove <img> tags with empty src to avoid TCPDF warnings
+        $html = preg_replace('/<img[^>]+src=""[^>]*>/i', '', $html);
+        
+        // Create PDF
         $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
         
-        // Set document information
         $pdf->SetCreator('Edutrack LMS');
-        $pdf->SetAuthor('Edutrack computer training college');
-        $pdf->SetTitle('Certificate of Completion');
+        $pdf->SetAuthor('Edutrack Computer Training College');
+        $pdf->SetTitle('Certificate - ' . $this->getCertificateNumber());
         
-        // Remove default header/footer
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
+        $pdf->SetMargins(10, 10, 10);
+        $pdf->SetAutoPageBreak(false);
         
-        // Set margins
-        $pdf->SetMargins(15, 15, 15);
-        
-        // Add a page
         $pdf->AddPage();
         
-        // Set font
-        $pdf->SetFont('helvetica', '', 12);
+        // Render HTML to PDF
+        $pdf->writeHTML($html, true, false, true, false, '');
         
-        // Colors
-        $primaryBlue = [46, 112, 218];
-        $accentGold = [246, 183, 69];
-        
-        // Border
-        $pdf->SetLineStyle(['width' => 2, 'color' => $primaryBlue]);
-        $pdf->Rect(10, 10, 277, 190);
-        $pdf->SetLineStyle(['width' => 1, 'color' => $accentGold]);
-        $pdf->Rect(12, 12, 273, 186);
-        
-        // Logo (if exists)
-        $logoPath = PUBLIC_PATH . '/assets/images/logo.png';
-        if (file_exists($logoPath)) {
-            $pdf->Image($logoPath, 25, 20, 30);
-        }
-        
-        // TEVETA Logo (if exists)
-        $tevataLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.png';
-        if (file_exists($tevataLogoPath)) {
-            $pdf->Image($tevataLogoPath, 242, 20, 30);
-        }
-        
-        // Add content...
-        $pdf->SetFont('helvetica', 'B', 24);
-        $pdf->SetTextColor(46, 112, 218);
-        $pdf->SetY(35);
-        $pdf->Cell(0, 10, 'EDUTRACK COMPUTER TRAINING COLLEGE', 0, 1, 'C');
-        
-        $pdf->SetFont('helvetica', '', 10);
-        $pdf->SetTextColor(100, 100, 100);
-        $tevetaCode = env('TEVETA_INSTITUTION_CODE', 'TVA/2064');
-        $pdf->Cell(0, 5, 'TEVETA Registered Institution - ' . $tevetaCode, 0, 1, 'C');
-        
-        // Certificate Title
-        $pdf->SetY(60);
-        $pdf->SetFont('helvetica', 'B', 36);
-        $pdf->SetTextColor(246, 183, 69);
-        $pdf->Cell(0, 15, 'CERTIFICATE OF COMPLETION', 0, 1, 'C');
-        
-        // Student Name
-        $pdf->SetY(85);
-        $pdf->SetFont('helvetica', 'B', 28);
-        $pdf->SetTextColor(0, 0, 0);
-        $studentName = $this->data['first_name'] . ' ' . $this->data['last_name'];
-        $pdf->Cell(0, 12, strtoupper($studentName), 0, 1, 'C');
-        
-        // Course Title
-        $pdf->SetY(105);
-        $pdf->SetFont('helvetica', 'B', 18);
-        $pdf->SetTextColor(46, 112, 218);
-        $pdf->Cell(0, 10, $this->data['course_title'], 0, 1, 'C');
-        
-        // Details
-        $pdf->SetY(120);
-        $pdf->SetFont('helvetica', '', 11);
-        $pdf->SetTextColor(100, 100, 100);
-        $completionDate = date('F j, Y', strtotime($this->data['issued_at']));
-        $pdf->Cell(0, 6, 'Completed on ' . $completionDate, 0, 1, 'C');
-        
-        // Certificate Number
-        $pdf->SetY(130);
-        $pdf->SetFont('helvetica', 'I', 9);
-        $pdf->Cell(0, 5, 'Certificate No: ' . $this->data['certificate_number'], 0, 1, 'C');
-        
-        // Verification URL
-        $verifyUrl = url('verify-certificate.php?code=' . $this->data['verification_code']);
-        $pdf->SetFont('helvetica', 'I', 8);
-        $pdf->Cell(0, 5, 'Verify at: ' . $verifyUrl, 0, 1, 'C');
-        
-        // Output PDF as string (generated on demand, not stored to disk)
-        $pdfContent = $pdf->Output('', 'S');
-        
-        return $pdfContent;
+        // Output as string (on-demand generation, not stored to disk)
+        return $pdf->Output('', 'S');
     }
     
     // Getters
