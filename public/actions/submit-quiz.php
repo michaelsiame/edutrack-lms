@@ -174,22 +174,22 @@ try {
     // Calculate time spent
     $timeSpent = $startTime ? (time() - $startTime) : 0;
 
+    // Get student_id from user_id
+    $student = $db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$userId]);
+    $studentId = $student['id'] ?? null;
+
     // Create quiz attempt record
     $db->query("
         INSERT INTO quiz_attempts
-        (user_id, quiz_id, course_id, attempt_number, score, total_points, percentage, status, time_spent, started_at, completed_at, passed)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'completed', ?, FROM_UNIXTIME(?), NOW(), ?)
+        (quiz_id, student_id, attempt_number, score, status, time_spent_minutes, started_at, submitted_at, completed_at)
+        VALUES (?, ?, ?, ?, 'Submitted', ?, FROM_UNIXTIME(?), NOW(), NOW())
     ", [
-        $userId,
         $quizId,
-        $quiz['course_id'],
+        $studentId,
         $attemptNumber,
-        $earnedPoints,
-        $totalPoints,
         $percentage,
-        $timeSpent,
-        $startTime,
-        $passed ? 1 : 0
+        round($timeSpent / 60),
+        $startTime
     ]);
 
     $attemptId = $db->lastInsertId();

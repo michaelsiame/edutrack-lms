@@ -30,7 +30,7 @@ $assignment = $db->fetchOne("
            asub.id as submission_id,
            asub.status as submission_status,
            asub.submission_text,
-           asub.file_path,
+           asub.file_url,
            asub.submitted_at,
            asub.points_earned,
            asub.feedback,
@@ -38,7 +38,7 @@ $assignment = $db->fetchOne("
     FROM assignments a
     JOIN courses c ON a.course_id = c.id
     JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
-    LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.user_id = ?
+    LEFT JOIN assignment_submissions asub ON a.id = asub.assignment_id AND asub.student_id = ?
     WHERE a.id = ?
 ", [$userId, $userId, $assignmentId]);
 

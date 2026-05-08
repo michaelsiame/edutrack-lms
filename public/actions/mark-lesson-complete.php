@@ -67,17 +67,19 @@ try {
         redirect($redirectUrl);
     }
 
+    $enrollmentId = $enrollment['id'];
+
     // Check if progress record exists
     $existingProgress = $db->fetchOne("
         SELECT id, status FROM lesson_progress
-        WHERE user_id = ? AND course_id = ? AND lesson_id = ?
-    ", [$userId, $courseId, $lessonId]);
+        WHERE enrollment_id = ? AND lesson_id = ?
+    ", [$enrollmentId, $lessonId]);
 
     if ($existingProgress) {
         // Update existing progress
         $db->query("
             UPDATE lesson_progress
-            SET status = 'completed',
+            SET status = 'Completed',
                 progress_percentage = 100,
                 completed_at = NOW(),
                 updated_at = NOW()
@@ -87,24 +89,24 @@ try {
         // Create new progress record
         $db->query("
             INSERT INTO lesson_progress
-            (user_id, course_id, lesson_id, status, progress_percentage, completed_at, created_at, updated_at)
-            VALUES (?, ?, ?, 'completed', 100, NOW(), NOW(), NOW())
-        ", [$userId, $courseId, $lessonId]);
+            (enrollment_id, lesson_id, status, progress_percentage, completed_at, created_at, updated_at)
+            VALUES (?, ?, 'Completed', 100, NOW(), NOW(), NOW())
+        ", [$enrollmentId, $lessonId]);
     }
 
     // Update overall course progress
     $totalLessons = $db->fetchOne("
         SELECT COUNT(*) as total
         FROM lessons l
-        JOIN course_modules m ON l.module_id = m.id
+        JOIN modules m ON l.module_id = m.id
         WHERE m.course_id = ?
     ", [$courseId])['total'];
 
     $completedLessons = $db->fetchOne("
         SELECT COUNT(*) as completed
         FROM lesson_progress
-        WHERE user_id = ? AND course_id = ? AND status = 'completed'
-    ", [$userId, $courseId])['completed'];
+        WHERE enrollment_id = ? AND status = 'Completed'
+    ", [$enrollmentId])['completed'];
 
     $progressPercentage = $totalLessons > 0 ? round(($completedLessons / $totalLessons) * 100, 2) : 0;
 

@@ -6,6 +6,12 @@
 
 require_once __DIR__ . '/../src/bootstrap.php';
 
+// Redirect to the unified student quiz interface
+$quizId = $_GET['quiz_id'] ?? $_GET['id'] ?? null;
+if ($quizId) {
+    redirect('student/take-quiz.php?quiz_id=' . intval($quizId));
+}
+
 // Ensure user is authenticated
 if (!isLoggedIn()) {
     redirect('login.php');

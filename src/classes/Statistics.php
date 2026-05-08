@@ -343,9 +343,9 @@ class Statistics {
                 (SELECT COUNT(*) FROM quiz_attempts qa 
                  JOIN students s ON qa.student_id = s.id 
                  WHERE s.user_id = ?) as total_quiz_attempts,
-                (SELECT AVG((qa.score / NULLIF(qa.total_score, 0)) * 100) FROM quiz_attempts qa 
+                (SELECT AVG(qa.score) FROM quiz_attempts qa 
                  JOIN students s ON qa.student_id = s.id 
-                 WHERE s.user_id = ? AND qa.total_score > 0) as avg_quiz_score,
+                 WHERE s.user_id = ? AND qa.score IS NOT NULL) as avg_quiz_score,
                 (SELECT COUNT(*) FROM assignment_submissions asub 
                  JOIN students s ON asub.student_id = s.id 
                  WHERE s.user_id = ?) as assignments_submitted

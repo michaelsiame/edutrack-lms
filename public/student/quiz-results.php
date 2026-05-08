@@ -48,7 +48,7 @@ $attempt = $db->fetchOne("
     FROM quiz_attempts qa
     JOIN quizzes q ON qa.quiz_id = q.id
     JOIN courses c ON q.course_id = c.id
-    WHERE qa.id = ? AND qa.user_id = ?
+    WHERE qa.id = ? AND qa.student_id = ?
 ", [$attemptId, $userId]);
 
 if (!$attempt) {

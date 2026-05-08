@@ -98,7 +98,7 @@ $recentActivity = $db->fetchAll("
      JOIN lessons l ON q.lesson_id = l.id
      JOIN modules m ON l.module_id = m.id
      JOIN courses c ON m.course_id = c.id
-     WHERE c.instructor_id = ? AND qa.status = 'completed')
+     WHERE c.instructor_id = ? AND qa.status IN ('Submitted', 'Graded'))
     ORDER BY activity_date DESC
     LIMIT 10
 ", [$instructorId, $instructorId, $instructorId]);

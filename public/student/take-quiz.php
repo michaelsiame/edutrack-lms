@@ -120,12 +120,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
 
     $scorePercentage = $totalPoints > 0 ? ($earnedPoints / $totalPoints) * 100 : 0;
 
+    // Get student_id from user_id
+    $student = $db->fetchOne("SELECT id FROM students WHERE user_id = ?", [$userId]);
+    $studentId = $student['id'] ?? null;
+
     // Save quiz attempt
     try {
         $db->query("
-            INSERT INTO quiz_attempts (user_id, quiz_id, score, total_score, total_questions, correct_answers, time_spent, completed_at, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
-        ", [$userId, $quizId, $scorePercentage, 100, $totalQuestions, $correctAnswers, $timeSpent]);
+            INSERT INTO quiz_attempts (quiz_id, student_id, attempt_number, score, status, time_spent_minutes, submitted_at, completed_at)
+            VALUES (?, ?, 1, ?, 'Submitted', ?, NOW(), NOW())
+        ", [$quizId, $studentId, $scorePercentage, round($timeSpent / 60)]);
 
         $attemptId = $db->lastInsertId();
 

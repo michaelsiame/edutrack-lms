@@ -94,7 +94,7 @@ $recentQuizAttempts = $db->fetchAll("
     JOIN courses c ON m.course_id = c.id
     JOIN students st ON qa.student_id = st.id
     JOIN users u ON st.user_id = u.id
-    WHERE c.instructor_id = ? AND qa.status = 'completed'
+    WHERE c.instructor_id = ? AND qa.status IN ('Submitted', 'Graded')
     ORDER BY qa.completed_at DESC
     LIMIT 5
 ", [$instructorId]);

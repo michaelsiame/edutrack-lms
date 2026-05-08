@@ -42,7 +42,7 @@ $assignments = $db->fetchAll("
            asub.points_earned,
            asub.feedback,
            asub.graded_at,
-           asub.file_path as submission_file,
+           asub.file_url as submission_file,
            e.id as enrollment_id
     FROM assignments a
     JOIN courses c ON a.course_id = c.id

@@ -47,9 +47,9 @@ $quizzes = $db->fetchAll("
            c.title as course_title, c.id as course_id,
            (SELECT COUNT(*) FROM quiz_questions WHERE quiz_id = q.id) as question_count,
            (SELECT COUNT(*) FROM quiz_attempts WHERE quiz_id = q.id) as total_attempts,
-           (SELECT COUNT(*) FROM quiz_attempts WHERE quiz_id = q.id AND status = 'completed') as completed_attempts,
-           (SELECT AVG(score) FROM quiz_attempts WHERE quiz_id = q.id AND status = 'completed') as avg_score,
-           (SELECT COUNT(*) FROM quiz_attempts WHERE quiz_id = q.id AND passed = 1) as passed_count
+           (SELECT COUNT(*) FROM quiz_attempts WHERE quiz_id = q.id AND status IN ('Submitted', 'Graded')) as completed_attempts,
+           (SELECT AVG(score) FROM quiz_attempts WHERE quiz_id = q.id AND status IN ('Submitted', 'Graded')) as avg_score,
+           (SELECT COUNT(*) FROM quiz_attempts qa2 JOIN quizzes q2 ON qa2.quiz_id = q2.id WHERE qa2.quiz_id = q.id AND qa2.score >= q2.passing_score) as passed_count
     FROM quizzes q
     JOIN lessons l ON q.lesson_id = l.id
     JOIN modules m ON l.module_id = m.id
@@ -92,7 +92,7 @@ $stats = $db->fetchOne("
     SELECT 
         COUNT(DISTINCT q.id) as total_quizzes,
         COUNT(DISTINCT qa.id) as total_attempts,
-        AVG(CASE WHEN qa.status = 'completed' THEN qa.score END) as avg_score
+        AVG(CASE WHEN qa.status IN ('Submitted', 'Graded') THEN qa.score END) as avg_score
     FROM quizzes q
     JOIN lessons l ON q.lesson_id = l.id
     JOIN modules m ON l.module_id = m.id
@@ -306,8 +306,8 @@ require_once '../../src/templates/instructor-header.php';
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <?php if ($attempt['status'] == 'completed'): ?>
-                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium <?= $attempt['passed'] ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' ?>">
+                                    <?php if (in_array($attempt['status'], ['Submitted', 'Graded'])): ?>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium <?= ($attempt['score'] >= ($attempt['passing_score'] ?? 60)) ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' ?>">
                                         <?= round($attempt['score'], 1) ?>%
                                     </span>
                                     <?php else: ?>

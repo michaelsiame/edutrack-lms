@@ -41,12 +41,12 @@ $stats = [
     'quizzes_completed' => $db->fetchColumn("
         SELECT COUNT(*) FROM quiz_attempts qa
         JOIN enrollments e ON qa.student_id = e.student_id
-        WHERE e.user_id = ? AND qa.status = 'Completed'
+        WHERE e.user_id = ? AND qa.status = 'Graded'
     ", [$userId]) ?? 0,
     'avg_quiz_score' => $db->fetchColumn("
-        SELECT AVG((qa.score / qa.total_score) * 100) FROM quiz_attempts qa
+        SELECT AVG(qa.score) FROM quiz_attempts qa
         JOIN enrollments e ON qa.student_id = e.student_id
-        WHERE e.user_id = ? AND qa.status = 'Completed'
+        WHERE e.user_id = ? AND qa.status = 'Graded'
     ", [$userId]) ?? 0
 ];
 
@@ -133,12 +133,12 @@ $badges = [
         'earned' => $db->fetchColumn("
             SELECT COUNT(*) FROM quiz_attempts qa
             JOIN enrollments e ON qa.student_id = e.student_id
-            WHERE e.user_id = ? AND qa.score = qa.total_score
+            WHERE e.user_id = ? AND qa.score >= 100
         ", [$userId]) > 0,
         'progress' => $db->fetchColumn("
             SELECT COUNT(*) FROM quiz_attempts qa
             JOIN enrollments e ON qa.student_id = e.student_id
-            WHERE e.user_id = ? AND qa.score = qa.total_score
+            WHERE e.user_id = ? AND qa.score >= 100
         ", [$userId]) > 0 ? 100 : 0
     ],
     [
@@ -186,11 +186,11 @@ $milestones = $db->fetchAll("
     JOIN courses c ON e.course_id = c.id
     WHERE e.user_id = ?
     UNION ALL
-    SELECT 'quiz_high' as type, q.title, qa.completed_at as date, CONCAT('Scored ', ROUND((qa.score/qa.total_score)*100), '% on quiz') as description
+    SELECT 'quiz_high' as type, q.title, qa.completed_at as date, CONCAT('Scored ', ROUND(qa.score), '% on quiz') as description
     FROM quiz_attempts qa
     JOIN quizzes q ON qa.quiz_id = q.id
     JOIN enrollments e ON qa.student_id = e.student_id
-    WHERE e.user_id = ? AND (qa.score/qa.total_score) >= 0.8
+    WHERE e.user_id = ? AND qa.score >= 80
     ORDER BY date DESC
     LIMIT 10
 ", [$userId, $userId, $userId]);

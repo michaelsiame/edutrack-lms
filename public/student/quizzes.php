@@ -41,7 +41,7 @@ $quizzes = $db->fetchAll("
     FROM quizzes q
     JOIN courses c ON q.course_id = c.id
     JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
-    LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.user_id = ?
+    LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.student_id = ?
     WHERE q.is_published = 1
     GROUP BY q.id
     $havingCondition
@@ -61,13 +61,13 @@ $counts = [
         JOIN courses c ON q.course_id = c.id
         JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
         WHERE q.is_published = 1
-        AND q.id NOT IN (SELECT DISTINCT quiz_id FROM quiz_attempts WHERE user_id = ?)
+        AND q.id NOT IN (SELECT DISTINCT quiz_id FROM quiz_attempts WHERE student_id = ?)
     ", [$userId, $userId])),
     'completed' => count($db->fetchAll("
         SELECT DISTINCT q.id FROM quizzes q
         JOIN courses c ON q.course_id = c.id
         JOIN enrollments e ON c.id = e.course_id AND e.user_id = ?
-        JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.user_id = ?
+        JOIN quiz_attempts qa ON q.id = qa.quiz_id AND qa.student_id = ?
         WHERE q.is_published = 1
     ", [$userId, $userId]))
 ];

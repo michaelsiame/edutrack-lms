@@ -273,7 +273,7 @@ class Quiz {
             return false;
         }
         
-        $sql = "SELECT * FROM quiz_attempts WHERE attempt_id = :id AND student_id = :student_id";
+        $sql = "SELECT * FROM quiz_attempts WHERE id = :id AND student_id = :student_id";
         $attempt = $this->db->query($sql, [
             'id' => $attemptId,
             'student_id' => $studentId
@@ -314,7 +314,7 @@ class Quiz {
                 status = 'Submitted',
                 submitted_at = NOW(),
                 score = :score
-                WHERE attempt_id = :id";
+                WHERE id = :id";
 
         $this->db->query($sql, [
             'score' => $score,
@@ -371,15 +371,16 @@ class Quiz {
      */
     private function saveAnswer($attemptId, $questionId, $answer, $isCorrect) {
         $sql = "INSERT INTO quiz_answers (
-            attempt_id, question_id, user_answer, is_correct
+            attempt_id, question_id, selected_option_id, answer_text, is_correct
         ) VALUES (
-            :attempt_id, :question_id, :user_answer, :is_correct
+            :attempt_id, :question_id, :selected_option_id, :answer_text, :is_correct
         )";
         
         return $this->db->query($sql, [
             'attempt_id' => $attemptId,
             'question_id' => $questionId,
-            'user_answer' => is_array($answer) ? json_encode($answer) : $answer,
+            'selected_option_id' => is_numeric($answer) ? $answer : null,
+            'answer_text' => is_array($answer) ? json_encode($answer) : (is_numeric($answer) ? null : $answer),
             'is_correct' => $isCorrect ? 1 : 0
         ]);
     }
