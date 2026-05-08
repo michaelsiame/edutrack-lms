@@ -41,7 +41,8 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <meta property="twitter:image" content="<?= $og_image ?? asset('images/logo.png') ?>">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?= asset('images/favicon.ico') ?>">
+    <link rel="icon" type="image/png" href="<?= asset('images/logo.png') ?>">
+    <link rel="apple-touch-icon" href="<?= asset('images/logo.png') ?>">
     
     <!-- Tailwind CSS CDN (v3.4.1) -->
     <script src="https://cdn.tailwindcss.com/3.4.1"></script>
