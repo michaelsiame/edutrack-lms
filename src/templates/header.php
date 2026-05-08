@@ -53,6 +53,10 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Design Tokens -->
+    <link rel="stylesheet" href="<?= asset('css/tokens.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/progress-ring.css') ?>">
+    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= asset('css/whatsapp-button.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/ui-fixes.css') ?>">

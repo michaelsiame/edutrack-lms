@@ -243,23 +243,22 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
 <div class="min-h-screen bg-gray-100">
 
     <!-- Course Header -->
-    <div class="bg-white shadow-sm border-b">
+    <div class="shadow-sm border-b" style="background: var(--surface-secondary); border-color: var(--border-primary);">
         <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
-                    <a href="<?= url('my-courses.php') ?>" class="text-gray-600 hover:text-gray-900">
+                    <a href="<?= url('my-courses.php') ?>" class="transition" style="color: var(--text-secondary);" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
                         <i class="fas fa-arrow-left"></i>
                     </a>
                     <div>
-                        <h1 class="text-xl font-bold text-gray-900"><?= htmlspecialchars($course['title']) ?></h1>
-                        <p class="text-sm text-gray-600">
+                        <h1 class="text-xl font-bold" style="color: var(--text-primary);"><?= htmlspecialchars($course['title']) ?></h1>
+                        <p class="text-sm" style="color: var(--text-secondary);">
                             Instructor: <?= htmlspecialchars($course['instructor_first_name'] . ' ' . $course['instructor_last_name']) ?>
                         </p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
                     <?php
-                    // Calculate lesson position
                     $totalLessonsInCourse = 0;
                     $currentLessonPosition = 0;
                     $lessonCounter = 0;
@@ -276,46 +275,48 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                     }
                     ?>
                     <div class="text-right">
-                        <p class="text-sm text-gray-600">
+                        <p class="text-sm" style="color: var(--text-secondary);">
                             <?php if ($currentLessonPosition > 0): ?>
                                 Lesson <?= $currentLessonPosition ?> of <?= $totalLessonsInCourse ?>
                             <?php else: ?>
                                 Progress
                             <?php endif; ?>
                         </p>
-                        <p class="text-lg font-bold text-blue-600"><?= round($course['progress_percentage'] ?? 0) ?>%</p>
+                        <p class="text-lg font-bold" style="color: var(--accent-primary);"><?= round($course['progress_percentage'] ?? 0) ?>%</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="max-w-7xl mx-auto px-4 py-8" style="background: var(--surface-primary);">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
             <!-- Sidebar - Course Content -->
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-lg shadow">
-                    <div class="p-4 border-b">
-                        <h2 class="font-bold text-gray-900">Course Content</h2>
+                <div class="course-card" style="background: var(--surface-secondary);">
+                    <div class="p-4 border-b" style="border-color: var(--border-primary);">
+                        <h2 class="font-bold" style="color: var(--text-primary);">Course Content</h2>
                     </div>
 
                     <?php if (empty($modules)): ?>
-                    <div class="p-6 text-center text-gray-500">
-                        <i class="fas fa-folder-open text-4xl mb-2"></i>
-                        <p>No modules available yet</p>
-                        <p class="text-sm mt-2">The instructor is preparing course content.</p>
+                    <div class="empty-state p-6">
+                        <div class="empty-state-icon" style="background: var(--surface-tertiary); width: 4rem; height: 4rem;">
+                            <i class="fas fa-folder-open text-2xl" style="color: var(--text-tertiary);"></i>
+                        </div>
+                        <p style="color: var(--text-secondary);">No modules available yet</p>
+                        <p class="text-sm mt-2" style="color: var(--text-tertiary);">The instructor is preparing course content.</p>
                     </div>
                     <?php else: ?>
-                    <div class="divide-y">
+                    <div class="divide-y" style="border-color: var(--border-secondary);">
                         <?php foreach ($modules as $module): ?>
                         <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 mb-2">
+                            <h3 class="font-semibold mb-2" style="color: var(--text-primary);">
                                 <?= htmlspecialchars($module['title']) ?>
                             </h3>
 
                             <?php if (!empty($lessonsGrouped[$module['id']])): ?>
-                            <ul class="space-y-2 ml-4">
+                            <ul class="space-y-1">
                                 <?php foreach ($lessonsGrouped[$module['id']] as $lesson):
                                     $icon = 'fa-play-circle';
                                     if ($lesson['lesson_type'] == 'text') $icon = 'fa-file-alt';
@@ -323,29 +324,26 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                                     elseif ($lesson['lesson_type'] == 'assignment') $icon = 'fa-tasks';
                                     elseif ($lesson['lesson_type'] == 'Live Session') $icon = 'fa-video';
                                     
-                                    // Check if lesson is completed
                                     $isCompleted = isset($lessonProgress[$lesson['id']]) && $lessonProgress[$lesson['id']] === 'Completed';
-                                    $lessonClasses = $lessonId == $lesson['id'] ? 'text-blue-600 font-semibold' : ($isCompleted ? 'text-green-700' : 'text-gray-700 hover:text-blue-600');
+                                    $isActive = $lessonId == $lesson['id'];
                                 ?>
                                 <li>
                                     <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $lesson['id']) ?>"
-                                       class="flex items-center justify-between text-sm <?= $lessonClasses ?>">
-                                        <span class="flex items-center">
+                                       class="lesson-item text-sm <?= $isActive ? 'lesson-item-active' : '' ?> <?= $isCompleted ? 'lesson-item-completed' : '' ?>"
+                                       style="color: <?= $isActive ? 'var(--accent-primary)' : ($isCompleted ? 'var(--status-success)' : 'var(--text-secondary)') ?>;">
+                                        <span class="flex items-center flex-1 min-w-0">
                                             <?php if ($isCompleted): ?>
-                                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                                <i class="fas fa-check-circle mr-2 flex-shrink-0" style="color: var(--status-success);"></i>
                                             <?php else: ?>
-                                                <i class="fas <?= $icon ?> mr-2"></i>
+                                                <i class="fas <?= $icon ?> mr-2 flex-shrink-0" style="color: <?= $isActive ? 'var(--accent-primary)' : 'var(--text-tertiary)' ?>;"></i>
                                             <?php endif; ?>
-                                            <?= htmlspecialchars($lesson['title']) ?>
+                                            <span class="truncate"><?= htmlspecialchars($lesson['title']) ?></span>
                                         </span>
-                                        <span class="flex items-center">
-                                            <?php if ($isCompleted): ?>
-                                                <span class="text-xs text-green-600 mr-2">Done</span>
-                                            <?php endif; ?>
-                                            <?php if ($lesson['duration_minutes']): ?>
-                                            <span class="text-xs text-gray-500"><?= $lesson['duration_minutes'] ?>m</span>
-                                            <?php endif; ?>
-                                        </span>
+                                        <?php if ($isCompleted): ?>
+                                            <span class="text-xs flex-shrink-0 ml-2" style="color: var(--status-success);">Done</span>
+                                        <?php elseif ($lesson['duration_minutes']): ?>
+                                            <span class="text-xs flex-shrink-0 ml-2" style="color: var(--text-tertiary);"><?= $lesson['duration_minutes'] ?>m</span>
+                                        <?php endif; ?>
                                     </a>
                                 </li>
                                 <?php endforeach; ?>
@@ -360,9 +358,9 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
 
                     <!-- Quizzes Section -->
                     <?php if (!empty($quizzes)): ?>
-                    <div class="p-4 border-t bg-blue-50">
-                        <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
-                            <i class="fas fa-question-circle text-blue-600 mr-2"></i>
+                    <div class="p-4 border-t" style="background: var(--color-primary-50); border-color: var(--border-primary);">
+                        <h3 class="font-semibold mb-2 flex items-center" style="color: var(--text-primary);">
+                            <i class="fas fa-question-circle mr-2" style="color: var(--accent-primary);"></i>
                             Quizzes
                         </h3>
                         <ul class="space-y-2 ml-4">
@@ -392,9 +390,9 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
 
                     <!-- Assignments Section -->
                     <?php if (!empty($assignments)): ?>
-                    <div class="p-4 border-t bg-green-50">
-                        <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
-                            <i class="fas fa-tasks text-green-600 mr-2"></i>
+                    <div class="p-4 border-t" style="background: var(--surface-success); border-color: var(--border-primary);">
+                        <h3 class="font-semibold mb-2 flex items-center" style="color: var(--text-primary);">
+                            <i class="fas fa-tasks mr-2" style="color: var(--status-success);"></i>
                             Assignments
                         </h3>
                         <ul class="space-y-2 ml-4">
@@ -424,9 +422,9 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
 
                     <!-- Live Sessions Section -->
                     <?php if (!empty($liveSessions)): ?>
-                    <div class="p-4 border-t bg-red-50">
-                        <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
-                            <i class="fas fa-video text-red-600 mr-2"></i>
+                    <div class="p-4 border-t" style="background: #FEF2F2; border-color: var(--border-primary);">
+                        <h3 class="font-semibold mb-2 flex items-center" style="color: var(--text-primary);">
+                            <i class="fas fa-video mr-2" style="color: var(--status-error);"></i>
                             Upcoming Live Sessions
                         </h3>
                         <ul class="space-y-2 ml-4">
@@ -680,11 +678,12 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                     </div>
 
                     <!-- Lesson Navigation -->
-                    <div class="p-6 border-t bg-gray-50">
+                    <div class="p-6 border-t" style="background: var(--surface-tertiary); border-color: var(--border-primary);">
                         <div class="flex justify-between items-center">
                             <?php if ($previousLesson): ?>
                             <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $previousLesson['id']) ?>"
-                               class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">
+                               class="px-4 py-2 rounded-lg transition font-medium" style="background: var(--surface-tertiary); color: var(--text-secondary); border: 1px solid var(--border-primary);"
+                               onmouseover="this.style.background='var(--border-primary)'" onmouseout="this.style.background='var(--surface-tertiary)'">
                                 <i class="fas fa-arrow-left mr-2"></i>Previous Lesson
                             </a>
                             <?php else: ?>
@@ -696,14 +695,16 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                                 <input type="hidden" name="lesson_id" value="<?= $lessonId ?>">
                                 <input type="hidden" name="redirect" id="markCompleteRedirect" value="<?= urlencode('learn.php?course=' . $courseSlug . '&lesson=' . $lessonId) ?>">
                                 <?= csrfField() ?>
-                                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                                <button type="submit" class="px-4 py-2 rounded-lg transition font-medium" style="background: var(--status-success); color: white;"
+                                        onmouseover="this.style.background='#059669'" onmouseout="this.style.background='var(--status-success)'">
                                     <i class="fas fa-check mr-2"></i>Mark as Complete
                                 </button>
                             </form>
 
                             <?php if ($nextLesson): ?>
                             <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $nextLesson['id']) ?>"
-                               class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                               class="px-4 py-2 rounded-lg transition font-medium" style="background: var(--accent-primary); color: white;"
+                               onmouseover="this.style.background='var(--accent-primary-hover)'" onmouseout="this.style.background='var(--accent-primary)'">
                                 Next Lesson<i class="fas fa-arrow-right ml-2"></i>
                             </a>
                             <?php else: ?>

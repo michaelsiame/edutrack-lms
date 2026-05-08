@@ -40,38 +40,39 @@ $page_title = "Student Hub - Edutrack";
 require_once '../../src/templates/header.php';
 ?>
 
-<div class="min-h-screen bg-gray-50 py-8">
+<div class="min-h-screen py-8" style="background: var(--surface-primary);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Welcome Header -->
         <div class="text-center mb-10">
             <div class="flex items-center justify-center gap-4 mb-4">
-                <h1 class="text-3xl font-bold text-gray-900">Student Hub</h1>
+                <h1 class="text-3xl font-bold" style="color: var(--text-primary);">Student Hub</h1>
                 <a href="<?= url('student/help.php') ?>" 
-                   class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 text-sm rounded-full hover:bg-blue-100 transition">
+                   class="inline-flex items-center px-3 py-1.5 text-sm rounded-full transition" style="background: var(--color-primary-50); color: var(--accent-primary);"
+                   onmouseover="this.style.background='var(--color-primary-100)'" onmouseout="this.style.background='var(--color-primary-50)'">
                     <i class="fas fa-question-circle mr-1.5"></i>Help
                 </a>
             </div>
-            <p class="text-gray-600 mt-2">Welcome back, <?= sanitize($user->first_name) ?>! What would you like to do today?</p>
+            <p style="color: var(--text-secondary);">Welcome back, <?= sanitize($user->first_name) ?>! What would you like to do today?</p>
         </div>
 
         <!-- Quick Stats Row -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            <div class="bg-white rounded-xl shadow-sm border p-4 text-center">
-                <p class="text-3xl font-bold text-blue-600"><?= $stats['active_courses'] ?></p>
-                <p class="text-sm text-gray-500">Active Courses</p>
+            <div class="stat-card text-center">
+                <p class="text-3xl font-bold" style="color: var(--accent-primary);"><?= $stats['active_courses'] ?></p>
+                <p class="text-sm" style="color: var(--text-secondary);">Active Courses</p>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border p-4 text-center">
-                <p class="text-3xl font-bold text-orange-600"><?= $stats['pending_assignments'] ?></p>
-                <p class="text-sm text-gray-500">Pending Tasks</p>
+            <div class="stat-card text-center">
+                <p class="text-3xl font-bold" style="color: var(--status-warning);"><?= $stats['pending_assignments'] ?></p>
+                <p class="text-sm" style="color: var(--text-secondary);">Pending Tasks</p>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border p-4 text-center">
-                <p class="text-3xl font-bold text-purple-600"><?= round($stats['avg_progress']) ?>%</p>
-                <p class="text-sm text-gray-500">Avg Progress</p>
+            <div class="stat-card text-center">
+                <p class="text-3xl font-bold" style="color: #9333EA;"><?= round($stats['avg_progress']) ?>%</p>
+                <p class="text-sm" style="color: var(--text-secondary);">Avg Progress</p>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border p-4 text-center">
-                <p class="text-3xl font-bold text-green-600"><?= $stats['certificates'] ?></p>
-                <p class="text-sm text-gray-500">Certificates</p>
+            <div class="stat-card text-center">
+                <p class="text-3xl font-bold" style="color: var(--status-success);"><?= $stats['certificates'] ?></p>
+                <p class="text-sm" style="color: var(--text-secondary);">Certificates</p>
             </div>
         </div>
 
@@ -79,14 +80,17 @@ require_once '../../src/templates/header.php';
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
             <!-- My Learning -->
-            <a href="<?= url('my-courses.php') ?>" class="group bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-lg transition-all duration-300">
+            <a href="<?= url('my-courses.php') ?>" class="course-hover group overflow-hidden transition-all duration-300" style="background: var(--surface-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); display: block;"
+               onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-card-hover)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-card)'">
                 <div class="p-6">
-                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
-                        <i class="fas fa-graduation-cap text-blue-600 text-2xl group-hover:text-white transition-colors"></i>
+                    <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-colors" style="background: var(--color-primary-50);"
+                         onmouseover="this.style.background='var(--accent-primary)'" onmouseout="this.style.background='var(--color-primary-50)'">
+                        <i class="fas fa-graduation-cap text-2xl transition-colors" style="color: var(--accent-primary);"
+                           onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--accent-primary)'"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">My Courses</h3>
-                    <p class="text-gray-600 text-sm">Continue learning, track progress, and manage your enrolled courses.</p>
-                    <div class="mt-4 flex items-center text-blue-600 font-medium">
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--text-primary);">My Courses</h3>
+                    <p class="text-sm" style="color: var(--text-secondary);">Continue learning, track progress, and manage your enrolled courses.</p>
+                    <div class="mt-4 flex items-center font-medium" style="color: var(--accent-primary);">
                         <span>Go to Courses</span>
                         <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
                     </div>

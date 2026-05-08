@@ -261,66 +261,66 @@ require_once __DIR__ . '/../src/templates/header.php';
         </div>
         <?php endif; ?>
 
-        <!-- Statistics Cards - Clean Design -->
+        <!-- Statistics Cards -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white rounded-xl border p-5 hover:shadow-md transition">
+            <div class="stat-card">
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 font-medium">Active Courses</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= $stats['active_courses'] ?></p>
+                        <p class="text-sm font-medium" style="color: var(--text-secondary);">Active Courses</p>
+                        <p class="text-3xl font-bold mt-2" style="color: var(--text-primary);"><?= $stats['active_courses'] ?></p>
                     </div>
-                    <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-book-open text-blue-600"></i>
+                    <div class="stat-card-icon" style="background: var(--color-primary-50);">
+                        <i class="fas fa-book-open" style="color: var(--accent-primary);"></i>
                     </div>
                 </div>
-                <a href="<?= url('my-courses.php') ?>" class="inline-flex items-center mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium">
+                <a href="<?= url('my-courses.php') ?>" class="inline-flex items-center mt-4 text-sm font-medium" style="color: var(--accent-primary);">
                     View all <i class="fas fa-arrow-right ml-1 text-xs"></i>
                 </a>
             </div>
 
-            <div class="bg-white rounded-xl border p-5 hover:shadow-md transition">
+            <div class="stat-card">
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 font-medium">Completed</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= $stats['completed_courses'] ?></p>
+                        <p class="text-sm font-medium" style="color: var(--text-secondary);">Completed</p>
+                        <p class="text-3xl font-bold mt-2" style="color: var(--text-primary);"><?= $stats['completed_courses'] ?></p>
                     </div>
-                    <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-check-circle text-green-600"></i>
+                    <div class="stat-card-icon" style="background: var(--surface-success);">
+                        <i class="fas fa-check-circle" style="color: var(--status-success);"></i>
                     </div>
                 </div>
-                <a href="<?= url('my-courses.php?status=completed') ?>" class="inline-flex items-center mt-4 text-sm text-green-600 hover:text-green-700 font-medium">
+                <a href="<?= url('my-courses.php?status=completed') ?>" class="inline-flex items-center mt-4 text-sm font-medium" style="color: var(--status-success);">
                     View certificates <i class="fas fa-arrow-right ml-1 text-xs"></i>
                 </a>
             </div>
 
-            <div class="bg-white rounded-xl border p-5 hover:shadow-md transition">
+            <div class="stat-card">
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 font-medium">Avg. Score</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= round($stats['avg_quiz_score']) ?>%</p>
+                        <p class="text-sm font-medium" style="color: var(--text-secondary);">Avg. Score</p>
+                        <p class="text-3xl font-bold mt-2" style="color: var(--text-primary);"><?= round($stats['avg_quiz_score']) ?>%</p>
                     </div>
-                    <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-chart-line text-purple-600"></i>
+                    <div class="stat-card-icon" style="background: var(--surface-warning);">
+                        <i class="fas fa-chart-line" style="color: var(--status-warning);"></i>
                     </div>
                 </div>
                 <div class="mt-4">
-                    <div class="w-full bg-gray-100 rounded-full h-2">
-                        <div class="bg-purple-500 h-2 rounded-full transition-all" style="width: <?= round($stats['avg_quiz_score']) ?>%"></div>
+                    <div class="w-full rounded-full h-2" style="background: var(--surface-tertiary);">
+                        <div class="h-2 rounded-full transition-all" style="width: <?= round($stats['avg_quiz_score']) ?>%; background: var(--status-warning);"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl border p-5 hover:shadow-md transition">
+            <div class="stat-card">
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 font-medium">Certificates</p>
-                        <p class="text-3xl font-bold text-gray-900 mt-2"><?= $stats['certificates'] ?></p>
+                        <p class="text-sm font-medium" style="color: var(--text-secondary);">Certificates</p>
+                        <p class="text-3xl font-bold mt-2" style="color: var(--text-primary);"><?= $stats['certificates'] ?></p>
                     </div>
-                    <div class="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-certificate text-amber-600"></i>
+                    <div class="stat-card-icon" style="background: var(--color-secondary-50);">
+                        <i class="fas fa-certificate" style="color: var(--accent-secondary);"></i>
                     </div>
                 </div>
-                <a href="<?= url('my-certificates.php') ?>" class="inline-flex items-center mt-4 text-sm text-amber-600 hover:text-amber-700 font-medium">
+                <a href="<?= url('my-certificates.php') ?>" class="inline-flex items-center mt-4 text-sm font-medium" style="color: var(--accent-secondary);">
                     View all <i class="fas fa-arrow-right ml-1 text-xs"></i>
                 </a>
             </div>
@@ -332,36 +332,36 @@ require_once __DIR__ . '/../src/templates/header.php';
                 
                 <!-- Onboarding Checklist (for new students) -->
                 <?php if ($isNewStudent || $onboardingProgress < $onboardingTotal): ?>
-                <div class="bg-white rounded-xl border overflow-hidden mb-6">
-                    <div class="px-6 py-4 border-b border-gray-100">
+                <div class="course-card mb-6" style="background: var(--surface-warm);">
+                    <div class="px-6 py-4 border-b" style="border-color: var(--border-primary);">
                         <div class="flex items-center justify-between">
                             <div>
-                                <h2 class="text-lg font-bold text-gray-900">Getting Started</h2>
-                                <p class="text-sm text-gray-500">Complete these steps to get the most out of Edutrack</p>
+                                <h2 class="text-lg font-bold" style="color: var(--text-primary);">Getting Started</h2>
+                                <p class="text-sm" style="color: var(--text-secondary);">Complete these steps to get the most out of Edutrack</p>
                             </div>
                             <div class="text-right">
-                                <span class="text-2xl font-bold text-blue-600"><?= $onboardingProgress ?></span>
-                                <span class="text-gray-400">/<?= $onboardingTotal ?></span>
+                                <span class="text-2xl font-bold" style="color: var(--accent-primary);"><?= $onboardingProgress ?></span>
+                                <span style="color: var(--text-tertiary);">/<?= $onboardingTotal ?></span>
                             </div>
                         </div>
-                        <div class="mt-3 w-full bg-gray-100 rounded-full h-2">
-                            <div class="bg-blue-600 h-2 rounded-full transition-all" 
-                                 style="width: <?= $onboardingTotal > 0 ? round(($onboardingProgress / $onboardingTotal) * 100) : 0 %>%"></div>
+                        <div class="mt-3 w-full rounded-full h-2" style="background: var(--surface-tertiary);">
+                            <div class="h-2 rounded-full transition-all" 
+                                 style="width: <?= $onboardingTotal > 0 ? round(($onboardingProgress / $onboardingTotal) * 100) : 0 ?>%; background: var(--accent-primary);"></div>
                         </div>
                     </div>
-                    <div class="divide-y divide-gray-100">
+                    <div class="divide-y" style="border-color: var(--border-secondary);">
                         <?php foreach ($onboardingSteps as $step): ?>
-                        <div class="p-4 flex items-center gap-4 <?= $step['done'] ? 'bg-green-50/50' : '' ?>">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center <?= $step['done'] ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400' ?>">
+                        <div class="checklist-item <?= $step['done'] ? 'checklist-item-done' : '' ?>">
+                            <div class="checklist-icon <?= $step['done'] ? '' : '' ?>" style="background: <?= $step['done'] ? 'var(--surface-success)' : 'var(--surface-tertiary)' ?>; color: <?= $step['done'] ? 'var(--status-success)' : 'var(--text-tertiary)' ?>;">
                                 <i class="fas <?= $step['done'] ? 'fa-check' : $step['icon'] ?>"></i>
                             </div>
                             <div class="flex-1">
-                                <span class="font-medium <?= $step['done'] ? 'text-gray-500 line-through' : 'text-gray-900' ?>">
+                                <span class="font-medium <?= $step['done'] ? 'line-through' : '' ?>" style="color: <?= $step['done'] ? 'var(--text-tertiary)' : 'var(--text-primary)' ?>;">
                                     <?= $step['label'] ?>
                                 </span>
                             </div>
                             <?php if (!$step['done']): ?>
-                            <a href="<?= url($step['url']) ?>" class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
+                            <a href="<?= url($step['url']) ?>" class="btn-primary text-sm" style="padding: 0.375rem 0.875rem;">
                                 Start
                             </a>
                             <?php endif; ?>
@@ -373,32 +373,39 @@ require_once __DIR__ . '/../src/templates/header.php';
 
                 <!-- Continue Learning -->
                 <?php if (!empty($recentEnrollments)): ?>
-                <div class="bg-white rounded-xl border overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                        <h2 class="text-lg font-bold text-gray-900">Continue Learning</h2>
-                        <a href="<?= url('my-courses.php') ?>" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View all</a>
+                <div class="course-card">
+                    <div class="px-6 py-4 border-b flex items-center justify-between" style="border-color: var(--border-primary);">
+                        <h2 class="text-lg font-bold" style="color: var(--text-primary);">Continue Learning</h2>
+                        <a href="<?= url('my-courses.php') ?>" class="text-sm font-medium" style="color: var(--accent-primary);">View all</a>
                     </div>
-                    <div class="divide-y divide-gray-100">
-                        <?php foreach ($recentEnrollments as $course): ?>
-                        <div class="p-4 hover:bg-gray-50 transition">
+                    <div class="divide-y" style="border-color: var(--border-secondary);">
+                        <?php foreach ($recentEnrollments as $course):
+                            $progress = round($course['progress_percentage'] ?? 0);
+                            $circumference = 2 * pi() * 18;
+                            $strokeDashoffset = $circumference - ($progress / 100) * $circumference;
+                        ?>
+                        <div class="p-4 transition" style="background: var(--surface-secondary);" onmouseover="this.style.background='var(--surface-tertiary)'" onmouseout="this.style.background='var(--surface-secondary)'">
                             <div class="flex gap-4">
-                                <div class="w-24 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                                <div class="w-24 h-16 flex-shrink-0 rounded-lg overflow-hidden" style="background: var(--surface-tertiary);">
                                     <img src="<?= courseThumbnail($course['thumbnail_url']) ?>" 
                                          alt="" class="w-full h-full object-cover">
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h3 class="font-semibold text-gray-900 truncate"><?= sanitize($course['title']) ?></h3>
-                                    <p class="text-sm text-gray-500"><?= sanitize($course['instructor_name']) ?></p>
+                                    <h3 class="font-semibold truncate" style="color: var(--text-primary);"><?= sanitize($course['title']) ?></h3>
+                                    <p class="text-sm" style="color: var(--text-secondary);"><?= sanitize($course['instructor_name']) ?></p>
                                     <div class="flex items-center gap-3 mt-2">
-                                        <div class="flex-1 bg-gray-100 rounded-full h-2">
-                                            <div class="bg-blue-600 h-2 rounded-full transition-all" 
-                                                 style="width: <?= round($course['progress_percentage'] ?? 0) ?>%"></div>
+                                        <div class="flex-1 rounded-full h-2" style="background: var(--surface-tertiary);">
+                                            <div class="h-2 rounded-full transition-all" 
+                                                 style="width: <?= $progress ?>%; background: var(--accent-primary);"></div>
                                         </div>
-                                        <span class="text-sm font-medium text-gray-600"><?= round($course['progress_percentage']) ?>%</span>
+                                        <span class="text-sm font-medium" style="color: var(--text-secondary);"><?= $progress ?>%</span>
                                     </div>
                                 </div>
                                 <a href="<?= url('learn.php?course=' . $course['slug']) ?>" 
-                                   class="self-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                                   class="self-center px-4 py-2 text-white text-sm font-medium rounded-lg transition"
+                                   style="background: var(--accent-primary);"
+                                   onmouseover="this.style.background='var(--accent-primary-hover)'"
+                                   onmouseout="this.style.background='var(--accent-primary)'">
                                     Continue
                                 </a>
                             </div>
@@ -410,36 +417,39 @@ require_once __DIR__ . '/../src/templates/header.php';
 
                 <!-- Recently Completed -->
                 <?php if (!empty($completedCourses)): ?>
-                <div class="bg-white rounded-xl border overflow-hidden mt-6">
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                        <h2 class="text-lg font-bold text-gray-900 flex items-center">
-                            <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                <div class="course-card course-card-completed mt-6">
+                    <div class="px-6 py-4 border-b flex items-center justify-between" style="border-color: #A7F3D0;">
+                        <h2 class="text-lg font-bold flex items-center" style="color: var(--text-primary);">
+                            <i class="fas fa-check-circle mr-2" style="color: var(--status-success);"></i>
                             Recently Completed
                         </h2>
-                        <a href="<?= url('my-courses.php?status=completed') ?>" class="text-sm text-green-600 hover:text-green-700 font-medium">View all</a>
+                        <a href="<?= url('my-courses.php?status=completed') ?>" class="text-sm font-medium" style="color: var(--status-success);">View all</a>
                     </div>
-                    <div class="divide-y divide-gray-100">
+                    <div class="divide-y" style="border-color: #A7F3D0;">
                         <?php foreach ($completedCourses as $course): ?>
-                        <div class="p-4 hover:bg-gray-50 transition">
+                        <div class="p-4 transition" style="background: transparent;" onmouseover="this.style.background='rgba(16, 185, 129, 0.04)'" onmouseout="this.style.background='transparent'">
                             <div class="flex gap-4">
-                                <div class="w-24 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                                <div class="w-24 h-16 flex-shrink-0 rounded-lg overflow-hidden" style="background: var(--surface-tertiary);">
                                     <img src="<?= courseThumbnail($course['thumbnail_url']) ?>" 
                                          alt="" class="w-full h-full object-cover">
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h3 class="font-semibold text-gray-900 truncate"><?= sanitize($course['title']) ?></h3>
-                                    <p class="text-sm text-gray-500"><?= sanitize($course['instructor_name']) ?></p>
+                                    <h3 class="font-semibold truncate" style="color: var(--text-primary);"><?= sanitize($course['title']) ?></h3>
+                                    <p class="text-sm" style="color: var(--text-secondary);"><?= sanitize($course['instructor_name']) ?></p>
                                     <div class="flex items-center gap-2 mt-2">
-                                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                                        <span class="text-xs px-2 py-1 rounded-full font-medium" style="background: var(--surface-success); color: var(--status-success);">
                                             Completed <?= date('M j, Y', strtotime($course['completion_date'])) ?>
                                         </span>
-                                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-medium">
+                                        <span class="text-xs px-2 py-1 rounded-full font-medium" style="background: var(--color-secondary-50); color: var(--accent-secondary-hover);">
                                             <?= round($course['final_grade']) ?>% Final Grade
                                         </span>
                                     </div>
                                 </div>
                                 <a href="<?= url('my-certificates.php') ?>" 
-                                   class="self-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
+                                   class="self-center px-4 py-2 text-white text-sm font-medium rounded-lg transition"
+                                   style="background: var(--status-success);"
+                                   onmouseover="this.style.background='#059669'"
+                                   onmouseout="this.style.background='var(--status-success)'">
                                     <i class="fas fa-certificate mr-1"></i>Certificate
                                 </a>
                             </div>
@@ -450,13 +460,13 @@ require_once __DIR__ . '/../src/templates/header.php';
                 <?php endif; ?>
 
                 <?php if (empty($recentEnrollments) && empty($completedCourses)): ?>
-                <div class="bg-white rounded-xl border p-8 text-center">
-                    <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-book-open text-blue-600 text-2xl"></i>
+                <div class="empty-state course-card">
+                    <div class="empty-state-icon" style="background: var(--color-primary-50);">
+                        <i class="fas fa-book-open text-2xl" style="color: var(--accent-primary);"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Start Your Learning Journey</h3>
-                    <p class="text-gray-600 mb-4">Enroll in a course to begin tracking your progress.</p>
-                    <a href="<?= url('courses.php') ?>" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
+                    <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">Start Your Learning Journey</h3>
+                    <p class="mb-4" style="color: var(--text-secondary);">Enroll in a course to begin tracking your progress.</p>
+                    <a href="<?= url('courses.php') ?>" class="btn-primary inline-flex items-center px-6 py-3 font-medium">
                         <i class="fas fa-search mr-2"></i>Browse Courses
                     </a>
                 </div>
@@ -526,27 +536,27 @@ require_once __DIR__ . '/../src/templates/header.php';
             <!-- Sidebar -->
             <div class="space-y-6">
                 
-                <!-- Profile Summary - Clean Design -->
-                <div class="bg-white rounded-xl border overflow-hidden">
-                    <div class="h-16 bg-gray-100"></div>
+                <!-- Profile Summary -->
+                <div class="course-card overflow-hidden">
+                    <div class="h-16" style="background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));"></div>
                     <div class="px-6 pb-6">
                         <div class="-mt-8 mb-3">
                             <img src="<?= $user->getAvatarUrl() ?>" alt="" 
-                                 class="w-16 h-16 rounded-full border-4 border-white shadow-sm">
+                                 class="w-16 h-16 rounded-full border-4 shadow-sm" style="border-color: var(--surface-secondary);">
                         </div>
-                        <h3 class="text-lg font-bold text-gray-900"><?= sanitize($user->getFullName()) ?></h3>
-                        <p class="text-sm text-gray-500"><?= sanitize($user->email) ?></p>
+                        <h3 class="text-lg font-bold" style="color: var(--text-primary);"><?= sanitize($user->getFullName()) ?></h3>
+                        <p class="text-sm" style="color: var(--text-secondary);"><?= sanitize($user->email) ?></p>
                         <div class="mt-4 grid grid-cols-2 gap-3 text-center">
-                            <div class="bg-gray-50 rounded-lg p-3">
-                                <p class="text-lg font-bold text-gray-900"><?= $stats['total_lessons_completed'] ?></p>
-                                <p class="text-xs text-gray-500">Lessons</p>
+                            <div class="rounded-lg p-3" style="background: var(--surface-tertiary);">
+                                <p class="text-lg font-bold" style="color: var(--text-primary);"><?= $stats['total_lessons_completed'] ?></p>
+                                <p class="text-xs" style="color: var(--text-secondary);">Lessons</p>
                             </div>
-                            <div class="bg-gray-50 rounded-lg p-3">
-                                <p class="text-lg font-bold text-gray-900"><?= round($stats['avg_progress']) ?>%</p>
-                                <p class="text-xs text-gray-500">Progress</p>
+                            <div class="rounded-lg p-3" style="background: var(--surface-tertiary);">
+                                <p class="text-lg font-bold" style="color: var(--text-primary);"><?= round($stats['avg_progress']) ?>%</p>
+                                <p class="text-xs" style="color: var(--text-secondary);">Progress</p>
                             </div>
                         </div>
-                        <a href="<?= url('profile.php') ?>" class="block mt-4 text-center py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium">
+                        <a href="<?= url('profile.php') ?>" class="block mt-4 text-center py-2 rounded-lg text-sm font-medium transition" style="border: 1px solid var(--border-primary); color: var(--text-secondary);" onmouseover="this.style.background='var(--surface-tertiary)'" onmouseout="this.style.background='transparent'">
                             Edit Profile
                         </a>
                     </div>
@@ -585,48 +595,48 @@ require_once __DIR__ . '/../src/templates/header.php';
                 <?php endif; ?>
 
                 <!-- Quick Links -->
-                <div class="bg-white rounded-xl border overflow-hidden">
-                    <div class="px-5 py-4 border-b border-gray-100">
-                        <h3 class="font-bold text-gray-900">Quick Links</h3>
+                <div class="course-card overflow-hidden">
+                    <div class="px-5 py-4 border-b" style="border-color: var(--border-primary);">
+                        <h3 class="font-bold" style="color: var(--text-primary);">Quick Links</h3>
                     </div>
                     <div class="p-2">
-                        <a href="<?= url('my-courses.php') ?>" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
-                            <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-graduation-cap text-blue-600"></i>
+                        <a href="<?= url('my-courses.php') ?>" class="flex items-center gap-3 p-3 rounded-lg transition" style="color: var(--text-primary);" onmouseover="this.style.background='var(--surface-tertiary)'" onmouseout="this.style.background='transparent'">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: var(--color-primary-50);">
+                                <i class="fas fa-graduation-cap" style="color: var(--accent-primary);"></i>
                             </div>
-                            <span class="text-gray-700 font-medium">My Courses</span>
+                            <span class="font-medium">My Courses</span>
                         </a>
-                        <a href="<?= url('student/assignments.php') ?>" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
-                            <div class="w-9 h-9 bg-orange-50 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-file-alt text-orange-600"></i>
+                        <a href="<?= url('student/assignments.php') ?>" class="flex items-center gap-3 p-3 rounded-lg transition" style="color: var(--text-primary);" onmouseover="this.style.background='var(--surface-tertiary)'" onmouseout="this.style.background='transparent'">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: var(--surface-warning);">
+                                <i class="fas fa-file-alt" style="color: var(--status-warning);"></i>
                             </div>
-                            <span class="text-gray-700 font-medium">Assignments</span>
+                            <span class="font-medium">Assignments</span>
                             <?php if (!empty($upcomingDeadlines)): ?>
-                            <span class="ml-auto text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full"><?= count($upcomingDeadlines) ?></span>
+                            <span class="ml-auto text-xs px-2 py-1 rounded-full" style="background: var(--surface-warning); color: var(--status-warning);"><?= count($upcomingDeadlines) ?></span>
                             <?php endif; ?>
                         </a>
-                        <a href="<?= url('student/quizzes.php') ?>" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
-                            <div class="w-9 h-9 bg-purple-50 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-question-circle text-purple-600"></i>
+                        <a href="<?= url('student/quizzes.php') ?>" class="flex items-center gap-3 p-3 rounded-lg transition" style="color: var(--text-primary);" onmouseover="this.style.background='var(--surface-tertiary)'" onmouseout="this.style.background='transparent'">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: #F3E8FF;">
+                                <i class="fas fa-question-circle" style="color: #9333EA;"></i>
                             </div>
-                            <span class="text-gray-700 font-medium">Quizzes</span>
+                            <span class="font-medium">Quizzes</span>
                         </a>
-                        <a href="<?= url('my-certificates.php') ?>" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
-                            <div class="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-certificate text-green-600"></i>
+                        <a href="<?= url('my-certificates.php') ?>" class="flex items-center gap-3 p-3 rounded-lg transition" style="color: var(--text-primary);" onmouseover="this.style.background='var(--surface-tertiary)'" onmouseout="this.style.background='transparent'">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: var(--surface-success);">
+                                <i class="fas fa-certificate" style="color: var(--status-success);"></i>
                             </div>
-                            <span class="text-gray-700 font-medium">Certificates</span>
+                            <span class="font-medium">Certificates</span>
                             <?php if ($stats['certificates'] > 0): ?>
-                            <span class="ml-auto text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full"><?= $stats['certificates'] ?></span>
+                            <span class="ml-auto text-xs px-2 py-1 rounded-full" style="background: var(--surface-success); color: var(--status-success);"><?= $stats['certificates'] ?></span>
                             <?php endif; ?>
                         </a>
-                        <a href="<?= url('my-payments.php') ?>" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition <?= $totalBalance > 0 ? 'bg-red-50' : '' ?>">
-                            <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-credit-card text-red-600"></i>
+                        <a href="<?= url('my-payments.php') ?>" class="flex items-center gap-3 p-3 rounded-lg transition" style="color: var(--text-primary); <?= $totalBalance > 0 ? 'background: var(--surface-error);' : '' ?>" onmouseover="this.style.background='<?= $totalBalance > 0 ? 'var(--surface-error)' : 'var(--surface-tertiary)' ?>'" onmouseout="this.style.background='<?= $totalBalance > 0 ? 'var(--surface-error)' : 'transparent' ?>'">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: var(--surface-error);">
+                                <i class="fas fa-credit-card" style="color: var(--status-error);"></i>
                             </div>
-                            <span class="text-gray-700 font-medium">Payments</span>
+                            <span class="font-medium">Payments</span>
                             <?php if ($totalBalance > 0): ?>
-                            <span class="ml-auto text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">K<?= number_format($totalBalance, 0) ?></span>
+                            <span class="ml-auto text-xs px-2 py-1 rounded-full" style="background: var(--surface-error); color: var(--status-error);">K<?= number_format($totalBalance, 0) ?></span>
                             <?php endif; ?>
                         </a>
                     </div>
