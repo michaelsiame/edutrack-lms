@@ -300,16 +300,8 @@ class Certificate {
         $pdf->SetFont('helvetica', 'I', 8);
         $pdf->Cell(0, 5, 'Verify at: ' . $verifyUrl, 0, 1, 'C');
         
-        // Output PDF
-        $filename = 'certificate-' . $this->data['certificate_number'] . '.pdf';
-        $filepath = STORAGE_PATH . '/certificates/' . $filename;
-        
-        // Create directory if not exists
-        if (!is_dir(STORAGE_PATH . '/certificates')) {
-            mkdir(STORAGE_PATH . '/certificates', 0755, true);
-        }
-        
-        $pdfContent = $pdf->Output($filepath, 'S');
+        // Output PDF as string (generated on demand, not stored to disk)
+        $pdfContent = $pdf->Output('', 'S');
         
         return $pdfContent;
     }

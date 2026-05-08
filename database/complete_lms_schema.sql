@@ -196,7 +196,6 @@ CREATE TABLE `certificates` (
   `enrollment_id` int(11) NOT NULL,
   `certificate_number` varchar(50) NOT NULL,
   `issued_date` date NOT NULL,
-  `certificate_url` varchar(255) DEFAULT NULL,
   `verification_code` varchar(100) DEFAULT NULL,
   `final_score` decimal(5,2) DEFAULT 0.00,
   `issued_at` datetime DEFAULT NULL,
@@ -209,13 +208,13 @@ CREATE TABLE `certificates` (
 -- Dumping data for table `certificates`
 --
 
-INSERT INTO `certificates` (`certificate_id`, `user_id`, `course_id`, `enrollment_id`, `certificate_number`, `issued_date`, `certificate_url`, `verification_code`, `final_score`, `issued_at`, `is_verified`, `expiry_date`, `created_at`) VALUES
-(1, 8, 1, 1, 'EDTRK-2025-000001', '2025-04-10', NULL, 'VRF-001-ABCD1234', 0.00, '2025-04-10 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(2, 9, 7, 4, 'EDTRK-2025-000002', '2025-04-25', NULL, 'VRF-002-EFGH5678', 0.00, '2025-04-25 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(3, 10, 18, 7, 'EDTRK-2025-000003', '2025-04-08', NULL, 'VRF-003-IJKL9012', 0.00, '2025-04-08 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(4, 10, 1, 9, 'EDTRK-2025-000004', '2025-04-12', NULL, 'VRF-004-MNOP3456', 0.00, '2025-04-12 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(5, 11, 5, 10, 'EDTRK-2025-000005', '2025-04-05', NULL, 'VRF-005-QRST7890', 0.00, '2025-04-05 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(6, 15, 3, 21, 'EDTRK-2025-000006', '2025-03-15', NULL, 'VRF-006-UVWX1234', 0.00, '2025-03-15 00:00:00', 1, NULL, '2025-11-18 22:21:01');
+INSERT INTO `certificates` (`certificate_id`, `user_id`, `course_id`, `enrollment_id`, `certificate_number`, `issued_date`, `verification_code`, `final_score`, `issued_at`, `is_verified`, `expiry_date`, `created_at`) VALUES
+(1, 8, 1, 1, 'EDTRK-2025-000001', '2025-04-10', 'VRF-001-ABCD1234', 0.00, '2025-04-10 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(2, 9, 7, 4, 'EDTRK-2025-000002', '2025-04-25', 'VRF-002-EFGH5678', 0.00, '2025-04-25 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(3, 10, 18, 7, 'EDTRK-2025-000003', '2025-04-08', 'VRF-003-IJKL9012', 0.00, '2025-04-08 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(4, 10, 1, 9, 'EDTRK-2025-000004', '2025-04-12', 'VRF-004-MNOP3456', 0.00, '2025-04-12 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(5, 11, 5, 10, 'EDTRK-2025-000005', '2025-04-05', 'VRF-005-QRST7890', 0.00, '2025-04-05 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(6, 15, 3, 21, 'EDTRK-2025-000006', '2025-03-15', 'VRF-006-UVWX1234', 0.00, '2025-03-15 00:00:00', 1, NULL, '2025-11-18 22:21:01');
 
 -- --------------------------------------------------------
 

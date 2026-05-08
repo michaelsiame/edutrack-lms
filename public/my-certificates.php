@@ -18,7 +18,7 @@ $userId = $user->getId();
 // Get all certificates for the student (certificates link to enrollments, not directly to courses/users)
 $certificates = $db->fetchAll("
     SELECT cert.certificate_id as id, cert.certificate_number, cert.issued_date,
-           cert.certificate_url, cert.verification_code, cert.is_verified, cert.expiry_date,
+           cert.verification_code, cert.is_verified, cert.expiry_date,
            cert.issued_date as issued_at,
            c.title as course_title, c.slug as course_slug,
            c.thumbnail_url, c.instructor_id,
