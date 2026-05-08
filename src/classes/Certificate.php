@@ -236,7 +236,7 @@ class Certificate {
         
         // Build placeholder replacements
         $logoPath = PUBLIC_PATH . '/assets/images/logo.png';
-        $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.png';
+        $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.svg';
         
         $replacements = [
             '{{logo_path}}'        => file_exists($logoPath) ? $logoPath : '',

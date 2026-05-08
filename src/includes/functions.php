@@ -467,7 +467,7 @@ function userAvatar($avatar = null, $email = '') {
         return gravatar($email);
     }
     
-    return asset('images/default-avatar.png');
+    return asset('images/default-avatar.svg');
 }
 
 /**
