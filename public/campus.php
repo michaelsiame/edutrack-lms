@@ -107,7 +107,7 @@ require_once __DIR__ . '/../src/templates/header.php';
     <?php 
     $heroImage = '/assets/images/campus-hero.jpg';
     if (!empty($featuredPhotos) && is_array($featuredPhotos[0])) {
-        $heroImage = !empty($featuredPhotos[0]['image_path']) ? '/uploads/institution/' . $featuredPhotos[0]['image_path'] : '/assets/images/campus-hero.jpg';
+        $heroImage = $featuredPhotos[0]['url'] ?? (!empty($featuredPhotos[0]['image_path']) ? '/uploads/institution/' . $featuredPhotos[0]['image_path'] : '/assets/images/campus-hero.jpg');
     }
     ?>
     <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('<?= $heroImage ?>');">
