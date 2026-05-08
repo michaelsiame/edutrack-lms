@@ -115,9 +115,9 @@ class Certificate {
             
             // Verify course completion
             require_once __DIR__ . '/Enrollment.php';
-            $enrollment = Enrollment::getByUserAndCourse($userId, $courseId);
+            $enrollment = Enrollment::findByUserAndCourse($userId, $courseId);
             
-            if (!$enrollment || $enrollment['progress'] < 100) {
+            if (!$enrollment || $enrollment->getProgress() < 100) {
                 $db->rollBack();
                 return false;
             }
@@ -137,7 +137,7 @@ class Certificate {
                 $courseId,
                 $certNumber,
                 $verifyCode,
-                $enrollment['final_score'] ?? 0
+                $enrollment->getFinalGrade()
             ];
             
             if (!$db->query($sql, $params)) {

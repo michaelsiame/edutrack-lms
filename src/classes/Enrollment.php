@@ -445,6 +445,7 @@ class Enrollment {
     public function getCourseTitle() { return $this->data['course_title'] ?? ''; }
     public function getCourseSlug() { return $this->data['course_slug'] ?? ''; }
     public function getProgress() { return (float)($this->data['progress'] ?? 0); }
+    public function getFinalGrade() { return (float)($this->data['final_grade'] ?? 0); }
     public function getTotalTimeSpent() { return (int)($this->data['total_time_spent'] ?? 0); }
     public function getEnrolledAt() { return $this->data['enrolled_at'] ?? null; }
     

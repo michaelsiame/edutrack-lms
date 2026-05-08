@@ -60,6 +60,15 @@ class PaymentPlan {
     }
 
     /**
+     * Get payment plan by course and user
+     */
+    public static function getByCourseAndUser($courseId, $userId) {
+        $db = Database::getInstance();
+        $sql = "SELECT * FROM enrollment_payment_plans WHERE course_id = ? AND user_id = ? LIMIT 1";
+        return $db->fetchOne($sql, [$courseId, $userId]);
+    }
+
+    /**
      * Get all payment plans for a user
      */
     public static function getByUser($userId) {
