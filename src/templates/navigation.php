@@ -117,6 +117,9 @@ if (isLoggedIn()) {
                             <a href="<?= url('dashboard.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 <i class="fas fa-th-large mr-2"></i> Dashboard
                             </a>
+                            <a href="<?= url('student/index.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-user-graduate mr-2"></i> Student Hub
+                            </a>
                             <a href="<?= url('my-courses.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 <i class="fas fa-book mr-2"></i> My Courses
                             </a>
@@ -240,6 +243,9 @@ if (isLoggedIn()) {
 
                     <a href="<?= url('dashboard.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
                         <i class="fas fa-th-large mr-2"></i> Dashboard
+                    </a>
+                    <a href="<?= url('student/index.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
+                        <i class="fas fa-user-graduate mr-2"></i> Student Hub
                     </a>
                     <a href="<?= url('my-courses.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
                         <i class="fas fa-book mr-2"></i> My Courses

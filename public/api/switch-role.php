@@ -127,6 +127,6 @@ function getRedirectUrlForRole($role) {
             return url('instructor/dashboard.php');
         case 'student':
         default:
-            return url('student/dashboard.php');
+            return url('dashboard.php');
     }
 }

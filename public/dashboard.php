@@ -29,7 +29,7 @@ $stats = [
     'total_lessons_completed' => $studentStats['total_lessons_completed'] ?? 0
 ];
 
-// Get recent enrollments with course details
+// Get active enrollments
 $recentEnrollments = $db->fetchAll("
     SELECT e.*, c.title, c.slug, c.thumbnail_url, c.description, c.price,
            CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
@@ -42,6 +42,34 @@ $recentEnrollments = $db->fetchAll("
     ORDER BY e.last_accessed DESC, e.enrolled_at DESC
     LIMIT 3
 ", [$userId]);
+
+// Get completed courses
+$completedCourses = $db->fetchAll("
+    SELECT e.*, c.title, c.slug, c.thumbnail_url, c.description,
+           CONCAT(u.first_name, ' ', u.last_name) as instructor_name,
+           e.completion_date, e.final_grade
+    FROM enrollments e
+    JOIN courses c ON e.course_id = c.id
+    LEFT JOIN instructors i ON c.instructor_id = i.id
+    LEFT JOIN users u ON i.user_id = u.id
+    WHERE e.user_id = ? AND e.enrollment_status = 'Completed'
+    ORDER BY e.completion_date DESC
+    LIMIT 3
+", [$userId]);
+
+// Check if user is new (no enrollments at all)
+$isNewStudent = empty($recentEnrollments) && empty($completedCourses);
+
+// Onboarding checklist for new students
+$onboardingSteps = [
+    ['label' => 'Complete your profile', 'done' => !empty($user->first_name) && !empty($user->last_name), 'url' => 'edit-profile.php', 'icon' => 'fa-user'],
+    ['label' => 'Pay registration fee', 'done' => $registrationPaid, 'url' => 'registration-fee.php', 'icon' => 'fa-credit-card'],
+    ['label' => 'Enroll in a course', 'done' => !empty($recentEnrollments) || !empty($completedCourses), 'url' => 'courses.php', 'icon' => 'fa-book'],
+    ['label' => 'Complete your first lesson', 'done' => ($stats['total_lessons_completed'] > 0), 'url' => 'my-courses.php', 'icon' => 'fa-play-circle'],
+    ['label' => 'Earn your first certificate', 'done' => ($stats['certificates'] > 0), 'url' => 'my-courses.php', 'icon' => 'fa-certificate'],
+];
+$onboardingProgress = count(array_filter($onboardingSteps, fn($s) => $s['done']));
+$onboardingTotal = count($onboardingSteps);
 
 // Get weekly learning activity for chart
 $learningActivity = $db->fetchAll("
@@ -297,6 +325,47 @@ require_once __DIR__ . '/../src/templates/header.php';
             <!-- Main Content Column -->
             <div class="lg:col-span-2 space-y-6">
                 
+                <!-- Onboarding Checklist (for new students) -->
+                <?php if ($isNewStudent || $onboardingProgress < $onboardingTotal): ?>
+                <div class="bg-white rounded-xl border overflow-hidden mb-6">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-lg font-bold text-gray-900">Getting Started</h2>
+                                <p class="text-sm text-gray-500">Complete these steps to get the most out of Edutrack</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-2xl font-bold text-blue-600"><?= $onboardingProgress ?></span>
+                                <span class="text-gray-400">/<?= $onboardingTotal ?></span>
+                            </div>
+                        </div>
+                        <div class="mt-3 w-full bg-gray-100 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full transition-all" 
+                                 style="width: <?= $onboardingTotal > 0 ? round(($onboardingProgress / $onboardingTotal) * 100) : 0 %>%"></div>
+                        </div>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        <?php foreach ($onboardingSteps as $step): ?>
+                        <div class="p-4 flex items-center gap-4 <?= $step['done'] ? 'bg-green-50/50' : '' ?>">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center <?= $step['done'] ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400' ?>">
+                                <i class="fas <?= $step['done'] ? 'fa-check' : $step['icon'] ?>"></i>
+                            </div>
+                            <div class="flex-1">
+                                <span class="font-medium <?= $step['done'] ? 'text-gray-500 line-through' : 'text-gray-900' ?>">
+                                    <?= $step['label'] ?>
+                                </span>
+                            </div>
+                            <?php if (!$step['done']): ?>
+                            <a href="<?= url($step['url']) ?>" class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
+                                Start
+                            </a>
+                            <?php endif; ?>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <!-- Continue Learning -->
                 <?php if (!empty($recentEnrollments)): ?>
                 <div class="bg-white rounded-xl border overflow-hidden">
@@ -332,7 +401,50 @@ require_once __DIR__ . '/../src/templates/header.php';
                         <?php endforeach; ?>
                     </div>
                 </div>
-                <?php else: ?>
+                <?php endif; ?>
+
+                <!-- Recently Completed -->
+                <?php if (!empty($completedCourses)): ?>
+                <div class="bg-white rounded-xl border overflow-hidden mt-6">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-gray-900 flex items-center">
+                            <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                            Recently Completed
+                        </h2>
+                        <a href="<?= url('my-courses.php?status=completed') ?>" class="text-sm text-green-600 hover:text-green-700 font-medium">View all</a>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        <?php foreach ($completedCourses as $course): ?>
+                        <div class="p-4 hover:bg-gray-50 transition">
+                            <div class="flex gap-4">
+                                <div class="w-24 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                                    <img src="<?= courseThumbnail($course['thumbnail_url']) ?>" 
+                                         alt="" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-semibold text-gray-900 truncate"><?= sanitize($course['title']) ?></h3>
+                                    <p class="text-sm text-gray-500"><?= sanitize($course['instructor_name']) ?></p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                                            Completed <?= date('M j, Y', strtotime($course['completion_date'])) ?>
+                                        </span>
+                                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-medium">
+                                            <?= round($course['final_grade']) ?>% Final Grade
+                                        </span>
+                                    </div>
+                                </div>
+                                <a href="<?= url('my-certificates.php') ?>" 
+                                   class="self-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
+                                    <i class="fas fa-certificate mr-1"></i>Certificate
+                                </a>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <?php if (empty($recentEnrollments) && empty($completedCourses)): ?>
                 <div class="bg-white rounded-xl border p-8 text-center">
                     <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-book-open text-blue-600 text-2xl"></i>
@@ -353,9 +465,24 @@ require_once __DIR__ . '/../src/templates/header.php';
                             <p class="text-sm text-gray-500">Lessons completed in the last 7 days</p>
                         </div>
                     </div>
+                    <?php if (array_sum($activityData) > 0): ?>
                     <div class="h-48">
                         <canvas id="activityChart"></canvas>
                     </div>
+                    <?php else: ?>
+                    <div class="h-48 flex flex-col items-center justify-center text-center">
+                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                            <i class="fas fa-chart-bar text-gray-400 text-xl"></i>
+                        </div>
+                        <p class="text-gray-500 text-sm">No activity yet this week</p>
+                        <p class="text-gray-400 text-xs mt-1">Complete lessons to see your progress here</p>
+                        <?php if (!empty($recentEnrollments)): ?>
+                        <a href="<?= url('learn.php?course=' . $recentEnrollments[0]['slug']) ?>" class="mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium">
+                            Continue learning →
+                        </a>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Recommended Courses -->

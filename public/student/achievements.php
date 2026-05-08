@@ -255,7 +255,7 @@ require_once '../../src/templates/header.php';
                     </div>
                     <div class="p-5">
                         <h3 class="font-bold text-gray-800 mb-1"><?= sanitize($cert['course_title']) ?></h3>
-                        <p class="text-sm text-gray-500 mb-3">Issued <?= date('M j, Y', strtotime($cert['issued_at'])) ?></p>
+                        <p class="text-sm text-gray-500 mb-3">Issued <?= date('M j, Y', strtotime($cert['issued_date'])) ?></p>
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-mono text-gray-400">#<?= $cert['certificate_number'] ?></span>
                             <a href="<?= url('download-certificate.php?id=' . $cert['certificate_id']) ?> 

@@ -149,9 +149,25 @@ try {
         // Continue with empty arrays
     }
 
-    // If no lesson specified, get the first lesson
-    if (!$lessonId && !empty($modules) && !empty($lessonsGrouped[$modules[0]['id']])) {
-        $lessonId = $lessonsGrouped[$modules[0]['id']][0]['id'];
+    // If no lesson specified, find the last accessed or first incomplete lesson
+    if (!$lessonId) {
+        // Try to find last accessed lesson for this enrollment
+        $lastAccessedLesson = $db->fetchOne("
+            SELECT lp.lesson_id 
+            FROM lesson_progress lp
+            JOIN lessons l ON lp.lesson_id = l.id
+            JOIN modules m ON l.module_id = m.id
+            WHERE lp.enrollment_id = ? AND m.course_id = ?
+            ORDER BY lp.last_accessed DESC
+            LIMIT 1
+        ", [$course['enrollment_id'], $courseId]);
+        
+        if ($lastAccessedLesson) {
+            $lessonId = $lastAccessedLesson['lesson_id'];
+        } elseif (!empty($modules) && !empty($lessonsGrouped[$modules[0]['id']])) {
+            // Fallback to first lesson
+            $lessonId = $lessonsGrouped[$modules[0]['id']][0]['id'];
+        }
     }
 
     // Get current lesson details
@@ -242,8 +258,31 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
+                    <?php
+                    // Calculate lesson position
+                    $totalLessonsInCourse = 0;
+                    $currentLessonPosition = 0;
+                    $lessonCounter = 0;
+                    foreach ($modules as $mod) {
+                        if (!empty($lessonsGrouped[$mod['id']])) {
+                            foreach ($lessonsGrouped[$mod['id']] as $l) {
+                                $lessonCounter++;
+                                $totalLessonsInCourse++;
+                                if ($l['id'] == $lessonId) {
+                                    $currentLessonPosition = $lessonCounter;
+                                }
+                            }
+                        }
+                    }
+                    ?>
                     <div class="text-right">
-                        <p class="text-sm text-gray-600">Progress</p>
+                        <p class="text-sm text-gray-600">
+                            <?php if ($currentLessonPosition > 0): ?>
+                                Lesson <?= $currentLessonPosition ?> of <?= $totalLessonsInCourse ?>
+                            <?php else: ?>
+                                Progress
+                            <?php endif; ?>
+                        </p>
                         <p class="text-lg font-bold text-blue-600"><?= round($course['progress_percentage'] ?? 0) ?>%</p>
                     </div>
                 </div>
@@ -652,10 +691,10 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                             <div></div>
                             <?php endif; ?>
 
-                            <form method="POST" action="<?= url('actions/mark-lesson-complete.php') ?>" class="inline">
+                            <form method="POST" action="<?= url('actions/mark-lesson-complete.php') ?>" class="inline" id="markCompleteForm">
                                 <input type="hidden" name="course_id" value="<?= $courseId ?>">
                                 <input type="hidden" name="lesson_id" value="<?= $lessonId ?>">
-                                <input type="hidden" name="redirect" value="<?= urlencode('learn.php?course=' . $courseSlug . '&lesson=' . $lessonId) ?>">
+                                <input type="hidden" name="redirect" id="markCompleteRedirect" value="<?= urlencode('learn.php?course=' . $courseSlug . '&lesson=' . $lessonId) ?>">
                                 <?= csrfField() ?>
                                 <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
                                     <i class="fas fa-check mr-2"></i>Mark as Complete
@@ -698,9 +737,23 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
 const courseId = <?= (int)$courseId ?>;
 const lessonId = <?= (int)$lessonId ?>;
 const courseSlug = <?= json_encode($courseSlug) ?>;
+const nextLessonId = <?= (int)($nextLesson['id'] ?? 0) ?>;
 </script>
 
 <!-- Learning interface JavaScript -->
 <script src="<?= asset('js/learning.js') ?>"></script>
+
+<!-- Auto-advance to next lesson after marking complete -->
+<script>
+document.getElementById('markCompleteForm')?.addEventListener('submit', function(e) {
+    if (nextLessonId > 0) {
+        // Change redirect to next lesson for auto-advance
+        const redirectInput = document.getElementById('markCompleteRedirect');
+        if (redirectInput) {
+            redirectInput.value = encodeURIComponent('learn.php?course=' + courseSlug + '&lesson=' + nextLessonId);
+        }
+    }
+});
+</script>
 
 <?php require_once __DIR__ . '/../src/templates/footer.php'; ?>
