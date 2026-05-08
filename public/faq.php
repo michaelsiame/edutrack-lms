@@ -89,11 +89,11 @@ $faqCategories = [
         'questions' => [
             [
                 'q' => 'Do you help with job placement?',
-                'a' => 'Yes! Our Career Services department provides: (1) Resume/CV writing workshops, (2) Interview preparation, (3) Job placement assistance with partner companies, (4) Career counseling, and (5) Alumni networking events. Our 85% placement rate speaks to our commitment.'
+                'a' => 'Yes! Our Career Services department provides: (1) Resume/CV writing workshops, (2) Interview preparation, (3) Job placement assistance with partner companies, (4) Career counseling, and (5) Alumni networking events. Many of our graduates secure employment within 6 months of completion.'
             ],
             [
                 'q' => 'What is the job placement rate?',
-                'a' => '85% of our graduates secure employment within 6 months of graduation. This includes full-time positions, internships that convert to jobs, and freelance opportunities. Many graduates start their own successful businesses.'
+                'a' => 'Many of our graduates secure employment within 6 months of graduation. This includes full-time positions, internships that convert to jobs, and freelance opportunities. We also support graduates who choose to start their own businesses.'
             ],
             [
                 'q' => 'Which companies hire your graduates?',

@@ -78,6 +78,31 @@ foreach ($allLessons as $lesson) {
 $reviews = Review::getCourseReviews($courseId, ['status' => 'approved', 'limit' => 10]);
 $reviewStats = Review::getCourseStats($courseId);
 
+// 5b. Course-specific enrollment stats (realistic data)
+$courseEnrollmentStats = [
+    'total_enrolled'   => 0,
+    'completed'        => 0,
+    'completion_rate'  => 0,
+];
+try {
+    $db = Database::getInstance();
+    $courseEnrollmentStats['total_enrolled'] = $db->fetchColumn(
+        "SELECT COUNT(*) FROM enrollments WHERE course_id = ?",
+        [$courseId]
+    ) ?: 0;
+    $courseEnrollmentStats['completed'] = $db->fetchColumn(
+        "SELECT COUNT(*) FROM enrollments WHERE course_id = ? AND enrollment_status = 'Completed'",
+        [$courseId]
+    ) ?: 0;
+    if ($courseEnrollmentStats['total_enrolled'] > 0) {
+        $courseEnrollmentStats['completion_rate'] = round(
+            ($courseEnrollmentStats['completed'] / $courseEnrollmentStats['total_enrolled']) * 100
+        );
+    }
+} catch (Exception $e) {
+    error_log("Course enrollment stats error: " . $e->getMessage());
+}
+
 // 6. Fetch Related Courses
 $relatedCoursesData = Course::all([
     'category_id' => $course->getCategoryId(),
@@ -442,16 +467,16 @@ require_once __DIR__ . '/../src/templates/header.php';
                                 <div class="bg-primary-50 rounded-xl p-6 mb-8">
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                         <div class="text-center">
-                                            <div class="text-4xl font-bold text-primary-600 mb-2">85%</div>
-                                            <p class="text-gray-600">Graduates Employed<br><span class="text-sm">within 6 months</span></p>
+                                            <div class="text-4xl font-bold text-primary-600 mb-2"><?= $courseEnrollmentStats['total_enrolled'] ?></div>
+                                            <p class="text-gray-600">Students Enrolled<br><span class="text-sm">in this course</span></p>
                                         </div>
                                         <div class="text-center">
-                                            <div class="text-4xl font-bold text-primary-600 mb-2">ZMW 6,500</div>
-                                            <p class="text-gray-600">Average Starting<br><span class="text-sm">Monthly Salary</span></p>
+                                            <div class="text-4xl font-bold text-primary-600 mb-2"><?= $courseEnrollmentStats['completion_rate'] ?>%</div>
+                                            <p class="text-gray-600">Completion Rate<br><span class="text-sm">finished the course</span></p>
                                         </div>
                                         <div class="text-center">
-                                            <div class="text-4xl font-bold text-primary-600 mb-2">50+</div>
-                                            <p class="text-gray-600">Hiring Partner<br><span class="text-sm">Companies</span></p>
+                                            <div class="text-4xl font-bold text-primary-600 mb-2"><?= number_format($reviewStats['average_rating'], 1) ?>/5</div>
+                                            <p class="text-gray-600">Course Rating<br><span class="text-sm">from <?= $reviewStats['total_reviews'] ?> reviews</span></p>
                                         </div>
                                     </div>
                                 </div>

@@ -16,7 +16,7 @@ $heroSlides = [
     [
         'title' => 'Launch Your Tech Career',
         'subtitle' => 'With Industry-Recognized Skills',
-        'description' => 'Join 5,000+ Zambians who transformed their lives through TEVETA-certified programs.',
+        'description' => 'Join our growing community of Zambians who transformed their lives through TEVETA-certified programs.',
         'image_path' => '',
         'cta_text' => 'Explore Courses',
         'cta_link' => 'courses.php',
@@ -35,7 +35,7 @@ $heroSlides = [
     ],
     [
         'title' => 'Your Success is Our Mission',
-        'subtitle' => '85% Job Placement Rate',
+        'subtitle' => 'Real Skills, Real Careers',
         'description' => 'Our graduates work at top companies like MTN, Airtel, and major banks.',
         'image_path' => '',
         'cta_text' => 'Apply Now',
@@ -61,6 +61,49 @@ try {
     $featuredPhotos = InstitutionPhoto::getFeatured(4);
 } catch (Throwable $e) {
     error_log("Homepage featured photos error: " . $e->getMessage());
+}
+
+// --- REALISTIC STATS (from database) ---
+$stats = [
+    'total_students'   => 0,
+    'total_courses'    => 0,
+    'total_enrollments'=> 0,
+    'avg_rating'       => 0,
+    'total_instructors'=> 0,
+];
+try {
+    // Active students
+    $stats['total_students'] = $pdo->query("
+        SELECT COUNT(DISTINCT u.id) 
+        FROM users u 
+        JOIN user_roles ur ON u.id = ur.user_id 
+        WHERE ur.role_id = 4 AND u.status = 'active'
+    ")->fetchColumn() ?: 0;
+
+    // Published courses
+    $stats['total_courses'] = $pdo->query("
+        SELECT COUNT(*) FROM courses WHERE status = 'published'
+    ")->fetchColumn() ?: 0;
+
+    // Total enrollments (all time)
+    $stats['total_enrollments'] = $pdo->query("
+        SELECT COUNT(*) FROM enrollments
+    ")->fetchColumn() ?: 0;
+
+    // Average course rating
+    $stats['avg_rating'] = $pdo->query("
+        SELECT COALESCE(AVG(rating), 0) FROM course_reviews
+    ")->fetchColumn() ?: 0;
+
+    // Active instructors
+    $stats['total_instructors'] = $pdo->query("
+        SELECT COUNT(DISTINCT i.id) 
+        FROM instructors i 
+        JOIN users u ON i.user_id = u.id 
+        WHERE u.status = 'active'
+    ")->fetchColumn() ?: 0;
+} catch (PDOException $e) {
+    error_log("Homepage stats error: " . $e->getMessage());
 }
 ?>
 
@@ -98,9 +141,26 @@ try {
 }
 
 // 2. TOP FEATURED (Recent/Popular with Instructors)
+// Collect IDs already shown in the category section to avoid duplication
+$featured_ids = [];
+foreach ($featured_by_category as $cat_courses) {
+    foreach ($cat_courses as $course) {
+        $featured_ids[] = (int)$course['id'];
+    }
+}
+$featured_ids = array_unique($featured_ids);
+
 $top_featured = [];
 try {
-    $stmt = $pdo->query("
+    $exclude_sql = '';
+    $exclude_params = [];
+    if (!empty($featured_ids)) {
+        $placeholders = implode(',', array_fill(0, count($featured_ids), '?'));
+        $exclude_sql = " AND c.id NOT IN ($placeholders)";
+        $exclude_params = $featured_ids;
+    }
+
+    $stmt = $pdo->prepare("
         SELECT c.*, 
                cc.name as category_name, 
                cc.color as category_color,
@@ -109,10 +169,11 @@ try {
         JOIN course_categories cc ON c.category_id = cc.id
         LEFT JOIN instructors i ON c.instructor_id = i.id
         LEFT JOIN users u ON i.user_id = u.id
-        WHERE c.status = 'published' 
+        WHERE c.status = 'published' $exclude_sql
         ORDER BY c.created_at DESC 
         LIMIT 6
     ");
+    $stmt->execute($exclude_params);
     $top_featured = $stmt->fetchAll();
 } catch (PDOException $e) {
     error_log("Top featured courses error: " . $e->getMessage());
@@ -224,21 +285,21 @@ try {
                 <div class="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mb-3">
                     <i class="fas fa-users text-2xl text-blue-400"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-white">5,000+</h3>
-                <p class="text-sm text-gray-400">Graduates</p>
+                <h3 class="text-2xl font-bold text-white"><?= number_format($stats['total_students']) ?>+</h3>
+                <p class="text-sm text-gray-400">Active Students</p>
             </div>
             <div class="flex flex-col items-center">
                 <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-3">
-                    <i class="fas fa-briefcase text-2xl text-green-400"></i>
+                    <i class="fas fa-book-open text-2xl text-green-400"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-white">85%</h3>
-                <p class="text-sm text-gray-400">Job Placement</p>
+                <h3 class="text-2xl font-bold text-white"><?= number_format($stats['total_courses']) ?></h3>
+                <p class="text-sm text-gray-400">Courses Offered</p>
             </div>
             <div class="flex flex-col items-center">
                 <div class="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mb-3">
                     <i class="fas fa-star text-2xl text-purple-400"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-white">4.8/5</h3>
+                <h3 class="text-2xl font-bold text-white"><?= number_format($stats['avg_rating'], 1) ?>/5</h3>
                 <p class="text-sm text-gray-400">Student Rating</p>
             </div>
         </div>

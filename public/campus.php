@@ -9,6 +9,24 @@ require_once __DIR__ . '/../src/classes/InstitutionPhoto.php';
 
 $db = Database::getInstance();
 
+// Realistic institutional stats
+$institutionStats = [
+    'total_enrollments' => 0,
+    'total_students'    => 0,
+    'total_courses'     => 0,
+];
+try {
+    $institutionStats['total_enrollments'] = $db->fetchColumn("SELECT COUNT(*) FROM enrollments") ?: 0;
+    $institutionStats['total_students'] = $db->fetchColumn("
+        SELECT COUNT(DISTINCT u.id) FROM users u
+        JOIN user_roles ur ON u.id = ur.user_id
+        WHERE ur.role_id = 4 AND u.status = 'active'
+    ") ?: 0;
+    $institutionStats['total_courses'] = $db->fetchColumn("SELECT COUNT(*) FROM courses WHERE status = 'published'") ?: 0;
+} catch (Exception $e) {
+    error_log("Campus stats error: " . $e->getMessage());
+}
+
 // Get filter
 $category = $_GET['category'] ?? 'all';
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
@@ -19,6 +37,19 @@ $photos = [];
 $countMap = [];
 $featuredPhotos = [];
 $categories = InstitutionPhoto::getCategories();
+
+// Fallback campus photos when DB table is missing
+$fallbackPhotos = [
+    ['id' => 1, 'url' => '/assets/images/group-campus-front-01.jpg', 'title' => 'Students at Campus Front', 'description' => 'Group photo in front of the Edutrack campus building', 'category' => 'campus'],
+    ['id' => 2, 'url' => '/assets/images/students-outdoor-class-01.jpg', 'title' => 'Outdoor Learning Session', 'description' => 'Hands-on training session with students outdoors', 'category' => 'classroom'],
+    ['id' => 3, 'url' => '/assets/images/group-campus-front-02.jpg', 'title' => 'Student Group with Flag', 'description' => 'Students proudly displaying the Zambian flag', 'category' => 'campus'],
+    ['id' => 4, 'url' => '/assets/images/students-outdoor-class-03.jpg', 'title' => 'Practical Training', 'description' => 'Students engaged in practical computer training', 'category' => 'classroom'],
+    ['id' => 5, 'url' => '/assets/images/students-banner-portrait-01.jpg', 'title' => 'Student Success Stories', 'description' => 'Our students at the campus entrance', 'category' => 'student_life'],
+    ['id' => 6, 'url' => '/assets/images/students-outdoor-class-05.jpg', 'title' => 'Instructor-led Session', 'description' => 'Expert instructors guiding students through practical exercises', 'category' => 'classroom'],
+    ['id' => 7, 'url' => '/assets/images/group-campus-front-03.jpg', 'title' => 'Campus Activities', 'description' => 'Students participating in campus group activities', 'category' => 'campus'],
+    ['id' => 8, 'url' => '/assets/images/students-banner-portrait-04.jpg', 'title' => 'Graduate Spotlight', 'description' => 'Successful graduates with their certificates', 'category' => 'student_life'],
+    ['id' => 9, 'url' => '/assets/images/students-outdoor-class-02.jpg', 'title' => 'Collaborative Learning', 'description' => 'Students working together on group projects', 'category' => 'classroom'],
+];
 
 try {
     // Get photos
@@ -31,6 +62,13 @@ try {
     error_log("Campus page photos error: " . $e->getMessage());
 }
 
+// Use fallback if DB is empty
+if (empty($photos)) {
+    $photos = $category !== 'all'
+        ? array_values(array_filter($fallbackPhotos, fn($p) => $p['category'] === $category))
+        : $fallbackPhotos;
+}
+
 try {
     // Get counts by category
     $categoryCounts = $db->fetchAll(
@@ -41,11 +79,22 @@ try {
     error_log("Campus page category counts error: " . $e->getMessage());
 }
 
+// Build counts from fallback if DB is empty
+if (empty($countMap)) {
+    foreach ($fallbackPhotos as $p) {
+        $countMap[$p['category']] = ($countMap[$p['category']] ?? 0) + 1;
+    }
+}
+
 try {
     // Get featured photos for hero
     $featuredPhotos = InstitutionPhoto::getFeatured(6);
 } catch (Throwable $e) {
     error_log("Campus page featured photos error: " . $e->getMessage());
+}
+
+if (empty($featuredPhotos)) {
+    $featuredPhotos = array_slice($fallbackPhotos, 0, 6);
 }
 
 $page_title = "Campus & Facilities - Edutrack Computer Training College";
@@ -154,7 +203,7 @@ require_once __DIR__ . '/../src/templates/header.php';
         <?php if (!empty($photos)): ?>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="photo-gallery">
             <?php foreach ($photos as $photoData): 
-                $imageUrl = !empty($photoData['image_path']) ? '/uploads/institution/' . $photoData['image_path'] : '';
+                $imageUrl = $photoData['url'] ?? (!empty($photoData['image_path']) ? '/uploads/institution/' . $photoData['image_path'] : '');
                 $photoId = $photoData['id'] ?? 0;
                 $title = $photoData['title'] ?? '';
                 $description = $photoData['description'] ?? '';
@@ -287,8 +336,8 @@ require_once __DIR__ . '/../src/templates/header.php';
                             <div class="text-sm text-gray-600">Classrooms Target</div>
                         </div>
                         <div class="bg-white rounded-lg p-4 shadow-sm">
-                            <div class="text-3xl font-bold text-secondary-600 mb-1">500+</div>
-                            <div class="text-sm text-gray-600">Students Annually</div>
+                            <div class="text-3xl font-bold text-secondary-600 mb-1"><?= number_format($institutionStats['total_students']) ?>+</div>
+                            <div class="text-sm text-gray-600">Active Students</div>
                         </div>
                     </div>
                     <a href="contact.php?subject=Investment/Grant Inquiry" class="inline-flex items-center px-6 py-3 bg-secondary-500 text-white rounded-lg font-semibold hover:bg-secondary-600 transition">
@@ -377,7 +426,7 @@ require_once __DIR__ . '/../src/templates/header.php';
 
 <script>
 let photos = <?= json_encode(!empty($photos) ? array_map(function($p) { 
-    $imageUrl = !empty($p['image_path']) ? '/uploads/institution/' . $p['image_path'] : '';
+    $imageUrl = $p['url'] ?? (!empty($p['image_path']) ? '/uploads/institution/' . $p['image_path'] : '');
     return [
         'id' => $p['id'] ?? 0,
         'url' => $imageUrl,

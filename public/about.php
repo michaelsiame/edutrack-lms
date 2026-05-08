@@ -191,7 +191,17 @@ try {
 } catch (Throwable $e) {
     error_log("About page campus photos error: " . $e->getMessage());
 }
-if (!empty($campusPhotos)):
+
+// Fallback to actual campus photos if DB table is missing/empty
+$fallbackCampusPhotos = [
+    ['url' => '/assets/images/group-campus-front-01.jpg', 'title' => 'Students at Campus Front'],
+    ['url' => '/assets/images/students-outdoor-class-01.jpg', 'title' => 'Outdoor Learning Session'],
+    ['url' => '/assets/images/group-campus-front-03.jpg', 'title' => 'Student Group Activities'],
+    ['url' => '/assets/images/students-outdoor-class-03.jpg', 'title' => 'Hands-on Training'],
+];
+if (empty($campusPhotos)) {
+    $campusPhotos = $fallbackCampusPhotos;
+}
 ?>
 <section class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -207,7 +217,8 @@ if (!empty($campusPhotos)):
         
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <?php foreach ($campusPhotos as $photoData): 
-                $imageUrl = !empty($photoData['image_path']) ? '/uploads/institution/' . $photoData['image_path'] : '';
+                // DB photo vs fallback photo have different key names
+                $imageUrl = $photoData['url'] ?? (!empty($photoData['image_path']) ? '/uploads/institution/' . $photoData['image_path'] : '');
                 $title = $photoData['title'] ?? '';
             ?>
             <a href="campus.php" class="group relative overflow-hidden rounded-xl aspect-square">
@@ -228,7 +239,6 @@ if (!empty($campusPhotos)):
         </div>
     </div>
 </section>
-<?php endif; ?>
 
 <!-- Core Values -->
 <section class="py-16 bg-white">
