@@ -210,7 +210,7 @@ foreach ($students as $student) {
         ]);
         
         // Create certificate
-        $existingCert = $db->fetchOne("SELECT id FROM certificates WHERE user_id = ? AND course_id = ?", [$userId, $courseId]);
+        $existingCert = $db->fetchOne("SELECT certificate_id FROM certificates WHERE user_id = ? AND course_id = ?", [$userId, $courseId]);
         if (!$existingCert) {
             $finalScore = round($student['total'] / 500 * 100, 2);
             $certNumber = 'EDTRK-2026-' . str_pad($enrollmentId + 100000, 6, '0', STR_PAD_LEFT);
