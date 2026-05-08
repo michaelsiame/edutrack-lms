@@ -33,8 +33,9 @@ try {
         redirect('my-certificates.php');
     }
 
-    // Verify ownership
-    if ($certificate->getUserId() != $userId) {
+    // Verify ownership (allow admins to view any certificate)
+    $isAdmin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
+    if ($certificate->getUserId() != $userId && !$isAdmin) {
         flash('error', 'You do not have permission to access this certificate', 'error');
         redirect('my-certificates.php');
     }

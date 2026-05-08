@@ -371,7 +371,7 @@ function getFlash($key = 'message') {
     
     if ($flash) {
         // Output toast-compatible data attributes
-        return '<div data-flash-message="' . htmlspecialchars($flash['message'], ENT_QUOTES) . '" data-type="' . $flash['type'] . '" style="display:none;"></div>';
+        return '<div data-message="' . htmlspecialchars($flash['message'], ENT_QUOTES) . '" data-type="' . $flash['type'] . '" style="display:none;"></div>';
     }
     
     return '';
