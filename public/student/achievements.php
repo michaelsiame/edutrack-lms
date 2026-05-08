@@ -258,7 +258,7 @@ require_once '../../src/templates/header.php';
                         <p class="text-sm text-gray-500 mb-3">Issued <?= date('M j, Y', strtotime($cert['issued_at'])) ?></p>
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-mono text-gray-400">#<?= $cert['certificate_number'] ?></span>
-                            <a href="<?= url('download-certificate.php?id=' . $cert['id']) ?>" 
+                            <a href="<?= url('download-certificate.php?id=' . $cert['certificate_id']) ?> 
                                class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition">
                                 <i class="fas fa-download mr-1"></i>Download
                             </a>

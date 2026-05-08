@@ -115,7 +115,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                             <div class="space-y-2 mb-4 text-sm text-gray-600">
                                 <div class="flex items-center">
                                     <i class="fas fa-user text-primary-500 w-5 mr-2"></i>
-                                    <span><?= sanitize($certificate['instructor_first_name'] . ' ' . $certificate['instructor_last_name']) ?></span>
+                                    <span><?= sanitize($certificate['instructor_name']) ?></span>
                                 </div>
                                 <div class="flex items-center">
                                     <i class="fas fa-calendar text-primary-500 w-5 mr-2"></i>

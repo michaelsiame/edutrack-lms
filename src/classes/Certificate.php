@@ -35,7 +35,7 @@ class Certificate {
                 JOIN users u ON c.user_id = u.id
                 JOIN courses co ON c.course_id = co.id
                 LEFT JOIN users i ON co.instructor_id = i.id
-                WHERE c.id = ?";
+                WHERE c.certificate_id = ?";
         
         $result = $this->db->query($sql, [$this->id])->fetch();
         $this->data = $result ?: [];
@@ -61,7 +61,7 @@ class Certificate {
      */
     public static function findByVerificationCode($code) {
         $db = Database::getInstance();
-        $sql = "SELECT id FROM certificates WHERE verification_code = ?";
+        $sql = "SELECT certificate_id FROM certificates WHERE verification_code = ?";
         $id = $db->fetchColumn($sql, [$code]);
         
         return $id ? new self($id) : null;
@@ -86,7 +86,7 @@ class Certificate {
      */
     public static function getByUserAndCourse($userId, $courseId) {
         $db = Database::getInstance();
-        $sql = "SELECT id FROM certificates WHERE user_id = ? AND course_id = ?";
+        $sql = "SELECT certificate_id FROM certificates WHERE user_id = ? AND course_id = ?";
         $id = $db->fetchColumn($sql, [$userId, $courseId]);
         
         return $id ? new self($id) : null;
@@ -104,13 +104,13 @@ class Certificate {
             
             // Check if certificate already exists (WITHIN transaction with FOR UPDATE)
             $existing = $db->fetchOne(
-                "SELECT id FROM certificates WHERE user_id = ? AND course_id = ? FOR UPDATE",
+                "SELECT certificate_id FROM certificates WHERE user_id = ? AND course_id = ? FOR UPDATE",
                 [$userId, $courseId]
             );
             
             if ($existing) {
                 $db->commit(); // Nothing to do, return existing
-                return new self($existing['id']);
+                return new self($existing['certificate_id']);
             }
             
             // Verify course completion
@@ -172,7 +172,7 @@ class Certificate {
                 SELECT certificate_number 
                 FROM certificates 
                 WHERE certificate_number LIKE ?
-                ORDER BY id DESC 
+                ORDER BY certificate_id DESC 
                 LIMIT 1
             ", [$prefix . '-%']);
             
@@ -309,13 +309,13 @@ class Certificate {
             mkdir(STORAGE_PATH . '/certificates', 0755, true);
         }
         
-        $pdf->Output($filepath, 'F');
+        $pdfContent = $pdf->Output($filepath, 'S');
         
-        return $filepath;
+        return $pdfContent;
     }
     
     // Getters
-    public function getId() { return $this->data['id'] ?? null; }
+    public function getId() { return $this->data['certificate_id'] ?? null; }
     public function getUserId() { return $this->data['user_id'] ?? null; }
     public function getCourseId() { return $this->data['course_id'] ?? null; }
     public function getCertificateNumber() { return $this->data['certificate_number'] ?? ''; }

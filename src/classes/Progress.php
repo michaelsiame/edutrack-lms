@@ -33,7 +33,7 @@ class Progress {
             FROM lesson_progress lp
             JOIN lessons l ON lp.lesson_id = l.id
             JOIN modules m ON l.module_id = m.id
-            WHERE lp.user_id = ? AND m.course_id = ? AND lp.completed = 1
+            WHERE lp.user_id = ? AND m.course_id = ? AND lp.status = 'Completed'
         ", [$userId, $courseId]);
         
         // Get quiz attempts
@@ -135,12 +135,12 @@ class Progress {
         $existing = $this->getLessonProgress($userId, $lessonId);
         
         if ($existing) {
-            if ($existing['completed']) {
+            if ($existing['status'] === 'Completed') {
                 return true; // Already completed
             }
             
             $sql = "UPDATE lesson_progress 
-                    SET completed = 1, completed_at = NOW(), last_accessed = NOW() 
+                    SET status = 'Completed', completed_at = NOW(), last_accessed = NOW() 
                     WHERE user_id = ? AND lesson_id = ?";
             $result = $this->db->query($sql, [$userId, $lessonId]);
             
@@ -150,8 +150,8 @@ class Progress {
             return $result;
         } else {
             $sql = "INSERT INTO lesson_progress 
-                    (user_id, lesson_id, completed, started_at, completed_at, last_accessed) 
-                    VALUES (?, ?, 1, NOW(), NOW(), NOW())";
+                    (user_id, lesson_id, status, started_at, completed_at, last_accessed) 
+                    VALUES (?, ?, 'Completed', NOW(), NOW(), NOW())";
             $result = $this->db->query($sql, [$userId, $lessonId]);
             
             $this->checkCourseCompletion($userId, $lessonId);
@@ -235,7 +235,7 @@ class Progress {
                 FROM lessons l
                 JOIN modules m ON l.module_id = m.id
                 LEFT JOIN lesson_progress lp ON l.id = lp.lesson_id AND lp.user_id = ?
-                WHERE m.course_id = ? AND (lp.completed IS NULL OR lp.completed = 0)
+                WHERE m.course_id = ? AND (lp.status IS NULL OR lp.status != 'Completed')
                 ORDER BY m.display_order ASC, l.display_order ASC
                 LIMIT 1";
         
@@ -289,7 +289,7 @@ class Progress {
         if ($progress['percentage'] >= 100) {
             // Mark enrollment as completed
             $sql = "UPDATE enrollments
-                    SET enrollment_status = 'completed', completed_at = NOW()
+                    SET enrollment_status = 'Completed', completion_date = CURDATE()
                     WHERE user_id = ? AND course_id = ? AND enrollment_status != 'completed'";
 
             $stmt = $this->db->query($sql, [$userId, $courseId]);
@@ -366,8 +366,8 @@ class Progress {
     public function getCourseLessonsProgress($userId, $courseId) {
         $sql = "SELECT 
                     l.id,
-                    lp.completed,
-                    lp.time_spent,
+                    lp.status,
+                    lp.time_spent_minutes as time_spent,
                     lp.last_accessed,
                     lp.started_at,
                     lp.completed_at
