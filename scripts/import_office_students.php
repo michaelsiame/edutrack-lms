@@ -42,17 +42,6 @@ $students = [
 
 $assignmentTitles = ['Test 1', 'Microsoft Word', 'Microsoft Excel', 'Microsoft Publisher & PowerPoint', 'IT & Networks'];
 
-// ============================================================
-// HELPER: Check if column exists
-// ============================================================
-function columnExists($db, $table, $column) {
-    try {
-        $result = $db->fetchOne("SHOW COLUMNS FROM `$table` LIKE ?", [$column]);
-        return !empty($result);
-    } catch (Exception $e) {
-        return false;
-    }
-}
 
 // ============================================================
 // STEP 1: Create Patricia Siamukopa user if needed
@@ -181,69 +170,17 @@ foreach ($students as $student) {
         
         // Mark all lessons complete
         if (!empty($lessons)) {
-            $hasUserId = columnExists($db, 'lesson_progress', 'user_id');
-            $hasCompleted = columnExists($db, 'lesson_progress', 'completed');
-            $hasEnrollmentId = columnExists($db, 'lesson_progress', 'enrollment_id');
-            
-            echo "    - lesson_progress columns: enrollment_id=" . ($hasEnrollmentId ? 'yes' : 'no') . ", user_id=" . ($hasUserId ? 'yes' : 'no') . ", completed=" . ($hasCompleted ? 'yes' : 'no') . "\n";
-            
             $lessonCount = 0;
             foreach ($lessons as $lesson) {
                 $lessonId = $lesson['id'];
                 
-                // Check if progress exists
-                $whereClause = $hasUserId ? "user_id = ? AND lesson_id = ?" : "enrollment_id = ? AND lesson_id = ?";
-                $whereParams = $hasUserId ? [$userId, $lessonId] : [$enrollmentId, $lessonId];
-                
-                $existing = $db->fetchOne("SELECT id FROM lesson_progress WHERE $whereClause", $whereParams);
+                // Check if progress exists (schema has enrollment_id, not user_id)
+                $existing = $db->fetchOne("SELECT id FROM lesson_progress WHERE enrollment_id = ? AND lesson_id = ?", [$enrollmentId, $lessonId]);
                 
                 if (!$existing) {
-                    $columns = [];
-                    $values = [];
-                    $params = [];
-                    
-                    if ($hasEnrollmentId) {
-                        $columns[] = 'enrollment_id';
-                        $values[] = '?';
-                        $params[] = $enrollmentId;
-                    }
-                    if ($hasUserId) {
-                        $columns[] = 'user_id';
-                        $values[] = '?';
-                        $params[] = $userId;
-                    }
-                    $columns[] = 'lesson_id';
-                    $values[] = '?';
-                    $params[] = $lessonId;
-                    $columns[] = 'status';
-                    $values[] = '?';
-                    $params[] = 'Completed';
-                    $columns[] = 'progress_percentage';
-                    $values[] = '?';
-                    $params[] = 100.00;
-                    $columns[] = 'time_spent_minutes';
-                    $values[] = '?';
-                    $params[] = 15;
-                    if ($hasCompleted) {
-                        $columns[] = 'completed';
-                        $values[] = '?';
-                        $params[] = 1;
-                    }
-                    $columns[] = 'started_at';
-                    $values[] = 'NOW()';
-                    $columns[] = 'completed_at';
-                    $values[] = 'NOW()';
-                    $columns[] = 'last_accessed';
-                    $values[] = 'NOW()';
-                    $columns[] = 'created_at';
-                    $values[] = 'NOW()';
-                    $columns[] = 'updated_at';
-                    $values[] = 'NOW()';
-                    
-                    $colStr = implode(', ', $columns);
-                    $valStr = implode(', ', $values);
-                    $sql = "INSERT INTO lesson_progress ($colStr) VALUES ($valStr)";
-                    $db->query($sql, $params);
+                    $db->query("INSERT INTO lesson_progress (enrollment_id, lesson_id, status, progress_percentage, time_spent_minutes, started_at, completed_at, last_accessed, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW(), NOW(), NOW(), NOW())", [
+                        $enrollmentId, $lessonId, 'Completed', 100.00, 15
+                    ]);
                     $lessonCount++;
                 }
                 
