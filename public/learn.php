@@ -463,6 +463,41 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
             <div class="lg:col-span-3">
                 <?php if ($currentLesson): ?>
                 <div class="bg-white rounded-lg shadow">
+                    
+                    <?php if ($course['enrollment_status'] === 'Completed'): ?>
+                    <!-- Course Completion Banner -->
+                    <div class="p-6 border-b celebration-pop" style="background: linear-gradient(135deg, var(--surface-success) 0%, #D1FAE5 100%); border-color: #A7F3D0;">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center mr-4" style="background: var(--status-success);">
+                                    <i class="fas fa-trophy text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold" style="color: #065F46;">Course Completed!</h3>
+                                    <p class="text-sm" style="color: #047857;">Congratulations on finishing <strong><?= sanitize($course['title']) ?></strong>. Your certificate is ready.</p>
+                                </div>
+                            </div>
+                            <a href="<?= url('my-certificates.php') ?>" class="btn-primary text-sm hidden sm:inline-flex">
+                                <i class="fas fa-certificate mr-2"></i>View Certificate
+                            </a>
+                        </div>
+                    </div>
+                    <script>
+                    // Trigger confetti once per session for this completed course
+                    (function() {
+                        const key = 'celebrated_<?= $course['id'] ?>';
+                        if (!sessionStorage.getItem(key)) {
+                            sessionStorage.setItem(key, '1');
+                            setTimeout(function() {
+                                if (typeof Confetti !== 'undefined') {
+                                    Confetti.courseComplete('<?= addslashes($course['title']) ?>');
+                                }
+                            }, 600);
+                        }
+                    })();
+                    </script>
+                    <?php endif; ?>
+                    
                     <div class="p-6 border-b">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm text-gray-600"><?= htmlspecialchars($currentModule['title'] ?? '') ?></span>
@@ -498,7 +533,7 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                             $canJoinNow = ($now >= $canJoinTime && $now <= $endJoinTime && $liveSessionData['status'] !== 'cancelled');
                             $isLive = ($liveSessionData['status'] === 'live');
                         ?>
-                        <div class="bg-red-50 border-2 border-red-200 rounded-lg p-6 mb-6">
+                        <div class="rounded-lg p-6 mb-6" style="background: #FEF2F2; border: 2px solid #FECACA;">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center">
                                     <i class="fas fa-video text-red-600 text-3xl mr-4"></i>
@@ -527,9 +562,9 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div class="bg-white rounded p-3">
-                                    <div class="text-sm text-gray-600">Date & Time</div>
-                                    <div class="font-bold text-gray-900">
+                                <div class="rounded-lg p-3" style="background: var(--surface-secondary);">
+                                    <div class="text-sm" style="color: var(--text-muted);">Date & Time</div>
+                                    <div class="font-bold" style="color: var(--text-primary);">
                                         <i class="fas fa-calendar-alt text-red-600 mr-2"></i>
                                         <?= $sessionStart->format('l, F j, Y') ?>
                                     </div>
@@ -538,9 +573,9 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                                         <?= $sessionStart->format('g:i A') ?> - <?= $sessionEnd->format('g:i A') ?>
                                     </div>
                                 </div>
-                                <div class="bg-white rounded p-3">
-                                    <div class="text-sm text-gray-600">Duration</div>
-                                    <div class="font-bold text-gray-900">
+                                <div class="rounded-lg p-3" style="background: var(--surface-secondary);">
+                                    <div class="text-sm" style="color: var(--text-muted);">Duration</div>
+                                    <div class="font-bold" style="color: var(--text-primary);">
                                         <i class="fas fa-hourglass-half text-red-600 mr-2"></i>
                                         <?= $liveSessionData['duration_minutes'] ?> minutes
                                     </div>
@@ -568,9 +603,9 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                                 <?= $isLive ? 'JOIN LIVE SESSION NOW' : 'JOIN SESSION' ?>
                             </a>
                             <?php elseif ($liveSessionData['status'] === 'scheduled'): ?>
-                            <div class="bg-yellow-100 border border-yellow-300 rounded p-4 text-center">
-                                <i class="fas fa-info-circle text-yellow-700 mr-2"></i>
-                                <span class="text-yellow-700">
+                            <div class="rounded-lg p-4 text-center" style="background: var(--surface-warning); border: 1px solid #FCD34D;">
+                                <i class="fas fa-info-circle mr-2" style="color: var(--status-warning);"></i>
+                                <span style="color: #92400E;">
                                     This session will be available to join <?= $bufferBefore ?> minutes before start time
                                 </span>
                             </div>
@@ -584,9 +619,9 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                             <?php endif; ?>
                         </div>
                         <?php else: ?>
-                        <div class="bg-yellow-100 border border-yellow-300 rounded-lg p-6 mb-6 text-center">
-                            <i class="fas fa-calendar-times text-yellow-700 text-3xl mb-3"></i>
-                            <h3 class="text-lg font-bold text-gray-900 mb-2">No Live Session Scheduled</h3>
+                        <div class="rounded-lg p-6 mb-6 text-center" style="background: var(--surface-warning); border: 1px solid #FCD34D;">
+                            <i class="fas fa-calendar-times text-3xl mb-3" style="color: var(--status-warning);"></i>
+                            <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">No Live Session Scheduled</h3>
                             <p class="text-gray-700">Your instructor hasn't scheduled a live session for this lesson yet.</p>
                         </div>
                         <?php endif; ?>
@@ -624,11 +659,11 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                         if (!empty($resources)):
                         ?>
                         <div class="mt-8 border-t pt-6">
-                            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                                <i class="fas fa-download text-blue-600 mr-2"></i>
+                            <h3 class="text-xl font-bold mb-4 flex items-center" style="color: var(--text-primary);">
+                                <i class="fas fa-download mr-2" style="color: var(--accent-primary);"></i>
                                 Downloadable Resources
                             </h3>
-                            <p class="text-gray-600 mb-4">Download the following materials to enhance your learning experience:</p>
+                            <p class="mb-4" style="color: var(--text-secondary);">Download the following materials to enhance your learning experience:</p>
 
                             <div class="grid gap-3">
                                 <?php foreach ($resources as $resource):
@@ -639,19 +674,21 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                                 ?>
                                 <a href="<?= htmlspecialchars($downloadUrl) ?>"
                                    target="_blank"
-                                   class="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition group">
+                                   class="flex items-center justify-between p-4 rounded-lg border transition group card-hover"
+                                   style="background: var(--surface-tertiary); border-color: var(--border-primary);"
+                                   onmouseover="this.style.background='var(--surface-primary)'" onmouseout="this.style.background='var(--surface-tertiary)'">
                                     <div class="flex items-center flex-1">
-                                        <i class="fas <?= $iconClass ?> text-2xl mr-4"></i>
+                                        <i class="fas <?= $iconClass ?> text-2xl mr-4" style="color: var(--accent-primary);"></i>
                                         <div>
-                                            <h4 class="font-semibold text-gray-900 group-hover:text-blue-600">
+                                            <h4 class="font-semibold group-hover:text-blue-600" style="color: var(--text-primary);">
                                                 <?= htmlspecialchars($resource['title']) ?>
                                             </h4>
                                             <?php if ($resource['description']): ?>
-                                            <p class="text-sm text-gray-600 mt-1">
+                                            <p class="text-sm mt-1" style="color: var(--text-secondary);">
                                                 <?= htmlspecialchars($resource['description']) ?>
                                             </p>
                                             <?php endif; ?>
-                                            <div class="flex items-center mt-2 text-xs text-gray-500 space-x-4">
+                                            <div class="flex items-center mt-2 text-xs space-x-4" style="color: var(--text-muted);">
                                                 <span>
                                                     <i class="fas fa-file mr-1"></i>
                                                     <?= htmlspecialchars($resource['resource_type']) ?>
@@ -669,7 +706,7 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                                             </div>
                                         </div>
                                     </div>
-                                    <i class="fas fa-arrow-down text-blue-600 text-xl ml-4"></i>
+                                    <i class="fas fa-arrow-down text-xl ml-4" style="color: var(--accent-primary);"></i>
                                 </a>
                                 <?php endforeach; ?>
                             </div>
@@ -714,13 +751,15 @@ require_once __DIR__ . '/../src/templates/breadcrumbs.php';
                     </div>
                 </div>
                 <?php else: ?>
-                <div class="bg-white rounded-lg shadow p-12 text-center">
-                    <i class="fas fa-graduation-cap text-6xl text-gray-300 mb-4"></i>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome to Your Course!</h2>
-                    <p class="text-gray-600 mb-6">Select a lesson from the sidebar to begin learning.</p>
+                <div class="p-12 text-center" style="background: var(--surface-secondary); border-radius: var(--radius-xl); box-shadow: var(--shadow-card);">
+                    <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style="background: var(--surface-warm);">
+                        <i class="fas fa-graduation-cap text-4xl" style="color: var(--accent-secondary);"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-2" style="color: var(--text-primary);">Welcome to Your Course!</h2>
+                    <p class="mb-6" style="color: var(--text-secondary);">Select a lesson from the sidebar to begin learning.</p>
                     <?php if (!empty($modules) && !empty($lessonsGrouped[$modules[0]['id']])): ?>
                     <a href="<?= url('learn.php?course=' . urlencode($courseSlug) . '&lesson=' . $lessonsGrouped[$modules[0]['id']][0]['id']) ?>"
-                       class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                       class="inline-flex items-center px-6 py-3 btn-primary">
                         <i class="fas fa-play mr-2"></i>Start Learning
                     </a>
                     <?php endif; ?>

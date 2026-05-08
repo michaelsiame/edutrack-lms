@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * My Courses - Enhanced with Modern UI
  * Features: Grid/List view, detailed progress, course timeline, skill tags
@@ -191,31 +191,100 @@ $certificatesCount = $db->fetchColumn("
 $page_title = "My Courses - Edutrack";
 require_once __DIR__ . '/../src/templates/header.php';
 ?>
+<style>
+    .tab-active {
+        background: var(--accent-primary);
+        color: var(--text-inverse);
+    }
+    .tab-inactive {
+        background: var(--surface-tertiary);
+        color: var(--text-secondary);
+    }
+    .tab-inactive:hover {
+        background: var(--border-primary);
+    }
+    .view-toggle-active {
+        background: var(--accent-primary);
+        color: var(--text-inverse);
+    }
+    .view-toggle-inactive {
+        background: var(--surface-secondary);
+        color: var(--text-secondary);
+    }
+    .view-toggle-inactive:hover {
+        background: var(--surface-tertiary);
+    }
+    .row-divider > * + * {
+        border-top: 1px solid var(--border-primary);
+    }
+    .list-row {
+        transition: background-color var(--duration-normal) var(--easing-default);
+    }
+    .list-row:hover {
+        background-color: var(--surface-tertiary);
+    }
+    .course-card {
+        box-shadow: var(--shadow-card);
+    }
+    .btn-secondary {
+        background: var(--surface-secondary);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: var(--radius-lg);
+        transition: background-color var(--duration-fast) var(--easing-default);
+    }
+    .btn-secondary:hover {
+        background: var(--surface-tertiary);
+    }
+    .select-token:focus {
+        outline: none;
+        border-color: var(--border-focus);
+        box-shadow: 0 0 0 3px rgba(46, 112, 218, 0.15);
+    }
+    .module-dots > .group:nth-child(8n+1) .module-dot { background-color: var(--accent-primary) !important; }
+    .module-dots > .group:nth-child(8n+2) .module-dot { background-color: var(--color-primary-400) !important; }
+    .module-dots > .group:nth-child(8n+3) .module-dot { background-color: var(--color-primary-300) !important; }
+    .module-dots > .group:nth-child(8n+4) .module-dot { background-color: var(--accent-secondary) !important; }
+    .module-dots > .group:nth-child(8n+5) .module-dot { background-color: var(--color-secondary-400) !important; }
+    .module-dots > .group:nth-child(8n+6) .module-dot { background-color: var(--status-success) !important; }
+    .module-dots > .group:nth-child(8n+7) .module-dot { background-color: var(--status-warning) !important; }
+    .module-dots > .group:nth-child(8n+8) .module-dot { background-color: var(--status-info) !important; }
+</style>
 
-<div class="min-h-screen bg-gray-50 py-8">
+<div class="min-h-screen py-8" style="background: var(--surface-primary);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Header with Overall Stats -->
         <div class="mb-8">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">My Learning</h1>
-                    <p class="text-gray-600 mt-2">Track your progress and continue your learning journey</p>
+                    <h1 class="text-3xl font-bold" style="color: var(--text-primary);">My Learning</h1>
+                    <p class="mt-2" style="color: var(--text-secondary);">Track your progress and continue your learning journey</p>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="bg-white rounded-lg shadow-sm border px-4 py-2">
-                        <span class="text-sm text-gray-500">Overall Progress</span>
-                        <div class="flex items-center gap-2">
-                            <div class="w-24 bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-500 h-2 rounded-full" style="width: <?= round($totalProgress) ? round($totalProgress) : 0 ?>%"></div>
-                            </div>
-                            <span class="font-bold text-gray-800"><?= round($totalProgress) ?>%</span>
+                    <div class="flex items-center gap-3" style="background: var(--surface-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); padding: var(--space-4); box-shadow: var(--shadow-card);">
+                        <div class="progress-ring-container progress-ring-md">
+                            <svg class="progress-ring-svg" width="56" height="56" viewBox="0 0 56 56">
+                                <circle class="progress-ring-bg" cx="28" cy="28" r="24" stroke-width="4"/>
+                                <circle class="progress-ring-fill <?= $totalProgress == 100 ? 'progress-ring-fill-success' : '' ?>" cx="28" cy="28" r="24" stroke-width="4"
+                                        stroke-dasharray="150.8" stroke-dashoffset="<?= 150.8 - (150.8 * ((round($totalProgress) ? round($totalProgress) : 0)) / 100) ?>"/>
+                            </svg>
+                            <span class="progress-ring-text"><?= round($totalProgress) ?>%</span>
+                        </div>
+                        <div>
+                            <span class="text-sm font-medium" style="color: var(--text-muted);">Overall Progress</span>
+                            <p class="text-lg font-bold" style="color: var(--text-primary);"><?= round($totalProgress) ?>%</p>
                         </div>
                     </div>
                     <?php if ($certificatesCount > 0): ?>
-                    <div class="bg-white rounded-lg shadow-sm border px-4 py-2">
-                        <span class="text-sm text-gray-500">Certificates</span>
-                        <p class="font-bold text-green-600"><?= $certificatesCount ?> <i class="fas fa-certificate text-sm"></i></p>
+                    <div class="flex items-center gap-3" style="background: var(--surface-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); padding: var(--space-4); box-shadow: var(--shadow-card);">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: var(--surface-success);">
+                            <i class="fas fa-certificate" style="color: var(--status-success);"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-medium" style="color: var(--text-muted);">Certificates</span>
+                            <p class="text-lg font-bold" style="color: var(--status-success);"><?= $certificatesCount ?></p>
+                        </div>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -223,20 +292,20 @@ require_once __DIR__ . '/../src/templates/header.php';
         </div>
 
         <!-- Filters & Controls -->
-        <div class="bg-white rounded-xl shadow-sm border mb-6">
+        <div class="mb-6" style="background: var(--surface-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); box-shadow: var(--shadow-card);">
             <div class="p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <!-- Status Tabs -->
                 <div class="flex flex-wrap gap-2">
                     <a href="?status=all&view=<?= $view ?>&sort=<?= $sort ?>" 
-                       class="px-4 py-2 rounded-lg font-medium transition <?= $status === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">
+                       class="px-4 py-2 rounded-lg font-medium transition <?= $status === 'all' ? 'tab-active' : 'tab-inactive' ?>">
                         All <span class="ml-1 opacity-75">(<?= $counts['all'] ?>)</span>
                     </a>
                     <a href="?status=active&view=<?= $view ?>&sort=<?= $sort ?>" 
-                       class="px-4 py-2 rounded-lg font-medium transition <?= $status === 'active' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">
+                       class="px-4 py-2 rounded-lg font-medium transition <?= $status === 'active' ? 'tab-active' : 'tab-inactive' ?>">
                         In Progress <span class="ml-1 opacity-75">(<?= $counts['active'] ?>)</span>
                     </a>
                     <a href="?status=completed&view=<?= $view ?>&sort=<?= $sort ?>" 
-                       class="px-4 py-2 rounded-lg font-medium transition <?= $status === 'completed' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?>">
+                       class="px-4 py-2 rounded-lg font-medium transition <?= $status === 'completed' ? 'tab-active' : 'tab-inactive' ?>">
                         Completed <span class="ml-1 opacity-75">(<?= $counts['completed'] ?>)</span>
                     </a>
                 </div>
@@ -245,20 +314,20 @@ require_once __DIR__ . '/../src/templates/header.php';
                 <div class="flex items-center gap-3">
                     <!-- Sort Dropdown -->
                     <select onchange="window.location.href='?status=<?= $status ?>&view=<?= $view ?>&sort='+this.value" 
-                            class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                            class="px-3 py-2 rounded-lg text-sm select-token" style="background: var(--surface-secondary); border: 1px solid var(--border-primary); color: var(--text-secondary);">
                         <option value="recent" <?= $sort === 'recent' ? 'selected' : '' ?>>Recently Accessed</option>
                         <option value="progress" <?= $sort === 'progress' ? 'selected' : '' ?>>Progress (High to Low)</option>
                         <option value="alphabetical" <?= $sort === 'alphabetical' ? 'selected' : '' ?>>Alphabetical</option>
                     </select>
 
                     <!-- View Toggle -->
-                    <div class="flex border rounded-lg overflow-hidden">
+                    <div class="flex overflow-hidden" style="border: 1px solid var(--border-primary); border-radius: var(--radius-lg);">
                         <a href="?status=<?= $status ?>&view=grid&sort=<?= $sort ?>" 
-                           class="px-3 py-2 <?= $view === 'grid' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50' ?>">
+                           class="px-3 py-2 transition <?= $view === 'grid' ? 'view-toggle-active' : 'view-toggle-inactive' ?>">
                             <i class="fas fa-th-large"></i>
                         </a>
                         <a href="?status=<?= $status ?>&view=list&sort=<?= $sort ?>" 
-                           class="px-3 py-2 <?= $view === 'list' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50' ?>">
+                           class="px-3 py-2 transition <?= $view === 'list' ? 'view-toggle-active' : 'view-toggle-inactive' ?>">
                             <i class="fas fa-list"></i>
                         </a>
                     </div>
@@ -270,18 +339,18 @@ require_once __DIR__ . '/../src/templates/header.php';
             
             <?php if ($view === 'list'): ?>
             <!-- List View -->
-            <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-                <div class="divide-y divide-gray-100">
+            <div style="background: var(--surface-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); overflow: hidden;">
+                <div class="row-divider">
                     <?php foreach ($enrollments as $course): ?>
-                    <div class="p-6 hover:bg-gray-50 transition">
-                        <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="p-6 list-row">
+                        <div class="flex flex-col lg:flex-row gap-6 items-start">
                             <!-- Thumbnail -->
                             <div class="lg:w-48 shrink-0">
-                                <div class="relative rounded-xl overflow-hidden">
+                                <div class="relative overflow-hidden" style="border-radius: var(--radius-xl);">
                                     <img src="<?= courseThumbnail($course['thumbnail_url']) ?>" 
                                          alt="" class="w-full h-32 object-cover">
                                     <?php if ($course['enrollment_status'] === 'Completed'): ?>
-                                    <div class="absolute inset-0 bg-green-500/90 flex items-center justify-center">
+                                    <div class="absolute inset-0 flex items-center justify-center" style="background: rgba(16, 185, 129, 0.9);">
                                         <div class="text-center text-white">
                                             <i class="fas fa-check-circle text-3xl mb-1"></i>
                                             <p class="text-sm font-bold">COMPLETED</p>
@@ -296,76 +365,71 @@ require_once __DIR__ . '/../src/templates/header.php';
                                 <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
                                     <div class="flex-1">
                                         <div class="flex items-center gap-2 mb-2">
-                                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">
+                                            <span class="px-2 py-1 text-xs font-medium rounded" style="background: var(--surface-info); color: var(--status-info);">
                                                 <?= $course['level'] ?>
                                             </span>
                                             <?php if ($course['enrollment_status'] === 'Completed'): ?>
-                                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded">
+                                            <span class="px-2 py-1 text-xs font-medium rounded" style="background: var(--surface-success); color: var(--status-success);">
                                                 <i class="fas fa-certificate mr-1"></i>Certificate Available
                                             </span>
                                             <?php endif; ?>
                                         </div>
-                                        <h3 class="text-xl font-bold text-gray-900 mb-1"><?= sanitize($course['title']) ?></h3>
-                                        <p class="text-sm text-gray-500">Instructor: <?= sanitize($course['instructor_name']) ?></p>
+                                        <h3 class="text-xl font-bold mb-1" style="color: var(--text-primary);"><?= sanitize($course['title']) ?></h3>
+                                        <p class="text-sm" style="color: var(--text-muted);">Instructor: <?= sanitize($course['instructor_name']) ?></p>
                                     </div>
                                     
-                                    <!-- Actions -->
-                                    <div class="flex items-center gap-2">
-                                        <?php if ($course['enrollment_status'] === 'Completed'): ?>
-                                        <a href="<?= url('my-certificates.php') ?>" 
-                                           class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium">
-                                            <i class="fas fa-certificate mr-2"></i>Certificate
-                                        </a>
-                                        <?php else: ?>
-                                        <a href="<?= url('learn.php?course=' . $course['slug']) ?>" 
-                                           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
-                                            <i class="fas fa-play mr-2"></i>Continue
-                                        </a>
-                                        <?php endif; ?>
-                                        <a href="<?= url('course.php?id=' . $course['course_id']) ?>" 
-                                           class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-                                            <i class="fas fa-info-circle"></i>
-                                        </a>
+                                    <!-- Right side: Progress Ring + Actions -->
+                                    <div class="flex items-center gap-4 shrink-0">
+                                        <div class="progress-ring-container progress-ring-md">
+                                            <svg class="progress-ring-svg" width="56" height="56" viewBox="0 0 56 56">
+                                                <circle class="progress-ring-bg" cx="28" cy="28" r="24" stroke-width="4"/>
+                                                <circle class="progress-ring-fill <?= $course['progress_percentage'] == 100 ? 'progress-ring-fill-success' : '' ?>" cx="28" cy="28" r="24" stroke-width="4"
+                                                        stroke-dasharray="150.8" stroke-dashoffset="<?= 150.8 - (150.8 * ((round($course['progress_percentage']) ? round($course['progress_percentage']) : 0)) / 100) ?>"/>
+                                            </svg>
+                                            <span class="progress-ring-text"><?= round($course['progress_percentage']) ?>%</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <?php if ($course['enrollment_status'] === 'Completed'): ?>
+                                            <a href="<?= url('my-certificates.php') ?>" class="btn-primary">
+                                                <i class="fas fa-certificate mr-2"></i>Certificate
+                                            </a>
+                                            <?php else: ?>
+                                            <a href="<?= url('learn.php?course=' . $course['slug']) ?>" class="btn-primary">
+                                                <i class="fas fa-play mr-2"></i>Continue
+                                            </a>
+                                            <?php endif; ?>
+                                            <a href="<?= url('course.php?id=' . $course['course_id']) ?>" class="px-4 py-2 btn-secondary">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Progress Section -->
-                                <div class="mt-4">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-600">Course Progress</span>
-                                        <span class="text-lg font-bold text-blue-600"><?= round($course['progress_percentage']) ?>%</span>
+                                <!-- Stats Grid -->
+                                <div class="mt-4 grid grid-cols-3 md:grid-cols-6 gap-4 text-sm">
+                                    <div class="p-3 text-center rounded-lg" style="background: var(--surface-info);">
+                                        <p class="font-bold" style="color: var(--status-info);"><?= $course['completed_lessons'] ?>/<?= $course['total_lessons'] ?></p>
+                                        <p class="text-xs" style="color: var(--text-muted);">Lessons</p>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
-                                        <div class="bg-blue-500 h-3 rounded-full transition-all" 
-                                             style="width: <?= round($course['progress_percentage']) ? round($course['progress_percentage']) : 0 ?>%"></div>
+                                    <div class="p-3 text-center rounded-lg" style="background: var(--surface-success);">
+                                        <p class="font-bold" style="color: var(--status-success);"><?= $course['submitted_assignments'] ?>/<?= $course['total_assignments'] ?></p>
+                                        <p class="text-xs" style="color: var(--text-muted);">Assignments</p>
                                     </div>
-
-                                    <!-- Stats Grid -->
-                                    <div class="grid grid-cols-3 md:grid-cols-6 gap-4 text-sm">
-                                        <div class="bg-blue-50 rounded-lg p-3 text-center">
-                                            <p class="font-bold text-blue-700"><?= $course['completed_lessons'] ?>/<?= $course['total_lessons'] ?></p>
-                                            <p class="text-xs text-gray-500">Lessons</p>
-                                        </div>
-                                        <div class="bg-green-50 rounded-lg p-3 text-center">
-                                            <p class="font-bold text-green-700"><?= $course['submitted_assignments'] ?>/<?= $course['total_assignments'] ?></p>
-                                            <p class="text-xs text-gray-500">Assignments</p>
-                                        </div>
-                                        <div class="bg-purple-50 rounded-lg p-3 text-center">
-                                            <p class="font-bold text-purple-700"><?= $course['attempted_quizzes'] ?>/<?= $course['total_quizzes'] ?></p>
-                                            <p class="text-xs text-gray-500">Quizzes</p>
-                                        </div>
-                                        <div class="bg-gray-50 rounded-lg p-3 text-center">
-                                            <p class="font-bold text-gray-700"><?= $course['duration_weeks'] ?: 'N/A' ?></p>
-                                            <p class="text-xs text-gray-500">Weeks</p>
-                                        </div>
-                                        <div class="bg-gray-50 rounded-lg p-3 text-center">
-                                            <p class="font-bold text-gray-700"><?= $course['total_hours'] ?: 'N/A' ?></p>
-                                            <p class="text-xs text-gray-500">Hours</p>
-                                        </div>
-                                        <div class="bg-amber-50 rounded-lg p-3 text-center">
-                                            <p class="font-bold text-amber-700"><?= isset($course['estimated_weeks_left']) ? $course['estimated_weeks_left'] . 'w' : 'N/A' ?></p>
-                                            <p class="text-xs text-gray-500">Est. Left</p>
-                                        </div>
+                                    <div class="p-3 text-center rounded-lg" style="background: var(--surface-warning);">
+                                        <p class="font-bold" style="color: var(--status-warning);"><?= $course['attempted_quizzes'] ?>/<?= $course['total_quizzes'] ?></p>
+                                        <p class="text-xs" style="color: var(--text-muted);">Quizzes</p>
+                                    </div>
+                                    <div class="p-3 text-center rounded-lg" style="background: var(--surface-tertiary);">
+                                        <p class="font-bold" style="color: var(--text-primary);"><?= $course['duration_weeks'] ?: 'N/A' ?></p>
+                                        <p class="text-xs" style="color: var(--text-muted);">Weeks</p>
+                                    </div>
+                                    <div class="p-3 text-center rounded-lg" style="background: var(--surface-tertiary);">
+                                        <p class="font-bold" style="color: var(--text-primary);"><?= $course['total_hours'] ?: 'N/A' ?></p>
+                                        <p class="text-xs" style="color: var(--text-muted);">Hours</p>
+                                    </div>
+                                    <div class="p-3 text-center rounded-lg" style="background: var(--surface-warm);">
+                                        <p class="font-bold" style="color: var(--accent-secondary-hover);"><?= isset($course['estimated_weeks_left']) ? $course['estimated_weeks_left'] . 'w' : 'N/A' ?></p>
+                                        <p class="text-xs" style="color: var(--text-muted);">Est. Left</p>
                                     </div>
                                 </div>
                             </div>
@@ -379,7 +443,7 @@ require_once __DIR__ . '/../src/templates/header.php';
             <!-- Grid View -->
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 <?php foreach ($enrollments as $course): ?>
-                <div class="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-lg transition group">
+                <div class="course-card">
                     <!-- Thumbnail -->
                     <div class="relative h-48">
                         <img src="<?= courseThumbnail($course['thumbnail_url']) ?>" 
@@ -387,13 +451,13 @@ require_once __DIR__ . '/../src/templates/header.php';
                         
                         <!-- Completion Overlay -->
                         <?php if ($course['enrollment_status'] === 'Completed'): ?>
-                        <div class="absolute inset-0 bg-green-600/80 flex items-center justify-center">
+                        <div class="absolute inset-0 flex items-center justify-center" style="background: rgba(16, 185, 129, 0.85);">
                             <div class="text-center text-white">
-                                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-2" style="background: rgba(255,255,255,0.2);">
                                     <i class="fas fa-check text-3xl"></i>
                                 </div>
                                 <p class="font-bold text-lg">COMPLETED</p>
-                                <a href="<?= url('my-certificates.php') ?>" class="inline-flex items-center mt-2 text-sm bg-white text-green-700 px-3 py-1 rounded-full font-medium">
+                                <a href="<?= url('my-certificates.php') ?>" class="inline-flex items-center mt-2 text-sm font-medium px-3 py-1 rounded-full" style="background: var(--surface-secondary); color: var(--status-success);">
                                     <i class="fas fa-certificate mr-1"></i>View Certificate
                                 </a>
                             </div>
@@ -402,16 +466,21 @@ require_once __DIR__ . '/../src/templates/header.php';
 
                         <!-- Level Badge -->
                         <div class="absolute top-3 left-3">
-                            <span class="px-2 py-1 bg-white/90 text-gray-700 text-xs font-medium rounded-lg">
+                            <span class="px-2 py-1 text-xs font-medium rounded-lg" style="background: rgba(255,255,255,0.9); color: var(--text-primary);">
                                 <?= $course['level'] ?>
                             </span>
                         </div>
 
-                        <!-- Progress Circle -->
+                        <!-- Progress Ring -->
                         <?php if ($course['enrollment_status'] !== 'Completed'): ?>
                         <div class="absolute bottom-3 right-3">
-                            <div class="w-14 h-14 bg-white rounded-full shadow-lg flex items-center justify-center">
-                                <span class="text-sm font-bold text-blue-600"><?= round($course['progress_percentage']) ?>%</span>
+                            <div class="progress-ring-container progress-ring-md">
+                                <svg class="progress-ring-svg" width="56" height="56" viewBox="0 0 56 56">
+                                    <circle class="progress-ring-bg" cx="28" cy="28" r="24" stroke-width="4"/>
+                                    <circle class="progress-ring-fill" cx="28" cy="28" r="24" stroke-width="4"
+                                            stroke-dasharray="150.8" stroke-dashoffset="<?= 150.8 - (150.8 * ((round($course['progress_percentage']) ? round($course['progress_percentage']) : 0)) / 100) ?>"/>
+                                </svg>
+                                <span class="progress-ring-text"><?= round($course['progress_percentage']) ?>%</span>
                             </div>
                         </div>
                         <?php endif; ?>
@@ -419,57 +488,56 @@ require_once __DIR__ . '/../src/templates/header.php';
 
                     <!-- Content -->
                     <div class="p-5">
-                        <h3 class="font-bold text-gray-800 text-lg mb-1 line-clamp-1"><?= sanitize($course['title']) ?></h3>
-                        <p class="text-sm text-gray-500 mb-3"><?= sanitize($course['instructor_name']) ?></p>
+                        <h3 class="font-bold text-lg mb-1 line-clamp-1" style="color: var(--text-primary);"><?= sanitize($course['title']) ?></h3>
+                        <p class="text-sm mb-3" style="color: var(--text-muted);"><?= sanitize($course['instructor_name']) ?></p>
 
                         <!-- Progress Bar -->
                         <?php if ($course['enrollment_status'] !== 'Completed'): ?>
                         <div class="mb-4">
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-500 h-2 rounded-full transition-all" 
-                                     style="width: <?= round($course['progress_percentage']) ? round($course['progress_percentage']) : 0 ?>%"></div>
+                            <div class="w-full rounded-full h-2" style="background: var(--surface-tertiary);">
+                                <div class="h-2 rounded-full transition-all" style="background: var(--accent-primary); width: <?= round($course['progress_percentage']) ? round($course['progress_percentage']) : 0 ?>%"></div>
                             </div>
                         </div>
                         <?php endif; ?>
 
                         <!-- Quick Stats -->
                         <div class="grid grid-cols-3 gap-2 mb-4 text-center text-sm">
-                            <div class="bg-blue-50 rounded-lg p-2">
-                                <p class="font-bold text-blue-700"><?= $course['completed_lessons'] ?></p>
-                                <p class="text-xs text-gray-500">Lessons</p>
+                            <div class="p-2 rounded-lg" style="background: var(--surface-info);">
+                                <p class="font-bold" style="color: var(--status-info);"><?= $course['completed_lessons'] ?></p>
+                                <p class="text-xs" style="color: var(--text-muted);">Lessons</p>
                             </div>
-                            <div class="bg-green-50 rounded-lg p-2">
-                                <p class="font-bold text-green-700"><?= $course['submitted_assignments'] ?></p>
-                                <p class="text-xs text-gray-500">Tasks</p>
+                            <div class="p-2 rounded-lg" style="background: var(--surface-success);">
+                                <p class="font-bold" style="color: var(--status-success);"><?= $course['submitted_assignments'] ?></p>
+                                <p class="text-xs" style="color: var(--text-muted);">Tasks</p>
                             </div>
-                            <div class="bg-purple-50 rounded-lg p-2">
-                                <p class="font-bold text-purple-700"><?= $course['attempted_quizzes'] ?></p>
-                                <p class="text-xs text-gray-500">Quizzes</p>
+                            <div class="p-2 rounded-lg" style="background: var(--surface-warning);">
+                                <p class="font-bold" style="color: var(--status-warning);"><?= $course['attempted_quizzes'] ?></p>
+                                <p class="text-xs" style="color: var(--text-muted);">Quizzes</p>
                             </div>
                         </div>
 
                         <!-- Module Progress Dots -->
                         <?php if (!empty($course['modules']) && count($course['modules']) <= 8): ?>
                         <div class="mb-4">
-                            <div class="flex gap-1 justify-center">
+                            <div class="flex gap-1 justify-center module-dots">
                                 <?php foreach ($course['modules'] as $module):
                                     $modProgress = $module['total_lessons'] > 0 ? ($module['completed_lessons'] / $module['total_lessons']) * 100 : 0;
                                     $dotClass = $modProgress == 100 ? 'bg-green-500' : ($modProgress > 0 ? 'bg-blue-500' : 'bg-gray-300');
                                 ?>
                                 <div class="group relative">
-                                    <div class="w-3 h-3 rounded-full <?= $dotClass ?>" title="<?= sanitize($module['title']) ?>"></div>
-                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition whitespace-nowrap z-10">
+                                    <div class="w-3 h-3 rounded-full module-dot <?= $dotClass ?>" title="<?= sanitize($module['title']) ?>"></div>
+                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition whitespace-nowrap z-10" style="background: var(--text-primary); color: var(--text-inverse);">
                                         <?= sanitize($module['title']) ?>
                                     </div>
                                 </div>
                                 <?php endforeach; ?>
                             </div>
-                            <p class="text-xs text-center text-gray-400 mt-1">Module Progress</p>
+                            <p class="text-xs text-center mt-1" style="color: var(--text-muted);">Module Progress</p>
                         </div>
                         <?php endif; ?>
 
                         <!-- Last Activity -->
-                        <div class="flex items-center text-xs text-gray-500 mb-4">
+                        <div class="flex items-center text-xs mb-4" style="color: var(--text-muted);">
                             <i class="fas fa-clock mr-1"></i>
                             <?php if ($course['last_accessed']): ?>
                                 Last active <?= timeAgo($course['last_accessed']) ?>
@@ -482,17 +550,17 @@ require_once __DIR__ . '/../src/templates/header.php';
                         <div class="flex gap-2">
                             <?php if ($course['enrollment_status'] === 'Completed'): ?>
                             <a href="<?= url('course.php?id=' . $course['course_id']) ?>" 
-                               class="flex-1 text-center py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
+                               class="flex-1 text-center py-2.5 font-medium btn-secondary">
                                 <i class="fas fa-redo mr-1"></i>Review
                             </a>
                             <?php else: ?>
                             <a href="<?= url('learn.php?course=' . $course['slug']) ?>" 
-                               class="flex-1 text-center py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+                               class="flex-1 text-center py-2.5 font-medium transition btn-primary">
                                 <i class="fas fa-play mr-1"></i>Continue
                             </a>
                             <?php endif; ?>
                             <a href="<?= url('course.php?id=' . $course['course_id']) ?>" 
-                               class="py-2.5 px-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                               class="py-2.5 px-3 btn-secondary">
                                 <i class="fas fa-info-circle"></i>
                             </a>
                         </div>
@@ -504,9 +572,9 @@ require_once __DIR__ . '/../src/templates/header.php';
 
         <?php else: ?>
             <!-- Empty State -->
-            <div class="bg-white rounded-xl shadow-sm border p-12 text-center">
-                <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="fas fa-book-open text-blue-600 text-3xl"></i>
+            <div class="empty-state" style="background: var(--surface-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); box-shadow: var(--shadow-card);">
+                <div class="empty-state-icon" style="background: var(--surface-warm);">
+                    <i class="fas fa-book-open text-3xl" style="color: var(--accent-secondary);"></i>
                 </div>
                 <?php
                 $emptyTitle = match($status) {
@@ -520,9 +588,9 @@ require_once __DIR__ . '/../src/templates/header.php';
                     default => 'Start your learning journey by enrolling in a course.'
                 };
                 ?>
-                <h3 class="text-xl font-bold text-gray-800 mb-2"><?= $emptyTitle ?></h3>
-                <p class="text-gray-600 mb-6"><?= $emptyMessage ?></p>
-                <a href="<?= url('courses.php') ?>" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
+                <h3 class="text-xl font-bold mb-2" style="color: var(--text-primary);"><?= $emptyTitle ?></h3>
+                <p class="mb-6" style="color: var(--text-secondary);"><?= $emptyMessage ?></p>
+                <a href="<?= url('courses.php') ?>" class="inline-flex items-center btn-primary">
                     <i class="fas fa-search mr-2"></i>Browse Courses
                 </a>
             </div>

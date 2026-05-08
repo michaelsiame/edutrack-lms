@@ -163,12 +163,14 @@ function loadingSpinner($text = 'Loading...') {
  */
 function emptyState($icon, $title, $message, $actionUrl = null, $actionText = null) {
     ?>
-    <div class="text-center py-12 px-4">
-        <i class="fas <?= $icon ?> text-gray-400 text-6xl mb-4"></i>
-        <h3 class="text-xl font-semibold text-gray-900 mb-2"><?= sanitize($title) ?></h3>
-        <p class="text-gray-600 mb-6 max-w-md mx-auto"><?= sanitize($message) ?></p>
+    <div class="empty-state">
+        <div class="empty-state-icon" style="background: var(--surface-warm);">
+            <i class="fas <?= $icon ?> text-3xl" style="color: var(--accent-secondary);"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2" style="color: var(--text-primary);"><?= sanitize($title) ?></h3>
+        <p class="mb-6 max-w-md mx-auto" style="color: var(--text-secondary);"><?= sanitize($message) ?></p>
         <?php if ($actionUrl && $actionText): ?>
-            <a href="<?= $actionUrl ?>" class="btn-primary px-6 py-3 rounded-md inline-block">
+            <a href="<?= $actionUrl ?>" class="btn-primary inline-flex items-center">
                 <?= sanitize($actionText) ?>
             </a>
         <?php endif; ?>

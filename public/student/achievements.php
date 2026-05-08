@@ -199,67 +199,80 @@ $page_title = "My Achievements - Edutrack";
 require_once '../../src/templates/header.php';
 ?>
 
-<div class="min-h-screen bg-gray-50 py-8">
+<div class="min-h-screen py-8" style="background-color: var(--surface-primary);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Header -->
         <div class="text-center mb-10">
-            <h1 class="text-3xl font-bold text-gray-900">My Achievements</h1>
-            <p class="text-gray-600 mt-2">Track your progress and celebrate your milestones</p>
+            <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background: linear-gradient(135deg, var(--color-secondary-100), var(--surface-warm));">
+                <i class="fas fa-trophy text-2xl" style="color: var(--accent-secondary-hover);"></i>
+            </div>
+            <h1 class="text-3xl font-bold" style="color: var(--text-primary);">My Achievements</h1>
+            <p class="mt-2" style="color: var(--text-muted);">Track your progress and celebrate your milestones</p>
         </div>
 
         <!-- Stats Overview -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            <div class="bg-white rounded-xl shadow-sm border p-5 text-center">
-                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <i class="fas fa-graduation-cap text-blue-600 text-xl"></i>
+            <div class="stat-card text-center">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background: linear-gradient(135deg, var(--color-primary-100), var(--color-primary-200)); color: var(--accent-primary);">
+                    <i class="fas fa-graduation-cap text-xl"></i>
                 </div>
-                <p class="text-2xl font-bold text-gray-800"><?= $stats['completed_courses'] ?></p>
-                <p class="text-sm text-gray-500">Courses Completed</p>
+                <p class="text-2xl font-bold" style="color: var(--text-primary);"><?= $stats['completed_courses'] ?></p>
+                <p class="text-sm" style="color: var(--text-muted);">Courses Completed</p>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border p-5 text-center">
-                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <i class="fas fa-certificate text-green-600 text-xl"></i>
+            <div class="stat-card text-center">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background: linear-gradient(135deg, var(--surface-success), #D1FAE5); color: var(--status-success);">
+                    <i class="fas fa-certificate text-xl"></i>
                 </div>
-                <p class="text-2xl font-bold text-gray-800"><?= count($certificates) ?></p>
-                <p class="text-sm text-gray-500">Certificates</p>
+                <p class="text-2xl font-bold" style="color: var(--text-primary);"><?= count($certificates) ?></p>
+                <p class="text-sm" style="color: var(--text-muted);">Certificates</p>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border p-5 text-center">
-                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <i class="fas fa-book-reader text-purple-600 text-xl"></i>
+            <div class="stat-card text-center">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background: linear-gradient(135deg, var(--surface-info), #DBEAFE); color: var(--status-info);">
+                    <i class="fas fa-book-reader text-xl"></i>
                 </div>
-                <p class="text-2xl font-bold text-gray-800"><?= $stats['total_lessons'] ?></p>
-                <p class="text-sm text-gray-500">Lessons Completed</p>
+                <p class="text-2xl font-bold" style="color: var(--text-primary);"><?= $stats['total_lessons'] ?></p>
+                <p class="text-sm" style="color: var(--text-muted);">Lessons Completed</p>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border p-5 text-center">
-                <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <i class="fas fa-medal text-yellow-600 text-xl"></i>
+            <div class="stat-card text-center">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background: linear-gradient(135deg, var(--surface-warning), #FDE68A); color: #B45309;">
+                    <i class="fas fa-medal text-xl"></i>
                 </div>
-                <p class="text-2xl font-bold text-gray-800"><?= count($earnedBadges) ?>/<?= count($badges) ?></p>
-                <p class="text-sm text-gray-500">Badges Earned</p>
+                <p class="text-2xl font-bold" style="color: var(--text-primary);"><?= count($earnedBadges) ?>/<?= count($badges) ?></p>
+                <p class="text-sm" style="color: var(--text-muted);">Badges Earned</p>
             </div>
         </div>
 
         <!-- Certificates Section -->
         <?php if (!empty($certificates)): ?>
         <div class="mb-10">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                <i class="fas fa-certificate text-green-600 mr-2"></i>
+            <h2 class="text-xl font-bold mb-4 flex items-center" style="color: var(--text-primary);">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: linear-gradient(135deg, var(--surface-success), #D1FAE5);">
+                    <i class="fas fa-certificate text-sm" style="color: var(--status-success);"></i>
+                </div>
                 My Certificates
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <?php foreach ($certificates as $cert): ?>
-                <div class="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition">
-                    <div class="h-32 bg-green-500 flex items-center justify-center">
-                        <i class="fas fa-certificate text-6xl text-white opacity-90"></i>
+                <div class="overflow-hidden card-hover" style="background: var(--surface-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); box-shadow: var(--shadow-card);">
+                    <div class="relative p-6 border-b" style="background: linear-gradient(135deg, var(--surface-warm) 0%, var(--color-secondary-50) 50%, var(--surface-warm) 100%); border-color: var(--border-primary);">
+                        <div class="text-center">
+                            <i class="fas fa-certificate text-6xl mb-4 opacity-20" style="color: var(--accent-secondary);"></i>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="text-center">
+                                    <i class="fas fa-award text-5xl mb-2" style="color: var(--accent-secondary-hover);"></i>
+                                    <p class="text-xs font-semibold mt-2" style="color: var(--text-secondary);">CERTIFICATE</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="p-5">
-                        <h3 class="font-bold text-gray-800 mb-1"><?= sanitize($cert['course_title']) ?></h3>
-                        <p class="text-sm text-gray-500 mb-3">Issued <?= date('M j, Y', strtotime($cert['issued_date'])) ?></p>
+                        <h3 class="font-bold mb-1" style="color: var(--text-primary);"><?= sanitize($cert['course_title']) ?></h3>
+                        <p class="text-sm mb-3" style="color: var(--text-muted);">Issued <?= date('M j, Y', strtotime($cert['issued_date'])) ?></p>
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-mono text-gray-400">#<?= $cert['certificate_number'] ?></span>
-                            <a href="<?= url('download-certificate.php?id=' . $cert['certificate_id']) ?> 
-                               class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition">
+                            <span class="text-xs font-mono" style="color: var(--text-tertiary);">#<?= $cert['certificate_number'] ?></span>
+                            <a href="<?= url('download-certificate.php?id=' . $cert['certificate_id']) ?>"
+                               class="btn-primary text-sm inline-flex items-center">
                                 <i class="fas fa-download mr-1"></i>Download
                             </a>
                         </div>
@@ -272,25 +285,27 @@ require_once '../../src/templates/header.php';
 
         <!-- Badges Section -->
         <div class="mb-10">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                <i class="fas fa-medal text-yellow-600 mr-2"></i>
+            <h2 class="text-xl font-bold mb-4 flex items-center" style="color: var(--text-primary);">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: linear-gradient(135deg, var(--surface-warning), #FDE68A);">
+                    <i class="fas fa-medal text-sm" style="color: #B45309;"></i>
+                </div>
                 Achievement Badges
             </h2>
             
             <!-- Earned Badges -->
             <?php if (!empty($earnedBadges)): ?>
             <div class="mb-6">
-                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Earned</h3>
+                <h3 class="text-sm font-medium uppercase tracking-wide mb-3" style="color: var(--text-muted);">Earned</h3>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <?php foreach ($earnedBadges as $badge): ?>
-                    <div class="bg-white rounded-xl shadow-sm border p-5 text-center hover:shadow-md transition group">
-                        <div class="w-16 h-16 bg-<?= $badge['color'] ?>-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                    <div class="p-5 text-center card-hover celebration-pop" style="background: var(--surface-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); box-shadow: var(--shadow-card);">
+                        <div class="w-16 h-16 bg-<?= $badge['color'] ?>-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform" style="box-shadow: 0 0 20px rgba(246, 183, 69, 0.2), 0 4px 12px rgba(0,0,0,0.06);">
                             <i class="fas <?= $badge['icon'] ?> text-<?= $badge['color'] ?>-600 text-2xl"></i>
                         </div>
-                        <h4 class="font-bold text-gray-800 mb-1"><?= $badge['name'] ?></h4>
-                        <p class="text-xs text-gray-500"><?= $badge['description'] ?></p>
+                        <h4 class="font-bold mb-1" style="color: var(--text-primary);"><?= $badge['name'] ?></h4>
+                        <p class="text-xs" style="color: var(--text-muted);"><?= $badge['description'] ?></p>
                         <div class="mt-3">
-                            <span class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                            <span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full" style="background: var(--surface-success); color: #065F46;">
                                 <i class="fas fa-check mr-1"></i>Earned
                             </span>
                         </div>
@@ -303,20 +318,20 @@ require_once '../../src/templates/header.php';
             <!-- Locked Badges -->
             <?php if (!empty($lockedBadges)): ?>
             <div>
-                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">In Progress</h3>
+                <h3 class="text-sm font-medium uppercase tracking-wide mb-3" style="color: var(--text-muted);">In Progress</h3>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <?php foreach ($lockedBadges as $badge): ?>
-                    <div class="bg-gray-50 rounded-xl border border-gray-200 p-5 text-center opacity-75 hover:opacity-100 transition">
-                        <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas <?= $badge['icon'] ?> text-gray-400 text-2xl"></i>
+                    <div class="rounded-xl border p-5 text-center transition" style="background: var(--surface-tertiary); border-color: var(--border-primary); filter: grayscale(0.6); opacity: 0.8;">
+                        <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3" style="background: var(--surface-secondary);">
+                            <i class="fas <?= $badge['icon'] ?> text-2xl" style="color: var(--text-tertiary);"></i>
                         </div>
-                        <h4 class="font-bold text-gray-600 mb-1"><?= $badge['name'] ?></h4>
-                        <p class="text-xs text-gray-400"><?= $badge['description'] ?></p>
+                        <h4 class="font-bold mb-1" style="color: var(--text-secondary);"><?= $badge['name'] ?></h4>
+                        <p class="text-xs" style="color: var(--text-muted);"><?= $badge['description'] ?></p>
                         <div class="mt-3">
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-<?= $badge['color'] ?>-400 h-2 rounded-full" style="width: <?= $badge['progress'] ?>"></div>
+                            <div class="w-full rounded-full h-2" style="background: var(--surface-tertiary); border: 1px solid var(--border-primary);">
+                                <div class="h-2 rounded-full" style="width: <?= $badge['progress'] ?>%; background: var(--accent-primary);"></div>
                             </div>
-                            <p class="text-xs text-gray-400 mt-1"><?= round($badge['progress']) ?>%</p>
+                            <p class="text-xs mt-1" style="color: var(--text-muted);"><?= round($badge['progress']) ?>%</p>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -327,31 +342,33 @@ require_once '../../src/templates/header.php';
 
         <!-- Recent Milestones -->
         <?php if (!empty($milestones)): ?>
-        <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100">
-                <h2 class="text-xl font-bold text-gray-800 flex items-center">
-                    <i class="fas fa-history text-blue-600 mr-2"></i>
+        <div class="overflow-hidden" style="background: var(--surface-secondary); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); box-shadow: var(--shadow-card);">
+            <div class="px-6 py-4 border-b" style="border-color: var(--border-secondary);">
+                <h2 class="text-xl font-bold flex items-center" style="color: var(--text-primary);">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background: linear-gradient(135deg, var(--surface-info), #DBEAFE);">
+                        <i class="fas fa-history text-sm" style="color: var(--status-info);"></i>
+                    </div>
                     Recent Milestones
                 </h2>
             </div>
-            <div class="divide-y divide-gray-100">
+            <div class="divide-y" style="border-color: var(--border-secondary);">
                 <?php foreach ($milestones as $milestone): 
                     $icon = match($milestone['type']) {
-                        'course_complete' => ['fa-flag-checkered', 'text-green-600', 'bg-green-100'],
-                        'certificate' => ['fa-certificate', 'text-yellow-600', 'bg-yellow-100'],
-                        'quiz_high' => ['fa-star', 'text-purple-600', 'bg-purple-100'],
-                        default => ['fa-circle', 'text-gray-600', 'bg-gray-100']
+                        'course_complete' => ['fa-flag-checkered', 'var(--status-success)', 'var(--surface-success)'],
+                        'certificate' => ['fa-certificate', '#B45309', 'var(--surface-warning)'],
+                        'quiz_high' => ['fa-star', 'var(--accent-primary)', 'var(--surface-info)'],
+                        default => ['fa-circle', 'var(--text-muted)', 'var(--surface-tertiary)']
                     };
                 ?>
-                <div class="px-6 py-4 flex items-center hover:bg-gray-50 transition">
-                    <div class="w-10 h-10 <?= $icon[2] ?> rounded-lg flex items-center justify-center mr-4">
-                        <i class="fas <?= $icon[0] ?> <?= $icon[1] ?>"></i>
+                <div class="px-6 py-4 flex items-center transition" style="border-color: var(--border-secondary);">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0" style="background: <?= $icon[2] ?>;">
+                        <i class="fas <?= $icon[0] ?>" style="color: <?= $icon[1] ?>;"></i>
                     </div>
-                    <div class="flex-1">
-                        <p class="font-medium text-gray-800"><?= sanitize($milestone['description']) ?></p>
-                        <p class="text-sm text-gray-500"><?= sanitize($milestone['title']) ?></p>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium" style="color: var(--text-primary);"><?= sanitize($milestone['description']) ?></p>
+                        <p class="text-sm" style="color: var(--text-muted);"><?= sanitize($milestone['title']) ?></p>
                     </div>
-                    <span class="text-sm text-gray-400"><?= timeAgo($milestone['date']) ?></span>
+                    <span class="text-sm flex-shrink-0 ml-4" style="color: var(--text-tertiary);"><?= timeAgo($milestone['date']) ?></span>
                 </div>
                 <?php endforeach; ?>
             </div>

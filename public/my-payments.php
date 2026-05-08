@@ -53,78 +53,78 @@ $page_title = 'My Payments';
 require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
-<div class="min-h-screen bg-gray-50 py-8">
+<div class="min-h-screen py-8" style="background: var(--surface-primary);">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">My Payments</h1>
-            <p class="text-gray-600 mt-1">View your payment status and history</p>
+            <h1 class="text-3xl font-bold" style="color: var(--text-primary);">My Payments</h1>
+            <p class="mt-1" style="color: var(--text-muted);">View your payment status and history</p>
         </div>
 
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <!-- Registration Fee -->
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="stat-card">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500">Registration Fee</p>
+                        <p class="text-sm" style="color: var(--text-muted);">Registration Fee</p>
                         <?php if ($registrationPaid): ?>
-                        <p class="text-2xl font-bold text-green-600">Paid</p>
+                        <p class="text-2xl font-bold" style="color: var(--status-success);">Paid</p>
                         <?php elseif ($registrationFee && $registrationFee->isPending()): ?>
-                        <p class="text-2xl font-bold text-yellow-600">Pending</p>
+                        <p class="text-2xl font-bold" style="color: var(--status-warning);">Pending</p>
                         <?php else: ?>
-                        <p class="text-2xl font-bold text-red-600">Not Paid</p>
+                        <p class="text-2xl font-bold" style="color: var(--status-error);">Not Paid</p>
                         <?php endif; ?>
                     </div>
-                    <div class="bg-gray-100 p-3 rounded-full">
+                    <div class="stat-card-icon" style="background: var(--surface-tertiary);">
                         <?php if ($registrationPaid): ?>
-                        <i class="fas fa-check text-green-600 text-xl"></i>
+                        <i class="fas fa-check text-xl" style="color: var(--status-success);"></i>
                         <?php elseif ($registrationFee && $registrationFee->isPending()): ?>
-                        <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                        <i class="fas fa-clock text-xl" style="color: var(--status-warning);"></i>
                         <?php else: ?>
-                        <i class="fas fa-times text-red-600 text-xl"></i>
+                        <i class="fas fa-times text-xl" style="color: var(--status-error);"></i>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
 
             <!-- Total Fees -->
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="stat-card">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500">Total Course Fees</p>
-                        <p class="text-2xl font-bold text-gray-900">K<?= number_format($totalFees, 2) ?></p>
+                        <p class="text-sm" style="color: var(--text-muted);">Total Course Fees</p>
+                        <p class="text-2xl font-bold" style="color: var(--text-primary);">K<?= number_format($totalFees, 2) ?></p>
                     </div>
-                    <div class="bg-blue-100 p-3 rounded-full">
-                        <i class="fas fa-receipt text-blue-600 text-xl"></i>
+                    <div class="stat-card-icon" style="background: var(--color-primary-100);">
+                        <i class="fas fa-receipt text-xl" style="color: var(--accent-primary);"></i>
                     </div>
                 </div>
             </div>
 
             <!-- Total Paid -->
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="stat-card">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500">Total Paid</p>
-                        <p class="text-2xl font-bold text-green-600">K<?= number_format($totalPaid, 2) ?></p>
+                        <p class="text-sm" style="color: var(--text-muted);">Total Paid</p>
+                        <p class="text-2xl font-bold" style="color: var(--status-success);">K<?= number_format($totalPaid, 2) ?></p>
                     </div>
-                    <div class="bg-green-100 p-3 rounded-full">
-                        <i class="fas fa-coins text-green-600 text-xl"></i>
+                    <div class="stat-card-icon" style="background: var(--status-success-bg);">
+                        <i class="fas fa-coins text-xl" style="color: var(--status-success);"></i>
                     </div>
                 </div>
             </div>
 
             <!-- Outstanding Balance -->
-            <div class="bg-white rounded-lg shadow p-6">
+            <div class="stat-card">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500">Outstanding Balance</p>
-                        <p class="text-2xl font-bold <?= $totalBalance > 0 ? 'text-red-600' : 'text-green-600' ?>">
+                        <p class="text-sm" style="color: var(--text-muted);">Outstanding Balance</p>
+                        <p class="text-2xl font-bold" style="color: <?= $totalBalance > 0 ? 'var(--status-error)' : 'var(--status-success)' ?>;">
                             K<?= number_format($totalBalance, 2) ?>
                         </p>
                     </div>
-                    <div class="<?= $totalBalance > 0 ? 'bg-red-100' : 'bg-green-100' ?> p-3 rounded-full">
-                        <i class="fas <?= $totalBalance > 0 ? 'fa-exclamation-circle text-red-600' : 'fa-check-circle text-green-600' ?> text-xl"></i>
+                    <div class="stat-card-icon" style="background: <?= $totalBalance > 0 ? 'var(--status-error-bg)' : 'var(--status-success-bg)' ?>;">
+                        <i class="fas <?= $totalBalance > 0 ? 'fa-exclamation-circle' : 'fa-check-circle' ?> text-xl" style="color: <?= $totalBalance > 0 ? 'var(--status-error)' : 'var(--status-success)' ?>;"></i>
                     </div>
                 </div>
             </div>
@@ -132,14 +132,14 @@ require_once __DIR__ . '/../src/templates/header.php';
 
         <?php if ($totalBalance > 0): ?>
         <!-- Outstanding Balance Alert -->
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8">
+        <div class="rounded-lg p-4 mb-8" style="background: var(--status-warning-bg); border: 1px solid var(--status-warning);">
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <i class="fas fa-exclamation-triangle text-yellow-500 text-xl"></i>
+                    <i class="fas fa-exclamation-triangle text-xl" style="color: var(--status-warning);"></i>
                 </div>
                 <div class="ml-3">
-                    <h3 class="text-sm font-medium text-yellow-800">Outstanding Balance</h3>
-                    <p class="mt-1 text-sm text-yellow-700">
+                    <h3 class="text-sm font-medium" style="color: var(--text-primary);">Outstanding Balance</h3>
+                    <p class="mt-1 text-sm" style="color: var(--text-secondary);">
                         You have an outstanding balance of <strong>K<?= number_format($totalBalance, 2) ?></strong>.
                         Please make a payment at the office or via bank transfer to clear your balance.
                         Note: You will not be able to receive your certificate until your fees are fully paid.
@@ -151,24 +151,24 @@ require_once __DIR__ . '/../src/templates/header.php';
 
         <?php if (!$registrationPaid): ?>
         <!-- Registration Fee Section -->
-        <div class="bg-white rounded-lg shadow mb-8">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-lg font-semibold text-gray-900">
-                    <i class="fas fa-user-plus text-primary-600 mr-2"></i>
+        <div class="rounded-lg mb-8" style="background: var(--surface-secondary); box-shadow: var(--shadow-card);">
+            <div class="px-6 py-4 border-b" style="border-color: var(--border-primary);">
+                <h2 class="text-lg font-semibold" style="color: var(--text-primary);">
+                    <i class="fas fa-user-plus mr-2" style="color: var(--accent-primary);"></i>
                     Registration Fee
                 </h2>
             </div>
             <div class="p-6">
                 <?php if ($registrationFee && $registrationFee->isPending()): ?>
-                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div class="rounded-lg p-4" style="background: var(--status-warning-bg); border: 1px solid var(--status-warning);">
                     <div class="flex items-center">
-                        <i class="fas fa-clock text-yellow-500 text-2xl mr-4"></i>
+                        <i class="fas fa-clock text-2xl mr-4" style="color: var(--status-warning);"></i>
                         <div>
-                            <h3 class="font-medium text-yellow-800">Payment Under Review</h3>
-                            <p class="text-sm text-yellow-700 mt-1">
+                            <h3 class="font-medium" style="color: var(--text-primary);">Payment Under Review</h3>
+                            <p class="text-sm mt-1" style="color: var(--text-secondary);">
                                 Your registration fee payment is being verified. This usually takes 24 hours.
                             </p>
-                            <p class="text-sm text-yellow-700 mt-2">
+                            <p class="text-sm mt-2" style="color: var(--text-secondary);">
                                 <strong>Reference:</strong> <?= sanitize($registrationFee->getBankReference()) ?>
                             </p>
                         </div>
@@ -177,12 +177,12 @@ require_once __DIR__ . '/../src/templates/header.php';
                 <?php else: ?>
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-gray-600">
+                        <p style="color: var(--text-secondary);">
                             A one-time registration fee of <strong>K<?= number_format(RegistrationFee::getFeeAmount(), 2) ?></strong>
                             is required before you can enroll in courses.
                         </p>
                     </div>
-                    <a href="<?= url('registration-fee.php') ?>" class="btn btn-primary">
+                    <a href="<?= url('registration-fee.php') ?>" class="btn-primary inline-flex items-center">
                         <i class="fas fa-credit-card mr-2"></i>Pay Now
                     </a>
                 </div>
@@ -192,31 +192,33 @@ require_once __DIR__ . '/../src/templates/header.php';
         <?php endif; ?>
 
         <!-- Course Fees Section -->
-        <div class="bg-white rounded-lg shadow mb-8">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-lg font-semibold text-gray-900">
-                    <i class="fas fa-graduation-cap text-primary-600 mr-2"></i>
+        <div class="rounded-lg mb-8" style="background: var(--surface-secondary); box-shadow: var(--shadow-card);">
+            <div class="px-6 py-4 border-b" style="border-color: var(--border-primary);">
+                <h2 class="text-lg font-semibold" style="color: var(--text-primary);">
+                    <i class="fas fa-graduation-cap mr-2" style="color: var(--accent-primary);"></i>
                     Course Fees
                 </h2>
             </div>
 
             <?php if (empty($paymentPlans)): ?>
-            <div class="p-12 text-center text-gray-500">
-                <i class="fas fa-book-open text-4xl mb-2"></i>
-                <p>You haven't enrolled in any courses yet.</p>
-                <a href="<?= url('courses.php') ?>" class="text-primary-600 hover:underline mt-2 inline-block">
+            <div class="empty-state">
+                <div class="empty-state-icon" style="background: var(--surface-tertiary);">
+                    <i class="fas fa-book-open text-2xl" style="color: var(--text-muted);"></i>
+                </div>
+                <p style="color: var(--text-secondary);">You haven't enrolled in any courses yet.</p>
+                <a href="<?= url('courses.php') ?>" class="btn-primary mt-4 inline-flex items-center">
                     Browse courses
                 </a>
             </div>
             <?php else: ?>
-            <div class="divide-y divide-gray-200">
+            <div class="divide-y" style="border-color: var(--border-primary);">
                 <?php foreach ($paymentPlans as $planData): ?>
                 <?php $plan = new PaymentPlan($planData['id']); ?>
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <h3 class="font-semibold text-gray-900"><?= sanitize($plan->getCourseTitle()) ?></h3>
-                            <p class="text-sm text-gray-500">
+                            <h3 class="font-semibold" style="color: var(--text-primary);"><?= sanitize($plan->getCourseTitle()) ?></h3>
+                            <p class="text-sm" style="color: var(--text-muted);">
                                 Enrolled: <?= date('d M Y', strtotime($plan->getCreatedAt())) ?>
                             </p>
                         </div>
@@ -225,16 +227,16 @@ require_once __DIR__ . '/../src/templates/header.php';
 
                     <div class="grid grid-cols-3 gap-4 mb-4">
                         <div>
-                            <p class="text-sm text-gray-500">Course Fee</p>
-                            <p class="font-semibold text-gray-900"><?= $plan->getFormattedTotalFee() ?></p>
+                            <p class="text-sm" style="color: var(--text-muted);">Course Fee</p>
+                            <p class="font-semibold" style="color: var(--text-primary);"><?= $plan->getFormattedTotalFee() ?></p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Amount Paid</p>
-                            <p class="font-semibold text-green-600"><?= $plan->getFormattedTotalPaid() ?></p>
+                            <p class="text-sm" style="color: var(--text-muted);">Amount Paid</p>
+                            <p class="font-semibold" style="color: var(--status-success);"><?= $plan->getFormattedTotalPaid() ?></p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-500">Balance</p>
-                            <p class="font-semibold <?= $plan->getBalance() > 0 ? 'text-red-600' : 'text-green-600' ?>">
+                            <p class="text-sm" style="color: var(--text-muted);">Balance</p>
+                            <p class="font-semibold" style="color: <?= $plan->getBalance() > 0 ? 'var(--status-error)' : 'var(--status-success)' ?>">
                                 <?= $plan->getFormattedBalance() ?>
                             </p>
                         </div>
@@ -243,16 +245,16 @@ require_once __DIR__ . '/../src/templates/header.php';
                     <!-- Progress Bar -->
                     <div class="mb-2">
                         <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-500">Payment Progress</span>
-                            <span class="text-gray-700 font-medium"><?= $plan->getProgressPercentage() ?>%</span>
+                            <span style="color: var(--text-muted);">Payment Progress</span>
+                            <span class="font-medium" style="color: var(--text-secondary);"><?= $plan->getProgressPercentage() ?>%</span>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div class="bg-primary-600 h-2.5 rounded-full" style="width: <?= $plan->getProgressPercentage() ?>%"></div>
+                        <div class="w-full rounded-full h-2.5" style="background: var(--surface-tertiary);">
+                            <div class="h-2.5 rounded-full" style="width: <?= $plan->getProgressPercentage() ?>%; background: var(--accent-primary);"></div>
                         </div>
                     </div>
 
                     <?php if ($plan->getBalance() > 0): ?>
-                    <div class="mt-4 flex items-center text-sm text-yellow-700 bg-yellow-50 rounded-lg p-3">
+                    <div class="mt-4 flex items-center text-sm rounded-lg p-3" style="background: var(--status-warning-bg); color: var(--status-warning);">
                         <i class="fas fa-info-circle mr-2"></i>
                         Certificate blocked until balance is cleared. Visit the office to make a payment.
                     </div>
@@ -270,26 +272,26 @@ require_once __DIR__ . '/../src/templates/header.php';
         });
         if (!empty($pendingLenco)):
         ?>
-        <div class="bg-white rounded-lg shadow mb-8">
-            <div class="px-6 py-4 border-b border-gray-200 bg-yellow-50">
-                <h2 class="text-lg font-semibold text-yellow-800">
-                    <i class="fas fa-clock text-yellow-600 mr-2"></i>
+        <div class="rounded-lg mb-8" style="background: var(--surface-secondary); box-shadow: var(--shadow-card);">
+            <div class="px-6 py-4 border-b" style="background: var(--status-warning-bg); border-color: var(--status-warning);">
+                <h2 class="text-lg font-semibold" style="color: var(--text-primary);">
+                    <i class="fas fa-clock mr-2" style="color: var(--status-warning);"></i>
                     Pending Bank Transfers
                 </h2>
             </div>
-            <div class="divide-y divide-gray-200">
+            <div class="divide-y" style="border-color: var(--border-primary);">
                 <?php foreach ($pendingLenco as $tx): ?>
                 <div class="p-6">
                     <div class="flex items-center justify-between">
                         <div class="flex-1">
                             <div class="flex items-center gap-3 mb-2">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full" style="background: var(--status-warning-bg); color: var(--status-warning);">
                                     <i class="fas fa-hourglass-half mr-1"></i>Awaiting Payment
                                 </span>
-                                <span class="text-sm text-gray-500 font-mono"><?= sanitize($tx['reference']) ?></span>
+                                <span class="text-sm font-mono" style="color: var(--text-muted);"><?= sanitize($tx['reference']) ?></span>
                             </div>
-                            <p class="font-semibold text-gray-900"><?= sanitize($tx['course_title'] ?? 'Course Payment') ?></p>
-                            <div class="mt-2 text-sm text-gray-600">
+                            <p class="font-semibold" style="color: var(--text-primary);"><?= sanitize($tx['course_title'] ?? 'Course Payment') ?></p>
+                            <div class="mt-2 text-sm" style="color: var(--text-secondary);">
                                 <p><strong>Amount:</strong> K<?= number_format($tx['amount'], 2) ?></p>
                                 <?php if ($tx['virtual_account_number']): ?>
                                 <p><strong>Account:</strong> <?= sanitize($tx['virtual_account_number']) ?> (<?= sanitize($tx['virtual_account_bank'] ?? 'Lenco') ?>)</p>
@@ -298,9 +300,9 @@ require_once __DIR__ . '/../src/templates/header.php';
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-2xl font-bold text-primary-600">K<?= number_format($tx['amount'], 2) ?></p>
+                            <p class="text-2xl font-bold" style="color: var(--accent-primary);">K<?= number_format($tx['amount'], 2) ?></p>
                             <a href="lenco-checkout.php?reference=<?= urlencode($tx['reference']) ?>"
-                               class="inline-block mt-2 text-sm text-primary-600 hover:text-primary-700 font-medium">
+                               class="inline-block mt-2 text-sm font-medium" style="color: var(--accent-primary);">
                                 View Payment Details <i class="fas fa-arrow-right ml-1"></i>
                             </a>
                         </div>
@@ -312,32 +314,34 @@ require_once __DIR__ . '/../src/templates/header.php';
         <?php endif; ?>
 
         <!-- Payment History -->
-        <div class="bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-lg font-semibold text-gray-900">
-                    <i class="fas fa-history text-primary-600 mr-2"></i>
+        <div class="rounded-lg" style="background: var(--surface-secondary); box-shadow: var(--shadow-card);">
+            <div class="px-6 py-4 border-b" style="border-color: var(--border-primary);">
+                <h2 class="text-lg font-semibold" style="color: var(--text-primary);">
+                    <i class="fas fa-history mr-2" style="color: var(--accent-primary);"></i>
                     Payment History
                 </h2>
             </div>
 
             <?php if (empty($paymentHistory) && empty($lencoTransactions)): ?>
-            <div class="p-12 text-center text-gray-500">
-                <i class="fas fa-receipt text-4xl mb-2"></i>
-                <p>No payment history available.</p>
+            <div class="empty-state">
+                <div class="empty-state-icon" style="background: var(--surface-tertiary);">
+                    <i class="fas fa-receipt text-2xl" style="color: var(--text-muted);"></i>
+                </div>
+                <p style="color: var(--text-secondary);">No payment history available.</p>
             </div>
             <?php else: ?>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full divide-y" style="border-color: var(--border-primary);">
+                    <thead style="background: var(--surface-tertiary);">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reference</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase" style="color: var(--text-muted);">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase" style="color: var(--text-muted);">Course</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase" style="color: var(--text-muted);">Amount</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase" style="color: var(--text-muted);">Reference</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase" style="color: var(--text-muted);">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="divide-y" style="border-color: var(--border-primary);">
                         <?php
                         // Combine regular payments with successful Lenco transactions
                         $allPayments = $paymentHistory;
@@ -365,32 +369,32 @@ require_once __DIR__ . '/../src/templates/header.php';
 
                         <?php foreach ($allPayments as $payment): ?>
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm" style="color: var(--text-primary);">
                                 <?= date('d M Y', strtotime($payment['created_at'])) ?>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm" style="color: var(--text-primary);">
                                 <?= sanitize($payment['course_title'] ?? 'N/A') ?>
                                 <?php if (isset($payment['payment_type']) && $payment['payment_type'] === 'Lenco'): ?>
-                                <span class="ml-1 text-xs text-blue-600"><i class="fas fa-university"></i></span>
+                                <span class="ml-1 text-xs" style="color: var(--accent-primary);"><i class="fas fa-university"></i></span>
                                 <?php endif; ?>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold" style="color: var(--text-primary);">
                                 K<?= number_format($payment['amount'], 2) ?>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono" style="color: var(--text-muted);">
                                 <?= sanitize($payment['transaction_id'] ?? 'N/A') ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <?php
-                                $statusColors = [
-                                    'Completed' => 'green',
-                                    'Pending' => 'yellow',
-                                    'Failed' => 'red',
-                                    'Refunded' => 'blue'
+                                $statusStyles = [
+                                    'Completed' => 'background: var(--status-success-bg); color: var(--status-success);',
+                                    'Pending' => 'background: var(--status-warning-bg); color: var(--status-warning);',
+                                    'Failed' => 'background: var(--status-error-bg); color: var(--status-error);',
+                                    'Refunded' => 'background: var(--status-info-bg); color: var(--status-info);'
                                 ];
-                                $color = $statusColors[$payment['payment_status']] ?? 'gray';
+                                $style = $statusStyles[$payment['payment_status']] ?? 'background: var(--surface-tertiary); color: var(--text-muted);';
                                 ?>
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-<?= $color ?>-100 text-<?= $color ?>-800">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full" style="<?= $style ?>">
                                     <?= sanitize($payment['payment_status']) ?>
                                 </span>
                             </td>
@@ -403,22 +407,22 @@ require_once __DIR__ . '/../src/templates/header.php';
         </div>
 
         <!-- Payment Info -->
-        <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-blue-900 mb-3">
-                <i class="fas fa-info-circle mr-2"></i>Payment Information
+        <div class="mt-8 rounded-lg p-6" style="background: var(--status-info-bg); border: 1px solid var(--status-info);">
+            <h3 class="text-lg font-semibold mb-3" style="color: var(--text-primary);">
+                <i class="fas fa-info-circle mr-2" style="color: var(--status-info);"></i>Payment Information
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm" style="color: var(--text-secondary);">
                 <div>
-                    <h4 class="font-medium mb-2">Payment Methods</h4>
+                    <h4 class="font-medium mb-2" style="color: var(--text-primary);">Payment Methods</h4>
                     <ul class="list-disc list-inside space-y-1">
-                        <li><i class="fas fa-university text-primary-600 mr-1"></i> <strong>Lenco Bank Transfer</strong> (Instant - Recommended)</li>
+                        <li><i class="fas fa-university mr-1" style="color: var(--accent-primary);"></i> <strong>Lenco Bank Transfer</strong> (Instant - Recommended)</li>
                         <li>Cash payment at the college office</li>
                         <li>Bank deposit with proof upload</li>
                         <li>Mobile Money (MTN, Airtel, Zamtel)</li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-medium mb-2">Important Notes</h4>
+                    <h4 class="font-medium mb-2" style="color: var(--text-primary);">Important Notes</h4>
                     <ul class="list-disc list-inside space-y-1">
                         <li>Lenco payments are verified automatically</li>
                         <li>Course fees can be paid in installments (min 30%)</li>

@@ -70,6 +70,9 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <!-- Loading States -->
     <script src="<?= asset('js/loading.js') ?>"></script>
     
+    <!-- Celebration Effects -->
+    <script src="<?= asset('js/confetti.js') ?>"></script>
+    
     <!-- Custom Styles -->
     <style>
         :root {
