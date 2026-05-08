@@ -27,14 +27,19 @@ class Certificate {
      * Load certificate data
      */
     private function load() {
+        // Join through enrollments for schema compatibility
+        // (certificates table may or may not have user_id/course_id directly)
         $sql = "SELECT c.*, 
+                       e.user_id, e.course_id, e.final_grade,
                        u.first_name, u.last_name, u.email,
                        co.title as course_title, co.level, co.duration_hours,
                        i.first_name as instructor_fname, i.last_name as instructor_lname
                 FROM certificates c
-                JOIN users u ON c.user_id = u.id
-                JOIN courses co ON c.course_id = co.id
-                LEFT JOIN users i ON co.instructor_id = i.id
+                JOIN enrollments e ON c.enrollment_id = e.id
+                JOIN users u ON e.user_id = u.id
+                JOIN courses co ON e.course_id = co.id
+                LEFT JOIN instructors inst ON co.instructor_id = inst.id
+                LEFT JOIN users i ON inst.user_id = i.id
                 WHERE c.certificate_id = ?";
         
         $result = $this->db->query($sql, [$this->id])->fetch();
@@ -74,9 +79,10 @@ class Certificate {
         $db = Database::getInstance();
         $sql = "SELECT c.*, co.title as course_title, co.thumbnail
                 FROM certificates c
-                JOIN courses co ON c.course_id = co.id
-                WHERE c.user_id = ?
-                ORDER BY c.issued_at DESC";
+                JOIN enrollments e ON c.enrollment_id = e.id
+                JOIN courses co ON e.course_id = co.id
+                WHERE e.user_id = ?
+                ORDER BY c.issued_date DESC";
         
         return $db->query($sql, [$userId])->fetchAll();
     }
@@ -86,7 +92,10 @@ class Certificate {
      */
     public static function getByUserAndCourse($userId, $courseId) {
         $db = Database::getInstance();
-        $sql = "SELECT certificate_id FROM certificates WHERE user_id = ? AND course_id = ?";
+        $sql = "SELECT c.certificate_id 
+                FROM certificates c
+                JOIN enrollments e ON c.enrollment_id = e.id
+                WHERE e.user_id = ? AND e.course_id = ?";
         $id = $db->fetchColumn($sql, [$userId, $courseId]);
         
         return $id ? new self($id) : null;
@@ -102,18 +111,7 @@ class Certificate {
         try {
             $db->beginTransaction();
             
-            // Check if certificate already exists (WITHIN transaction with FOR UPDATE)
-            $existing = $db->fetchOne(
-                "SELECT certificate_id FROM certificates WHERE user_id = ? AND course_id = ? FOR UPDATE",
-                [$userId, $courseId]
-            );
-            
-            if ($existing) {
-                $db->commit(); // Nothing to do, return existing
-                return new self($existing['certificate_id']);
-            }
-            
-            // Verify course completion
+            // Verify course completion and get enrollment
             require_once __DIR__ . '/Enrollment.php';
             $enrollment = Enrollment::findByUserAndCourse($userId, $courseId);
             
@@ -122,22 +120,33 @@ class Certificate {
                 return false;
             }
             
+            $enrollmentId = $enrollment->getId();
+            
+            // Check if certificate already exists (WITHIN transaction with FOR UPDATE)
+            $existing = $db->fetchOne(
+                "SELECT certificate_id FROM certificates WHERE enrollment_id = ? FOR UPDATE",
+                [$enrollmentId]
+            );
+            
+            if ($existing) {
+                $db->commit(); // Nothing to do, return existing
+                return new self($existing['certificate_id']);
+            }
+            
             // Generate certificate number and verification code
             $certNumber = self::generateCertificateNumber();
             $verifyCode = self::generateVerificationCode();
             
-            // Create certificate record
+            // Create certificate record using only columns guaranteed to exist
+            // (enrollment_id links to users/courses via enrollments table)
             $sql = "INSERT INTO certificates (
-                user_id, course_id, certificate_number, verification_code,
-                final_score, issued_at
-            ) VALUES (?, ?, ?, ?, ?, NOW())";
+                enrollment_id, certificate_number, verification_code, issued_date
+            ) VALUES (?, ?, ?, CURDATE())";
             
             $params = [
-                $userId,
-                $courseId,
+                $enrollmentId,
                 $certNumber,
-                $verifyCode,
-                $enrollment->getFinalGrade()
+                $verifyCode
             ];
             
             if (!$db->query($sql, $params)) {
@@ -235,7 +244,7 @@ class Certificate {
             '{{teveta_code}}'      => env('TEVETA_INSTITUTION_CODE', 'TVA/2064'),
             '{{student_name}}'     => strtoupper($this->getStudentName()),
             '{{course_title}}'     => htmlspecialchars($this->getCourseTitle()),
-            '{{completion_date}}'  => date('F j, Y', strtotime($this->data['issued_at'])),
+            '{{completion_date}}'  => date('F j, Y', strtotime($this->data['issued_at'] ?? $this->data['issued_date'] ?? 'now')),
             '{{certificate_number}}' => $this->getCertificateNumber(),
             '{{verify_url}}'       => url('verify-certificate.php?code=' . $this->getVerificationCode()),
             '{{director_name}}'    => 'Michael Siame',
@@ -274,8 +283,8 @@ class Certificate {
     public function getCourseId() { return $this->data['course_id'] ?? null; }
     public function getCertificateNumber() { return $this->data['certificate_number'] ?? ''; }
     public function getVerificationCode() { return $this->data['verification_code'] ?? ''; }
-    public function getFinalScore() { return $this->data['final_score'] ?? 0; }
-    public function getIssuedAt() { return $this->data['issued_at'] ?? null; }
+    public function getFinalScore() { return $this->data['final_grade'] ?? $this->data['final_score'] ?? 0; }
+    public function getIssuedAt() { return $this->data['issued_at'] ?? $this->data['issued_date'] ?? null; }
     public function getStudentName() { 
         return trim(($this->data['first_name'] ?? '') . ' ' . ($this->data['last_name'] ?? ''));
     }

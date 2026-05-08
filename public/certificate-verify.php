@@ -7,7 +7,7 @@
 require_once __DIR__ . '/../src/bootstrap.php';
 
 // Forward any verification code to the main page
-$code = $_GET['code'] ?? '';
+$code = $_GET['code'] ?? $_GET['number'] ?? '';
 
 if (!empty($code)) {
     redirect('verify-certificate.php?code=' . urlencode($code));

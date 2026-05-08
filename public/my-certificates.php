@@ -144,7 +144,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                                    class="btn-primary flex-1 text-center text-sm">
                                     <i class="fas fa-download mr-1"></i>Download
                                 </a>
-                                <a href="<?= url('certificate-verify.php?number=' . urlencode($certificate['certificate_number'])) ?>"
+                                <a href="<?= url('certificate-verify.php?code=' . urlencode($certificate['verification_code'])) ?>"
                                    class="py-2 px-4 text-sm font-medium transition"
                                    style="border: 1px solid var(--accent-primary); color: var(--accent-primary); border-radius: var(--radius-lg);"
                                    title="Verify Certificate">
