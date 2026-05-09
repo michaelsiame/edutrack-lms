@@ -13,8 +13,8 @@ return new class extends Migration
             $table->foreignId('lesson_id')->constrained('lessons')->onDelete('cascade');
             $table->foreignId('instructor_id')->constrained('instructors')->onDelete('cascade');
             $table->string('meeting_room_id', 255);
-            $table->timestamp('scheduled_start_time');
-            $table->timestamp('scheduled_end_time');
+            $table->timestamp('scheduled_start_time')->nullable();
+            $table->timestamp('scheduled_end_time')->nullable();
             $table->integer('duration_minutes')->default(60);
             $table->enum('status', ['scheduled', 'live', 'ended', 'cancelled'])->default('scheduled');
             $table->integer('max_participants')->nullable();
