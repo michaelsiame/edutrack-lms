@@ -38,6 +38,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
     Route::get('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'show'])->name('password.request');
     Route::post('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'send'])->name('password.email');
+    Route::get('/reset-password/{token}', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'resetForm'])->name('password.reset');
+    Route::post('/reset-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'reset'])->name('password.update');
 });
 
 Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout')->middleware('auth');
