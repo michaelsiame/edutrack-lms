@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
             PaymentSeeder::class,
             CertificateSeeder::class,
             SystemSettingSeeder::class,
+            // Uncomment below to migrate from legacy database:
+            // MigrateLegacyData::class,
         ]);
     }
 }
