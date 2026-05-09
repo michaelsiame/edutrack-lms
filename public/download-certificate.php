@@ -8,8 +8,17 @@ require_once __DIR__ . '/../src/bootstrap.php';
 require_once __DIR__ . '/../src/classes/Certificate.php';
 require_once __DIR__ . '/../src/classes/PaymentPlan.php';
 
+$traceMode = isset($_GET['trace']) && $_GET['trace'] == '1';
+$traceLog = [];
+function trace($msg) {
+    global $traceMode, $traceLog;
+    $traceLog[] = $msg;
+    error_log($msg);
+}
+
 // Must be logged in
 if (!isLoggedIn()) {
+    if ($traceMode) { trace('[TRACE] FAIL: Not logged in'); outputTrace(); }
     redirect('login.php');
 }
 
@@ -20,58 +29,71 @@ $userId = $user->getId();
 $certificateId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$certificateId) {
-    error_log("[CERT-DEBUG] download-certificate.php: Invalid certificate ID from URL");
+    trace("[TRACE] FAIL: Invalid certificate ID from URL");
+    if ($traceMode) outputTrace();
     flash('error', 'Invalid certificate', 'error');
     redirect('my-certificates.php');
 }
 
-error_log("[CERT-DEBUG] download-certificate.php: Starting for cert_id={$certificateId}, user_id={$userId}");
+trace("[TRACE] START cert_id={$certificateId}, user_id={$userId}");
+
+function outputTrace() {
+    global $traceLog;
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "=== CERTIFICATE DOWNLOAD TRACE ===\n\n";
+    foreach ($traceLog as $line) { echo $line . "\n"; }
+    exit;
+}
 
 try {
     // Find the certificate
-    error_log("[CERT-DEBUG] download-certificate.php: Calling Certificate::find({$certificateId})");
+    trace("[TRACE] Calling Certificate::find({$certificateId})");
     $certificate = Certificate::find($certificateId);
 
     if (!$certificate) {
-        error_log("[CERT-DEBUG] download-certificate.php: Certificate not found for id={$certificateId}");
+        trace("[TRACE] FAIL: Certificate not found for id={$certificateId}");
+        if ($traceMode) outputTrace();
         flash('error', 'Certificate not found', 'error');
         redirect('my-certificates.php');
     }
-    error_log("[CERT-DEBUG] download-certificate.php: Certificate found. cert_user_id=" . ($certificate->getUserId() ?? 'NULL') . ", course_id=" . ($certificate->getCourseId() ?? 'NULL'));
+    trace("[TRACE] Certificate found. cert_user_id=" . ($certificate->getUserId() ?? 'NULL') . ", course_id=" . ($certificate->getCourseId() ?? 'NULL'));
 
     // Verify ownership (allow admins to view any certificate)
     $isAdmin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
-    error_log("[CERT-DEBUG] download-certificate.php: Ownership check — cert_user_id=" . ($certificate->getUserId() ?? 'NULL') . ", session_user_id={$userId}, isAdmin=" . ($isAdmin ? 'true' : 'false'));
+    trace("[TRACE] Ownership check — cert_user_id=" . ($certificate->getUserId() ?? 'NULL') . ", session_user_id={$userId}, isAdmin=" . ($isAdmin ? 'true' : 'false'));
     if ($certificate->getUserId() != $userId && !$isAdmin) {
-        error_log("[CERT-DEBUG] download-certificate.php: Ownership check FAILED. Redirecting.");
+        trace("[TRACE] FAIL: Ownership check FAILED.");
+        if ($traceMode) outputTrace();
         flash('error', 'You do not have permission to access this certificate', 'error');
         redirect('my-certificates.php');
     }
-    error_log("[CERT-DEBUG] download-certificate.php: Ownership check passed");
+    trace("[TRACE] Ownership check passed");
 
     // Check if fees are fully paid
     $courseId = $certificate->getCourseId();
-    error_log("[CERT-DEBUG] download-certificate.php: Checking payment plan for course_id=" . ($courseId ?? 'NULL') . ", user_id={$userId}");
+    trace("[TRACE] Checking payment plan for course_id=" . ($courseId ?? 'NULL') . ", user_id={$userId}");
     $paymentPlan = PaymentPlan::getByCourseAndUser($courseId, $userId);
 
     if ($paymentPlan && $paymentPlan['balance'] > 0) {
-        error_log("[CERT-DEBUG] download-certificate.php: Outstanding balance K" . number_format($paymentPlan['balance'], 2) . ". Redirecting to payments.");
+        trace("[TRACE] FAIL: Outstanding balance K" . number_format($paymentPlan['balance'], 2) . ".");
+        if ($traceMode) outputTrace();
         flash('error', 'Please clear your outstanding balance of K' . number_format($paymentPlan['balance'], 2) . ' to download your certificate.', 'error');
         redirect('my-payments.php');
     }
-    error_log("[CERT-DEBUG] download-certificate.php: Payment plan check passed (balance=0 or no plan)");
+    trace("[TRACE] Payment plan check passed (balance=0 or no plan)");
 
     // Check if download is requested
     $action = $_GET['action'] ?? 'view';
     $debugMode = isset($_GET['debug']) && $_GET['debug'] == '1';
-    error_log("[CERT-DEBUG] download-certificate.php: action={$action}, debugMode=" . ($debugMode ? 'true' : 'false'));
+    trace("[TRACE] action={$action}, debugMode=" . ($debugMode ? 'true' : 'false') . ", traceMode=" . ($traceMode ? 'true' : 'false'));
 
     // DEBUG MODE: render raw HTML template instead of PDF
     if ($debugMode) {
-        error_log("[CERT-DEBUG] download-certificate.php: Entering DEBUG mode — returning raw HTML preview");
+        trace("[TRACE] Entering DEBUG mode — returning raw HTML preview");
         $html = $certificate->getDebugHtml();
         if ($html === false) {
-            error_log("[CERT-DEBUG] download-certificate.php: getDebugHtml() returned false");
+            trace("[TRACE] FAIL: getDebugHtml() returned false");
+            if ($traceMode) outputTrace();
             http_response_code(500);
             echo "<h1>Debug Error</h1><p>Could not generate preview HTML. Check error logs.</p>";
             exit;
@@ -92,18 +114,18 @@ try {
     }
 
     if ($action === 'download' || $action === 'pdf') {
-        error_log("[CERT-DEBUG] download-certificate.php: Generating PDF...");
+        trace("[TRACE] Generating PDF...");
         // Generate and download PDF
         $pdfContent = $certificate->generatePDF();
 
         if ($pdfContent === false) {
-            error_log("[CERT-DEBUG] download-certificate.php: generatePDF() returned FALSE. PDF generation failed.");
-            // PDF generation not available, show alternative
+            trace("[TRACE] FAIL: generatePDF() returned FALSE. PDF generation failed.");
+            if ($traceMode) outputTrace();
             flash('warning', 'PDF generation is currently unavailable. Please contact the office to collect your physical certificate.', 'warning');
             redirect('my-certificates.php');
         }
 
-        error_log("[CERT-DEBUG] download-certificate.php: PDF generated successfully. Size=" . strlen($pdfContent) . " bytes");
+        trace("[TRACE] PDF generated successfully. Size=" . strlen($pdfContent) . " bytes");
 
         // Set headers for PDF download
         $fileName = 'Certificate_' . $certificate->getCertificateNumber() . '.pdf';
@@ -113,7 +135,7 @@ try {
         header('Pragma: public');
 
         echo $pdfContent;
-        error_log("[CERT-DEBUG] download-certificate.php: PDF streamed to client. Exiting.");
+        trace("[TRACE] PDF streamed to client. Exiting.");
         exit;
     }
 
@@ -122,7 +144,8 @@ try {
     require_once __DIR__ . '/../src/templates/header.php';
 
 } catch (Exception $e) {
-    error_log("[CERT-DEBUG] download-certificate.php: EXCEPTION caught: " . get_class($e) . " — " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+    trace("[TRACE] EXCEPTION: " . get_class($e) . " — " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+    if ($traceMode) outputTrace();
     flash('error', 'An error occurred loading the certificate', 'error');
     redirect('my-certificates.php');
 }
