@@ -45,6 +45,48 @@ function outputTrace() {
     exit;
 }
 
+// EMERGENCY PDF TEST: bypass everything and generate a minimal PDF
+if (isset($_GET['pdf-test']) && $_GET['pdf-test'] == '1') {
+    trace("[TRACE] EMERGENCY PDF TEST mode — bypassing all logic");
+    if (!class_exists('TCPDF')) {
+        trace("[TRACE] FAIL: TCPDF class not available");
+        if ($traceMode) outputTrace();
+        echo "TCPDF not available";
+        exit;
+    }
+    trace("[TRACE] TCPDF class exists. Creating minimal PDF...");
+    try {
+        $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
+        trace("[TRACE] TCPDF instance created OK");
+        $pdf->SetCreator('Test');
+        $pdf->SetTitle('Test PDF');
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+        $pdf->AddPage();
+        trace("[TRACE] Page added OK");
+        $pdf->SetFont('helvetica', '', 12);
+        $pdf->Cell(0, 10, 'Hello World — TCPDF works!', 0, 1, 'C');
+        trace("[TRACE] Text written OK");
+        $output = $pdf->Output('', 'S');
+        trace("[TRACE] PDF output generated. Size=" . strlen($output) . " bytes");
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="test.pdf"');
+        echo $output;
+        trace("[TRACE] Test PDF streamed. Exiting.");
+        exit;
+    } catch (Exception $e) {
+        trace("[TRACE] TCPDF EXCEPTION: " . get_class($e) . " — " . $e->getMessage());
+        if ($traceMode) outputTrace();
+        echo "TCPDF Error: " . htmlspecialchars($e->getMessage());
+        exit;
+    } catch (Error $e) {
+        trace("[TRACE] TCPDF ERROR: " . get_class($e) . " — " . $e->getMessage());
+        if ($traceMode) outputTrace();
+        echo "TCPDF Fatal Error: " . htmlspecialchars($e->getMessage());
+        exit;
+    }
+}
+
 try {
     // Find the certificate
     trace("[TRACE] Calling Certificate::find({$certificateId})");
