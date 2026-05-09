@@ -51,10 +51,10 @@
                             <i class="fas fa-book mr-2 w-5"></i>My Courses
                         </a>
                     @elseif(auth()->user()->isFinance())
-                        <a href="{{ route('finance.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('finance.index') ? 'bg-blue-50 text-blue-700' : 'text-gray-700' }}">
+                        <a href="{{ route('finance.dashboard') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('finance.dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-700' }}">
                             <i class="fas fa-tachometer-alt mr-2 w-5"></i>Dashboard
                         </a>
-                        <a href="{{ route('finance.payments') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('finance.payments') ? 'bg-blue-50 text-blue-700' : 'text-gray-700' }}">
+                        <a href="{{ route('finance.transactions') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('finance.transactions') ? 'bg-blue-50 text-blue-700' : 'text-gray-700' }}">
                             <i class="fas fa-money-bill-wave mr-2 w-5"></i>Payments
                         </a>
                     @endif
