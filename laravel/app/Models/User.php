@@ -1,0 +1,150 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
+class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'username',
+        'email',
+        'google_id',
+        'password_hash',
+        'first_name',
+        'last_name',
+        'phone',
+        'avatar_url',
+        'status',
+        'email_verified',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password_hash',
+        'email_verification_token',
+        'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified' => 'boolean',
+        'email_verification_expires' => 'datetime',
+        'last_login' => 'datetime',
+        'account_locked_until' => 'datetime',
+        'failed_login_attempts' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Role Checks
+    |--------------------------------------------------------------------------
+    */
+
+    public function isAdmin(): bool
+    {
+        return $this->roles()->where('role_id', 1)->exists();
+    }
+
+    public function isInstructor(): bool
+    {
+        return $this->roles()->where('role_id', 2)->exists();
+    }
+
+    public function isFinance(): bool
+    {
+        return $this->roles()->where('role_id', 3)->exists();
+    }
+
+    public function isStudent(): bool
+    {
+        return $this->roles()->where('role_id', 4)->exists();
+    }
+
+    public function hasRole(int $roleId): bool
+    {
+        return $this->roles()->where('role_id', $roleId)->exists();
+    }
+
+    public function isEnrolledIn(int $courseId): bool
+    {
+        return $this->enrollments()->where('course_id', $courseId)->exists();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
+    public function roles()
+    {
+        return $this->hasMany(UserRole::class);
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    public function instructor()
+    {
+        return $this->hasOne(Instructor::class);
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'student_id');
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accessors
+    |--------------------------------------------------------------------------
+    */
+
+    public function getFullNameAttribute(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function getPasswordAttribute(): string
+    {
+        return $this->password_hash;
+    }
+
+    public function setPasswordAttribute(string $value): void
+    {
+        $this->attributes['password_hash'] = bcrypt($value);
+    }
+}
