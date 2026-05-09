@@ -1,130 +1,163 @@
 <!--
-  Certificate PDF Template for TCPDF
+  TEVETA Certificate PDF Template for TCPDF
+  A4 Landscape — 297mm x 210mm
   
-  Design your certificate here using HTML with inline CSS.
-  TCPDF supports: tables, images, fonts, colors, borders, basic padding/margin.
+  Design: Swiss / Formal Authority
+  - Strict grid alignment
+  - Strong sans-serif typography (Helvetica)
+  - High contrast, restrained color palette
+  - Institutional blue + formal gold accents
   
-  TCPDF does NOT support: flexbox, grid, margin:auto, complex positioning.
-  Use TABLE-based layout for reliable rendering.
-  
-  Placeholders (replaced by Certificate::generatePDF()):
-  {{logo_path}}        - Path to institution logo
-  {{teveta_logo_path}} - Path to TEVETA logo
-  {{teveta_code}}      - TEVETA institution code
-  {{student_name}}     - Student full name (UPPERCASE)
-  {{course_title}}     - Course name
-  {{completion_date}}  - e.g. "January 15, 2026"
-  {{certificate_number}} - e.g. "EDTRK-202605-00001"
-  {{verify_url}}       - Public verification URL
-  {{director_name}}    - Director name (or "Michael Siame" default)
-  {{instructor_name}}  - Course instructor name
+  TCPDF constraints: table-based layout, inline CSS only.
+  No flexbox, grid, or margin:auto.
 -->
 
-<table cellpadding="0" cellspacing="0" style="width:100%; height:100%; border:3px solid #2E70DA;">
+<table cellpadding="0" cellspacing="0" style="width:100%; height:100%; border:4px solid #1E4A8A; background-color:#FFFFFF;">
     <tr>
-        <td style="padding:6px;">
-            <table cellpadding="0" cellspacing="0" style="width:100%; height:100%; border:2px solid #F6B745; background-color:#FFFFFF;">
+        <td style="padding:8px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; height:100%; border:1.5px solid #C9A227; background-color:#FFFFFF;">
                 <tr>
-                    <td style="padding:25px;">
+                    <td style="padding:18px 28px 22px 28px; vertical-align:top;">
                         
-                        <!-- Header Row: Logo | Institution | TEVETA Logo -->
-                        <table style="width:100%; margin-bottom:15px;">
+                        <!-- Header: Logo | Institution | TEVETA Logo -->
+                        <table style="width:100%; margin-bottom:12px;">
                             <tr>
-                                <td style="width:20%; text-align:left; vertical-align:middle;">
-                                    <img src="{{logo_path}}" style="width:55px;">
+                                <td style="width:18%; text-align:left; vertical-align:middle;">
+                                    <img src="{{logo_path}}" style="width:50px; height:auto;">
                                 </td>
-                                <td style="width:60%; text-align:center; vertical-align:middle;">
-                                    <div style="font-family:helvetica; font-size:20px; font-weight:bold; color:#1E4A8A; line-height:1.2;">
-                                        EDUTRACK COMPUTER<br>TRAINING COLLEGE
+                                <td style="width:64%; text-align:center; vertical-align:middle;">
+                                    <div style="font-family:helvetica; font-size:11px; font-weight:bold; color:#1E4A8A; letter-spacing:1.5px; text-transform:uppercase; line-height:1.3;">
+                                        Edutrack Computer Training College
                                     </div>
-                                    <div style="font-family:helvetica; font-size:9px; color:#6B7280; margin-top:4px;">
-                                        TEVETA Registered Institution &mdash; {{teveta_code}}
+                                    <div style="font-family:helvetica; font-size:8px; color:#6B7280; margin-top:3px; letter-spacing:0.5px;">
+                                        TEVETA Registered Institution — Code {{teveta_code}}
                                     </div>
                                 </td>
-                                <td style="width:20%; text-align:right; vertical-align:middle;">
-                                    <img src="{{teveta_logo_path}}" style="width:55px;">
+                                <td style="width:18%; text-align:right; vertical-align:middle;">
+                                    <img src="{{teveta_logo_path}}" style="width:75px; height:auto;">
                                 </td>
+                            </tr>
+                        </table>
+                        
+                        <!-- Decorative Rule -->
+                        <table style="width:100%; margin-bottom:10px;">
+                            <tr>
+                                <td style="border-top:1.5px solid #1E4A8A;">&nbsp;</td>
                             </tr>
                         </table>
                         
                         <!-- Certificate Title -->
-                        <div style="text-align:center; margin-top:25px; margin-bottom:5px;">
-                            <span style="font-family:helvetica; font-size:32px; font-weight:bold; color:#D97706; letter-spacing:2px;">
-                                CERTIFICATE OF COMPLETION
-                            </span>
-                        </div>
-                        <div style="text-align:center; margin-bottom:25px;">
-                            <span style="font-family:helvetica; font-size:11px; color:#9CA3AF;">
-                                This is to certify that
-                            </span>
-                        </div>
+                        <table style="width:100%; margin-bottom:6px;">
+                            <tr>
+                                <td style="text-align:center;">
+                                    <span style="font-family:helvetica; font-size:26px; font-weight:bold; color:#1E4A8A; letter-spacing:3px; text-transform:uppercase;">
+                                        Certificate of Completion
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <!-- Subtitle -->
+                        <table style="width:100%; margin-bottom:16px;">
+                            <tr>
+                                <td style="text-align:center;">
+                                    <span style="font-family:helvetica; font-size:9px; color:#6B7280; text-transform:uppercase; letter-spacing:2px;">
+                                        This is to certify that
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
                         
                         <!-- Student Name -->
-                        <div style="text-align:center; margin-bottom:6px;">
-                            <span style="font-family:helvetica; font-size:10px; color:#6B7280; text-transform:uppercase; letter-spacing:3px;">
-                                Has successfully completed
-                            </span>
-                        </div>
-                        <div style="text-align:center; margin-bottom:20px;">
-                            <span style="font-family:helvetica; font-size:26px; font-weight:bold; color:#1F2937;">
-                                {{student_name}}
-                            </span>
-                        </div>
-                        
-                        <!-- Course Name -->
-                        <div style="text-align:center; margin-bottom:4px;">
-                            <span style="font-family:helvetica; font-size:10px; color:#6B7280; text-transform:uppercase; letter-spacing:2px;">
-                                Course
-                            </span>
-                        </div>
-                        <div style="text-align:center; margin-bottom:20px;">
-                            <span style="font-family:helvetica; font-size:16px; font-weight:bold; color:#2E70DA;">
-                                {{course_title}}
-                            </span>
-                        </div>
-                        
-                        <!-- Divider -->
-                        <table style="width:100%; margin-bottom:20px;">
+                        <table style="width:100%; margin-bottom:6px;">
                             <tr>
-                                <td style="width:40%;">&nbsp;</td>
-                                <td style="width:20%; border-top:2px solid #F6B745;">&nbsp;</td>
-                                <td style="width:40%;">&nbsp;</td>
+                                <td style="text-align:center;">
+                                    <span style="font-family:helvetica; font-size:22px; font-weight:bold; color:#1F2937; letter-spacing:1px;">
+                                        {{student_name}}
+                                    </span>
+                                </td>
                             </tr>
                         </table>
                         
-                        <!-- Details -->
-                        <div style="text-align:center; margin-bottom:30px;">
-                            <span style="font-family:helvetica; font-size:10px; color:#6B7280;">
-                                Completed on <span style="font-weight:bold; color:#1F2937;">{{completion_date}}</span>
-                                &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-                                Certificate No: <span style="font-weight:bold; color:#1F2937;">{{certificate_number}}</span>
-                            </span>
-                        </div>
+                        <!-- Achievement Label -->
+                        <table style="width:100%; margin-bottom:14px;">
+                            <tr>
+                                <td style="text-align:center;">
+                                    <span style="font-family:helvetica; font-size:9px; color:#6B7280; text-transform:uppercase; letter-spacing:2px;">
+                                        Has successfully completed the course
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <!-- Course Title -->
+                        <table style="width:100%; margin-bottom:18px;">
+                            <tr>
+                                <td style="text-align:center;">
+                                    <span style="font-family:helvetica; font-size:15px; font-weight:bold; color:#1E4A8A; letter-spacing:0.5px;">
+                                        {{course_title}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <!-- Gold Divider -->
+                        <table style="width:100%; margin-bottom:14px;">
+                            <tr>
+                                <td style="width:35%;">&nbsp;</td>
+                                <td style="width:30%; border-top:2px solid #C9A227;">&nbsp;</td>
+                                <td style="width:35%;">&nbsp;</td>
+                            </tr>
+                        </table>
+                        
+                        <!-- Date & Certificate Number -->
+                        <table style="width:100%; margin-bottom:22px;">
+                            <tr>
+                                <td style="text-align:center;">
+                                    <span style="font-family:helvetica; font-size:9px; color:#4B5563;">
+                                        <strong>Completed:</strong> {{completion_date}}
+                                        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                                        <strong>Certificate No:</strong> {{certificate_number}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
                         
                         <!-- Signatures -->
-                        <table style="width:100%; margin-top:20px;">
+                        <table style="width:100%; margin-top:8px;">
                             <tr>
                                 <td style="width:50%; text-align:center; vertical-align:top;">
-                                    <div style="border-top:1px solid #1F2937; width:160px; margin:0 auto; padding-top:6px;">
-                                        <span style="font-family:helvetica; font-size:10px; font-weight:bold; color:#1F2937;">{{director_name}}</span><br>
-                                        <span style="font-family:helvetica; font-size:9px; color:#6B7280;">Director of Training</span>
+                                    <div style="border-top:1px solid #1F2937; width:150px; margin:0 auto; padding-top:5px;">
+                                        <span style="font-family:helvetica; font-size:9px; font-weight:bold; color:#1F2937;">{{director_name}}</span><br>
+                                        <span style="font-family:helvetica; font-size:8px; color:#6B7280;">Director of Training</span>
                                     </div>
                                 </td>
                                 <td style="width:50%; text-align:center; vertical-align:top;">
-                                    <div style="border-top:1px solid #1F2937; width:160px; margin:0 auto; padding-top:6px;">
-                                        <span style="font-family:helvetica; font-size:10px; font-weight:bold; color:#1F2937;">{{instructor_name}}</span><br>
-                                        <span style="font-family:helvetica; font-size:9px; color:#6B7280;">Course Instructor</span>
+                                    <div style="border-top:1px solid #1F2937; width:150px; margin:0 auto; padding-top:5px;">
+                                        <span style="font-family:helvetica; font-size:9px; font-weight:bold; color:#1F2937;">{{instructor_name}}</span><br>
+                                        <span style="font-family:helvetica; font-size:8px; color:#6B7280;">Course Instructor</span>
                                     </div>
                                 </td>
                             </tr>
                         </table>
                         
-                        <!-- Footer -->
-                        <div style="text-align:center; margin-top:30px;">
-                            <span style="font-family:helvetica; font-size:8px; color:#9CA3AF; font-style:italic;">
-                                Verify this certificate at: {{verify_url}}
-                            </span>
-                        </div>
+                        <!-- Footer: Verification & Accreditation -->
+                        <table style="width:100%; margin-top:18px;">
+                            <tr>
+                                <td style="text-align:center;">
+                                    <span style="font-family:helvetica; font-size:7px; color:#9CA3AF; font-style:italic;">
+                                        Verify authenticity at {{verify_url}}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center; padding-top:4px;">
+                                    <span style="font-family:helvetica; font-size:7px; color:#9CA3AF;">
+                                        This certificate is issued under the authority of the Technical Education, Vocational and Entrepreneurship Training Authority (TEVETA) of Zambia.
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
                         
                     </td>
                 </tr>
