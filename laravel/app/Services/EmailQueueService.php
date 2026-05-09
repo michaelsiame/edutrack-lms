@@ -34,10 +34,11 @@ class EmailQueueService
 
     /**
      * Queue an email for sending.
+     * In sync mode, sends immediately.
      */
     public function queue(string $recipient, string $subject, string $body, array $attachments = [], int $priority = 0): EmailQueue
     {
-        return EmailQueue::create([
+        $email = EmailQueue::create([
             'recipient' => $recipient,
             'subject' => $subject,
             'body' => $body,
@@ -46,6 +47,17 @@ class EmailQueueService
             'priority' => $priority,
             'scheduled_at' => now(),
         ]);
+
+        // Send immediately if queue is set to sync
+        if (config('queue.default') === 'sync') {
+            try {
+                $this->send($email);
+            } catch (\Exception $e) {
+                \Log::error('Sync email failed', ['error' => $e->getMessage(), 'recipient' => $recipient]);
+            }
+        }
+
+        return $email;
     }
 
     /**
