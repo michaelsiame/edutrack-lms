@@ -233,8 +233,8 @@ class Certificate {
         $html = file_get_contents($templatePath);
         $html = preg_replace('/<!--.*?-->/s', '', $html);
 
-        $logoPath = PUBLIC_PATH . '/assets/images/logo.png';
-        $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.png';
+        $logoPath = PUBLIC_PATH . '/assets/images/logo-sm.png';
+        $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo-sm.png';
 
         $replacements = [
             '{{logo_path}}'        => file_exists($logoPath) ? $logoPath : '',
@@ -283,8 +283,8 @@ class Certificate {
         $html = preg_replace('/<!--.*?-->/s', '', $html);
         
         // Build placeholder replacements
-        $logoPath = PUBLIC_PATH . '/assets/images/logo.png';
-        $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.png';
+        $logoPath = PUBLIC_PATH . '/assets/images/logo-sm.png';
+        $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo-sm.png';
         
         $logoExists = file_exists($logoPath);
         $tevetaExists = file_exists($tevetaLogoPath);
