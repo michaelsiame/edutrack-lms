@@ -38,4 +38,9 @@ class Instructor extends Model
     {
         return $this->hasMany(Course::class);
     }
+
+    public function liveSessions()
+    {
+        return $this->hasMany(LiveSession::class);
+    }
 }

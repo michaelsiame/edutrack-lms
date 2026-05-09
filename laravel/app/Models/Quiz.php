@@ -55,4 +55,12 @@ class Quiz extends Model
     {
         return $this->hasMany(QuizAttempt::class);
     }
+
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class, 'quiz_questions', 'quiz_id', 'question_id')
+            ->withPivot('display_order')
+            ->withTimestamps()
+            ->orderBy('quiz_questions.display_order');
+    }
 }

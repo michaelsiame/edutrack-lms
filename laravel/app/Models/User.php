@@ -127,6 +127,41 @@ class User extends Authenticatable
         return $this->hasMany(Certificate::class);
     }
 
+    public function quizAttempts()
+    {
+        return $this->hasMany(QuizAttempt::class, 'student_id');
+    }
+
+    public function assignmentSubmissions()
+    {
+        return $this->hasMany(AssignmentSubmission::class, 'student_id');
+    }
+
+    public function announcements()
+    {
+        return $this->hasMany(Announcement::class, 'posted_by');
+    }
+
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
+    public function lessonProgress()
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
+
+    public function courseReviews()
+    {
+        return $this->hasMany(CourseReview::class);
+    }
+
+    public function liveSessionAttendance()
+    {
+        return $this->hasMany(LiveSessionAttendance::class, 'student_id');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Accessors

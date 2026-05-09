@@ -51,4 +51,14 @@ class Lesson extends Model
     {
         return $this->hasMany(Assignment::class);
     }
+
+    public function liveSessions()
+    {
+        return $this->hasMany(LiveSession::class);
+    }
+
+    public function lessonProgress()
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
 }

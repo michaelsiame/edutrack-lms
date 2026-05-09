@@ -90,6 +90,21 @@ class Course extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(CourseReview::class);
+    }
+
+    public function announcements()
+    {
+        return $this->hasMany(Announcement::class);
+    }
+
+    public function liveSessions()
+    {
+        return $this->hasManyThrough(LiveSession::class, Lesson::class);
+    }
+
     public function scopePublished($query)
     {
         return $query->where('status', 'published');

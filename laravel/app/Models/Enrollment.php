@@ -65,6 +65,16 @@ class Enrollment extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function lessonProgress()
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
+
+    public function paymentPlan()
+    {
+        return $this->hasOne(EnrollmentPaymentPlan::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->whereIn('enrollment_status', ['Enrolled', 'In Progress']);
