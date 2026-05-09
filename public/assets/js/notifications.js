@@ -15,6 +15,7 @@ class NotificationManager {
         this.onUnreadCount = options.onUnreadCount || this.defaultUnreadHandler;
         this.onUpcomingSessions = options.onUpcomingSessions || (() => {});
         this.onError = options.onError || console.error;
+        this.sseDisabled = false;
         this.initialized = false;
     }
 
@@ -46,8 +47,16 @@ class NotificationManager {
 
     /**
      * Connect to SSE stream
+     * NOTE: SSE is disabled on Hostinger shared hosting because mod_security
+     * blocks long-running PHP scripts and HTTP/2 proxies break persistent
+     * connections. We fall back to polling immediately.
      */
     connect() {
+        // Hostinger/shared hosting: skip SSE entirely, use polling
+        if (this.sseDisabled) {
+            return;
+        }
+
         if (this.eventSource) {
             this.disconnect();
         }
@@ -56,7 +65,6 @@ class NotificationManager {
             this.eventSource = new EventSource(this.apiUrl);
 
             this.eventSource.addEventListener('connected', (event) => {
-                console.log('Connected to notification stream');
                 this.retryCount = 0;
             });
 
@@ -76,20 +84,16 @@ class NotificationManager {
             });
 
             this.eventSource.addEventListener('timeout', () => {
-                console.log('Connection timeout, reconnecting...');
-                this.reconnect();
+                this.fallbackToPolling();
             });
 
-            this.eventSource.addEventListener('error', (event) => {
-                if (event.target.readyState === EventSource.CLOSED) {
-                    console.log('Connection closed, reconnecting...');
-                    this.reconnect();
-                }
+            this.eventSource.addEventListener('error', () => {
+                // Any error → immediately disable SSE and poll instead of retry loop
+                this.fallbackToPolling();
             });
 
         } catch (error) {
-            console.error('Failed to connect to notification stream:', error);
-            this.reconnect();
+            this.fallbackToPolling();
         }
     }
 
@@ -104,25 +108,19 @@ class NotificationManager {
     }
 
     /**
-     * Reconnect with exponential backoff
+     * Permanently disable SSE and switch to polling
+     */
+    fallbackToPolling() {
+        this.disconnect();
+        this.sseDisabled = true;
+        this.startPolling();
+    }
+
+    /**
+     * Reconnect with exponential backoff (deprecated — now uses fallbackToPolling)
      */
     reconnect() {
-        this.disconnect();
-
-        if (this.retryCount >= this.maxRetries) {
-            console.warn('Max retries reached, falling back to polling');
-            this.startPolling();
-            return;
-        }
-
-        const delay = this.retryDelay * Math.pow(2, this.retryCount);
-        this.retryCount++;
-
-        console.log(`Reconnecting in ${delay}ms... (attempt ${this.retryCount})`);
-
-        setTimeout(() => {
-            this.connect();
-        }, delay);
+        this.fallbackToPolling();
     }
 
     /**
