@@ -29,10 +29,12 @@ class Certificate {
     private function load() {
         // Join through enrollments for schema compatibility
         // (certificates table may or may not have user_id/course_id directly)
+        // NOTE: only select columns guaranteed to exist in production schema.
+        // Removed: e.final_grade, co.level, co.duration_hours (not present on Hostinger DB)
         $sql = "SELECT c.*, 
-                       e.user_id, e.course_id, e.final_grade,
+                       e.user_id, e.course_id,
                        u.first_name, u.last_name, u.email,
-                       co.title as course_title, co.level, co.duration_hours,
+                       co.title as course_title,
                        i.first_name as instructor_fname, i.last_name as instructor_lname
                 FROM certificates c
                 JOIN enrollments e ON c.enrollment_id = e.id
