@@ -5,125 +5,62 @@
 
 @section('content')
 
-<!-- Hero Carousel Section -->
-<section class="relative h-[500px] sm:h-[560px] md:h-[700px] overflow-hidden" x-data="{ currentSlide: 0, totalSlides: {{ count($heroSlides) }} }" x-init="setInterval(() => { currentSlide = (currentSlide + 1) % totalSlides }, 6000)">
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-br from-primary-600 via-blue-800 to-purple-900 text-white overflow-hidden">
+    <div class="absolute inset-0 bg-black opacity-40"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
 
-    <!-- Slides -->
-    @foreach($heroSlides as $index => $slide)
-    <div class="absolute inset-0 transition-opacity duration-1000"
-         x-show="currentSlide === {{ $index }}"
-         x-transition:enter="opacity-0"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="opacity-100"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0">
-
-        <!-- Background Image -->
-        <div class="absolute inset-0 bg-cover bg-center"
-             style="background-image: url('{{ !empty($slide['image_path']) ? asset('uploads/hero/' . $slide['image_path']) : asset('assets/images/hero-bg-' . ($index + 1) . '.jpg') }}');">
-            <div class="absolute inset-0 bg-black/60"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div class="text-center">
+            <div class="mb-6 animate-fade-in">
+                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-yellow-500 text-gray-900 shadow-lg">
+                    <i class="fas fa-certificate mr-2"></i>
+                    TEVETA Registered Institution
+                </span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
+                Transform Your Future with
+                <span class="block text-yellow-400 mt-2">Edutrack Computer Training College</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-primary-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Zambia's premier TEVETA-certified computer training institution. Join thousands of students mastering industry-relevant skills.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto">
+                @auth
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-gray-50 transition duration-200 shadow-lg transform hover:-translate-y-1">
+                        <i class="fas fa-tachometer-alt mr-2"></i>
+                        Go to Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 transition duration-200 shadow-lg transform hover:-translate-y-1">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Get Started Free
+                    </a>
+                @endauth
+                <a href="{{ route('courses.index') }}" class="inline-flex items-center justify-center px-8 py-4 border border-white text-base font-medium rounded-md text-white hover:bg-white hover:text-primary-600 transition duration-200">
+                    <i class="fas fa-book mr-2"></i>
+                    View Our Courses
+                </a>
+            </div>
         </div>
 
-        <!-- Content -->
-        <div class="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-            <div class="max-w-2xl py-24">
-                <!-- Badge -->
-                <div class="mb-6 animate-fade-in" x-show="currentSlide === {{ $index }}" x-transition.delay.300ms>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-yellow-500 text-gray-900 shadow-lg">
-                        <i class="fas fa-certificate mr-2"></i>
-                        TEVETA Registered Institution
-                    </span>
-                </div>
-
-                <!-- Title -->
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 animate-fade-in"
-                    x-show="currentSlide === {{ $index }}" x-transition.delay.500ms>
-                    {{ $slide['title'] }}
-                    @if(!empty($slide['subtitle']))
-                    <span class="block text-yellow-400 mt-2">{{ $slide['subtitle'] }}</span>
-                    @endif
-                </h1>
-
-                <!-- Description -->
-                <p class="text-xl md:text-2xl text-gray-200 mb-8 animate-fade-in"
-                   x-show="currentSlide === {{ $index }}" x-transition.delay.700ms>
-                    {{ $slide['description'] }}
-                </p>
-
-                <!-- CTAs -->
-                <div class="flex flex-col sm:flex-row gap-4 animate-fade-in"
-                     x-show="currentSlide === {{ $index }}" x-transition.delay.900ms>
-                    <a href="{{ $slide['cta_link'] }}"
-                       class="inline-flex items-center justify-center px-8 py-4 bg-yellow-500 text-gray-900 font-semibold rounded-lg hover:bg-yellow-600 transition shadow-lg transform hover:-translate-y-1">
-                        <i class="fas fa-rocket mr-2"></i>
-                        {{ $slide['cta_text'] }}
-                    </a>
-                    @if(!empty($slide['secondary_cta_text']))
-                    <a href="{{ $slide['secondary_cta_link'] }}"
-                       class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-gray-900 transition">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        {{ $slide['secondary_cta_text'] }}
-                    </a>
-                    @endif
-                </div>
+        <!-- Trust Indicators -->
+        <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div class="animate-slide-up animation-delay-100">
+                <i class="fas fa-certificate text-3xl text-yellow-400 mb-2 block"></i>
+                <h3 class="text-lg font-semibold text-white">TEVETA Registered</h3>
             </div>
-        </div>
-    </div>
-    @endforeach
-
-    <!-- Slide Navigation Dots -->
-    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
-        @foreach($heroSlides as $index => $slide)
-        <button @click="currentSlide = {{ $index }}"
-                class="w-3 h-3 rounded-full transition-all duration-300"
-                :class="currentSlide === {{ $index }} ? 'bg-yellow-500 w-8' : 'bg-white/50 hover:bg-white'">
-        </button>
-        @endforeach
-    </div>
-
-    <!-- Arrow Navigation -->
-    <button @click="currentSlide = (currentSlide - 1 + totalSlides) % totalSlides"
-            class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center transition z-10">
-        <i class="fas fa-chevron-left text-xl"></i>
-    </button>
-    <button @click="currentSlide = (currentSlide + 1) % totalSlides"
-            class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center transition z-10">
-        <i class="fas fa-chevron-right text-xl"></i>
-    </button>
-</section>
-
-<!-- Trust Indicators Bar -->
-<section class="bg-gray-900 text-white py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mb-3">
-                    <i class="fas fa-certificate text-2xl text-yellow-400"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">TEVETA</h3>
-                <p class="text-sm text-gray-400">Registered</p>
+            <div class="animate-slide-up animation-delay-200">
+                <i class="fas fa-users text-3xl text-blue-300 mb-2 block"></i>
+                <h3 class="text-lg font-semibold text-white">{{ number_format($stats['total_students']) }}+ Students</h3>
             </div>
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mb-3">
-                    <i class="fas fa-users text-2xl text-blue-400"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">{{ number_format($stats['total_students']) }}+</h3>
-                <p class="text-sm text-gray-400">Active Students</p>
+            <div class="animate-slide-up animation-delay-300">
+                <i class="fas fa-graduation-cap text-3xl text-green-300 mb-2 block"></i>
+                <h3 class="text-lg font-semibold text-white">Expert Instructors</h3>
             </div>
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-3">
-                    <i class="fas fa-book-open text-2xl text-green-400"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">{{ number_format($stats['total_courses']) }}</h3>
-                <p class="text-sm text-gray-400">Courses Offered</p>
-            </div>
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mb-3">
-                    <i class="fas fa-star text-2xl text-purple-400"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">{{ number_format($stats['avg_rating'], 1) }}/5</h3>
-                <p class="text-sm text-gray-400">Student Rating</p>
+            <div class="animate-slide-up animation-delay-400">
+                <i class="fas fa-award text-3xl text-purple-300 mb-2 block"></i>
+                <h3 class="text-lg font-semibold text-white">Career Ready</h3>
             </div>
         </div>
     </div>

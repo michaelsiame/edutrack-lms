@@ -14,40 +14,6 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Hero slides fallback
-        $heroSlides = [
-            [
-                'title' => 'Launch Your Tech Career',
-                'subtitle' => 'With Industry-Recognized Skills',
-                'description' => 'Join our growing community of Zambians who transformed their lives through TEVETA-certified programs.',
-                'image_path' => '',
-                'cta_text' => 'Explore Courses',
-                'cta_link' => route('courses.index'),
-                'secondary_cta_text' => 'Contact Us',
-                'secondary_cta_link' => route('contact'),
-            ],
-            [
-                'title' => 'State-of-the-Art Facilities',
-                'subtitle' => 'Learn on Modern Equipment',
-                'description' => 'Our computer labs feature the latest hardware and software for hands-on learning.',
-                'image_path' => '',
-                'cta_text' => 'Take a Tour',
-                'cta_link' => route('about'),
-                'secondary_cta_text' => 'View Programs',
-                'secondary_cta_link' => route('courses.index'),
-            ],
-            [
-                'title' => 'Your Success is Our Mission',
-                'subtitle' => 'Real Skills, Real Careers',
-                'description' => 'Our graduates work at top companies like MTN, Airtel, and major banks.',
-                'image_path' => '',
-                'cta_text' => 'Apply Now',
-                'cta_link' => route('register'),
-                'secondary_cta_text' => 'Contact Us',
-                'secondary_cta_link' => route('contact'),
-            ],
-        ];
-
         // Stats
         $totalStudents = DB::table('users')
             ->join('user_roles', 'users.id', '=', 'user_roles.user_id')
@@ -93,7 +59,7 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
 
-        return view('home', compact('heroSlides', 'stats', 'featuredByCategory', 'topFeatured'));
+        return view('home', compact('stats', 'featuredByCategory', 'topFeatured'));
     }
 
     public function about()
