@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::get('/campus', [HomeController::class, 'campus'])->name('campus');
+Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
+Route::get('/testimonials', [HomeController::class, 'testimonials'])->name('testimonials');
+Route::get('/events', [HomeController::class, 'events'])->name('events');
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');

@@ -71,4 +71,29 @@ class HomeController extends Controller
     {
         return view('contact');
     }
+
+    public function campus()
+    {
+        $stats = [
+            'total_students' => \App\Models\User::whereHas('roles', fn($q) => $q->where('role_id', 4))->count(),
+            'total_courses' => \App\Models\Course::published()->count(),
+            'total_enrollments' => \App\Models\Enrollment::count(),
+        ];
+        return view('campus', compact('stats'));
+    }
+
+    public function faq()
+    {
+        return view('faq');
+    }
+
+    public function testimonials()
+    {
+        return view('testimonials');
+    }
+
+    public function events()
+    {
+        return view('events');
+    }
 }

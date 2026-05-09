@@ -33,6 +33,9 @@
                     <li><a href="{{ url('/') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-chevron-right text-xs mr-2"></i>Home</a></li>
                     <li><a href="{{ route('courses.index') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-chevron-right text-xs mr-2"></i>All Courses</a></li>
                     <li><a href="{{ route('about') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-chevron-right text-xs mr-2"></i>About Us</a></li>
+                    <li><a href="{{ route('campus') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-chevron-right text-xs mr-2"></i>Campus</a></li>
+                    <li><a href="{{ route('events') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-chevron-right text-xs mr-2"></i>Events</a></li>
+                    <li><a href="{{ route('faq') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-chevron-right text-xs mr-2"></i>FAQ</a></li>
                     <li><a href="{{ route('contact') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-chevron-right text-xs mr-2"></i>Contact</a></li>
                     @guest
                         <li><a href="{{ route('register') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-chevron-right text-xs mr-2"></i>Register</a></li>

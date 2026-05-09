@@ -39,6 +39,12 @@ if (auth()->check()) {
                 <a href="{{ route('about') }}" class="nav-link text-gray-700 hover:text-primary-600 font-medium {{ request()->routeIs('about') ? 'active text-primary-600' : '' }}">
                     About Us
                 </a>
+                <a href="{{ route('campus') }}" class="nav-link text-gray-700 hover:text-primary-600 font-medium {{ request()->routeIs('campus') ? 'active text-primary-600' : '' }}">
+                    <i class="fas fa-university mr-1"></i>Campus
+                </a>
+                <a href="{{ route('events') }}" class="nav-link text-gray-700 hover:text-primary-600 font-medium {{ request()->routeIs('events') ? 'active text-primary-600' : '' }}">
+                    <i class="fas fa-calendar-alt mr-1"></i>Events
+                </a>
                 <a href="{{ route('contact') }}" class="nav-link text-gray-700 hover:text-primary-600 font-medium {{ request()->routeIs('contact') ? 'active text-primary-600' : '' }}">
                     Contact
                 </a>
@@ -161,6 +167,12 @@ if (auth()->check()) {
             </a>
             <a href="{{ route('about') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 {{ request()->routeIs('about') ? 'text-primary-600 bg-primary-50' : '' }}">
                 About Us
+            </a>
+            <a href="{{ route('campus') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 {{ request()->routeIs('campus') ? 'text-primary-600 bg-primary-50' : '' }}">
+                <i class="fas fa-university mr-2 text-primary-600"></i> Campus
+            </a>
+            <a href="{{ route('events') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 {{ request()->routeIs('events') ? 'text-primary-600 bg-primary-50' : '' }}">
+                <i class="fas fa-calendar-alt mr-2 text-primary-600"></i> Events
             </a>
             <a href="{{ route('contact') }}" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 {{ request()->routeIs('contact') ? 'text-primary-600 bg-primary-50' : '' }}">
                 Contact
