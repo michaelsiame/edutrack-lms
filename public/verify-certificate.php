@@ -44,7 +44,7 @@ require_once __DIR__ . '/../src/templates/header.php';
         <div class="text-center mb-8">
             <div class="flex justify-center items-center space-x-4 mb-4">
                 <img src="<?= asset('images/logo.png') ?>" alt="Edutrack" class="h-16">
-                <img src="<?= asset('images/teveta-logo.svg') ?>" alt="TEVETA" class="h-16">
+                <img src="<?= asset('images/teveta-logo.png') ?>" alt="TEVETA" class="h-16">
             </div>
             <h1 class="text-3xl font-bold text-gray-900">Certificate Verification</h1>
             <p class="text-gray-600 mt-2">Verify the authenticity of Edutrack certificates</p>

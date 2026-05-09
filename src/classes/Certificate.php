@@ -234,7 +234,7 @@ class Certificate {
         $html = preg_replace('/<!--.*?-->/s', '', $html);
 
         $logoPath = PUBLIC_PATH . '/assets/images/logo.png';
-        $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.svg';
+        $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.png';
 
         $replacements = [
             '{{logo_path}}'        => file_exists($logoPath) ? $logoPath : '',

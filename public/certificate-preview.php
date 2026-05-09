@@ -180,9 +180,9 @@ try {
             <h2>Replacement Values</h2>
             <pre><code><?php
                 $logoPath = PUBLIC_PATH . '/assets/images/logo.png';
-                $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.svg';
+                $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo.png';
                 echo "logo.png exists: " . (file_exists($logoPath) ? 'YES' : 'NO') . " ({$logoPath})\n";
-                echo "teveta-logo.svg exists: " . (file_exists($tevetaLogoPath) ? 'YES' : 'NO') . " ({$tevetaLogoPath})\n";
+                echo "teveta-logo.png exists: " . (file_exists($tevetaLogoPath) ? 'YES' : 'NO') . " ({$tevetaLogoPath})\n";
                 echo "student_name: " . strtoupper($certificate->getStudentName()) . "\n";
                 echo "course_title: " . htmlspecialchars($certificate->getCourseTitle()) . "\n";
                 echo "completion_date: " . date('F j, Y', strtotime($certificate->getIssuedAt() ?? 'now')) . "\n";
