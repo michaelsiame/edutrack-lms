@@ -245,8 +245,11 @@ class Certificate {
             '{{completion_date}}'  => date('F j, Y', strtotime($this->data['issued_at'] ?? $this->data['issued_date'] ?? 'now')),
             '{{certificate_number}}' => $this->getCertificateNumber(),
             '{{verify_url}}'       => url('verify-certificate.php?code=' . $this->getVerificationCode()),
-            '{{director_name}}'    => 'Michael Siame',
-            '{{instructor_name}}'  => $this->getInstructorName() ?: '',
+            '{{director_name}}'        => 'Michael Siame',
+            '{{instructor_name}}'      => $this->getInstructorName() ?: '',
+            '{{director_signature}}'   => '',
+            '{{instructor_signature}}' => '',
+            '{{qr_code}}'              => '',
         ];
 
         $html = str_replace(array_keys($replacements), array_values($replacements), $html);
@@ -290,17 +293,35 @@ class Certificate {
         $tevetaExists = file_exists($tevetaLogoPath);
         error_log("[CERT-DEBUG] Certificate::generatePDF() — logo exists={$logoExists} path={$logoPath}, teveta exists={$tevetaExists} path={$tevetaLogoPath}");
         
+        // Optional signature / QR code images (empty string if not present)
+        $directorSigPath = PUBLIC_PATH . '/assets/images/signatures/director.png';
+        $instructorSigPath = PUBLIC_PATH . '/assets/images/signatures/instructor.png';
+        $qrPath = PUBLIC_PATH . '/assets/images/qr-codes/cert-' . $this->getCertificateNumber() . '.png';
+
+        $directorSig = file_exists($directorSigPath)
+            ? '<img src="' . $directorSigPath . '" style="max-height:36px; display:block; margin:0 auto 2px;">'
+            : '';
+        $instructorSig = file_exists($instructorSigPath)
+            ? '<img src="' . $instructorSigPath . '" style="max-height:36px; display:block; margin:0 auto 2px;">'
+            : '';
+        $qrImg = file_exists($qrPath)
+            ? '<img src="' . $qrPath . '" style="width:40px; height:40px; vertical-align:middle; margin-right:4px;">'
+            : '';
+
         $replacements = [
-            '{{logo_path}}'        => $logoExists ? $logoPath : '',
-            '{{teveta_logo_path}}' => $tevetaExists ? $tevetaLogoPath : '',
-            '{{teveta_code}}'      => env('TEVETA_INSTITUTION_CODE', 'TVA/2064'),
-            '{{student_name}}'     => strtoupper($this->getStudentName()),
-            '{{course_title}}'     => htmlspecialchars($this->getCourseTitle()),
-            '{{completion_date}}'  => date('F j, Y', strtotime($this->data['issued_at'] ?? $this->data['issued_date'] ?? 'now')),
-            '{{certificate_number}}' => $this->getCertificateNumber(),
-            '{{verify_url}}'       => url('verify-certificate.php?code=' . $this->getVerificationCode()),
-            '{{director_name}}'    => 'Michael Siame',
-            '{{instructor_name}}'  => $this->getInstructorName() ?: '',
+            '{{logo_path}}'            => $logoExists ? $logoPath : '',
+            '{{teveta_logo_path}}'     => $tevetaExists ? $tevetaLogoPath : '',
+            '{{teveta_code}}'          => env('TEVETA_INSTITUTION_CODE', 'TVA/2064'),
+            '{{student_name}}'         => strtoupper($this->getStudentName()),
+            '{{course_title}}'         => htmlspecialchars($this->getCourseTitle()),
+            '{{completion_date}}'      => date('F j, Y', strtotime($this->data['issued_at'] ?? $this->data['issued_date'] ?? 'now')),
+            '{{certificate_number}}'   => $this->getCertificateNumber(),
+            '{{verify_url}}'           => url('verify-certificate.php?code=' . $this->getVerificationCode()),
+            '{{director_name}}'        => 'Michael Siame',
+            '{{instructor_name}}'      => $this->getInstructorName() ?: '',
+            '{{director_signature}}'   => $directorSig,
+            '{{instructor_signature}}' => $instructorSig,
+            '{{qr_code}}'              => $qrImg,
         ];
         
         $html = str_replace(array_keys($replacements), array_values($replacements), $html);
