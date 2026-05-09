@@ -246,7 +246,7 @@ class Certificate {
             '{{certificate_number}}' => $this->getCertificateNumber(),
             '{{verify_url}}'       => url('verify-certificate.php?code=' . $this->getVerificationCode()),
             '{{director_name}}'    => 'Michael Siame',
-            '{{instructor_name}}'  => $this->getInstructorName() ?: 'Course Instructor',
+            '{{instructor_name}}'  => $this->getInstructorName() ?: '',
         ];
 
         $html = str_replace(array_keys($replacements), array_values($replacements), $html);
@@ -300,7 +300,7 @@ class Certificate {
             '{{certificate_number}}' => $this->getCertificateNumber(),
             '{{verify_url}}'       => url('verify-certificate.php?code=' . $this->getVerificationCode()),
             '{{director_name}}'    => 'Michael Siame',
-            '{{instructor_name}}'  => $this->getInstructorName() ?: 'Course Instructor',
+            '{{instructor_name}}'  => $this->getInstructorName() ?: '',
         ];
         
         $html = str_replace(array_keys($replacements), array_values($replacements), $html);
