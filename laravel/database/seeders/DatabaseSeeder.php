@@ -21,6 +21,10 @@ class DatabaseSeeder extends Seeder
             PaymentSeeder::class,
             CertificateSeeder::class,
             SystemSettingSeeder::class,
+            TestimonialSeeder::class,
+            EventSeeder::class,
+            HeroSlideSeeder::class,
+            InstitutionPhotoSeeder::class,
             // Uncomment below to migrate from legacy database:
             // MigrateLegacyData::class,
         ]);

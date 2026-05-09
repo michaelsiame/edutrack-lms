@@ -266,6 +266,60 @@
     </div>
 </section>
 
+<!-- Upcoming Events Preview -->
+@if($upcomingEvents->count() > 0)
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Upcoming Events</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Stay connected with workshops, graduations, and community events
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            @foreach($upcomingEvents as $event)
+            <div class="group bg-gray-50 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="relative h-48 overflow-hidden">
+                    @if($event->cover_image)
+                        <img src="{{ asset($event->cover_image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    @else
+                        <div class="w-full h-full bg-primary-100 flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-4xl text-primary-400"></i>
+                        </div>
+                    @endif
+                    <div class="absolute top-3 left-3">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-600 text-white">
+                            {{ $event->category }}
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-sm text-gray-500 mb-2">
+                        <i class="far fa-calendar-alt mr-2 text-primary-500"></i>
+                        {{ $event->formatted_date }}
+                        @if($event->location)
+                            <span class="mx-2">&bull;</span>
+                            <i class="fas fa-map-marker-alt mr-1 text-primary-500"></i>
+                            {{ $event->location }}
+                        @endif
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{{ $event->title }}</h3>
+                    <p class="text-gray-600 text-sm line-clamp-2">{{ $event->excerpt ?? Str::limit($event->description, 120) }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        <div class="text-center mt-10">
+            <a href="{{ route('events') }}" class="inline-flex items-center px-6 py-3 border border-primary-200 text-primary-700 font-medium rounded-lg hover:bg-primary-50 transition duration-200">
+                All Events <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+@endif
+
 <!-- Next Intake Banner -->
 <section class="py-6 bg-secondary-500 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -324,54 +378,71 @@
 
         <!-- Testimonial Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            @php
-            $testimonials = [
-                [
-                    'name' => 'Chileshe Banda',
-                    'course' => 'Web Development',
-                    'year' => '2024',
-                    'text' => 'Edutrack changed my life. I went from being unemployed to working as a junior developer at a tech startup in Lusaka. The practical skills I gained were exactly what employers were looking for.',
-                    'rating' => 5,
-                ],
-                [
-                    'name' => 'Mutale Mumba',
-                    'course' => 'Digital Marketing',
-                    'year' => '2023',
-                    'text' => 'The digital marketing course gave me the confidence to start my own agency. Within 6 months of graduating, I had 5 clients and was earning more than my previous job. TEVETA certification really helped.',
-                    'rating' => 5,
-                ],
-                [
-                    'name' => 'Bwalya Chanda',
-                    'course' => 'Data Science',
-                    'year' => '2024',
-                    'text' => 'The instructors at Edutrack are world-class. They don\'t just teach theory - they make sure you can actually build things. The career support after graduation was exceptional.',
-                    'rating' => 5,
-                ],
-            ];
-            @endphp
-
-            @foreach($testimonials as $t)
+            @forelse($featuredTestimonials as $t)
             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 animate-slide-up">
                 <div class="flex items-center mb-4">
                     <i class="fas fa-quote-left text-secondary-500 text-2xl mr-3"></i>
                     <div class="flex text-yellow-400">
-                        @for($i = 0; $i < $t['rating']; $i++)
+                        @for($i = 0; $i < $t->rating; $i++)
                             <i class="fas fa-star"></i>
                         @endfor
                     </div>
                 </div>
-                <p class="text-gray-300 mb-6 leading-relaxed">"{{ $t['text'] }}"</p>
+                <p class="text-gray-300 mb-6 leading-relaxed">"{{ $t->testimonial_text }}"</p>
                 <div class="flex items-center">
-                    <div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-sm mr-3">
-                        {{ strtoupper(substr($t['name'], 0, 1)) }}
-                    </div>
+                    @if($t->avatar_url)
+                        <img src="{{ asset($t->avatar_url) }}" alt="{{ $t->name }}" class="w-10 h-10 rounded-full object-cover mr-3">
+                    @else
+                        <div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-sm mr-3">
+                            {{ strtoupper(substr($t->name, 0, 1)) }}
+                        </div>
+                    @endif
                     <div>
-                        <div class="font-semibold text-white">{{ $t['name'] }}</div>
-                        <div class="text-sm text-gray-400">{{ $t['course'] }} - Class of {{ $t['year'] }}</div>
+                        <div class="font-semibold text-white">{{ $t->name }}</div>
+                        <div class="text-sm text-gray-400">{{ $t->course_taken }} - Class of {{ $t->graduation_year }}</div>
+                        @if($t->job_title)
+                            <div class="text-xs text-gray-500">{{ $t->job_title }}{{ $t->company ? ' at ' . $t->company : '' }}</div>
+                        @endif
                     </div>
                 </div>
             </div>
-            @endforeach
+            @empty
+                @php
+                $fallbackTestimonials = [
+                    ['name' => 'Chileshe Banda', 'course' => 'Web Development', 'year' => '2024', 'text' => 'Edutrack changed my life. I went from being unemployed to working as a junior developer at a tech startup in Lusaka.', 'rating' => 5],
+                    ['name' => 'Mutale Mumba', 'course' => 'Digital Marketing', 'year' => '2023', 'text' => 'The digital marketing course gave me the confidence to start my own agency. Within 6 months of graduating, I had 5 clients.', 'rating' => 5],
+                    ['name' => 'Bwalya Chanda', 'course' => 'Data Science', 'year' => '2024', 'text' => 'The instructors at Edutrack are world-class. They don\'t just teach theory - they make sure you can actually build things.', 'rating' => 5],
+                ];
+                @endphp
+                @foreach($fallbackTestimonials as $t)
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 animate-slide-up">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-quote-left text-secondary-500 text-2xl mr-3"></i>
+                        <div class="flex text-yellow-400">
+                            @for($i = 0; $i < $t['rating']; $i++)
+                                <i class="fas fa-star"></i>
+                            @endfor
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">"{{ $t['text'] }}"</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-sm mr-3">
+                            {{ strtoupper(substr($t['name'], 0, 1)) }}
+                        </div>
+                        <div>
+                            <div class="font-semibold text-white">{{ $t['name'] }}</div>
+                            <div class="text-sm text-gray-400">{{ $t['course'] }} - Class of {{ $t['year'] }}</div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            @endforelse
+        </div>
+
+        <div class="text-center mt-12">
+            <a href="{{ route('testimonials') }}" class="inline-flex items-center px-6 py-3 border border-white/30 text-white font-medium rounded-lg hover:bg-white/10 transition duration-200">
+                View All Stories <i class="fas fa-arrow-right ml-2"></i>
+            </a>
         </div>
     </div>
 </section>

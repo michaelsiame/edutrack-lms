@@ -84,9 +84,10 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::resource('courses', App\Http\Controllers\Admin\CourseController::class);
-    Route::resource('users', App\Http\Controllers\Admin\UserController::class);
-    Route::resource('payments', App\Http\Controllers\Admin\PaymentController::class);
+    // TODO: Create these controllers
+    // Route::resource('courses', App\Http\Controllers\Admin\CourseController::class);
+    // Route::resource('users', App\Http\Controllers\Admin\UserController::class);
+    // Route::resource('payments', App\Http\Controllers\Admin\PaymentController::class);
     Route::get('/reports', [AdminDashboardController::class, 'reports'])->name('reports');
     Route::get('/settings', [AdminDashboardController::class, 'settings'])->name('settings');
 });
@@ -99,10 +100,11 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 
 Route::prefix('instructor')->middleware(['auth', 'instructor'])->name('instructor.')->group(function () {
     Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
-    Route::resource('courses', App\Http\Controllers\Instructor\CourseController::class);
-    Route::resource('lessons', App\Http\Controllers\Instructor\LessonController::class);
-    Route::resource('quizzes', App\Http\Controllers\Instructor\QuizController::class);
-    Route::resource('assignments', App\Http\Controllers\Instructor\AssignmentController::class);
+    // TODO: Create these controllers
+    // Route::resource('courses', App\Http\Controllers\Instructor\CourseController::class);
+    // Route::resource('lessons', App\Http\Controllers\Instructor\LessonController::class);
+    // Route::resource('quizzes', App\Http\Controllers\Instructor\QuizController::class);
+    // Route::resource('assignments', App\Http\Controllers\Instructor\AssignmentController::class);
     Route::get('/submissions', [InstructorDashboardController::class, 'submissions'])->name('submissions');
     Route::get('/analytics', [InstructorDashboardController::class, 'analytics'])->name('analytics');
 });

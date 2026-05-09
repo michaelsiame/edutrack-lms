@@ -82,27 +82,31 @@
         </div>
 
         @php
-        $photos = [
-            ['url' => 'assets/images/group-campus-front-01.jpg', 'title' => 'Students at Campus Front'],
-            ['url' => 'assets/images/students-outdoor-class-01.jpg', 'title' => 'Outdoor Learning Session'],
-            ['url' => 'assets/images/group-campus-front-02.jpg', 'title' => 'Student Group with Flag'],
-            ['url' => 'assets/images/students-outdoor-class-03.jpg', 'title' => 'Practical Training'],
-            ['url' => 'assets/images/students-banner-portrait-01.jpg', 'title' => 'Student Success Stories'],
-            ['url' => 'assets/images/students-outdoor-class-05.jpg', 'title' => 'Instructor-led Session'],
-            ['url' => 'assets/images/group-campus-front-03.jpg', 'title' => 'Campus Activities'],
-            ['url' => 'assets/images/students-banner-portrait-04.jpg', 'title' => 'Graduate Spotlight'],
-            ['url' => 'assets/images/students-outdoor-class-02.jpg', 'title' => 'Collaborative Learning'],
+        $fallbackPhotos = [
+            ['image_path' => 'assets/images/group-campus-front-01.jpg', 'title' => 'Students at Campus Front'],
+            ['image_path' => 'assets/images/students-outdoor-class-01.jpg', 'title' => 'Outdoor Learning Session'],
+            ['image_path' => 'assets/images/group-campus-front-02.jpg', 'title' => 'Student Group with Flag'],
+            ['image_path' => 'assets/images/students-outdoor-class-03.jpg', 'title' => 'Practical Training'],
+            ['image_path' => 'assets/images/students-banner-portrait-01.jpg', 'title' => 'Student Success Stories'],
+            ['image_path' => 'assets/images/students-outdoor-class-05.jpg', 'title' => 'Instructor-led Session'],
+            ['image_path' => 'assets/images/group-campus-front-03.jpg', 'title' => 'Campus Activities'],
+            ['image_path' => 'assets/images/students-banner-portrait-04.jpg', 'title' => 'Graduate Spotlight'],
+            ['image_path' => 'assets/images/students-outdoor-class-02.jpg', 'title' => 'Collaborative Learning'],
         ];
+        $displayPhotos = $photos->count() > 0 ? $photos : collect($fallbackPhotos);
         @endphp
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            @foreach($photos as $photo)
+            @foreach($displayPhotos as $photo)
             <div class="group relative overflow-hidden rounded-xl shadow-lg aspect-[4/3]">
-                <img src="{{ asset($photo['url']) }}" alt="{{ $photo['title'] }}"
+                <img src="{{ asset($photo->image_path ?? $photo['image_path']) }}" alt="{{ $photo->title ?? $photo['title'] }}"
                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div class="absolute bottom-4 left-4 right-4">
-                        <h3 class="text-white font-semibold">{{ $photo['title'] }}</h3>
+                        <h3 class="text-white font-semibold">{{ $photo->title ?? $photo['title'] }}</h3>
+                        @if(isset($photo->description) && $photo->description)
+                            <p class="text-white/80 text-sm">{{ $photo->description }}</p>
+                        @endif
                     </div>
                 </div>
             </div>

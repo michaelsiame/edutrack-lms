@@ -42,7 +42,50 @@
     </div>
 </section>
 
-<!-- Testimonials Grid -->
+<!-- Featured Testimonials -->
+@if($featuredTestimonials->count() > 0)
+<section class="py-16 bg-gradient-to-br from-gray-900 via-gray-800 to-primary-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Featured Stories</h2>
+            <p class="text-gray-300">Outstanding graduates who went above and beyond</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            @foreach($featuredTestimonials as $t)
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:bg-white/15 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-quote-left text-secondary-500 text-2xl mr-3"></i>
+                    <div class="flex text-yellow-400">
+                        @for($i = 0; $i < $t->rating; $i++)
+                            <i class="fas fa-star"></i>
+                        @endfor
+                    </div>
+                </div>
+                <p class="text-gray-200 mb-6 leading-relaxed italic">"{{ $t->testimonial_text }}"</p>
+                <div class="flex items-center">
+                    @if($t->avatar_url)
+                        <img src="{{ asset($t->avatar_url) }}" alt="{{ $t->name }}" class="w-12 h-12 rounded-full object-cover mr-4">
+                    @else
+                        <div class="w-12 h-12 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-lg mr-4">
+                            {{ strtoupper(substr($t->name, 0, 1)) }}
+                        </div>
+                    @endif
+                    <div>
+                        <div class="font-semibold text-white">{{ $t->name }}</div>
+                        <div class="text-sm text-gray-400">{{ $t->course_taken }} - Class of {{ $t->graduation_year }}</div>
+                        @if($t->job_title)
+                            <div class="text-xs text-secondary-400">{{ $t->job_title }}{{ $t->company ? ' at ' . $t->company : '' }}</div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+<!-- All Testimonials Grid -->
 <section class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
@@ -52,40 +95,48 @@
             </p>
         </div>
 
-        @php
-        $testimonials = [
-            ['name' => 'Chileshe Banda', 'course' => 'Web Development', 'year' => '2024', 'rating' => 5, 'text' => 'Edutrack changed my life. I went from being unemployed to working as a junior developer at a tech startup in Lusaka. The practical skills I gained were exactly what employers were looking for.'],
-            ['name' => 'Mutale Mumba', 'course' => 'Digital Marketing', 'year' => '2023', 'rating' => 5, 'text' => 'The digital marketing course gave me the confidence to start my own agency. Within 6 months of graduating, I had 5 clients and was earning more than my previous job. TEVETA certification really helped.'],
-            ['name' => 'Bwalya Chanda', 'course' => 'Data Science', 'year' => '2024', 'rating' => 5, 'text' => 'The instructors at Edutrack are world-class. They don\'t just teach theory - they make sure you can actually build things. The career support after graduation was exceptional.'],
-            ['name' => 'Micheal Siame', 'course' => 'Cybersecurity', 'year' => '2024', 'rating' => 5, 'text' => 'I always wanted to work in IT security but didn\'t know where to start. The Cybersecurity program at Edutrack gave me hands-on experience with real tools and scenarios. Now I work as a security analyst.'],
-            ['name' => 'Grace Lungu', 'course' => 'Microsoft Office Specialist', 'year' => '2023', 'rating' => 4, 'text' => 'As an administrative assistant, improving my Office skills was essential. The course was practical and immediately applicable to my job. I got a promotion within 3 months of completing the program.'],
-            ['name' => 'John Phiri', 'course' => 'Computer Hardware & Networking', 'year' => '2024', 'rating' => 5, 'text' => 'The networking course was comprehensive and practical. We worked with real Cisco equipment and configured actual networks. The certification helped me land a job at an ISP in Livingstone.'],
-        ];
-        @endphp
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @foreach($testimonials as $t)
-            <div class="bg-white rounded-xl shadow-md p-8 hover:shadow-xl transition-all duration-300 animate-slide-up">
-                <div class="flex items-center mb-4">
-                    <div class="flex text-yellow-400">
-                        @for($i = 0; $i < $t['rating']; $i++)
-                            <i class="fas fa-star"></i>
-                        @endfor
+        @if($testimonials->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @foreach($testimonials as $t)
+                <div class="bg-white rounded-xl shadow-md p-8 hover:shadow-xl transition-all duration-300 animate-slide-up">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            @for($i = 0; $i < $t->rating; $i++)
+                                <i class="fas fa-star"></i>
+                            @endfor
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-6 leading-relaxed">"{{ $t->testimonial_text }}"</p>
+                    <div class="flex items-center pt-4 border-t border-gray-100">
+                        @if($t->avatar_url)
+                            <img src="{{ asset($t->avatar_url) }}" alt="{{ $t->name }}" class="w-12 h-12 rounded-full object-cover mr-4">
+                        @else
+                            <div class="w-12 h-12 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-lg mr-4">
+                                {{ strtoupper(substr($t->name, 0, 1)) }}
+                            </div>
+                        @endif
+                        <div>
+                            <div class="font-semibold text-gray-900">{{ $t->name }}</div>
+                            <div class="text-sm text-gray-500">{{ $t->course_taken }} - Class of {{ $t->graduation_year }}</div>
+                            @if($t->job_title)
+                                <div class="text-xs text-primary-600">{{ $t->job_title }}{{ $t->company ? ' at ' . $t->company : '' }}</div>
+                            @endif
+                        </div>
                     </div>
                 </div>
-                <p class="text-gray-600 mb-6 leading-relaxed">"{{ $t['text'] }}"</p>
-                <div class="flex items-center pt-4 border-t border-gray-100">
-                    <div class="w-12 h-12 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-lg mr-4">
-                        {{ strtoupper(substr($t['name'], 0, 1)) }}
-                    </div>
-                    <div>
-                        <div class="font-semibold text-gray-900">{{ $t['name'] }}</div>
-                        <div class="text-sm text-gray-500">{{ $t['course'] }} - Class of {{ $t['year'] }}</div>
-                    </div>
-                </div>
+                @endforeach
             </div>
-            @endforeach
-        </div>
+
+            <div class="mt-12">
+                {{ $testimonials->links() }}
+            </div>
+        @else
+            <div class="text-center py-16">
+                <i class="fas fa-comment-dots text-5xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">No testimonials yet</h3>
+                <p class="text-gray-500">Be the first to share your success story after completing a course.</p>
+            </div>
+        @endif
     </div>
 </section>
 

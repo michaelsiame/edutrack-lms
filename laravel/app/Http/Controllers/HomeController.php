@@ -8,6 +8,9 @@ use App\Models\Enrollment;
 use App\Models\User;
 use App\Models\Instructor;
 use App\Models\CourseReview;
+use App\Models\Testimonial;
+use App\Models\Event;
+use App\Models\HeroSlide;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -59,12 +62,30 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
 
-        return view('home', compact('stats', 'featuredByCategory', 'topFeatured'));
+        // Dynamic data for sections
+        $featuredTestimonials = Testimonial::approved()->featured()->latest()->limit(6)->get();
+        $upcomingEvents = Event::upcoming()->featured()->limit(3)->get();
+        $heroSlides = HeroSlide::active()->limit(3)->get();
+
+        return view('home', compact(
+            'stats',
+            'featuredByCategory',
+            'topFeatured',
+            'featuredTestimonials',
+            'upcomingEvents',
+            'heroSlides'
+        ));
     }
 
     public function about()
     {
-        return view('about');
+        $stats = [
+            'total_students' => User::whereHas('roles', fn($q) => $q->where('role_id', 4))->where('status', 'active')->count(),
+            'total_courses' => Course::published()->count(),
+            'total_enrollments' => Enrollment::count(),
+            'avg_rating' => CourseReview::avg('rating') ?? 0,
+        ];
+        return view('about', compact('stats'));
     }
 
     public function contact()
@@ -75,11 +96,12 @@ class HomeController extends Controller
     public function campus()
     {
         $stats = [
-            'total_students' => \App\Models\User::whereHas('roles', fn($q) => $q->where('role_id', 4))->count(),
-            'total_courses' => \App\Models\Course::published()->count(),
-            'total_enrollments' => \App\Models\Enrollment::count(),
+            'total_students' => User::whereHas('roles', fn($q) => $q->where('role_id', 4))->count(),
+            'total_courses' => Course::published()->count(),
+            'total_enrollments' => Enrollment::count(),
         ];
-        return view('campus', compact('stats'));
+        $photos = \App\Models\InstitutionPhoto::active()->get();
+        return view('campus', compact('stats', 'photos'));
     }
 
     public function faq()
@@ -89,11 +111,15 @@ class HomeController extends Controller
 
     public function testimonials()
     {
-        return view('testimonials');
+        $testimonials = Testimonial::approved()->latest()->paginate(12);
+        $featuredTestimonials = Testimonial::approved()->featured()->limit(3)->get();
+        return view('testimonials', compact('testimonials', 'featuredTestimonials'));
     }
 
     public function events()
     {
-        return view('events');
+        $upcomingEvents = Event::upcoming()->latest('event_date')->paginate(9);
+        $pastEvents = Event::where('event_date', '<', now())->latest('event_date')->limit(6)->get();
+        return view('events', compact('upcomingEvents', 'pastEvents'));
     }
 }
