@@ -79,14 +79,22 @@ class CertificateService
     {
         $certificate->load(['user', 'course', 'enrollment']);
 
+        $issuedDate = $certificate->issued_date ?? now();
+        $graduationDate = $certificate->graduation_ceremony_date ?? $issuedDate;
+
         return [
             'certificate' => $certificate,
             'student_name' => $certificate->user?->full_name ?? 'Unknown',
             'course_title' => $certificate->course?->title ?? 'Unknown Course',
             'certificate_number' => $certificate->certificate_number,
-            'issued_date' => $certificate->issued_date?->format('F d, Y') ?? now()->format('F d, Y'),
+            'issued_date' => $issuedDate->format('F d, Y'),
             'verification_code' => $certificate->verification_code,
             'final_score' => $certificate->final_score,
+            'classification' => $certificate->classification ?? 'Pass',
+            'graduation_day' => $graduationDate->format('j'),
+            'graduation_month' => $graduationDate->format('F'),
+            'graduation_year' => $graduationDate->format('Y'),
+            'student_number' => 'EDU-' . str_pad($certificate->user_id, 6, '0', STR_PAD_LEFT),
         ];
     }
 }

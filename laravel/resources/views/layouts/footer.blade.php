@@ -48,36 +48,59 @@
             <!-- Popular Courses -->
             <div>
                 <h3 class="text-white text-lg font-bold mb-4">Popular Courses</h3>
+                @php
+                $footerCourses = \App\Models\Course::published()->where('is_featured', true)->orWhere('enrollment_count', '>', 0)->orderByDesc('enrollment_count')->limit(5)->get();
+                @endphp
+                @if($footerCourses->count() > 0)
                 <ul class="space-y-2">
-                    <li><a href="{{ route('courses.index') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-code text-xs mr-2"></i>Web Development</a></li>
-                    <li><a href="{{ route('courses.index') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-bullhorn text-xs mr-2"></i>Digital Marketing</a></li>
-                    <li><a href="{{ route('courses.index') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-chart-line text-xs mr-2"></i>Data Science</a></li>
-                    <li><a href="{{ route('courses.index') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-paint-brush text-xs mr-2"></i>Graphic Design</a></li>
-                    <li><a href="{{ route('courses.index') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-file-excel text-xs mr-2"></i>Microsoft Office</a></li>
+                    @foreach($footerCourses as $fc)
+                    <li><a href="{{ route('courses.show', $fc) }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-graduation-cap text-xs mr-2"></i>{{ $fc->title }}</a></li>
+                    @endforeach
                 </ul>
+                @else
+                <ul class="space-y-2">
+                    <li><a href="{{ route('courses.index') }}" class="text-gray-400 hover:text-secondary-500 transition text-sm"><i class="fas fa-chevron-right text-xs mr-2"></i>Browse All Courses</a></li>
+                </ul>
+                @endif
             </div>
 
             <!-- Contact Info -->
             <div>
                 <h3 class="text-white text-lg font-bold mb-4">Contact Us</h3>
+                @php
+                $footerAddress = \App\Models\SystemSetting::get('site_address', 'Kalomo, Zambia');
+                $footerPhone = \App\Models\SystemSetting::get('site_phone');
+                @endphp
                 <ul class="space-y-3">
                     <li class="flex items-start">
                         <i class="fas fa-map-marker-alt text-secondary-500 mt-1 mr-3"></i>
-                        <span class="text-sm text-gray-400">Kalomo, Zambia</span>
+                        <span class="text-sm text-gray-400">{{ $footerAddress }}</span>
                     </li>
+                    @if($footerPhone)
                     <li class="flex items-start">
                         <i class="fas fa-phone text-secondary-500 mt-1 mr-3"></i>
-                        <a href="tel:+260770666937" class="text-sm text-gray-400 hover:text-secondary-500 transition">+260 770 666 937</a>
+                        <a href="tel:{{ preg_replace('/\s+/', '', $footerPhone) }}" class="text-sm text-gray-400 hover:text-secondary-500 transition">{{ $footerPhone }}</a>
                     </li>
+                    @endif
                     <li class="flex items-start">
                         <i class="fas fa-envelope text-secondary-500 mt-1 mr-3"></i>
-                        <a href="mailto:edutrackzambia@gmail.com" class="text-sm text-gray-400 hover:text-secondary-500 transition">edutrackzambia@gmail.com</a>
+                        @php $siteEmail = \App\Models\SystemSetting::get('site_email'); @endphp
+                        @if($siteEmail)
+                        <a href="mailto:{{ $siteEmail }}" class="text-sm text-gray-400 hover:text-secondary-500 transition">{{ $siteEmail }}</a>
+                        @else
+                        <span class="text-sm text-gray-500">Email coming soon</span>
+                        @endif
                     </li>
                     <li class="flex items-start">
                         <i class="fas fa-certificate text-secondary-500 mt-1 mr-3"></i>
                         <div class="text-sm">
                             <div class="text-gray-400">TEVETA Registration</div>
-                            <div class="text-white font-semibold">TEVETA/CTR/2024/001</div>
+                            @php $tevetaReg = \App\Models\SystemSetting::get('teveta_registration_number'); @endphp
+                            @if($tevetaReg)
+                            <div class="text-white font-semibold">{{ $tevetaReg }}</div>
+                            @else
+                            <div class="text-gray-500">Registration info coming soon</div>
+                            @endif
                         </div>
                     </li>
                 </ul>
@@ -106,7 +129,10 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="text-sm text-gray-400 text-center md:text-left">
                     <p>&copy; {{ date('Y') }} Edutrack Computer Training College. All rights reserved.</p>
-                    <p class="text-xs mt-1">TEVETA Registered Institution - TEVETA/CTR/2024/001</p>
+                    @php $tevetaRegFooter = \App\Models\SystemSetting::get('teveta_registration_number'); @endphp
+                    @if($tevetaRegFooter)
+                    <p class="text-xs mt-1">TEVETA Registered Institution - {{ $tevetaRegFooter }}</p>
+                    @endif
                 </div>
                 <div class="flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-2 text-sm">
                     <a href="#" class="text-gray-400 hover:text-secondary-500 transition">Privacy Policy</a>

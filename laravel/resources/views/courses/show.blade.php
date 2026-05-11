@@ -7,7 +7,7 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="relative h-64 md:h-96">
-                <img src="{{ $course->thumbnail_url ?? 'https://via.placeholder.com/1200x400' }}" alt="{{ $course->title }}" class="w-full h-full object-cover">
+                <img src="{{ $course->thumbnail_url ?? asset('assets/images/course-placeholder.jpg') }}" alt="{{ $course->title }}" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 <div class="absolute bottom-0 left-0 right-0 p-6">
                     <span class="inline-block px-3 py-1 text-xs font-semibold text-white bg-indigo-600 rounded-full mb-2">{{ $course->level }}</span>

@@ -30,7 +30,12 @@ class DashboardController extends Controller
             ->latest()
             ->get();
 
-        return view('student.progress', compact('enrollments'));
+        $totalCourses = $enrollments->count();
+        $completedCourses = $enrollments->where('enrollment_status', 'completed')->count();
+        $inProgressCourses = $enrollments->where('enrollment_status', 'active')->count();
+        $totalCertificates = auth()->user()->certificates()->count();
+
+        return view('student.progress', compact('enrollments', 'totalCourses', 'completedCourses', 'inProgressCourses', 'totalCertificates'));
     }
 
     public function payments()
@@ -40,7 +45,19 @@ class DashboardController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('student.payments', compact('payments'));
+        $totalPaid = auth()->user()->payments()
+            ->where('payment_status', 'Completed')
+            ->sum('amount');
+
+        $totalPending = auth()->user()->payments()
+            ->where('payment_status', 'Pending')
+            ->sum('amount');
+
+        $activeEnrollments = auth()->user()->enrollments()
+            ->where('enrollment_status', 'active')
+            ->count();
+
+        return view('student.payments', compact('payments', 'totalPaid', 'totalPending', 'activeEnrollments'));
     }
 
     public function certificates()

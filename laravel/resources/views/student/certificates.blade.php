@@ -1,6 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', 'My Certificates - Edutrack LMS')
+@section('page_title', 'My Certificates')
 
 @section('content')
 <div class="container mx-auto px-4 py-6">

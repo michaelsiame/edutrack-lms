@@ -1,68 +1,113 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Instructor Dashboard - Edutrack LMS')
+@section('page_title', 'Instructor Dashboard')
 
 @section('content')
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Instructor Dashboard</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <dt class="text-sm font-medium text-gray-500 truncate">My Courses</dt>
-                    <dd class="text-2xl font-semibold text-gray-900">{{ $stats['total_courses'] }}</dd>
-                </div>
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+    <div class="stat-card bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700 shadow-sm">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">My Courses</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ $stats['total_courses'] }}</p>
             </div>
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <dt class="text-sm font-medium text-gray-500 truncate">Total Students</dt>
-                    <dd class="text-2xl font-semibold text-gray-900">{{ $stats['total_students'] }}</dd>
-                </div>
-            </div>
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <dt class="text-sm font-medium text-gray-500 truncate">Rating</dt>
-                    <dd class="text-2xl font-semibold text-gray-900">{{ number_format($stats['average_rating'], 1) }}/5</dd>
-                </div>
+            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                <i class="fas fa-book text-blue-600 dark:text-blue-400 text-lg"></i>
             </div>
         </div>
+    </div>
 
-        <div class="bg-white shadow rounded-lg">
-            <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">My Courses</h3>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead>
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Students</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse($courses as $course)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $course->title }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $course->enrollments_count }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $course->status === 'published' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                            {{ ucfirst($course->status) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">
-                                        <a href="#" class="hover:text-indigo-900">Manage</a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr><td colspan="4" class="px-6 py-4 text-sm text-gray-500 text-center">No courses yet</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+    <div class="stat-card bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700 shadow-sm">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Students</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ $stats['total_students'] }}</p>
+            </div>
+            <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
+                <i class="fas fa-users text-emerald-600 dark:text-emerald-400 text-lg"></i>
             </div>
         </div>
+    </div>
+
+    <div class="stat-card bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700 shadow-sm">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Rating</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ number_format($stats['average_rating'], 1) }}<span class="text-sm text-gray-400 font-normal">/5</span></p>
+            </div>
+            <div class="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
+                <i class="fas fa-star text-amber-600 dark:text-amber-400 text-lg"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- My Courses -->
+<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+        <h3 class="text-base font-semibold text-gray-800 dark:text-white">
+            <i class="fas fa-chalkboard-teacher text-primary-500 mr-2"></i>My Courses
+        </h3>
+        <a href="#" class="inline-flex items-center px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">
+            <i class="fas fa-plus mr-1.5"></i> New Course
+        </a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="dashboard-table">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Students</th>
+                    <th>Status</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($courses as $course)
+                    <tr>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400">
+                                    <i class="fas fa-laptop-code"></i>
+                                </div>
+                                <span class="font-medium text-gray-900 dark:text-white">{{ $course->title }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="inline-flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+                                <i class="fas fa-users text-xs"></i> {{ $course->enrollments_count }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $course->status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
+                                {{ ucfirst($course->status) }}
+                            </span>
+                        </td>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <button class="p-1.5 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Edit">
+                                    <i class="fas fa-pen text-sm"></i>
+                                </button>
+                                <button class="p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="View">
+                                    <i class="fas fa-eye text-sm"></i>
+                                </button>
+                                <button class="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Delete">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="text-center py-10 text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-book-open text-3xl mb-3 text-gray-300 dark:text-gray-600"></i>
+                            <p class="text-sm">No courses yet. Create your first course to get started!</p>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection

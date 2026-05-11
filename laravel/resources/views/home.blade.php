@@ -6,38 +6,44 @@
 @section('content')
 
 <!-- Hero Section -->
-<section class="relative bg-gradient-to-br from-primary-600 via-blue-800 to-purple-900 text-white overflow-hidden">
-    <div class="absolute inset-0 bg-black opacity-40"></div>
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+<section class="relative text-white overflow-hidden" style="min-height: 600px;">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0">
+        <img src="{{ asset('assets/images/hero-bg-1.jpg') }}" alt="Edutrack Campus" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-br from-black/80 via-primary-900/90 to-black/85"></div>
+        <div class="absolute inset-0 bg-black/30"></div>
+    </div>
+    <!-- Decorative pattern overlay -->
+    <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;"></div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div class="text-center">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+        <div class="text-center bg-black/20 backdrop-blur-sm rounded-3xl p-6 md:p-10">
             <div class="mb-6 animate-fade-in">
-                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-yellow-500 text-gray-900 shadow-lg">
+                <span class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold bg-yellow-500 text-gray-900 shadow-lg border-2 border-yellow-400">
                     <i class="fas fa-certificate mr-2"></i>
                     TEVETA Registered Institution
                 </span>
             </div>
-            <h1 class="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fade-in leading-tight">
                 Transform Your Future with
-                <span class="block text-yellow-400 mt-2">Edutrack Computer Training College</span>
+                <span class="block text-yellow-400 mt-2 drop-shadow-lg">Edutrack Computer Training College</span>
             </h1>
-            <p class="text-xl md:text-2xl text-primary-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p class="text-lg md:text-xl lg:text-2xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
                 Zambia's premier TEVETA-certified computer training institution. Join thousands of students mastering industry-relevant skills.
             </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto pb-6">
                 @auth
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-gray-50 transition duration-200 shadow-lg transform hover:-translate-y-1">
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-xl text-primary-700 bg-white hover:bg-gray-50 transition duration-200 shadow-xl transform hover:-translate-y-1">
                         <i class="fas fa-tachometer-alt mr-2"></i>
                         Go to Dashboard
                     </a>
                 @else
-                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 transition duration-200 shadow-lg transform hover:-translate-y-1">
+                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 border-2 border-yellow-400 text-base font-medium rounded-xl text-gray-900 bg-yellow-500 hover:bg-yellow-400 transition duration-200 shadow-xl transform hover:-translate-y-1">
                         <i class="fas fa-user-plus mr-2"></i>
                         Get Started Free
                     </a>
                 @endauth
-                <a href="{{ route('courses.index') }}" class="inline-flex items-center justify-center px-8 py-4 border border-white text-base font-medium rounded-md text-white hover:bg-white hover:text-primary-600 transition duration-200">
+                <a href="{{ route('courses.index') }}" class="inline-flex items-center justify-center px-8 py-4 border-2 border-white/60 text-base font-medium rounded-xl text-white hover:bg-white/10 hover:border-white transition duration-200 backdrop-blur-sm">
                     <i class="fas fa-book mr-2"></i>
                     View Our Courses
                 </a>
@@ -45,22 +51,42 @@
         </div>
 
         <!-- Trust Indicators -->
-        <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div class="animate-slide-up animation-delay-100">
-                <i class="fas fa-certificate text-3xl text-yellow-400 mb-2 block"></i>
-                <h3 class="text-lg font-semibold text-white">TEVETA Registered</h3>
-            </div>
-            <div class="animate-slide-up animation-delay-200">
-                <i class="fas fa-users text-3xl text-blue-300 mb-2 block"></i>
-                <h3 class="text-lg font-semibold text-white">{{ number_format($stats['total_students']) }}+ Students</h3>
-            </div>
-            <div class="animate-slide-up animation-delay-300">
-                <i class="fas fa-graduation-cap text-3xl text-green-300 mb-2 block"></i>
-                <h3 class="text-lg font-semibold text-white">Expert Instructors</h3>
-            </div>
-            <div class="animate-slide-up animation-delay-400">
-                <i class="fas fa-award text-3xl text-purple-300 mb-2 block"></i>
-                <h3 class="text-lg font-semibold text-white">Career Ready</h3>
+        <div class="mt-10 md:mt-14 pt-8 border-t border-white/10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <div class="animate-slide-up animation-delay-100 bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 text-center border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="w-14 h-14 mx-auto mb-3 bg-yellow-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-certificate text-2xl text-yellow-400"></i>
+                    </div>
+                    <h3 class="text-base md:text-lg font-bold text-white">TEVETA Registered</h3>
+                    <p class="text-xs text-blue-200 mt-1">Government Certified</p>
+                </div>
+                <div class="animate-slide-up animation-delay-200 bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 text-center border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="w-14 h-14 mx-auto mb-3 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-users text-2xl text-blue-300"></i>
+                    </div>
+                    <h3 class="text-base md:text-lg font-bold text-white">
+                        @if(($stats['total_students'] ?? 0) > 0)
+                            {{ number_format($stats['total_students']) }}+ Students
+                        @else
+                            Growing Community
+                        @endif
+                    </h3>
+                    <p class="text-xs text-blue-200 mt-1">Nationwide Community</p>
+                </div>
+                <div class="animate-slide-up animation-delay-300 bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 text-center border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="w-14 h-14 mx-auto mb-3 bg-green-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-2xl text-green-300"></i>
+                    </div>
+                    <h3 class="text-base md:text-lg font-bold text-white">Expert Instructors</h3>
+                    <p class="text-xs text-blue-200 mt-1">Industry Professionals</p>
+                </div>
+                <div class="animate-slide-up animation-delay-400 bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 text-center border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="w-14 h-14 mx-auto mb-3 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-award text-2xl text-purple-300"></i>
+                    </div>
+                    <h3 class="text-base md:text-lg font-bold text-white">Career Ready</h3>
+                    <p class="text-xs text-blue-200 mt-1">Job Placement Support</p>
+                </div>
             </div>
         </div>
     </div>
@@ -279,13 +305,13 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @foreach($upcomingEvents as $event)
-            <div class="group bg-gray-50 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="relative h-48 overflow-hidden">
+            <div class="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+                <div class="relative h-48 overflow-hidden bg-gradient-to-br from-primary-50 to-blue-50">
                     @if($event->cover_image)
                         <img src="{{ asset($event->cover_image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     @else
-                        <div class="w-full h-full bg-primary-100 flex items-center justify-center">
-                            <i class="fas fa-calendar-alt text-4xl text-primary-400"></i>
+                        <div class="w-full h-full flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-5xl text-primary-300"></i>
                         </div>
                     @endif
                     <div class="absolute top-3 left-3">
@@ -320,6 +346,11 @@
 </section>
 @endif
 
+@php
+$nextIntakeDate = \App\Models\SystemSetting::get('next_intake_date');
+$intakeLabel = \App\Models\SystemSetting::get('next_intake_label');
+@endphp
+@if($nextIntakeDate || $intakeLabel)
 <!-- Next Intake Banner -->
 <section class="py-6 bg-secondary-500 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -329,15 +360,19 @@
                     <i class="fas fa-rocket text-2xl"></i>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold">Next Intake: May 2026</h3>
-                    <p class="text-white text-opacity-90">Limited spots available - Early bird discount ends April 30th</p>
+                    <h3 class="text-xl font-bold">{{ $intakeLabel ?: 'Next Intake Coming Soon' }}</h3>
+                    @if($nextIntakeDate)
+                    <p class="text-white text-opacity-90">Limited spots available</p>
+                    @endif
                 </div>
             </div>
             <div class="flex items-center gap-6">
+                @if($nextIntakeDate)
                 <div class="text-center hidden md:block">
                     <div class="text-3xl font-bold" id="countdown-days">--</div>
                     <div class="text-xs uppercase tracking-wide opacity-80">Days Left</div>
                 </div>
+                @endif
                 <a href="{{ route('courses.index') }}" class="px-8 py-3 bg-white text-orange-600 rounded-lg font-bold hover:bg-gray-100 transition shadow-lg">
                     Enroll Now <i class="fas fa-arrow-right ml-2"></i>
                 </a>
@@ -345,6 +380,7 @@
         </div>
     </div>
 </section>
+@endif
 
 <!-- Testimonials Section -->
 <section class="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-primary-900 text-white">
@@ -359,20 +395,20 @@
         <!-- Stats -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 text-center">
             <div>
-                <div class="text-3xl md:text-4xl font-bold text-secondary-500">5,000+</div>
+                <div class="text-3xl md:text-4xl font-bold text-secondary-500">{{ number_format($stats['total_students'] ?? 0) }}+</div>
                 <div class="text-gray-400 text-sm mt-1">Graduates</div>
             </div>
             <div>
-                <div class="text-3xl md:text-4xl font-bold text-secondary-500">85%</div>
-                <div class="text-gray-400 text-sm mt-1">Job Placement</div>
+                <div class="text-3xl md:text-4xl font-bold text-secondary-500">{{ number_format($stats['total_enrollments'] ?? 0) }}</div>
+                <div class="text-gray-400 text-sm mt-1">Enrollments</div>
             </div>
             <div>
-                <div class="text-3xl md:text-4xl font-bold text-secondary-500">4.8</div>
+                <div class="text-3xl md:text-4xl font-bold text-secondary-500">{{ number_format($stats['avg_rating'] ?? 0, 1) }}</div>
                 <div class="text-gray-400 text-sm mt-1">Average Rating</div>
             </div>
             <div>
-                <div class="text-3xl md:text-4xl font-bold text-secondary-500">50+</div>
-                <div class="text-gray-400 text-sm mt-1">Industry Partners</div>
+                <div class="text-3xl md:text-4xl font-bold text-secondary-500">{{ number_format($stats['total_courses'] ?? 0) }}+</div>
+                <div class="text-gray-400 text-sm mt-1">Courses</div>
             </div>
         </div>
 
@@ -407,35 +443,13 @@
                 </div>
             </div>
             @empty
-                @php
-                $fallbackTestimonials = [
-                    ['name' => 'Chileshe Banda', 'course' => 'Web Development', 'year' => '2024', 'text' => 'Edutrack changed my life. I went from being unemployed to working as a junior developer at a tech startup in Lusaka.', 'rating' => 5],
-                    ['name' => 'Mutale Mumba', 'course' => 'Digital Marketing', 'year' => '2023', 'text' => 'The digital marketing course gave me the confidence to start my own agency. Within 6 months of graduating, I had 5 clients.', 'rating' => 5],
-                    ['name' => 'Bwalya Chanda', 'course' => 'Data Science', 'year' => '2024', 'text' => 'The instructors at Edutrack are world-class. They don\'t just teach theory - they make sure you can actually build things.', 'rating' => 5],
-                ];
-                @endphp
-                @foreach($fallbackTestimonials as $t)
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 animate-slide-up">
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-quote-left text-secondary-500 text-2xl mr-3"></i>
-                        <div class="flex text-yellow-400">
-                            @for($i = 0; $i < $t['rating']; $i++)
-                                <i class="fas fa-star"></i>
-                            @endfor
-                        </div>
+                <div class="col-span-full text-center py-12">
+                    <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-comment-alt text-gray-400 text-2xl"></i>
                     </div>
-                    <p class="text-gray-300 mb-6 leading-relaxed">"{{ $t['text'] }}"</p>
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-sm mr-3">
-                            {{ strtoupper(substr($t['name'], 0, 1)) }}
-                        </div>
-                        <div>
-                            <div class="font-semibold text-white">{{ $t['name'] }}</div>
-                            <div class="text-sm text-gray-400">{{ $t['course'] }} - Class of {{ $t['year'] }}</div>
-                        </div>
-                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">No testimonials yet</h3>
+                    <p class="text-gray-400">Be the first to share your success story with us.</p>
                 </div>
-                @endforeach
             @endforelse
         </div>
 
@@ -488,7 +502,11 @@
 @push('scripts')
 <script>
 // Countdown timer
-const intakeDate = new Date('2026-05-01T00:00:00');
+@php
+$countdownDate = \App\Models\SystemSetting::get('next_intake_date');
+@endphp
+@if($countdownDate)
+const intakeDate = new Date('{{ $countdownDate }}');
 function updateCountdown() {
     const now = new Date();
     const diff = intakeDate - now;
@@ -497,7 +515,8 @@ function updateCountdown() {
     if (el) el.textContent = days > 0 ? days : 0;
 }
 updateCountdown();
-setInterval(updateCountdown, 86400000);
+setInterval(updateCountdown, 60000);
+@endif
 </script>
 @endpush
 

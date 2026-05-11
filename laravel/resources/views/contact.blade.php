@@ -91,45 +91,58 @@
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
 
                     <div class="space-y-6">
+                        @php
+                        $contactAddress = \App\Models\SystemSetting::get('site_address', 'Kalomo, Zambia');
+                        $contactPhone = \App\Models\SystemSetting::get('site_phone');
+                        $contactEmail = \App\Models\SystemSetting::get('site_email');
+                        $tevetaReg = \App\Models\SystemSetting::get('teveta_registration_number');
+                        @endphp
+
                         <div class="flex items-start">
                             <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
                                 <i class="fas fa-map-marker-alt text-primary-600 text-xl"></i>
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-900">Address</h3>
-                                <p class="text-gray-600">Kalomo, Zambia</p>
+                                <p class="text-gray-600">{{ $contactAddress }}</p>
                             </div>
                         </div>
 
+                        @if($contactPhone)
                         <div class="flex items-start">
                             <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
                                 <i class="fas fa-phone text-primary-600 text-xl"></i>
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-900">Phone</h3>
-                                <p class="text-gray-600">+260 770 666 937</p>
+                                <p class="text-gray-600">{{ $contactPhone }}</p>
                             </div>
                         </div>
+                        @endif
 
+                        @if($contactEmail)
                         <div class="flex items-start">
                             <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
                                 <i class="fas fa-envelope text-primary-600 text-xl"></i>
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-900">Email</h3>
-                                <p class="text-gray-600">edutrackzambia@gmail.com</p>
+                                <p class="text-gray-600">{{ $contactEmail }}</p>
                             </div>
                         </div>
+                        @endif
 
+                        @if($tevetaReg)
                         <div class="flex items-start">
                             <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
                                 <i class="fas fa-certificate text-primary-600 text-xl"></i>
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-900">TEVETA Registration</h3>
-                                <p class="text-gray-600">TEVETA/CTR/2024/001</p>
+                                <p class="text-gray-600">{{ $tevetaReg }}</p>
                             </div>
                         </div>
+                        @endif
                     </div>
                 </div>
 

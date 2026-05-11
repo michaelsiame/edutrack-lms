@@ -20,6 +20,8 @@ class Certificate extends Model
         'issued_date',
         'verification_code',
         'final_score',
+        'classification',
+        'graduation_ceremony_date',
         'issued_at',
         'is_verified',
         'expiry_date',

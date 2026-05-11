@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'My Courses - Edutrack LMS')
+@section('page_title', 'My Courses')
 
 @section('content')
 <div class="py-12">

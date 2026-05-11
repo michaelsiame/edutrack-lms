@@ -3,45 +3,54 @@
 @section('title', 'Forgot Password - Edutrack LMS')
 
 @section('content')
-<div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gray-50">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Reset your password
-        </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-            Enter your email and we'll send you a reset link.
-        </p>
-    </div>
+<div class="min-h-screen flex flex-col justify-center py-10 px-4 sm:px-6 bg-gray-50">
+    <div class="mx-auto w-full max-w-md">
+        {{-- Logo / Header --}}
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary-600 text-white mb-4 shadow-lg">
+                <i class="fas fa-key text-2xl"></i>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">
+                Reset your password
+            </h2>
+            <p class="mt-2 text-sm text-gray-500">
+                Enter your email and we'll send you a reset link
+            </p>
+        </div>
 
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form class="space-y-6" action="{{ route('password.email') }}" method="POST">
+        {{-- Card --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+            <form class="space-y-5" action="{{ route('password.email') }}" method="POST">
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">
                         Email address
                     </label>
-                    <div class="mt-1">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400 text-sm"></i>
+                        </div>
                         <input id="email" name="email" type="email" required
-                            class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                            placeholder="you@example.com"
                             value="{{ old('email') }}">
                     </div>
                     @error('email')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div>
-                    <button type="submit"
-                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Send Reset Link
-                    </button>
-                </div>
+                <button type="submit"
+                    class="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    Send Reset Link
+                </button>
             </form>
 
             <div class="mt-6 text-center">
-                <a href="{{ route('login') }}" class="text-sm text-indigo-600 hover:text-indigo-500">
+                <a href="{{ route('login') }}" class="text-sm font-medium text-primary-600 hover:text-primary-500">
+                    <i class="fas fa-arrow-left mr-1"></i>
                     Back to login
                 </a>
             </div>

@@ -30,8 +30,8 @@
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/tailwind.css') }}">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome (local for reliability) -->
+    <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/all.min.css') }}">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -111,15 +111,24 @@
             overflow: hidden;
         }
         .animate-slide-up {
-            opacity: 0;
-            transform: translateY(30px);
+            opacity: 1;
+            transform: translateY(0);
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .animate-slide-up.animated {
+        /* Enhanced animation when JS is available */
+        html.js-enabled .animate-slide-up {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        html.js-enabled .animate-slide-up.animated {
             opacity: 1;
             transform: translateY(0);
         }
         .animate-fade-in {
+            opacity: 1;
+            animation: none;
+        }
+        html.js-enabled .animate-fade-in {
             opacity: 0;
             animation: fadeIn 1s ease-out forwards;
         }
@@ -128,6 +137,7 @@
     </style>
 
     @stack('styles')
+    <script>document.documentElement.classList.add('js-enabled');</script>
 </head>
 <body class="bg-gray-50">
 
@@ -136,20 +146,31 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm gap-2 sm:gap-0">
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1">
+                    @php
+                        $tevetaReg = \App\Models\SystemSetting::get('teveta_registration_number');
+                        $sitePhone = \App\Models\SystemSetting::get('site_phone');
+                    @endphp
+                    @if($tevetaReg)
                     <span class="flex items-center">
                         <i class="fas fa-certificate mr-1 text-secondary-500"></i>
-                        <strong>TEVETA Registered:</strong> TEVETA/CTR/2024/001
+                        <strong>TEVETA Registered:</strong> {{ $tevetaReg }}
                     </span>
+                    @endif
+                    @if($sitePhone)
                     <span class="hidden md:flex items-center">
                         <i class="fas fa-phone mr-1"></i>
-                        +260 770 666 937
+                        {{ $sitePhone }}
                     </span>
+                    @endif
                 </div>
                 <div class="flex items-center gap-3 sm:gap-4">
+                    @php $topBarEmail = \App\Models\SystemSetting::get('site_email'); @endphp
+                    @if($topBarEmail)
                     <span class="hidden sm:flex items-center">
                         <i class="fas fa-envelope mr-1"></i>
-                        edutrackzambia@gmail.com
+                        {{ $topBarEmail }}
                     </span>
+                    @endif
                     <div class="flex items-center space-x-2">
                         <a href="#" class="hover:text-secondary-400 transition"><i class="fab fa-facebook"></i></a>
                         <a href="#" class="hover:text-secondary-400 transition"><i class="fab fa-twitter"></i></a>

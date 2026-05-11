@@ -23,19 +23,19 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-                <div class="text-4xl font-bold text-gray-900">5,000+</div>
+                <div class="text-4xl font-bold text-gray-900">{{ number_format($stats['total_students'] ?? 0) }}+</div>
                 <div class="text-gray-800">Success Stories</div>
             </div>
             <div>
-                <div class="text-4xl font-bold text-gray-900">4.8</div>
+                <div class="text-4xl font-bold text-gray-900">{{ number_format($stats['avg_rating'] ?? 0, 1) }}</div>
                 <div class="text-gray-800">Average Rating</div>
             </div>
             <div>
-                <div class="text-4xl font-bold text-gray-900">85%</div>
-                <div class="text-gray-800">Job Placement</div>
+                <div class="text-4xl font-bold text-gray-900">{{ number_format($stats['total_enrollments'] ?? 0) }}</div>
+                <div class="text-gray-800">Enrollments</div>
             </div>
             <div>
-                <div class="text-4xl font-bold text-gray-900">25+</div>
+                <div class="text-4xl font-bold text-gray-900">{{ number_format($stats['total_courses'] ?? 0) }}+</div>
                 <div class="text-gray-800">Courses</div>
             </div>
         </div>

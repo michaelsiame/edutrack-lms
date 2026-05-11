@@ -31,14 +31,14 @@
         @if($upcomingEvents->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach($upcomingEvents as $event)
-                <div class="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="relative h-48 overflow-hidden">
+                <div class="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+                    <div class="relative h-48 overflow-hidden bg-gradient-to-br from-primary-50 to-blue-50">
                         @if($event->cover_image)
                             <img src="{{ asset($event->cover_image) }}" alt="{{ $event->title }}"
                                  class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                         @else
-                            <div class="w-full h-full bg-primary-50 flex items-center justify-center">
-                                <i class="fas fa-calendar-alt text-4xl text-primary-300"></i>
+                            <div class="w-full h-full flex items-center justify-center">
+                                <i class="fas fa-calendar-alt text-5xl text-primary-300"></i>
                             </div>
                         @endif
                         <div class="absolute top-3 left-3">
@@ -98,14 +98,14 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($pastEvents as $event)
-            <div class="group bg-gray-50 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
-                <div class="relative h-40 overflow-hidden">
+            <div class="group bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300 border border-gray-100">
+                <div class="relative h-40 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
                     @if($event->cover_image)
                         <img src="{{ asset($event->cover_image) }}" alt="{{ $event->title }}"
                              class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 opacity-80">
                     @else
-                        <div class="w-full h-full bg-gray-200 flex items-center justify-center">
-                            <i class="fas fa-calendar-check text-3xl text-gray-400"></i>
+                        <div class="w-full h-full flex items-center justify-center">
+                            <i class="fas fa-calendar-check text-4xl text-gray-300"></i>
                         </div>
                     @endif
                     <div class="absolute top-3 left-3">

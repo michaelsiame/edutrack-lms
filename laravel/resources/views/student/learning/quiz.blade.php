@@ -1,5 +1,8 @@
 @extends('layouts.dashboard')
 
+@section('title', $quiz->title . ' - Edutrack LMS')
+@section('page_title', $quiz->title)
+
 @section('content')
 <div class="container mx-auto px-4 py-6 max-w-4xl">
     <!-- Quiz Header -->
@@ -12,8 +15,8 @@
             @if($quiz->time_limit)
                 <div class="text-center bg-red-50 px-4 py-2 rounded-lg">
                     <div class="text-sm text-red-600 font-medium">Time Remaining</div>
-                    <div id="timer" class="text-2xl font-bold text-red-700" data-minutes="{{ $quiz->time_limit }}">
-                        {{ $quiz->time_limit }}:00
+                    <div id="timer" class="text-2xl font-bold text-red-700" data-minutes="{{ $quiz->time_limit_minutes }}">
+                        {{ $quiz->time_limit_minutes }}:00
                     </div>
                 </div>
             @endif
@@ -45,27 +48,22 @@
                 </div>
 
                 <div class="ml-11 space-y-3">
-                    @if($question->question_type === 'multiple_choice')
-                        @php
-                            $options = json_decode($question->options, true) ?? [];
-                        @endphp
-                        @foreach($options as $key => $option)
+                    @if($question->question_type === 'Multiple Choice')
+                        @foreach($question->options as $option)
                             <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <input type="radio" name="answers[{{ $question->id }}]" value="{{ $key }}" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                <span class="ml-3 text-gray-700">{{ $option }}</span>
+                                <input type="radio" name="answers[{{ $question->question_id }}]" value="{{ $option->id }}" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                <span class="ml-3 text-gray-700">{{ $option->option_text }}</span>
                             </label>
                         @endforeach
-                    @elseif($question->question_type === 'true_false')
-                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                            <input type="radio" name="answers[{{ $question->id }}]" value="true" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                            <span class="ml-3 text-gray-700">True</span>
-                        </label>
-                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                            <input type="radio" name="answers[{{ $question->id }}]" value="false" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                            <span class="ml-3 text-gray-700">False</span>
-                        </label>
-                    @elseif($question->question_type === 'short_answer')
-                        <textarea name="answers[{{ $question->id }}]" rows="3" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Enter your answer..."></textarea>
+                    @elseif($question->question_type === 'True/False')
+                        @foreach($question->options as $option)
+                            <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="answers[{{ $question->question_id }}]" value="{{ $option->option_text }}" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                <span class="ml-3 text-gray-700">{{ $option->option_text }}</span>
+                            </label>
+                        @endforeach
+                    @else
+                        <textarea name="answers[{{ $question->question_id }}]" rows="3" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Enter your answer..."></textarea>
                     @endif
                 </div>
             </div>

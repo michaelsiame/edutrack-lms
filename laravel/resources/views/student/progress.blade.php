@@ -1,6 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', 'My Progress - Edutrack LMS')
+@section('page_title', 'My Progress')
 
 @section('content')
 <div class="container mx-auto px-4 py-6">
@@ -49,7 +50,7 @@
                         </div>
                     </div>
                     <div>
-                        <a href="{{ route('enrollments.show', $enrollment) }}" class="text-primary-600 hover:text-primary-800 text-sm font-medium">
+                        <a href="{{ route('enrollments.show', $enrollment->course) }}" class="text-primary-600 hover:text-primary-800 text-sm font-medium">
                             Continue <i class="fas fa-arrow-right ml-1"></i>
                         </a>
                     </div>

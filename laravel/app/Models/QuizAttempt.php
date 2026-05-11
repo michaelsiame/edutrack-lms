@@ -50,4 +50,9 @@ class QuizAttempt extends Model
     {
         return $this->score !== null && $this->score >= $this->quiz->passing_score;
     }
+
+    public function getPassedAttribute(): bool
+    {
+        return $this->isPassed();
+    }
 }

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Certificate;
+use App\Services\CertificateService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use TCPDF;
 
 class CertificateController extends Controller
 {
@@ -48,19 +47,7 @@ class CertificateController extends Controller
 
     protected function generatePdf(Certificate $certificate): string
     {
-        $pdf = new TCPDF('L', 'mm', 'A4');
-        $pdf->SetCreator('Edutrack LMS');
-        $pdf->SetAuthor('Edutrack Computer Training College');
-        $pdf->SetTitle('Certificate - ' . $certificate->certificate_number);
-        $pdf->SetMargins(0, 0, 0);
-        $pdf->SetAutoPageBreak(false);
-        $pdf->AddPage();
-
-        // Load certificate template view
-        $html = view('certificates.pdf', compact('certificate'))->render();
-
-        $pdf->writeHTML($html, true, false, true, false, '');
-
-        return $pdf->Output('', 'S');
+        $service = new CertificateService();
+        return $service->generatePdf($certificate);
     }
 }

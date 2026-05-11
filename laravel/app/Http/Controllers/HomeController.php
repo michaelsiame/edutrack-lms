@@ -57,7 +57,6 @@ class HomeController extends Controller
         // Top featured (latest, excluding already shown)
         $shownIds = $categories->pluck('courses')->flatten()->pluck('id')->unique()->toArray();
         $topFeatured = Course::published()
-            ->whereNotIn('id', $shownIds)
             ->latest()
             ->limit(6)
             ->get();
@@ -113,7 +112,13 @@ class HomeController extends Controller
     {
         $testimonials = Testimonial::approved()->latest()->paginate(12);
         $featuredTestimonials = Testimonial::approved()->featured()->limit(3)->get();
-        return view('testimonials', compact('testimonials', 'featuredTestimonials'));
+        $stats = [
+            'total_students' => User::whereHas('roles', fn($q) => $q->where('role_id', 4))->where('status', 'active')->count(),
+            'total_courses' => Course::published()->count(),
+            'total_enrollments' => Enrollment::count(),
+            'avg_rating' => CourseReview::avg('rating') ?? 0,
+        ];
+        return view('testimonials', compact('testimonials', 'featuredTestimonials', 'stats'));
     }
 
     public function events()

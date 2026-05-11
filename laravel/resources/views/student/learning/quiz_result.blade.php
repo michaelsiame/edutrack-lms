@@ -1,9 +1,12 @@
 @extends('layouts.dashboard')
 
+@section('title', 'Quiz Result - Edutrack LMS')
+@section('page_title', 'Quiz Result')
+
 @section('content')
 <div class="container mx-auto px-4 py-6 max-w-3xl">
     <div class="bg-white rounded-lg shadow p-8 text-center">
-        @if($attempt->passed)
+        @if($attempt->isPassed())
             <div class="mb-4">
                 <i class="fas fa-trophy text-green-500 text-5xl"></i>
             </div>
@@ -38,7 +41,7 @@
             <a href="{{ route('student.courses.show', $quiz->course) }}" class="inline-block bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 font-medium">
                 Back to Course
             </a>
-            @if(!$attempt->passed)
+            @if(!$attempt->isPassed())
                 <a href="{{ route('student.quizzes.take', $quiz) }}" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium">
                     <i class="fas fa-redo mr-2"></i>Retake Quiz
                 </a>

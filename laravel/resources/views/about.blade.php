@@ -23,8 +23,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
             <!-- Mission -->
             <div class="bg-blue-50 rounded-xl p-8 shadow-lg animate-slide-up">
-                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-6">
-                    <i class="fas fa-bullseye text-white text-2xl"></i>
+                <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                    <i class="fas fa-bullseye text-white text-3xl"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
                 <p class="text-gray-700 leading-relaxed">
@@ -36,8 +36,8 @@
 
             <!-- Vision -->
             <div class="bg-purple-50 rounded-xl p-8 shadow-lg animate-slide-up animation-delay-200">
-                <div class="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mb-6">
-                    <i class="fas fa-eye text-white text-2xl"></i>
+                <div class="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                    <i class="fas fa-eye text-white text-3xl"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Our Vision</h2>
                 <p class="text-gray-700 leading-relaxed">

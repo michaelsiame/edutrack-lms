@@ -33,8 +33,19 @@
         <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             @forelse($courses as $course)
                 <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col">
-                    <div class="h-48 bg-gray-200">
-                        <img src="{{ $course->thumbnail_url ?? 'https://via.placeholder.com/400x200' }}" alt="{{ $course->title }}" class="w-full h-full object-cover">
+                    <div class="h-48 bg-gray-100 overflow-hidden relative">
+                        @if(!empty($course->thumbnail_url))
+                            @php
+                                $thumb = filter_var($course->thumbnail_url, FILTER_VALIDATE_URL)
+                                    ? $course->thumbnail_url
+                                    : asset('uploads/courses/' . $course->thumbnail_url);
+                            @endphp
+                            <img src="{{ $thumb }}" alt="{{ $course->title }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-50 to-blue-50">
+                                <i class="fas fa-laptop-code text-5xl text-primary-300"></i>
+                            </div>
+                        @endif
                     </div>
                     <div class="p-6 flex-1 flex flex-col">
                         <div class="flex items-center justify-between mb-2">
@@ -42,12 +53,12 @@
                             <span class="text-xs text-gray-500">{{ $course->level }}</span>
                         </div>
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                            <a href="{{ route('courses.show', $course) }}" class="hover:text-indigo-600">{{ $course->title }}</a>
+                            <a href="{{ route('courses.show', $course) }}" class="hover:text-primary-600">{{ $course->title }}</a>
                         </h3>
                         <p class="text-sm text-gray-500 mb-4 flex-1">{{ Str::limit($course->short_description, 100) }}</p>
                         <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                            <span class="text-lg font-bold text-gray-900">{{ $course->formatted_price }}</span>
-                            <a href="{{ route('courses.show', $course) }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">View Details &rarr;</a>
+                            <span class="text-lg font-bold text-primary-600">{{ $course->formatted_price }}</span>
+                            <a href="{{ route('courses.show', $course) }}" class="text-sm text-primary-600 hover:text-primary-800 font-medium">View Details <i class="fas fa-arrow-right ml-1"></i></a>
                         </div>
                     </div>
                 </div>
