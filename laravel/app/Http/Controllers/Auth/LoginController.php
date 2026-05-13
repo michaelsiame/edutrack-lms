@@ -29,6 +29,17 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
+            $user = Auth::user();
+
+            // Check if email is verified
+            if (!$user->email_verified && !$user->google_id) {
+                Auth::logout();
+
+                return redirect()->route('verification.notice')
+                    ->with('email', $user->email)
+                    ->with('warning', 'Please verify your email address before logging in.');
+            }
+
             return redirect()->intended(route('dashboard'));
         }
 

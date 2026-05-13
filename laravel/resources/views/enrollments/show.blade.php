@@ -102,6 +102,19 @@
                 </div>
             </div>
 
+            <!-- Course Community -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="font-bold text-gray-900 mb-4">Course Community</h3>
+                <div class="space-y-2">
+                    <a href="{{ route('student.discussions.index', $enrollment->course) }}" class="flex items-center px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50 border border-gray-200">
+                        <i class="fas fa-comments w-5 text-primary-600"></i> Discussions
+                    </a>
+                    <a href="{{ route('student.live-sessions.index', $enrollment->course) }}" class="flex items-center px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50 border border-gray-200">
+                        <i class="fas fa-video w-5 text-red-600"></i> Live Sessions
+                    </a>
+                </div>
+            </div>
+
             <!-- Certificate -->
             @if($enrollment->status === 'completed')
             <div class="bg-white rounded-lg shadow p-6">

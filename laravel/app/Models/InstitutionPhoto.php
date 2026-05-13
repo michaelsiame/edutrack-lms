@@ -16,17 +16,17 @@ class InstitutionPhoto extends Model
         'category',
         'display_order',
         'is_featured',
-        'is_active',
+        'is_featured',
     ];
 
     protected $casts = [
         'is_featured' => 'boolean',
-        'is_active' => 'boolean',
+        'is_featured' => 'boolean',
     ];
 
     public function scopeActive($query)
     {
-        return $query->where('is_active', true)->orderBy('display_order');
+        return $query->where('is_featured', true)->orderBy('display_order');
     }
 
     public function scopeFeatured($query)

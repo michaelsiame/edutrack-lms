@@ -7,9 +7,9 @@
     <div class="mx-auto w-full max-w-md">
         {{-- Logo / Header --}}
         <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary-600 text-white mb-4 shadow-lg">
-                <i class="fas fa-key text-2xl"></i>
-            </div>
+            <a href="{{ url('/') }}" class="inline-block mb-4">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="Edutrack Logo" class="h-16 w-auto mx-auto">
+            </a>
             <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">
                 Reset your password
             </h2>

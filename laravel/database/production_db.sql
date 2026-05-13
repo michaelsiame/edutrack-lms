@@ -2897,7 +2897,7 @@ CREATE TABLE `system_settings` (
 
 INSERT INTO `system_settings` (`setting_id`, `setting_key`, `setting_value`, `setting_type`, `description`, `is_editable`, `updated_at`) VALUES
 (1, 'site_name', 'EduTrack LMS', 'String', 'Website name displayed throughout the platform', 1, '2025-11-18 22:21:01'),
-(2, 'site_email', 'info@edutrack.edu', 'String', 'Main contact email for the platform', 1, '2025-11-18 22:21:01'),
+(2, 'site_email', 'edutrackzambia@gmail.com', 'String', 'Main contact email for the platform', 1, '2025-11-18 22:21:01'),
 (3, 'max_file_upload_size', '10', 'Number', 'Maximum file upload size in MB', 1, '2025-11-18 22:21:01'),
 (4, 'allow_student_discussion', 'true', 'Boolean', 'Allow students to create discussion topics', 1, '2025-11-18 22:21:01'),
 (5, 'certificate_auto_generate', 'true', 'Boolean', 'Automatically generate certificates upon course completion', 1, '2025-11-18 22:21:01'),

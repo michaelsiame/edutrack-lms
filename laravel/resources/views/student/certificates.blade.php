@@ -19,7 +19,7 @@
             <div class="bg-gradient-to-r from-primary-600 to-primary-800 p-6 text-white">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-certificate text-4xl text-yellow-400"></i>
-                    <span class="text-xs bg-white/20 px-2 py-1 rounded">TEVETA Certified</span>
+                    <span class="text-xs bg-white/20 px-2 py-1 rounded">Certified</span>
                 </div>
                 <h3 class="text-lg font-bold mt-4">Certificate of Completion</h3>
                 <p class="text-primary-100 text-sm">{{ $certificate->enrollment->course->title ?? 'Course' }}</p>
@@ -53,7 +53,7 @@
         <div class="col-span-full bg-white rounded-lg shadow p-12 text-center">
             <i class="fas fa-certificate text-6xl text-gray-300 mb-4"></i>
             <h3 class="text-xl font-semibold text-gray-900 mb-2">No Certificates Yet</h3>
-            <p class="text-gray-600 mb-6">Complete a course to earn your first TEVETA-certified certificate.</p>
+            <p class="text-gray-600 mb-6">Complete a course to earn your first professional certificate.</p>
             <a href="{{ route('courses.index') }}" class="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">
                 <i class="fas fa-search mr-2"></i> Browse Courses
             </a>

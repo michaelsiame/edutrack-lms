@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Edutrack Computer Training College | TEVETA-Certified Tech Training in Zambia')
-@section('meta_description', 'Edutrack Computer Training College - TEVETA registered institution offering quality computer training in Zambia. Transform your future with industry-recognized certification programs.')
+@section('title', 'Edutrack Computer Training College | Tech Training in Zambia')
+@section('meta_description', 'Edutrack Computer Training College - Quality computer training in Zambia. Transform your future with industry-recognized certification programs.')
 
 @section('content')
 
@@ -21,7 +21,7 @@
             <div class="mb-6 animate-fade-in">
                 <span class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold bg-yellow-500 text-gray-900 shadow-lg border-2 border-yellow-400">
                     <i class="fas fa-certificate mr-2"></i>
-                    TEVETA Registered Institution
+                    Registered Institution
                 </span>
             </div>
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fade-in leading-tight">
@@ -29,7 +29,7 @@
                 <span class="block text-yellow-400 mt-2 drop-shadow-lg">Edutrack Computer Training College</span>
             </h1>
             <p class="text-lg md:text-xl lg:text-2xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
-                Zambia's premier TEVETA-certified computer training institution. Join thousands of students mastering industry-relevant skills.
+                Zambia's premier computer training institution. Join thousands of students mastering industry-relevant skills.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto pb-6">
                 @auth
@@ -57,7 +57,7 @@
                     <div class="w-14 h-14 mx-auto mb-3 bg-yellow-500/20 rounded-xl flex items-center justify-center">
                         <i class="fas fa-certificate text-2xl text-yellow-400"></i>
                     </div>
-                    <h3 class="text-base md:text-lg font-bold text-white">TEVETA Registered</h3>
+                    <h3 class="text-base md:text-lg font-bold text-white">Registered Institution</h3>
                     <p class="text-xs text-blue-200 mt-1">Government Certified</p>
                 </div>
                 <div class="animate-slide-up animation-delay-200 bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 text-center border border-white/20 hover:bg-white/15 transition-all duration-300">
@@ -211,7 +211,7 @@
         <div class="text-center mb-16">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Latest Additions</h2>
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                Check out the newest TEVETA-certified training programs
+                Check out the newest training programs
             </p>
         </div>
 
@@ -467,7 +467,7 @@ $intakeLabel = \App\Models\SystemSetting::get('next_intake_label');
         <div class="text-center mb-16">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Edutrack?</h2>
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                As a TEVETA-registered institution, we're committed to excellence
+                As a registered institution, we're committed to excellence
             </p>
         </div>
 
@@ -476,7 +476,7 @@ $intakeLabel = \App\Models\SystemSetting::get('next_intake_label');
                 <div class="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                     <i class="fas fa-certificate text-yellow-600 text-3xl"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-3">TEVETA Registered</h3>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Registered Institution</h3>
                 <p class="text-gray-600">Officially recognized by the Technical Education, Vocational and Entrepreneurship Training Authority.</p>
             </div>
 

@@ -10,11 +10,11 @@
                     <img src="{{ asset('assets/images/logo.png') }}" alt="Edutrack Logo" class="h-10 w-auto mr-2">
                     <div>
                         <h3 class="text-white text-lg font-bold">Edutrack</h3>
-                        <span class="text-secondary-500 text-xs font-semibold">TEVETA REGISTERED</span>
+                        <span class="text-secondary-500 text-xs font-semibold">COMPUTER TRAINING</span>
                     </div>
                 </div>
                 <p class="text-sm text-gray-400 mb-4">
-                    Transform your future with Zambia's premier TEVETA-registered computer training institution.
+                    Transform your future with Zambia's premier computer training institution.
                     Quality education, industry-recognized certification.
                 </p>
                 <div class="flex items-center space-x-3">
@@ -94,13 +94,8 @@
                     <li class="flex items-start">
                         <i class="fas fa-certificate text-secondary-500 mt-1 mr-3"></i>
                         <div class="text-sm">
-                            <div class="text-gray-400">TEVETA Registration</div>
-                            @php $tevetaReg = \App\Models\SystemSetting::get('teveta_registration_number'); @endphp
-                            @if($tevetaReg)
-                            <div class="text-white font-semibold">{{ $tevetaReg }}</div>
-                            @else
-                            <div class="text-gray-500">Registration info coming soon</div>
-                            @endif
+                            <div class="text-gray-400">Registered Institution</div>
+                            <div class="text-white font-semibold">Quality Assured</div>
                         </div>
                     </li>
                 </ul>
@@ -113,12 +108,14 @@
                 <h3 class="text-white text-xl font-bold mb-2">Stay Updated</h3>
                 <p class="text-gray-400 text-sm mb-4">Subscribe to our newsletter for course updates and tech news</p>
                 <form class="flex flex-col sm:flex-row gap-2 max-w-md mx-auto" onsubmit="event.preventDefault(); handleNewsletterSubmit(this);">
-                    <input type="email" required placeholder="Enter your email" class="flex-1 px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-secondary-500">
+                    <input type="email" name="email" required placeholder="Enter your email" class="flex-1 px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-secondary-500">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn-secondary px-6 py-2 rounded-md font-medium whitespace-nowrap">
                         <i class="fas fa-paper-plane mr-2"></i>Subscribe
                     </button>
                 </form>
-                <p class="text-sm text-green-400 mt-2 hidden newsletter-msg">Thank you for subscribing!</p>
+                <p class="text-sm text-green-400 mt-2 hidden newsletter-msg" id="newsletter-success">Thank you for subscribing!</p>
+                <p class="text-sm text-red-400 mt-2 hidden newsletter-msg" id="newsletter-error">Something went wrong. Please try again.</p>
             </div>
         </div>
     </div>
@@ -129,10 +126,7 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="text-sm text-gray-400 text-center md:text-left">
                     <p>&copy; {{ date('Y') }} Edutrack Computer Training College. All rights reserved.</p>
-                    @php $tevetaRegFooter = \App\Models\SystemSetting::get('teveta_registration_number'); @endphp
-                    @if($tevetaRegFooter)
-                    <p class="text-xs mt-1">TEVETA Registered Institution - {{ $tevetaRegFooter }}</p>
-                    @endif
+
                 </div>
                 <div class="flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-2 text-sm">
                     <a href="#" class="text-gray-400 hover:text-secondary-500 transition">Privacy Policy</a>
@@ -149,12 +143,27 @@
 <script>
 function handleNewsletterSubmit(form) {
     const btn = form.querySelector('button[type="submit"]');
-    const msg = form.parentElement.querySelector('.newsletter-msg');
+    const successMsg = document.getElementById('newsletter-success');
+    const errorMsg = document.getElementById('newsletter-error');
+    const email = form.querySelector('input[name="email"]').value;
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Subscribing...';
-    setTimeout(function() {
+    fetch('{{ route('newsletter.subscribe') }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+        body: JSON.stringify({ email: email })
+    })
+    .then(r => r.json())
+    .then(data => {
         btn.innerHTML = '<i class="fas fa-check mr-2"></i>Subscribed';
-        msg.classList.remove('hidden');
-    }, 1000);
+        successMsg.classList.remove('hidden');
+        errorMsg.classList.add('hidden');
+        form.reset();
+    })
+    .catch(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Subscribe';
+        errorMsg.classList.remove('hidden');
+    });
 }
 </script>

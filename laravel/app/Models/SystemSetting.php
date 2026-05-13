@@ -20,6 +20,8 @@ class SystemSetting extends Model
         'is_editable',
     ];
 
+    public $timestamps = false;
+
     public static function get(string $key, mixed $default = null): mixed
     {
         $setting = static::where('setting_key', $key)->first();

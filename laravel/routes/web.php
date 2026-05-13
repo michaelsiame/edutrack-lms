@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::post('/contact', [HomeController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/campus', [HomeController::class, 'campus'])->name('campus');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
 Route::get('/testimonials', [HomeController::class, 'testimonials'])->name('testimonials');
@@ -26,6 +27,7 @@ Route::get('/events', [HomeController::class, 'events'])->name('events');
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
+Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
 
 Route::get('/certificates/verify/{code}', [CertificateController::class, 'verify'])->name('certificates.verify');
 
@@ -48,6 +50,11 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
+// Email Verification
+Route::get('/verify-email', [App\Http\Controllers\Auth\VerifyEmailController::class, 'notice'])->name('verification.notice');
+Route::get('/verify-email/{token}', [App\Http\Controllers\Auth\VerifyEmailController::class, 'verify'])->name('verification.verify');
+Route::post('/verify-email/resend', [App\Http\Controllers\Auth\VerifyEmailController::class, 'resend'])->name('verification.resend');
+
 /*
 |--------------------------------------------------------------------------
 | Google OAuth
@@ -66,10 +73,28 @@ Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController:
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Profile
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+
+    // Transcript
+    Route::get('/transcript/download', [App\Http\Controllers\Student\TranscriptController::class, 'download'])->name('transcript.download');
+
     // Enrollment
     Route::post('/courses/{course}/enroll', [EnrollmentController::class, 'store'])->name('enrollments.store');
     Route::get('/my-courses', [EnrollmentController::class, 'index'])->name('enrollments.index');
     Route::get('/my-courses/{course}', [EnrollmentController::class, 'show'])->name('enrollments.show');
+
+    // Checkout & Payments
+    Route::get('/courses/{course}/checkout', [App\Http\Controllers\CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/courses/{course}/checkout', [App\Http\Controllers\CheckoutController::class, 'process'])->name('checkout.process');
+    Route::get('/payment/success', [App\Http\Controllers\CheckoutController::class, 'success'])->name('payment.success');
+    Route::get('/payment/failed', [App\Http\Controllers\CheckoutController::class, 'failed'])->name('payment.failed');
+
+    // Registration Fee
+    Route::get('/registration-fee', [App\Http\Controllers\RegistrationFeeController::class, 'show'])->name('registration-fee.show');
+    Route::post('/registration-fee', [App\Http\Controllers\RegistrationFeeController::class, 'store'])->name('registration-fee.store');
 
     // Certificates
     Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
@@ -87,8 +112,46 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::resource('courses', App\Http\Controllers\Admin\CourseController::class);
     Route::resource('users', App\Http\Controllers\Admin\UserController::class);
     Route::resource('payments', App\Http\Controllers\Admin\PaymentController::class);
+
+    // Announcements
+    Route::resource('announcements', App\Http\Controllers\Admin\AnnouncementController::class)->except(['show']);
+
+    // Institution Photos
+    Route::get('/photos', [App\Http\Controllers\Admin\InstitutionPhotoController::class, 'index'])->name('photos.index');
+    Route::post('/photos', [App\Http\Controllers\Admin\InstitutionPhotoController::class, 'store'])->name('photos.store');
+    Route::put('/photos/{photo}', [App\Http\Controllers\Admin\InstitutionPhotoController::class, 'update'])->name('photos.update');
+    Route::delete('/photos/{photo}', [App\Http\Controllers\Admin\InstitutionPhotoController::class, 'destroy'])->name('photos.destroy');
+
+    // Events
+    Route::get('/events', [App\Http\Controllers\Admin\EventController::class, 'index'])->name('events.index');
+    Route::post('/events', [App\Http\Controllers\Admin\EventController::class, 'store'])->name('events.store');
+    Route::put('/events/{event}', [App\Http\Controllers\Admin\EventController::class, 'update'])->name('events.update');
+    Route::delete('/events/{event}', [App\Http\Controllers\Admin\EventController::class, 'destroy'])->name('events.destroy');
+
+    // Enrollments
+    Route::get('/enrollments', [App\Http\Controllers\Admin\EnrollmentController::class, 'index'])->name('enrollments.index');
+    Route::put('/enrollments/{enrollment}', [App\Http\Controllers\Admin\EnrollmentController::class, 'update'])->name('enrollments.update');
+    Route::delete('/enrollments/{enrollment}', [App\Http\Controllers\Admin\EnrollmentController::class, 'destroy'])->name('enrollments.destroy');
+
+    // Email Templates
+    Route::get('/templates', [App\Http\Controllers\Admin\EmailTemplateController::class, 'index'])->name('templates.index');
+    Route::post('/templates', [App\Http\Controllers\Admin\EmailTemplateController::class, 'store'])->name('templates.store');
+    Route::put('/templates/{template}', [App\Http\Controllers\Admin\EmailTemplateController::class, 'update'])->name('templates.update');
+    Route::delete('/templates/{template}', [App\Http\Controllers\Admin\EmailTemplateController::class, 'destroy'])->name('templates.destroy');
+
     Route::get('/reports', [AdminDashboardController::class, 'reports'])->name('reports');
     Route::get('/settings', [AdminDashboardController::class, 'settings'])->name('settings');
+
+    // Badges & Achievements
+    Route::get('/badges', [App\Http\Controllers\Admin\BadgeController::class, 'index'])->name('badges.index');
+    Route::post('/badges', [App\Http\Controllers\Admin\BadgeController::class, 'store'])->name('badges.store');
+    Route::post('/badges/{badge}/toggle', [App\Http\Controllers\Admin\BadgeController::class, 'toggle'])->name('badges.toggle');
+    Route::delete('/badges/{badge}', [App\Http\Controllers\Admin\BadgeController::class, 'destroy'])->name('badges.destroy');
+
+    // Newsletter Subscribers
+    Route::get('/newsletter', [App\Http\Controllers\Admin\NewsletterController::class, 'index'])->name('newsletter.index');
+    Route::post('/newsletter/{subscriber}/toggle', [App\Http\Controllers\Admin\NewsletterController::class, 'toggle'])->name('newsletter.toggle');
+    Route::delete('/newsletter/{subscriber}', [App\Http\Controllers\Admin\NewsletterController::class, 'destroy'])->name('newsletter.destroy');
 });
 
 /*
@@ -100,11 +163,29 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 Route::prefix('instructor')->middleware(['auth', 'instructor'])->name('instructor.')->group(function () {
     Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
     Route::resource('courses', App\Http\Controllers\Instructor\CourseController::class);
-    // Route::resource('lessons', App\Http\Controllers\Instructor\LessonController::class);
-    // Route::resource('quizzes', App\Http\Controllers\Instructor\QuizController::class);
-    // Route::resource('assignments', App\Http\Controllers\Instructor\AssignmentController::class);
+
+    // Module CRUD
+    Route::post('/courses/{course}/modules', [App\Http\Controllers\Instructor\ModuleController::class, 'store'])->name('courses.modules.store');
+    Route::put('/courses/{course}/modules/{module}', [App\Http\Controllers\Instructor\ModuleController::class, 'update'])->name('courses.modules.update');
+    Route::delete('/courses/{course}/modules/{module}', [App\Http\Controllers\Instructor\ModuleController::class, 'destroy'])->name('courses.modules.destroy');
+
+    // Lesson CRUD
+    Route::post('/courses/{course}/modules/{module}/lessons', [App\Http\Controllers\Instructor\LessonController::class, 'store'])->name('courses.modules.lessons.store');
+    Route::put('/courses/{course}/modules/{module}/lessons/{lesson}', [App\Http\Controllers\Instructor\LessonController::class, 'update'])->name('courses.modules.lessons.update');
+    Route::delete('/courses/{course}/modules/{module}/lessons/{lesson}', [App\Http\Controllers\Instructor\LessonController::class, 'destroy'])->name('courses.modules.lessons.destroy');
+
+    // Assignments
+    Route::get('/assignments', [App\Http\Controllers\Instructor\AssignmentController::class, 'index'])->name('assignments.index');
+    Route::post('/courses/{course}/assignments', [App\Http\Controllers\Instructor\AssignmentController::class, 'store'])->name('courses.assignments.store');
+    Route::post('/courses/{course}/assignments/{assignment}/submissions/{submission}/grade', [App\Http\Controllers\Instructor\AssignmentController::class, 'grade'])->name('courses.assignments.grade');
+
     Route::get('/submissions', [InstructorDashboardController::class, 'submissions'])->name('submissions');
     Route::get('/analytics', [InstructorDashboardController::class, 'analytics'])->name('analytics');
+
+    // Live Sessions
+    Route::get('/courses/{course}/live-sessions', [App\Http\Controllers\Instructor\LiveSessionController::class, 'index'])->name('live-sessions.index');
+    Route::post('/courses/{course}/live-sessions', [App\Http\Controllers\Instructor\LiveSessionController::class, 'store'])->name('live-sessions.store');
+    Route::delete('/courses/{course}/live-sessions/{session}', [App\Http\Controllers\Instructor\LiveSessionController::class, 'destroy'])->name('live-sessions.destroy');
 });
 
 /*
@@ -126,6 +207,35 @@ Route::prefix('student')->middleware(['auth', 'student'])->name('student.')->gro
     // Quizzes
     Route::get('/quizzes/{quiz}/take', [App\Http\Controllers\Student\QuizController::class, 'take'])->name('quizzes.take');
     Route::post('/quizzes/{quiz}/submit', [App\Http\Controllers\Student\QuizController::class, 'submit'])->name('quizzes.submit');
+
+    // Assignments
+    Route::get('/assignments', [App\Http\Controllers\Student\AssignmentController::class, 'index'])->name('assignments.index');
+    Route::get('/courses/{course}/assignments/{assignment}', [App\Http\Controllers\Student\AssignmentController::class, 'show'])->name('assignments.show');
+    Route::post('/courses/{course}/assignments/{assignment}/submit', [App\Http\Controllers\Student\AssignmentController::class, 'submit'])->name('assignments.submit');
+
+    // Notes
+    Route::get('/notes', [App\Http\Controllers\Student\NoteController::class, 'index'])->name('notes.index');
+    Route::get('/courses/{course}/lessons/{lesson}/notes', [App\Http\Controllers\Student\NoteController::class, 'show'])->name('notes.show');
+    Route::post('/courses/{course}/lessons/{lesson}/notes', [App\Http\Controllers\Student\NoteController::class, 'store'])->name('notes.store');
+
+    // Schedule
+    Route::get('/schedule', [App\Http\Controllers\Student\ScheduleController::class, 'index'])->name('schedule');
+
+    // Reviews
+    Route::post('/courses/{course}/reviews', [App\Http\Controllers\Student\ReviewController::class, 'store'])->name('reviews.store');
+
+    // Discussions
+    Route::get('/courses/{course}/discussions', [App\Http\Controllers\Student\DiscussionController::class, 'index'])->name('discussions.index');
+    Route::get('/courses/{course}/discussions/{discussion}', [App\Http\Controllers\Student\DiscussionController::class, 'show'])->name('discussions.show');
+    Route::post('/courses/{course}/discussions', [App\Http\Controllers\Student\DiscussionController::class, 'store'])->name('discussions.store');
+    Route::post('/courses/{course}/discussions/{discussion}/reply', [App\Http\Controllers\Student\DiscussionController::class, 'reply'])->name('discussions.reply');
+
+    // Live Sessions
+    Route::get('/courses/{course}/live-sessions', [App\Http\Controllers\Student\LiveSessionController::class, 'index'])->name('live-sessions.index');
+    Route::get('/live-sessions/{session}/join', [App\Http\Controllers\Student\LiveSessionController::class, 'join'])->name('live-sessions.join');
+
+    // Achievements
+    Route::get('/achievements', [App\Http\Controllers\Student\AchievementController::class, 'index'])->name('achievements.index');
 });
 
 /*
@@ -147,3 +257,13 @@ Route::prefix('finance')->middleware(['auth', 'finance'])->name('finance.')->gro
 */
 
 Route::post('/lenco/webhook', [App\Http\Controllers\Payment\LencoWebhookController::class, 'handle'])->name('lenco.webhook');
+
+// Public Newsletter Subscription
+Route::post('/newsletter/subscribe', function (\Illuminate\Http\Request $request) {
+    $validated = $request->validate(['email' => 'required|email|max:255']);
+    \App\Models\NewsletterSubscriber::updateOrCreate(
+        ['email' => $validated['email']],
+        ['is_active' => true, 'subscribed_at' => now(), 'unsubscribed_at' => null]
+    );
+    return response()->json(['success' => true]);
+})->name('newsletter.subscribe');

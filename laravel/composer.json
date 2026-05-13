@@ -6,14 +6,15 @@
     "license": "proprietary",
     "require": {
         "php": "^8.1",
+        "google/apiclient": "^2.18",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
+        "laravel/socialite": "^5.27",
         "laravel/tinker": "^2.8",
-        "google/apiclient": "^2.18",
         "phpmailer/phpmailer": "^6.8",
-        "tecnickcom/tcpdf": "^6.6",
-        "simplesoftwareio/simple-qrcode": "^4.2"
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "tecnickcom/tcpdf": "^6.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

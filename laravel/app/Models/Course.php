@@ -102,7 +102,13 @@ class Course extends Model
 
     public function liveSessions()
     {
-        return $this->hasManyThrough(LiveSession::class, Lesson::class);
+        $lessonIds = $this->lessons()->pluck('lessons.id');
+        return LiveSession::whereIn('lesson_id', $lessonIds);
+    }
+
+    public function discussions()
+    {
+        return $this->hasMany(Discussion::class, 'course_id');
     }
 
     public function scopePublished($query)

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Contact Us - Edutrack Computer Training College')
-@section('meta_description', 'Get in touch with Edutrack Computer Training College. Located in Kalomo, Zambia. TEVETA registered institution.')
+@section('meta_description', 'Get in touch with Edutrack Computer Training College. Located in Kalomo, Zambia.')
 
 @section('content')
 
@@ -32,7 +32,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('contact') }}" method="POST" class="space-y-6">
+                <form action="{{ route('contact.submit') }}" method="POST" class="space-y-6">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -95,7 +95,6 @@
                         $contactAddress = \App\Models\SystemSetting::get('site_address', 'Kalomo, Zambia');
                         $contactPhone = \App\Models\SystemSetting::get('site_phone');
                         $contactEmail = \App\Models\SystemSetting::get('site_email');
-                        $tevetaReg = \App\Models\SystemSetting::get('teveta_registration_number');
                         @endphp
 
                         <div class="flex items-start">
@@ -132,17 +131,7 @@
                         </div>
                         @endif
 
-                        @if($tevetaReg)
-                        <div class="flex items-start">
-                            <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                                <i class="fas fa-certificate text-primary-600 text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900">TEVETA Registration</h3>
-                                <p class="text-gray-600">{{ $tevetaReg }}</p>
-                            </div>
-                        </div>
-                        @endif
+
                     </div>
                 </div>
 

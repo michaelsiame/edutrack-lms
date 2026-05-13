@@ -145,7 +145,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="text-3xl font-bold mb-4">Start Your Success Story Today</h2>
         <p class="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of students who have transformed their careers through Edutrack's TEVETA-certified programs.
+            Join thousands of students who have transformed their careers through Edutrack's professional programs.
         </p>
         <a href="{{ route('courses.index') }}" class="inline-flex items-center justify-center px-8 py-4 bg-yellow-500 text-gray-900 font-semibold rounded-lg hover:bg-yellow-600 transition shadow-lg transform hover:-translate-y-1">
             <i class="fas fa-rocket mr-2"></i> Explore Courses

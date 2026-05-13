@@ -18,7 +18,7 @@ class HeroSlide extends Model
         'cta_link',
         'secondary_cta_text',
         'secondary_cta_link',
-        'sort_order',
+        'display_order',
         'is_active',
     ];
 
@@ -28,6 +28,6 @@ class HeroSlide extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('is_active', true)->orderBy('sort_order');
+        return $query->where('is_active', true)->orderBy('display_order');
     }
 }

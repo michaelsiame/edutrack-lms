@@ -20,4 +20,10 @@ return [
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
+
+    'lenco' => [
+        'api_key' => env('LENCO_API_KEY'),
+        'secret_key' => env('LENCO_SECRET_KEY'),
+        'webhook_secret' => env('LENCO_WEBHOOK_SECRET'),
+    ],
 ];

@@ -56,8 +56,29 @@
                         @if(Route::has('admin.courses.index'))
                         <x-dashboard-nav-item route="admin.courses.index" icon="fa-book" label="Courses" />
                         @endif
+                        @if(Route::has('admin.enrollments.index'))
+                        <x-dashboard-nav-item route="admin.enrollments.index" icon="fa-user-graduate" label="Enrollments" />
+                        @endif
                         @if(Route::has('admin.payments.index'))
                         <x-dashboard-nav-item route="admin.payments.index" icon="fa-money-bill-wave" label="Payments" />
+                        @endif
+                        @if(Route::has('admin.announcements.index'))
+                        <x-dashboard-nav-item route="admin.announcements.index" icon="fa-bullhorn" label="Announcements" />
+                        @endif
+                        @if(Route::has('admin.events.index'))
+                        <x-dashboard-nav-item route="admin.events.index" icon="fa-calendar-alt" label="Events" />
+                        @endif
+                        @if(Route::has('admin.photos.index'))
+                        <x-dashboard-nav-item route="admin.photos.index" icon="fa-images" label="Photos" />
+                        @endif
+                        @if(Route::has('admin.templates.index'))
+                        <x-dashboard-nav-item route="admin.templates.index" icon="fa-envelope" label="Email Templates" />
+                        @endif
+                        @if(Route::has('admin.badges.index'))
+                        <x-dashboard-nav-item route="admin.badges.index" icon="fa-medal" label="Badges" />
+                        @endif
+                        @if(Route::has('admin.newsletter.index'))
+                        <x-dashboard-nav-item route="admin.newsletter.index" icon="fa-newspaper" label="Newsletter" />
                         @endif
                         <x-dashboard-nav-item route="admin.reports" icon="fa-chart-bar" label="Reports" />
                         <x-dashboard-nav-item route="admin.settings" icon="fa-cog" label="Settings" />
@@ -66,14 +87,30 @@
                         @if(Route::has('instructor.courses.index'))
                         <x-dashboard-nav-item route="instructor.courses.index" icon="fa-book" label="My Courses" />
                         @endif
+                        @if(Route::has('instructor.assignments.index'))
+                        <x-dashboard-nav-item route="instructor.assignments.index" icon="fa-tasks" label="Assignments" />
+                        @endif
                         <x-dashboard-nav-item route="instructor.submissions" icon="fa-clipboard-check" label="Submissions" />
                         <x-dashboard-nav-item route="instructor.analytics" icon="fa-chart-line" label="Analytics" />
                     @elseif($user->isStudent())
                         <x-dashboard-nav-item route="student.dashboard" icon="fa-tachometer-alt" label="Dashboard" />
                         <x-dashboard-nav-item route="enrollments.index" icon="fa-book-open" label="My Courses" />
+                        @if(Route::has('student.assignments.index'))
+                        <x-dashboard-nav-item route="student.assignments.index" icon="fa-tasks" label="Assignments" />
+                        @endif
+                        @if(Route::has('student.notes.index'))
+                        <x-dashboard-nav-item route="student.notes.index" icon="fa-sticky-note" label="My Notes" />
+                        @endif
+                        @if(Route::has('student.schedule'))
+                        <x-dashboard-nav-item route="student.schedule" icon="fa-calendar-alt" label="Schedule" />
+                        @endif
                         <x-dashboard-nav-item route="student.progress" icon="fa-chart-pie" label="Progress" />
                         <x-dashboard-nav-item route="student.certificates" icon="fa-certificate" label="Certificates" />
                         <x-dashboard-nav-item route="student.payments" icon="fa-credit-card" label="Payments" />
+                        @if(Route::has('student.achievements.index'))
+                        <x-dashboard-nav-item route="student.achievements.index" icon="fa-medal" label="Achievements" />
+                        @endif
+                        <x-dashboard-nav-item route="profile.show" icon="fa-user" label="My Profile" />
                     @elseif($user->isFinance())
                         <x-dashboard-nav-item route="finance.dashboard" icon="fa-tachometer-alt" label="Dashboard" />
                         <x-dashboard-nav-item route="finance.transactions" icon="fa-money-bill-wave" label="Transactions" />

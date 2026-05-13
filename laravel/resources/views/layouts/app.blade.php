@@ -7,15 +7,15 @@
     <title>@yield('title', config('app.name', 'Edutrack Computer Training College'))</title>
 
     <!-- Meta Tags -->
-    <meta name="description" content="@yield('meta_description', 'Edutrack Computer Training College - TEVETA registered institution offering quality computer training in Zambia. Transform your future with industry-recognized certification programs.')">
-    <meta name="keywords" content="computer training, TEVETA, Zambia, courses, certification, web development, digital marketing, Kalomo">
+    <meta name="description" content="@yield('meta_description', 'Edutrack Computer Training College - Quality computer training in Zambia. Transform your future with industry-recognized certification programs.')">
+    <meta name="keywords" content="computer training, Zambia, courses, certification, web development, digital marketing, Kalomo">
     <meta name="author" content="Edutrack Computer Training College">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="@yield('title', config('app.name'))">
-    <meta property="og:description" content="@yield('meta_description', 'TEVETA registered computer training institution in Zambia')">
+    <meta property="og:description" content="@yield('meta_description', 'Quality computer training institution in Zambia')">
     <meta property="og:image" content="@yield('og_image', asset('assets/images/logo.png'))">
 
     <!-- Favicon -->
@@ -147,15 +147,8 @@
             <div class="flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm gap-2 sm:gap-0">
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1">
                     @php
-                        $tevetaReg = \App\Models\SystemSetting::get('teveta_registration_number');
                         $sitePhone = \App\Models\SystemSetting::get('site_phone');
                     @endphp
-                    @if($tevetaReg)
-                    <span class="flex items-center">
-                        <i class="fas fa-certificate mr-1 text-secondary-500"></i>
-                        <strong>TEVETA Registered:</strong> {{ $tevetaReg }}
-                    </span>
-                    @endif
                     @if($sitePhone)
                     <span class="hidden md:flex items-center">
                         <i class="fas fa-phone mr-1"></i>

@@ -50,6 +50,14 @@
                         </a>
                     </div>
                 @endif
+
+                <!-- Take Notes -->
+                <div class="mt-4">
+                    <a href="{{ route('student.notes.show', [$course, $lesson]) }}"
+                        class="inline-flex items-center px-4 py-2 bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 font-medium text-sm">
+                        <i class="fas fa-sticky-note mr-2"></i>Take Notes
+                    </a>
+                </div>
             </div>
         </div>
 

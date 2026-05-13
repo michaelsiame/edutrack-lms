@@ -40,4 +40,9 @@ class Student extends Model
     {
         return $this->hasMany(RegistrationFee::class, 'student_id');
     }
+
+    public function achievements()
+    {
+        return $this->hasMany(StudentAchievement::class, 'student_id');
+    }
 }

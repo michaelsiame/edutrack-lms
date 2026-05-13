@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'About Us - Edutrack Computer Training College')
-@section('meta_description', 'Learn about Edutrack Computer Training College - TEVETA registered institution in Zambia. Our mission, vision, and commitment to quality education.')
+@section('meta_description', 'Learn about Edutrack Computer Training College - Quality computer training in Zambia. Our mission, vision, and commitment to quality education.')
 
 @section('content')
 
@@ -11,7 +11,7 @@
         <div class="text-center">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">About Edutrack</h1>
             <p class="text-xl text-primary-100 max-w-3xl mx-auto">
-                Empowering Zambians through quality computer training and TEVETA-certified education
+                Empowering Zambians through quality computer training and professional education
             </p>
         </div>
     </div>
@@ -65,7 +65,7 @@
                 <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center mb-6">
                     <i class="fas fa-certificate text-yellow-600 text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">TEVETA Certified</h3>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Professionally Certified</h3>
                 <p class="text-gray-600">All our programs are registered and accredited by the Technical Education, Vocational and Entrepreneurship Training Authority.</p>
             </div>
 
@@ -117,7 +117,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Start Your Journey?</h2>
         <p class="text-xl text-primary-100 max-w-2xl mx-auto mb-8">
-            Join thousands of students who have transformed their careers through Edutrack's TEVETA-certified programs.
+            Join thousands of students who have transformed their careers through Edutrack's professional programs.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="{{ route('courses.index') }}" class="inline-flex items-center justify-center px-8 py-4 bg-yellow-500 text-gray-900 font-semibold rounded-lg hover:bg-yellow-600 transition shadow-lg">

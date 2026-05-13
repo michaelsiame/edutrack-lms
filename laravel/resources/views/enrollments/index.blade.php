@@ -39,12 +39,11 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        @match($enrollment->enrollment_status)
-                                            @case('Completed') bg-green-100 text-green-800 @break
-                                            @case('In Progress') bg-blue-100 text-blue-800 @break
-                                            @case('Dropped') bg-red-100 text-red-800 @break
-                                            @default bg-gray-100 text-gray-800
-                                        @endmatch">
+                                        @if($enrollment->enrollment_status === 'Completed') bg-green-100 text-green-800
+                                        @elseif($enrollment->enrollment_status === 'In Progress') bg-blue-100 text-blue-800
+                                        @elseif($enrollment->enrollment_status === 'Dropped') bg-red-100 text-red-800
+                                        @else bg-gray-100 text-gray-800
+                                        @endif">
                                         {{ $enrollment->enrollment_status }}
                                     </span>
                                 </td>

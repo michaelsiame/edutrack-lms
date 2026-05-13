@@ -11,7 +11,9 @@ use App\Models\CourseReview;
 use App\Models\Testimonial;
 use App\Models\Event;
 use App\Models\HeroSlide;
+use App\Models\Contact;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -90,6 +92,29 @@ class HomeController extends Controller
     public function contact()
     {
         return view('contact');
+    }
+
+    public function contactSubmit(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'subject' => 'required|string|max:200',
+            'message' => 'required|string|max:5000',
+        ]);
+
+        Contact::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+            'subject' => $validated['subject'],
+            'message' => $validated['message'],
+            'is_read' => false,
+        ]);
+
+        return redirect()->route('contact')
+            ->with('success', 'Thank you for your message! We will get back to you within 24-48 hours.');
     }
 
     public function campus()

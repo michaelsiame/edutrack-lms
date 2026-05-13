@@ -81,6 +81,11 @@ class User extends Authenticatable
         return $this->roles()->where('role_id', 4)->exists();
     }
 
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
+
     public function hasRole(int $roleId): bool
     {
         return $this->roles()->where('role_id', $roleId)->exists();

@@ -55,6 +55,78 @@
                                 @endforeach
                             </div>
                         @endif
+
+                        <!-- Reviews -->
+                        <div class="mt-8">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Student Reviews</h3>
+
+                            @if($course->reviews->count() > 0)
+                                <div class="space-y-4">
+                                    @foreach($course->reviews->take(5) as $review)
+                                        <div class="bg-gray-50 rounded-lg p-4">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold text-sm">
+                                                        {{ strtoupper(substr($review->user->first_name, 0, 1)) }}
+                                                    </div>
+                                                    <span class="font-medium text-gray-900">{{ $review->user->full_name }}</span>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    @for($i = 1; $i <= 5; $i++)
+                                                        <i class="fas fa-star text-xs {{ $i <= $review->rating ? 'text-amber-400' : 'text-gray-300' }}"></i>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                            <p class="text-sm text-gray-600">{{ $review->review }}</p>
+                                            <p class="text-xs text-gray-400 mt-1">{{ $review->created_at->diffForHumans() }}</p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-gray-500 text-sm">No reviews yet. Be the first to review!</p>
+                            @endif
+
+                            @auth
+                                @php
+                                    $canReview = \App\Models\Enrollment::where('user_id', auth()->id())
+                                        ->where('course_id', $course->id)
+                                        ->whereIn('enrollment_status', ['In Progress', 'Completed'])
+                                        ->exists();
+                                @endphp
+                                @if($canReview)
+                                    <form action="{{ route('reviews.store', $course) }}" method="POST" class="mt-4 p-4 bg-gray-50 rounded-lg">
+                                        @csrf
+                                        <h4 class="font-medium text-gray-900 mb-3">Write a Review</h4>
+                                        <div class="mb-3">
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                                            <div class="flex items-center gap-1">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <label class="cursor-pointer">
+                                                        <input type="radio" name="rating" value="{{ $i }}" class="sr-only peer" required>
+                                                        <i class="fas fa-star text-xl peer-checked:text-amber-400 text-gray-300 hover:text-amber-300 transition-colors"></i>
+                                                    </label>
+                                                @endfor
+                                            </div>
+                                            @error('rating')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="review" class="block text-sm font-medium text-gray-700 mb-1">Your Review</label>
+                                            <textarea name="review" id="review" rows="3" required minlength="10"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                                placeholder="Share your experience with this course..."></textarea>
+                                            @error('review')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm">
+                                            Submit Review
+                                        </button>
+                                    </form>
+                                @endif
+                            @endauth
+                        </div>
                     </div>
 
                     <div class="lg:col-span-1">
@@ -67,21 +139,42 @@
                             </div>
 
                             @auth
-                                @if($isEnrolled)
-                                    <a href="{{ route('enrollments.show', $course) }}" class="block w-full text-center py-3 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium">
-                                        Continue Learning
-                                    </a>
+                                @php
+                                    $enrollment = \App\Models\Enrollment::where('user_id', auth()->id())->where('course_id', $course->id)->first();
+                                    $hasPaidRegFee = \App\Models\RegistrationFee::where('user_id', auth()->id())->where('payment_status', 'completed')->exists();
+                                @endphp
+
+                                @if($enrollment)
+                                    @if($enrollment->isFullyPaid())
+                                        <a href="{{ route('enrollments.show', $course) }}" class="block w-full text-center py-3 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium">
+                                            <i class="fas fa-play mr-2"></i>Continue Learning
+                                        </a>
+                                    @else
+                                        <a href="{{ route('checkout.show', $course) }}" class="block w-full text-center py-3 px-4 bg-amber-600 text-white rounded-md hover:bg-amber-700 font-medium">
+                                            <i class="fas fa-credit-card mr-2"></i>Complete Payment
+                                        </a>
+                                        <p class="mt-2 text-xs text-center text-gray-500">
+                                            Paid: K{{ number_format($enrollment->amount_paid, 2) }} / K{{ number_format($course->discount_price ?? $course->price, 2) }}
+                                        </p>
+                                    @endif
                                 @else
-                                    <form action="{{ route('enrollments.store', $course) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="block w-full text-center py-3 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-medium">
-                                            Enroll Now
-                                        </button>
-                                    </form>
+                                    @if(!$hasPaidRegFee)
+                                        <a href="{{ route('registration-fee.show') }}" class="block w-full text-center py-3 px-4 bg-gray-600 text-white rounded-md hover:bg-gray-700 font-medium">
+                                            <i class="fas fa-lock mr-2"></i>Pay Registration Fee First
+                                        </a>
+                                        <p class="mt-2 text-xs text-center text-gray-500">K150 one-time registration fee required</p>
+                                    @else
+                                        <form action="{{ route('enrollments.store', $course) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="block w-full text-center py-3 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-medium">
+                                                <i class="fas fa-user-plus mr-2"></i>Enroll Now
+                                            </button>
+                                        </form>
+                                    @endif
                                 @endif
                             @else
                                 <a href="{{ route('login') }}" class="block w-full text-center py-3 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-medium">
-                                    Login to Enroll
+                                    <i class="fas fa-sign-in-alt mr-2"></i>Login to Enroll
                                 </a>
                             @endauth
 

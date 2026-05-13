@@ -162,17 +162,44 @@ class LencoPaymentService
 
     /**
      * Update enrollment payment status based on total payments.
+     * Implements the 30% deposit rule and 100% certificate rule.
      */
     protected function updateEnrollmentPaymentStatus(Enrollment $enrollment): void
     {
+        $coursePrice = $enrollment->course->discount_price ?? $enrollment->course->price;
+
         $totalPaid = Payment::where('enrollment_id', $enrollment->id)
             ->where('payment_status', 'Completed')
             ->sum('amount');
 
+        $percentagePaid = $coursePrice > 0 ? ($totalPaid / $coursePrice) * 100 : 100;
+
+        // Determine enrollment status based on payment
+        $enrollmentStatus = $enrollment->enrollment_status;
+        if ($percentagePaid >= 30 && $enrollmentStatus === 'Enrolled') {
+            $enrollmentStatus = 'In Progress';
+        }
+
+        // Certificate blocked until fully paid
+        $certificateBlocked = $totalPaid < $coursePrice;
+
+        $paymentStatus = $totalPaid >= $coursePrice ? 'completed' : 'pending';
+
         $enrollment->update([
             'amount_paid' => $totalPaid,
-            'payment_status' => $totalPaid >= $enrollment->course->price ? 'completed' : 'pending',
+            'payment_status' => $paymentStatus,
+            'enrollment_status' => $enrollmentStatus,
+            'certificate_blocked' => $certificateBlocked,
         ]);
+
+        // Update payment plan
+        $paymentPlan = $enrollment->paymentPlan;
+        if ($paymentPlan) {
+            $paymentPlan->update([
+                'total_paid' => $totalPaid,
+                'payment_status' => $paymentStatus,
+            ]);
+        }
     }
 
     /**

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -29,6 +30,8 @@ class RegisterController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()->min(8)->mixedCase()->numbers()],
         ]);
 
+        $verificationToken = Str::random(64);
+
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -37,6 +40,9 @@ class RegisterController extends Controller
             'phone' => $request->phone,
             'password_hash' => Hash::make($request->password),
             'status' => 'active',
+            'email_verification_token' => $verificationToken,
+            'email_verification_expires' => now()->addHours(24),
+            'email_verified' => false,
         ]);
 
         // Assign student role by default
@@ -47,8 +53,14 @@ class RegisterController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // In development, show the verification link
+        if (app()->environment('local', 'development')) {
+            return redirect()->route('verification.notice')
+                ->with('verification_link', route('verification.verify', ['token' => $verificationToken]))
+                ->with('email', $user->email);
+        }
 
-        return redirect(route('dashboard'));
+        return redirect()->route('verification.notice')
+            ->with('email', $user->email);
     }
 }
