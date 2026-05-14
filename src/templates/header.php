@@ -11,7 +11,7 @@ if (!defined('APP_BOOTSTRAPPED')) {
 }
 
 // Set page title
-$page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGISTERED';
+$page_title = $page_title ?? 'Edutrack Computer Training College | Tech Training in Zambia';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,22 +22,22 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
     <title><?= sanitize($page_title) ?></title>
     
     <!-- Meta Tags -->
-    <meta name="description" content="<?= sanitize($page_description ?? 'Edutrack Computer Training College - TEVETA registered institution offering quality computer training in Zambia. Transform your future with industry-recognized certification programs.') ?>">
-    <meta name="keywords" content="computer training, TEVETA, Zambia, courses, certification, web development, digital marketing, Lusaka">
+    <meta name="description" content="<?= sanitize($page_description ?? 'Edutrack Computer Training College - Quality computer training in Zambia. Transform your future with industry-recognized certification programs.') ?>">
+    <meta name="keywords" content="computer training, Zambia, courses, certification, web development, digital marketing, Kalomo">
     <meta name="author" content="Edutrack computer training college">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="<?= url() ?>">
     <meta property="og:title" content="<?= sanitize($page_title) ?>">
-    <meta property="og:description" content="<?= sanitize($page_description ?? 'TEVETA registered computer training institution in Zambia') ?>">
+    <meta property="og:description" content="<?= sanitize($page_description ?? 'Quality computer training institution in Zambia') ?>">
     <meta property="og:image" content="<?= $og_image ?? asset('images/logo.png') ?>">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="<?= url() ?>">
     <meta property="twitter:title" content="<?= sanitize($page_title) ?>">
-    <meta property="twitter:description" content="<?= sanitize($page_description ?? 'TEVETA registered computer training institution in Zambia') ?>">
+    <meta property="twitter:description" content="<?= sanitize($page_description ?? 'Quality computer training institution in Zambia') ?>">
     <meta property="twitter:image" content="<?= $og_image ?? asset('images/logo.png') ?>">
     
     <!-- Favicon -->
@@ -155,8 +155,8 @@ $page_title = $page_title ?? 'Edutrack computer training college - TEVETA REGIST
             <div class="flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm gap-2 sm:gap-0">
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1">
                     <span class="flex items-center">
-                        <i class="fas fa-certificate mr-1 text-secondary-500"></i>
-                        <strong>TEVETA Registered:</strong> <?= TEVETA_CODE ?>
+                        <i class="fas fa-map-marker-alt mr-1 text-secondary-500"></i>
+                        Kalomo, Zambia
                     </span>
                     <span class="hidden md:flex items-center">
                         <i class="fas fa-phone mr-1"></i>

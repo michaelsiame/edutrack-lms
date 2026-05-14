@@ -178,129 +178,125 @@ try {
 } catch (PDOException $e) {
     error_log("Top featured courses error: " . $e->getMessage());
 }
+
+// 3. UPCOMING EVENTS
+$upcoming_events = [];
+try {
+    $stmt = $pdo->query("
+        SELECT * FROM events 
+        WHERE event_date >= CURDATE() 
+           OR (event_date IS NULL AND status = 'upcoming')
+        ORDER BY event_date ASC, created_at DESC
+        LIMIT 3
+    ");
+    $upcoming_events = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log("Upcoming events error: " . $e->getMessage());
+}
+
+// 4. NEXT INTAKE SETTINGS
+$next_intake_date = null;
+$next_intake_label = 'Next Intake Coming Soon';
+try {
+    $stmt = $pdo->query("SELECT setting_value FROM system_settings WHERE setting_key = 'next_intake_date' LIMIT 1");
+    $result = $stmt->fetch();
+    if ($result) $next_intake_date = $result['setting_value'];
+    
+    $stmt = $pdo->query("SELECT setting_value FROM system_settings WHERE setting_key = 'next_intake_label' LIMIT 1");
+    $result = $stmt->fetch();
+    if ($result && !empty($result['setting_value'])) $next_intake_label = $result['setting_value'];
+} catch (PDOException $e) {
+    error_log("Next intake settings error: " . $e->getMessage());
+}
 ?>
 
-<!-- Hero Carousel Section -->
-<section class="relative h-[500px] sm:h-[560px] md:h-[700px] overflow-hidden" x-data="{ currentSlide: 0, totalSlides: <?= count($heroSlides) ?> }" x-init="setInterval(() => { currentSlide = (currentSlide + 1) % totalSlides }, 6000)">
-    
-    <!-- Slides -->
-    <?php foreach ($heroSlides as $index => $slide): 
-        $imageUrl = !empty($slide['image_path']) ? '/uploads/hero/' . $slide['image_path'] : '';
-    ?>
-    <div class="absolute inset-0 transition-opacity duration-1000" 
-         x-show="currentSlide === <?= $index ?>"
-         x-transition:enter="opacity-0"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="opacity-100"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0">
-        
-        <!-- Background Image -->
-        <div class="absolute inset-0 bg-cover bg-center" 
-             style="background-image: url('<?= $imageUrl ?: '/assets/images/hero-bg-' . ($index + 1) . '.jpg' ?>');">
-            <div class="absolute inset-0 bg-black/60"></div>
-        </div>
-        
-        <!-- Content -->
-        <div class="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-            <div class="max-w-2xl py-24">
-                <!-- Badge -->
-                <div class="mb-6 animate-fade-in" x-show="currentSlide === <?= $index ?>" x-transition.delay.300ms>
-                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-yellow-500 text-gray-900 shadow-lg">
-                        <i class="fas fa-certificate mr-2"></i>
-                        TEVETA Registered Institution
-                    </span>
-                </div>
-                
-                <!-- Title -->
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 animate-fade-in" 
-                    x-show="currentSlide === <?= $index ?>" x-transition.delay.500ms>
-                    <?= htmlspecialchars($slide['title']) ?>
-                    <?php if (!empty($slide['subtitle'])): ?>
-                    <span class="block text-yellow-400 mt-2"><?= htmlspecialchars($slide['subtitle']) ?></span>
-                    <?php endif; ?>
-                </h1>
-                
-                <!-- Description -->
-                <p class="text-xl md:text-2xl text-gray-200 mb-8 animate-fade-in" 
-                   x-show="currentSlide === <?= $index ?>" x-transition.delay.700ms>
-                    <?= htmlspecialchars($slide['description']) ?>
-                </p>
-                
-                <!-- CTAs -->
-                <div class="flex flex-col sm:flex-row gap-4 animate-fade-in" 
-                     x-show="currentSlide === <?= $index ?>" x-transition.delay.900ms>
-                    <a href="<?= $slide['cta_link'] ?? 'courses.php' ?>" 
-                       class="inline-flex items-center justify-center px-8 py-4 bg-yellow-500 text-gray-900 font-semibold rounded-lg hover:bg-yellow-600 transition shadow-lg transform hover:-translate-y-1">
-                        <i class="fas fa-rocket mr-2"></i>
-                        <?= htmlspecialchars($slide['cta_text'] ?? 'Get Started') ?>
-                    </a>
-                    <?php if (!empty($slide['secondary_cta_text'])): ?>
-                    <a href="<?= $slide['secondary_cta_link'] ?? 'contact.php' ?>" 
-                       class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-gray-900 transition">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        <?= htmlspecialchars($slide['secondary_cta_text']) ?>
-                    </a>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
+<!-- Hero Section -->
+<section class="relative text-white overflow-hidden" style="min-height: 600px;">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0">
+        <?php 
+        $heroImage = !empty($heroSlides[0]['image_path']) 
+            ? '/uploads/hero/' . $heroSlides[0]['image_path'] 
+            : '/assets/images/hero-bg-1.jpg';
+        ?>
+        <img src="<?= $heroImage ?>" alt="Edutrack Campus" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-br from-black/80 via-primary-900/90 to-black/85"></div>
+        <div class="absolute inset-0 bg-black/30"></div>
     </div>
-    <?php endforeach; ?>
-    
-    <!-- Slide Navigation Dots -->
-    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
-        <?php foreach ($heroSlides as $index => $slide): ?>
-        <button @click="currentSlide = <?= $index ?>" 
-                class="w-3 h-3 rounded-full transition-all duration-300"
-                :class="currentSlide === <?= $index ?> ? 'bg-yellow-500 w-8' : 'bg-white/50 hover:bg-white'">
-        </button>
-        <?php endforeach; ?>
-    </div>
-    
-    <!-- Arrow Navigation -->
-    <button @click="currentSlide = (currentSlide - 1 + totalSlides) % totalSlides" 
-            class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center transition z-10">
-        <i class="fas fa-chevron-left text-xl"></i>
-    </button>
-    <button @click="currentSlide = (currentSlide + 1) % totalSlides" 
-            class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center transition z-10">
-        <i class="fas fa-chevron-right text-xl"></i>
-    </button>
-</section>
+    <!-- Decorative pattern overlay -->
+    <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;"></div>
 
-<!-- Trust Indicators Bar -->
-<section class="bg-gray-900 text-white py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mb-3">
-                    <i class="fas fa-certificate text-2xl text-yellow-400"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">TEVETA</h3>
-                <p class="text-sm text-gray-400">Registered</p>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+        <div class="text-center bg-black/20 backdrop-blur-sm rounded-3xl p-6 md:p-10">
+            <div class="mb-6 animate-fade-in">
+                <span class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold bg-yellow-500 text-gray-900 shadow-lg border-2 border-yellow-400">
+                    <i class="fas fa-certificate mr-2"></i>
+                    Registered Institution
+                </span>
             </div>
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mb-3">
-                    <i class="fas fa-users text-2xl text-blue-400"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white"><?= number_format($stats['total_students']) ?>+</h3>
-                <p class="text-sm text-gray-400">Active Students</p>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fade-in leading-tight">
+                Transform Your Future with
+                <span class="block text-yellow-400 mt-2 drop-shadow-lg">Edutrack Computer Training College</span>
+            </h1>
+            <p class="text-lg md:text-xl lg:text-2xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
+                Zambia's premier computer training institution. Join thousands of students mastering industry-relevant skills.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto pb-6">
+                <?php if (isLoggedIn()): ?>
+                    <a href="<?= url('dashboard.php') ?>" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-xl text-primary-700 bg-white hover:bg-gray-50 transition duration-200 shadow-xl transform hover:-translate-y-1">
+                        <i class="fas fa-tachometer-alt mr-2"></i>
+                        Go to Dashboard
+                    </a>
+                <?php else: ?>
+                    <a href="<?= url('register.php') ?>" class="inline-flex items-center justify-center px-8 py-4 border-2 border-yellow-400 text-base font-medium rounded-xl text-gray-900 bg-yellow-500 hover:bg-yellow-400 transition duration-200 shadow-xl transform hover:-translate-y-1">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Get Started Free
+                    </a>
+                <?php endif; ?>
+                <a href="<?= url('courses.php') ?>" class="inline-flex items-center justify-center px-8 py-4 border-2 border-white/60 text-base font-medium rounded-xl text-white hover:bg-white/10 hover:border-white transition duration-200 backdrop-blur-sm">
+                    <i class="fas fa-book mr-2"></i>
+                    View Our Courses
+                </a>
             </div>
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-3">
-                    <i class="fas fa-book-open text-2xl text-green-400"></i>
+        </div>
+
+        <!-- Trust Indicators -->
+        <div class="mt-10 md:mt-14 pt-8 border-t border-white/10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <div class="animate-slide-up animation-delay-100 bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 text-center border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="w-14 h-14 mx-auto mb-3 bg-yellow-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-certificate text-2xl text-yellow-400"></i>
+                    </div>
+                    <h3 class="text-base md:text-lg font-bold text-white">Registered Institution</h3>
+                    <p class="text-xs text-blue-200 mt-1">Government Certified</p>
                 </div>
-                <h3 class="text-2xl font-bold text-white"><?= number_format($stats['total_courses']) ?></h3>
-                <p class="text-sm text-gray-400">Courses Offered</p>
-            </div>
-            <div class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mb-3">
-                    <i class="fas fa-star text-2xl text-purple-400"></i>
+                <div class="animate-slide-up animation-delay-200 bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 text-center border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="w-14 h-14 mx-auto mb-3 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-users text-2xl text-blue-300"></i>
+                    </div>
+                    <h3 class="text-base md:text-lg font-bold text-white">
+                        <?php if ($stats['total_students'] > 0): ?>
+                            <?= number_format($stats['total_students']) ?>+ Students
+                        <?php else: ?>
+                            Growing Community
+                        <?php endif; ?>
+                    </h3>
+                    <p class="text-xs text-blue-200 mt-1">Nationwide Community</p>
                 </div>
-                <h3 class="text-2xl font-bold text-white"><?= number_format($stats['avg_rating'], 1) ?>/5</h3>
-                <p class="text-sm text-gray-400">Student Rating</p>
+                <div class="animate-slide-up animation-delay-300 bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 text-center border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="w-14 h-14 mx-auto mb-3 bg-green-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-2xl text-green-300"></i>
+                    </div>
+                    <h3 class="text-base md:text-lg font-bold text-white">Expert Instructors</h3>
+                    <p class="text-xs text-blue-200 mt-1">Industry Professionals</p>
+                </div>
+                <div class="animate-slide-up animation-delay-400 bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 text-center border border-white/20 hover:bg-white/15 transition-all duration-300">
+                    <div class="w-14 h-14 mx-auto mb-3 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-award text-2xl text-purple-300"></i>
+                    </div>
+                    <h3 class="text-base md:text-lg font-bold text-white">Career Ready</h3>
+                    <p class="text-xs text-blue-200 mt-1">Job Placement Support</p>
+                </div>
             </div>
         </div>
     </div>
@@ -510,6 +506,63 @@ try {
     </div>
 </section>
 
+<?php if (!empty($upcoming_events)): ?>
+<!-- Upcoming Events Preview -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Upcoming Events</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Stay connected with workshops, graduations, and community events
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <?php foreach ($upcoming_events as $event): 
+                $eventDate = !empty($event['event_date']) ? date('M j, Y', strtotime($event['event_date'])) : 'TBA';
+            ?>
+            <div class="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+                <div class="relative h-48 overflow-hidden bg-gradient-to-br from-primary-50 to-blue-50">
+                    <?php if (!empty($event['cover_image'])): ?>
+                        <img src="<?= htmlspecialchars($event['cover_image']) ?>" alt="<?= htmlspecialchars($event['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <?php else: ?>
+                        <div class="w-full h-full flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-5xl text-primary-300"></i>
+                        </div>
+                    <?php endif; ?>
+                    <div class="absolute top-3 left-3">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-600 text-white">
+                            <?= htmlspecialchars($event['category'] ?? 'Event') ?>
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-sm text-gray-500 mb-2">
+                        <i class="far fa-calendar-alt mr-2 text-primary-500"></i>
+                        <?= $eventDate ?>
+                        <?php if (!empty($event['location'])): ?>
+                            <span class="mx-2">&bull;</span>
+                            <i class="fas fa-map-marker-alt mr-1 text-primary-500"></i>
+                            <?= htmlspecialchars($event['location']) ?>
+                        <?php endif; ?>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors"><?= htmlspecialchars($event['title']) ?></h3>
+                    <p class="text-gray-600 text-sm line-clamp-2"><?= htmlspecialchars(substr($event['description'] ?? '', 0, 120)) ?>...</p>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="text-center mt-10">
+            <a href="events.php" class="inline-flex items-center px-6 py-3 border border-primary-200 text-primary-700 font-medium rounded-lg hover:bg-primary-50 transition duration-200">
+                All Events <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
+<?php if ($next_intake_date || $next_intake_label !== 'Next Intake Coming Soon'): ?>
 <!-- Next Intake Banner -->
 <section class="py-6 bg-secondary-500 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -519,15 +572,19 @@ try {
                     <i class="fas fa-rocket text-2xl"></i>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold">Next Intake: May 2026</h3>
-                    <p class="text-white text-opacity-90">Limited spots available - Early bird discount ends April 30th</p>
+                    <h3 class="text-xl font-bold"><?= htmlspecialchars($next_intake_label) ?></h3>
+                    <?php if ($next_intake_date): ?>
+                        <p class="text-white text-opacity-90">Limited spots available</p>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="flex items-center gap-6">
+                <?php if ($next_intake_date): ?>
                 <div class="text-center hidden md:block">
                     <div class="text-3xl font-bold" id="countdown-days">--</div>
                     <div class="text-xs uppercase tracking-wide opacity-80">Days Left</div>
                 </div>
+                <?php endif; ?>
                 <a href="courses.php" class="px-8 py-3 bg-white text-orange-600 rounded-lg font-bold hover:bg-gray-100 transition shadow-lg">
                     Enroll Now <i class="fas fa-arrow-right ml-2"></i>
                 </a>
@@ -536,9 +593,10 @@ try {
     </div>
 </section>
 
+<?php if ($next_intake_date): ?>
 <script>
 // Countdown timer
-const intakeDate = new Date('2026-05-01T00:00:00');
+const intakeDate = new Date('<?= $next_intake_date ?>T00:00:00');
 function updateCountdown() {
     const now = new Date();
     const diff = intakeDate - now;
@@ -548,6 +606,8 @@ function updateCountdown() {
 updateCountdown();
 setInterval(updateCountdown, 86400000); // Update daily
 </script>
+<?php endif; ?>
+<?php endif; ?>
 
 <?php
 try {
@@ -563,7 +623,7 @@ try {
         <div class="text-center mb-16">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose Edutrack?</h2>
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                As a TEVETA-registered institution, we're committed to excellence
+                As a registered institution, we're committed to excellence
             </p>
         </div>
 
@@ -572,7 +632,7 @@ try {
                 <div class="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                     <i class="fas fa-certificate text-yellow-600 text-3xl"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-3">TEVETA Registered</h3>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Registered Institution</h3>
                 <p class="text-gray-600">Officially recognized by the Technical Education, Vocational and Entrepreneurship Training Authority.</p>
             </div>
             

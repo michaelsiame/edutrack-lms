@@ -45,22 +45,40 @@ if (empty($testimonials)) {
         </div>
         
         <!-- Stats Row -->
+        <?php
+        // Fetch real stats for testimonials section
+        $t_stats = [
+            'total_students' => 0,
+            'total_enrollments' => 0,
+            'avg_rating' => 0,
+            'total_courses' => 0,
+        ];
+        try {
+            $db = Database::getInstance();
+            $t_stats['total_students'] = $db->query("SELECT COUNT(DISTINCT u.id) FROM users u JOIN user_roles ur ON u.id = ur.user_id WHERE ur.role_id = 4 AND u.status = 'active'")->fetchColumn() ?: 0;
+            $t_stats['total_enrollments'] = $db->query("SELECT COUNT(*) FROM enrollments")->fetchColumn() ?: 0;
+            $t_stats['avg_rating'] = $db->query("SELECT COALESCE(AVG(rating), 0) FROM course_reviews")->fetchColumn() ?: 0;
+            $t_stats['total_courses'] = $db->query("SELECT COUNT(*) FROM courses WHERE status = 'published'")->fetchColumn() ?: 0;
+        } catch (Throwable $e) {
+            error_log("Testimonials stats error: " . $e->getMessage());
+        }
+        ?>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
             <div class="text-center">
-                <div class="text-4xl md:text-5xl font-bold text-yellow-400 mb-2">5,000+</div>
+                <div class="text-4xl md:text-5xl font-bold text-yellow-400 mb-2"><?= number_format($t_stats['total_students']) ?>+</div>
                 <div class="text-gray-400">Graduates</div>
             </div>
             <div class="text-center">
-                <div class="text-4xl md:text-5xl font-bold text-yellow-400 mb-2">85%</div>
-                <div class="text-gray-400">Job Placement Rate</div>
+                <div class="text-4xl md:text-5xl font-bold text-yellow-400 mb-2"><?= number_format($t_stats['total_enrollments']) ?></div>
+                <div class="text-gray-400">Enrollments</div>
             </div>
             <div class="text-center">
-                <div class="text-4xl md:text-5xl font-bold text-yellow-400 mb-2">4.8</div>
+                <div class="text-4xl md:text-5xl font-bold text-yellow-400 mb-2"><?= number_format($t_stats['avg_rating'], 1) ?></div>
                 <div class="text-gray-400">Average Rating</div>
             </div>
             <div class="text-center">
-                <div class="text-4xl md:text-5xl font-bold text-yellow-400 mb-2">50+</div>
-                <div class="text-gray-400">Partner Companies</div>
+                <div class="text-4xl md:text-5xl font-bold text-yellow-400 mb-2"><?= number_format($t_stats['total_courses']) ?>+</div>
+                <div class="text-gray-400">Courses</div>
             </div>
         </div>
         

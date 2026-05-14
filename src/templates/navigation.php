@@ -31,30 +31,51 @@ if (isLoggedIn()) {
                     <img src="<?= asset('images/logo.png') ?>" alt="Edutrack Logo" class="h-10 md:h-12 w-auto mr-2 md:mr-3 shrink-0">
                     <div class="hidden sm:flex flex-col min-w-0">
                         <span class="text-lg md:text-xl font-bold text-primary-600 leading-tight">Edutrack</span>
-                        <span class="text-[10px] md:text-xs text-gray-600 truncate">TEVETA REGISTERED</span>
+                        <span class="text-[10px] md:text-xs text-gray-600 truncate">COMPUTER TRAINING</span>
                     </div>
                 </a>
             </div>
             
             <!-- Desktop Navigation -->
-            <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
-                <a href="<?= url() ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'index.php' ? 'active text-primary-600' : '' ?>">
+            <div class="hidden md:flex items-center space-x-1">
+                <a href="<?= url() ?>" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'index.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                     Home
                 </a>
-                <a href="<?= url('courses.php') ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'courses.php' ? 'active text-primary-600' : '' ?>">
+                <a href="<?= url('courses.php') ?>" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'courses.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                     Courses
                 </a>
-                <a href="<?= url('about.php') ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'about.php' ? 'active text-primary-600' : '' ?>">
-                    About Us
+                <a href="<?= url('about.php') ?>" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'about.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
+                    About
                 </a>
-                <a href="<?= url('campus.php') ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'campus.php' ? 'active text-primary-600' : '' ?>">
-                    <i class="fas fa-university mr-1"></i>Campus
-                </a>
-                <a href="<?= url('events.php') ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'events.php' ? 'active text-primary-600' : '' ?>">
-                    <i class="fas fa-calendar-alt mr-1"></i>Events
-                </a>
-                <a href="<?= url('contact.php') ?>" class="nav-link text-gray-700 hover:text-primary-600 font-medium <?= $current_page === 'contact.php' ? 'active text-primary-600' : '' ?>">
-                    Contact
+                
+                <!-- More Dropdown -->
+                <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                    <button @click="open = !open" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 flex items-center <?= in_array($current_page, ['campus.php','events.php','contact.php','faq.php','testimonials.php']) ? 'text-primary-600 bg-primary-50' : '' ?>">
+                        More
+                        <i class="fas fa-chevron-down ml-1 text-xs transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="open" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-1" x-cloak class="absolute left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+                        <a href="<?= url('campus.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
+                            <i class="fas fa-university w-5 text-gray-400"></i> Campus
+                        </a>
+                        <a href="<?= url('events.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
+                            <i class="fas fa-calendar-alt w-5 text-gray-400"></i> Events
+                        </a>
+                        <a href="<?= url('testimonials.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
+                            <i class="fas fa-star w-5 text-gray-400"></i> Testimonials
+                        </a>
+                        <a href="<?= url('faq.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
+                            <i class="fas fa-question-circle w-5 text-gray-400"></i> FAQ
+                        </a>
+                        <a href="<?= url('contact.php') ?>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary-600">
+                            <i class="fas fa-envelope w-5 text-gray-400"></i> Contact
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Search Icon -->
+                <a href="<?= url('search.php') ?>" class="flex items-center justify-center w-9 h-9 rounded-full text-gray-500 hover:text-primary-600 hover:bg-gray-100 transition ml-2" title="Search courses">
+                    <i class="fas fa-search text-sm"></i>
                 </a>
                 
                 <?php if (isLoggedIn()): ?>
@@ -175,24 +196,43 @@ if (isLoggedIn()) {
          x-cloak
          class="md:hidden bg-white border-t max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain">
         <div class="px-2 pt-2 pb-4 space-y-1">
-            <a href="<?= url() ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'index.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
+            <a href="<?= url() ?>" @click="mobileMenuOpen = false" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'index.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 Home
             </a>
-            <a href="<?= url('courses.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'courses.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
+            <a href="<?= url('courses.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'courses.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 Courses
             </a>
-            <a href="<?= url('about.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'about.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
+            <a href="<?= url('about.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'about.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
                 About Us
             </a>
-            <a href="<?= url('campus.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'campus.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
-                <i class="fas fa-university mr-2 text-primary-600"></i> Campus
-            </a>
-            <a href="<?= url('events.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'events.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
-                <i class="fas fa-calendar-alt mr-2 text-primary-600"></i> Events
-            </a>
-            <a href="<?= url('contact.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 <?= $current_page === 'contact.php' ? 'text-primary-600 bg-primary-50' : '' ?>">
-                Contact
-            </a>
+            
+            <!-- Mobile More Section -->
+            <div x-data="{ moreExpanded: false }" class="border-t border-gray-100 mt-1 pt-1">
+                <button @click="moreExpanded = !moreExpanded" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50">
+                    <span>More</span>
+                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform" :class="moreExpanded ? 'rotate-180' : ''"></i>
+                </button>
+                <div x-show="moreExpanded" x-collapse x-cloak class="pl-4 space-y-1">
+                    <a href="<?= url('search.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50">
+                        <i class="fas fa-search mr-2 w-4"></i> Search
+                    </a>
+                    <a href="<?= url('campus.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50">
+                        <i class="fas fa-university mr-2 w-4"></i> Campus
+                    </a>
+                    <a href="<?= url('events.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50">
+                        <i class="fas fa-calendar-alt mr-2 w-4"></i> Events
+                    </a>
+                    <a href="<?= url('testimonials.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50">
+                        <i class="fas fa-star mr-2 w-4"></i> Testimonials
+                    </a>
+                    <a href="<?= url('faq.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50">
+                        <i class="fas fa-question-circle mr-2 w-4"></i> FAQ
+                    </a>
+                    <a href="<?= url('contact.php') ?>" @click="mobileMenuOpen = false" class="block px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50">
+                        <i class="fas fa-envelope mr-2 w-4"></i> Contact
+                    </a>
+                </div>
+            </div>
             
             <?php if (isLoggedIn()): ?>
                 <div class="border-t pt-4 mt-4">

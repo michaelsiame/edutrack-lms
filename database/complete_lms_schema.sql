@@ -2,8 +2,8 @@
 -- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: May 08, 2026 at 01:52 PM
+-- Host: 127.0.0.1
+-- Generation Time: May 13, 2026 at 05:44 PM
 -- Server version: 11.8.6-MariaDB-log
 -- PHP Version: 7.2.34
 
@@ -55,7 +55,8 @@ INSERT INTO `activity_logs` (`log_id`, `user_id`, `activity_type`, `entity_type`
 (9, 11, 'discussion_post', 'discussion', 2, 'Posted new discussion topic', '192.168.1.120', NULL, '2025-11-18 22:21:01'),
 (10, 1, 'login', NULL, NULL, 'Admin logged in', '10.0.0.10', NULL, '2025-11-18 22:21:01'),
 (11, 68, 'enrollment', 'course', 11, 'Enrolled in course (Pending Deposit)', '45.214.180.198', NULL, '2026-03-16 23:36:01'),
-(12, 56, 'enrollment', 'course', 7, 'Enrolled in course (Pending Deposit)', '165.58.129.54', NULL, '2026-03-17 16:57:36');
+(12, 56, 'enrollment', 'course', 7, 'Enrolled in course (Pending Deposit)', '165.58.129.54', NULL, '2026-03-17 16:57:36'),
+(13, 90, 'enrollment', 'course', 27, 'Enrolled in course (Pending Deposit)', '41.223.116.241', NULL, '2026-05-13 15:55:59');
 
 -- --------------------------------------------------------
 
@@ -120,7 +121,12 @@ INSERT INTO `assignments` (`id`, `course_id`, `lesson_id`, `title`, `description
 (1, 5, NULL, 'Python Basics Project', 'Create a simple calculator application', 'Build a command-line calculator that can perform basic arithmetic operations (addition, subtraction, multiplication, division). Include error handling for division by zero.', 100, 70, '2025-02-15 23:59:59', 1, 0.00, 10, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (2, 5, NULL, 'Data Structures Assignment', 'Work with lists, dictionaries, and sets', 'Create a student management system using Python dictionaries to store student information. Implement functions to add, remove, and search students.', 100, 70, '2025-03-10 23:59:59', 1, 0.00, 10, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (3, 7, NULL, 'Personal Portfolio Website', 'Build a responsive portfolio website', 'Create a multi-page portfolio website using HTML5, CSS3, and JavaScript. Must include: home page, about page, portfolio gallery, and contact form. Site must be fully responsive.', 150, 105, '2025-03-20 23:59:59', 0, 0.00, 10, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(4, 11, NULL, 'Network Security Analysis', 'Perform security audit of a test network', 'Document security vulnerabilities in the provided test network environment. Submit a detailed report with findings and recommendations.', 100, 70, '2025-04-30 23:59:59', 0, 0.00, 10, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01');
+(4, 11, NULL, 'Network Security Analysis', 'Perform security audit of a test network', 'Document security vulnerabilities in the provided test network environment. Submit a detailed report with findings and recommendations.', 100, 70, '2025-04-30 23:59:59', 0, 0.00, 10, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(5, 1, NULL, 'Test 1', 'Test 1 assessment for Microsoft Office Suite', NULL, 100, 60, '2026-05-08 14:47:43', 0, 0.00, 10, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(6, 1, NULL, 'Microsoft Word', 'Microsoft Word assessment for Microsoft Office Suite', NULL, 100, 60, '2026-05-08 14:47:43', 0, 0.00, 10, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(7, 1, NULL, 'Microsoft Excel', 'Microsoft Excel assessment for Microsoft Office Suite', NULL, 100, 60, '2026-05-08 14:47:43', 0, 0.00, 10, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(8, 1, NULL, 'Microsoft Publisher & PowerPoint', 'Microsoft Publisher & PowerPoint assessment for Microsoft Office Suite', NULL, 100, 60, '2026-05-08 14:47:43', 0, 0.00, 10, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(9, 1, NULL, 'IT & Networks', 'IT & Networks assessment for Microsoft Office Suite', NULL, 100, 60, '2026-05-08 14:47:43', 0, 0.00, 10, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43');
 
 -- --------------------------------------------------------
 
@@ -151,7 +157,67 @@ CREATE TABLE `assignment_submissions` (
 INSERT INTO `assignment_submissions` (`id`, `assignment_id`, `student_id`, `submission_text`, `file_url`, `submitted_at`, `status`, `points_earned`, `feedback`, `graded_by`, `graded_at`, `attempt_number`, `is_late`) VALUES
 (1, 1, 1, 'Calculator project completed. File uploaded to repository.', NULL, '2025-02-14 16:30:00', 'Graded', 95.00, 'Excellent work! Clean code and proper error handling. Well done.', 2, '2025-02-16 08:00:00', 1, 0),
 (2, 1, 4, 'My calculator implementation with extended features.', NULL, '2025-02-15 18:00:00', 'Graded', 88.00, 'Good implementation. Consider adding more comments for clarity.', 2, '2025-02-17 12:30:00', 1, 0),
-(3, 3, 2, 'Portfolio website completed with all requirements.', NULL, '2025-03-19 14:45:00', 'Graded', 142.00, 'Beautiful design and excellent responsive implementation!', 2, '2025-03-21 09:00:00', 1, 0);
+(3, 3, 2, 'Portfolio website completed with all requirements.', NULL, '2025-03-19 14:45:00', 'Graded', 142.00, 'Beautiful design and excellent responsive implementation!', 2, '2025-03-21 09:00:00', 1, 0),
+(4, 5, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(5, 6, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(6, 7, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(7, 8, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(8, 9, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 89.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(9, 5, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(10, 6, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(11, 7, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(12, 8, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 84.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(13, 9, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 88.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(14, 5, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 93.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(15, 6, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(16, 7, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(17, 8, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 74.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(18, 9, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 83.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(19, 5, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 83.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(20, 6, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(21, 7, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(22, 8, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 72.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(23, 9, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 77.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(24, 5, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 82.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(25, 6, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(26, 7, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(27, 8, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 74.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(28, 9, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 72.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(29, 5, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 87.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(30, 6, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(31, 7, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 86.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(32, 8, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 70.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(33, 9, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 80.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(34, 5, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(35, 6, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(36, 7, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(37, 8, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(38, 9, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 71.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(39, 5, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 69.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(40, 6, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(41, 7, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(42, 8, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 80.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(43, 9, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(44, 5, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 89.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(45, 6, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(46, 7, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 88.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(47, 8, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 58.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(48, 9, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(49, 5, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 73.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(50, 6, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(51, 7, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(52, 8, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(53, 9, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 57.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(54, 5, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 50.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
+(55, 6, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 62.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
+(56, 7, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
+(57, 8, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
+(58, 9, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 73.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
+(59, 5, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 80.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
+(60, 6, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 85.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
+(61, 7, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 90.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
+(62, 8, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 75.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
+(63, 9, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 88.00, NULL, 1, '2026-05-08 15:20:22', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -214,7 +280,19 @@ INSERT INTO `certificates` (`certificate_id`, `user_id`, `course_id`, `enrollmen
 (3, 10, 18, 7, 'EDTRK-2025-000003', '2025-04-08', 'VRF-003-IJKL9012', 0.00, '2025-04-08 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
 (4, 10, 1, 9, 'EDTRK-2025-000004', '2025-04-12', 'VRF-004-MNOP3456', 0.00, '2025-04-12 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
 (5, 11, 5, 10, 'EDTRK-2025-000005', '2025-04-05', 'VRF-005-QRST7890', 0.00, '2025-04-05 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(6, 15, 3, 21, 'EDTRK-2025-000006', '2025-03-15', 'VRF-006-UVWX1234', 0.00, '2025-03-15 00:00:00', 1, NULL, '2025-11-18 22:21:01');
+(6, 15, 3, 21, 'EDTRK-2025-000006', '2025-03-15', 'VRF-006-UVWX1234', 0.00, '2025-03-15 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(7, 78, 1, 39, 'EDTRK-2026-100039', '2026-05-08', 'VRF-139-9C509B3A', 97.40, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
+(8, 83, 1, 40, 'EDTRK-2026-100040', '2026-05-08', 'VRF-140-D4DE494F', 92.00, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
+(9, 77, 1, 41, 'EDTRK-2026-100041', '2026-05-08', 'VRF-141-E87AC841', 88.80, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
+(10, 79, 1, 42, 'EDTRK-2026-100042', '2026-05-08', 'VRF-142-4D668F4B', 84.00, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(11, 85, 1, 43, 'EDTRK-2026-100043', '2026-05-08', 'VRF-143-C87545D6', 83.60, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(12, 86, 1, 44, 'EDTRK-2026-100044', '2026-05-08', 'VRF-144-230A46A9', 83.40, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(13, 84, 1, 45, 'EDTRK-2026-100045', '2026-05-08', 'VRF-145-F8DE372C', 81.80, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(14, 87, 1, 46, 'EDTRK-2026-100046', '2026-05-08', 'VRF-146-6235A06E', 79.80, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(15, 80, 1, 47, 'EDTRK-2026-100047', '2026-05-08', 'VRF-147-CB541394', 79.40, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(16, 81, 1, 48, 'EDTRK-2026-100048', '2026-05-08', 'VRF-148-E8A683F9', 78.00, '2026-05-08 15:09:05', 1, NULL, '2026-05-08 15:09:05'),
+(17, 82, 1, 49, 'EDTRK-2026-100049', '2026-05-08', 'VRF-149-89859207', 64.20, '2026-05-08 15:09:05', 1, NULL, '2026-05-08 15:09:05'),
+(18, 88, 1, 50, 'EDTRK-2026-100050', '2026-05-08', 'VRF-150-5ECC1A26', 83.60, '2026-05-08 15:20:22', 1, NULL, '2026-05-08 15:20:22');
 
 -- --------------------------------------------------------
 
@@ -257,7 +335,8 @@ INSERT INTO `contacts` (`id`, `name`, `email`, `phone`, `subject`, `message`, `i
 (17, 'Jayrn Smith', 'charmain.stainforth@msn.com', '725807508', 'general', 'Hi, it’s Jayrn.\r\n\r\nEvery market has one rule: He who can spend the most to acquire a customer, wins. But here’s the question nobody answers: How do you actually do it?\r\n\r\nIn this video, Darcy Juarez walk through the single number that separates the amateurs from the market dominators—Maximum Allowable Cost Per Acquisition. \r\n\r\nGet this wrong, and you’ll bleed cash. Get it right, and you’ll buy customers at scale while your competitors are stuck Googling cheaper ad hacks.\r\n\r\nWatch it here: https://marketersmentor.com/crush-your-competition.php?refer=edutrackzambia.com\r\n\r\n\r\nTo multiplying your leverage,\r\nJayrn\r\n\r\nP.S.: I’m Jayrn, a digital marketer and e-commerce seller with a passion for sharing knowledge. I share proven strategies, tips, and resources to help you grow your online business.\r\n\r\n\r\n\r\nMy Blog:\r\nhttps://www.jayrn.com\r\nUnsubscribe: \r\nhttps://marketersmentor.com/unsubscribe.php?d=edutrackzambia.com', 0, '2026-04-18 11:08:24'),
 (18, 'Jayrn Smith', 'scotty.briseno@outlook.com', '9249488814', 'general', 'Hey, it’s Jayrn.\r\n\r\nThere’s a pattern I keep seeing…\r\n\r\nPeople who *work hard*, try different strategies, even invest in tools…\r\n\r\n…but still don’t see consistent results.\r\n\r\nIt’s not because they’re lazy.\r\nIt’s not because they’re unlucky.\r\n\r\nIt’s because they’re following **disconnected advice**.\r\n\r\nOne strategy here.\r\nAnother tactic there.\r\n\r\nNo real understanding of what actually drives revenue.\r\n\r\nAnd when you don’t understand the “why”…\r\n\r\nYou’re stuck guessing.\r\n\r\n---\r\n\r\nThat’s exactly where I was.\r\n\r\nUntil I started studying something different:\r\n\r\nNot surface-level tactics…\r\n\r\n…but the **actual thinking behind successful marketing campaigns**.\r\n\r\nThat’s when things finally started to click.\r\n\r\n---\r\n\r\nIf you want to see what I mean, take a look at this:\r\n\r\n������ https://marketersmentor.com/NO-BS-Letter.php?refer=edutrackzambia.com\r\n\r\nEven just reading the page will shift how you think about marketing.\r\n\r\nMore tomorrow.\r\n\r\n—\r\nJayrn\r\n\r\nP.S.: I’m Jayrn, a digital marketer and e-commerce seller with a passion for sharing knowledge. I share proven strategies, tips, and resources to help you grow your online business.\r\n\r\n\r\n\r\nMy Blog:\r\nhttps://www.jayrn.com\r\nUnsubscribe: \r\nhttps://marketersmentor.com/unsubscribe.php?d=edutrackzambia.com', 0, '2026-04-23 17:31:28'),
 (19, 'MUJAHID ALI', 'mjhdmnhs@gmail.com', '+33759415055', 'payment', 'Hi Sir I have been purchase a mobile in france bondy but i did\'nt recived my packege but whenever i track my packege they said packege already deliverd but i don\'t get any call any sms any package please clear my parsal...', 0, '2026-04-24 07:08:43'),
-(20, 'MichaelPek', 'jacksrenome@gmx.com', '87499932667', 'general', 'YyErjcwdkdjwjjwjjdwjddjwsjf ndsaKAqwdweihduncbbwebidaa iudwnishqwuvdwqihbfvweuiojsqjqioqdefiw dwqsqwijbfiewdncbhvdifqhioqsjnqw edutrackzambia.com', 0, '2026-05-06 04:34:02');
+(20, 'MichaelPek', 'jacksrenome@gmx.com', '87499932667', 'general', 'YyErjcwdkdjwjjwjjdwjddjwsjf ndsaKAqwdweihduncbbwebidaa iudwnishqwuvdwqihbfvweuiojsqjqioqdefiw dwqsqwijbfiewdncbhvdifqhioqsjnqw edutrackzambia.com', 0, '2026-05-06 04:34:02'),
+(21, 'SamuelRer', 'yourmail@gmail.com', '88897564112', 'general', 'This professional campaign titled \'The Path You Make\' was published in United States in February, 2018. It was created for the brand: Delta Airlines, by ad agency: Digitas. This Film medium campaign is related to the Transport industry and contains 1 media asset. It was submitted about 8 years ago. \r\nhttps://www.adsoftheworld.com/campaigns/the-path-you-make', 0, '2026-05-08 18:27:36');
 
 -- --------------------------------------------------------
 
@@ -301,7 +380,7 @@ CREATE TABLE `courses` (
 
 INSERT INTO `courses` (`id`, `title`, `slug`, `description`, `short_description`, `category_id`, `instructor_id`, `level`, `language`, `thumbnail_url`, `video_intro_url`, `start_date`, `end_date`, `price`, `discount_price`, `duration_weeks`, `total_hours`, `max_students`, `enrollment_count`, `status`, `is_featured`, `rating`, `total_reviews`, `prerequisites`, `learning_outcomes`, `created_at`, `updated_at`) VALUES
 (0, 'Cybersecurity Fundamentals', 'cybersecurity-fundamentals', '<p>This comprehensive cybersecurity course prepares you for entry-level roles in the rapidly growing field of cybersecurity. You will learn fundamental concepts, network security, threat detection, ethical hacking basics, and security operations.</p>\n    <p>By the end of this course, you will understand how to protect systems, detect threats, and respond to security incidents using industry-standard tools and frameworks.</p>', 'Master cybersecurity fundamentals and protect digital assets from cyber threats', 7, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800', NULL, NULL, NULL, 4500.00, NULL, 12, 96.00, 30, 0, 'published', 1, 0.00, 0, 'Basic computer literacy, Understanding of operating systems (Windows/Linux)', 'Understand cybersecurity principles and the threat landscape|Identify and mitigate common network vulnerabilities|Implement security controls and defense strategies|Detect and respond to security incidents|Understand ethical hacking basics|Apply security frameworks like NIST', '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(1, 'Certificate in Microsoft Office Suite', 'microsoft-office-suite', 'Transform your productivity with comprehensive Microsoft Office training. This industry-leading program covers the complete Office Suite including Word, Excel, PowerPoint, Publisher, and essential internet skills. Learn to create professional documents, analyze data with powerful spreadsheets, design compelling presentations, and master desktop publishing. Perfect for professionals seeking to enhance workplace efficiency, students preparing for academic success, or career changers entering the digital workplace. Our hands-on approach ensures you gain practical, job-ready skills that employers value. By course end, you\'ll confidently handle complex office tasks, automate workflows, and present information professionally.', 'Master Word, Excel, PowerPoint, Publisher & Internet skills for professional success', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=800', NULL, '2025-01-15', '2025-04-15', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2026-05-08 15:47:21'),
+(1, 'Certificate in Microsoft Office Suite', 'microsoft-office-suite', 'Transform your productivity with comprehensive Microsoft Office training. This industry-leading program covers the complete Office Suite including Word, Excel, PowerPoint, Publisher, and essential internet skills. Learn to create professional documents, analyze data with powerful spreadsheets, design compelling presentations, and master desktop publishing. Perfect for professionals seeking to enhance workplace efficiency, students preparing for academic success, or career changers entering the digital workplace. Our hands-on approach ensures you gain practical, job-ready skills that employers value. By course end, you\'ll confidently handle complex office tasks, automate workflows, and present information professionally.', 'Master Word, Excel, PowerPoint, Publisher & Internet skills for professional success', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=800', NULL, '2025-01-15', '2025-04-15', 2500.00, NULL, 8, 64.00, 30, 18, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2026-05-08 14:56:55'),
 (3, 'Certificate in Digital Literacy', 'digital-literacy', 'Bridge the digital divide with essential 21st-century skills. This foundational course equips you with critical digital competencies for modern life and work. Learn professional email communication, effective internet research techniques, cloud storage management, online collaboration tools, and digital safety practices. Understand social media etiquette, basic troubleshooting, file management, and online privacy protection. Ideal for beginners, seniors transitioning to digital workplaces, or anyone looking to build confidence with technology. Our patient, step-by-step instruction ensures no one gets left behind in the digital age. Gain the digital fluency needed to thrive in today\'s connected world.', 'Essential digital skills for navigating modern technology confidently', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800', NULL, '2025-01-20', '2025-03-20', 850.00, NULL, 2, 16.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
 (4, 'Certificate in Record Management', 'record-management', 'Master professional records and information management systems that keep organizations running smoothly. Learn comprehensive filing systems, document control procedures, archiving best practices, and compliance with data protection regulations including GDPR. Understand records lifecycle management, retention schedules, digitization processes, and efficient retrieval systems. This course covers both physical and electronic records management, preparing you for roles in government, healthcare, legal, and corporate environments. Gain expertise in maintaining confidentiality, ensuring audit trails, and implementing secure disposal methods. Essential for administrative professionals, office managers, and those pursuing careers in information governance.', 'Professional records and information management for compliance and efficiency', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800', NULL, '2025-02-15', '2025-05-15', 1500.00, NULL, 6, 48.00, 30, 0, 'published', 0, 4.50, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
 (5, 'Certificate in Python Programming', 'python-programming', 'Launch your programming career with Python, the world\'s most popular and versatile programming language. This comprehensive course takes you from absolute beginner to confident developer. Master Python fundamentals including variables, data types, control structures, and functions. Progress to advanced topics like object-oriented programming, file handling, error management, and popular libraries including NumPy, Pandas, and Matplotlib. Build real-world projects including data analysis tools, automation scripts, and web applications. Python\'s readability and extensive community support make it perfect for beginners, while its power suits professional developers. Ideal for aspiring programmers, data scientists, automation engineers, or anyone entering tech careers.', 'Learn Python from basics to advanced - the most in-demand programming language', 2, 2, 'Beginner', 'English', 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800', NULL, '2025-01-10', '2025-04-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
@@ -560,6 +639,12 @@ INSERT INTO `email_queue` (`id`, `recipient`, `subject`, `body`, `attachments`, 
 (68, 'edwardmusole76@gmail.com', 'New User Registration - Fragester Mudenda', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New User Registration</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A new user has just registered on the platform:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #2E70DA; margin: 20px 0;\">\n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Name:</strong></td>\n                <td>Fragester Mudenda</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:fragestermudenda46@gmail.com\" style=\"color: #2E70DA;\">fragestermudenda46@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>+260773137696</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Role:</strong></td>\n                <td>Student</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Registered:</strong></td>\n                <td>May 8, 2026 12:38 PM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/users.php?action=view&amp;id=85\" \n           style=\"background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View User Profile\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'sent', 0, 10, NULL, '2026-05-08 14:39:06', '2026-05-08 14:39:05', '2026-05-08 14:38:39'),
 (69, 'inutu.simasiku@edutrack.edu', 'New User Registration - Fragester Mudenda', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New User Registration</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A new user has just registered on the platform:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #2E70DA; margin: 20px 0;\">\n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Name:</strong></td>\n                <td>Fragester Mudenda</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:fragestermudenda46@gmail.com\" style=\"color: #2E70DA;\">fragestermudenda46@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>+260773137696</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Role:</strong></td>\n                <td>Student</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Registered:</strong></td>\n                <td>May 8, 2026 12:38 PM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/users.php?action=view&amp;id=85\" \n           style=\"background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View User Profile\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'sent', 0, 10, NULL, '2026-05-08 14:39:06', '2026-05-08 14:39:06', '2026-05-08 14:38:39'),
 (70, 'nita.sichimwa@edutrack.edu', 'New User Registration - Fragester Mudenda', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New User Registration</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A new user has just registered on the platform:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #2E70DA; margin: 20px 0;\">\n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Name:</strong></td>\n                <td>Fragester Mudenda</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:fragestermudenda46@gmail.com\" style=\"color: #2E70DA;\">fragestermudenda46@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>+260773137696</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Role:</strong></td>\n                <td>Student</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Registered:</strong></td>\n                <td>May 8, 2026 12:38 PM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/users.php?action=view&amp;id=85\" \n           style=\"background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View User Profile\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'sent', 0, 10, NULL, '2026-05-08 14:39:07', '2026-05-08 14:39:06', '2026-05-08 14:38:39');
+INSERT INTO `email_queue` (`id`, `recipient`, `subject`, `body`, `attachments`, `status`, `attempts`, `priority`, `scheduled_at`, `sent_at`, `last_attempt`, `created_at`) VALUES
+(71, 'michael.siame@edutrack.edu', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
+(72, 'marvinmoonga69@gmail.com', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
+(73, 'edwardmusole76@gmail.com', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
+(74, 'inutu.simasiku@edutrack.edu', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
+(75, 'nita.sichimwa@edutrack.edu', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59');
 
 -- --------------------------------------------------------
 
@@ -654,7 +739,20 @@ INSERT INTO `enrollments` (`id`, `user_id`, `student_id`, `course_id`, `enrolled
 (34, 43, 37, 1, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 0.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (35, 40, 34, 1, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 0.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (37, 68, 62, 11, '2026-03-16', '2026-03-16', 0.00, NULL, 'Enrolled', 'completed', 100.00, NULL, 0, 1, NULL, 0, '2026-03-16 21:36:01', '2026-03-16 21:37:27'),
-(38, 56, 50, 7, '2026-03-17', '2026-03-17', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-03-17 14:57:36', '2026-03-17 14:57:36');
+(38, 56, 50, 7, '2026-03-17', '2026-03-17', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-03-17 14:57:36', '2026-03-17 14:57:36'),
+(39, 78, 72, 1, '2026-05-08', '2026-05-08', 100.00, 97.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:47:43', '2026-05-08 15:12:52'),
+(40, 83, 77, 1, '2026-05-08', '2026-05-08', 100.00, 92.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:52'),
+(41, 77, 71, 1, '2026-05-08', '2026-05-08', 100.00, 88.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:52'),
+(42, 79, 73, 1, '2026-05-08', '2026-05-08', 100.00, 84.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:52'),
+(43, 85, 79, 1, '2026-05-08', '2026-05-08', 100.00, 83.60, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(44, 86, 80, 1, '2026-05-08', '2026-05-08', 100.00, 83.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(45, 84, 78, 1, '2026-05-08', '2026-05-08', 100.00, 81.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(46, 87, 81, 1, '2026-05-08', '2026-05-08', 100.00, 79.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(47, 80, 74, 1, '2026-05-08', '2026-05-08', 100.00, 79.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(48, 81, 75, 1, '2026-05-08', '2026-05-08', 100.00, 78.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(49, 82, 76, 1, '2026-05-08', '2026-05-08', 100.00, 64.20, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(50, 88, 82, 1, '2026-05-08', '2026-05-08', 100.00, 83.60, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(51, 90, 84, 27, '2026-05-13', '2026-05-13', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-05-13 13:55:59', '2026-05-13 13:55:59');
 
 -- --------------------------------------------------------
 
@@ -717,7 +815,129 @@ INSERT INTO `enrollment_payment_plans` (`id`, `enrollment_id`, `user_id`, `cours
 (35, 34, 43, 1, 2500.00, 500.00, 'ZMW', 'partial', NULL, 'Betty - Tuition Plan', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (36, 35, 40, 1, 2500.00, 500.00, 'ZMW', 'partial', NULL, 'Sharon - Tuition Plan', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (37, 37, 68, 11, 2500.00, 0.00, 'ZMW', 'pending', NULL, NULL, '2026-03-16 21:36:01', '2026-03-16 21:36:01'),
-(38, 38, 56, 7, 3000.00, 0.00, 'ZMW', 'pending', NULL, NULL, '2026-03-17 14:57:36', '2026-03-17 14:57:36');
+(38, 38, 56, 7, 3000.00, 0.00, 'ZMW', 'pending', NULL, NULL, '2026-03-17 14:57:36', '2026-03-17 14:57:36'),
+(39, 39, 78, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(40, 40, 83, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(41, 41, 77, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(42, 42, 79, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(43, 43, 85, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(44, 44, 86, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(45, 45, 84, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(46, 46, 87, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(47, 47, 80, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(48, 48, 81, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(49, 49, 82, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(50, 50, 88, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(51, 51, 90, 27, 2500.00, 0.00, 'ZMW', 'pending', NULL, NULL, '2026-05-13 13:55:59', '2026-05-13 13:55:59');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `events`
+--
+
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `summary` text DEFAULT NULL,
+  `story` text DEFAULT NULL,
+  `event_date` date DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `cover_image` varchar(255) DEFAULT NULL,
+  `is_featured` tinyint(1) DEFAULT 0,
+  `status` enum('draft','published','archived') DEFAULT 'draft',
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `event_images`
+--
+
+CREATE TABLE `event_images` (
+  `id` int(11) NOT NULL,
+  `event_id` int(11) NOT NULL,
+  `image_path` varchar(255) NOT NULL,
+  `caption` varchar(255) DEFAULT NULL,
+  `display_order` int(11) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hero_slides`
+--
+
+CREATE TABLE `hero_slides` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `subtitle` varchar(500) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `image_path` varchar(255) NOT NULL,
+  `cta_text` varchar(100) DEFAULT 'Get Started',
+  `cta_link` varchar(255) DEFAULT 'courses.php',
+  `secondary_cta_text` varchar(100) DEFAULT NULL,
+  `secondary_cta_link` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `display_order` int(11) DEFAULT 0,
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `hero_slides`
+--
+
+INSERT INTO `hero_slides` (`id`, `title`, `subtitle`, `description`, `image_path`, `cta_text`, `cta_link`, `secondary_cta_text`, `secondary_cta_link`, `is_active`, `display_order`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'Launch Your Tech Career', 'With Industry-Recognized Skills', 'Join 5,000+ Zambians who transformed their lives through TEVETA-certified programs in Cybersecurity, Web Development, and Digital Marketing.', 'hero-slide-1.jpg', 'Explore Courses', 'courses.php', 'Visit Campus', 'campus.php', 1, 1, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(2, 'State-of-the-Art Computer Labs', 'Learn on Modern Equipment', 'Our facilities feature the latest hardware and software to ensure you gain practical experience with industry-standard tools.', 'hero-slide-2.jpg', 'Take a Tour', 'campus.php', 'View Programs', 'courses.php', 1, 2, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(3, 'Your Success is Our Mission', '85% Job Placement Rate', 'Our graduates work at top companies like MTN, Airtel, and Zambia National Commercial Bank. Start your journey to a rewarding tech career today.', 'hero-slide-3.jpg', 'Apply Now', 'register.php', 'Contact Us', 'contact.php', 1, 3, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(4, 'Launch Your Tech Career', 'With Industry-Recognized Skills', 'Join 5,000+ Zambians who transformed their lives through TEVETA-certified programs in Cybersecurity, Web Development, and Digital Marketing.', 'hero-slide-1.jpg', 'Explore Courses', 'courses.php', 'Visit Campus', 'campus.php', 1, 1, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(5, 'State-of-the-Art Computer Labs', 'Learn on Modern Equipment', 'Our facilities feature the latest hardware and software to ensure you gain practical experience with industry-standard tools.', 'hero-slide-2.jpg', 'Take a Tour', 'campus.php', 'View Programs', 'courses.php', 1, 2, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(6, 'Your Success is Our Mission', '85% Job Placement Rate', 'Our graduates work at top companies like MTN, Airtel, and Zambia National Commercial Bank. Start your journey to a rewarding tech career today.', 'hero-slide-3.jpg', 'Apply Now', 'register.php', 'Contact Us', 'contact.php', 1, 3, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `institution_photos`
+--
+
+CREATE TABLE `institution_photos` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `category` enum('campus','classroom','lab','event','faculty','student_life') DEFAULT 'campus',
+  `image_path` varchar(255) NOT NULL,
+  `is_featured` tinyint(1) DEFAULT 0,
+  `display_order` int(11) DEFAULT 0,
+  `uploaded_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `institution_photos`
+--
+
+INSERT INTO `institution_photos` (`id`, `title`, `description`, `category`, `image_path`, `is_featured`, `display_order`, `uploaded_by`, `created_at`, `updated_at`) VALUES
+(1, 'Main Campus Building', 'The welcoming entrance to Edutrack Computer Training College in Kalomo', 'campus', 'campus-main.jpg', 1, 1, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(2, 'Computer Lab 1', 'Our primary computer lab with 30 workstations for hands-on learning', 'lab', 'lab-1.jpg', 1, 2, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(3, 'Classroom Setting', 'Interactive learning environment with projector and modern teaching aids', 'classroom', 'classroom-1.jpg', 0, 3, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(4, 'Student Workshop', 'Students participating in a practical cybersecurity workshop', 'event', 'event-workshop.jpg', 1, 4, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(5, 'Graduation Ceremony', 'Celebrating our 2024 graduates and their achievements', 'event', 'graduation-2024.jpg', 1, 5, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(6, 'Library & Study Area', 'Quiet space for students to study and access digital resources', 'campus', 'library.jpg', 0, 6, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(7, 'Main Campus Building', 'The welcoming entrance to Edutrack Computer Training College in Kalomo', 'campus', 'campus-main.jpg', 1, 1, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(8, 'Computer Lab 1', 'Our primary computer lab with 30 workstations for hands-on learning', 'lab', 'lab-1.jpg', 1, 2, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(9, 'Classroom Setting', 'Interactive learning environment with projector and modern teaching aids', 'classroom', 'classroom-1.jpg', 0, 3, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(10, 'Student Workshop', 'Students participating in a practical cybersecurity workshop', 'event', 'event-workshop.jpg', 1, 4, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(11, 'Graduation Ceremony', 'Celebrating our 2024 graduates and their achievements', 'event', 'graduation-2024.jpg', 1, 5, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(12, 'Library & Study Area', 'Quiet space for students to study and access digital resources', 'campus', 'library.jpg', 0, 6, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41');
 
 -- --------------------------------------------------------
 
@@ -757,6 +977,33 @@ INSERT INTO `instructors` (`id`, `user_id`, `bio`, `specialization`, `years_expe
 (9, 28, 'Instructor at Edutrack Computer Training College', 'General', NULL, NULL, NULL, 0.00, 0, 0, 1, '2025-12-25 09:40:13', '2025-12-25 09:40:13'),
 (10, 31, 'Instructor at Edutrack Computer Training College', 'General', NULL, NULL, NULL, 0.00, 0, 0, 1, '2025-12-25 09:40:13', '2025-12-25 09:40:13'),
 (12, 1, NULL, NULL, NULL, NULL, NULL, 0.00, 0, 0, 0, '2026-01-09 19:06:16', '2026-01-09 19:06:16');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lenco_collections`
+--
+
+CREATE TABLE `lenco_collections` (
+  `id` int(11) NOT NULL,
+  `lenco_collection_id` varchar(100) DEFAULT NULL COMMENT 'Lenco collection ID',
+  `reference` varchar(100) NOT NULL COMMENT 'Our reference',
+  `lenco_reference` varchar(100) DEFAULT NULL COMMENT 'Lenco reference',
+  `user_id` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `currency` varchar(3) NOT NULL DEFAULT 'ZMW',
+  `phone` varchar(20) NOT NULL COMMENT 'Customer phone number',
+  `country` varchar(2) NOT NULL DEFAULT 'ZM',
+  `status` enum('pending','pay-offline','successful','failed') DEFAULT 'pending',
+  `operator_transaction_id` varchar(100) DEFAULT NULL,
+  `type` varchar(50) DEFAULT 'registration_fee' COMMENT 'registration_fee or course_payment',
+  `fee` decimal(10,2) DEFAULT NULL,
+  `settlement_status` varchar(20) DEFAULT NULL,
+  `completed_at` datetime DEFAULT NULL,
+  `metadata` text DEFAULT NULL COMMENT 'JSON metadata',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -979,7 +1226,187 @@ INSERT INTO `lesson_progress` (`id`, `enrollment_id`, `lesson_id`, `status`, `pr
 (6, 4, 14, 'Completed', 100.00, 40, '2025-01-15 13:00:00', '2025-01-15 13:40:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (7, 10, 1, 'Completed', 100.00, 15, '2025-01-10 06:00:00', '2025-01-10 06:15:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (8, 10, 2, 'Completed', 100.00, 32, '2025-01-10 06:30:00', '2025-01-10 07:02:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(9, 10, 3, 'Completed', 100.00, 22, '2025-01-10 07:15:00', '2025-01-10 07:37:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01');
+(9, 10, 3, 'Completed', 100.00, 22, '2025-01-10 07:15:00', '2025-01-10 07:37:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(22, 39, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(23, 39, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(24, 39, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(25, 39, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(26, 39, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(27, 39, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(28, 39, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(29, 39, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(30, 39, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(31, 39, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(32, 39, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(33, 39, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(34, 39, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(35, 39, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(36, 39, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(37, 40, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(38, 40, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(39, 40, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(40, 40, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(41, 40, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(42, 40, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(43, 40, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(44, 40, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(45, 40, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(46, 40, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(47, 40, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(48, 40, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(49, 40, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(50, 40, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(51, 40, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(52, 41, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(53, 41, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(54, 41, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(55, 41, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(56, 41, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(57, 41, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(58, 41, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(59, 41, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(60, 41, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(61, 41, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(62, 41, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(63, 41, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(64, 41, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(65, 41, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(66, 41, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(67, 42, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(68, 42, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(69, 42, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(70, 42, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(71, 42, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(72, 42, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(73, 42, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(74, 42, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(75, 42, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(76, 42, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(77, 42, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(78, 42, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(79, 42, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(80, 42, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(81, 42, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(82, 43, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(83, 43, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(84, 43, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(85, 43, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(86, 43, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(87, 43, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(88, 43, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(89, 43, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(90, 43, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(91, 43, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(92, 43, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(93, 43, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(94, 43, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(95, 43, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(96, 43, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(97, 44, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(98, 44, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(99, 44, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(100, 44, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(101, 44, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(102, 44, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(103, 44, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(104, 44, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(105, 44, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(106, 44, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(107, 44, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(108, 44, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(109, 44, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(110, 44, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(111, 44, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(112, 45, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(113, 45, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(114, 45, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(115, 45, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(116, 45, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(117, 45, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(118, 45, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(119, 45, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(120, 45, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(121, 45, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(122, 45, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(123, 45, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(124, 45, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(125, 45, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(126, 45, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(127, 46, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(128, 46, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(129, 46, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(130, 46, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(131, 46, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(132, 46, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(133, 46, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(134, 46, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(135, 46, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(136, 46, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(137, 46, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(138, 46, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(139, 46, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(140, 46, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(141, 46, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(142, 47, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(143, 47, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(144, 47, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(145, 47, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(146, 47, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(147, 47, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(148, 47, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(149, 47, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(150, 47, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(151, 47, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(152, 47, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(153, 47, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(154, 47, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(155, 47, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(156, 47, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(157, 48, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(158, 48, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(159, 48, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(160, 48, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(161, 48, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(162, 48, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(163, 48, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(164, 48, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(165, 48, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(166, 48, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(167, 48, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(168, 48, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(169, 48, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(170, 48, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(171, 48, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(172, 49, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(173, 49, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(174, 49, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(175, 49, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(176, 49, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(177, 49, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(178, 49, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(179, 49, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(180, 49, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(181, 49, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(182, 49, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(183, 49, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(184, 49, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(185, 49, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(186, 49, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(187, 50, 28, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(188, 50, 29, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(189, 50, 30, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(190, 50, 31, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(191, 50, 32, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(192, 50, 33, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(193, 50, 34, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(194, 50, 35, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(195, 50, 36, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(196, 50, 37, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(197, 50, 38, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(198, 50, 39, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(199, 50, 40, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(200, 50, 41, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(201, 50, 42, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22');
 
 -- --------------------------------------------------------
 
@@ -2277,7 +2704,20 @@ INSERT INTO `registration_fees` (`id`, `user_id`, `student_id`, `amount`, `curre
 (4, 43, 37, 150.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-01-09', NULL, 1, NULL, 'Registration fee paid - Betty', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (5, 40, 34, 150.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-01-09', NULL, 1, NULL, 'Registration fee paid - Sharon', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (6, 68, 62, 100.00, 'ZMW', 'completed', 'mobile_money', NULL, NULL, '2026-03-16', NULL, 1, '2026-03-16 23:11:21', NULL, '2026-03-16 21:11:21', '2026-03-16 21:11:21'),
-(7, 56, 50, 100.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-03-17', NULL, 1, '2026-03-17 16:35:41', NULL, '2026-03-17 14:35:41', '2026-03-17 14:35:41');
+(7, 56, 50, 100.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-03-17', NULL, 1, '2026-03-17 16:35:41', NULL, '2026-03-17 14:35:41', '2026-03-17 14:35:41'),
+(8, 78, 72, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(9, 83, 77, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(10, 77, 71, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(11, 79, 73, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(12, 85, 79, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(13, 86, 80, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(14, 84, 78, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(15, 87, 81, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(16, 80, 74, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(17, 81, 75, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(18, 82, 76, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(19, 88, 82, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(20, 90, 84, 100.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-05-13', NULL, 1, '2026-05-13 15:15:03', NULL, '2026-05-13 13:15:03', '2026-05-13 13:15:03');
 
 -- --------------------------------------------------------
 
@@ -2413,7 +2853,11 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (77, 83, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:22:17', '2026-05-08 12:22:17'),
 (78, 84, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:24:57', '2026-05-08 12:24:57'),
 (79, 85, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:38:39', '2026-05-08 12:38:39'),
-(80, 86, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:46:55', '2026-05-08 12:46:55');
+(80, 86, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:46:55', '2026-05-08 12:46:55'),
+(81, 87, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(82, 88, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(83, 89, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-11', 0, 0, 0, '2026-05-11 09:41:30', '2026-05-11 09:41:30'),
+(84, 90, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-12', 0, 0, 0, '2026-05-12 16:26:41', '2026-05-12 16:26:41');
 
 -- --------------------------------------------------------
 
@@ -2581,11 +3025,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `password_hash`, `first_name`, `last_name`, `phone`, `avatar_url`, `status`, `email_verification_token`, `email_verification_expires`, `email_verified`, `last_login`, `last_login_ip`, `failed_login_attempts`, `account_locked_until`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-05-08 15:36:00', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-05-08 13:36:00'),
+(1, 'admin', 'admin@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-05-13 15:13:44', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-05-13 13:13:44'),
 (6, 'michael.siame', 'michael.siame@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, '2025-12-25 21:53:14', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 19:53:14'),
 (25, 'taona', 'taona@gmail.com', NULL, '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
 (26, 'jaysiame076', 'jaysiame076@gmail.com', NULL, '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:32:59', NULL, 0, NULL, '2025-11-23 11:05:46', '2025-12-09 09:32:59'),
-(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2026-01-10 16:11:40', NULL, 0, NULL, '2025-12-04 20:34:20', '2026-01-10 14:11:40'),
+(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2026-05-13 15:39:44', NULL, 0, NULL, '2025-12-04 20:34:20', '2026-05-13 13:39:44'),
 (28, 'it', 'it@witmanmiyande.com', NULL, '$2y$10$kbm0yafbxD0Iu0Vk7uZYoOKTaqE1DTV47I7FHEFmeRESglBLmnWve', 'Witman', 'Miyande', '+260976062621', NULL, 'active', NULL, NULL, 0, '2025-12-08 13:07:32', NULL, 0, NULL, '2025-12-05 14:38:37', '2025-12-08 17:45:29'),
 (29, 'edwardmusole76', 'edwardmusole76@gmail.com', NULL, '$2y$10$WAgkucanVQ4OuVJtxfZeIuH2gxPk4lH7tTmhKT0I8awfPWiBBakdC', 'Edward', 'Musole', '+260978605960', NULL, 'active', NULL, NULL, 0, '2025-12-29 12:47:56', NULL, 0, NULL, '2025-12-05 14:42:37', '2025-12-29 10:47:56'),
 (30, 'siamem570', 'siamem570@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, '2026-03-16 22:27:06', NULL, 0, NULL, '2025-12-09 11:30:29', '2026-03-16 20:27:06'),
@@ -2636,15 +3080,19 @@ INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `password_hash`, `f
 (75, 'wilfredmweemba12345', 'wilfredmweemba12345@gmail.com', NULL, '$2y$10$WLVee9FIhr2CCDZaFQzNo..X1LPwm..fbwxeaGXhXrHoYH4TvaZri', 'Wilfred', 'Mweemba', '+260972584450', NULL, 'active', NULL, NULL, 0, '2026-04-26 06:57:07', NULL, 0, NULL, '2026-04-26 04:56:43', '2026-04-26 04:57:07'),
 (76, 'stephenkafweku', 'stephenkafweku@gmail.com', '109580197860006785098', '$2y$10$21cO.jH6.vbWPv9/x7YFn.tXpc9UU1himG9n0Tw/xBaBpXAKWgs9G', 'Stephen', 'Kafweku', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-04-30 12:33:28', '2026-04-30 12:33:28'),
 (77, 'taongatembo167', 'taongatembo167@gmail.com', NULL, '$2y$10$2HHJlvBwC0GeqCL258YOIemnnaSa6jIllkuPdq/V5EiqNq8RWMISm', 'Taonga', 'Tembo', '+260779033041', NULL, 'active', NULL, NULL, 0, '2026-05-08 14:14:15', NULL, 0, NULL, '2026-05-08 12:11:18', '2026-05-08 12:14:15'),
-(78, 'luyando356', 'luyando356@gmail.com', NULL, '$2y$10$khvRzYfIZKv3Vc.h.8lc9.GiOa9iYqTk/OKNcaAM5iAMvU0TsFEfu', 'Luyando Mumbe', 'Muchimba', '+260975215720', NULL, 'active', NULL, NULL, 0, '2026-05-08 14:13:07', NULL, 0, NULL, '2026-05-08 12:12:26', '2026-05-08 12:13:07'),
-(79, 'chintuchiinda01', 'chintuchiinda01@gmail.com', NULL, '$2y$10$1uAckp4.jefF1GVeYeXR.e3aCmS3nKhAz8sXHRUkWSY9CBnezlHs6', 'Chintu', 'Chiinda', '+260976788089', NULL, 'active', NULL, NULL, 0, '2026-05-08 15:09:52', NULL, 0, NULL, '2026-05-08 12:16:52', '2026-05-08 13:09:52'),
+(78, 'luyando356', 'luyando356@gmail.com', NULL, '$2y$10$khvRzYfIZKv3Vc.h.8lc9.GiOa9iYqTk/OKNcaAM5iAMvU0TsFEfu', 'Luyando Mumbe', 'Muchimba', '+260975215720', NULL, 'active', NULL, NULL, 0, '2026-05-12 19:23:34', NULL, 0, NULL, '2026-05-08 12:12:26', '2026-05-12 17:23:34'),
+(79, 'chintuchiinda01', 'chintuchiinda01@gmail.com', NULL, '$2y$10$1uAckp4.jefF1GVeYeXR.e3aCmS3nKhAz8sXHRUkWSY9CBnezlHs6', 'Chintu', 'Chiinda', '+260976788089', NULL, 'active', NULL, NULL, 0, '2026-05-12 11:09:53', NULL, 0, NULL, '2026-05-08 12:16:52', '2026-05-12 09:09:53'),
 (80, 'wankietrust08', 'wankietrust08@gmail.com', '107750983156068961383', '$2y$10$NVtUB/Osxdhj4kVGXqzzJewd89NQFhfV6tY4LgOqFGVkTcz18nmx.', 'Trust', 'Wankie', '', NULL, 'active', NULL, NULL, 1, '2026-05-08 14:40:21', NULL, 0, NULL, '2026-05-08 12:16:59', '2026-05-08 12:40:21'),
 (81, 'luyandodabali0', 'luyandodabali0@gmail.com', '114514853630568794611', '$2y$10$0w9cSLP1kgRpjspfr/9WS.TOaguQS5pC87yzbgWeR6Vq1a0Q1LxQS', 'Luyando', 'Dabali', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-05-08 12:19:00', '2026-05-08 12:19:00'),
-(82, 'abhisikaubwe', 'abhisikaubwe@gmail.com', '102122395373050519487', '$2y$10$w4CdWNFmuJoCr3cXZf80C./.f7Apgv69vISIJ.FJRJ8JfucqwHZb2', 'Abhi', 'Sikaubwe', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-05-08 12:19:44', '2026-05-08 12:19:44'),
+(82, 'abhisikaubwe', 'abhisikaubwe@gmail.com', '102122395373050519487', '$2y$10$w4CdWNFmuJoCr3cXZf80C./.f7Apgv69vISIJ.FJRJ8JfucqwHZb2', 'Abhi', 'Sikaubwe', '', NULL, 'active', NULL, NULL, 1, '2026-05-10 10:18:24', NULL, 0, NULL, '2026-05-08 12:19:44', '2026-05-10 08:18:24'),
 (83, 'wanengambi12', 'wanengambi12@icloud.com', NULL, '$2y$10$cQmiF1eu23iGF5.RdRJ7peWc9vwSJq1NynJ4OrplaFOkHooBCbGeO', 'Wane', 'Mary', '+260779297663', NULL, 'active', NULL, NULL, 0, '2026-05-08 14:24:34', NULL, 0, NULL, '2026-05-08 12:22:17', '2026-05-08 12:24:34'),
-(84, 'cathynamakanda75', 'cathynamakanda75@gmail.com', NULL, '$2y$10$WY.dcJcc3pIetoZmPSC7Mem1DDrquYO2.jfxo4KFzLN84mCRQdHqW', 'Catherine', 'Namakanda', '+260766635170', NULL, 'active', NULL, NULL, 0, '2026-05-08 14:25:13', NULL, 0, NULL, '2026-05-08 12:24:57', '2026-05-08 12:25:13'),
-(85, 'fragestermudenda46', 'fragestermudenda46@gmail.com', NULL, '$2y$10$G3Y6MsNAovpiLFByVeoJGuAKW2DkKk0Zw.qnKJuNGiSzISAEQMLni', 'Fragester', 'Mudenda', '+260773137696', NULL, 'active', NULL, NULL, 0, '2026-05-08 15:05:51', NULL, 0, NULL, '2026-05-08 12:38:39', '2026-05-08 13:05:51'),
-(86, 'lishebelajoyce', 'lishebelajoyce@gmail.com', '114562181971949631777', '$2y$10$tdt46skZDQ7/OpXlrmmwRe1fCTa9DDZbgqUbbD2vf6LGFNpe9g0g6', 'Joyce', 'Lishebela', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-05-08 12:46:55', '2026-05-08 12:46:55');
+(84, 'cathynamakanda75', 'cathynamakanda75@gmail.com', NULL, '$2y$10$WY.dcJcc3pIetoZmPSC7Mem1DDrquYO2.jfxo4KFzLN84mCRQdHqW', 'Catherine', 'Namakanda', '+260766635170', NULL, 'active', NULL, NULL, 0, '2026-05-11 22:59:40', NULL, 0, NULL, '2026-05-08 12:24:57', '2026-05-11 20:59:40'),
+(85, 'fragestermudenda46', 'fragestermudenda46@gmail.com', NULL, '$2y$10$G3Y6MsNAovpiLFByVeoJGuAKW2DkKk0Zw.qnKJuNGiSzISAEQMLni', 'Fragester', 'Mudenda', '+260773137696', NULL, 'active', NULL, NULL, 0, '2026-05-09 20:57:06', NULL, 0, NULL, '2026-05-08 12:38:39', '2026-05-09 18:57:06'),
+(86, 'lishebelajoyce', 'lishebelajoyce@gmail.com', '114562181971949631777', '$2y$10$tdt46skZDQ7/OpXlrmmwRe1fCTa9DDZbgqUbbD2vf6LGFNpe9g0g6', 'Joyce', 'Lishebela', '', NULL, 'active', NULL, NULL, 1, '2026-05-13 13:55:43', NULL, 0, NULL, '2026-05-08 12:46:55', '2026-05-13 11:55:43'),
+(87, 'patricia.siamukopa', 'patricia.siamukopa@student.edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Patricia', 'Siamukopa', NULL, NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(88, 'testuser', 'testuser@edutrack.edu', NULL, '$2y$10$OpR3oP3xhNb7m93AOklNjerKmIRoMAVNbxVY73S3QL6xdwjpIuily', 'Test', 'User', NULL, NULL, 'active', NULL, NULL, 0, '2026-05-09 11:24:53', NULL, 0, NULL, '2026-05-08 15:20:22', '2026-05-09 09:24:53'),
+(89, 'dicksonchangwe6', 'dicksonchangwe6@gmail.com', '108102239233611028894', '$2y$10$nP2ndbj28eDx7UbVwEBXm.BOfs71ZmOigmqBl8u1.rK624JFuonhe', 'DICKSON', 'CHANGWE', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-05-11 09:41:30', '2026-05-11 09:41:30'),
+(90, 'maselenimary854', 'maselenimary854@gmail.com', '103272139780537937302', '$2y$10$b7vc5viRZaU0FKVsJX/lZuTpCKojZ1SChFSGzGoVRtuYvW7RpK7QW', 'Mary', 'Maseleni', '', NULL, 'active', NULL, NULL, 1, '2026-05-13 15:51:10', NULL, 0, NULL, '2026-05-12 16:26:41', '2026-05-13 13:51:10');
 
 -- --------------------------------------------------------
 
@@ -2757,7 +3205,11 @@ INSERT INTO `user_profiles` (`id`, `user_id`, `bio`, `phone`, `date_of_birth`, `
 (96, 83, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:22:17', '2026-05-08 12:22:17', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (97, 84, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:24:57', '2026-05-08 12:24:57', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (98, 85, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:38:39', '2026-05-08 12:38:39', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(99, 86, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:46:55', '2026-05-08 12:46:55', 'https://lh3.googleusercontent.com/a/ACg8ocIRHsx4T3M7WKNEEW_rq6LciDWwizWiOc_RjquzY-rbJE_btA=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(99, 86, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:46:55', '2026-05-08 12:46:55', 'https://lh3.googleusercontent.com/a/ACg8ocIRHsx4T3M7WKNEEW_rq6LciDWwizWiOc_RjquzY-rbJE_btA=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(100, 87, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(101, 88, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 15:20:22', '2026-05-08 15:20:22', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(102, 89, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-11 09:41:30', '2026-05-11 09:41:30', 'https://lh3.googleusercontent.com/a/ACg8ocLzYDrYyeaYVaVyJ_2D-67NdpbzFNbFV6ekRPztD_A1HdndTVA=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(103, 90, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-12 16:26:41', '2026-05-12 16:26:41', 'https://lh3.googleusercontent.com/a/ACg8ocLxVlsZJvZYFF0TUg6QbetxEJFSn6J1zX5k9Dwhjv8L02-RUA=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2864,7 +3316,11 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`, `assigned_b
 (111, 83, 4, '2026-05-08 12:22:17', NULL),
 (112, 84, 4, '2026-05-08 12:24:57', NULL),
 (113, 85, 4, '2026-05-08 12:38:39', NULL),
-(114, 86, 4, '2026-05-08 12:46:55', NULL);
+(114, 86, 4, '2026-05-08 12:46:55', NULL),
+(115, 87, 4, '2026-05-08 14:47:43', 1),
+(116, 88, 4, '2026-05-08 15:20:22', 1),
+(117, 89, 4, '2026-05-11 09:41:30', NULL),
+(118, 90, 4, '2026-05-12 16:26:41', NULL);
 
 -- --------------------------------------------------------
 
@@ -2888,22 +3344,9 @@ CREATE TABLE `user_sessions` (
 --
 
 INSERT INTO `user_sessions` (`id`, `user_id`, `session_token`, `ip_address`, `user_agent`, `expires_at`, `created_at`, `updated_at`) VALUES
-(130, 72, 'fab8d5924eb5b89571985bd47bad9aa974add414641a392d4a0a9e3d446b400b', '165.58.129.66', 'Mozilla/5.0 (Linux; Android 13; SM-A145P Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/146.0.7680.164 Mobile Safari/537.36[FBAN/EMA;FBLC/en_US;FBAV/503.0.0.10.107;FBCX/modulariab;]', '2026-05-12 13:27:36', '2026-04-12 11:27:36', '2026-04-12 11:27:36'),
-(139, 78, 'ccf568ba919f2296cf4703a790f076cff207551b96fb5f17ddbde9ddd022b70f', '41.223.117.35', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:13:07', '2026-05-08 12:13:07', '2026-05-08 12:13:07'),
-(140, 77, '3d070324842eedfa6a446570c53a6decbe597127f9613fed73daf02156679d9e', '45.215.255.90', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:14:15', '2026-05-08 12:14:15', '2026-05-08 12:14:15'),
-(141, 80, 'a8a5d16d36ae3e38ae6af7d14beeaba46808485b4a333f39b523412b54439980', '102.212.183.174', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:16:59', '2026-05-08 12:16:59', '2026-05-08 12:16:59'),
-(142, 79, '2518c812bd14023f5552d5d78b8c6a728f7caca9b292027ebefd0eef69731e74', '45.215.224.63', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:17:24', '2026-05-08 12:17:24', '2026-05-08 12:17:24'),
-(143, 81, '54ebaffa5a800e16f5478a2b8479b3c8eeaf88f0c1f8dbd5db32481f77be748c', '102.212.183.174', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36', '2026-05-08 16:19:01', '2026-05-08 12:19:01', '2026-05-08 12:19:01'),
-(144, 82, '51ce642093f281e1c453ef8815c0314878c31662ec559987809bfd646f0afe13', '45.215.224.25', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36', '2026-05-08 16:19:44', '2026-05-08 12:19:44', '2026-05-08 12:19:44'),
-(145, 83, '9e70aaa264a3e238709dd9263eec9afd7bcb1a911764fb85f7afd0380bb7a789', '45.215.252.43', 'Mozilla/5.0 (iPhone; CPU iPhone OS 26_3_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/409.0.872648028 Mobile/15E148 Safari/604.1', '2026-05-08 16:24:34', '2026-05-08 12:24:34', '2026-05-08 12:24:34'),
-(146, 84, '3c5b26fb0cf88a50fb3a5e4f8f7cb311a468570ff3643b9b462f8b9ff994ca0e', '102.212.183.174', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:25:13', '2026-05-08 12:25:13', '2026-05-08 12:25:13'),
-(148, 79, '141d2bb8e33a2ae4fb47e7b3a2ae1261006e997f0e0735c56715ad3758e852bc', '45.215.224.63', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:40:07', '2026-05-08 12:40:07', '2026-05-08 12:40:07'),
-(149, 80, '10d31ec40c37f7438eb41d0ee5c4ae2a2222c8f7a947b9bf46b62eb703bef9a6', '102.212.183.174', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:40:21', '2026-05-08 12:40:21', '2026-05-08 12:40:21'),
-(150, 79, 'bd1ac37496ac4718e448fe7b447b0af912ccb8d7e39627b37c282bbcbc595b27', '45.215.224.63', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:42:24', '2026-05-08 12:42:24', '2026-05-08 12:42:24'),
-(151, 86, 'cbbf789ad826c40a68f0743da385b8e6a01bd83dd751515da5deb4dd9b4a4057', '45.215.255.203', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36', '2026-05-08 16:46:55', '2026-05-08 12:46:55', '2026-05-08 12:46:55'),
-(152, 85, 'de5ce708971360c80e82b154bd4adc173a7f75c377fcf03c2e7c23429ee4f5c6', '45.215.224.36', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 17:05:51', '2026-05-08 13:05:51', '2026-05-08 13:05:51'),
-(153, 79, 'cf8c2acc62c610b80e49ce86b7666ec0c3b6a9ce9069b681af7895b2ed9f88e4', '45.215.224.51', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 17:09:52', '2026-05-08 13:09:52', '2026-05-08 13:09:52'),
-(154, 1, '1c37895d7e30b1f48e4aadfa98dc259a2693bb411b9bdfc45e3cbb3102cd97c4', '102.208.221.215', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', '2026-05-08 17:36:00', '2026-05-08 13:36:00', '2026-05-08 13:36:00');
+(191, 86, '3b3195a6b6d3589a6188e8c476f0fac6c9987dbfced88dd735a350bef2388205', '45.215.224.117', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36', '2026-05-13 15:55:43', '2026-05-13 11:55:43', '2026-05-13 11:55:43'),
+(192, 1, '861d403e172f78e310879702d062f9edd422d94de634a8f4caec8280f0efe46b', '45.213.187.228', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', '2026-05-13 17:13:44', '2026-05-13 13:13:44', '2026-05-13 13:13:44'),
+(194, 90, '6dd30d59710edcf35f68db222c2b0efd19b15a3d751fe8afae8f6196afbd902a', '41.223.116.241', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '2026-05-13 17:51:10', '2026-05-13 13:51:10', '2026-05-13 13:51:10');
 
 -- --------------------------------------------------------
 
@@ -2950,7 +3393,9 @@ ALTER TABLE `announcements`
 --
 ALTER TABLE `assignments`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_assign_course` (`course_id`);
+  ADD KEY `idx_assign_course` (`course_id`),
+  ADD KEY `idx_assignments_due_date` (`due_date`),
+  ADD KEY `idx_assignments_course` (`course_id`);
 
 --
 -- Indexes for table `assignment_submissions`
@@ -2975,7 +3420,8 @@ ALTER TABLE `certificates`
   ADD UNIQUE KEY `uk_cert_verify` (`verification_code`),
   ADD KEY `idx_cert_user` (`user_id`),
   ADD KEY `idx_cert_course` (`course_id`),
-  ADD KEY `fk_cert_enroll` (`enrollment_id`);
+  ADD KEY `fk_cert_enroll` (`enrollment_id`),
+  ADD KEY `idx_certificates_issued` (`issued_date`);
 
 --
 -- Indexes for table `contacts`
@@ -2991,7 +3437,8 @@ ALTER TABLE `contacts`
 ALTER TABLE `courses`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_courses_cat` (`category_id`),
-  ADD KEY `idx_courses_inst` (`instructor_id`);
+  ADD KEY `idx_courses_inst` (`instructor_id`),
+  ADD KEY `idx_courses_status` (`status`);
 
 --
 -- Indexes for table `course_categories`
@@ -3054,7 +3501,10 @@ ALTER TABLE `enrollments`
   ADD UNIQUE KEY `uk_enrollments_user_course` (`user_id`,`course_id`),
   ADD KEY `idx_enroll_user` (`user_id`),
   ADD KEY `idx_enroll_course` (`course_id`),
-  ADD KEY `idx_enroll_student` (`student_id`);
+  ADD KEY `idx_enroll_student` (`student_id`),
+  ADD KEY `idx_enrollments_status` (`enrollment_status`),
+  ADD KEY `idx_enrollments_user_status` (`user_id`,`enrollment_status`),
+  ADD KEY `idx_enrollments_course_user` (`course_id`,`user_id`);
 
 --
 -- Indexes for table `enrollment_payment_plans`
@@ -3066,12 +3516,60 @@ ALTER TABLE `enrollment_payment_plans`
   ADD KEY `idx_epp_course` (`course_id`);
 
 --
+-- Indexes for table `events`
+--
+ALTER TABLE `events`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`),
+  ADD KEY `created_by` (`created_by`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_event_date` (`event_date`),
+  ADD KEY `idx_featured` (`is_featured`);
+
+--
+-- Indexes for table `event_images`
+--
+ALTER TABLE `event_images`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_event_order` (`event_id`,`display_order`);
+
+--
+-- Indexes for table `hero_slides`
+--
+ALTER TABLE `hero_slides`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `created_by` (`created_by`),
+  ADD KEY `idx_active` (`is_active`),
+  ADD KEY `idx_order` (`display_order`);
+
+--
+-- Indexes for table `institution_photos`
+--
+ALTER TABLE `institution_photos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `uploaded_by` (`uploaded_by`),
+  ADD KEY `idx_category` (`category`),
+  ADD KEY `idx_featured` (`is_featured`),
+  ADD KEY `idx_order` (`display_order`);
+
+--
 -- Indexes for table `instructors`
 --
 ALTER TABLE `instructors`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uk_instructors_user` (`user_id`),
   ADD KEY `idx_inst_user` (`user_id`);
+
+--
+-- Indexes for table `lenco_collections`
+--
+ALTER TABLE `lenco_collections`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uk_reference` (`reference`),
+  ADD UNIQUE KEY `uk_lenco_collection_id` (`lenco_collection_id`),
+  ADD KEY `idx_user_id` (`user_id`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_phone` (`phone`);
 
 --
 -- Indexes for table `lenco_transactions`
@@ -3110,8 +3608,10 @@ ALTER TABLE `lessons`
 --
 ALTER TABLE `lesson_progress`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_lp_enroll` (`enrollment_id`),
-  ADD KEY `fk_lp_lesson` (`lesson_id`);
+  ADD KEY `fk_lp_lesson` (`lesson_id`),
+  ADD KEY `idx_lesson_progress_status` (`status`),
+  ADD KEY `idx_lesson_progress_enrollment_status` (`enrollment_id`,`status`),
+  ADD KEY `idx_lesson_progress_last_accessed` (`last_accessed`);
 
 --
 -- Indexes for table `lesson_resources`
@@ -3161,7 +3661,8 @@ ALTER TABLE `modules`
 --
 ALTER TABLE `notifications`
   ADD PRIMARY KEY (`notification_id`),
-  ADD KEY `idx_notif_user` (`user_id`);
+  ADD KEY `idx_notif_user` (`user_id`),
+  ADD KEY `idx_notifications_user_read` (`user_id`,`is_read`);
 
 --
 -- Indexes for table `payments`
@@ -3201,7 +3702,9 @@ ALTER TABLE `question_options`
 --
 ALTER TABLE `quizzes`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_quiz_course` (`course_id`);
+  ADD KEY `idx_quiz_course` (`course_id`),
+  ADD KEY `idx_quizzes_published` (`is_published`),
+  ADD KEY `idx_quizzes_course` (`course_id`);
 
 --
 -- Indexes for table `quiz_answers`
@@ -3332,7 +3835,7 @@ ALTER TABLE `user_sessions`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `log_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `log_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `announcements`
@@ -3344,13 +3847,13 @@ ALTER TABLE `announcements`
 -- AUTO_INCREMENT for table `assignments`
 --
 ALTER TABLE `assignments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `assignment_submissions`
 --
 ALTER TABLE `assignment_submissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT for table `badges`
@@ -3362,13 +3865,13 @@ ALTER TABLE `badges`
 -- AUTO_INCREMENT for table `certificates`
 --
 ALTER TABLE `certificates`
-  MODIFY `certificate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `certificate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `courses`
@@ -3404,7 +3907,7 @@ ALTER TABLE `discussions`
 -- AUTO_INCREMENT for table `email_queue`
 --
 ALTER TABLE `email_queue`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `email_templates`
@@ -3416,19 +3919,49 @@ ALTER TABLE `email_templates`
 -- AUTO_INCREMENT for table `enrollments`
 --
 ALTER TABLE `enrollments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `enrollment_payment_plans`
 --
 ALTER TABLE `enrollment_payment_plans`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+
+--
+-- AUTO_INCREMENT for table `events`
+--
+ALTER TABLE `events`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `event_images`
+--
+ALTER TABLE `event_images`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hero_slides`
+--
+ALTER TABLE `hero_slides`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `institution_photos`
+--
+ALTER TABLE `institution_photos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `instructors`
 --
 ALTER TABLE `instructors`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `lenco_collections`
+--
+ALTER TABLE `lenco_collections`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `lenco_transactions`
@@ -3452,7 +3985,7 @@ ALTER TABLE `lessons`
 -- AUTO_INCREMENT for table `lesson_progress`
 --
 ALTER TABLE `lesson_progress`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=202;
 
 --
 -- AUTO_INCREMENT for table `lesson_resources`
@@ -3548,7 +4081,7 @@ ALTER TABLE `quiz_question_options`
 -- AUTO_INCREMENT for table `registration_fees`
 --
 ALTER TABLE `registration_fees`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `remember_tokens`
@@ -3566,7 +4099,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
 -- AUTO_INCREMENT for table `system_settings`
@@ -3584,25 +4117,25 @@ ALTER TABLE `team_members`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
 
 --
 -- AUTO_INCREMENT for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=195;
 
 -- --------------------------------------------------------
 
@@ -3687,6 +4220,30 @@ ALTER TABLE `enrollments`
   ADD CONSTRAINT `fk_enroll_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_enroll_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_enroll_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `events`
+--
+ALTER TABLE `events`
+  ADD CONSTRAINT `events_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `event_images`
+--
+ALTER TABLE `event_images`
+  ADD CONSTRAINT `event_images_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `hero_slides`
+--
+ALTER TABLE `hero_slides`
+  ADD CONSTRAINT `hero_slides_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `institution_photos`
+--
+ALTER TABLE `institution_photos`
+  ADD CONSTRAINT `institution_photos_ibfk_1` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `instructors`

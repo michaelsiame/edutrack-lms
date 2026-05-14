@@ -49,15 +49,18 @@ $page_title = "Reset Password - Edutrack";
 require_once __DIR__ . '/../src/templates/header.php';
 ?>
 
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full">
-        <div class="text-center mb-8">
-            <i class="fas fa-key text-primary-600 text-5xl mb-4"></i>
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">Reset Your Password</h2>
-            <p class="text-gray-600">Choose a new password for your account</p>
+<div class="min-h-screen flex flex-col justify-center py-10 px-4 sm:px-6 bg-gray-50">
+    <div class="mx-auto w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-6">
+            <a href="<?= url() ?>" class="inline-block mb-4">
+                <img src="<?= asset('images/logo.png') ?>" alt="Edutrack Logo" class="h-16 w-auto mx-auto">
+            </a>
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Set new password</h2>
+            <p class="mt-2 text-sm text-gray-500">Create a strong password for your account</p>
         </div>
         
-        <div class="bg-white shadow-lg rounded-lg p-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
             <?php if ($success): ?>
                 <div class="text-center">
                     <i class="fas fa-check-circle text-green-500 text-5xl mb-4"></i>

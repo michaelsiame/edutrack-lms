@@ -28,7 +28,7 @@ $companyData = [
     'TEVETA Registration' => [
         'Institution Code' => TEVETA_CODE,
         'Institution Name' => TEVETA_NAME,
-        'Registration URL' => '<a href="https://www.teveta.org.zm" target="_blank" class="text-blue-600 hover:underline">teveta.org.zm</a>',
+        'Registration URL' => '<a href="https://www.teveta.org.zm" target="_blank" class="text-primary-600 hover:underline">teveta.org.zm</a>',
         'Verified Status' => TEVETA_VERIFIED ? '<span class="text-green-600 font-semibold">✓ Verified</span>' : '<span class="text-yellow-600">Pending</span>',
     ],
     'Brand Colors' => [
@@ -57,7 +57,7 @@ $issues = [];
 if (strpos(TEVETA_CODE, 'XXX') !== false) {
     $issues[] = [
         'type' => 'error',
-        'message' => 'TEVETA Institution Code is using placeholder value (TEVETA/XXX/2024). Please update with actual registration number.',
+        'message' => 'TEVETA Institution Code is using placeholder value. Please update with actual registration number.',
         'fix' => 'Set TEVETA_INSTITUTION_CODE in .env file or config/app.php'
     ];
 }
@@ -79,7 +79,7 @@ if (empty(SITE_EMAIL)) {
     $issues[] = [
         'type' => 'error',
         'message' => 'Primary email is not set. This is critical for system notifications.',
-        'fix' => 'Set SITE_EMAIL in .env file (e.g., info@edutrackzambia.com)'
+        'fix' => 'Set SITE_EMAIL in .env file'
     ];
 }
 if (empty(config('social.facebook')) && empty(config('social.linkedin'))) {
@@ -91,18 +91,18 @@ if (empty(config('social.facebook')) && empty(config('social.linkedin'))) {
 }
 ?>
 
-<div class="max-w-7xl mx-auto">
+<div class="p-4 sm:p-6 lg:p-8">
     <!-- Page Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Company Profile</h1>
-        <p class="text-gray-600 mt-2">View current company configuration and branding settings</p>
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Company Profile</h1>
+        <p class="text-gray-500 mt-1">View current company configuration and branding settings</p>
     </div>
 
     <!-- Issues Alert Box -->
     <?php if (!empty($issues)): ?>
-    <div class="mb-8 space-y-4">
+    <div class="mb-6 space-y-3">
         <?php foreach ($issues as $issue): ?>
-        <div class="rounded-lg p-4 <?= $issue['type'] === 'error' ? 'bg-red-50 border border-red-200' : 'bg-yellow-50 border border-yellow-200' ?>">
+        <div class="rounded-xl p-4 <?= $issue['type'] === 'error' ? 'bg-red-50 border border-red-200' : 'bg-yellow-50 border border-yellow-200' ?>">
             <div class="flex">
                 <div class="flex-shrink-0">
                     <i class="fas fa-<?= $issue['type'] === 'error' ? 'exclamation-circle text-red-400' : 'exclamation-triangle text-yellow-400' ?> text-xl"></i>
@@ -111,7 +111,7 @@ if (empty(config('social.facebook')) && empty(config('social.linkedin'))) {
                     <h3 class="text-sm font-medium <?= $issue['type'] === 'error' ? 'text-red-800' : 'text-yellow-800' ?>">
                         <?= $issue['type'] === 'error' ? 'Critical Issue' : 'Warning' ?>
                     </h3>
-                    <div class="mt-2 text-sm <?= $issue['type'] === 'error' ? 'text-red-700' : 'text-yellow-700' ?>">
+                    <div class="mt-1 text-sm <?= $issue['type'] === 'error' ? 'text-red-700' : 'text-yellow-700' ?>">
                         <p><?= $issue['message'] ?></p>
                         <p class="mt-1 font-medium">Fix: <?= $issue['fix'] ?></p>
                     </div>
@@ -123,13 +123,13 @@ if (empty(config('social.facebook')) && empty(config('social.linkedin'))) {
     <?php endif; ?>
 
     <!-- Configuration Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <?php foreach ($companyData as $section => $items): ?>
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
                 <h2 class="text-lg font-semibold text-gray-900"><?= htmlspecialchars($section) ?></h2>
             </div>
-            <div class="divide-y divide-gray-200">
+            <div class="divide-y divide-gray-100">
                 <?php foreach ($items as $label => $value): ?>
                 <div class="px-6 py-4 flex justify-between items-center">
                     <span class="text-sm font-medium text-gray-600"><?= htmlspecialchars($label) ?></span>
@@ -141,36 +141,11 @@ if (empty(config('social.facebook')) && empty(config('social.linkedin'))) {
         <?php endforeach; ?>
     </div>
 
-    <!-- Edit Instructions -->
-    <div class="mt-8 bg-blue-50 rounded-lg p-6 border border-blue-200">
-        <h3 class="text-lg font-semibold text-blue-900 mb-4">
-            <i class="fas fa-info-circle mr-2"></i>How to Update Company Information
-        </h3>
-        <div class="prose prose-blue text-blue-800">
-            <p><strong>Option 1: Environment Variables (Recommended)</strong></p>
-            <p>Edit the <code>.env</code> file in the root directory and set the appropriate values:</p>
-            <pre class="bg-white p-4 rounded border border-blue-200 overflow-x-auto"><code>TEVETA_INSTITUTION_CODE="TEVETA/ACTUAL/CODE/2024"
-SITE_PHONE2="+260XXXXXXXX"
-FACEBOOK_URL="https://facebook.com/edutrackzambia"
-LINKEDIN_URL="https://linkedin.com/company/edutrack"</code></pre>
-            
-            <p class="mt-4"><strong>Option 2: Config File</strong></p>
-            <p>Edit <code>config/app.php</code> and update the default values directly.</p>
-            
-            <p class="mt-4"><strong>After making changes:</strong></p>
-            <ul class="list-disc list-inside">
-                <li>Clear any cache if enabled</li>
-                <li>Refresh this page to see updated values</li>
-                <li>Changes will appear immediately on all pages</li>
-            </ul>
-        </div>
-    </div>
-
     <!-- Quick Links -->
-    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <a href="https://www.teveta.org.zm" target="_blank" class="bg-white rounded-lg shadow p-6 hover:shadow-md transition">
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="https://www.teveta.org.zm" target="_blank" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition">
             <div class="flex items-center">
-                <div class="flex-shrink-0 bg-green-100 rounded-full p-3">
+                <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
                     <i class="fas fa-external-link-alt text-green-600 text-xl"></i>
                 </div>
                 <div class="ml-4">
@@ -180,9 +155,9 @@ LINKEDIN_URL="https://linkedin.com/company/edutrack"</code></pre>
             </div>
         </a>
         
-        <a href="../" target="_blank" class="bg-white rounded-lg shadow p-6 hover:shadow-md transition">
+        <a href="../" target="_blank" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition">
             <div class="flex items-center">
-                <div class="flex-shrink-0 bg-blue-100 rounded-full p-3">
+                <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
                     <i class="fas fa-globe text-blue-600 text-xl"></i>
                 </div>
                 <div class="ml-4">
@@ -192,16 +167,31 @@ LINKEDIN_URL="https://linkedin.com/company/edutrack"</code></pre>
             </div>
         </a>
         
-        <div class="bg-white rounded-lg shadow p-6">
+        <a href="?page=settings" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition">
             <div class="flex items-center">
-                <div class="flex-shrink-0 bg-purple-100 rounded-full p-3">
-                    <i class="fas fa-palette text-purple-600 text-xl"></i>
+                <div class="flex-shrink-0 bg-purple-100 rounded-lg p-3">
+                    <i class="fas fa-cog text-purple-600 text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <h3 class="text-sm font-medium text-gray-900">Brand Colors</h3>
-                    <p class="text-sm text-gray-500">Primary: <?= PRIMARY_COLOR ?>, Secondary: <?= SECONDARY_COLOR ?></p>
+                    <h3 class="text-sm font-medium text-gray-900">Edit Settings</h3>
+                    <p class="text-sm text-gray-500">Update configuration</p>
                 </div>
             </div>
+        </a>
+    </div>
+
+    <!-- Edit Instructions -->
+    <div class="mt-6 bg-blue-50 rounded-xl p-6 border border-blue-200">
+        <h3 class="text-lg font-semibold text-blue-900 mb-4">
+            <i class="fas fa-info-circle mr-2"></i>How to Update Company Information
+        </h3>
+        <div class="text-blue-800 space-y-3">
+            <p><strong>Option 1: Environment Variables (Recommended)</strong></p>
+            <p class="text-sm">Edit the <code>.env</code> file in the root directory and set the appropriate values.</p>
+            <p><strong>Option 2: Settings Page</strong></p>
+            <p class="text-sm">Use the <a href="?page=settings" class="underline">Settings</a> page to update contact info, social links, and other preferences through the UI.</p>
+            <p><strong>Option 3: Config File</strong></p>
+            <p class="text-sm">Edit <code>config/app.php</code> and update the default values directly.</p>
         </div>
     </div>
 </div>

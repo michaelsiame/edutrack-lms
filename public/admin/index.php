@@ -19,7 +19,18 @@ if (!hasRole('admin')) {
 
 // Get current page
 $page = $_GET['page'] ?? 'dashboard';
-$validPages = ['dashboard', 'users', 'courses', 'modules', 'enrollments', 'financials', 'settings', 'announcements', 'help', 'company-profile'];
+$validPages = [
+    'dashboard',
+    'users', 'instructors', 'students',
+    'courses', 'modules', 'quizzes', 'assignments',
+    'enrollments', 'certificates', 'badges',
+    'announcements', 'events', 'hero-slides', 'institution-photos', 'email-templates',
+    'discussions', 'reviews', 'contacts',
+    'financials', 'payment-methods', 'registration-fees',
+    'communication', 'email-queue', 'notifications', 'newsletter-subscribers',
+    'reports', 'activity-logs',
+    'settings', 'help', 'company-profile'
+];
 if (!in_array($page, $validPages)) {
     $page = 'dashboard';
 }
@@ -293,6 +304,7 @@ $page_title = 'Admin Dashboard';
         .sidebar-link.active { background: rgba(59, 130, 246, 0.9); box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3); }
         .stat-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .stat-card:hover { transform: translateY(-2px); }
+        .shadow-card { box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04); }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -334,18 +346,41 @@ $page_title = 'Admin Dashboard';
                     </div>
                     <span>Dashboard</span>
                 </a>
+                <a href="?page=reports" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'reports' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'reports' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <span>Reports</span>
+                </a>
 
-                <!-- Management -->
+                <!-- People -->
                 <div class="px-4 py-2 mt-4">
-                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Management</span>
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">People</span>
                 </div>
                 <a href="?page=users" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'users' ? 'active' : 'text-gray-300 hover:text-white' ?>">
                     <div class="w-8 h-8 rounded-lg <?= $page === 'users' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
                         <i class="fas fa-users"></i>
                     </div>
-                    <span>Users</span>
+                    <span>All Users</span>
                     <span class="ml-auto bg-primary-500 text-white text-xs px-2 py-0.5 rounded-full"><?= $totalStudents ?></span>
                 </a>
+                <a href="?page=instructors" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'instructors' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'instructors' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <span>Instructors</span>
+                </a>
+                <a href="?page=students" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'students' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'students' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <span>Students</span>
+                </a>
+
+                <!-- Academics -->
+                <div class="px-4 py-2 mt-4">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Academics</span>
+                </div>
                 <a href="?page=courses" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'courses' ? 'active' : 'text-gray-300 hover:text-white' ?>">
                     <div class="w-8 h-8 rounded-lg <?= $page === 'courses' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
                         <i class="fas fa-book"></i>
@@ -356,36 +391,165 @@ $page_title = 'Admin Dashboard';
                     <div class="w-8 h-8 rounded-lg <?= $page === 'modules' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
                         <i class="fas fa-layer-group"></i>
                     </div>
-                    <span>Modules</span>
+                    <span>Modules & Lessons</span>
+                </a>
+                <a href="?page=quizzes" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'quizzes' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'quizzes' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <span>Quizzes</span>
+                </a>
+                <a href="?page=assignments" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'assignments' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'assignments' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <span>Assignments</span>
                 </a>
                 <a href="?page=enrollments" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'enrollments' ? 'active' : 'text-gray-300 hover:text-white' ?>">
                     <div class="w-8 h-8 rounded-lg <?= $page === 'enrollments' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
-                        <i class="fas fa-user-graduate"></i>
+                        <i class="fas fa-user-check"></i>
                     </div>
                     <span>Enrollments</span>
                 </a>
-
-                <!-- Finance & Communication -->
-                <div class="px-4 py-2 mt-4">
-                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Finance & Communication</span>
-                </div>
-                <a href="?page=financials" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'financials' ? 'active' : 'text-gray-300 hover:text-white' ?>">
-                    <div class="w-8 h-8 rounded-lg <?= $page === 'financials' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
-                        <i class="fas fa-money-bill-wave"></i>
+                <a href="?page=certificates" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'certificates' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'certificates' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-certificate"></i>
                     </div>
-                    <span>Financials</span>
+                    <span>Certificates</span>
                 </a>
+                <a href="?page=badges" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'badges' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'badges' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <span>Badges</span>
+                </a>
+                <a href="?page=live-sessions" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'live-sessions' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'live-sessions' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <span>Live Sessions</span>
+                </a>
+
+                <!-- Content -->
+                <div class="px-4 py-2 mt-4">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Content</span>
+                </div>
                 <a href="?page=announcements" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'announcements' ? 'active' : 'text-gray-300 hover:text-white' ?>">
                     <div class="w-8 h-8 rounded-lg <?= $page === 'announcements' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
                         <i class="fas fa-bullhorn"></i>
                     </div>
                     <span>Announcements</span>
                 </a>
+                <a href="?page=events" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'events' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'events' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <span>Events</span>
+                </a>
+                <a href="?page=hero-slides" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'hero-slides' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'hero-slides' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <span>Hero Slides</span>
+                </a>
+                <a href="?page=institution-photos" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'institution-photos' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'institution-photos' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <span>Photos</span>
+                </a>
+                <a href="?page=email-templates" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'email-templates' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'email-templates' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <span>Email Templates</span>
+                </a>
+
+                <!-- Community -->
+                <div class="px-4 py-2 mt-4">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Community</span>
+                </div>
+                <a href="?page=discussions" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'discussions' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'discussions' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span>Discussions</span>
+                </a>
+                <a href="?page=reviews" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'reviews' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'reviews' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span>Reviews</span>
+                </a>
+                <a href="?page=contacts" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'contacts' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'contacts' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-address-book"></i>
+                    </div>
+                    <span>Contacts</span>
+                </a>
+
+                <!-- Finance -->
+                <div class="px-4 py-2 mt-4">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Finance</span>
+                </div>
+                <a href="?page=financials" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'financials' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'financials' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <span>Payments</span>
+                </a>
+                <a href="?page=payment-methods" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'payment-methods' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'payment-methods' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <span>Payment Methods</span>
+                </a>
+                <a href="?page=registration-fees" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'registration-fees' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'registration-fees' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <span>Registration Fees</span>
+                </a>
+
+                <!-- Communication -->
+                <div class="px-4 py-2 mt-4">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Communication</span>
+                </div>
+                <a href="?page=email-queue" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'email-queue' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'email-queue' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <span>Email Queue</span>
+                </a>
+                <a href="?page=notifications" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'notifications' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'notifications' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <span>Notifications</span>
+                </a>
+                <a href="?page=newsletter-subscribers" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'newsletter-subscribers' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'newsletter-subscribers' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <span>Newsletter</span>
+                </a>
 
                 <!-- System -->
                 <div class="px-4 py-2 mt-4">
                     <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">System</span>
                 </div>
+                <a href="?page=activity-logs" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'activity-logs' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'activity-logs' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <span>Activity Logs</span>
+                </a>
+                <a href="?page=company-profile" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'company-profile' ? 'active' : 'text-gray-300 hover:text-white' ?>">
+                    <div class="w-8 h-8 rounded-lg <?= $page === 'company-profile' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <span>Company Profile</span>
+                </a>
                 <a href="?page=settings" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl <?= $page === 'settings' ? 'active' : 'text-gray-300 hover:text-white' ?>">
                     <div class="w-8 h-8 rounded-lg <?= $page === 'settings' ? 'bg-white/20' : 'bg-slate-700/50' ?> flex items-center justify-center mr-3">
                         <i class="fas fa-cog"></i>
@@ -540,6 +704,72 @@ $page_title = 'Admin Dashboard';
                             </div>
                         </div>
 
+                        <!-- Needs Attention -->
+                        <?php
+                        $pendingContacts = $db->fetchColumn("SELECT COUNT(*) FROM contacts WHERE is_read = 0") ?: 0;
+                        $upcomingEvents = $db->fetchColumn("SELECT COUNT(*) FROM events WHERE event_date >= CURDATE()") ?: 0;
+                        $totalReviews = $db->fetchColumn("SELECT COUNT(*) FROM course_reviews") ?: 0;
+                        $scheduledSessions = $db->fetchColumn("SELECT COUNT(*) FROM live_sessions WHERE status = 'scheduled'") ?: 0;
+                        $pendingEmails = $db->fetchColumn("SELECT COUNT(*) FROM email_queue WHERE status = 'pending'") ?: 0;
+                        ?>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                            <a href="?page=contacts" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition <?= $pendingContacts > 0 ? 'ring-2 ring-blue-100' : '' ?>">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-500">New Contacts</p>
+                                        <p class="text-2xl font-bold text-gray-900"><?= $pendingContacts ?></p>
+                                    </div>
+                                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-envelope text-blue-600"></i>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="?page=events" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition <?= $upcomingEvents > 0 ? 'ring-2 ring-green-100' : '' ?>">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-500">Upcoming Events</p>
+                                        <p class="text-2xl font-bold text-gray-900"><?= $upcomingEvents ?></p>
+                                    </div>
+                                    <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-calendar-alt text-green-600"></i>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="?page=reviews" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-500">Total Reviews</p>
+                                        <p class="text-2xl font-bold text-gray-900"><?= $totalReviews ?></p>
+                                    </div>
+                                    <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-star text-yellow-600"></i>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="?page=live-sessions" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition <?= $scheduledSessions > 0 ? 'ring-2 ring-purple-100' : '' ?>">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-500">Live Sessions</p>
+                                        <p class="text-2xl font-bold text-gray-900"><?= $scheduledSessions ?></p>
+                                    </div>
+                                    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-video text-purple-600"></i>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="?page=email-queue" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition <?= $pendingEmails > 0 ? 'ring-2 ring-orange-100' : '' ?>">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-500">Email Queue</p>
+                                        <p class="text-2xl font-bold text-gray-900"><?= $pendingEmails ?></p>
+                                    </div>
+                                    <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-paper-plane text-orange-600"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
                         <!-- Charts and Activity -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                             <!-- Enrollment Chart -->
@@ -587,37 +817,70 @@ $page_title = 'Admin Dashboard';
 
                         <!-- Recent Activity & Quick Stats -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            <!-- Recent Enrollments -->
+                            <!-- Recent Activity Feed -->
                             <div class="lg:col-span-2 bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
                                 <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
                                     <h3 class="text-lg font-bold text-gray-900">Recent Activity</h3>
-                                    <a href="?page=enrollments" class="text-sm text-primary-600 hover:text-primary-700">View All</a>
+                                    <a href="?page=activity-logs" class="text-sm text-primary-600 hover:text-primary-700">View Logs</a>
                                 </div>
                                 <div class="divide-y divide-gray-100">
                                     <?php
-                                    $recentEnrollments = $db->fetchAll("
-                                        SELECT e.*, CONCAT(u.first_name, ' ', u.last_name) as full_name, c.title
+                                    $recentActivity = $db->fetchAll("
+                                        SELECT 'enrollment' as type, e.enrolled_at as date, CONCAT(u.first_name, ' ', u.last_name) as user_name, c.title as item_name, null as action_type
                                         FROM enrollments e
                                         JOIN users u ON e.user_id = u.id
                                         JOIN courses c ON e.course_id = c.id
                                         ORDER BY e.enrolled_at DESC
-                                        LIMIT 5
+                                        LIMIT 3
                                     ");
-                                    foreach ($recentEnrollments as $enrollment): 
-                                        $initials = strtoupper(substr($enrollment['full_name'] ?? 'U', 0, 1));
+                                    $recentLogs = $db->fetchAll("
+                                        SELECT a.activity_type as type, a.created_at as date, CONCAT(u.first_name, ' ', u.last_name) as user_name, a.entity_type as item_name, a.activity_type as action_type
+                                        FROM activity_logs a
+                                        LEFT JOIN users u ON a.user_id = u.id
+                                        ORDER BY a.created_at DESC
+                                        LIMIT 4
+                                    ");
+                                    $combined = array_merge($recentActivity, $recentLogs);
+                                    usort($combined, function($a, $b) {
+                                        return strtotime($b['date']) <=> strtotime($a['date']);
+                                    });
+                                    $combined = array_slice($combined, 0, 6);
+                                    foreach ($combined as $activity):
+                                        $isEnrollment = $activity['type'] === 'enrollment';
+                                        $iconClass = $isEnrollment ? 'bg-green-100 text-green-600' : match($activity['action_type'] ?? '') {
+                                            'login' => 'bg-blue-100 text-blue-600',
+                                            'logout' => 'bg-gray-100 text-gray-600',
+                                            'create' => 'bg-green-100 text-green-600',
+                                            'update' => 'bg-yellow-100 text-yellow-600',
+                                            'delete' => 'bg-red-100 text-red-600',
+                                            'payment' => 'bg-emerald-100 text-emerald-600',
+                                            default => 'bg-gray-100 text-gray-600'
+                                        };
+                                        $icon = $isEnrollment ? 'fa-user-plus' : match($activity['action_type'] ?? '') {
+                                            'login' => 'fa-sign-in-alt',
+                                            'logout' => 'fa-sign-out-alt',
+                                            'create' => 'fa-plus',
+                                            'update' => 'fa-edit',
+                                            'delete' => 'fa-trash',
+                                            'payment' => 'fa-money-bill',
+                                            default => 'fa-cog'
+                                        };
+                                        $text = $isEnrollment 
+                                            ? 'Enrolled in ' . htmlspecialchars($activity['item_name'])
+                                            : ucfirst($activity['action_type'] ?? 'performed action') . ' ' . htmlspecialchars($activity['item_name'] ?? '');
                                     ?>
                                         <div class="p-4 flex items-center hover:bg-gray-50/50 transition">
-                                            <div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold">
-                                                <?= $initials ?>
+                                            <div class="w-10 h-10 rounded-full <?= $iconClass ?> flex items-center justify-center">
+                                                <i class="fas <?= $icon ?>"></i>
                                             </div>
                                             <div class="ml-4 flex-1">
-                                                <p class="text-sm font-medium text-gray-800"><?= htmlspecialchars($enrollment['full_name'] ?? 'Unknown') ?></p>
-                                                <p class="text-xs text-gray-500">Enrolled in <?= htmlspecialchars($enrollment['title']) ?></p>
+                                                <p class="text-sm font-medium text-gray-800"><?= htmlspecialchars($activity['user_name'] ?? 'System') ?></p>
+                                                <p class="text-xs text-gray-500"><?= $text ?></p>
                                             </div>
-                                            <span class="text-xs text-gray-400"><?= date('M j, Y', strtotime($enrollment['enrolled_at'])) ?></span>
+                                            <span class="text-xs text-gray-400"><?= date('M j, H:i', strtotime($activity['date'])) ?></span>
                                         </div>
                                     <?php endforeach; ?>
-                                    <?php if (empty($recentEnrollments)): ?>
+                                    <?php if (empty($combined)): ?>
                                         <div class="p-8 text-center text-gray-500">
                                             <i class="fas fa-inbox text-4xl mb-2 text-gray-300"></i>
                                             <p>No recent activity</p>
@@ -626,47 +889,101 @@ $page_title = 'Admin Dashboard';
                                 </div>
                             </div>
 
-                            <!-- Quick Stats -->
-                            <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
-                                <h3 class="text-lg font-bold text-gray-900 mb-4">System Overview</h3>
-                                <div class="space-y-4">
-                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                        <div class="flex items-center">
-                                            <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
-                                                <i class="fas fa-chalkboard-teacher text-purple-600"></i>
+                            <!-- System Overview & Upcoming -->
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+                                    <h3 class="text-lg font-bold text-gray-900 mb-4">System Overview</h3>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                                    <i class="fas fa-chalkboard-teacher text-purple-600 text-sm"></i>
+                                                </div>
+                                                <span class="text-sm text-gray-700">Instructors</span>
                                             </div>
-                                            <span class="text-gray-700">Instructors</span>
+                                            <span class="text-lg font-bold text-gray-900"><?= $totalInstructors ?></span>
                                         </div>
-                                        <span class="text-xl font-bold text-gray-900"><?= $totalInstructors ?></span>
-                                    </div>
-                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                        <div class="flex items-center">
-                                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
-                                                <i class="fas fa-book text-blue-600"></i>
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                                    <i class="fas fa-book text-blue-600 text-sm"></i>
+                                                </div>
+                                                <span class="text-sm text-gray-700">Total Courses</span>
                                             </div>
-                                            <span class="text-gray-700">Total Courses</span>
+                                            <span class="text-lg font-bold text-gray-900"><?= $db->count('courses') ?></span>
                                         </div>
-                                        <span class="text-xl font-bold text-gray-900"><?= $db->count('courses') ?></span>
-                                    </div>
-                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                        <div class="flex items-center">
-                                            <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center mr-3">
-                                                <i class="fas fa-certificate text-yellow-600"></i>
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                                                    <i class="fas fa-certificate text-yellow-600 text-sm"></i>
+                                                </div>
+                                                <span class="text-sm text-gray-700">Certificates</span>
                                             </div>
-                                            <span class="text-gray-700">Certificates</span>
+                                            <span class="text-lg font-bold text-gray-900"><?= $db->count('certificates') ?></span>
                                         </div>
-                                        <span class="text-xl font-bold text-gray-900"><?= $db->count('certificates') ?></span>
-                                    </div>
-                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                        <div class="flex items-center">
-                                            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-3">
-                                                <i class="fas fa-money-bill text-green-600"></i>
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                                    <i class="fas fa-money-bill text-green-600 text-sm"></i>
+                                                </div>
+                                                <span class="text-sm text-gray-700">Total Revenue</span>
                                             </div>
-                                            <span class="text-gray-700">Total Revenue</span>
+                                            <span class="text-lg font-bold text-gray-900"><?= $currency ?> <?= number_format($db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE payment_status = 'Completed'") ?? 0, 0) ?></span>
                                         </div>
-                                        <span class="text-xl font-bold text-gray-900"><?= $currency ?> <?= number_format($db->fetchColumn("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE payment_status = 'Completed'") ?? 0, 0) ?></span>
                                     </div>
                                 </div>
+
+                                <!-- Upcoming Events -->
+                                <?php $upcomingEventsList = $db->fetchAll("SELECT title, event_date, location FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC LIMIT 3"); ?>
+                                <?php if ($upcomingEventsList): ?>
+                                <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h3 class="text-lg font-bold text-gray-900">Upcoming Events</h3>
+                                        <a href="?page=events" class="text-xs text-primary-600 hover:text-primary-700">View All</a>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <?php foreach ($upcomingEventsList as $evt): ?>
+                                        <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class="fas fa-calendar-alt text-green-600 text-sm"></i>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="text-sm font-medium text-gray-900 truncate"><?= htmlspecialchars($evt['title']) ?></p>
+                                                <p class="text-xs text-gray-500"><?= date('M j, Y', strtotime($evt['event_date'])) ?></p>
+                                                <?php if ($evt['location']): ?>
+                                                    <p class="text-xs text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i><?= htmlspecialchars($evt['location']) ?></p>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+
+                                <!-- Upcoming Live Sessions -->
+                                <?php $upcomingSessions = $db->fetchAll("SELECT l.title as lesson_title, ls.scheduled_start_time, c.title as course_title FROM live_sessions ls JOIN lessons l ON ls.lesson_id = l.id JOIN courses c ON l.course_id = c.id WHERE ls.status = 'scheduled' AND ls.scheduled_start_time >= NOW() ORDER BY ls.scheduled_start_time ASC LIMIT 3"); ?>
+                                <?php if ($upcomingSessions): ?>
+                                <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h3 class="text-lg font-bold text-gray-900">Live Sessions</h3>
+                                        <a href="?page=live-sessions" class="text-xs text-primary-600 hover:text-primary-700">View All</a>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <?php foreach ($upcomingSessions as $s): ?>
+                                        <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class="fas fa-video text-purple-600 text-sm"></i>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="text-sm font-medium text-gray-900 truncate"><?= htmlspecialchars($s['lesson_title']) ?></p>
+                                                <p class="text-xs text-gray-500"><?= date('M j, H:i', strtotime($s['scheduled_start_time'])) ?></p>
+                                                <p class="text-xs text-gray-400 truncate"><?= htmlspecialchars($s['course_title']) ?></p>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -708,16 +1025,60 @@ $page_title = 'Admin Dashboard';
 
                 <?php elseif ($page === 'users'): ?>
                     <?php include 'pages/users.php'; ?>
+                <?php elseif ($page === 'instructors'): ?>
+                    <?php include 'pages/instructors.php'; ?>
+                <?php elseif ($page === 'students'): ?>
+                    <?php include 'pages/students.php'; ?>
                 <?php elseif ($page === 'courses'): ?>
                     <?php include 'pages/courses.php'; ?>
                 <?php elseif ($page === 'modules'): ?>
                     <?php include 'pages/modules.php'; ?>
+                <?php elseif ($page === 'quizzes'): ?>
+                    <?php include 'pages/quizzes.php'; ?>
+                <?php elseif ($page === 'assignments'): ?>
+                    <?php include 'pages/assignments.php'; ?>
                 <?php elseif ($page === 'enrollments'): ?>
                     <?php include 'pages/enrollments.php'; ?>
-                <?php elseif ($page === 'financials'): ?>
-                    <?php include 'pages/financials.php'; ?>
+                <?php elseif ($page === 'certificates'): ?>
+                    <?php include 'pages/certificates.php'; ?>
+                <?php elseif ($page === 'badges'): ?>
+                    <?php include 'pages/badges.php'; ?>
+                <?php elseif ($page === 'live-sessions'): ?>
+                    <?php include 'pages/live-sessions.php'; ?>
                 <?php elseif ($page === 'announcements'): ?>
                     <?php include 'pages/announcements.php'; ?>
+                <?php elseif ($page === 'events'): ?>
+                    <?php include 'pages/events.php'; ?>
+                <?php elseif ($page === 'hero-slides'): ?>
+                    <?php include 'pages/hero-slides.php'; ?>
+                <?php elseif ($page === 'institution-photos'): ?>
+                    <?php include 'pages/institution-photos.php'; ?>
+                <?php elseif ($page === 'email-templates'): ?>
+                    <?php include 'pages/email-templates.php'; ?>
+                <?php elseif ($page === 'discussions'): ?>
+                    <?php include 'pages/discussions.php'; ?>
+                <?php elseif ($page === 'reviews'): ?>
+                    <?php include 'pages/reviews.php'; ?>
+                <?php elseif ($page === 'contacts'): ?>
+                    <?php include 'pages/contacts.php'; ?>
+                <?php elseif ($page === 'financials'): ?>
+                    <?php include 'pages/financials.php'; ?>
+                <?php elseif ($page === 'payment-methods'): ?>
+                    <?php include 'pages/payment-methods.php'; ?>
+                <?php elseif ($page === 'registration-fees'): ?>
+                    <?php include 'pages/registration-fees.php'; ?>
+                <?php elseif ($page === 'email-queue'): ?>
+                    <?php include 'pages/email-queue.php'; ?>
+                <?php elseif ($page === 'notifications'): ?>
+                    <?php include 'pages/notifications.php'; ?>
+                <?php elseif ($page === 'newsletter-subscribers'): ?>
+                    <?php include 'pages/newsletter-subscribers.php'; ?>
+                <?php elseif ($page === 'reports'): ?>
+                    <?php include 'pages/reports.php'; ?>
+                <?php elseif ($page === 'activity-logs'): ?>
+                    <?php include 'pages/activity-logs.php'; ?>
+                <?php elseif ($page === 'company-profile'): ?>
+                    <?php include 'pages/company-profile.php'; ?>
                 <?php elseif ($page === 'settings'): ?>
                     <?php include 'pages/settings.php'; ?>
                 <?php endif; ?>
