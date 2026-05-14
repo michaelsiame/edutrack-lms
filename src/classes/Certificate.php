@@ -236,20 +236,29 @@ class Certificate {
         $logoPath = PUBLIC_PATH . '/assets/images/logo-sm.png';
         $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo-sm.png';
 
+        $issuedDate = $this->data['issued_at'] ?? $this->data['issued_date'] ?? 'now';
+        $formattedDate = date('F j, Y', strtotime($issuedDate));
+        $formalDate = $this->getFormalDate($issuedDate);
+
         $replacements = [
             '{{logo_path}}'        => file_exists($logoPath) ? $logoPath : '',
             '{{teveta_logo_path}}' => file_exists($tevetaLogoPath) ? $tevetaLogoPath : '',
             '{{teveta_code}}'      => env('TEVETA_INSTITUTION_CODE', 'TVA/2064'),
             '{{student_name}}'     => strtoupper($this->getStudentName()),
             '{{course_title}}'     => htmlspecialchars($this->getCourseTitle()),
-            '{{completion_date}}'  => date('F j, Y', strtotime($this->data['issued_at'] ?? $this->data['issued_date'] ?? 'now')),
+            '{{completion_date}}'  => $formattedDate,
+            '{{formal_date}}'      => $formalDate,
             '{{certificate_number}}' => $this->getCertificateNumber(),
             '{{verify_url}}'       => url('verify-certificate.php?code=' . $this->getVerificationCode()),
             '{{director_name}}'        => 'Michael Siame',
+            '{{principal_name}}'       => env('CERTIFICATE_PRINCIPAL_NAME', 'Michael Siame'),
             '{{instructor_name}}'      => $this->getInstructorName() ?: '',
             '{{director_signature}}'   => '',
             '{{instructor_signature}}' => '',
             '{{qr_code}}'              => '',
+            '{{student_number}}'       => $this->getStudentNumber(),
+            '{{merit_text}}'           => '',
+            '{{graduate_id}}'          => '',
         ];
 
         $html = str_replace(array_keys($replacements), array_values($replacements), $html);
@@ -308,20 +317,29 @@ class Certificate {
             ? '<img src="' . $qrPath . '" style="width:40px; height:40px; vertical-align:middle; margin-right:4px;">'
             : '';
 
+        $issuedDate = $this->data['issued_at'] ?? $this->data['issued_date'] ?? 'now';
+        $formattedDate = date('F j, Y', strtotime($issuedDate));
+        $formalDate = $this->getFormalDate($issuedDate);
+
         $replacements = [
             '{{logo_path}}'            => $logoExists ? $logoPath : '',
             '{{teveta_logo_path}}'     => $tevetaExists ? $tevetaLogoPath : '',
             '{{teveta_code}}'          => env('TEVETA_INSTITUTION_CODE', 'TVA/2064'),
             '{{student_name}}'         => strtoupper($this->getStudentName()),
             '{{course_title}}'         => htmlspecialchars($this->getCourseTitle()),
-            '{{completion_date}}'      => date('F j, Y', strtotime($this->data['issued_at'] ?? $this->data['issued_date'] ?? 'now')),
+            '{{completion_date}}'      => $formattedDate,
+            '{{formal_date}}'          => $formalDate,
             '{{certificate_number}}'   => $this->getCertificateNumber(),
             '{{verify_url}}'           => url('verify-certificate.php?code=' . $this->getVerificationCode()),
             '{{director_name}}'        => 'Michael Siame',
+            '{{principal_name}}'       => env('CERTIFICATE_PRINCIPAL_NAME', 'Michael Siame'),
             '{{instructor_name}}'      => $this->getInstructorName() ?: '',
             '{{director_signature}}'   => $directorSig,
             '{{instructor_signature}}' => $instructorSig,
             '{{qr_code}}'              => $qrImg,
+            '{{student_number}}'       => $this->getStudentNumber(),
+            '{{merit_text}}'           => '',
+            '{{graduate_id}}'          => '',
         ];
         
         $html = str_replace(array_keys($replacements), array_values($replacements), $html);
@@ -332,8 +350,8 @@ class Certificate {
         error_log('[CERT-DEBUG] Certificate::generatePDF() — placeholders replaced. HTML length=' . strlen($html));
 
         try {
-            // Create PDF
-            $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
+            // Create PDF (Portrait A4 for new certificate design)
+            $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
             error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF instance created');
             
             $pdf->SetCreator('Edutrack LMS');
@@ -386,6 +404,39 @@ class Certificate {
      */
     public function getData() {
         return $this->data;
+    }
+
+    /**
+     * Get formal date string e.g. "27th day of March in the year 2026"
+     */
+    private function getFormalDate($dateStr) {
+        $ts = strtotime($dateStr);
+        $day = date('j', $ts);
+        $month = date('F', $ts);
+        $year = date('Y', $ts);
+
+        $suffix = 'th';
+        if (!in_array(($day % 100), [11, 12, 13])) {
+            switch ($day % 10) {
+                case 1: $suffix = 'st'; break;
+                case 2: $suffix = 'nd'; break;
+                case 3: $suffix = 'rd'; break;
+            }
+        }
+
+        return "{$day}<sup>{$suffix}</sup> day of {$month} in the year {$year}";
+    }
+
+    /**
+     * Generate a student number for the certificate
+     */
+    private function getStudentNumber() {
+        $userId = $this->data['user_id'] ?? 0;
+        $certNum = $this->getCertificateNumber();
+        if ($userId) {
+            return date('y') . 'Edu' . str_pad($userId, 6, '0', STR_PAD_LEFT);
+        }
+        return $certNum;
     }
 
     public function __get($key) {
