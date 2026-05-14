@@ -60,6 +60,9 @@ $completedCourses = $db->fetchAll("
 // Check if user is new (no enrollments at all)
 $isNewStudent = empty($recentEnrollments) && empty($completedCourses);
 
+// Check registration fee status
+$registrationPaid = RegistrationFee::hasPaid($userId);
+
 // Onboarding checklist for new students
 $onboardingSteps = [
     ['label' => 'Complete your profile', 'done' => !empty($user->first_name) && !empty($user->last_name), 'url' => 'edit-profile.php', 'icon' => 'fa-user'],

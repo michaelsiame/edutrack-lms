@@ -97,7 +97,12 @@ class Database {
             // Reconnect on "MySQL server has gone away" (error 2006)
             if (stripos($e->getMessage(), 'server has gone away') !== false
                 || $e->getCode() == 2006) {
-                $this->logError('Connection lost, reconnecting: ' . $e->getMessage());
+                // Only log first reconnection per request to reduce noise
+                static $reconnected = false;
+                if (!$reconnected) {
+                    $this->logError('Connection lost, reconnecting: ' . $e->getMessage());
+                    $reconnected = true;
+                }
                 $this->connect();
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->execute($params);
