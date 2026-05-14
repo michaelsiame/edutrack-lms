@@ -961,7 +961,7 @@ $page_title = 'Admin Dashboard';
                                 <?php endif; ?>
 
                                 <!-- Upcoming Live Sessions -->
-                                <?php $upcomingSessions = $db->fetchAll("SELECT l.title as lesson_title, ls.scheduled_start_time, c.title as course_title FROM live_sessions ls JOIN lessons l ON ls.lesson_id = l.id JOIN courses c ON l.course_id = c.id WHERE ls.status = 'scheduled' AND ls.scheduled_start_time >= NOW() ORDER BY ls.scheduled_start_time ASC LIMIT 3"); ?>
+                                <?php $upcomingSessions = $db->fetchAll("SELECT l.title as lesson_title, ls.scheduled_start_time, c.title as course_title FROM live_sessions ls JOIN lessons l ON ls.lesson_id = l.id JOIN modules m ON l.module_id = m.id JOIN courses c ON m.course_id = c.id WHERE ls.status = 'scheduled' AND ls.scheduled_start_time >= NOW() ORDER BY ls.scheduled_start_time ASC LIMIT 3"); ?>
                                 <?php if ($upcomingSessions): ?>
                                 <div class="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
                                     <div class="flex items-center justify-between mb-4">

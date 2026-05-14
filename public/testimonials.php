@@ -12,30 +12,39 @@ $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $perPage = 12;
 $offset = ($page - 1) * $perPage;
 
-// Get total count
-$totalTestimonials = $db->fetchColumn(
-    "SELECT COUNT(*) FROM testimonials WHERE status = 'approved'"
-);
+$testimonials = [];
+$totalTestimonials = 0;
+$totalPages = 0;
+$stats = ['total_graduates' => 0, 'avg_rating' => 0, 'total_courses' => 0];
 
-// Get testimonials
-$testimonials = $db->fetchAll(
-    "SELECT * FROM testimonials 
-     WHERE status = 'approved' 
-     ORDER BY is_featured DESC, created_at DESC 
-     LIMIT ? OFFSET ?",
-    [$perPage, $offset]
-);
+try {
+    // Get total count
+    $totalTestimonials = $db->fetchColumn(
+        "SELECT COUNT(*) FROM testimonials WHERE status = 'approved'"
+    );
 
-$totalPages = ceil($totalTestimonials / $perPage);
+    // Get testimonials
+    $testimonials = $db->fetchAll(
+        "SELECT * FROM testimonials
+         WHERE status = 'approved'
+         ORDER BY is_featured DESC, created_at DESC
+         LIMIT ? OFFSET ?",
+        [$perPage, $offset]
+    );
 
-// Get stats
-$stats = $db->fetchOne(
-    "SELECT 
-        COUNT(*) as total_graduates,
-        AVG(rating) as avg_rating,
-        COUNT(DISTINCT course_taken) as total_courses
-     FROM testimonials WHERE status = 'approved'"
-);
+    $totalPages = ceil($totalTestimonials / $perPage);
+
+    // Get stats
+    $stats = $db->fetchOne(
+        "SELECT
+            COUNT(*) as total_graduates,
+            AVG(rating) as avg_rating,
+            COUNT(DISTINCT course_taken) as total_courses
+         FROM testimonials WHERE status = 'approved'"
+    );
+} catch (Throwable $e) {
+    error_log("Testimonials page error: " . $e->getMessage());
+}
 
 $page_title = "Student Success Stories - Edutrack Testimonials";
 

@@ -23,7 +23,8 @@ $sessions = $db->fetchAll("SELECT ls.*, l.title as lesson_title, c.title as cour
     (SELECT COUNT(*) FROM live_session_attendance WHERE live_session_id = ls.id) as attendee_count
     FROM live_sessions ls
     JOIN lessons l ON ls.lesson_id = l.id
-    JOIN courses c ON l.course_id = c.id
+    JOIN modules m ON l.module_id = m.id
+    JOIN courses c ON m.course_id = c.id
     JOIN users u ON ls.instructor_id = u.id
     $where
     ORDER BY ls.scheduled_start_time DESC LIMIT $per_page OFFSET $offset", $params);
