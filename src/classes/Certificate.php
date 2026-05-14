@@ -424,7 +424,8 @@ class Certificate {
             }
         }
 
-        return "{$day}<sup>{$suffix}</sup> day of {$month} in the year {$year}";
+        // Return plain text (no HTML tags) for TCPDF compatibility
+        return "{$day}{$suffix} day of {$month} in the year {$year}";
     }
 
     /**
