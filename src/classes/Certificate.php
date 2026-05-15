@@ -164,6 +164,7 @@ class Certificate {
             
             $certId = $db->lastInsertId();
             $db->commit();
+
             return new self($certId);
             
         } catch (Exception $e) {
@@ -223,49 +224,13 @@ class Certificate {
             error_log('[CERT-DEBUG] Certificate::getDebugHtml() — certificate does not exist');
             return false;
         }
-
-        $templatePath = SRC_PATH . '/templates/certificate-pdf.php';
-        if (!file_exists($templatePath)) {
-            error_log('[CERT-DEBUG] Certificate::getDebugHtml() — template not found: ' . $templatePath);
-            return false;
-        }
-
-        $html = file_get_contents($templatePath);
-        $html = preg_replace('/<!--.*?-->/s', '', $html);
-
-        $logoPath = PUBLIC_PATH . '/assets/images/logo-sm.png';
-        $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo-sm.png';
-
-        $issuedDate = $this->data['issued_at'] ?? $this->data['issued_date'] ?? 'now';
-        $formattedDate = date('F j, Y', strtotime($issuedDate));
-        $formalDate = $this->getFormalDate($issuedDate);
-
-        $replacements = [
-            '{{logo_path}}'        => file_exists($logoPath) ? $logoPath : '',
-            '{{teveta_logo_path}}' => file_exists($tevetaLogoPath) ? $tevetaLogoPath : '',
-            '{{teveta_code}}'      => env('TEVETA_INSTITUTION_CODE', 'TVA/2064'),
-            '{{student_name}}'     => strtoupper($this->getStudentName()),
-            '{{course_title}}'     => htmlspecialchars($this->getCourseTitle()),
-            '{{completion_date}}'  => $formattedDate,
-            '{{formal_date}}'      => $formalDate,
-            '{{certificate_number}}' => $this->getCertificateNumber(),
-            '{{verify_url}}'       => url('verify-certificate.php?code=' . $this->getVerificationCode()),
-            '{{director_name}}'        => 'Michael Siame',
-            '{{principal_name}}'       => env('CERTIFICATE_PRINCIPAL_NAME', 'Michael Siame'),
-            '{{instructor_name}}'      => $this->getInstructorName() ?: '',
-            '{{director_signature}}'   => '',
-            '{{instructor_signature}}' => '',
-            '{{qr_code}}'              => '',
-            '{{student_number}}'       => $this->getStudentNumber(),
-            '{{merit_text}}'           => '',
-            '{{graduate_id}}'          => '',
-        ];
-
-        $html = str_replace(array_keys($replacements), array_values($replacements), $html);
-        $html = preg_replace('/<img[^>]+src=""[^>]*>/i', '', $html);
-        return $html;
+        return $this->buildCertificateHtml();
     }
 
+    /**
+     * Generate PDF on-demand and return the binary content.
+     * Returns PDF binary string on success, false on failure.
+     */
     public function generatePDF() {
         $certId = $this->getId() ?? 'unknown';
         error_log("[CERT-DEBUG] Certificate::generatePDF() — start for cert_id={$certId}");
@@ -275,34 +240,85 @@ class Certificate {
             return false;
         }
 
-        if (!class_exists('TCPDF')) {
-            error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF class not available. Returning false.');
-            return false;
-        }
-        error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF class is available');
+        // Use Dompdf if available, fallback to TCPDF
+        $useDompdf = class_exists('Dompdf\Dompdf');
+        $useTcpdf = class_exists('TCPDF');
 
-        // Load HTML template
-        $templatePath = SRC_PATH . '/templates/certificate-pdf.php';
-        if (!file_exists($templatePath)) {
-            error_log('[CERT-DEBUG] Certificate::generatePDF() — template not found: ' . $templatePath);
+        if (!$useDompdf && !$useTcpdf) {
+            error_log('[CERT-DEBUG] Certificate::generatePDF() — No PDF library available. Returning false.');
             return false;
         }
-        error_log('[CERT-DEBUG] Certificate::generatePDF() — template loaded: ' . $templatePath);
-        
+
+        error_log('[CERT-DEBUG] Certificate::generatePDF() — Using ' . ($useDompdf ? 'Dompdf' : 'TCPDF'));
+
+        // Build HTML with placeholders replaced
+        $html = $this->buildCertificateHtml();
+        if ($html === false) {
+            return false;
+        }
+
+        try {
+            if ($useDompdf) {
+                $options = new \Dompdf\Options();
+                $options->set('isRemoteEnabled', true);
+                $options->set('isPhpEnabled', false);
+                $options->set('defaultFont', 'DejaVu Sans');
+                $options->set('chroot', PUBLIC_PATH);
+
+                $dompdf = new \Dompdf\Dompdf($options);
+                $dompdf->loadHtml($html);
+                $dompdf->setPaper('A4', 'portrait');
+                $dompdf->render();
+
+                $output = $dompdf->output();
+                error_log('[CERT-DEBUG] Certificate::generatePDF() — Dompdf rendered. Size=' . strlen($output) . ' bytes');
+                return $output;
+            } else {
+                // TCPDF fallback
+                $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+                $pdf->SetCreator('Edutrack LMS');
+                $pdf->SetAuthor('Edutrack Computer Training College');
+                $pdf->SetTitle('Certificate - ' . $this->getCertificateNumber());
+                $pdf->setPrintHeader(false);
+                $pdf->setPrintFooter(false);
+                $pdf->SetMargins(10, 10, 10);
+                $pdf->SetAutoPageBreak(false);
+                $pdf->AddPage();
+                $pdf->writeHTML($html, true, false, true, false, '');
+                $output = $pdf->Output('', 'S');
+                error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF rendered. Size=' . strlen($output) . ' bytes');
+                return $output;
+            }
+        } catch (Exception $e) {
+            error_log('[CERT-DEBUG] Certificate::generatePDF() — EXCEPTION: ' . get_class($e) . ' — ' . $e->getMessage());
+            return false;
+        } catch (Error $e) {
+            error_log('[CERT-DEBUG] Certificate::generatePDF() — ERROR: ' . get_class($e) . ' — ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Build the certificate HTML with all placeholders replaced.
+     */
+    private function buildCertificateHtml() {
+        $useDompdf = class_exists('Dompdf\Dompdf');
+        $templateName = $useDompdf ? 'certificate-dompdf.php' : 'certificate-pdf.php';
+        $templatePath = SRC_PATH . '/templates/' . $templateName;
+
+        if (!file_exists($templatePath)) {
+            error_log('[CERT-DEBUG] Certificate::buildCertificateHtml() — template not found: ' . $templatePath);
+            return false;
+        }
+
         $html = file_get_contents($templatePath);
-        
-        // Remove HTML comments (TCPDF may render them)
         $html = preg_replace('/<!--.*?-->/s', '', $html);
-        
-        // Build placeholder replacements
+
         $logoPath = PUBLIC_PATH . '/assets/images/logo-sm.png';
         $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo-sm.png';
-        
         $logoExists = file_exists($logoPath);
         $tevetaExists = file_exists($tevetaLogoPath);
-        error_log("[CERT-DEBUG] Certificate::generatePDF() — logo exists={$logoExists} path={$logoPath}, teveta exists={$tevetaExists} path={$tevetaLogoPath}");
-        
-        // Optional signature / QR code images (empty string if not present)
+
         $directorSigPath = PUBLIC_PATH . '/assets/images/signatures/director.png';
         $instructorSigPath = PUBLIC_PATH . '/assets/images/signatures/instructor.png';
         $qrPath = PUBLIC_PATH . '/assets/images/qr-codes/cert-' . $this->getCertificateNumber() . '.png';
@@ -341,46 +357,11 @@ class Certificate {
             '{{merit_text}}'           => '',
             '{{graduate_id}}'          => '',
         ];
-        
-        $html = str_replace(array_keys($replacements), array_values($replacements), $html);
-        
-        // Remove <img> tags with empty src to avoid TCPDF warnings
-        $html = preg_replace('/<img[^>]+src=""[^>]*>/i', '', $html);
-        
-        error_log('[CERT-DEBUG] Certificate::generatePDF() — placeholders replaced. HTML length=' . strlen($html));
 
-        try {
-            // Create PDF (Portrait A4 for new certificate design)
-            $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
-            error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF instance created');
-            
-            $pdf->SetCreator('Edutrack LMS');
-            $pdf->SetAuthor('Edutrack Computer Training College');
-            $pdf->SetTitle('Certificate - ' . $this->getCertificateNumber());
-            
-            $pdf->setPrintHeader(false);
-            $pdf->setPrintFooter(false);
-            $pdf->SetMargins(10, 10, 10);
-            $pdf->SetAutoPageBreak(false);
-            
-            $pdf->AddPage();
-            error_log('[CERT-DEBUG] Certificate::generatePDF() — PDF page added');
-            
-            // Render HTML to PDF
-            $pdf->writeHTML($html, true, false, true, false, '');
-            error_log('[CERT-DEBUG] Certificate::generatePDF() — writeHTML() completed');
-            
-            // Output as string (on-demand generation, not stored to disk)
-            $output = $pdf->Output('', 'S');
-            error_log('[CERT-DEBUG] Certificate::generatePDF() — Output() completed. Size=' . strlen($output) . ' bytes');
-            return $output;
-        } catch (Exception $e) {
-            error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF EXCEPTION: ' . get_class($e) . ' — ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
-            return false;
-        } catch (Error $e) {
-            error_log('[CERT-DEBUG] Certificate::generatePDF() — TCPDF ERROR: ' . get_class($e) . ' — ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
-            return false;
-        }
+        $html = str_replace(array_keys($replacements), array_values($replacements), $html);
+        $html = preg_replace('/<img[^>]+src=""[^>]*>/i', '', $html);
+
+        return $html;
     }
     
     // Getters

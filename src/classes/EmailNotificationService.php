@@ -133,7 +133,7 @@ class EmailNotificationService {
                 'certificate_number' => $certificate['certificate_number'],
                 'issued_date' => date('F j, Y', strtotime($certificate['issued_date'])),
                 'verification_code' => $certificate['verification_code'],
-                'download_url' => (getenv('APP_URL') ?: 'https://edutrackzambia.com') . '/download-certificate.php?id=' . $certificate['certificate_id'],
+                'download_url' => (getenv('APP_URL') ?: 'https://edutrackzambia.com') . '/download-certificate.php?id=' . $certificate['certificate_id'] . '&action=download',
                 'verify_url' => (getenv('APP_URL') ?: 'https://edutrackzambia.com') . '/verify-certificate.php'
             ]);
 

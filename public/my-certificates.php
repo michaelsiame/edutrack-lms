@@ -140,7 +140,7 @@ require_once __DIR__ . '/../src/templates/header.php';
 
                             <!-- Actions -->
                             <div class="flex space-x-2">
-                                <a href="<?= url('download-certificate.php?id=' . $certificate['id']) ?>"
+                                <a href="<?= url('download-certificate.php?id=' . $certificate['id'] . '&action=download') ?>"
                                    class="btn-primary flex-1 text-center text-sm">
                                     <i class="fas fa-download mr-1"></i>Download
                                 </a>

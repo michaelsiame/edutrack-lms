@@ -661,7 +661,7 @@ require_once __DIR__ . '/../src/templates/header.php';
                                 <p class="font-medium text-gray-900 text-sm truncate"><?= sanitize($cert['course_title']) ?></p>
                                 <p class="text-xs text-gray-500"><?= timeAgo($cert['issued_date']) ?></p>
                             </div>
-                            <a href="<?= url('download-certificate.php?id=' . $cert['certificate_id']) ?>" class="text-amber-600 hover:text-amber-700">
+                            <a href="<?= url('download-certificate.php?id=' . $cert['certificate_id'] . '&action=download') ?>" class="text-amber-600 hover:text-amber-700" title="Download Certificate">
                                 <i class="fas fa-download"></i>
                             </a>
                         </div>

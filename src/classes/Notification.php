@@ -286,7 +286,7 @@ class Notification {
             'type' => 'certificate',
             'title' => 'Certificate Issued',
             'message' => "Your TEVETA certificate for $courseTitle is ready for download!",
-            'link' => 'download-certificate.php?id=' . $certificateId,
+            'link' => 'download-certificate.php?id=' . $certificateId . '&action=download',
             'icon' => 'fa-certificate',
             'color' => 'yellow'
         ]);

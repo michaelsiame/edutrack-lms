@@ -156,8 +156,7 @@ try {
     }
 
     if ($action === 'download' || $action === 'pdf') {
-        trace("[TRACE] Generating PDF...");
-        // Generate and download PDF
+        trace("[TRACE] Generating PDF on-demand...");
         $pdfContent = $certificate->generatePDF();
 
         if ($pdfContent === false) {
@@ -175,6 +174,7 @@ try {
         header('Content-Disposition: attachment; filename="' . $fileName . '"');
         header('Cache-Control: private, max-age=0, must-revalidate');
         header('Pragma: public');
+        header('Content-Length: ' . strlen($pdfContent));
 
         echo $pdfContent;
         trace("[TRACE] PDF streamed to client. Exiting.");
