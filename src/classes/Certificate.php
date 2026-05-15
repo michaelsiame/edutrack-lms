@@ -333,18 +333,27 @@ class Certificate {
             ? '<img src="' . $qrPath . '" style="width:40px; height:40px; vertical-align:middle; margin-right:4px;">'
             : '';
 
+        $sealPath = PUBLIC_PATH . '/assets/images/certificate-seal.png';
+        $cornerTl = PUBLIC_PATH . '/assets/images/cert-corner-tl.png';
+        $cornerTr = PUBLIC_PATH . '/assets/images/cert-corner-tr.png';
+        $cornerBl = PUBLIC_PATH . '/assets/images/cert-corner-bl.png';
+        $cornerBr = PUBLIC_PATH . '/assets/images/cert-corner-br.png';
+
         $issuedDate = $this->data['issued_at'] ?? $this->data['issued_date'] ?? 'now';
         $formattedDate = date('F j, Y', strtotime($issuedDate));
         $formalDate = $this->getFormalDate($issuedDate);
+        $formalDateHtml = $this->getFormalDateHtml($issuedDate);
+        $meritText = $this->getMeritText();
 
         $replacements = [
             '{{logo_path}}'            => $logoExists ? $logoPath : '',
             '{{teveta_logo_path}}'     => $tevetaExists ? $tevetaLogoPath : '',
             '{{teveta_code}}'          => env('TEVETA_INSTITUTION_CODE', 'TVA/2064'),
-            '{{student_name}}'         => strtoupper($this->getStudentName()),
+            '{{student_name}}'         => htmlspecialchars($this->getStudentName()),
             '{{course_title}}'         => htmlspecialchars($this->getCourseTitle()),
             '{{completion_date}}'      => $formattedDate,
             '{{formal_date}}'          => $formalDate,
+            '{{formal_date_html}}'     => $formalDateHtml,
             '{{certificate_number}}'   => $this->getCertificateNumber(),
             '{{verify_url}}'           => url('verify-certificate.php?code=' . $this->getVerificationCode()),
             '{{director_name}}'        => 'Michael Siame',
@@ -354,8 +363,13 @@ class Certificate {
             '{{instructor_signature}}' => $instructorSig,
             '{{qr_code}}'              => $qrImg,
             '{{student_number}}'       => $this->getStudentNumber(),
-            '{{merit_text}}'           => '',
+            '{{merit_text}}'           => $meritText,
             '{{graduate_id}}'          => '',
+            '{{seal_path}}'            => file_exists($sealPath) ? $sealPath : '',
+            '{{corner_tl}}'            => file_exists($cornerTl) ? $cornerTl : '',
+            '{{corner_tr}}'            => file_exists($cornerTr) ? $cornerTr : '',
+            '{{corner_bl}}'            => file_exists($cornerBl) ? $cornerBl : '',
+            '{{corner_br}}'            => file_exists($cornerBr) ? $cornerBr : '',
         ];
 
         $html = str_replace(array_keys($replacements), array_values($replacements), $html);
@@ -388,6 +402,23 @@ class Certificate {
     }
 
     /**
+     * Get merit text based on final score
+     */
+    public function getMeritText() {
+        $score = (float) ($this->data['final_score'] ?? 0);
+        if ($score >= 90) {
+            return 'With Distinction';
+        } elseif ($score >= 80) {
+            return 'With Merit';
+        } elseif ($score >= 70) {
+            return 'With Credit';
+        } elseif ($score > 0) {
+            return 'Pass';
+        }
+        return '';
+    }
+
+    /**
      * Get formal date string e.g. "27th day of March in the year 2026"
      */
     private function getFormalDate($dateStr) {
@@ -407,6 +438,28 @@ class Certificate {
 
         // Return plain text (no HTML tags) for TCPDF compatibility
         return "{$day}{$suffix} day of {$month} in the year {$year}";
+    }
+
+    /**
+     * Get formal date with HTML formatting for Dompdf
+     * e.g. "27<sup>th</sup> day of <em>March</em> in the year <strong>2026</strong>"
+     */
+    private function getFormalDateHtml($dateStr) {
+        $ts = strtotime($dateStr);
+        $day = date('j', $ts);
+        $month = date('F', $ts);
+        $year = date('Y', $ts);
+
+        $suffix = 'th';
+        if (!in_array(($day % 100), [11, 12, 13])) {
+            switch ($day % 10) {
+                case 1: $suffix = 'st'; break;
+                case 2: $suffix = 'nd'; break;
+                case 3: $suffix = 'rd'; break;
+            }
+        }
+
+        return "<strong>{$day}<sup>{$suffix}</sup></strong> day of <em>{$month}</em> in the year <strong>{$year}</strong>";
     }
 
     /**

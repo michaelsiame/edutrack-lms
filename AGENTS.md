@@ -22,10 +22,10 @@ Edutrack LMS is a **custom PHP web application** (not based on Laravel, Symfony,
 |-----------|------------|
 | **Backend** | PHP 8.0+ |
 | **Database** | MySQL 5.7+ / MariaDB 10.3+ |
-| **Frontend** | Tailwind CSS (CDN), Vanilla JavaScript, Font Awesome 6.4.0, Alpine.js, Chart.js |
-| **Package Manager** | Composer |
+| **Frontend** | Tailwind CSS 3.4.1, Vanilla JavaScript, Font Awesome 6.4.0, Alpine.js, Chart.js |
+| **Package Managers** | Composer, NPM (for Tailwind CSS build only) |
 | **Email** | PHPMailer with Gmail SMTP |
-| **PDF Generation** | TCPDF |
+| **PDF Generation** | Dompdf (primary), TCPDF (fallback) |
 | **Session Storage** | File-based (in `storage/sessions/`) |
 | **Payment Gateway** | Lenco (primary), MTN Mobile Money, Airtel Money, Zamtel Kwacha, Bank Transfer |
 | **Live Video** | Jitsi Meet |
@@ -34,8 +34,12 @@ Edutrack LMS is a **custom PHP web application** (not based on Laravel, Symfony,
 ### Composer Dependencies (`composer.json`)
 ```json
 {
+    "name": "edutrack/lms",
+    "description": "Edutrack Computer Training College - Learning Management System",
+    "type": "project",
     "require": {
         "php": ">=8.0",
+        "dompdf/dompdf": "^3.1",
         "google/apiclient": "^2.18",
         "phpmailer/phpmailer": "^6.8",
         "tecnickcom/tcpdf": "^6.6"
@@ -47,11 +51,30 @@ Edutrack LMS is a **custom PHP web application** (not based on Laravel, Symfony,
         "psr-4": {
             "Edutrack\\": "src/"
         }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
     }
 }
 ```
 
-**Important:** There is no `package.json` or NPM build step. Tailwind CSS is loaded via CDN. The `composer.lock` is committed for consistent deployments.
+### NPM Dependencies (`package.json`)
+```json
+{
+    "name": "edutrack-lms",
+    "version": "1.0.0",
+    "scripts": {
+        "build:css": "tailwindcss -i ./src/input.css -o ./public/assets/css/tailwind.css --minify",
+        "watch:css": "tailwindcss -i ./src/input.css -o ./public/assets/css/tailwind.css --watch"
+    },
+    "devDependencies": {
+        "tailwindcss": "^3.4.1"
+    }
+}
+```
+
+**Important:** The `composer.lock` and `public/assets/css/tailwind.css` are committed to the repository for consistent deployments. There is no frontend bundler (Webpack, Vite, etc.).
 
 ---
 
@@ -61,6 +84,9 @@ Edutrack LMS is a **custom PHP web application** (not based on Laravel, Symfony,
 edutrack-lms/
 ├── composer.json              # PHP dependencies
 ├── composer.lock              # Locked dependency versions (committed)
+├── package.json               # NPM dependencies (Tailwind CSS only)
+├── package-lock.json          # Locked NPM dependency versions
+├── tailwind.config.js         # Tailwind CSS configuration
 ├── .env                       # Environment configuration (NEVER commit)
 ├── .htaccess                  # Root Apache rewrite: forwards all requests to public/
 │
@@ -68,38 +94,46 @@ edutrack-lms/
 │   ├── app.php                # App settings, brand colors, TEVETA config, features
 │   ├── database.php           # Database connection config
 │   ├── mail.php               # SMTP configuration
-│   └── payment.php            # Payment gateway settings
+│   ├── payment.php            # Payment gateway settings
+│   └── google-credentials.json # Google API service account credentials
 │
 ├── database/
 │   └── complete_lms_schema.sql # Full database schema dump
 │
-├── migrations/                # Incremental SQL migration files
+├── migrations/                # Incremental SQL migration files (19 total)
 │   ├── 002_comprehensive_fixes.sql
 │   ├── 003_add_google_id_to_users.sql
 │   ├── 004_add_unique_constraints.sql
+│   ├── 005_add_missing_tables.sql
+│   ├── add_certificates_user_course_columns.sql
+│   ├── add_course_career_fields.sql
 │   ├── add_lenco_collections_table.sql
-│   └── ... (16 total migration files)
+│   ├── add_lenco_transactions_table.sql
+│   ├── add_lenco_webhook_logs_table.sql
+│   ├── add_performance_indexes.sql
+│   └── ... (and 9 more)
 │
 ├── cron/                      # Scheduled task scripts (CLI-only, secret key for web)
 │   ├── process-emails.php     # Processes email_queue every 5 minutes
 │   └── session-reminders.php  # Live session reminders (30min, 5min, start)
 │
-├── public/                    # Web document root
-│   ├── .htaccess              # Apache rules: pretty URLs, security headers
+├── public/                    # Web document root (152 PHP files)
+│   ├── .htaccess              # Apache rules: pretty URLs, security headers, gzip, caching
 │   ├── index.php              # Homepage
-│   ├── assets/                # CSS, JS, images, fonts, CSV templates
+│   ├── assets/                # CSS (Tailwind + custom), JS, images, fonts, CSV templates
 │   ├── uploads/               # User-generated content (avatars, certificates, submissions, etc.)
-│   ├── api/                   # REST API endpoints (30+ files)
-│   ├── admin/                 # Admin panel pages and handlers
+│   ├── api/                   # REST API endpoints (30 files)
+│   ├── admin/                 # Admin panel with router (index.php?page=...) + pages/ subdirectory
 │   ├── instructor/            # Instructor dashboard pages
 │   ├── student/               # Student-specific pages
 │   └── actions/               # Form action handlers (lesson CRUD, quiz submit, etc.)
 │
 ├── src/                       # Application source code
 │   ├── bootstrap.php          # Central initialization file
+│   ├── input.css              # Tailwind CSS entry point
 │   ├── api/
 │   │   └── ApiBase.php        # Abstract base class for all API endpoints
-│   ├── classes/               # Domain model classes (34 PHP classes)
+│   ├── classes/               # Domain model classes (32 PHP classes)
 │   │   ├── User.php
 │   │   ├── Course.php
 │   │   ├── Enrollment.php
@@ -111,12 +145,28 @@ edutrack-lms/
 │   │   ├── Lesson.php
 │   │   ├── Module.php
 │   │   ├── Quiz.php
+│   │   ├── Question.php
 │   │   ├── Assignment.php
+│   │   ├── Submission.php
 │   │   ├── LiveSession.php
 │   │   ├── Notification.php
 │   │   ├── GoogleDriveService.php
-│   │   └── ... (and more)
-│   ├── includes/              # Core functionality files
+│   │   ├── FileUpload.php
+│   │   ├── InstitutionPhoto.php
+│   │   ├── Instructor.php
+│   │   ├── Invoice.php
+│   │   ├── PaymentPlan.php
+│   │   ├── Progress.php
+│   │   ├── RegistrationFee.php
+│   │   ├── Review.php
+│   │   ├── Statistics.php
+│   │   ├── Announcement.php
+│   │   ├── Badge.php
+│   │   ├── Category.php
+│   │   ├── Discussion.php
+│   │   ├── Event.php
+│   │   └── LessonResource.php
+│   ├── includes/              # Core functionality files (13 files)
 │   │   ├── config.php         # Env loader, constants, helper functions (url, asset, redirect)
 │   │   ├── database.php       # Singleton Database class (PDO wrapper)
 │   │   ├── security.php       # CSRF, password hashing, encryption, rate limiting
@@ -125,8 +175,11 @@ edutrack-lms/
 │   │   ├── helpers.php        # Additional helpers
 │   │   ├── auth.php           # Authentication functions (register, login, session)
 │   │   ├── email.php          # Email helper functions
-│   │   ├── security-headers.php # HTTP security headers
-│   │   └── stats.php          # Statistics helpers
+│   │   ├── security-headers.php # HTTP security headers (CSP, HSTS, Permissions-Policy)
+│   │   ├── access-control.php # Centralized access denied pages, requireAdmin, etc.
+│   │   ├── stats.php          # Statistics helpers
+│   │   ├── admin-debug.php    # Admin debugging utilities
+│   │   └── email-hooks.php    # Email event hooks
 │   ├── middleware/            # Access control middleware
 │   │   ├── authenticate.php   # Requires login
 │   │   ├── admin-only.php     # Admin role required
@@ -139,20 +192,35 @@ edutrack-lms/
 │       ├── footer.php
 │       ├── admin-header.php
 │       ├── admin-sidebar.php
+│       ├── admin-footer.php
 │       ├── instructor-header.php
 │       ├── instructor-footer.php
 │       ├── alerts.php
 │       ├── breadcrumbs.php
-│       └── navigation.php
+│       ├── navigation.php
+│       ├── certificate-dompdf.php
+│       ├── certificate-pdf.php
+│       ├── testimonials-section.php
+│       └── sidebar.php
 │
 ├── storage/                   # Writable storage (must be 755)
+│   ├── backups/               # Application backups
 │   ├── cache/                 # Application cache
 │   ├── logs/                  # Error and access logs
 │   └── sessions/              # PHP session files
 │
+├── scripts/                   # Utility scripts
+│   ├── tools/                 # Python scripts for course content generation
+│   ├── add_registration_fees.php
+│   ├── add_test_user.php
+│   ├── compress-images.php
+│   ├── import_office_students.php
+│   └── verify_office_students.php
+│
 ├── course_materials/          # Static course content (PPTX, PDFs, Python exercises)
 ├── docs/                      # Project documentation (code reviews, plans, etc.)
-└── scripts/tools/             # Utility scripts
+└── .github/workflows/         # GitHub Actions CI/CD
+    └── build-css.yml          # Auto-build Tailwind CSS on push to main
 ```
 
 ---
@@ -167,7 +235,7 @@ require_once '../src/bootstrap.php';
 
 This loads in order:
 - Composer autoloader
-- Security headers
+- Security headers (`src/includes/security-headers.php`)
 - `includes/config.php` (env vars, constants)
 - `includes/database.php` (Database singleton)
 - `includes/security.php` (CSRF, password functions)
@@ -175,8 +243,9 @@ This loads in order:
 - `includes/functions.php`
 - `includes/helpers.php`
 - `includes/auth.php`
+- `includes/email.php`
 - `templates/alerts.php`
-- Class autoloader for `src/classes/`
+- SPL autoloader for `src/classes/`
 - Session initialization
 - CSRF token generation
 - Session validation
@@ -207,7 +276,7 @@ A global `$pdo` is also available for backward compatibility: `$pdo = $db->getCo
 Domain models in `src/classes/` use active-record-style loading:
 - Constructor accepts an optional ID and auto-loads from DB
 - Static `find($id)` and `findByXxx()` methods
-- Classes observed: `User`, `Course`, `Enrollment`, `Payment`, `Lenco`, `Certificate`, `Email`, `EmailNotificationService`, `Lesson`, `Module`, `Quiz`, `Assignment`, `LiveSession`, `Notification`, `GoogleDriveService`, `FileUpload`, `InstitutionPhoto`, `Instructor`, `Invoice`, `PaymentPlan`, `Progress`, `Question`, `RegistrationFee`, `Review`, `Statistics`, `Submission`, `Announcement`, `Badge`, `Category`, `Discussion`, `Event`, `LessonResource`
+- Classes: `User`, `Course`, `Enrollment`, `Payment`, `Lenco`, `Certificate`, `Email`, `EmailNotificationService`, `Lesson`, `Module`, `Quiz`, `Question`, `Assignment`, `Submission`, `LiveSession`, `Notification`, `GoogleDriveService`, `FileUpload`, `InstitutionPhoto`, `Instructor`, `Invoice`, `PaymentPlan`, `Progress`, `RegistrationFee`, `Review`, `Statistics`, `Announcement`, `Badge`, `Category`, `Discussion`, `Event`, `LessonResource`
 
 ### 4. Middleware Pattern
 Role-based access control in `src/middleware/`:
@@ -228,11 +297,17 @@ API endpoints in `public/api/` typically extend `ApiBase` (in `src/api/ApiBase.p
 - Validation helper: `validate(['field' => 'required|email|min:3'])`
 - Role checks: `requireRole()`, `requireAdmin()`, `requireInstructor()`
 
+### 6. Admin Router Pattern
+The admin panel uses a router at `public/admin/index.php`:
+- Reads `?page=` parameter
+- Validates against a `$validPages` array
+- Includes the corresponding page from `public/admin/pages/`
+
 ---
 
 ## User Roles & Permissions
 
-Roles are stored in the `roles` table and linked via `user_roles`:
+Roles are stored in the `roles` table and linked via `user_roles`. Users can have multiple roles and switch between them via `User::switchRole()`. The active role is stored in `$_SESSION['active_role']`.
 
 | Role | ID | Capabilities |
 |------|-----|--------------|
@@ -244,13 +319,13 @@ Roles are stored in the `roles` table and linked via `user_roles`:
 Role checks in code:
 - `isAdmin()` - global function in `config.php`
 - `$user->hasRole('admin')` - method on User class
-- `$_SESSION['user_role']` - stored in session
+- `$_SESSION['user_role']` / `$_SESSION['active_role']` - stored in session
 
 ---
 
 ## Database Schema
 
-The complete schema is in `database/complete_lms_schema.sql` (3,800+ lines, 50+ tables/views). Key tables:
+The complete schema is in `database/complete_lms_schema.sql` (~4,500 lines, 50+ tables/views). Key tables:
 
 | Table | Purpose |
 |-------|---------|
@@ -269,6 +344,7 @@ The complete schema is in `database/complete_lms_schema.sql` (3,800+ lines, 50+ 
 | `enrollment_payment_plans` | Payment plans per enrollment |
 | `payments` / `transactions` | Payment records |
 | `lenco_transactions` | Lenco gateway transactions |
+| `lenco_collections` | Lenco V2 mobile money collections |
 | `lenco_webhook_logs` | Lenco webhook audit trail |
 | `certificates` | Issued certificates |
 | `assignments` / `assignment_submissions` | Coursework |
@@ -281,6 +357,12 @@ The complete schema is in `database/complete_lms_schema.sql` (3,800+ lines, 50+ 
 | `badges` / `student_achievements` | Gamification |
 | `activity_logs` | Audit trail |
 | `registration_fees` | Registration fee payments |
+| `rate_limits` | Rate limiting data |
+| `user_sessions` | Session tracking |
+| `invoices` | Invoice records |
+| `payment_plans` | Global payment plan templates |
+| `events` / `newsletter_subscribers` | Events and newsletter |
+| `hero_slides` / `institution_photos` / `company_profiles` / `contacts` | CMS content |
 | `v_student_balances` | Database view for student balances |
 
 ---
@@ -328,72 +410,63 @@ LENCO_WEBHOOK_SECRET="..."
 CRON_SECRET_KEY="change_this_secret"
 ```
 
+**Note:** There is no `.env.example` file in the repository. Create one from the `.env` file if needed.
+
 ### Config Files (`config/`)
-- `app.php` - Returns a PHP array with app settings, colors, TEVETA config, video platforms, Jitsi Meet, session, security, rate limiting, pagination.
+- `app.php` - Returns a PHP array with app settings, brand colors (primary `#2E70DA`, secondary `#F6B745`), TEVETA config, video platforms, Jitsi Meet, session/security, rate limiting, pagination.
 - `database.php` - Returns a PHP array with connection settings and backup config.
 - `mail.php` - Returns a PHP array with SMTP/sendmail/log mailers, templates, rate limiting.
 - `payment.php` - Returns a PHP array with Lenco, MTN, Airtel, Zamtel, bank transfer settings.
 
----
-
-## Security Considerations
-
-### Implemented Protections
-- **CSRF Tokens**: All forms require `csrf_token` field. Use `csrfField()` to generate HTML, `verifyCsrfToken()` or `requireCsrfToken()` to validate.
-- **Rate Limiting**: 5 login attempts per 15 minutes (configurable).
-- **Password Requirements**: Min 8 chars, uppercase, number required (configurable).
-- **Password Hashing**: `password_hash()` with `PASSWORD_DEFAULT`.
-- **Encryption**: AES-256 for sensitive data.
-- **JWT**: For API authentication (`JWT_SECRET` required).
-- **Session Security**: HttpOnly, Secure, SameSite=Lax cookies. Session lifetime default 7200 seconds.
-- **SQL Injection**: All queries use prepared statements. The `Database` class validates table/column names for `insert()`/`update()`/`delete()`.
-- **XSS Protection**: Output escaping with `htmlspecialchars()` where implemented.
-- **File Upload Protection**: Allowed extensions whitelist, max size limits, PHP execution disabled in uploads via `.htaccess`.
-
-### Security Headers (`src/includes/security-headers.php` and `public/.htaccess`)
-- X-Frame-Options: DENY
-- X-Content-Type-Options: nosniff
-- X-XSS-Protection: 1; mode=block
-- Referrer-Policy: strict-origin-when-cross-origin
-
-### `.htaccess` Protections
-- `public/.htaccess` denies access to `.env`, `.json`, `.lock`, `.md`, `.sql`, `.sqlite`
-- Denies PHP execution in `/uploads/`
-- Blocks direct access to `/vendor/`, `/src/`, `/config/`, `/database/`, `/migrations/`, `/cron/`
-
-### Important Security Notes
-1. **Delete `public/install.php` after installation** (if present).
-2. **Protect `.env` file** - contains credentials. It is blocked by `.htaccess` but verify server config.
-3. **Secure `storage/` directory** - contains logs and sessions. Must be writable (755) but outside web root access.
-4. **Regenerate keys** in production (`ENCRYPTION_KEY`, `JWT_SECRET`, `CRON_SECRET_KEY`).
-5. **Google Drive folder ID is hardcoded** in `config/app.php` (`GOOGLE_DRIVE_FOLDER_ID`).
+### Tailwind CSS Configuration (`tailwind.config.js`)
+- Custom color palette: primary, secondary, success, warning, danger
+- Font family: Inter
+- Custom shadows: soft, card, card-hover
+- Content paths: `public/**/*.php`, `src/templates/**/*.php`, `src/includes/**/*.php`, `public/assets/js/**/*.js`
 
 ---
 
 ## Build and Deployment
 
-### No Build Step
-There is no frontend build process (no Webpack, Vite, or NPM scripts). Tailwind CSS is loaded via CDN in page templates. JavaScript is vanilla JS in `public/assets/js/`.
+### Tailwind CSS Build
+```bash
+# Build CSS for production (minified)
+npm run build:css
+
+# Watch for changes during development
+npm run watch:css
+```
+
+- **Input:** `src/input.css`
+- **Output:** `public/assets/css/tailwind.css` (committed to repo)
+- The application also loads Tailwind via CDN in some templates for development convenience.
+
+### PHP Dependencies
+```bash
+composer install
+```
 
 ### Installation / Setup Commands
 ```bash
 # 1. Install PHP dependencies
 composer install
 
-# 2. Configure environment
-cp .env.example .env   # (create .env.example if missing)
-# Edit .env with production credentials
+# 2. Install Node dependencies (for Tailwind build)
+npm install
 
-# 3. Import database
+# 3. Configure environment
+# Create .env from existing config or documentation
+
+# 4. Import database
 mysql -u root -p edutrack_lms < database/complete_lms_schema.sql
 
-# 4. Apply any pending migrations (manual process - run SQL files in migrations/)
+# 5. Apply any pending migrations (manual process - run SQL files in migrations/)
 
-# 5. Ensure writable directories
+# 6. Ensure writable directories
 chmod -R 755 storage/
 chmod -R 755 public/uploads/
 
-# 6. Configure Apache to point to public/ directory
+# 7. Configure Apache to point to public/ directory
 ```
 
 ### Server Requirements
@@ -401,8 +474,17 @@ chmod -R 755 public/uploads/
 - MySQL 5.7+ or MariaDB 10.3+
 - Apache with `mod_rewrite` enabled
 - Composer for dependency installation
+- Node.js and NPM (for Tailwind CSS builds)
 - SSL certificate (HTTPS required for security headers and Google OAuth)
 - `mbstring`, `openssl`, `pdo_mysql`, `gd` PHP extensions recommended
+
+### GitHub Actions CI/CD
+`.github/workflows/build-css.yml`:
+- **Trigger:** Push to `main` when `src/**`, `public/**/*.php`, `src/templates/**/*.php`, `tailwind.config.js`, or `package.json` change
+- **Runner:** `ubuntu-latest` with Node.js 20
+- **Steps:** `npm install` -> `npm run build:css` -> auto-commit `public/assets/css/tailwind.css` with `[skip ci]`
+
+**No PHP testing, linting, or deployment workflows exist.**
 
 ### Cron Jobs
 Add to crontab for production:
@@ -410,7 +492,7 @@ Add to crontab for production:
 # Process email queue every 5 minutes
 */5 * * * * /usr/bin/php /path/to/cron/process-emails.php
 
-# Session reminders daily at 8am
+# Session reminders daily at 8am (more frequent scheduling recommended)
 0 8 * * * /usr/bin/php /path/to/cron/session-reminders.php
 ```
 
@@ -432,6 +514,8 @@ Observed conventions across the codebase:
   - Constants: UPPER_CASE (e.g., `APP_DEBUG`, `PRIMARY_COLOR`)
   - Database tables: snake_case, plural (e.g., `user_profiles`, `live_sessions`)
   - Database columns: snake_case (e.g., `created_at`, `password_hash`)
+
+**No automated code quality tools are configured.** There is no PHP-CS-Fixer, PHP_CodeSniffer, ESLint, or Prettier setup. No pre-commit hooks are configured.
 
 ### Adding New Pages
 1. Create PHP file in appropriate `public/` subdirectory
@@ -466,17 +550,17 @@ if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
 
 **Current State: No automated test suite is configured.**
 
-- `phpunit/phpunit` is listed in `require-dev` in `composer.json`.
-- There is no `phpunit.xml` or `phpunit.xml.dist` file.
-- There are no `*.test.php` files.
+- `phpunit/phpunit` is listed in `require-dev` in `composer.json` and installed in `vendor/`.
+- There is no `phpunit.xml` or `phpunit.xml.dist` file at the project root.
+- There are no `*.test.php` or `*Test.php` files outside `vendor/`.
 - There is no `tests/` directory.
-- The `.gitignore` excludes `/phpunit.xml` and `/.phpunit.result.cache`.
+- The `.gitignore` explicitly excludes `/phpunit.xml` and `/.phpunit.result.cache`.
 
 ### Manual Testing Strategy
 Test these user flows manually:
-1. **Student Flow**: Registration → Email Verification → Login → Browse Courses → Enrollment → Payment → Learning → Quiz → Assignment → Certificate
-2. **Instructor Flow**: Login → Create Course → Add Modules/Lessons → Create Quiz → Review Submissions → Grade Assignments → Schedule Live Session
-3. **Admin Flow**: Login → User Management → Course Approval → Financial Reports → Payment Verification → Announcements → Settings
+1. **Student Flow**: Registration -> Email Verification -> Login -> Browse Courses -> Enrollment -> Payment -> Learning -> Quiz -> Assignment -> Certificate
+2. **Instructor Flow**: Login -> Create Course -> Add Modules/Lessons -> Create Quiz -> Review Submissions -> Grade Assignments -> Schedule Live Session
+3. **Admin Flow**: Login -> User Management -> Course Approval -> Financial Reports -> Payment Verification -> Announcements -> Settings
 
 ### Debug Mode
 Enable in `.env`:
@@ -492,14 +576,71 @@ This enables:
 
 ---
 
+## Security Considerations
+
+### Implemented Protections
+- **CSRF Tokens**: All forms require `csrf_token` field. Use `csrfField()` to generate HTML, `verifyCsrfToken()` or `requireCsrfToken()` to validate. API requests check `X-CSRF-Token` header.
+- **Rate Limiting**: 5 login attempts per 15 minutes (configurable), backed by `rate_limits` table with session fallback.
+- **Password Requirements**: Min 8 chars, uppercase, number, and special character required (configurable via `validatePasswordStrength()`).
+- **Password Hashing**: `password_hash()` with `PASSWORD_DEFAULT`.
+- **Encryption**: AES-256-CBC for sensitive data.
+- **JWT**: For API authentication (`JWT_SECRET` required).
+- **Session Security**: HttpOnly, Secure (when HTTPS), SameSite=Lax cookies. Session ID regenerated every 30 minutes. Browser fingerprint validation.
+- **SQL Injection**: All queries use prepared statements. The `Database` class validates table/column names for `insert()`/`update()`/`delete()`.
+- **XSS Protection**: Output escaping with `htmlspecialchars()`, `sanitizeInput()`, `xssClean()`.
+- **File Upload Protection**: Allowed extensions whitelist, max size limits (50MB default), MIME check, PHP injection detection. PHP execution disabled in uploads via `.htaccess`.
+
+### Security Headers (`src/includes/security-headers.php` and `public/.htaccess`)
+- `X-Frame-Options: DENY`
+- `X-Content-Type-Options: nosniff`
+- `X-XSS-Protection: 1; mode=block`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- **Content Security Policy (CSP)**:
+  - `default-src 'self'`
+  - `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://meet.jit.si`
+  - `style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com`
+  - `img-src 'self' data: https: http:`
+  - `font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com`
+  - `connect-src 'self' https://meet.jit.si`
+  - `frame-src 'self' https://www.youtube.com https://player.vimeo.com https://meet.jit.si`
+  - `frame-ancestors 'none'`
+- **Permissions-Policy**: `microphone=(self "https://meet.jit.si"), camera=(self "https://meet.jit.si")`
+- **HSTS**: `max-age=31536000; includeSubDomains` when HTTPS is on
+
+### `.htaccess` Protections
+- `public/.htaccess` denies access to `.env`, `.json`, `.lock`, `.md`, `.sql`, `.sqlite`
+- Denies PHP execution in `/uploads/`
+- Blocks direct access to `/vendor/`, `/src/`, `/config/`, `/database/`, `/migrations/`, `/cron/`
+- Gzip compression via `mod_deflate` for text-based assets
+- Browser caching via `mod_expires` (images 1 month, CSS/JS 1 week, fonts 1 month)
+- PHP settings: `display_errors off`, `upload_max_filesize 64M`, `post_max_size 64M`, `max_execution_time 300`
+
+### CORS
+Whitelist-based CORS in `src/includes/security.php`:
+- Production: `https://edutrackzambia.com` and `www` variant
+- Development: localhost variants allowed
+- Preflight OPTIONS handled automatically
+
+### Important Security Notes
+1. **Delete `public/install.php` after installation** (if present).
+2. **Protect `.env` file** - contains credentials. It is blocked by `.htaccess` but verify server config.
+3. **Secure `storage/` directory** - contains logs and sessions. Must be writable (755) but outside web root access.
+4. **Regenerate keys** in production (`ENCRYPTION_KEY`, `JWT_SECRET`, `CRON_SECRET_KEY`).
+5. **Google Drive folder ID is hardcoded** in `config/app.php` (`GOOGLE_DRIVE_FOLDER_ID`).
+6. **Cron scripts have a default fallback secret** (`change_this_secret`) if `CRON_SECRET_KEY` is not set in `.env`.
+
+---
+
 ## Key Features and Integrations
 
 ### Payment Processing
-- **Lenco** is the primary payment gateway (bank transfer via virtual accounts).
+- **Lenco** is the primary payment gateway (bank transfer via virtual accounts + V2 mobile money collections).
 - Supports sandbox and live modes.
 - Webhook endpoint: `public/api/lenco-webhook.php`
 - Additional methods: MTN Mobile Money, Airtel Money, Zamtel Kwacha, manual bank transfer.
 - Payment callbacks: `public/api/payment-callback.php`
+- Currency: ZMW (symbol `K`)
+- **30% minimum payment rule**: The `Enrollment` class enforces that students must pay at least 30% before course content is unlocked (`canAccessContent()`). Certificates require 100% payment (`canDownloadCertificate()`).
 
 ### Email System
 - PHPMailer with Gmail SMTP.
@@ -509,16 +650,17 @@ This enables:
 - Rate limiting: 10 per minute, 100 per hour.
 
 ### Certificates
-- Auto-generated PDF certificates using TCPDF.
+- Auto-generated PDF certificates using **Dompdf** (primary) with **TCPDF** fallback.
 - TEVETA accreditation branding.
 - Unique certificate numbers with public verification page (`certificate-verify.php`).
 - Certificates stored in `public/uploads/certificates/generated/`.
 
 ### Live Sessions
-- Jitsi Meet integration for virtual classes.
+- Jitsi Meet integration for virtual classes (domain: `meet.jit.si`, room prefix: `edutrack_zm`).
 - Scheduled live sessions per course.
 - Attendance tracking.
 - Recording support (configured in Jitsi settings).
+- Reminder notifications at 30 minutes, 5 minutes, and at start time.
 
 ### Google Integration
 - Google OAuth for login/signup (`public/google-callback.php`).
@@ -539,7 +681,7 @@ This enables:
 |---------|---------|---------------|
 | Gmail SMTP | Email sending | `MAIL_*` env vars |
 | Google OAuth | Social login | `GOOGLE_CLIENT_*` env vars |
-| Google Drive | File storage | `config/app.php` |
+| Google Drive | File storage | `config/app.php` + `config/google-credentials.json` |
 | Lenco | Payment processing | `LENCO_*` env vars |
 | Jitsi Meet | Video conferencing | `config/app.php` |
 | YouTube API | Video embedding | `YOUTUBE_API_KEY` env var |
@@ -576,15 +718,20 @@ This enables:
 - Verify `.htaccess` files exist in root and `public/`
 - Check `AllowOverride All` is set in Apache virtual host config
 
+**Tailwind CSS Styles Missing**
+- Run `npm run build:css` to regenerate `public/assets/css/tailwind.css`
+- Check that `tailwind.config.js` content paths include your new files
+
 ---
 
 ## File Statistics (Approximate)
-- **Total PHP Lines**: ~25,000+
-- **Classes**: 34 domain models
-- **API Endpoints**: 30+ REST endpoints
+- **Total PHP Lines**: ~30,000+
+- **Classes**: 32 domain models
+- **API Endpoints**: 30 REST endpoints
 - **Database Tables**: 50+ tables and views
-- **Public Pages**: 60+ user-facing and admin pages
-- **Migrations**: 16 SQL migration files
+- **Public Pages**: 152 PHP files
+- **Migrations**: 19 SQL migration files
+- **Includes**: 13 core framework files
 
 ---
 

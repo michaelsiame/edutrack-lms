@@ -3,130 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <style>
-  @page { margin: 0; size: 210mm 297mm; }
+  @page { margin: 10mm; size: 210mm 297mm; }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: 'DejaVu Sans', sans-serif;
     background: #fff;
-    width: 210mm;
-    height: 297mm;
-    position: relative;
     color: #1F2937;
+    font-size: 11pt;
+    line-height: 1.5;
   }
 
-  /* Outer orange border */
-  .outer-border {
-    position: absolute;
-    top: 6mm; left: 6mm; right: 6mm; bottom: 6mm;
-    border: 2mm solid #F26522;
+  /* Outer frame */
+  .frame-outer {
+    width: 100%;
+    border: 4pt solid #F26522;
+    border-collapse: collapse;
+  }
+  .frame-outer td {
+    padding: 5pt;
+    vertical-align: top;
   }
 
-  /* Inner blue border */
-  .inner-border {
-    position: absolute;
-    top: 10mm; left: 10mm; right: 10mm; bottom: 10mm;
-    border: 1mm solid #1E4A8A;
+  /* Inner frame */
+  .frame-inner {
+    width: 100%;
+    border: 2pt solid #1E4A8A;
+    border-collapse: collapse;
+  }
+  .frame-inner td {
+    padding: 18pt 22pt 14pt 22pt;
+    vertical-align: top;
   }
 
-  /* Corner triangles using border hack (works in dompdf) */
-  .corner {
-    position: absolute;
-    width: 0; height: 0;
-    border-style: solid;
+  /* Corner images table */
+  .corners-table {
+    width: 100%;
+    border-collapse: collapse;
   }
-  .corner-tl {
-    top: 6mm; left: 6mm;
-    border-width: 12mm 12mm 0 0;
-    border-color: #F26522 transparent transparent transparent;
-  }
-  .corner-tr {
-    top: 6mm; right: 6mm;
-    border-width: 0 12mm 12mm 0;
-    border-color: transparent #F26522 transparent transparent;
-  }
-  .corner-bl {
-    bottom: 6mm; left: 6mm;
-    border-width: 12mm 0 0 12mm;
-    border-color: transparent transparent transparent #F26522;
-  }
-  .corner-br {
-    bottom: 6mm; right: 6mm;
-    border-width: 0 0 12mm 12mm;
-    border-color: transparent transparent #F26522 transparent;
-  }
-
-  /* Main content area */
-  .content {
-    position: absolute;
-    top: 16mm; left: 16mm; right: 16mm; bottom: 16mm;
-    padding: 8mm 12mm;
+  .corners-table td {
+    padding: 0;
+    vertical-align: top;
   }
 
   /* Header */
   .header-table {
     width: 100%;
-    margin-bottom: 4mm;
+    border-collapse: collapse;
+    margin-top: 4pt;
   }
   .header-table td {
     vertical-align: middle;
+    padding: 0;
   }
-  .header-logo { width: 20%; text-align: left; }
-  .header-logo img { height: 18mm; }
-  .header-title { width: 60%; text-align: center; }
-  .header-teveta { width: 20%; text-align: right; }
-  .header-teveta img { height: 14mm; }
-
+  .header-logo-left { width: 18%; text-align: left; }
+  .header-logo-left img { height: 46pt; }
+  .header-logo-right { width: 18%; text-align: right; }
+  .header-logo-right img { height: 38pt; }
+  .header-title { width: 64%; text-align: center; }
   .college-name {
-    font-size: 16pt;
+    font-size: 17pt;
     font-weight: bold;
     color: #1F2937;
     letter-spacing: 0.5pt;
     text-transform: uppercase;
-    line-height: 1.2;
+    line-height: 1.25;
   }
-
   .tagline {
-    font-size: 8pt;
+    font-size: 9pt;
     color: #6B7280;
     font-style: italic;
-    text-align: center;
-    margin-bottom: 6mm;
+    margin-top: 3pt;
   }
 
-  /* Decorative rule */
-  .rule-table {
+  /* Decorative divider with diamond */
+  .divider-table {
     width: 100%;
-    margin-bottom: 4mm;
+    border-collapse: collapse;
+    margin: 8pt 0 10pt 0;
   }
-  .rule-table td {
+  .divider-table td {
     vertical-align: middle;
+    padding: 0;
   }
-  .rule-line {
-    border-top: 0.5pt solid #1E4A8A;
-  }
-  .rule-diamond {
-    width: 20%;
+  .divider-line-left { width: 28%; border-top: 0.5pt solid #1E4A8A; }
+  .divider-line-right { width: 28%; border-top: 0.5pt solid #1E4A8A; }
+  .divider-center {
+    width: 44%;
     text-align: center;
     font-size: 8pt;
     color: #F26522;
+    letter-spacing: 2pt;
   }
 
-  /* Certification statement */
+  /* Certify text */
   .certify-table {
     width: 100%;
-    margin-bottom: 4mm;
+    border-collapse: collapse;
+    margin: 12pt 0 10pt 0;
   }
   .certify-table td {
     vertical-align: middle;
+    padding: 0;
   }
-  .certify-line {
-    border-top: 0.5pt solid #F26522;
-  }
+  .certify-line-side { width: 10%; border-top: 0.5pt solid #F26522; }
   .certify-text {
+    width: 80%;
     text-align: center;
-    font-size: 11pt;
+    font-size: 13pt;
     font-weight: bold;
     color: #1E4A8A;
     letter-spacing: 1.5pt;
@@ -134,293 +119,361 @@
   }
 
   /* Student name */
-  .student-name {
+  .student-section {
     text-align: center;
-    font-family: serif;
-    font-size: 24pt;
+    margin: 14pt 0 8pt 0;
+  }
+  .student-name {
+    font-family: 'DejaVu Serif', serif;
+    font-size: 28pt;
     font-weight: bold;
     font-style: italic;
     color: #1F2937;
-    margin-bottom: 2mm;
+    letter-spacing: 0.5pt;
   }
-
-  .name-underline {
-    width: 50%;
-    margin: 0 auto 4mm auto;
-    border-top: 0.5pt solid #F26522;
+  .student-underline {
+    width: 55%;
+    margin: 6pt auto 0 auto;
+    border-top: 1pt solid #F26522;
   }
 
   /* Award text */
   .award-text {
     text-align: center;
-    font-size: 9pt;
+    font-size: 11pt;
     color: #4B5563;
-    line-height: 1.5;
-    margin-bottom: 4mm;
+    line-height: 1.7;
+    margin: 10pt 0;
   }
 
-  /* Course name */
-  .course-name {
+  /* Course */
+  .course-section {
     text-align: center;
-    font-size: 15pt;
+    margin: 12pt 0 6pt 0;
+  }
+  .course-name {
+    font-size: 18pt;
     font-weight: bold;
     color: #1E4A8A;
     letter-spacing: 0.5pt;
     text-transform: uppercase;
-    margin-bottom: 1mm;
+    line-height: 1.3;
   }
-
   .merit-text {
-    text-align: center;
-    font-family: serif;
-    font-size: 13pt;
+    font-family: 'DejaVu Serif', serif;
+    font-size: 16pt;
     font-weight: bold;
     font-style: italic;
     color: #1F2937;
-    margin-bottom: 4mm;
+    margin-top: 5pt;
   }
-
-  /* Decorative line */
-  .center-rule {
-    width: 40%;
-    margin: 0 auto 4mm auto;
+  .merit-line {
+    width: 35%;
+    margin: 6pt auto 0 auto;
     border-top: 0.5pt solid #F26522;
   }
 
-  /* Ceremony text */
-  .ceremony-text {
+  /* Ceremony */
+  .ceremony-section {
     text-align: center;
-    font-size: 9pt;
+    margin: 12pt 0 14pt 0;
+  }
+  .ceremony-line {
+    width: 40%;
+    margin: 0 auto 10pt auto;
+    border-top: 0.5pt solid #F26522;
+  }
+  .ceremony-text {
+    font-size: 11pt;
     color: #4B5563;
-    line-height: 1.6;
-    margin-bottom: 8mm;
+    line-height: 1.9;
+  }
+  .ceremony-text strong {
+    color: #1F2937;
+    font-weight: bold;
+  }
+  .ceremony-text em {
+    font-family: 'DejaVu Serif', serif;
+    font-style: italic;
+    color: #1F2937;
+  }
+  .ceremony-text sup {
+    font-size: 7pt;
+    vertical-align: super;
+    line-height: 0;
   }
 
   /* Signatures */
-  .sig-table {
+  .signatures-table {
     width: 100%;
-    margin-bottom: 3mm;
+    border-collapse: collapse;
+    margin-bottom: 10pt;
   }
-  .sig-table td {
+  .signatures-table td {
     vertical-align: bottom;
     text-align: center;
+    padding: 6pt 4pt;
   }
   .sig-line {
     border-top: 0.5pt solid #374151;
-    width: 40mm;
-    margin: 0 auto;
-    padding-top: 1mm;
+    width: 80%;
+    margin: 0 auto 3pt auto;
   }
   .sig-label {
-    font-size: 7pt;
+    font-size: 9pt;
     color: #4B5563;
   }
-
   .seal-box {
     text-align: center;
+    vertical-align: middle;
   }
-  .seal-inner {
-    display: inline-block;
-    border: 1.5pt solid #1E4A8A;
-    background-color: #1E4A8A;
-    padding: 4mm 5mm;
-  }
-  .seal-text {
-    font-size: 10pt;
-    font-weight: bold;
-    color: #C9A227;
-  }
-  .seal-label {
-    font-size: 5pt;
-    color: #1E4A8A;
-    font-weight: bold;
-    margin-top: 0.5mm;
+  .seal-box img {
+    height: 70pt;
+    width: auto;
   }
 
-  /* Bottom info box */
-  .info-box {
+  /* Graduate row */
+  .graduate-table {
     width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14pt;
+  }
+  .graduate-table td {
+    width: 50%;
+    vertical-align: bottom;
+    text-align: center;
+    padding: 6pt 4pt;
+  }
+
+  /* Info box */
+  .info-box {
     border: 1pt solid #1E4A8A;
     background-color: #F8FAFC;
-    padding: 4mm 5mm;
-    margin-bottom: 3mm;
+    padding: 10pt 14pt;
+    margin: 10pt 0 8pt 0;
   }
   .info-table {
     width: 100%;
+    border-collapse: collapse;
   }
   .info-table td {
+    padding: 4pt 6pt;
     vertical-align: top;
   }
   .info-divider {
     width: 2%;
     text-align: center;
     color: #1E4A8A;
-    font-size: 12pt;
+    font-size: 14pt;
+    vertical-align: middle;
   }
   .info-label {
-    font-size: 6pt;
+    font-size: 7pt;
     font-weight: bold;
     color: #1E4A8A;
     text-transform: uppercase;
+    letter-spacing: 0.5pt;
   }
   .info-value {
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: bold;
     color: #1F2937;
   }
 
   /* Footer */
-  .footer-text {
+  .footer {
     text-align: center;
-    font-size: 5pt;
+    margin-top: 8pt;
+  }
+  .footer-text {
+    font-size: 6pt;
     color: #9CA3AF;
     font-style: italic;
   }
   .footer-teveta {
-    text-align: center;
-    font-size: 5pt;
+    font-size: 6pt;
     color: #9CA3AF;
+  }
+
+  /* Bottom corners table */
+  .bottom-corners-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 4pt;
+  }
+  .bottom-corners-table td {
+    padding: 0;
+    vertical-align: bottom;
   }
 </style>
 </head>
 <body>
 
-<div class="outer-border"></div>
-<div class="inner-border"></div>
-<div class="corner corner-tl"></div>
-<div class="corner corner-tr"></div>
-<div class="corner corner-bl"></div>
-<div class="corner corner-br"></div>
+<table class="frame-outer" cellpadding="0" cellspacing="0">
+  <tr>
+    <td>
+      <table class="frame-inner" cellpadding="0" cellspacing="0">
+        <tr>
+          <td>
 
-<div class="content">
+            <!-- Top Corners -->
+            <table class="corners-table" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="width:28pt; text-align:left;">
+                  <img src="{{corner_tl}}" style="width:26pt; height:26pt; display:block;">
+                </td>
+                <td></td>
+                <td style="width:28pt; text-align:right;">
+                  <img src="{{corner_tr}}" style="width:26pt; height:26pt; display:block; margin-left:auto;">
+                </td>
+              </tr>
+            </table>
 
-  <!-- Header -->
-  <table class="header-table" cellpadding="0" cellspacing="0">
-    <tr>
-      <td class="header-logo">
-        <img src="{{logo_path}}" alt="Edutrack">
-      </td>
-      <td class="header-title">
-        <div class="college-name">Edutrack Computer<br>Training College</div>
-      </td>
-      <td class="header-teveta">
-        <img src="{{teveta_logo_path}}" alt="TEVETA">
-      </td>
-    </tr>
-  </table>
+            <!-- Header -->
+            <table class="header-table" cellpadding="0" cellspacing="0">
+              <tr>
+                <td class="header-logo-left">
+                  <img src="{{logo_path}}" alt="Edutrack">
+                </td>
+                <td class="header-title">
+                  <div class="college-name">Edutrack Computer<br>Training College</div>
+                  <div class="tagline">A skill training college</div>
+                </td>
+                <td class="header-logo-right">
+                  <img src="{{teveta_logo_path}}" alt="TEVETA">
+                </td>
+              </tr>
+            </table>
 
-  <!-- Tagline -->
-  <div class="tagline">A skill training college</div>
+            <!-- Divider -->
+            <table class="divider-table" cellpadding="0" cellspacing="0">
+              <tr>
+                <td class="divider-line-left"></td>
+                <td class="divider-center">&#9670; &#9670; &#9670;</td>
+                <td class="divider-line-right"></td>
+              </tr>
+            </table>
 
-  <!-- Decorative rule -->
-  <table class="rule-table" cellpadding="0" cellspacing="0">
-    <tr>
-      <td class="rule-line" style="width:25%;"></td>
-      <td class="rule-diamond">* * *</td>
-      <td class="rule-line" style="width:25%;"></td>
-    </tr>
-  </table>
+            <!-- Certify -->
+            <table class="certify-table" cellpadding="0" cellspacing="0">
+              <tr>
+                <td class="certify-line-side"></td>
+                <td class="certify-text">This is to certify that</td>
+                <td class="certify-line-side"></td>
+              </tr>
+            </table>
 
-  <!-- Certification statement -->
-  <table class="certify-table" cellpadding="0" cellspacing="0">
-    <tr>
-      <td class="certify-line" style="width:10%;"></td>
-      <td class="certify-text" style="width:80%;">This is to certify that</td>
-      <td class="certify-line" style="width:10%;"></td>
-    </tr>
-  </table>
+            <!-- Student name -->
+            <div class="student-section">
+              <div class="student-name">{{student_name}}</div>
+              <div class="student-underline"></div>
+            </div>
 
-  <!-- Student name -->
-  <div class="student-name">{{student_name}}</div>
-  <div class="name-underline"></div>
+            <!-- Award -->
+            <div class="award-text">
+              having satisfied the requirements for the<br>
+              award of the certificate of
+            </div>
 
-  <!-- Award text -->
-  <div class="award-text">
-    having satisfied the requirements for the<br>
-    award of the certificate of
-  </div>
+            <!-- Course -->
+            <div class="course-section">
+              <div class="course-name">{{course_title}}</div>
+              <div class="merit-text">{{merit_text}}</div>
+              <div class="merit-line"></div>
+            </div>
 
-  <!-- Course name -->
-  <div class="course-name">{{course_title}}</div>
-  <div class="merit-text">{{merit_text}}</div>
+            <!-- Ceremony -->
+            <div class="ceremony-section">
+              <div class="ceremony-line"></div>
+              <div class="ceremony-text">
+                was admitted to the certificate at a Graduation Ceremony<br>
+                held on the {{formal_date_html}}
+              </div>
+            </div>
 
-  <!-- Decorative line -->
-  <div class="center-rule"></div>
+            <!-- Signatures -->
+            <table class="signatures-table" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="width:30%;">
+                  <div class="sig-line"></div>
+                  <div class="sig-label">Principal</div>
+                </td>
+                <td style="width:40%;" class="seal-box">
+                  <img src="{{seal_path}}" alt="Official Seal">
+                </td>
+                <td style="width:30%;">
+                  <div class="sig-line"></div>
+                  <div class="sig-label">Director</div>
+                </td>
+              </tr>
+            </table>
 
-  <!-- Ceremony text -->
-  <div class="ceremony-text">
-    was admitted to the certificate at a Graduation Ceremony<br>
-    held on the <strong>{{formal_date}}</strong>
-  </div>
+            <table class="graduate-table" cellpadding="0" cellspacing="0">
+              <tr>
+                <td>
+                  <div class="sig-line"></div>
+                  <div class="sig-label">Graduate's Signature</div>
+                </td>
+                <td>
+                  <div class="sig-line"></div>
+                  <div class="sig-label">Graduate's I.D. No.</div>
+                </td>
+              </tr>
+            </table>
 
-  <!-- Signatures row -->
-  <table class="sig-table" cellpadding="0" cellspacing="0">
-    <tr>
-      <td style="width:33%;">
-        <div class="sig-line"></div>
-        <div class="sig-label">Principal</div>
-      </td>
-      <td style="width:34%; vertical-align:middle;">
-        <div class="seal-box">
-          <div class="seal-inner">
-            <span class="seal-text">SEAL</span>
-          </div>
-          <div class="seal-label">SEAL</div>
-        </div>
-      </td>
-      <td style="width:33%;">
-        <div class="sig-line"></div>
-        <div class="sig-label">Director</div>
-      </td>
-    </tr>
-  </table>
+            <!-- Info box -->
+            <div class="info-box">
+              <table class="info-table" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="width:46%;">
+                    <div class="info-label">Student Number</div>
+                    <div class="info-value">{{student_number}}</div>
+                  </td>
+                  <td class="info-divider">|</td>
+                  <td style="width:46%;">
+                    <div class="info-label">Date of Graduation</div>
+                    <div class="info-value">{{completion_date}}</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-top:6pt;">
+                    <div class="info-label">Certificate Number</div>
+                    <div class="info-value">{{certificate_number}}</div>
+                  </td>
+                  <td class="info-divider">|</td>
+                  <td style="padding-top:6pt;">
+                    <div class="info-label">Course</div>
+                    <div class="info-value">{{course_title}}</div>
+                  </td>
+                </tr>
+              </table>
+            </div>
 
-  <!-- Graduate signature & ID row -->
-  <table class="sig-table" cellpadding="0" cellspacing="0">
-    <tr>
-      <td style="width:50%;">
-        <div class="sig-line"></div>
-        <div class="sig-label">Graduate's Signature</div>
-      </td>
-      <td style="width:50%;">
-        <div class="sig-line"></div>
-        <div class="sig-label">Graduate's I.D. No.</div>
-      </td>
-    </tr>
-  </table>
+            <!-- Bottom Corners -->
+            <table class="bottom-corners-table" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="width:28pt; text-align:left;">
+                  <img src="{{corner_bl}}" style="width:26pt; height:26pt; display:block;">
+                </td>
+                <td></td>
+                <td style="width:28pt; text-align:right;">
+                  <img src="{{corner_br}}" style="width:26pt; height:26pt; display:block; margin-left:auto;">
+                </td>
+              </tr>
+            </table>
 
-  <!-- Bottom info box -->
-  <div class="info-box">
-    <table class="info-table" cellpadding="0" cellspacing="0">
-      <tr>
-        <td style="width:46%;">
-          <div class="info-label">Student Number</div>
-          <div class="info-value">{{student_number}}</div>
-        </td>
-        <td class="info-divider">|</td>
-        <td style="width:46%;">
-          <div class="info-label">Date of Graduation</div>
-          <div class="info-value">{{completion_date}}</div>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding-top:3mm;">
-          <div class="info-label">Certificate Number</div>
-          <div class="info-value">{{certificate_number}}</div>
-        </td>
-        <td class="info-divider">|</td>
-        <td style="padding-top:3mm;">
-          <div class="info-label">Course</div>
-          <div class="info-value">{{course_title}}</div>
-        </td>
-      </tr>
-    </table>
-  </div>
+            <!-- Footer -->
+            <div class="footer">
+              <div class="footer-text">Verify authenticity at {{verify_url}}</div>
+              <div class="footer-teveta">Issued under the authority of the Technical Education, Vocational and Entrepreneurship Training Authority (TEVETA) of Zambia.</div>
+            </div>
 
-  <!-- Footer -->
-  <div class="footer-text">Verify authenticity at {{verify_url}}</div>
-  <div class="footer-teveta">Issued under the authority of the Technical Education, Vocational and Entrepreneurship Training Authority (TEVETA) of Zambia.</div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
 
-</div>
 </body>
 </html>

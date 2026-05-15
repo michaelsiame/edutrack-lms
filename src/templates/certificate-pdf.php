@@ -4,10 +4,11 @@
 
   TCPDF-safe rules:
   - No height on <td> elements (causes hangs)
-  - No <sup> tags (not supported)
+  - No <sup> tags (not supported well)
   - Max 2 levels of table nesting
   - Simple inline CSS only
   - No border-radius
+  - position: absolute is not supported
 
   Placeholders:
   {{logo_path}} {{teveta_logo_path}} {{teveta_code}} {{student_name}}
@@ -15,15 +16,29 @@
   {{verify_url}} {{director_name}} {{principal_name}} {{instructor_name}}
   {{director_signature}} {{instructor_signature}} {{qr_code}}
   {{student_number}} {{merit_text}} {{graduate_id}}
+  {{seal_path}} {{corner_tl}} {{corner_tr}} {{corner_bl}} {{corner_br}}
 -->
 
 <table cellpadding="0" cellspacing="0" style="width:100%; border:3px solid #F26522; background-color:#FFFFFF;">
   <tr>
-    <td style="padding:5px;">
+    <td style="padding:4px;">
 
       <table cellpadding="0" cellspacing="0" style="width:100%; border:1.5px solid #1E4A8A;">
         <tr>
-          <td style="padding:20px 22px 16px 22px;">
+          <td style="padding:18px 20px 14px 20px;">
+
+            <!-- Top Corners -->
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:2px;">
+              <tr>
+                <td style="width:28px; text-align:left; vertical-align:top;">
+                  <img src="{{corner_tl}}" style="width:26px; height:26px;">
+                </td>
+                <td style="width:100%;"></td>
+                <td style="width:28px; text-align:right; vertical-align:top;">
+                  <img src="{{corner_tr}}" style="width:26px; height:26px;">
+                </td>
+              </tr>
+            </table>
 
             <!-- Header: Logos + College Name -->
             <table cellpadding="0" cellspacing="0" style="width:100%;">
@@ -32,7 +47,7 @@
                   <img src="{{logo_path}}" style="width:48px; height:auto;">
                 </td>
                 <td style="width:64%; text-align:center; vertical-align:middle;">
-                  <div style="font-family:helvetica; font-size:12px; font-weight:bold; color:#1F2937; letter-spacing:1px; text-transform:uppercase; line-height:1.3;">
+                  <div style="font-family:helvetica; font-size:11px; font-weight:bold; color:#1F2937; letter-spacing:1px; text-transform:uppercase; line-height:1.3;">
                     Edutrack Computer<br>Training College
                   </div>
                   <div style="font-family:helvetica; font-size:7px; color:#6B7280; margin-top:2px; letter-spacing:0.5px;">
@@ -45,21 +60,19 @@
               </tr>
             </table>
 
-            <!-- Decorative rule -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; margin-top:10px; margin-bottom:16px;">
+            <!-- Decorative rule with diamonds -->
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-top:8px; margin-bottom:12px;">
               <tr>
-                <td style="width:20%; border-top:1px solid #1E4A8A;"></td>
-                <td style="width:60%; text-align:center; vertical-align:middle;">
-                  <span style="font-family:helvetica; font-size:9px; color:#F26522;">*</span>
-                  <span style="font-family:helvetica; font-size:9px; color:#1E4A8A;">*</span>
-                  <span style="font-family:helvetica; font-size:9px; color:#F26522;">*</span>
+                <td style="width:28%; border-top:1px solid #1E4A8A;"></td>
+                <td style="width:44%; text-align:center; vertical-align:middle;">
+                  <span style="font-family:helvetica; font-size:8px; color:#F26522;">&#9670; &#9670; &#9670;</span>
                 </td>
-                <td style="width:20%; border-top:1px solid #1E4A8A;"></td>
+                <td style="width:28%; border-top:1px solid #1E4A8A;"></td>
               </tr>
             </table>
 
             <!-- Certification statement -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:12px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:10px;">
               <tr>
                 <td style="width:10%; border-top:1px solid #F26522; vertical-align:middle;"></td>
                 <td style="width:80%; text-align:center; vertical-align:middle;">
@@ -72,7 +85,7 @@
             </table>
 
             <!-- Student name -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:8px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:6px;">
               <tr>
                 <td style="text-align:center;">
                   <span style="font-family:times; font-size:22px; font-weight:bold; font-style:italic; color:#1F2937; letter-spacing:0.5px;">
@@ -83,7 +96,7 @@
             </table>
 
             <!-- Decorative underline -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:12px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:10px;">
               <tr>
                 <td style="width:25%;"></td>
                 <td style="width:50%; border-top:1px solid #F26522;"></td>
@@ -92,7 +105,7 @@
             </table>
 
             <!-- Award text -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:10px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:8px;">
               <tr>
                 <td style="text-align:center;">
                   <span style="font-family:times; font-size:9px; color:#4B5563; line-height:1.5;">
@@ -104,7 +117,7 @@
             </table>
 
             <!-- Course title -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:6px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:4px;">
               <tr>
                 <td style="text-align:center;">
                   <span style="font-family:helvetica; font-size:15px; font-weight:bold; color:#1E4A8A; letter-spacing:0.5px; text-transform:uppercase;">
@@ -115,7 +128,7 @@
             </table>
 
             <!-- Merit / Distinction -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:10px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:8px;">
               <tr>
                 <td style="text-align:center;">
                   <span style="font-family:times; font-size:13px; font-weight:bold; font-style:italic; color:#1F2937;">
@@ -126,23 +139,23 @@
             </table>
 
             <!-- Decorative line -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:12px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:10px;">
               <tr>
-                <td style="width:30%;"></td>
-                <td style="width:40%; border-top:1px solid #F26522;"></td>
-                <td style="width:30%;"></td>
+                <td style="width:32%;"></td>
+                <td style="width:36%; border-top:1px solid #F26522;"></td>
+                <td style="width:32%;"></td>
               </tr>
               <tr>
-                <td style="width:30%;"></td>
-                <td style="width:40%; text-align:center; padding-top:2px;">
-                  <span style="font-family:helvetica; font-size:7px; color:#F26522;">*</span>
+                <td style="width:32%;"></td>
+                <td style="width:36%; text-align:center; padding-top:2px;">
+                  <span style="font-family:helvetica; font-size:7px; color:#F26522;">&#9670;</span>
                 </td>
-                <td style="width:30%;"></td>
+                <td style="width:32%;"></td>
               </tr>
             </table>
 
             <!-- Graduation date -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:20px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:16px;">
               <tr>
                 <td style="text-align:center;">
                   <span style="font-family:times; font-size:9px; color:#4B5563; line-height:1.6;">
@@ -154,29 +167,18 @@
             </table>
 
             <!-- Signatures row -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:10px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:8px;">
               <tr>
-                <td style="width:33%; text-align:center; vertical-align:bottom;">
-                  <div style="border-top:1px solid #374151; width:110px; margin:0 auto; padding-top:4px;">
+                <td style="width:30%; text-align:center; vertical-align:bottom;">
+                  <div style="border-top:1px solid #374151; width:100px; margin:0 auto; padding-top:4px;">
                     <span style="font-family:helvetica; font-size:7px; color:#4B5563;">Principal</span>
                   </div>
                 </td>
-                <td style="width:34%; text-align:center; vertical-align:middle;">
-                  <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
-                    <tr>
-                      <td style="border:2px solid #1E4A8A; background-color:#1E4A8A; text-align:center; vertical-align:middle; padding:8px;">
-                        <span style="font-family:helvetica; font-size:10px; color:#C9A227; font-weight:bold;">SEAL</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="text-align:center; padding-top:1px;">
-                        <span style="font-family:helvetica; font-size:5px; color:#1E4A8A; font-weight:bold;">SEAL</span>
-                      </td>
-                    </tr>
-                  </table>
+                <td style="width:40%; text-align:center; vertical-align:middle;">
+                  <img src="{{seal_path}}" style="height:65px; width:auto;">
                 </td>
-                <td style="width:33%; text-align:center; vertical-align:bottom;">
-                  <div style="border-top:1px solid #374151; width:110px; margin:0 auto; padding-top:4px;">
+                <td style="width:30%; text-align:center; vertical-align:bottom;">
+                  <div style="border-top:1px solid #374151; width:100px; margin:0 auto; padding-top:4px;">
                     <span style="font-family:helvetica; font-size:7px; color:#4B5563;">Director</span>
                   </div>
                 </td>
@@ -184,15 +186,15 @@
             </table>
 
             <!-- Graduate signature & ID row -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:20px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-bottom:16px;">
               <tr>
                 <td style="width:50%; text-align:center; vertical-align:bottom;">
-                  <div style="border-top:1px solid #374151; width:130px; margin:0 auto; padding-top:4px;">
+                  <div style="border-top:1px solid #374151; width:120px; margin:0 auto; padding-top:4px;">
                     <span style="font-family:helvetica; font-size:7px; color:#4B5563;">Graduate's Signature</span>
                   </div>
                 </td>
                 <td style="width:50%; text-align:center; vertical-align:bottom;">
-                  <div style="border-top:1px solid #374151; width:130px; margin:0 auto; padding-top:4px;">
+                  <div style="border-top:1px solid #374151; width:120px; margin:0 auto; padding-top:4px;">
                     <span style="font-family:helvetica; font-size:7px; color:#4B5563;">Graduate's I.D. No.</span>
                   </div>
                 </td>
@@ -200,7 +202,7 @@
             </table>
 
             <!-- Bottom info box -->
-            <table cellpadding="0" cellspacing="0" style="width:100%; border:1px solid #1E4A8A; background-color:#F8FAFC; margin-bottom:12px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%; border:1px solid #1E4A8A; background-color:#F8FAFC; margin-bottom:10px;">
               <tr>
                 <td style="padding:8px 10px;">
                   <table cellpadding="0" cellspacing="0" style="width:100%;">
@@ -231,6 +233,19 @@
                       </td>
                     </tr>
                   </table>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Bottom Corners -->
+            <table cellpadding="0" cellspacing="0" style="width:100%; margin-top:2px;">
+              <tr>
+                <td style="width:28px; text-align:left; vertical-align:bottom;">
+                  <img src="{{corner_bl}}" style="width:26px; height:26px;">
+                </td>
+                <td style="width:100%;"></td>
+                <td style="width:28px; text-align:right; vertical-align:bottom;">
+                  <img src="{{corner_br}}" style="width:26px; height:26px;">
                 </td>
               </tr>
             </table>
