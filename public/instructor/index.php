@@ -53,19 +53,16 @@ $pendingAssignments = $db->fetchAll("
 ", [$instructorId]);
 
 // Get instructor's courses with detailed metrics
+// Using subqueries avoids Cartesian product explosion from multiple LEFT JOINs
 $courses = $db->fetchAll("
     SELECT c.*, cat.name as category_name,
-           COUNT(DISTINCT e.id) as student_count,
-           COUNT(DISTINCT m.id) as module_count,
-           COUNT(DISTINCT l.id) as lesson_count,
-           AVG(e.progress) as avg_progress
+           (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = c.id) as student_count,
+           (SELECT COUNT(*) FROM modules m WHERE m.course_id = c.id) as module_count,
+           (SELECT COUNT(*) FROM lessons l JOIN modules m ON l.module_id = m.id WHERE m.course_id = c.id) as lesson_count,
+           (SELECT AVG(progress) FROM enrollments e WHERE e.course_id = c.id) as avg_progress
     FROM courses c
     LEFT JOIN course_categories cat ON c.category_id = cat.id
-    LEFT JOIN enrollments e ON c.id = e.course_id
-    LEFT JOIN modules m ON c.id = m.course_id
-    LEFT JOIN lessons l ON m.id = l.module_id
     WHERE c.instructor_id = ?
-    GROUP BY c.id
     ORDER BY c.created_at DESC
     LIMIT 4
 ", [$instructorId]);

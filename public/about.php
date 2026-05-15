@@ -80,17 +80,24 @@ try {
 
         <?php if (!empty($team_members)): ?>
             <!-- Principal's Card (Featured) -->
-            <?php 
+            <?php
                 $principal = $team_members[0]; // Assuming order 1 is Principal
                 $rest_of_team = array_slice($team_members, 1);
+                // Pre-build team photo lookup to avoid file_exists in loop
+                $teamPhotos = [];
+                if (is_dir('uploads/team')) {
+                    foreach (glob('uploads/team/*') as $f) {
+                        $teamPhotos[basename($f)] = true;
+                    }
+                }
             ?>
-            
+
             <div class="flex justify-center mb-16">
                 <div class="bg-white rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full flex flex-col md:flex-row transform hover:-translate-y-1 transition duration-300">
                     <div class="md:w-2/5 relative h-96 md:h-auto bg-gray-200">
-                        <?php if ($principal['image_url'] && file_exists('uploads/team/' . $principal['image_url'])): ?>
-                            <img src="uploads/team/<?= htmlspecialchars($principal['image_url']) ?>" 
-                                 alt="<?= htmlspecialchars($principal['name']) ?>" 
+                        <?php if ($principal['image_url'] && isset($teamPhotos[$principal['image_url']])): ?>
+                            <img src="uploads/team/<?= htmlspecialchars($principal['image_url']) ?>"
+                                 alt="<?= htmlspecialchars($principal['name']) ?>"
                                  class="w-full h-full object-cover">
                         <?php else: ?>
                             <div class="w-full h-full flex items-center justify-center bg-primary-700 text-white">
@@ -128,12 +135,12 @@ try {
                     <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 group border-t-4 border-transparent hover:border-primary-500">
                         <!-- Image Container -->
                         <div class="relative h-64 bg-gray-100 overflow-hidden">
-                            <?php 
+                            <?php
                                 $imagePath = 'uploads/team/' . $member['image_url'];
-                                if ($member['image_url'] && file_exists($imagePath)): 
+                                if ($member['image_url'] && isset($teamPhotos[$member['image_url']])):
                             ?>
-                                <img src="<?= htmlspecialchars($imagePath) ?>" 
-                                     alt="<?= htmlspecialchars($member['name']) ?>" 
+                                <img src="<?= htmlspecialchars($imagePath) ?>"
+                                     alt="<?= htmlspecialchars($member['name']) ?>"
                                      class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
                             <?php else: ?>
                                 <div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">

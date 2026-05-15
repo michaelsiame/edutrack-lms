@@ -60,7 +60,7 @@ $completedCourses = $db->fetchAll("
 // Check if user is new (no enrollments at all)
 $isNewStudent = empty($recentEnrollments) && empty($completedCourses);
 
-// Check registration fee status
+// Check registration fee status (cached for reuse later in page)
 $registrationPaid = RegistrationFee::hasPaid($userId);
 
 // Onboarding checklist for new students
@@ -162,16 +162,19 @@ $recommendedCourses = $db->fetchAll("
     LIMIT 3
 ", [$userId]);
 
-// Check payment status
+// Check payment status — compute total balance in SQL instead of PHP loop
 $totalBalance = 0;
-$registrationPaid = true;
 try {
-    $registrationPaid = RegistrationFee::hasPaid($userId);
-    $paymentPlans = PaymentPlan::getByUser($userId);
-    foreach ($paymentPlans as $plan) {
-        $totalBalance += floatval($plan['balance']);
-    }
-} catch (Exception $e) {}
+    $balanceRow = $db->fetchOne("
+        SELECT COALESCE(SUM(epp.balance), 0) as total_balance
+        FROM enrollment_payment_plans epp
+        JOIN enrollments e ON epp.enrollment_id = e.id
+        WHERE e.user_id = ?
+    ", [$userId]);
+    $totalBalance = floatval($balanceRow['total_balance'] ?? 0);
+} catch (Exception $e) {
+    $totalBalance = 0;
+}
 
 $page_title = "Dashboard - Edutrack";
 require_once __DIR__ . '/../src/templates/header.php';

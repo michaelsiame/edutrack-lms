@@ -610,6 +610,8 @@ setInterval(updateCountdown, 86400000); // Update daily
 <?php endif; ?>
 
 <?php
+// Pass homepage stats to testimonials section to avoid duplicate DB queries
+$t_stats = $stats;
 try {
     require_once __DIR__ . '/../src/templates/testimonials-section.php';
 } catch (Throwable $e) {

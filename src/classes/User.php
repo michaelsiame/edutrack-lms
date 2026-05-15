@@ -24,20 +24,35 @@ class User {
     }
     
     /**
-     * Load user data from both tables
+     * Load user data from both tables in a single query
      */
     private function load() {
-        // Load core credentials
-        $result = $this->db->fetchOne("SELECT * FROM users WHERE id = ?", [$this->id]);
-        $this->data = $result ?: [];
+        $result = $this->db->fetchOne(
+            "SELECT u.*, p.bio, p.phone, p.address, p.date_of_birth, p.emergency_contact_name,
+                    p.emergency_contact_phone, p.education_level, p.occupation, p.company,
+                    p.nrc_number, p.nationality, p.gender, p.profile_picture, p.social_links
+             FROM users u
+             LEFT JOIN user_profiles p ON u.id = p.user_id
+             WHERE u.id = ?",
+            [$this->id]
+        );
 
-        // Load extended profile
-        if ($this->data) {
-            $this->profile = $this->db->fetchOne("SELECT * FROM user_profiles WHERE user_id = ?", [$this->id]);
-            // Ensure profile is an array even if empty
-            if (!$this->profile) {
-                $this->profile = [];
+        if ($result) {
+            // Split profile columns from user columns
+            $profileCols = ['bio','phone','address','date_of_birth','emergency_contact_name',
+                            'emergency_contact_phone','education_level','occupation','company',
+                            'nrc_number','nationality','gender','profile_picture','social_links'];
+            $this->profile = [];
+            foreach ($profileCols as $col) {
+                if (array_key_exists($col, $result)) {
+                    $this->profile[$col] = $result[$col];
+                    unset($result[$col]);
+                }
             }
+            $this->data = $result;
+        } else {
+            $this->data = [];
+            $this->profile = [];
         }
     }
     
@@ -53,12 +68,34 @@ class User {
      */
     public static function findByEmail($email) {
         $db = Database::getInstance();
-        $userData = $db->fetchOne("SELECT id FROM users WHERE email = ?", [$email]);
-        
+        $userData = $db->fetchOne(
+            "SELECT u.*, p.bio, p.phone, p.address, p.date_of_birth, p.emergency_contact_name,
+                    p.emergency_contact_phone, p.education_level, p.occupation, p.company,
+                    p.nrc_number, p.nationality, p.gender, p.profile_picture, p.social_links
+             FROM users u
+             LEFT JOIN user_profiles p ON u.id = p.user_id
+             WHERE u.email = ?",
+            [$email]
+        );
+
         if ($userData) {
-            return new self($userData['id']);
+            $user = new self();
+            $user->id = $userData['id'];
+
+            $profileCols = ['bio','phone','address','date_of_birth','emergency_contact_name',
+                            'emergency_contact_phone','education_level','occupation','company',
+                            'nrc_number','nationality','gender','profile_picture','social_links'];
+            $user->profile = [];
+            foreach ($profileCols as $col) {
+                if (array_key_exists($col, $userData)) {
+                    $user->profile[$col] = $userData[$col];
+                    unset($userData[$col]);
+                }
+            }
+            $user->data = $userData;
+            return $user;
         }
-        
+
         return null;
     }
     

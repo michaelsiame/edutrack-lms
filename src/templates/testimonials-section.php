@@ -46,21 +46,23 @@ if (empty($testimonials)) {
         
         <!-- Stats Row -->
         <?php
-        // Fetch real stats for testimonials section
-        $t_stats = [
-            'total_students' => 0,
-            'total_enrollments' => 0,
-            'avg_rating' => 0,
-            'total_courses' => 0,
-        ];
-        try {
-            $db = Database::getInstance();
-            $t_stats['total_students'] = $db->query("SELECT COUNT(DISTINCT u.id) FROM users u JOIN user_roles ur ON u.id = ur.user_id WHERE ur.role_id = 4 AND u.status = 'active'")->fetchColumn() ?: 0;
-            $t_stats['total_enrollments'] = $db->query("SELECT COUNT(*) FROM enrollments")->fetchColumn() ?: 0;
-            $t_stats['avg_rating'] = $db->query("SELECT COALESCE(AVG(rating), 0) FROM course_reviews")->fetchColumn() ?: 0;
-            $t_stats['total_courses'] = $db->query("SELECT COUNT(*) FROM courses WHERE status = 'published'")->fetchColumn() ?: 0;
-        } catch (Throwable $e) {
-            error_log("Testimonials stats error: " . $e->getMessage());
+        // Fetch real stats for testimonials section (skip if provided by caller, e.g. homepage)
+        if (!isset($t_stats)) {
+            $t_stats = [
+                'total_students' => 0,
+                'total_enrollments' => 0,
+                'avg_rating' => 0,
+                'total_courses' => 0,
+            ];
+            try {
+                $db = Database::getInstance();
+                $t_stats['total_students'] = $db->query("SELECT COUNT(DISTINCT u.id) FROM users u JOIN user_roles ur ON u.id = ur.user_id WHERE ur.role_id = 4 AND u.status = 'active'")->fetchColumn() ?: 0;
+                $t_stats['total_enrollments'] = $db->query("SELECT COUNT(*) FROM enrollments")->fetchColumn() ?: 0;
+                $t_stats['avg_rating'] = $db->query("SELECT COALESCE(AVG(rating), 0) FROM course_reviews")->fetchColumn() ?: 0;
+                $t_stats['total_courses'] = $db->query("SELECT COUNT(*) FROM courses WHERE status = 'published'")->fetchColumn() ?: 0;
+            } catch (Throwable $e) {
+                error_log("Testimonials stats error: " . $e->getMessage());
+            }
         }
         ?>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
@@ -82,9 +84,20 @@ if (empty($testimonials)) {
             </div>
         </div>
         
+        <!-- Pre-build photo lookup to avoid file_exists in loop -->
+        <?php
+        $testimonialPhotos = [];
+        $photoDir = __DIR__ . '/../../public/uploads/testimonials/';
+        if (is_dir($photoDir)) {
+            foreach (glob($photoDir . '*') as $photoFile) {
+                $testimonialPhotos[basename($photoFile)] = true;
+            }
+        }
+        ?>
+
         <!-- Testimonials Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="testimonials-grid">
-            <?php foreach ($testimonials as $index => $testimonial): 
+            <?php foreach ($testimonials as $index => $testimonial):
                 $delay = ($index % 3) * 100;
             ?>
             <div class="testimonial-card group bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 hover:bg-opacity-20 transition-all duration-300 transform hover:-translate-y-2"
@@ -93,24 +106,24 @@ if (empty($testimonials)) {
                 <div class="mb-4">
                     <i class="fas fa-quote-left text-4xl text-yellow-400 opacity-50"></i>
                 </div>
-                
+
                 <!-- Rating -->
                 <div class="flex gap-1 mb-4">
                     <?php for ($i = 1; $i <= 5; $i++): ?>
                         <i class="fas fa-star text-sm <?= $i <= $testimonial['rating'] ? 'text-yellow-400' : 'text-gray-600' ?>"></i>
                     <?php endfor; ?>
                 </div>
-                
+
                 <!-- Testimonial Text -->
                 <p class="text-gray-200 mb-6 line-clamp-4 leading-relaxed">
                     "<?= htmlspecialchars($testimonial['testimonial_text']) ?>"
                 </p>
-                
+
                 <!-- Author Info -->
                 <div class="flex items-center gap-4 pt-4 border-t border-white border-opacity-20">
                     <div class="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-gray-900 font-bold text-xl">
-                        <?php if ($testimonial['student_photo'] && file_exists(__DIR__ . '/../../public/uploads/testimonials/' . $testimonial['student_photo'])): ?>
-                        <img src="/uploads/testimonials/<?= htmlspecialchars($testimonial['student_photo']) ?>" 
+                        <?php if ($testimonial['student_photo'] && isset($testimonialPhotos[$testimonial['student_photo']])): ?>
+                        <img src="/uploads/testimonials/<?= htmlspecialchars($testimonial['student_photo']) ?>"
                              alt="<?= htmlspecialchars($testimonial['student_name']) ?>"
                              class="w-full h-full object-cover rounded-full">
                         <?php else: ?>

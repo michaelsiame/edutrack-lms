@@ -111,19 +111,6 @@ try {
     }
     trace("[TRACE] Ownership check passed");
 
-    // Check if fees are fully paid
-    $courseId = $certificate->getCourseId();
-    trace("[TRACE] Checking payment plan for course_id=" . ($courseId ?? 'NULL') . ", user_id={$userId}");
-    $paymentPlan = PaymentPlan::getByCourseAndUser($courseId, $userId);
-
-    if ($paymentPlan && $paymentPlan['balance'] > 0) {
-        trace("[TRACE] FAIL: Outstanding balance K" . number_format($paymentPlan['balance'], 2) . ".");
-        if ($traceMode) outputTrace();
-        flash('error', 'Please clear your outstanding balance of K' . number_format($paymentPlan['balance'], 2) . ' to download your certificate.', 'error');
-        redirect('my-payments.php');
-    }
-    trace("[TRACE] Payment plan check passed (balance=0 or no plan)");
-
     // Check if download is requested
     $action = $_GET['action'] ?? 'view';
     $debugMode = isset($_GET['debug']) && $_GET['debug'] == '1';
@@ -156,6 +143,19 @@ try {
     }
 
     if ($action === 'download' || $action === 'pdf') {
+        // Only check payment for actual PDF downloads, not for viewing the page
+        $courseId = $certificate->getCourseId();
+        trace("[TRACE] Checking payment plan for course_id=" . ($courseId ?? 'NULL') . ", user_id={$userId}");
+        $paymentPlan = PaymentPlan::getByCourseAndUser($courseId, $userId);
+
+        if ($paymentPlan && $paymentPlan['balance'] > 0) {
+            trace("[TRACE] FAIL: Outstanding balance K" . number_format($paymentPlan['balance'], 2) . ".");
+            if ($traceMode) outputTrace();
+            flash('error', 'Please clear your outstanding balance of K' . number_format($paymentPlan['balance'], 2) . ' to download your certificate.', 'error');
+            redirect('my-payments.php');
+        }
+        trace("[TRACE] Payment plan check passed (balance=0 or no plan)");
+
         trace("[TRACE] Generating PDF on-demand...");
         $pdfContent = $certificate->generatePDF();
 

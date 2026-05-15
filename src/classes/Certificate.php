@@ -14,10 +14,16 @@ class Certificate {
     private $db;
     private $id;
     private $data = [];
-    
-    public function __construct($id = null) {
+
+    /** @var array Static cache for file existence checks (avoids repeated disk I/O) */
+    private static $fileCache = [];
+
+    public function __construct($id = null, array $preloadedData = []) {
         $this->db = Database::getInstance();
-        if ($id) {
+        if (!empty($preloadedData)) {
+            $this->id = $preloadedData['certificate_id'] ?? $id;
+            $this->data = $preloadedData;
+        } elseif ($id) {
             $this->id = $id;
             $this->load();
         }
@@ -69,16 +75,28 @@ class Certificate {
     public static function findByVerificationCode($code) {
         error_log("[CERT-DEBUG] Certificate::findByVerificationCode() — code='" . substr($code, 0, 50) . "'");
         $db = Database::getInstance();
-        $sql = "SELECT certificate_id FROM certificates WHERE verification_code = ?";
-        $id = $db->fetchColumn($sql, [$code]);
-        
-        if ($id) {
-            error_log("[CERT-DEBUG] Certificate::findByVerificationCode() — found cert_id={$id}");
-        } else {
-            error_log("[CERT-DEBUG] Certificate::findByVerificationCode() — no match found");
+        $sql = "SELECT c.*,
+                       e.user_id, e.course_id,
+                       u.first_name, u.last_name, u.email,
+                       co.title as course_title,
+                       i.first_name as instructor_fname, i.last_name as instructor_lname
+                FROM certificates c
+                JOIN enrollments e ON c.enrollment_id = e.id
+                JOIN users u ON e.user_id = u.id
+                JOIN courses co ON e.course_id = co.id
+                LEFT JOIN instructors inst ON co.instructor_id = inst.id
+                LEFT JOIN users i ON inst.user_id = i.id
+                WHERE c.verification_code = ?";
+        $row = $db->fetchOne($sql, [$code]);
+
+        if ($row) {
+            error_log("[CERT-DEBUG] Certificate::findByVerificationCode() — found cert_id={$row['certificate_id']}");
+            $cert = new self(null, $row);
+            return $cert;
         }
-        
-        return $id ? new self($id) : null;
+
+        error_log("[CERT-DEBUG] Certificate::findByVerificationCode() — no match found");
+        return null;
     }
     
     /**
@@ -101,15 +119,72 @@ class Certificate {
      */
     public static function getByUserAndCourse($userId, $courseId) {
         $db = Database::getInstance();
-        $sql = "SELECT c.certificate_id 
+        $sql = "SELECT c.*,
+                       e.user_id, e.course_id,
+                       u.first_name, u.last_name, u.email,
+                       co.title as course_title,
+                       i.first_name as instructor_fname, i.last_name as instructor_lname
                 FROM certificates c
                 JOIN enrollments e ON c.enrollment_id = e.id
+                JOIN users u ON e.user_id = u.id
+                JOIN courses co ON e.course_id = co.id
+                LEFT JOIN instructors inst ON co.instructor_id = inst.id
+                LEFT JOIN users i ON inst.user_id = i.id
                 WHERE e.user_id = ? AND e.course_id = ?";
-        $id = $db->fetchColumn($sql, [$userId, $courseId]);
-        
-        return $id ? new self($id) : null;
+        $row = $db->fetchOne($sql, [$userId, $courseId]);
+
+        return $row ? new self(null, $row) : null;
     }
     
+    /**
+     * Get all certificates (for admin API)
+     */
+    public static function all() {
+        $db = Database::getInstance();
+        $sql = "SELECT c.*, co.title as course_title,
+                       u.first_name, u.last_name
+                FROM certificates c
+                JOIN enrollments e ON c.enrollment_id = e.id
+                JOIN courses co ON e.course_id = co.id
+                JOIN users u ON e.user_id = u.id
+                ORDER BY c.issued_date DESC";
+        return $db->query($sql)->fetchAll();
+    }
+
+    /**
+     * Find certificate by enrollment ID
+     */
+    public static function findByEnrollment($enrollmentId) {
+        $db = Database::getInstance();
+        $sql = "SELECT c.*,
+                       e.user_id, e.course_id,
+                       u.first_name, u.last_name, u.email,
+                       co.title as course_title,
+                       i.first_name as instructor_fname, i.last_name as instructor_lname
+                FROM certificates c
+                JOIN enrollments e ON c.enrollment_id = e.id
+                JOIN users u ON e.user_id = u.id
+                JOIN courses co ON e.course_id = co.id
+                LEFT JOIN instructors inst ON co.instructor_id = inst.id
+                LEFT JOIN users i ON inst.user_id = i.id
+                WHERE c.enrollment_id = ?";
+        $row = $db->fetchOne($sql, [$enrollmentId]);
+        return $row ? new self(null, $row) : null;
+    }
+
+    /**
+     * Issue a certificate for an enrollment (admin API)
+     */
+    public static function issue($enrollmentId) {
+        $db = Database::getInstance();
+        $enrollment = $db->fetchOne("SELECT user_id, course_id FROM enrollments WHERE id = ?", [$enrollmentId]);
+        if (!$enrollment) {
+            return false;
+        }
+        $cert = self::generate($enrollment['user_id'], $enrollment['course_id']);
+        return $cert ? $cert->getId() : false;
+    }
+
     /**
      * Generate certificate for a student
      * Uses transaction to prevent race conditions on duplicate certificates
@@ -299,6 +374,16 @@ class Certificate {
     }
 
     /**
+     * Cached file_exists() to avoid repeated disk I/O during PDF generation.
+     */
+    private static function fileExistsCached(string $path): bool {
+        if (!array_key_exists($path, self::$fileCache)) {
+            self::$fileCache[$path] = file_exists($path);
+        }
+        return self::$fileCache[$path];
+    }
+
+    /**
      * Build the certificate HTML with all placeholders replaced.
      */
     private function buildCertificateHtml() {
@@ -316,20 +401,20 @@ class Certificate {
 
         $logoPath = PUBLIC_PATH . '/assets/images/logo-sm.png';
         $tevetaLogoPath = PUBLIC_PATH . '/assets/images/teveta-logo-sm.png';
-        $logoExists = file_exists($logoPath);
-        $tevetaExists = file_exists($tevetaLogoPath);
+        $logoExists = self::fileExistsCached($logoPath);
+        $tevetaExists = self::fileExistsCached($tevetaLogoPath);
 
         $directorSigPath = PUBLIC_PATH . '/assets/images/signatures/director.png';
         $instructorSigPath = PUBLIC_PATH . '/assets/images/signatures/instructor.png';
         $qrPath = PUBLIC_PATH . '/assets/images/qr-codes/cert-' . $this->getCertificateNumber() . '.png';
 
-        $directorSig = file_exists($directorSigPath)
+        $directorSig = self::fileExistsCached($directorSigPath)
             ? '<img src="' . $directorSigPath . '" style="max-height:36px; display:block; margin:0 auto 2px;">'
             : '';
-        $instructorSig = file_exists($instructorSigPath)
+        $instructorSig = self::fileExistsCached($instructorSigPath)
             ? '<img src="' . $instructorSigPath . '" style="max-height:36px; display:block; margin:0 auto 2px;">'
             : '';
-        $qrImg = file_exists($qrPath)
+        $qrImg = self::fileExistsCached($qrPath)
             ? '<img src="' . $qrPath . '" style="width:40px; height:40px; vertical-align:middle; margin-right:4px;">'
             : '';
 
@@ -365,11 +450,11 @@ class Certificate {
             '{{student_number}}'       => $this->getStudentNumber(),
             '{{merit_text}}'           => $meritText,
             '{{graduate_id}}'          => '',
-            '{{seal_path}}'            => file_exists($sealPath) ? $sealPath : '',
-            '{{corner_tl}}'            => file_exists($cornerTl) ? $cornerTl : '',
-            '{{corner_tr}}'            => file_exists($cornerTr) ? $cornerTr : '',
-            '{{corner_bl}}'            => file_exists($cornerBl) ? $cornerBl : '',
-            '{{corner_br}}'            => file_exists($cornerBr) ? $cornerBr : '',
+            '{{seal_path}}'            => self::fileExistsCached($sealPath) ? $sealPath : '',
+            '{{corner_tl}}'            => self::fileExistsCached($cornerTl) ? $cornerTl : '',
+            '{{corner_tr}}'            => self::fileExistsCached($cornerTr) ? $cornerTr : '',
+            '{{corner_bl}}'            => self::fileExistsCached($cornerBl) ? $cornerBl : '',
+            '{{corner_br}}'            => self::fileExistsCached($cornerBr) ? $cornerBr : '',
         ];
 
         $html = str_replace(array_keys($replacements), array_values($replacements), $html);

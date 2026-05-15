@@ -5,12 +5,13 @@
  */
 
 class GoogleDriveService {
-    private $client;
-    private $service;
+    private $client = null;
+    private $service = null;
     private $folderId;
+    private $initialized = false;
 
     /**
-     * Initialize Google Drive service
+     * Initialize Google Drive service config only (lazy-loads client on first upload)
      *
      * @throws Exception if credentials file not found or invalid
      */
@@ -22,7 +23,6 @@ class GoogleDriveService {
 
         // Path to service account credentials JSON file
         $credentialsPath = BASE_PATH . '/config/google-credentials.json';
-
         if (!file_exists($credentialsPath)) {
             throw new Exception('Google Drive credentials file not found. Please add google-credentials.json to /config/');
         }
@@ -31,17 +31,25 @@ class GoogleDriveService {
             throw new Exception('Google API client library not installed. Run composer install.');
         }
 
-        // Initialize Google Client
+        // Get folder ID from config (or use root)
+        $this->folderId = defined('GOOGLE_DRIVE_FOLDER_ID') ? GOOGLE_DRIVE_FOLDER_ID : null;
+    }
+
+    /**
+     * Lazy-initialize the Google Client and Drive service on first use
+     */
+    private function ensureInitialized() {
+        if ($this->initialized) {
+            return;
+        }
+        $this->initialized = true;
+
+        $credentialsPath = BASE_PATH . '/config/google-credentials.json';
         $this->client = new Google_Client();
         $this->client->setAuthConfig($credentialsPath);
         $this->client->addScope(Google_Service_Drive::DRIVE_FILE);
         $this->client->setApplicationName('EduTrack LMS');
-
-        // Initialize Drive service
         $this->service = new Google_Service_Drive($this->client);
-
-        // Get folder ID from config (or use root)
-        $this->folderId = defined('GOOGLE_DRIVE_FOLDER_ID') ? GOOGLE_DRIVE_FOLDER_ID : null;
     }
 
     /**
@@ -53,6 +61,8 @@ class GoogleDriveService {
      * @return array ['success' => bool, 'file_id' => string, 'web_view_link' => string, 'error' => string]
      */
     public function uploadFile($filePath, $fileName, $mimeType) {
+        $this->ensureInitialized();
+
         try {
             // Check if file exists
             if (!file_exists($filePath)) {

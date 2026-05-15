@@ -11,26 +11,36 @@ class Email {
     private $from;
     private $fromName;
     private $usePHPMailer = false;
+    private $initialized = false;
 
     public function __construct() {
+        // Lazy initialization: don't build PHPMailer until we actually send
+        $this->from = getenv('MAIL_FROM_ADDRESS') ?: getenv('MAIL_USERNAME') ?: 'noreply@edutrack.com';
+        $this->fromName = getenv('MAIL_FROM_NAME') ?: (defined('APP_NAME') ? APP_NAME : 'Edutrack LMS');
+    }
+
+    /**
+     * Lazy-initialize the mailer backend when first needed
+     */
+    private function ensureInitialized() {
+        if ($this->initialized) {
+            return;
+        }
+        $this->initialized = true;
+
         // Try to load PHPMailer if available
-        // Check root vendor directory first, then src/vendor as fallback
         $rootVendor = dirname(__DIR__, 2) . '/vendor/autoload.php';
         $srcVendor = dirname(__DIR__) . '/vendor/autoload.php';
-
         $vendorAutoload = file_exists($rootVendor) ? $rootVendor : $srcVendor;
 
         if (file_exists($vendorAutoload)) {
             require_once $vendorAutoload;
-
             if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
                 $this->initializePHPMailer();
-            } else {
-                $this->initializeFallback();
+                return;
             }
-        } else {
-            $this->initializeFallback();
         }
+        $this->initializeFallback();
     }
 
     /**
@@ -101,6 +111,7 @@ class Email {
      * Send email
      */
     public function send($to, $subject, $body, $attachments = []) {
+        $this->ensureInitialized();
         if (!$this->isValidEmail($to)) {
             error_log("Email Error: Invalid recipient email: " . $to);
             return false;
