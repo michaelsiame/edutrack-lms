@@ -3,9 +3,10 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: May 08, 2026 at 01:52 PM
+-- Generation Time: May 20, 2026 at 05:52 PM
 -- Server version: 11.8.6-MariaDB-log
 -- PHP Version: 7.2.34
+SET FOREIGN_KEY_CHECKS=0;
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -55,7 +56,8 @@ INSERT INTO `activity_logs` (`log_id`, `user_id`, `activity_type`, `entity_type`
 (9, 11, 'discussion_post', 'discussion', 2, 'Posted new discussion topic', '192.168.1.120', NULL, '2025-11-18 22:21:01'),
 (10, 1, 'login', NULL, NULL, 'Admin logged in', '10.0.0.10', NULL, '2025-11-18 22:21:01'),
 (11, 68, 'enrollment', 'course', 11, 'Enrolled in course (Pending Deposit)', '45.214.180.198', NULL, '2026-03-16 23:36:01'),
-(12, 56, 'enrollment', 'course', 7, 'Enrolled in course (Pending Deposit)', '165.58.129.54', NULL, '2026-03-17 16:57:36');
+(12, 56, 'enrollment', 'course', 7, 'Enrolled in course (Pending Deposit)', '165.58.129.54', NULL, '2026-03-17 16:57:36'),
+(13, 90, 'enrollment', 'course', 27, 'Enrolled in course (Pending Deposit)', '41.223.116.241', NULL, '2026-05-13 15:55:59');
 
 -- --------------------------------------------------------
 
@@ -120,7 +122,12 @@ INSERT INTO `assignments` (`id`, `course_id`, `lesson_id`, `title`, `description
 (1, 5, NULL, 'Python Basics Project', 'Create a simple calculator application', 'Build a command-line calculator that can perform basic arithmetic operations (addition, subtraction, multiplication, division). Include error handling for division by zero.', 100, 70, '2025-02-15 23:59:59', 1, 0.00, 10, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (2, 5, NULL, 'Data Structures Assignment', 'Work with lists, dictionaries, and sets', 'Create a student management system using Python dictionaries to store student information. Implement functions to add, remove, and search students.', 100, 70, '2025-03-10 23:59:59', 1, 0.00, 10, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
 (3, 7, NULL, 'Personal Portfolio Website', 'Build a responsive portfolio website', 'Create a multi-page portfolio website using HTML5, CSS3, and JavaScript. Must include: home page, about page, portfolio gallery, and contact form. Site must be fully responsive.', 150, 105, '2025-03-20 23:59:59', 0, 0.00, 10, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(4, 11, NULL, 'Network Security Analysis', 'Perform security audit of a test network', 'Document security vulnerabilities in the provided test network environment. Submit a detailed report with findings and recommendations.', 100, 70, '2025-04-30 23:59:59', 0, 0.00, 10, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01');
+(4, 11, NULL, 'Network Security Analysis', 'Perform security audit of a test network', 'Document security vulnerabilities in the provided test network environment. Submit a detailed report with findings and recommendations.', 100, 70, '2025-04-30 23:59:59', 0, 0.00, 10, NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(5, 1, NULL, 'Test 1', 'Test 1 assessment for Microsoft Office Suite', NULL, 100, 60, '2026-05-08 14:47:43', 0, 0.00, 10, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(6, 1, NULL, 'Microsoft Word', 'Microsoft Word assessment for Microsoft Office Suite', NULL, 100, 60, '2026-05-08 14:47:43', 0, 0.00, 10, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(7, 1, NULL, 'Microsoft Excel', 'Microsoft Excel assessment for Microsoft Office Suite', NULL, 100, 60, '2026-05-08 14:47:43', 0, 0.00, 10, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(8, 1, NULL, 'Microsoft Publisher & PowerPoint', 'Microsoft Publisher & PowerPoint assessment for Microsoft Office Suite', NULL, 100, 60, '2026-05-08 14:47:43', 0, 0.00, 10, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(9, 1, NULL, 'IT & Networks', 'IT & Networks assessment for Microsoft Office Suite', NULL, 100, 60, '2026-05-08 14:47:43', 0, 0.00, 10, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43');
 
 -- --------------------------------------------------------
 
@@ -151,7 +158,67 @@ CREATE TABLE `assignment_submissions` (
 INSERT INTO `assignment_submissions` (`id`, `assignment_id`, `student_id`, `submission_text`, `file_url`, `submitted_at`, `status`, `points_earned`, `feedback`, `graded_by`, `graded_at`, `attempt_number`, `is_late`) VALUES
 (1, 1, 1, 'Calculator project completed. File uploaded to repository.', NULL, '2025-02-14 16:30:00', 'Graded', 95.00, 'Excellent work! Clean code and proper error handling. Well done.', 2, '2025-02-16 08:00:00', 1, 0),
 (2, 1, 4, 'My calculator implementation with extended features.', NULL, '2025-02-15 18:00:00', 'Graded', 88.00, 'Good implementation. Consider adding more comments for clarity.', 2, '2025-02-17 12:30:00', 1, 0),
-(3, 3, 2, 'Portfolio website completed with all requirements.', NULL, '2025-03-19 14:45:00', 'Graded', 142.00, 'Beautiful design and excellent responsive implementation!', 2, '2025-03-21 09:00:00', 1, 0);
+(3, 3, 2, 'Portfolio website completed with all requirements.', NULL, '2025-03-19 14:45:00', 'Graded', 142.00, 'Beautiful design and excellent responsive implementation!', 2, '2025-03-21 09:00:00', 1, 0),
+(4, 5, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(5, 6, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(6, 7, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(7, 8, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(8, 9, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 89.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(9, 5, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(10, 6, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(11, 7, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(12, 8, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 84.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(13, 9, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 88.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(14, 5, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 93.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(15, 6, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(16, 7, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(17, 8, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 74.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(18, 9, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 83.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(19, 5, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 83.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(20, 6, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(21, 7, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(22, 8, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 72.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(23, 9, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 77.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
+(24, 5, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 82.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(25, 6, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(26, 7, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(27, 8, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 74.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(28, 9, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 72.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(29, 5, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 87.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(30, 6, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(31, 7, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 86.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(32, 8, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 70.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(33, 9, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 80.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(34, 5, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(35, 6, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(36, 7, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(37, 8, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(38, 9, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 71.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(39, 5, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 69.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(40, 6, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(41, 7, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(42, 8, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 80.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(43, 9, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(44, 5, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 89.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(45, 6, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(46, 7, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 88.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(47, 8, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 58.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(48, 9, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(49, 5, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 73.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(50, 6, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(51, 7, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(52, 8, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(53, 9, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 57.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
+(54, 5, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 50.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
+(55, 6, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 62.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
+(56, 7, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
+(57, 8, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
+(58, 9, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 73.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
+(59, 5, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 80.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
+(60, 6, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 85.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
+(61, 7, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 90.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
+(62, 8, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 75.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
+(63, 9, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 88.00, NULL, 1, '2026-05-08 15:20:22', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -214,7 +281,19 @@ INSERT INTO `certificates` (`certificate_id`, `user_id`, `course_id`, `enrollmen
 (3, 10, 18, 7, 'EDTRK-2025-000003', '2025-04-08', 'VRF-003-IJKL9012', 0.00, '2025-04-08 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
 (4, 10, 1, 9, 'EDTRK-2025-000004', '2025-04-12', 'VRF-004-MNOP3456', 0.00, '2025-04-12 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
 (5, 11, 5, 10, 'EDTRK-2025-000005', '2025-04-05', 'VRF-005-QRST7890', 0.00, '2025-04-05 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(6, 15, 3, 21, 'EDTRK-2025-000006', '2025-03-15', 'VRF-006-UVWX1234', 0.00, '2025-03-15 00:00:00', 1, NULL, '2025-11-18 22:21:01');
+(6, 15, 3, 21, 'EDTRK-2025-000006', '2025-03-15', 'VRF-006-UVWX1234', 0.00, '2025-03-15 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(7, 78, 1, 39, 'EDTRK-2026-100039', '2026-05-08', 'VRF-139-9C509B3A', 97.40, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
+(8, 83, 1, 40, 'EDTRK-2026-100040', '2026-05-08', 'VRF-140-D4DE494F', 92.00, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
+(9, 77, 1, 41, 'EDTRK-2026-100041', '2026-05-08', 'VRF-141-E87AC841', 88.80, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
+(10, 79, 1, 42, 'EDTRK-2026-100042', '2026-05-08', 'VRF-142-4D668F4B', 84.00, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(11, 85, 1, 43, 'EDTRK-2026-100043', '2026-05-08', 'VRF-143-C87545D6', 83.60, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(12, 86, 1, 44, 'EDTRK-2026-100044', '2026-05-08', 'VRF-144-230A46A9', 83.40, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(13, 84, 1, 45, 'EDTRK-2026-100045', '2026-05-08', 'VRF-145-F8DE372C', 81.80, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(14, 87, 1, 46, 'EDTRK-2026-100046', '2026-05-08', 'VRF-146-6235A06E', 79.80, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(15, 80, 1, 47, 'EDTRK-2026-100047', '2026-05-08', 'VRF-147-CB541394', 79.40, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(16, 81, 1, 48, 'EDTRK-2026-100048', '2026-05-08', 'VRF-148-E8A683F9', 78.00, '2026-05-08 15:09:05', 1, NULL, '2026-05-08 15:09:05'),
+(17, 82, 1, 49, 'EDTRK-2026-100049', '2026-05-08', 'VRF-149-89859207', 64.20, '2026-05-08 15:09:05', 1, NULL, '2026-05-08 15:09:05'),
+(18, 88, 1, 50, 'EDTRK-2026-100050', '2026-05-08', 'VRF-150-5ECC1A26', 83.60, '2026-05-08 15:20:22', 1, NULL, '2026-05-08 15:20:22');
 
 -- --------------------------------------------------------
 
@@ -257,7 +336,10 @@ INSERT INTO `contacts` (`id`, `name`, `email`, `phone`, `subject`, `message`, `i
 (17, 'Jayrn Smith', 'charmain.stainforth@msn.com', '725807508', 'general', 'Hi, it’s Jayrn.\r\n\r\nEvery market has one rule: He who can spend the most to acquire a customer, wins. But here’s the question nobody answers: How do you actually do it?\r\n\r\nIn this video, Darcy Juarez walk through the single number that separates the amateurs from the market dominators—Maximum Allowable Cost Per Acquisition. \r\n\r\nGet this wrong, and you’ll bleed cash. Get it right, and you’ll buy customers at scale while your competitors are stuck Googling cheaper ad hacks.\r\n\r\nWatch it here: https://marketersmentor.com/crush-your-competition.php?refer=edutrackzambia.com\r\n\r\n\r\nTo multiplying your leverage,\r\nJayrn\r\n\r\nP.S.: I’m Jayrn, a digital marketer and e-commerce seller with a passion for sharing knowledge. I share proven strategies, tips, and resources to help you grow your online business.\r\n\r\n\r\n\r\nMy Blog:\r\nhttps://www.jayrn.com\r\nUnsubscribe: \r\nhttps://marketersmentor.com/unsubscribe.php?d=edutrackzambia.com', 0, '2026-04-18 11:08:24'),
 (18, 'Jayrn Smith', 'scotty.briseno@outlook.com', '9249488814', 'general', 'Hey, it’s Jayrn.\r\n\r\nThere’s a pattern I keep seeing…\r\n\r\nPeople who *work hard*, try different strategies, even invest in tools…\r\n\r\n…but still don’t see consistent results.\r\n\r\nIt’s not because they’re lazy.\r\nIt’s not because they’re unlucky.\r\n\r\nIt’s because they’re following **disconnected advice**.\r\n\r\nOne strategy here.\r\nAnother tactic there.\r\n\r\nNo real understanding of what actually drives revenue.\r\n\r\nAnd when you don’t understand the “why”…\r\n\r\nYou’re stuck guessing.\r\n\r\n---\r\n\r\nThat’s exactly where I was.\r\n\r\nUntil I started studying something different:\r\n\r\nNot surface-level tactics…\r\n\r\n…but the **actual thinking behind successful marketing campaigns**.\r\n\r\nThat’s when things finally started to click.\r\n\r\n---\r\n\r\nIf you want to see what I mean, take a look at this:\r\n\r\n������ https://marketersmentor.com/NO-BS-Letter.php?refer=edutrackzambia.com\r\n\r\nEven just reading the page will shift how you think about marketing.\r\n\r\nMore tomorrow.\r\n\r\n—\r\nJayrn\r\n\r\nP.S.: I’m Jayrn, a digital marketer and e-commerce seller with a passion for sharing knowledge. I share proven strategies, tips, and resources to help you grow your online business.\r\n\r\n\r\n\r\nMy Blog:\r\nhttps://www.jayrn.com\r\nUnsubscribe: \r\nhttps://marketersmentor.com/unsubscribe.php?d=edutrackzambia.com', 0, '2026-04-23 17:31:28'),
 (19, 'MUJAHID ALI', 'mjhdmnhs@gmail.com', '+33759415055', 'payment', 'Hi Sir I have been purchase a mobile in france bondy but i did\'nt recived my packege but whenever i track my packege they said packege already deliverd but i don\'t get any call any sms any package please clear my parsal...', 0, '2026-04-24 07:08:43'),
-(20, 'MichaelPek', 'jacksrenome@gmx.com', '87499932667', 'general', 'YyErjcwdkdjwjjwjjdwjddjwsjf ndsaKAqwdweihduncbbwebidaa iudwnishqwuvdwqihbfvweuiojsqjqioqdefiw dwqsqwijbfiewdncbhvdifqhioqsjnqw edutrackzambia.com', 0, '2026-05-06 04:34:02');
+(20, 'MichaelPek', 'jacksrenome@gmx.com', '87499932667', 'general', 'YyErjcwdkdjwjjwjjdwjddjwsjf ndsaKAqwdweihduncbbwebidaa iudwnishqwuvdwqihbfvweuiojsqjqioqdefiw dwqsqwijbfiewdncbhvdifqhioqsjnqw edutrackzambia.com', 0, '2026-05-06 04:34:02'),
+(21, 'SamuelRer', 'yourmail@gmail.com', '88897564112', 'general', 'This professional campaign titled \'The Path You Make\' was published in United States in February, 2018. It was created for the brand: Delta Airlines, by ad agency: Digitas. This Film medium campaign is related to the Transport industry and contains 1 media asset. It was submitted about 8 years ago. \r\nhttps://www.adsoftheworld.com/campaigns/the-path-you-make', 0, '2026-05-08 18:27:36'),
+(22, 'Donnellcique', 'dowell637@gmail.com', '84525656159', 'general', 'THE $27,000,000 JACKPOT IS A TROPHY FOR TENACITY https://hiurls.com/EWbLr \r\n \r\n \r\n \r\n \r\n \r\nBATCH ID: c0to6n2z4b1l7r7um6tf5e6m9h3s2m7iq3rm0h1n3a0e6f6zb1uj6d4q2n7w0j3bl7om2j6w1q3i7w8fd1aw5u2i9x6n3g3jn8fn5x0m3p4k7j0q', 0, '2026-05-18 12:27:58'),
+(23, 'Donnellcique', 'ramy.t.trade@gmail.com', '82778214969', 'general', 'IMPORTANT! Your 1.3426 BTC is Confirmed Withdraw https://orb.tl/ytUGB \r\n \r\n \r\n \r\n \r\n \r\nVALUE: j7px9g9h3i3q9e0lq6tn2c0k7p4b7e0mt6xf0g3a2o5l5r7bm4pt2k7r8d7x3a1ke9af4r4m0x4e7s0mo5ds4p8c6w4a6p4oc7ci5j4f4w1k7l6n', 0, '2026-05-19 03:04:24');
 
 -- --------------------------------------------------------
 
@@ -301,7 +383,7 @@ CREATE TABLE `courses` (
 
 INSERT INTO `courses` (`id`, `title`, `slug`, `description`, `short_description`, `category_id`, `instructor_id`, `level`, `language`, `thumbnail_url`, `video_intro_url`, `start_date`, `end_date`, `price`, `discount_price`, `duration_weeks`, `total_hours`, `max_students`, `enrollment_count`, `status`, `is_featured`, `rating`, `total_reviews`, `prerequisites`, `learning_outcomes`, `created_at`, `updated_at`) VALUES
 (0, 'Cybersecurity Fundamentals', 'cybersecurity-fundamentals', '<p>This comprehensive cybersecurity course prepares you for entry-level roles in the rapidly growing field of cybersecurity. You will learn fundamental concepts, network security, threat detection, ethical hacking basics, and security operations.</p>\n    <p>By the end of this course, you will understand how to protect systems, detect threats, and respond to security incidents using industry-standard tools and frameworks.</p>', 'Master cybersecurity fundamentals and protect digital assets from cyber threats', 7, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800', NULL, NULL, NULL, 4500.00, NULL, 12, 96.00, 30, 0, 'published', 1, 0.00, 0, 'Basic computer literacy, Understanding of operating systems (Windows/Linux)', 'Understand cybersecurity principles and the threat landscape|Identify and mitigate common network vulnerabilities|Implement security controls and defense strategies|Detect and respond to security incidents|Understand ethical hacking basics|Apply security frameworks like NIST', '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(1, 'Certificate in Microsoft Office Suite', 'microsoft-office-suite', 'Transform your productivity with comprehensive Microsoft Office training. This industry-leading program covers the complete Office Suite including Word, Excel, PowerPoint, Publisher, and essential internet skills. Learn to create professional documents, analyze data with powerful spreadsheets, design compelling presentations, and master desktop publishing. Perfect for professionals seeking to enhance workplace efficiency, students preparing for academic success, or career changers entering the digital workplace. Our hands-on approach ensures you gain practical, job-ready skills that employers value. By course end, you\'ll confidently handle complex office tasks, automate workflows, and present information professionally.', 'Master Word, Excel, PowerPoint, Publisher & Internet skills for professional success', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=800', NULL, '2025-01-15', '2025-04-15', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2026-05-08 15:47:21'),
+(1, 'Certificate in Microsoft Office Suite', 'microsoft-office-suite', 'Transform your productivity with comprehensive Microsoft Office training. This industry-leading program covers the complete Office Suite including Word, Excel, PowerPoint, Publisher, and essential internet skills. Learn to create professional documents, analyze data with powerful spreadsheets, design compelling presentations, and master desktop publishing. Perfect for professionals seeking to enhance workplace efficiency, students preparing for academic success, or career changers entering the digital workplace. Our hands-on approach ensures you gain practical, job-ready skills that employers value. By course end, you\'ll confidently handle complex office tasks, automate workflows, and present information professionally.', 'Master Word, Excel, PowerPoint, Publisher & Internet skills for professional success', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=800', NULL, '2025-01-15', '2025-04-15', 2500.00, NULL, 8, 64.00, 30, 18, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2026-05-08 14:56:55'),
 (3, 'Certificate in Digital Literacy', 'digital-literacy', 'Bridge the digital divide with essential 21st-century skills. This foundational course equips you with critical digital competencies for modern life and work. Learn professional email communication, effective internet research techniques, cloud storage management, online collaboration tools, and digital safety practices. Understand social media etiquette, basic troubleshooting, file management, and online privacy protection. Ideal for beginners, seniors transitioning to digital workplaces, or anyone looking to build confidence with technology. Our patient, step-by-step instruction ensures no one gets left behind in the digital age. Gain the digital fluency needed to thrive in today\'s connected world.', 'Essential digital skills for navigating modern technology confidently', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800', NULL, '2025-01-20', '2025-03-20', 850.00, NULL, 2, 16.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
 (4, 'Certificate in Record Management', 'record-management', 'Master professional records and information management systems that keep organizations running smoothly. Learn comprehensive filing systems, document control procedures, archiving best practices, and compliance with data protection regulations including GDPR. Understand records lifecycle management, retention schedules, digitization processes, and efficient retrieval systems. This course covers both physical and electronic records management, preparing you for roles in government, healthcare, legal, and corporate environments. Gain expertise in maintaining confidentiality, ensuring audit trails, and implementing secure disposal methods. Essential for administrative professionals, office managers, and those pursuing careers in information governance.', 'Professional records and information management for compliance and efficiency', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800', NULL, '2025-02-15', '2025-05-15', 1500.00, NULL, 6, 48.00, 30, 0, 'published', 0, 4.50, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
 (5, 'Certificate in Python Programming', 'python-programming', 'Launch your programming career with Python, the world\'s most popular and versatile programming language. This comprehensive course takes you from absolute beginner to confident developer. Master Python fundamentals including variables, data types, control structures, and functions. Progress to advanced topics like object-oriented programming, file handling, error management, and popular libraries including NumPy, Pandas, and Matplotlib. Build real-world projects including data analysis tools, automation scripts, and web applications. Python\'s readability and extensive community support make it perfect for beginners, while its power suits professional developers. Ideal for aspiring programmers, data scientists, automation engineers, or anyone entering tech careers.', 'Learn Python from basics to advanced - the most in-demand programming language', 2, 2, 'Beginner', 'English', 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800', NULL, '2025-01-10', '2025-04-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42'),
@@ -560,6 +642,12 @@ INSERT INTO `email_queue` (`id`, `recipient`, `subject`, `body`, `attachments`, 
 (68, 'edwardmusole76@gmail.com', 'New User Registration - Fragester Mudenda', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New User Registration</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A new user has just registered on the platform:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #2E70DA; margin: 20px 0;\">\n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Name:</strong></td>\n                <td>Fragester Mudenda</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:fragestermudenda46@gmail.com\" style=\"color: #2E70DA;\">fragestermudenda46@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>+260773137696</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Role:</strong></td>\n                <td>Student</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Registered:</strong></td>\n                <td>May 8, 2026 12:38 PM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/users.php?action=view&amp;id=85\" \n           style=\"background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View User Profile\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'sent', 0, 10, NULL, '2026-05-08 14:39:06', '2026-05-08 14:39:05', '2026-05-08 14:38:39'),
 (69, 'inutu.simasiku@edutrack.edu', 'New User Registration - Fragester Mudenda', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New User Registration</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A new user has just registered on the platform:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #2E70DA; margin: 20px 0;\">\n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Name:</strong></td>\n                <td>Fragester Mudenda</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:fragestermudenda46@gmail.com\" style=\"color: #2E70DA;\">fragestermudenda46@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>+260773137696</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Role:</strong></td>\n                <td>Student</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Registered:</strong></td>\n                <td>May 8, 2026 12:38 PM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/users.php?action=view&amp;id=85\" \n           style=\"background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View User Profile\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'sent', 0, 10, NULL, '2026-05-08 14:39:06', '2026-05-08 14:39:06', '2026-05-08 14:38:39'),
 (70, 'nita.sichimwa@edutrack.edu', 'New User Registration - Fragester Mudenda', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New User Registration</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A new user has just registered on the platform:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #2E70DA; margin: 20px 0;\">\n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Name:</strong></td>\n                <td>Fragester Mudenda</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:fragestermudenda46@gmail.com\" style=\"color: #2E70DA;\">fragestermudenda46@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>+260773137696</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Role:</strong></td>\n                <td>Student</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Registered:</strong></td>\n                <td>May 8, 2026 12:38 PM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/users.php?action=view&amp;id=85\" \n           style=\"background: #2E70DA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View User Profile\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'sent', 0, 10, NULL, '2026-05-08 14:39:07', '2026-05-08 14:39:06', '2026-05-08 14:38:39');
+INSERT INTO `email_queue` (`id`, `recipient`, `subject`, `body`, `attachments`, `status`, `attempts`, `priority`, `scheduled_at`, `sent_at`, `last_attempt`, `created_at`) VALUES
+(71, 'michael.siame@edutrack.edu', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
+(72, 'marvinmoonga69@gmail.com', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
+(73, 'edwardmusole76@gmail.com', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
+(74, 'inutu.simasiku@edutrack.edu', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
+(75, 'nita.sichimwa@edutrack.edu', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59');
 
 -- --------------------------------------------------------
 
@@ -654,7 +742,20 @@ INSERT INTO `enrollments` (`id`, `user_id`, `student_id`, `course_id`, `enrolled
 (34, 43, 37, 1, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 0.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (35, 40, 34, 1, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 0.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (37, 68, 62, 11, '2026-03-16', '2026-03-16', 0.00, NULL, 'Enrolled', 'completed', 100.00, NULL, 0, 1, NULL, 0, '2026-03-16 21:36:01', '2026-03-16 21:37:27'),
-(38, 56, 50, 7, '2026-03-17', '2026-03-17', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-03-17 14:57:36', '2026-03-17 14:57:36');
+(38, 56, 50, 7, '2026-03-17', '2026-03-17', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-03-17 14:57:36', '2026-03-17 14:57:36'),
+(39, 78, 72, 1, '2026-05-08', '2026-05-08', 100.00, 97.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:47:43', '2026-05-08 15:12:52'),
+(40, 83, 77, 1, '2026-05-08', '2026-05-08', 100.00, 92.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:52'),
+(41, 77, 71, 1, '2026-05-08', '2026-05-08', 100.00, 88.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:52'),
+(42, 79, 73, 1, '2026-05-08', '2026-05-08', 100.00, 84.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:52'),
+(43, 85, 79, 1, '2026-05-08', '2026-05-08', 100.00, 83.60, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(44, 86, 80, 1, '2026-05-08', '2026-05-08', 100.00, 83.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(45, 84, 78, 1, '2026-05-08', '2026-05-08', 100.00, 81.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(46, 87, 81, 1, '2026-05-08', '2026-05-08', 100.00, 79.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(47, 80, 74, 1, '2026-05-08', '2026-05-08', 100.00, 79.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(48, 81, 75, 1, '2026-05-08', '2026-05-08', 100.00, 78.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(49, 82, 76, 1, '2026-05-08', '2026-05-08', 100.00, 64.20, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53'),
+(50, 88, 82, 1, '2026-05-08', '2026-05-08', 100.00, 83.60, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(51, 90, 84, 27, '2026-05-13', '2026-05-13', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-05-13 13:55:59', '2026-05-13 13:55:59');
 
 -- --------------------------------------------------------
 
@@ -717,7 +818,129 @@ INSERT INTO `enrollment_payment_plans` (`id`, `enrollment_id`, `user_id`, `cours
 (35, 34, 43, 1, 2500.00, 500.00, 'ZMW', 'partial', NULL, 'Betty - Tuition Plan', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (36, 35, 40, 1, 2500.00, 500.00, 'ZMW', 'partial', NULL, 'Sharon - Tuition Plan', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (37, 37, 68, 11, 2500.00, 0.00, 'ZMW', 'pending', NULL, NULL, '2026-03-16 21:36:01', '2026-03-16 21:36:01'),
-(38, 38, 56, 7, 3000.00, 0.00, 'ZMW', 'pending', NULL, NULL, '2026-03-17 14:57:36', '2026-03-17 14:57:36');
+(38, 38, 56, 7, 3000.00, 0.00, 'ZMW', 'pending', NULL, NULL, '2026-03-17 14:57:36', '2026-03-17 14:57:36'),
+(39, 39, 78, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(40, 40, 83, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(41, 41, 77, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(42, 42, 79, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(43, 43, 85, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(44, 44, 86, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(45, 45, 84, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(46, 46, 87, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(47, 47, 80, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(48, 48, 81, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(49, 49, 82, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 14:56:55', '2026-05-08 14:56:55'),
+(50, 50, 88, 1, 2500.00, 2500.00, 'ZMW', 'completed', NULL, NULL, '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(51, 51, 90, 27, 2500.00, 0.00, 'ZMW', 'pending', NULL, NULL, '2026-05-13 13:55:59', '2026-05-13 13:55:59');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `events`
+--
+
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `summary` text DEFAULT NULL,
+  `story` text DEFAULT NULL,
+  `event_date` date DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `cover_image` varchar(255) DEFAULT NULL,
+  `is_featured` tinyint(1) DEFAULT 0,
+  `status` enum('draft','published','archived') DEFAULT 'draft',
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `event_images`
+--
+
+CREATE TABLE `event_images` (
+  `id` int(11) NOT NULL,
+  `event_id` int(11) NOT NULL,
+  `image_path` varchar(255) NOT NULL,
+  `caption` varchar(255) DEFAULT NULL,
+  `display_order` int(11) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hero_slides`
+--
+
+CREATE TABLE `hero_slides` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `subtitle` varchar(500) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `image_path` varchar(255) NOT NULL,
+  `cta_text` varchar(100) DEFAULT 'Get Started',
+  `cta_link` varchar(255) DEFAULT 'courses.php',
+  `secondary_cta_text` varchar(100) DEFAULT NULL,
+  `secondary_cta_link` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `display_order` int(11) DEFAULT 0,
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `hero_slides`
+--
+
+INSERT INTO `hero_slides` (`id`, `title`, `subtitle`, `description`, `image_path`, `cta_text`, `cta_link`, `secondary_cta_text`, `secondary_cta_link`, `is_active`, `display_order`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'Launch Your Tech Career', 'With Industry-Recognized Skills', 'Join 5,000+ Zambians who transformed their lives through TEVETA-certified programs in Cybersecurity, Web Development, and Digital Marketing.', 'hero-slide-1.jpg', 'Explore Courses', 'courses.php', 'Visit Campus', 'campus.php', 1, 1, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(2, 'State-of-the-Art Computer Labs', 'Learn on Modern Equipment', 'Our facilities feature the latest hardware and software to ensure you gain practical experience with industry-standard tools.', 'hero-slide-2.jpg', 'Take a Tour', 'campus.php', 'View Programs', 'courses.php', 1, 2, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(3, 'Your Success is Our Mission', '85% Job Placement Rate', 'Our graduates work at top companies like MTN, Airtel, and Zambia National Commercial Bank. Start your journey to a rewarding tech career today.', 'hero-slide-3.jpg', 'Apply Now', 'register.php', 'Contact Us', 'contact.php', 1, 3, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(4, 'Launch Your Tech Career', 'With Industry-Recognized Skills', 'Join 5,000+ Zambians who transformed their lives through TEVETA-certified programs in Cybersecurity, Web Development, and Digital Marketing.', 'hero-slide-1.jpg', 'Explore Courses', 'courses.php', 'Visit Campus', 'campus.php', 1, 1, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(5, 'State-of-the-Art Computer Labs', 'Learn on Modern Equipment', 'Our facilities feature the latest hardware and software to ensure you gain practical experience with industry-standard tools.', 'hero-slide-2.jpg', 'Take a Tour', 'campus.php', 'View Programs', 'courses.php', 1, 2, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(6, 'Your Success is Our Mission', '85% Job Placement Rate', 'Our graduates work at top companies like MTN, Airtel, and Zambia National Commercial Bank. Start your journey to a rewarding tech career today.', 'hero-slide-3.jpg', 'Apply Now', 'register.php', 'Contact Us', 'contact.php', 1, 3, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `institution_photos`
+--
+
+CREATE TABLE `institution_photos` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `category` enum('campus','classroom','lab','event','faculty','student_life') DEFAULT 'campus',
+  `image_path` varchar(255) NOT NULL,
+  `is_featured` tinyint(1) DEFAULT 0,
+  `display_order` int(11) DEFAULT 0,
+  `uploaded_by` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `institution_photos`
+--
+
+INSERT INTO `institution_photos` (`id`, `title`, `description`, `category`, `image_path`, `is_featured`, `display_order`, `uploaded_by`, `created_at`, `updated_at`) VALUES
+(1, 'Main Campus Building', 'The welcoming entrance to Edutrack Computer Training College in Kalomo', 'campus', 'campus-main.jpg', 1, 1, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(2, 'Computer Lab 1', 'Our primary computer lab with 30 workstations for hands-on learning', 'lab', 'lab-1.jpg', 1, 2, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(3, 'Classroom Setting', 'Interactive learning environment with projector and modern teaching aids', 'classroom', 'classroom-1.jpg', 0, 3, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(4, 'Student Workshop', 'Students participating in a practical cybersecurity workshop', 'event', 'event-workshop.jpg', 1, 4, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(5, 'Graduation Ceremony', 'Celebrating our 2024 graduates and their achievements', 'event', 'graduation-2024.jpg', 1, 5, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(6, 'Library & Study Area', 'Quiet space for students to study and access digital resources', 'campus', 'library.jpg', 0, 6, 1, '2026-05-08 18:23:12', '2026-05-08 18:23:12'),
+(7, 'Main Campus Building', 'The welcoming entrance to Edutrack Computer Training College in Kalomo', 'campus', 'campus-main.jpg', 1, 1, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(8, 'Computer Lab 1', 'Our primary computer lab with 30 workstations for hands-on learning', 'lab', 'lab-1.jpg', 1, 2, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(9, 'Classroom Setting', 'Interactive learning environment with projector and modern teaching aids', 'classroom', 'classroom-1.jpg', 0, 3, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(10, 'Student Workshop', 'Students participating in a practical cybersecurity workshop', 'event', 'event-workshop.jpg', 1, 4, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(11, 'Graduation Ceremony', 'Celebrating our 2024 graduates and their achievements', 'event', 'graduation-2024.jpg', 1, 5, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41'),
+(12, 'Library & Study Area', 'Quiet space for students to study and access digital resources', 'campus', 'library.jpg', 0, 6, 1, '2026-05-08 18:23:41', '2026-05-08 18:23:41');
 
 -- --------------------------------------------------------
 
@@ -757,6 +980,33 @@ INSERT INTO `instructors` (`id`, `user_id`, `bio`, `specialization`, `years_expe
 (9, 28, 'Instructor at Edutrack Computer Training College', 'General', NULL, NULL, NULL, 0.00, 0, 0, 1, '2025-12-25 09:40:13', '2025-12-25 09:40:13'),
 (10, 31, 'Instructor at Edutrack Computer Training College', 'General', NULL, NULL, NULL, 0.00, 0, 0, 1, '2025-12-25 09:40:13', '2025-12-25 09:40:13'),
 (12, 1, NULL, NULL, NULL, NULL, NULL, 0.00, 0, 0, 0, '2026-01-09 19:06:16', '2026-01-09 19:06:16');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lenco_collections`
+--
+
+CREATE TABLE `lenco_collections` (
+  `id` int(11) NOT NULL,
+  `lenco_collection_id` varchar(100) DEFAULT NULL COMMENT 'Lenco collection ID',
+  `reference` varchar(100) NOT NULL COMMENT 'Our reference',
+  `lenco_reference` varchar(100) DEFAULT NULL COMMENT 'Lenco reference',
+  `user_id` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `currency` varchar(3) NOT NULL DEFAULT 'ZMW',
+  `phone` varchar(20) NOT NULL COMMENT 'Customer phone number',
+  `country` varchar(2) NOT NULL DEFAULT 'ZM',
+  `status` enum('pending','pay-offline','successful','failed') DEFAULT 'pending',
+  `operator_transaction_id` varchar(100) DEFAULT NULL,
+  `type` varchar(50) DEFAULT 'registration_fee' COMMENT 'registration_fee or course_payment',
+  `fee` decimal(10,2) DEFAULT NULL,
+  `settlement_status` varchar(20) DEFAULT NULL,
+  `completed_at` datetime DEFAULT NULL,
+  `metadata` text DEFAULT NULL COMMENT 'JSON metadata',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -802,6 +1052,170 @@ CREATE TABLE `lenco_webhook_logs` (
   `ip_address` varchar(45) DEFAULT NULL COMMENT 'Source IP address',
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Logs incoming Lenco webhooks for debugging';
+
+--
+-- Dumping data for table `lenco_webhook_logs`
+--
+
+INSERT INTO `lenco_webhook_logs` (`id`, `event_type`, `payload`, `signature`, `signature_valid`, `processed`, `error_message`, `ip_address`, `created_at`) VALUES
+(1, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 06:23:32'),
+(2, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 06:24:32'),
+(3, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 06:26:32'),
+(4, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 06:31:32'),
+(5, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 06:41:32'),
+(6, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 06:56:32'),
+(7, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:26:32'),
+(8, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:32:08'),
+(9, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:32:08'),
+(10, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:33:08'),
+(11, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:33:08'),
+(12, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:35:08'),
+(13, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:35:08'),
+(14, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:40:08'),
+(15, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:40:08'),
+(16, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:50:08'),
+(17, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:50:48'),
+(18, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 07:56:32'),
+(19, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 08:05:08'),
+(20, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 08:05:08'),
+(21, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 08:26:32'),
+(22, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 08:35:08'),
+(23, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 08:35:48'),
+(24, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 08:56:32'),
+(25, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 09:05:08'),
+(26, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 09:05:08'),
+(27, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 09:26:32'),
+(28, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 09:35:08'),
+(29, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 09:35:08'),
+(30, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 09:56:32'),
+(31, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 10:05:08'),
+(32, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 10:05:08'),
+(33, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 10:26:32'),
+(34, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 10:35:10'),
+(35, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 10:35:10'),
+(36, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 10:56:32'),
+(37, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 11:05:08'),
+(38, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 11:05:08'),
+(39, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 11:26:32'),
+(40, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 11:35:08'),
+(41, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 11:35:43'),
+(42, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 11:56:32'),
+(43, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 12:05:08'),
+(44, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 12:05:08'),
+(45, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 12:26:32'),
+(46, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 12:35:09'),
+(47, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 12:35:09'),
+(48, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 12:56:32'),
+(49, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 13:05:08'),
+(50, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 13:05:08'),
+(51, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 13:26:32'),
+(52, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 13:35:08'),
+(53, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 13:35:08'),
+(54, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 13:56:32'),
+(55, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 14:05:08'),
+(56, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 14:05:08'),
+(57, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 14:26:32'),
+(58, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 14:35:08'),
+(59, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 14:35:08'),
+(60, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 14:56:32'),
+(61, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 15:05:08'),
+(62, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 15:05:08'),
+(63, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 15:26:32'),
+(64, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 15:35:08'),
+(65, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 15:35:08'),
+(66, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 15:56:32'),
+(67, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 16:05:08'),
+(68, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 16:05:08'),
+(69, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 16:26:32'),
+(70, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 16:35:08'),
+(71, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 16:35:08'),
+(72, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 16:56:32'),
+(73, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 17:05:08'),
+(74, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 17:05:08'),
+(75, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 17:26:32'),
+(76, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 17:35:08'),
+(77, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 17:35:08');
+INSERT INTO `lenco_webhook_logs` (`id`, `event_type`, `payload`, `signature`, `signature_valid`, `processed`, `error_message`, `ip_address`, `created_at`) VALUES
+(78, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 17:56:32'),
+(79, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 18:05:08'),
+(80, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 18:05:08'),
+(81, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 18:26:32'),
+(82, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 18:35:08'),
+(83, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 18:35:08'),
+(84, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 18:56:32'),
+(85, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 19:05:08'),
+(86, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 19:05:08'),
+(87, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 19:26:32'),
+(88, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 19:35:08'),
+(89, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 19:35:08'),
+(90, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 19:56:32'),
+(91, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 20:05:08'),
+(92, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 20:05:48'),
+(93, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 20:26:32'),
+(94, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 20:35:08'),
+(95, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 20:35:08'),
+(96, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 20:56:32'),
+(97, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 21:05:08'),
+(98, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 21:05:08'),
+(99, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 21:26:32'),
+(100, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 21:35:09'),
+(101, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 21:35:48'),
+(102, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 21:56:32'),
+(103, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 22:05:11'),
+(104, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 22:05:42'),
+(105, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 22:26:32'),
+(106, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 22:35:08'),
+(107, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 22:35:08'),
+(108, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 22:56:32'),
+(109, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 23:05:08'),
+(110, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 23:05:08'),
+(111, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 23:26:32'),
+(112, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 23:35:09'),
+(113, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 23:35:44'),
+(114, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-16 23:56:32'),
+(115, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 00:05:08'),
+(116, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 00:05:08'),
+(117, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 00:26:32'),
+(118, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 00:35:08'),
+(119, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 00:35:08'),
+(120, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 00:56:32'),
+(121, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 01:05:08'),
+(122, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 01:05:08'),
+(123, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 01:26:32'),
+(124, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 01:35:08'),
+(125, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 01:35:08'),
+(126, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 01:56:32'),
+(127, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 02:05:08'),
+(128, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 02:05:08'),
+(129, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 02:26:32'),
+(130, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 02:35:08'),
+(131, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 02:35:08'),
+(132, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 02:56:32'),
+(133, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 03:05:08'),
+(134, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 03:05:40'),
+(135, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 03:26:32'),
+(136, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 03:35:08'),
+(137, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 03:35:08'),
+(138, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 03:56:32'),
+(139, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 04:05:08'),
+(140, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 04:05:08'),
+(141, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 04:26:32'),
+(142, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 04:35:09'),
+(143, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 04:35:09'),
+(144, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 04:56:32'),
+(145, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 05:05:08'),
+(146, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 05:05:08'),
+(147, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 05:26:32'),
+(148, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 05:35:08'),
+(149, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 05:35:08'),
+(150, 'incoming', '{\"event\":\"transaction.credit\",\"data\":{\"id\":\"e72c9c99-f5e7-42b5-8fb3-d3f410991393\",\"amount\":\"100.00\",\"currency\":\"ZMW\",\"narration\":\"RAYTON MUDENDA MP260516.0823.H17548\",\"type\":\"credit\",\"datetime\":\"2026-05-16T06:23:32.100Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":\"121.50\"}}', 'bfe434ae5ef990c910e22752cfe5ef99337ba307bfa80cee812028f8d6afc277ac5e5d888ca38f82c2295911656a006ffd050f2bebde8454d64d4087ca4d83ec', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 05:56:32'),
+(151, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 06:05:08'),
+(152, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 06:05:08'),
+(153, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 06:35:08'),
+(154, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 06:35:08');
+INSERT INTO `lenco_webhook_logs` (`id`, `event_type`, `payload`, `signature`, `signature_valid`, `processed`, `error_message`, `ip_address`, `created_at`) VALUES
+(155, 'incoming', '{\"event\":\"transaction.debit\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"currency\":\"ZMW\",\"narration\":\"yeah / 2613602412\",\"type\":\"debit\",\"datetime\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"balance\":null}}', '37a4d4f0c9922e555abfeb819e1566d6f9142257220e22cac066e9872d7e5fc67eea5da2f025c067365996d2a1883be2c50da3cb48c554deafc06ee59ab11acb', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 07:05:08'),
+(156, 'incoming', '{\"event\":\"transfer.successful\",\"data\":{\"id\":\"81873b7e-4d2f-4ded-b3b4-e10e5891b0a8\",\"amount\":\"110.00\",\"fee\":\"8.50\",\"currency\":\"ZMW\",\"narration\":\"yeah\",\"initiatedAt\":\"2026-05-16T07:32:05.356Z\",\"completedAt\":\"2026-05-16T07:32:08.179Z\",\"accountId\":\"0831d8d3-e2c6-4127-bcb0-7f897a4cdd4d\",\"creditAccount\":{\"type\":\"mobile-money\",\"accountName\":\"siame michael\",\"phone\":\"0771216339\",\"operator\":\"airtel\",\"country\":\"zm\"},\"status\":\"successful\",\"reasonForFailure\":null,\"reference\":null,\"lencoReference\":\"2613602412\",\"extraData\":{\"nipSessionId\":null},\"source\":\"banking-app\"}}', '7c7cd76353b6c105e450b09e0097eafb1e0dfd00fb9e6cded4cc3af3982ae51f972a2a877e3eaf4fae8413a0966bd5a29e40379846651a48d3a6f17f6700d4db', 0, 0, 'Invalid signature', '209.38.164.16', '2026-05-17 07:05:08');
 
 -- --------------------------------------------------------
 
@@ -955,6 +1369,8 @@ INSERT INTO `lessons` (`id`, `module_id`, `title`, `content`, `lesson_type`, `du
 CREATE TABLE `lesson_progress` (
   `id` int(11) NOT NULL,
   `enrollment_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `course_id` int(11) DEFAULT NULL,
   `lesson_id` int(11) NOT NULL,
   `status` enum('Not Started','In Progress','Completed') DEFAULT 'Not Started',
   `progress_percentage` decimal(5,2) DEFAULT 0.00,
@@ -970,16 +1386,196 @@ CREATE TABLE `lesson_progress` (
 -- Dumping data for table `lesson_progress`
 --
 
-INSERT INTO `lesson_progress` (`id`, `enrollment_id`, `lesson_id`, `status`, `progress_percentage`, `time_spent_minutes`, `started_at`, `completed_at`, `last_accessed`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'Completed', 100.00, 15, '2025-01-15 07:00:00', '2025-01-15 07:15:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(2, 1, 2, 'Completed', 100.00, 30, '2025-01-15 07:20:00', '2025-01-15 07:50:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(3, 1, 3, 'Completed', 100.00, 20, '2025-01-15 08:00:00', '2025-01-15 08:20:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(4, 1, 4, 'Completed', 100.00, 25, '2025-01-15 08:30:00', '2025-01-15 08:55:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(5, 4, 13, 'Completed', 100.00, 35, '2025-01-15 12:00:00', '2025-01-15 12:35:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(6, 4, 14, 'Completed', 100.00, 40, '2025-01-15 13:00:00', '2025-01-15 13:40:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(7, 10, 1, 'Completed', 100.00, 15, '2025-01-10 06:00:00', '2025-01-10 06:15:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(8, 10, 2, 'Completed', 100.00, 32, '2025-01-10 06:30:00', '2025-01-10 07:02:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(9, 10, 3, 'Completed', 100.00, 22, '2025-01-10 07:15:00', '2025-01-10 07:37:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01');
+INSERT INTO `lesson_progress` (`id`, `enrollment_id`, `user_id`, `course_id`, `lesson_id`, `status`, `progress_percentage`, `time_spent_minutes`, `started_at`, `completed_at`, `last_accessed`, `created_at`, `updated_at`) VALUES
+(1, 1, NULL, NULL, 1, 'Completed', 100.00, 15, '2025-01-15 07:00:00', '2025-01-15 07:15:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(2, 1, NULL, NULL, 2, 'Completed', 100.00, 30, '2025-01-15 07:20:00', '2025-01-15 07:50:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(3, 1, NULL, NULL, 3, 'Completed', 100.00, 20, '2025-01-15 08:00:00', '2025-01-15 08:20:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(4, 1, NULL, NULL, 4, 'Completed', 100.00, 25, '2025-01-15 08:30:00', '2025-01-15 08:55:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(5, 4, NULL, NULL, 13, 'Completed', 100.00, 35, '2025-01-15 12:00:00', '2025-01-15 12:35:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(6, 4, NULL, NULL, 14, 'Completed', 100.00, 40, '2025-01-15 13:00:00', '2025-01-15 13:40:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(7, 10, NULL, NULL, 1, 'Completed', 100.00, 15, '2025-01-10 06:00:00', '2025-01-10 06:15:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(8, 10, NULL, NULL, 2, 'Completed', 100.00, 32, '2025-01-10 06:30:00', '2025-01-10 07:02:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(9, 10, NULL, NULL, 3, 'Completed', 100.00, 22, '2025-01-10 07:15:00', '2025-01-10 07:37:00', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
+(22, 39, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(23, 39, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(24, 39, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(25, 39, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(26, 39, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(27, 39, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(28, 39, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(29, 39, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(30, 39, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(31, 39, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(32, 39, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(33, 39, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(34, 39, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(35, 39, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(36, 39, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(37, 40, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(38, 40, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(39, 40, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(40, 40, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(41, 40, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(42, 40, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(43, 40, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(44, 40, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(45, 40, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(46, 40, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(47, 40, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(48, 40, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(49, 40, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(50, 40, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(51, 40, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(52, 41, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(53, 41, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(54, 41, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(55, 41, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(56, 41, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(57, 41, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(58, 41, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(59, 41, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(60, 41, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(61, 41, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(62, 41, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(63, 41, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(64, 41, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(65, 41, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(66, 41, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(67, 42, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(68, 42, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(69, 42, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(70, 42, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(71, 42, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(72, 42, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(73, 42, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(74, 42, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(75, 42, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(76, 42, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(77, 42, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(78, 42, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(79, 42, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(80, 42, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(81, 42, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(82, 43, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(83, 43, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(84, 43, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(85, 43, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43', '2026-05-08 15:03:43'),
+(86, 43, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(87, 43, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(88, 43, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(89, 43, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(90, 43, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(91, 43, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(92, 43, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(93, 43, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(94, 43, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(95, 43, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(96, 43, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(97, 44, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(98, 44, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(99, 44, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(100, 44, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(101, 44, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(102, 44, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(103, 44, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(104, 44, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(105, 44, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(106, 44, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(107, 44, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(108, 44, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(109, 44, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(110, 44, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(111, 44, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(112, 45, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(113, 45, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(114, 45, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(115, 45, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(116, 45, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(117, 45, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(118, 45, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(119, 45, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(120, 45, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(121, 45, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(122, 45, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(123, 45, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(124, 45, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(125, 45, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(126, 45, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(127, 46, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(128, 46, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(129, 46, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(130, 46, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(131, 46, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(132, 46, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(133, 46, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(134, 46, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(135, 46, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(136, 46, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(137, 46, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(138, 46, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(139, 46, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(140, 46, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(141, 46, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(142, 47, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(143, 47, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(144, 47, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(145, 47, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(146, 47, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(147, 47, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(148, 47, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(149, 47, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(150, 47, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(151, 47, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(152, 47, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(153, 47, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(154, 47, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(155, 47, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(156, 47, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(157, 48, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(158, 48, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(159, 48, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(160, 48, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(161, 48, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(162, 48, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(163, 48, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(164, 48, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(165, 48, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(166, 48, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(167, 48, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(168, 48, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(169, 48, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(170, 48, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(171, 48, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(172, 49, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(173, 49, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(174, 49, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(175, 49, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(176, 49, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(177, 49, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(178, 49, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(179, 49, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(180, 49, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44', '2026-05-08 15:03:44'),
+(181, 49, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(182, 49, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(183, 49, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(184, 49, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(185, 49, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(186, 49, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45', '2026-05-08 15:03:45'),
+(187, 50, NULL, NULL, 28, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(188, 50, NULL, NULL, 29, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(189, 50, NULL, NULL, 30, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(190, 50, NULL, NULL, 31, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(191, 50, NULL, NULL, 32, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(192, 50, NULL, NULL, 33, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(193, 50, NULL, NULL, 34, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(194, 50, NULL, NULL, 35, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(195, 50, NULL, NULL, 36, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(196, 50, NULL, NULL, 37, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(197, 50, NULL, NULL, 38, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(198, 50, NULL, NULL, 39, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(199, 50, NULL, NULL, 40, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(200, 50, NULL, NULL, 41, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(201, 50, NULL, NULL, 42, 'Completed', 100.00, 15, '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22', '2026-05-08 15:20:22');
 
 -- --------------------------------------------------------
 
@@ -2244,6 +2840,26 @@ INSERT INTO `quiz_question_options` (`id`, `question_id`, `option_text`, `is_cor
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `rate_limits`
+--
+
+CREATE TABLE `rate_limits` (
+  `id` int(11) NOT NULL,
+  `identifier` varchar(64) NOT NULL,
+  `attempt_count` int(11) NOT NULL DEFAULT 1,
+  `expires_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `rate_limits`
+--
+
+INSERT INTO `rate_limits` (`id`, `identifier`, `attempt_count`, `expires_at`) VALUES
+(9, 'd1a8361d33008069afbfc8d68c5602fa', 1, '2026-05-15 20:18:11');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `registration_fees`
 --
 
@@ -2277,7 +2893,20 @@ INSERT INTO `registration_fees` (`id`, `user_id`, `student_id`, `amount`, `curre
 (4, 43, 37, 150.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-01-09', NULL, 1, NULL, 'Registration fee paid - Betty', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (5, 40, 34, 150.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-01-09', NULL, 1, NULL, 'Registration fee paid - Sharon', '2026-01-09 04:42:00', '2026-01-09 04:42:00'),
 (6, 68, 62, 100.00, 'ZMW', 'completed', 'mobile_money', NULL, NULL, '2026-03-16', NULL, 1, '2026-03-16 23:11:21', NULL, '2026-03-16 21:11:21', '2026-03-16 21:11:21'),
-(7, 56, 50, 100.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-03-17', NULL, 1, '2026-03-17 16:35:41', NULL, '2026-03-17 14:35:41', '2026-03-17 14:35:41');
+(7, 56, 50, 100.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-03-17', NULL, 1, '2026-03-17 16:35:41', NULL, '2026-03-17 14:35:41', '2026-03-17 14:35:41'),
+(8, 78, 72, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(9, 83, 77, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(10, 77, 71, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(11, 79, 73, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(12, 85, 79, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(13, 86, 80, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(14, 84, 78, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(15, 87, 81, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(16, 80, 74, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(17, 81, 75, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(18, 82, 76, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(19, 88, 82, 150.00, 'ZMW', 'completed', 'bank_deposit', 'IMPORTED', 'Admin Import', NULL, NULL, 1, '2026-05-08 15:36:43', 'Auto-imported for Microsoft Office graduates', '2026-05-08 15:36:43', '2026-05-08 15:36:43'),
+(20, 90, 84, 100.00, 'ZMW', 'completed', 'bank_deposit', NULL, NULL, '2026-05-13', NULL, 1, '2026-05-13 15:15:03', NULL, '2026-05-13 13:15:03', '2026-05-13 13:15:03');
 
 -- --------------------------------------------------------
 
@@ -2291,7 +2920,7 @@ CREATE TABLE `remember_tokens` (
   `token` varchar(255) NOT NULL,
   `expires_at` datetime NOT NULL,
   `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -2413,7 +3042,11 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (77, 83, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:22:17', '2026-05-08 12:22:17'),
 (78, 84, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:24:57', '2026-05-08 12:24:57'),
 (79, 85, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:38:39', '2026-05-08 12:38:39'),
-(80, 86, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:46:55', '2026-05-08 12:46:55');
+(80, 86, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:46:55', '2026-05-08 12:46:55'),
+(81, 87, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(82, 88, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(83, 89, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-11', 0, 0, 0, '2026-05-11 09:41:30', '2026-05-11 09:41:30'),
+(84, 90, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-12', 0, 0, 0, '2026-05-12 16:26:41', '2026-05-12 16:26:41');
 
 -- --------------------------------------------------------
 
@@ -2501,7 +3134,7 @@ CREATE TABLE `team_members` (
   `image_url` varchar(255) DEFAULT NULL,
   `display_order` int(11) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `team_members`
@@ -2515,6 +3148,29 @@ INSERT INTO `team_members` (`id`, `user_id`, `name`, `position`, `qualifications
 (5, 32, 'Inutu Simasiku', 'Admin & Procurement Officer', 'Dip. Registered Nursing\r\nCertificate in Marketing', 'inutu.jpg', 5, '2025-12-06 09:00:22'),
 (6, 33, 'Nita Sichimwa', 'Student Support & Hygiene Officer', 'Nurse Assistant\r\nCert. Social Work & Community Development\r\nCertified Counselor', 'nita.jpg', 6, '2025-12-06 09:00:22'),
 (7, 28, 'Witman Miyande', 'Senior Lecturer', 'B.ICT (UNZA)\r\nPROGRAMMING AND COMPUTER HARDWARE', 'witman.jpg', 7, '2025-12-12 09:37:04');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `testimonials`
+--
+
+CREATE TABLE `testimonials` (
+  `id` int(11) NOT NULL,
+  `student_name` varchar(255) NOT NULL,
+  `student_photo` varchar(255) DEFAULT NULL,
+  `course_taken` varchar(255) NOT NULL,
+  `graduation_year` int(11) DEFAULT NULL,
+  `current_job_title` varchar(255) DEFAULT NULL,
+  `company` varchar(255) DEFAULT NULL,
+  `testimonial_text` text NOT NULL,
+  `rating` int(11) DEFAULT 5,
+  `is_featured` tinyint(1) DEFAULT 0,
+  `status` enum('pending','approved','rejected') DEFAULT 'pending',
+  `submitted_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -2581,11 +3237,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `password_hash`, `first_name`, `last_name`, `phone`, `avatar_url`, `status`, `email_verification_token`, `email_verification_expires`, `email_verified`, `last_login`, `last_login_ip`, `failed_login_attempts`, `account_locked_until`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-05-08 15:36:00', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-05-08 13:36:00'),
+(1, 'admin', 'admin@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'System', 'Administrator', '+260900000000', NULL, 'active', NULL, NULL, 1, '2026-05-14 11:36:38', NULL, 0, NULL, '2025-11-18 22:21:01', '2026-05-14 09:36:38'),
 (6, 'michael.siame', 'michael.siame@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, '2025-12-25 21:53:14', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 19:53:14'),
 (25, 'taona', 'taona@gmail.com', NULL, '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', 'toana', 'ndlovuli', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14'),
 (26, 'jaysiame076', 'jaysiame076@gmail.com', NULL, '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', 'joe', 'siame', '', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:32:59', NULL, 0, NULL, '2025-11-23 11:05:46', '2025-12-09 09:32:59'),
-(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2026-01-10 16:11:40', NULL, 0, NULL, '2025-12-04 20:34:20', '2026-01-10 14:11:40'),
+(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2026-05-14 20:12:13', NULL, 0, NULL, '2025-12-04 20:34:20', '2026-05-14 18:12:13'),
 (28, 'it', 'it@witmanmiyande.com', NULL, '$2y$10$kbm0yafbxD0Iu0Vk7uZYoOKTaqE1DTV47I7FHEFmeRESglBLmnWve', 'Witman', 'Miyande', '+260976062621', NULL, 'active', NULL, NULL, 0, '2025-12-08 13:07:32', NULL, 0, NULL, '2025-12-05 14:38:37', '2025-12-08 17:45:29'),
 (29, 'edwardmusole76', 'edwardmusole76@gmail.com', NULL, '$2y$10$WAgkucanVQ4OuVJtxfZeIuH2gxPk4lH7tTmhKT0I8awfPWiBBakdC', 'Edward', 'Musole', '+260978605960', NULL, 'active', NULL, NULL, 0, '2025-12-29 12:47:56', NULL, 0, NULL, '2025-12-05 14:42:37', '2025-12-29 10:47:56'),
 (30, 'siamem570', 'siamem570@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, '2026-03-16 22:27:06', NULL, 0, NULL, '2025-12-09 11:30:29', '2026-03-16 20:27:06'),
@@ -2636,15 +3292,19 @@ INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `password_hash`, `f
 (75, 'wilfredmweemba12345', 'wilfredmweemba12345@gmail.com', NULL, '$2y$10$WLVee9FIhr2CCDZaFQzNo..X1LPwm..fbwxeaGXhXrHoYH4TvaZri', 'Wilfred', 'Mweemba', '+260972584450', NULL, 'active', NULL, NULL, 0, '2026-04-26 06:57:07', NULL, 0, NULL, '2026-04-26 04:56:43', '2026-04-26 04:57:07'),
 (76, 'stephenkafweku', 'stephenkafweku@gmail.com', '109580197860006785098', '$2y$10$21cO.jH6.vbWPv9/x7YFn.tXpc9UU1himG9n0Tw/xBaBpXAKWgs9G', 'Stephen', 'Kafweku', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-04-30 12:33:28', '2026-04-30 12:33:28'),
 (77, 'taongatembo167', 'taongatembo167@gmail.com', NULL, '$2y$10$2HHJlvBwC0GeqCL258YOIemnnaSa6jIllkuPdq/V5EiqNq8RWMISm', 'Taonga', 'Tembo', '+260779033041', NULL, 'active', NULL, NULL, 0, '2026-05-08 14:14:15', NULL, 0, NULL, '2026-05-08 12:11:18', '2026-05-08 12:14:15'),
-(78, 'luyando356', 'luyando356@gmail.com', NULL, '$2y$10$khvRzYfIZKv3Vc.h.8lc9.GiOa9iYqTk/OKNcaAM5iAMvU0TsFEfu', 'Luyando Mumbe', 'Muchimba', '+260975215720', NULL, 'active', NULL, NULL, 0, '2026-05-08 14:13:07', NULL, 0, NULL, '2026-05-08 12:12:26', '2026-05-08 12:13:07'),
-(79, 'chintuchiinda01', 'chintuchiinda01@gmail.com', NULL, '$2y$10$1uAckp4.jefF1GVeYeXR.e3aCmS3nKhAz8sXHRUkWSY9CBnezlHs6', 'Chintu', 'Chiinda', '+260976788089', NULL, 'active', NULL, NULL, 0, '2026-05-08 15:09:52', NULL, 0, NULL, '2026-05-08 12:16:52', '2026-05-08 13:09:52'),
+(78, 'luyando356', 'luyando356@gmail.com', NULL, '$2y$10$khvRzYfIZKv3Vc.h.8lc9.GiOa9iYqTk/OKNcaAM5iAMvU0TsFEfu', 'Luyando Mumbe', 'Muchimba', '+260975215720', NULL, 'active', NULL, NULL, 0, '2026-05-15 22:03:11', NULL, 0, NULL, '2026-05-08 12:12:26', '2026-05-15 20:03:11'),
+(79, 'chintuchiinda01', 'chintuchiinda01@gmail.com', NULL, '$2y$10$1uAckp4.jefF1GVeYeXR.e3aCmS3nKhAz8sXHRUkWSY9CBnezlHs6', 'Chintu', 'Chiinda', '+260976788089', NULL, 'active', NULL, NULL, 0, '2026-05-12 11:09:53', NULL, 0, NULL, '2026-05-08 12:16:52', '2026-05-12 09:09:53'),
 (80, 'wankietrust08', 'wankietrust08@gmail.com', '107750983156068961383', '$2y$10$NVtUB/Osxdhj4kVGXqzzJewd89NQFhfV6tY4LgOqFGVkTcz18nmx.', 'Trust', 'Wankie', '', NULL, 'active', NULL, NULL, 1, '2026-05-08 14:40:21', NULL, 0, NULL, '2026-05-08 12:16:59', '2026-05-08 12:40:21'),
 (81, 'luyandodabali0', 'luyandodabali0@gmail.com', '114514853630568794611', '$2y$10$0w9cSLP1kgRpjspfr/9WS.TOaguQS5pC87yzbgWeR6Vq1a0Q1LxQS', 'Luyando', 'Dabali', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-05-08 12:19:00', '2026-05-08 12:19:00'),
-(82, 'abhisikaubwe', 'abhisikaubwe@gmail.com', '102122395373050519487', '$2y$10$w4CdWNFmuJoCr3cXZf80C./.f7Apgv69vISIJ.FJRJ8JfucqwHZb2', 'Abhi', 'Sikaubwe', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-05-08 12:19:44', '2026-05-08 12:19:44'),
+(82, 'abhisikaubwe', 'abhisikaubwe@gmail.com', '102122395373050519487', '$2y$10$w4CdWNFmuJoCr3cXZf80C./.f7Apgv69vISIJ.FJRJ8JfucqwHZb2', 'Abhi', 'Sikaubwe', '', NULL, 'active', NULL, NULL, 1, '2026-05-10 10:18:24', NULL, 0, NULL, '2026-05-08 12:19:44', '2026-05-10 08:18:24'),
 (83, 'wanengambi12', 'wanengambi12@icloud.com', NULL, '$2y$10$cQmiF1eu23iGF5.RdRJ7peWc9vwSJq1NynJ4OrplaFOkHooBCbGeO', 'Wane', 'Mary', '+260779297663', NULL, 'active', NULL, NULL, 0, '2026-05-08 14:24:34', NULL, 0, NULL, '2026-05-08 12:22:17', '2026-05-08 12:24:34'),
-(84, 'cathynamakanda75', 'cathynamakanda75@gmail.com', NULL, '$2y$10$WY.dcJcc3pIetoZmPSC7Mem1DDrquYO2.jfxo4KFzLN84mCRQdHqW', 'Catherine', 'Namakanda', '+260766635170', NULL, 'active', NULL, NULL, 0, '2026-05-08 14:25:13', NULL, 0, NULL, '2026-05-08 12:24:57', '2026-05-08 12:25:13'),
-(85, 'fragestermudenda46', 'fragestermudenda46@gmail.com', NULL, '$2y$10$G3Y6MsNAovpiLFByVeoJGuAKW2DkKk0Zw.qnKJuNGiSzISAEQMLni', 'Fragester', 'Mudenda', '+260773137696', NULL, 'active', NULL, NULL, 0, '2026-05-08 15:05:51', NULL, 0, NULL, '2026-05-08 12:38:39', '2026-05-08 13:05:51'),
-(86, 'lishebelajoyce', 'lishebelajoyce@gmail.com', '114562181971949631777', '$2y$10$tdt46skZDQ7/OpXlrmmwRe1fCTa9DDZbgqUbbD2vf6LGFNpe9g0g6', 'Joyce', 'Lishebela', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-05-08 12:46:55', '2026-05-08 12:46:55');
+(84, 'cathynamakanda75', 'cathynamakanda75@gmail.com', NULL, '$2y$10$WY.dcJcc3pIetoZmPSC7Mem1DDrquYO2.jfxo4KFzLN84mCRQdHqW', 'Catherine', 'Namakanda', '+260766635170', NULL, 'active', NULL, NULL, 0, '2026-05-11 22:59:40', NULL, 0, NULL, '2026-05-08 12:24:57', '2026-05-11 20:59:40'),
+(85, 'fragestermudenda46', 'fragestermudenda46@gmail.com', NULL, '$2y$10$G3Y6MsNAovpiLFByVeoJGuAKW2DkKk0Zw.qnKJuNGiSzISAEQMLni', 'Fragester', 'Mudenda', '+260773137696', NULL, 'active', NULL, NULL, 0, '2026-05-09 20:57:06', NULL, 0, NULL, '2026-05-08 12:38:39', '2026-05-09 18:57:06'),
+(86, 'lishebelajoyce', 'lishebelajoyce@gmail.com', '114562181971949631777', '$2y$10$tdt46skZDQ7/OpXlrmmwRe1fCTa9DDZbgqUbbD2vf6LGFNpe9g0g6', 'Joyce', 'Lishebela', '', NULL, 'active', NULL, NULL, 1, '2026-05-13 13:55:43', NULL, 0, NULL, '2026-05-08 12:46:55', '2026-05-13 11:55:43'),
+(87, 'patricia.siamukopa', 'patricia.siamukopa@student.edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 'Patricia', 'Siamukopa', NULL, NULL, 'active', NULL, NULL, 0, NULL, NULL, 0, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
+(88, 'testuser', 'testuser@edutrack.edu', NULL, '$2y$10$OpR3oP3xhNb7m93AOklNjerKmIRoMAVNbxVY73S3QL6xdwjpIuily', 'Test', 'User', NULL, NULL, 'active', NULL, NULL, 0, '2026-05-15 19:18:30', NULL, 0, NULL, '2026-05-08 15:20:22', '2026-05-15 17:18:30'),
+(89, 'dicksonchangwe6', 'dicksonchangwe6@gmail.com', '108102239233611028894', '$2y$10$nP2ndbj28eDx7UbVwEBXm.BOfs71ZmOigmqBl8u1.rK624JFuonhe', 'DICKSON', 'CHANGWE', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-05-11 09:41:30', '2026-05-11 09:41:30'),
+(90, 'maselenimary854', 'maselenimary854@gmail.com', '103272139780537937302', '$2y$10$b7vc5viRZaU0FKVsJX/lZuTpCKojZ1SChFSGzGoVRtuYvW7RpK7QW', 'Mary', 'Maseleni', '', NULL, 'active', NULL, NULL, 1, '2026-05-19 11:07:37', NULL, 0, NULL, '2026-05-12 16:26:41', '2026-05-19 09:07:37');
 
 -- --------------------------------------------------------
 
@@ -2757,7 +3417,11 @@ INSERT INTO `user_profiles` (`id`, `user_id`, `bio`, `phone`, `date_of_birth`, `
 (96, 83, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:22:17', '2026-05-08 12:22:17', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (97, 84, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:24:57', '2026-05-08 12:24:57', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (98, 85, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:38:39', '2026-05-08 12:38:39', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(99, 86, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:46:55', '2026-05-08 12:46:55', 'https://lh3.googleusercontent.com/a/ACg8ocIRHsx4T3M7WKNEEW_rq6LciDWwizWiOc_RjquzY-rbJE_btA=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(99, 86, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:46:55', '2026-05-08 12:46:55', 'https://lh3.googleusercontent.com/a/ACg8ocIRHsx4T3M7WKNEEW_rq6LciDWwizWiOc_RjquzY-rbJE_btA=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(100, 87, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(101, 88, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 15:20:22', '2026-05-08 15:20:22', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(102, 89, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-11 09:41:30', '2026-05-11 09:41:30', 'https://lh3.googleusercontent.com/a/ACg8ocLzYDrYyeaYVaVyJ_2D-67NdpbzFNbFV6ekRPztD_A1HdndTVA=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(103, 90, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-12 16:26:41', '2026-05-12 16:26:41', 'https://lh3.googleusercontent.com/a/ACg8ocLxVlsZJvZYFF0TUg6QbetxEJFSn6J1zX5k9Dwhjv8L02-RUA=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2864,7 +3528,11 @@ INSERT INTO `user_roles` (`id`, `user_id`, `role_id`, `assigned_at`, `assigned_b
 (111, 83, 4, '2026-05-08 12:22:17', NULL),
 (112, 84, 4, '2026-05-08 12:24:57', NULL),
 (113, 85, 4, '2026-05-08 12:38:39', NULL),
-(114, 86, 4, '2026-05-08 12:46:55', NULL);
+(114, 86, 4, '2026-05-08 12:46:55', NULL),
+(115, 87, 4, '2026-05-08 14:47:43', 1),
+(116, 88, 4, '2026-05-08 15:20:22', 1),
+(117, 89, 4, '2026-05-11 09:41:30', NULL),
+(118, 90, 4, '2026-05-12 16:26:41', NULL);
 
 -- --------------------------------------------------------
 
@@ -2888,22 +3556,7 @@ CREATE TABLE `user_sessions` (
 --
 
 INSERT INTO `user_sessions` (`id`, `user_id`, `session_token`, `ip_address`, `user_agent`, `expires_at`, `created_at`, `updated_at`) VALUES
-(130, 72, 'fab8d5924eb5b89571985bd47bad9aa974add414641a392d4a0a9e3d446b400b', '165.58.129.66', 'Mozilla/5.0 (Linux; Android 13; SM-A145P Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/146.0.7680.164 Mobile Safari/537.36[FBAN/EMA;FBLC/en_US;FBAV/503.0.0.10.107;FBCX/modulariab;]', '2026-05-12 13:27:36', '2026-04-12 11:27:36', '2026-04-12 11:27:36'),
-(139, 78, 'ccf568ba919f2296cf4703a790f076cff207551b96fb5f17ddbde9ddd022b70f', '41.223.117.35', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:13:07', '2026-05-08 12:13:07', '2026-05-08 12:13:07'),
-(140, 77, '3d070324842eedfa6a446570c53a6decbe597127f9613fed73daf02156679d9e', '45.215.255.90', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:14:15', '2026-05-08 12:14:15', '2026-05-08 12:14:15'),
-(141, 80, 'a8a5d16d36ae3e38ae6af7d14beeaba46808485b4a333f39b523412b54439980', '102.212.183.174', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:16:59', '2026-05-08 12:16:59', '2026-05-08 12:16:59'),
-(142, 79, '2518c812bd14023f5552d5d78b8c6a728f7caca9b292027ebefd0eef69731e74', '45.215.224.63', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:17:24', '2026-05-08 12:17:24', '2026-05-08 12:17:24'),
-(143, 81, '54ebaffa5a800e16f5478a2b8479b3c8eeaf88f0c1f8dbd5db32481f77be748c', '102.212.183.174', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36', '2026-05-08 16:19:01', '2026-05-08 12:19:01', '2026-05-08 12:19:01'),
-(144, 82, '51ce642093f281e1c453ef8815c0314878c31662ec559987809bfd646f0afe13', '45.215.224.25', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36', '2026-05-08 16:19:44', '2026-05-08 12:19:44', '2026-05-08 12:19:44'),
-(145, 83, '9e70aaa264a3e238709dd9263eec9afd7bcb1a911764fb85f7afd0380bb7a789', '45.215.252.43', 'Mozilla/5.0 (iPhone; CPU iPhone OS 26_3_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) GSA/409.0.872648028 Mobile/15E148 Safari/604.1', '2026-05-08 16:24:34', '2026-05-08 12:24:34', '2026-05-08 12:24:34'),
-(146, 84, '3c5b26fb0cf88a50fb3a5e4f8f7cb311a468570ff3643b9b462f8b9ff994ca0e', '102.212.183.174', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:25:13', '2026-05-08 12:25:13', '2026-05-08 12:25:13'),
-(148, 79, '141d2bb8e33a2ae4fb47e7b3a2ae1261006e997f0e0735c56715ad3758e852bc', '45.215.224.63', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:40:07', '2026-05-08 12:40:07', '2026-05-08 12:40:07'),
-(149, 80, '10d31ec40c37f7438eb41d0ee5c4ae2a2222c8f7a947b9bf46b62eb703bef9a6', '102.212.183.174', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:40:21', '2026-05-08 12:40:21', '2026-05-08 12:40:21'),
-(150, 79, 'bd1ac37496ac4718e448fe7b447b0af912ccb8d7e39627b37c282bbcbc595b27', '45.215.224.63', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 16:42:24', '2026-05-08 12:42:24', '2026-05-08 12:42:24'),
-(151, 86, 'cbbf789ad826c40a68f0743da385b8e6a01bd83dd751515da5deb4dd9b4a4057', '45.215.255.203', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36', '2026-05-08 16:46:55', '2026-05-08 12:46:55', '2026-05-08 12:46:55'),
-(152, 85, 'de5ce708971360c80e82b154bd4adc173a7f75c377fcf03c2e7c23429ee4f5c6', '45.215.224.36', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 17:05:51', '2026-05-08 13:05:51', '2026-05-08 13:05:51'),
-(153, 79, 'cf8c2acc62c610b80e49ce86b7666ec0c3b6a9ce9069b681af7895b2ed9f88e4', '45.215.224.51', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36', '2026-05-08 17:09:52', '2026-05-08 13:09:52', '2026-05-08 13:09:52'),
-(154, 1, '1c37895d7e30b1f48e4aadfa98dc259a2693bb411b9bdfc45e3cbb3102cd97c4', '102.208.221.215', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', '2026-05-08 17:36:00', '2026-05-08 13:36:00', '2026-05-08 13:36:00');
+(206, 90, '6395104652e067e1be0e36bbb842b17c58c0e25f56c304808027f0971be3b434', '102.212.183.105', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '2026-05-19 13:07:37', '2026-05-19 09:07:37', '2026-05-19 09:07:37');
 
 -- --------------------------------------------------------
 
@@ -2943,14 +3596,16 @@ ALTER TABLE `activity_logs`
 ALTER TABLE `announcements`
   ADD PRIMARY KEY (`announcement_id`),
   ADD KEY `fk_ann_poster` (`posted_by`),
-  ADD KEY `idx_ann_course` (`course_id`);
+  ADD KEY `idx_ann_course` (`course_id`),
+  ADD KEY `idx_announce_published_expires` (`is_published`,`expires_at`);
 
 --
 -- Indexes for table `assignments`
 --
 ALTER TABLE `assignments`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_assign_course` (`course_id`);
+  ADD KEY `idx_assign_course` (`course_id`),
+  ADD KEY `idx_assignments_due_date` (`due_date`);
 
 --
 -- Indexes for table `assignment_submissions`
@@ -2958,7 +3613,9 @@ ALTER TABLE `assignments`
 ALTER TABLE `assignment_submissions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_sub_assign` (`assignment_id`),
-  ADD KEY `idx_sub_student` (`student_id`);
+  ADD KEY `idx_sub_student` (`student_id`),
+  ADD KEY `idx_asub_assignment_student` (`assignment_id`,`student_id`),
+  ADD KEY `idx_asub_status` (`status`);
 
 --
 -- Indexes for table `badges`
@@ -2975,7 +3632,8 @@ ALTER TABLE `certificates`
   ADD UNIQUE KEY `uk_cert_verify` (`verification_code`),
   ADD KEY `idx_cert_user` (`user_id`),
   ADD KEY `idx_cert_course` (`course_id`),
-  ADD KEY `fk_cert_enroll` (`enrollment_id`);
+  ADD KEY `fk_cert_enroll` (`enrollment_id`),
+  ADD KEY `idx_certificates_issued` (`issued_date`);
 
 --
 -- Indexes for table `contacts`
@@ -2991,7 +3649,9 @@ ALTER TABLE `contacts`
 ALTER TABLE `courses`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_courses_cat` (`category_id`),
-  ADD KEY `idx_courses_inst` (`instructor_id`);
+  ADD KEY `idx_courses_inst` (`instructor_id`),
+  ADD KEY `idx_courses_status` (`status`),
+  ADD KEY `idx_courses_status_featured` (`status`,`is_featured`);
 
 --
 -- Indexes for table `course_categories`
@@ -3012,6 +3672,7 @@ ALTER TABLE `course_instructors`
 --
 ALTER TABLE `course_reviews`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uk_course_reviews_course_user` (`course_id`,`user_id`),
   ADD KEY `idx_review_course` (`course_id`),
   ADD KEY `idx_review_user` (`user_id`);
 
@@ -3054,7 +3715,10 @@ ALTER TABLE `enrollments`
   ADD UNIQUE KEY `uk_enrollments_user_course` (`user_id`,`course_id`),
   ADD KEY `idx_enroll_user` (`user_id`),
   ADD KEY `idx_enroll_course` (`course_id`),
-  ADD KEY `idx_enroll_student` (`student_id`);
+  ADD KEY `idx_enroll_student` (`student_id`),
+  ADD KEY `idx_enrollments_status` (`enrollment_status`),
+  ADD KEY `idx_enrollments_user_status` (`user_id`,`enrollment_status`),
+  ADD KEY `idx_enrollments_course_user` (`course_id`,`user_id`);
 
 --
 -- Indexes for table `enrollment_payment_plans`
@@ -3066,12 +3730,60 @@ ALTER TABLE `enrollment_payment_plans`
   ADD KEY `idx_epp_course` (`course_id`);
 
 --
+-- Indexes for table `events`
+--
+ALTER TABLE `events`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`),
+  ADD KEY `created_by` (`created_by`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_event_date` (`event_date`),
+  ADD KEY `idx_featured` (`is_featured`);
+
+--
+-- Indexes for table `event_images`
+--
+ALTER TABLE `event_images`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_event_order` (`event_id`,`display_order`);
+
+--
+-- Indexes for table `hero_slides`
+--
+ALTER TABLE `hero_slides`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `created_by` (`created_by`),
+  ADD KEY `idx_active` (`is_active`),
+  ADD KEY `idx_order` (`display_order`);
+
+--
+-- Indexes for table `institution_photos`
+--
+ALTER TABLE `institution_photos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `uploaded_by` (`uploaded_by`),
+  ADD KEY `idx_category` (`category`),
+  ADD KEY `idx_featured` (`is_featured`),
+  ADD KEY `idx_order` (`display_order`);
+
+--
 -- Indexes for table `instructors`
 --
 ALTER TABLE `instructors`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uk_instructors_user` (`user_id`),
   ADD KEY `idx_inst_user` (`user_id`);
+
+--
+-- Indexes for table `lenco_collections`
+--
+ALTER TABLE `lenco_collections`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uk_reference` (`reference`),
+  ADD UNIQUE KEY `uk_lenco_collection_id` (`lenco_collection_id`),
+  ADD KEY `idx_user_id` (`user_id`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_phone` (`phone`);
 
 --
 -- Indexes for table `lenco_transactions`
@@ -3084,10 +3796,7 @@ ALTER TABLE `lenco_transactions`
   ADD KEY `idx_course_id` (`course_id`),
   ADD KEY `idx_status` (`status`),
   ADD KEY `idx_virtual_account` (`virtual_account_number`),
-  ADD KEY `idx_expires_at` (`expires_at`),
-  ADD KEY `idx_lt_user` (`user_id`),
-  ADD KEY `idx_lt_enroll` (`enrollment_id`),
-  ADD KEY `idx_lt_course` (`course_id`);
+  ADD KEY `idx_expires_at` (`expires_at`);
 
 --
 -- Indexes for table `lenco_webhook_logs`
@@ -3110,8 +3819,13 @@ ALTER TABLE `lessons`
 --
 ALTER TABLE `lesson_progress`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_lp_enroll` (`enrollment_id`),
-  ADD KEY `fk_lp_lesson` (`lesson_id`);
+  ADD KEY `fk_lp_lesson` (`lesson_id`),
+  ADD KEY `idx_lesson_progress_status` (`status`),
+  ADD KEY `idx_lesson_progress_enrollment_status` (`enrollment_id`,`status`),
+  ADD KEY `idx_lesson_progress_last_accessed` (`last_accessed`),
+  ADD KEY `idx_lp_user_id` (`user_id`),
+  ADD KEY `idx_lp_enrollment_lesson` (`enrollment_id`,`lesson_id`),
+  ADD KEY `idx_lp_user_lesson` (`user_id`,`lesson_id`);
 
 --
 -- Indexes for table `lesson_resources`
@@ -3132,7 +3846,9 @@ ALTER TABLE `live_sessions`
 -- Indexes for table `live_session_attendance`
 --
 ALTER TABLE `live_session_attendance`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_lsa_session` (`live_session_id`),
+  ADD KEY `idx_lsa_user` (`user_id`);
 
 --
 -- Indexes for table `messages`
@@ -3161,7 +3877,8 @@ ALTER TABLE `modules`
 --
 ALTER TABLE `notifications`
   ADD PRIMARY KEY (`notification_id`),
-  ADD KEY `idx_notif_user` (`user_id`);
+  ADD KEY `idx_notif_user` (`user_id`),
+  ADD KEY `idx_notifications_user_read` (`user_id`,`is_read`);
 
 --
 -- Indexes for table `payments`
@@ -3201,15 +3918,16 @@ ALTER TABLE `question_options`
 --
 ALTER TABLE `quizzes`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_quiz_course` (`course_id`);
+  ADD KEY `idx_quiz_course` (`course_id`),
+  ADD KEY `idx_quizzes_published` (`is_published`);
 
 --
 -- Indexes for table `quiz_answers`
 --
 ALTER TABLE `quiz_answers`
   ADD PRIMARY KEY (`answer_id`),
-  ADD KEY `fk_qa_attempt` (`attempt_id`),
-  ADD KEY `fk_qa_question` (`question_id`);
+  ADD KEY `fk_qa_question` (`question_id`),
+  ADD KEY `idx_qans_attempt_question` (`attempt_id`,`question_id`);
 
 --
 -- Indexes for table `quiz_attempts`
@@ -3217,7 +3935,9 @@ ALTER TABLE `quiz_answers`
 ALTER TABLE `quiz_attempts`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_att_quiz` (`quiz_id`),
-  ADD KEY `idx_att_student` (`student_id`);
+  ADD KEY `idx_att_student` (`student_id`),
+  ADD KEY `idx_qa_quiz_student` (`quiz_id`,`student_id`),
+  ADD KEY `idx_qa_status` (`status`);
 
 --
 -- Indexes for table `quiz_questions`
@@ -3235,11 +3955,21 @@ ALTER TABLE `quiz_question_options`
   ADD KEY `idx_qqo_question` (`question_id`);
 
 --
+-- Indexes for table `rate_limits`
+--
+ALTER TABLE `rate_limits`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idx_identifier` (`identifier`),
+  ADD KEY `idx_expires_at` (`expires_at`);
+
+--
 -- Indexes for table `registration_fees`
 --
 ALTER TABLE `registration_fees`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_registration_fees_phone` (`phone_number`);
+  ADD KEY `idx_registration_fees_phone` (`phone_number`),
+  ADD KEY `idx_rf_user_id` (`user_id`),
+  ADD KEY `idx_rf_payment_status` (`payment_status`);
 
 --
 -- Indexes for table `remember_tokens`
@@ -3275,7 +4005,8 @@ ALTER TABLE `student_achievements`
 -- Indexes for table `system_settings`
 --
 ALTER TABLE `system_settings`
-  ADD PRIMARY KEY (`setting_id`);
+  ADD PRIMARY KEY (`setting_id`),
+  ADD KEY `idx_ss_key` (`setting_key`);
 
 --
 -- Indexes for table `team_members`
@@ -3285,10 +4016,22 @@ ALTER TABLE `team_members`
   ADD KEY `fk_team_user_link` (`user_id`);
 
 --
+-- Indexes for table `testimonials`
+--
+ALTER TABLE `testimonials`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_featured` (`is_featured`),
+  ADD KEY `idx_rating` (`rating`),
+  ADD KEY `fk_testimonials_user` (`submitted_by`);
+
+--
 -- Indexes for table `transactions`
 --
 ALTER TABLE `transactions`
-  ADD PRIMARY KEY (`transaction_id`);
+  ADD PRIMARY KEY (`transaction_id`),
+  ADD KEY `idx_trans_payment_id` (`payment_id`),
+  ADD KEY `idx_trans_type` (`transaction_type`);
 
 --
 -- Indexes for table `users`
@@ -3299,7 +4042,9 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `uk_users_username` (`username`),
   ADD UNIQUE KEY `idx_users_google_id` (`google_id`),
   ADD KEY `idx_users_email_search` (`email`),
-  ADD KEY `idx_users_ver_token` (`email_verification_token`);
+  ADD KEY `idx_users_ver_token` (`email_verification_token`),
+  ADD KEY `idx_users_status` (`status`),
+  ADD KEY `idx_users_created_at` (`created_at`);
 
 --
 -- Indexes for table `user_profiles`
@@ -3322,7 +4067,10 @@ ALTER TABLE `user_roles`
 -- Indexes for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_us_user_id` (`user_id`),
+  ADD KEY `idx_us_token` (`session_token`),
+  ADD KEY `idx_us_expires` (`expires_at`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -3332,7 +4080,7 @@ ALTER TABLE `user_sessions`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `log_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `log_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `announcements`
@@ -3344,13 +4092,13 @@ ALTER TABLE `announcements`
 -- AUTO_INCREMENT for table `assignments`
 --
 ALTER TABLE `assignments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `assignment_submissions`
 --
 ALTER TABLE `assignment_submissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT for table `badges`
@@ -3362,13 +4110,13 @@ ALTER TABLE `badges`
 -- AUTO_INCREMENT for table `certificates`
 --
 ALTER TABLE `certificates`
-  MODIFY `certificate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `certificate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `courses`
@@ -3404,7 +4152,7 @@ ALTER TABLE `discussions`
 -- AUTO_INCREMENT for table `email_queue`
 --
 ALTER TABLE `email_queue`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `email_templates`
@@ -3416,19 +4164,49 @@ ALTER TABLE `email_templates`
 -- AUTO_INCREMENT for table `enrollments`
 --
 ALTER TABLE `enrollments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `enrollment_payment_plans`
 --
 ALTER TABLE `enrollment_payment_plans`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+
+--
+-- AUTO_INCREMENT for table `events`
+--
+ALTER TABLE `events`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `event_images`
+--
+ALTER TABLE `event_images`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `hero_slides`
+--
+ALTER TABLE `hero_slides`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `institution_photos`
+--
+ALTER TABLE `institution_photos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `instructors`
 --
 ALTER TABLE `instructors`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `lenco_collections`
+--
+ALTER TABLE `lenco_collections`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `lenco_transactions`
@@ -3440,7 +4218,7 @@ ALTER TABLE `lenco_transactions`
 -- AUTO_INCREMENT for table `lenco_webhook_logs`
 --
 ALTER TABLE `lenco_webhook_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
 
 --
 -- AUTO_INCREMENT for table `lessons`
@@ -3452,7 +4230,7 @@ ALTER TABLE `lessons`
 -- AUTO_INCREMENT for table `lesson_progress`
 --
 ALTER TABLE `lesson_progress`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=202;
 
 --
 -- AUTO_INCREMENT for table `lesson_resources`
@@ -3542,13 +4320,19 @@ ALTER TABLE `quiz_questions`
 -- AUTO_INCREMENT for table `quiz_question_options`
 --
 ALTER TABLE `quiz_question_options`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=512;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=279;
+
+--
+-- AUTO_INCREMENT for table `rate_limits`
+--
+ALTER TABLE `rate_limits`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `registration_fees`
 --
 ALTER TABLE `registration_fees`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `remember_tokens`
@@ -3566,7 +4350,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
 -- AUTO_INCREMENT for table `system_settings`
@@ -3581,28 +4365,34 @@ ALTER TABLE `team_members`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT for table `testimonials`
+--
+ALTER TABLE `testimonials`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
 
 --
 -- AUTO_INCREMENT for table `user_sessions`
 --
 ALTER TABLE `user_sessions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=207;
 
 -- --------------------------------------------------------
 
@@ -3687,6 +4477,30 @@ ALTER TABLE `enrollments`
   ADD CONSTRAINT `fk_enroll_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_enroll_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_enroll_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `events`
+--
+ALTER TABLE `events`
+  ADD CONSTRAINT `events_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `event_images`
+--
+ALTER TABLE `event_images`
+  ADD CONSTRAINT `event_images_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `hero_slides`
+--
+ALTER TABLE `hero_slides`
+  ADD CONSTRAINT `hero_slides_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `institution_photos`
+--
+ALTER TABLE `institution_photos`
+  ADD CONSTRAINT `institution_photos_ibfk_1` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `instructors`
@@ -3821,6 +4635,12 @@ ALTER TABLE `team_members`
   ADD CONSTRAINT `fk_team_user_link` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
+-- Constraints for table `testimonials`
+--
+ALTER TABLE `testimonials`
+  ADD CONSTRAINT `fk_testimonials_user` FOREIGN KEY (`submitted_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
 -- Constraints for table `user_profiles`
 --
 ALTER TABLE `user_profiles`
@@ -3846,7 +4666,7 @@ END$$
 
 DELIMITER ;
 COMMIT;
-
+SET FOREIGN_KEY_CHECKS=1;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

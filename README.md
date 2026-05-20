@@ -1,118 +1,116 @@
-# Edutrack LMS - Learning Management System
+# Edutrack LMS - Laravel Migration
 
-**Edutrack Computer Training College - TEVETA Registered Institution**
+This directory contains the Laravel migration of the Edutrack LMS project.
 
-A custom PHP-based Learning Management System for delivering the Cybersecurity Certificate Program and other vocational courses.
+## Migration Status
 
-## 📁 Repository Structure
+### Completed
+- [x] Laravel skeleton setup
+- [x] Core migrations (13 tables)
+- [x] Eloquent models with relationships
+- [x] Role-based middleware
+- [x] Route structure (web, api, console)
+- [x] Core controllers
+- [x] Base Blade layout with Tailwind CSS
+- [x] Authentication views (login, register)
 
-```
-edutrack-lms/
-├── README.md                 # This file
-├── AGENTS.md                 # AI agent documentation
-├── .env                      # Environment configuration
-├── .htaccess                 # Apache rewrite rules
-│
-├── course_materials/         # 📚 All course content
-│   ├── README.md
-│   ├── module1_foundation/   # Module 1 (Weeks 1-3)
-│   │   ├── topic1_computer_fundamentals/
-│   │   ├── topic2_os/
-│   │   ├── topic3_programming/      # Python exercises
-│   │   ├── topic4_math/
-│   │   └── topic5_networking/
-│   ├── module2_cybersecurity/
-│   ├── module3_threat_detection/
-│   └── module4_capstone/
-│
-├── docs/                     # 📄 Documentation
-│   ├── planning/             # Program outlines
-│   ├── CODE_REVIEW.md        # Code review findings
-│   ├── SYSTEM_REVIEW.md      # System architecture review
-│   └── ...
-│
-├── scripts/                  # 🔧 Utility scripts
-│   └── tools/                # PPTX generation, etc.
-│
-├── public/                   # 🌐 Web root
-│   ├── index.php
-│   ├── assets/               # CSS, JS, images
-│   ├── api/                  # REST API endpoints
-│   ├── admin/                # Admin panel
-│   ├── instructor/           # Instructor dashboard
-│   └── student/              # Student pages
-│
-├── src/                      # 💻 Application source
-│   ├── bootstrap.php         # Application initialization
-│   ├── classes/              # PHP classes (Course, User, etc.)
-│   ├── includes/             # Core functions
-│   ├── middleware/           # Access control
-│   ├── mail/                 # Email templates
-│   └── templates/            # View components
-│
-├── config/                   # ⚙️ Configuration files
-├── database/                 # 🗄️ SQL schemas and migrations
-├── cron/                     # ⏰ Scheduled tasks
-└── storage/                  # 💾 Logs, sessions, cache
-```
+### Pending
+- [ ] Remaining 43+ migrations (questions, quiz_attempts, assignment_submissions, etc.)
+- [ ] Service providers configuration
+- [ ] Google OAuth integration setup
+- [ ] Lenco payment integration
+- [ ] Certificate PDF generation service
+- [ ] Email notification system
+- [ ] Queue jobs
+- [ ] Testing suite
+- [ ] Data migration scripts
 
-## 🚀 Quick Start
+## Setup Instructions
 
-### Prerequisites
-- PHP 8.0+
-- MySQL 5.7+ or MariaDB 10.3+
-- Apache with mod_rewrite
-- Composer
-
-### Installation
-1. Clone the repository
-2. Copy `.env.example` to `.env` and configure
-3. Run `composer install`
-4. Import `database/complete_lms_schema.sql`
-5. Ensure `storage/` and `public/uploads/` are writable
-6. Configure Apache to point to `public/` directory
-
-### Course Materials
-All course content is organized in `course_materials/`:
-
+1. Install dependencies:
 ```bash
-# Navigate to Python exercises
-cd course_materials/module1_foundation/topic3_programming/python_exercises
-
-# Run an exercise
-python3 01_hello_security.py
+composer install
+npm install
 ```
 
-## 📖 Key Documentation
+2. Copy environment file:
+```bash
+cp .env.example .env
+```
 
-- **AGENTS.md** - Guidelines for AI assistants working on this codebase
-- **docs/CYBERSECURITY_PROGRAM_OUTLINE.md** - Full program curriculum
-- **docs/CODE_REVIEW.md** - Code quality findings and fixes
-- **course_materials/README.md** - Course content navigation
+3. Generate application key:
+```bash
+php artisan key:generate
+```
 
-## 🛠️ Technology Stack
+4. Configure database in `.env`
 
-| Component | Technology |
-|-----------|------------|
-| Backend | PHP 8.0+ (custom framework) |
-| Database | MySQL/MariaDB |
-| Frontend | Tailwind CSS, Alpine.js, Chart.js |
-| Email | PHPMailer |
-| PDF | TCPDF |
-| Payment | Lenco Payment Gateway |
+5. Run migrations:
+```bash
+php artisan migrate
+```
 
-## 🔒 Security
+6. Build assets:
+```bash
+npm run build
+```
 
-See `AGENTS.md` for security considerations and `docs/CODE_REVIEW.md` for recent security fixes.
+7. Start development server:
+```bash
+php artisan serve
+```
 
-## 📞 Support
+## Architecture
 
-- **Email:** edutrackzambia@gmail.com
-- **Phone:** +260 770 666 937
-- **Location:** Kalomo, Zambia
+### Models
+- `User` - Authentication and roles
+- `Course` - Course content
+- `Enrollment` - Student enrollments
+- `Certificate` - PDF certificates
+- `Payment` - Payment records
+- `Instructor` - Instructor profiles
+- `Module` - Course modules
+- `Lesson` - Individual lessons
+- `Quiz` / `Assignment` - Assessments
 
-## 📜 License
+### Middleware
+- `AdminMiddleware` - Admin access
+- `InstructorMiddleware` - Instructor access
+- `FinanceMiddleware` - Finance access
+- `StudentMiddleware` - Student access
+- `EnrolledMiddleware` - Course enrollment check
 
-© 2024 Edutrack Computer Training College. All rights reserved.
+### Controllers
+Organized by role:
+- `App\Http\Controllers\Auth\*` - Authentication
+- `App\Http\Controllers\Admin\*` - Admin panel
+- `App\Http\Controllers\Instructor\*` - Instructor dashboard
+- `App\Http\Controllers\Student\*` - Student dashboard
+- `App\Http\Controllers\Finance\*` - Finance panel
+- `App\Http\Controllers\Api\*` - API endpoints
 
-TEVETA Registration: [Registration Number]
+## Migration Plan
+
+1. **Phase 1: Foundation** (Current)
+   - Laravel structure
+   - Core migrations and models
+   - Auth system
+   - Basic views
+
+2. **Phase 2: Features**
+   - Course management
+   - Enrollment system
+   - Payment integration
+   - Certificate generation
+
+3. **Phase 3: Advanced**
+   - Quiz system
+   - Assignment system
+   - Live sessions
+   - Notifications
+
+4. **Phase 4: Production**
+   - Data migration
+   - Testing
+   - Performance optimization
+   - Deployment
