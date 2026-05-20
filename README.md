@@ -1,116 +1,163 @@
-# Edutrack LMS - Laravel Migration
+# Edutrack LMS
 
-This directory contains the Laravel migration of the Edutrack LMS project.
+Edutrack LMS is a Laravel 10.x web application for Edutrack Computer Training College, a TEVETA-registered vocational training institution based in Kalomo, Zambia.
 
-## Migration Status
+## Technology Stack
 
-### Completed
-- [x] Laravel skeleton setup
-- [x] Core migrations (13 tables)
-- [x] Eloquent models with relationships
-- [x] Role-based middleware
-- [x] Route structure (web, api, console)
-- [x] Core controllers
-- [x] Base Blade layout with Tailwind CSS
-- [x] Authentication views (login, register)
+| Component | Technology |
+|-----------|------------|
+| **Backend** | PHP 8.1+, Laravel 10.x |
+| **Database** | MySQL 5.7+ / MariaDB 10.3+ |
+| **Frontend** | Tailwind CSS 3.x, Alpine.js, Vite |
+| **Auth** | Session-based + Google OAuth (Laravel Socialite) |
+| **Payments** | Lenco (primary), MTN/Airtel/Zamtel Mobile Money, Bank Transfer |
+| **Email** | PHPMailer with Gmail SMTP |
+| **PDF** | TCPDF |
+| **QR Codes** | Simple QR Code |
 
-### Pending
-- [ ] Remaining 43+ migrations (questions, quiz_attempts, assignment_submissions, etc.)
-- [ ] Service providers configuration
-- [ ] Google OAuth integration setup
-- [ ] Lenco payment integration
-- [ ] Certificate PDF generation service
-- [ ] Email notification system
-- [ ] Queue jobs
-- [ ] Testing suite
-- [ ] Data migration scripts
+## Local Setup (XAMPP)
 
-## Setup Instructions
+### Prerequisites
+- XAMPP with PHP 8.1+ and MySQL/MariaDB
+- Composer
+- Node.js 18+ and npm
 
-1. Install dependencies:
-```bash
-composer install
-npm install
+### Installation
+
+1. **Clone or extract** the project into your XAMPP `htdocs/` folder:
+   ```
+   C:\xampp\htdocs\edutrack-lms\
+   ```
+
+2. **Install PHP dependencies:**
+   ```bash
+   composer install
+   ```
+
+3. **Install Node dependencies and build assets:**
+   ```bash
+   npm install
+   npm run build
+   ```
+
+4. **Environment configuration:**
+   ```bash
+   copy .env.example .env
+   php artisan key:generate
+   ```
+
+   Edit `.env` and set your database credentials:
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=edutrack-lms
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+5. **Database setup:**
+   - Import `database/complete_lms_schema.sql` into your MySQL server
+   - Mark migrations as run (if starting fresh with existing schema):
+     ```bash
+     php artisan migrate:status
+     ```
+   - If migrations table is missing, run:
+     ```bash
+     php artisan migrate
+     ```
+
+6. **Storage link:**
+   ```bash
+   php artisan storage:link
+   ```
+
+7. **Access the application:**
+   ```
+   http://localhost/edutrack-lms/public/
+   ```
+
+   Or configure an Apache virtual host pointing to the `public/` directory.
+
+### Default Admin Account
+If the database was imported from `complete_lms_schema.sql`, existing users are preserved.
+- Email: `admin@edutrack.edu`
+- Password: (same as before migration - bcrypt hashes are compatible)
+
+## User Roles
+
+| Role | ID | Access |
+|------|-----|--------|
+| Super Admin | 1 | Full system access |
+| Admin | 2 | Administrative access |
+| Instructor | 3 | Create/manage courses |
+| Student | 4 | Enroll and learn |
+| Content Creator | 5 | Create course content |
+| Finance | 6 | Financial operations |
+
+## Key Features
+
+- **Course Management** - Categories, modules, lessons, quizzes, assignments
+- **Enrollment System** - Student enrollment with payment tracking
+- **Payment Processing** - Lenco integration, mobile money, bank transfer
+- **Certificates** - Auto-generated PDF certificates with verification
+- **Live Sessions** - Jitsi Meet integration for virtual classes
+- **Discussions** - Course discussion forums
+- **Assignments** - File/text submissions with instructor grading
+- **Notifications** - In-app and email notifications
+- **Admin Panel** - User management, financial reports, settings
+
+## Project Structure
+
+```
+edutrack-lms/
+├── app/                  # Application logic
+│   ├── Http/Controllers/ # Controllers (Admin, Instructor, Student, Auth, Api)
+│   ├── Models/           # Eloquent models
+│   └── Services/         # Business logic services
+├── config/               # Laravel configuration
+├── database/
+│   ├── migrations/       # Database migrations
+│   └── seeders/          # Data seeders
+├── public/               # Web document root
+│   ├── assets/           # CSS, JS, images
+│   ├── uploads/          # User-generated content
+│   └── build/            # Compiled Vite assets
+├── resources/
+│   ├── views/            # Blade templates
+│   ├── css/              # Tailwind CSS entry
+│   └── js/               # Alpine.js entry
+├── routes/
+│   ├── web.php           # Web routes
+│   └── api.php           # API routes
+└── storage/              # Logs, sessions, cache
 ```
 
-2. Copy environment file:
-```bash
-cp .env.example .env
-```
+## Useful Commands
 
-3. Generate application key:
 ```bash
-php artisan key:generate
-```
-
-4. Configure database in `.env`
-
-5. Run migrations:
-```bash
-php artisan migrate
-```
-
-6. Build assets:
-```bash
-npm run build
-```
-
-7. Start development server:
-```bash
+# Start development server
 php artisan serve
+
+# Watch assets during development
+npm run dev
+
+# Build production assets
+npm run build
+
+# Clear caches
+php artisan optimize:clear
+
+# Check route list
+php artisan route:list
+
+# Run migrations
+php artisan migrate
+
+# Check migration status
+php artisan migrate:status
 ```
 
-## Architecture
+## License
 
-### Models
-- `User` - Authentication and roles
-- `Course` - Course content
-- `Enrollment` - Student enrollments
-- `Certificate` - PDF certificates
-- `Payment` - Payment records
-- `Instructor` - Instructor profiles
-- `Module` - Course modules
-- `Lesson` - Individual lessons
-- `Quiz` / `Assignment` - Assessments
-
-### Middleware
-- `AdminMiddleware` - Admin access
-- `InstructorMiddleware` - Instructor access
-- `FinanceMiddleware` - Finance access
-- `StudentMiddleware` - Student access
-- `EnrolledMiddleware` - Course enrollment check
-
-### Controllers
-Organized by role:
-- `App\Http\Controllers\Auth\*` - Authentication
-- `App\Http\Controllers\Admin\*` - Admin panel
-- `App\Http\Controllers\Instructor\*` - Instructor dashboard
-- `App\Http\Controllers\Student\*` - Student dashboard
-- `App\Http\Controllers\Finance\*` - Finance panel
-- `App\Http\Controllers\Api\*` - API endpoints
-
-## Migration Plan
-
-1. **Phase 1: Foundation** (Current)
-   - Laravel structure
-   - Core migrations and models
-   - Auth system
-   - Basic views
-
-2. **Phase 2: Features**
-   - Course management
-   - Enrollment system
-   - Payment integration
-   - Certificate generation
-
-3. **Phase 3: Advanced**
-   - Quiz system
-   - Assignment system
-   - Live sessions
-   - Notifications
-
-4. **Phase 4: Production**
-   - Data migration
-   - Testing
-   - Performance optimization
-   - Deployment
+Proprietary - Edutrack Computer Training College

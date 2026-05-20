@@ -4,9 +4,8 @@
 /public/storage
 /storage/*.key
 /storage/pail
-/storage/framework/views/**
-/storage/framework/sessions/**
-/storage/framework/cache/data/**
+/storage/framework/
+/storage/logs/
 /bootstrap/cache/**
 .env
 .env.backup
