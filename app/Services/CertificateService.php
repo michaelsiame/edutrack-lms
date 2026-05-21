@@ -10,6 +10,20 @@ use TCPDF;
 class CertificateService
 {
     /**
+     * Get the ordinal suffix for a day number.
+     */
+    protected function getDaySuffix(int $day): string
+    {
+        return match (true) {
+            $day >= 11 && $day <= 13 => 'th',
+            $day % 10 === 1 => 'st',
+            $day % 10 === 2 => 'nd',
+            $day % 10 === 3 => 'rd',
+            default => 'th',
+        };
+    }
+
+    /**
      * Generate a unique certificate number.
      */
     public function generateCertificateNumber(): string
@@ -56,7 +70,7 @@ class CertificateService
      */
     public function generatePdf(Certificate $certificate): string
     {
-        $pdf = new TCPDF('L', 'mm', 'A4');
+        $pdf = new TCPDF('P', 'mm', 'A4');
         $pdf->SetCreator('Edutrack LMS');
         $pdf->SetAuthor('Edutrack Computer Training College');
         $pdf->SetTitle('Certificate - ' . $certificate->certificate_number);
@@ -92,6 +106,7 @@ class CertificateService
             'final_score' => $certificate->final_score,
             'classification' => $certificate->classification ?? 'Pass',
             'graduation_day' => $graduationDate->format('j'),
+            'graduation_suffix' => $this->getDaySuffix((int) $graduationDate->format('j')),
             'graduation_month' => $graduationDate->format('F'),
             'graduation_year' => $graduationDate->format('Y'),
             'student_number' => 'EDU-' . str_pad($certificate->user_id, 6, '0', STR_PAD_LEFT),

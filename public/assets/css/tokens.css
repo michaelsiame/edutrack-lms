@@ -159,7 +159,7 @@
 
 /* === COMPLETED COURSE CARD === */
 .course-card-completed {
-  background: linear-gradient(135deg, var(--surface-success) 0%, var(--surface-secondary) 100%);
+  background-color: var(--surface-success);
   border-color: #A7F3D0;
 }
 
