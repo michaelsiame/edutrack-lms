@@ -74,8 +74,17 @@ class CertificateService
         $pdf->SetCreator('Edutrack LMS');
         $pdf->SetAuthor('Edutrack Computer Training College');
         $pdf->SetTitle('Certificate - ' . $certificate->certificate_number);
+        // Disable TCPDF default header/footer lines that break the certificate layout.
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+
+        // Render at exact full-page size with no automatic page break offsets.
         $pdf->SetMargins(0, 0, 0);
-        $pdf->SetAutoPageBreak(false);
+        $pdf->SetAutoPageBreak(false, 0);
+        $pdf->SetCellPadding(0);
+        $pdf->SetCellMargins(0);
+        $pdf->setImageScale(1);
+        $pdf->SetFont('dejavuserif', '', 10);
         $pdf->AddPage();
 
         $data = $this->getCertificateData($certificate);

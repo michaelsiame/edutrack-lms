@@ -74,11 +74,17 @@ body { margin: 0; padding: 0; font-family:'DejaVu Serif', Georgia,'Times New Rom
 </table>
 
 <!-- Student Name -->
-<div style="text-align:center; margin:2mm 0 3mm 0;">
-<div style="font-size:32px; font-family:'DejaVu Serif', Georgia, serif; font-style:italic; color:#111111; border-bottom:2px solid #D89E2E; display:inline-block; padding:0 12mm 2mm 12mm; line-height:1.2;">
-{{ $student_name }}
-</div>
-</div>
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%; margin:2mm 0 3mm 0;">
+<tr>
+<td style="text-align:center;">
+<table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+<tr>
+<td style="font-size:32px; font-family:'DejaVu Serif', Georgia, serif; font-style:italic; color:#111111; line-height:1.2; padding:0 12mm 2mm 12mm; border-bottom:2px solid #D89E2E;">{{ $student_name }}</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
 
 <!-- Body -->
 <div style="text-align:center; font-size:10px; color:#444444; line-height:1.8; margin:2mm 0 2mm 0;">
