@@ -90,7 +90,11 @@
  @if(Route::has('instructor.assignments.index'))
  <x-dashboard-nav-item route="instructor.assignments.index" icon="fa-tasks" label="Assignments" />
  @endif
+ @if(Route::has('instructor.quizzes.index'))
+ <x-dashboard-nav-item route="instructor.quizzes.index" icon="fa-question-circle" label="Quizzes" />
+ @endif
  <x-dashboard-nav-item route="instructor.submissions" icon="fa-clipboard-check" label="Submissions" />
+ <x-dashboard-nav-item route="instructor.progress" icon="fa-user-graduate" label="Class Progress" />
  <x-dashboard-nav-item route="instructor.analytics" icon="fa-chart-line" label="Analytics" />
  @elseif($user->isStudent())
  <x-dashboard-nav-item route="student.dashboard" icon="fa-tachometer-alt" label="Dashboard" />
@@ -104,6 +108,9 @@
  @if(Route::has('student.schedule'))
  <x-dashboard-nav-item route="student.schedule" icon="fa-calendar-alt" label="Schedule" />
  @endif
+ @if(Route::has('student.quizzes.index'))
+ <x-dashboard-nav-item route="student.quizzes.index" icon="fa-clipboard-list" label="Quizzes" />
+ @endif
  <x-dashboard-nav-item route="student.progress" icon="fa-chart-pie" label="Progress" />
  <x-dashboard-nav-item route="student.certificates" icon="fa-certificate" label="Certificates" />
  <x-dashboard-nav-item route="student.payments" icon="fa-credit-card" label="Payments" />
@@ -114,6 +121,7 @@
  @elseif($user->isFinance())
  <x-dashboard-nav-item route="finance.dashboard" icon="fa-tachometer-alt" label="Dashboard" />
  <x-dashboard-nav-item route="finance.transactions" icon="fa-money-bill-wave" label="Transactions" />
+ <x-dashboard-nav-item route="finance.payments" icon="fa-check-circle" label="Verify Payments" />
  <x-dashboard-nav-item route="finance.invoices" icon="fa-file-invoice" label="Invoices" />
  @endif
 

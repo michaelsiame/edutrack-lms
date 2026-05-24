@@ -39,7 +39,10 @@
  </tr>
  @empty
  <tr>
- <td colspan="6" class="text-center py-10 text-gray-500 dark:text-gray-400">No transactions found.</td>
+ <td colspan="6" class="text-center py-10 text-gray-500 dark:text-gray-400">
+ <i class="fas fa-money-bill-wave text-3xl mb-3 text-gray-300 dark:text-gray-600"></i>
+ <p class="text-sm">No transactions found.</p>
+ </td>
  </tr>
  @endforelse
  </tbody>

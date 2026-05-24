@@ -57,7 +57,7 @@ class LiveSessionController extends Controller
     private function authorizeInstructor(Course $course)
     {
         $user = Auth::user();
-        $isInstructor = $user->roles()->where('role_id', 3)->exists();
+        $isInstructor = $user->isInstructor();
         $ownsCourse = $course->instructor_id == $user->instructor?->id;
         if (!$isInstructor || !$ownsCourse) {
             abort(403);

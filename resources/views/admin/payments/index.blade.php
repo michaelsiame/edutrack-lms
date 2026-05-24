@@ -4,6 +4,38 @@
 @section('page_title','Payment Management')
 
 @section('content')
+<div class="space-y-6">
+<!-- Filters -->
+<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-4">
+ <form action="{{ route('admin.payments.index') }}" method="GET" class="flex flex-wrap items-end gap-4">
+ <div>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">From</label>
+ <input type="date" name="from" value="{{ request('from') }}"
+ class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ </div>
+ <div>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">To</label>
+ <input type="date" name="to" value="{{ request('to') }}"
+ class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ </div>
+ <div>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Status</label>
+ <select name="status" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ <option value="">All</option>
+ <option value="Completed" {{ request('status') === 'Completed' ? 'selected' : '' }}>Completed</option>
+ <option value="Pending" {{ request('status') === 'Pending' ? 'selected' : '' }}>Pending</option>
+ <option value="Failed" {{ request('status') === 'Failed' ? 'selected' : '' }}>Failed</option>
+ <option value="Refunded" {{ request('status') === 'Refunded' ? 'selected' : '' }}>Refunded</option>
+ </select>
+ </div>
+ <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm font-medium">Filter</button>
+ <a href="{{ route('admin.payments.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Clear</a>
+ <a href="{{ route('admin.reports.export', 'payments') }}?{{ http_build_query(request()->only(['from','to','status'])) }}" class="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 text-sm font-medium">
+ <i class="fas fa-download mr-1"></i>CSV
+ </a>
+ </form>
+</div>
+
 <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
  <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
  <h3 class="text-base font-semibold text-gray-800 dark:text-white">All Payments</h3>
@@ -46,5 +78,6 @@
  <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700">
  {{ $payments->links() }}
  </div>
+</div>
 </div>
 @endsection

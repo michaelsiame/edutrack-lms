@@ -7,7 +7,7 @@
 <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
  <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
  <h3 class="text-base font-semibold text-gray-800 dark:text-white">My Courses</h3>
- <a href="#" class="inline-flex items-center px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">
+ <a href="{{ route('instructor.courses.create') }}" class="inline-flex items-center px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">
  <i class="fas fa-plus mr-1.5"></i> New Course
  </a>
  </div>
@@ -35,12 +35,12 @@
  </td>
  <td class="text-right">
  <div class="flex items-center justify-end gap-2">
- <button class="p-1.5 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+ <a href="{{ route('instructor.courses.edit', $course) }}" class="p-1.5 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
  <i class="fas fa-pen text-sm"></i>
- </button>
- <button class="p-1.5 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+ </a>
+ <a href="{{ route('instructor.courses.show', $course) }}" class="p-1.5 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
  <i class="fas fa-eye text-sm"></i>
- </button>
+ </a>
  </div>
  </td>
  </tr>

@@ -1,52 +1,59 @@
 @extends('layouts.dashboard')
 
+@section('title','Quizzes - Instructor')
+@section('page_title','Quizzes')
+
 @section('content')
-<div class="container mx-auto px-4 py-6">
- <div class="flex justify-between items-center mb-6">
- <h1 class="text-2xl font-bold">Quizzes</h1>
- <a href="{{ route('instructor.quizzes.create') }}" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700">
- <i class="fas fa-plus mr-2"></i>New Quiz
+<div class="max-w-6xl mx-auto">
+ <div class="flex items-center justify-between mb-6">
+ <h2 class="text-xl font-bold text-gray-900 dark:text-white">Quizzes</h2>
+ <a href="{{ route('instructor.quizzes.create') }}" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm">
+ <i class="fas fa-plus mr-1"></i>New Quiz
  </a>
  </div>
 
  @if(session('success'))
- <div class="bg-success-100 border border-success-400 text-success-700 px-4 py-3 rounded mb-4">
- {{ session('success') }}
- </div>
+ <div class="mb-4 p-4 bg-success-50 border border-success-200 rounded-lg text-success-700">{{ session('success') }}</div>
  @endif
 
- <div class="bg-white rounded-lg shadow overflow-hidden">
- <table class="min-w-full divide-y divide-gray-200">
- <thead class="bg-gray-50">
+ <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+ <div class="overflow-x-auto">
+ <table class="w-full text-sm min-w-[640px]">
+ <thead class="bg-gray-50 dark:bg-gray-700/50">
  <tr>
- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Questions</th>
- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Passing Score</th>
- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+ <th class="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300" scope="col">Title</th>
+ <th class="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300" scope="col">Course</th>
+ <th class="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300" scope="col">Questions</th>
+ <th class="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300" scope="col">Passing Score</th>
+ <th class="px-4 py-3 text-right font-medium text-gray-700 dark:text-gray-300" scope="col">Actions</th>
  </tr>
  </thead>
- <tbody class="bg-white divide-y divide-gray-200">
+ <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
  @forelse($quizzes as $quiz)
- <tr>
- <td class="px-6 py-4">
- <div class="text-sm font-medium text-gray-900">{{ $quiz->title }}</div>
+ <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+ <td class="px-4 py-3">
+ <div class="font-medium text-gray-900 dark:text-white">{{ $quiz->title }}</div>
  </td>
- <td class="px-6 py-4 text-sm text-gray-500">{{ $quiz->course->title ??'N/A' }}</td>
- <td class="px-6 py-4 text-sm text-gray-500">{{ $quiz->questions_count ?? 0 }}</td>
- <td class="px-6 py-4 text-sm text-gray-500">{{ $quiz->passing_score ?? 60 }}%</td>
- <td class="px-6 py-4 text-sm font-medium space-x-2">
- <a href="{{ route('instructor.quizzes.show', $quiz) }}" class="text-primary-600 hover:text-primary-900">View</a>
- <a href="{{ route('instructor.quizzes.edit', $quiz) }}" class="text-secondary-600 hover:text-secondary-900">Edit</a>
+ <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $quiz->course->title ?? 'N/A' }}</td>
+ <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $quiz->questions_count ?? 0 }}</td>
+ <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $quiz->passing_score ?? 60 }}%</td>
+ <td class="px-4 py-3 text-right">
+ <a href="{{ route('instructor.quizzes.show', $quiz) }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="View quiz">
+ <i class="fas fa-eye" aria-hidden="true"></i>
+ </a>
+ <a href="{{ route('instructor.quizzes.edit', $quiz) }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-secondary-600 hover:text-secondary-700 hover:bg-secondary-50 dark:hover:bg-secondary-900/20 rounded-lg" aria-label="Edit quiz">
+ <i class="fas fa-edit" aria-hidden="true"></i>
+ </a>
  </td>
  </tr>
  @empty
  <tr>
- <td colspan="5" class="px-6 py-8 text-center text-gray-500">No quizzes found.</td>
+ <td colspan="5" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">No quizzes found.</td>
  </tr>
  @endforelse
  </tbody>
  </table>
+ </div>
  </div>
 
  @if($quizzes->hasPages())

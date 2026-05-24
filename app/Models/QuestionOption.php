@@ -9,6 +9,10 @@ class QuestionOption extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+    protected $primaryKey = 'option_id';
+    public $incrementing = true;
+
     protected $fillable = [
         'question_id',
         'option_text',

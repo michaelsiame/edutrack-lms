@@ -26,10 +26,12 @@ class UserRole extends Model
     public function getRoleNameAttribute(): string
     {
         return match ($this->role_id) {
-            1 => 'Admin',
-            2 => 'Instructor',
-            3 => 'Finance',
+            1 => 'Super Admin',
+            2 => 'Admin',
+            3 => 'Instructor',
             4 => 'Student',
+            5 => 'Content Creator',
+            6 => 'Finance',
             default => 'Unknown',
         };
     }

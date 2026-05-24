@@ -8,9 +8,23 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payments = Payment::with(['student', 'course'])->latest()->paginate(20);
+        $query = Payment::with(['student', 'course']);
+
+        if ($request->filled('status')) {
+            $query->where('payment_status', $request->status);
+        }
+
+        if ($request->filled('from')) {
+            $query->whereDate('created_at', '>=', $request->from);
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('created_at', '<=', $request->to);
+        }
+
+        $payments = $query->latest()->paginate(20)->withQueryString();
         return view('admin.payments.index', compact('payments'));
     }
 

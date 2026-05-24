@@ -24,15 +24,38 @@ class CertificateService
     }
 
     /**
-     * Generate a unique certificate number.
+     * Generate a certificate number in the format: NRC 2495807/1/1
      */
-    public function generateCertificateNumber(): string
+    public function generateCertificateNumber($user = null): string
     {
-        $prefix = 'EDT';
-        $year = date('Y');
-        $random = Str::upper(Str::random(6));
+        $nrcSuffix = '2495807';
 
-        return "{$prefix}-{$year}-{$random}";
+        if ($user && $user->national_id) {
+            $nrcSuffix = preg_replace('/[^0-9\/]/', '', $user->national_id);
+            if (empty($nrcSuffix)) $nrcSuffix = '2495807/1/1';
+        } elseif ($user && $user->id) {
+            $nrcSuffix = $user->id . '/1/1';
+        }
+
+        return 'NRC ' . $nrcSuffix;
+    }
+
+    /**
+     * Generate student number like "26Edu249580"
+     */
+    protected function generateStudentNumber(Certificate $certificate): string
+    {
+        $yearSuffix = substr($certificate->graduation_ceremony_date?->format('Y') ?? date('Y'), -2);
+        $userId = $certificate->user_id;
+
+        if ($certificate->user && $certificate->user->national_id) {
+            $numberPart = preg_replace('/[^0-9]/', '', $certificate->user->national_id);
+            if (strlen($numberPart) > 6) $numberPart = substr($numberPart, -6);
+        } else {
+            $numberPart = str_pad((string) $userId, 6, '0', STR_PAD_LEFT);
+        }
+
+        return $yearSuffix . 'Edu' . $numberPart;
     }
 
     /**
@@ -52,7 +75,7 @@ class CertificateService
             'user_id' => $enrollment->user_id,
             'course_id' => $enrollment->course_id,
             'enrollment_id' => $enrollment->id,
-            'certificate_number' => $this->generateCertificateNumber(),
+            'certificate_number' => $this->generateCertificateNumber($enrollment->user),
             'issued_date' => now(),
             'verification_code' => $this->generateVerificationCode(),
             'final_score' => $enrollment->final_grade ?? 0,
@@ -98,7 +121,7 @@ class CertificateService
     /**
      * Get certificate data for PDF generation.
      */
-    protected function getCertificateData(Certificate $certificate): array
+    public function getCertificateData(Certificate $certificate): array
     {
         $certificate->load(['user', 'course', 'enrollment']);
 
@@ -118,7 +141,7 @@ class CertificateService
             'graduation_suffix' => $this->getDaySuffix((int) $graduationDate->format('j')),
             'graduation_month' => $graduationDate->format('F'),
             'graduation_year' => $graduationDate->format('Y'),
-            'student_number' => 'EDU-' . str_pad($certificate->user_id, 6, '0', STR_PAD_LEFT),
+            'student_number' => $this->generateStudentNumber($certificate),
         ];
     }
 }

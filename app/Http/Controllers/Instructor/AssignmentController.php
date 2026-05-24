@@ -7,6 +7,7 @@ use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Services\EmailQueueService;
 use Illuminate\Http\Request;
 
 class AssignmentController extends Controller
@@ -83,6 +84,31 @@ class AssignmentController extends Controller
             'graded_by' => auth()->id(),
             'graded_at' => now(),
         ]);
+
+        // Send notification email to student
+        try {
+            $student = $submission->student;
+            if ($student && $student->user) {
+                $emailService = app(EmailQueueService::class);
+                $emailService->queue(
+                    $student->user->email,
+                    'Assignment Graded: ' . $assignment->title,
+                    view('emails.assignment-graded', [
+                        'studentName' => $student->user->first_name,
+                        'assignmentTitle' => $assignment->title,
+                        'courseTitle' => $course->title,
+                        'pointsEarned' => $validated['points_earned'],
+                        'maxPoints' => $assignment->max_points,
+                        'feedback' => $validated['feedback'] ?? null,
+                    ])->render(),
+                    [],
+                    5
+                );
+            }
+        } catch (\Exception $e) {
+            // Silently log email failure; don't block the grading flow
+            \Illuminate\Support\Facades\Log::warning('Failed to send assignment graded email: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Submission graded successfully.');
     }

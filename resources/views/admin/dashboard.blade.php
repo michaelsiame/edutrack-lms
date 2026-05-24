@@ -78,7 +78,7 @@
  <h3 class="text-base font-semibold text-gray-800 dark:text-white">
  <i class="fas fa-user-plus text-primary-500 mr-2"></i>Recent Enrollments
  </h3>
- <a href="#" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">View All</a>
+ <a href="{{ route('admin.enrollments.index') }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">View All</a>
  </div>
  <div class="divide-y divide-gray-100 dark:divide-gray-700">
  @forelse($stats['recent_enrollments'] as $enrollment)
@@ -109,7 +109,7 @@
  <h3 class="text-base font-semibold text-gray-800 dark:text-white">
  <i class="fas fa-money-bill-wave text-success-500 mr-2"></i>Recent Payments
  </h3>
- <a href="#" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">View All</a>
+ <a href="{{ route('admin.payments.index') }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">View All</a>
  </div>
  <div class="divide-y divide-gray-100 dark:divide-gray-700">
  @forelse($stats['recent_payments'] as $payment)

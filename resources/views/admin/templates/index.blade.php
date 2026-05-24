@@ -59,13 +59,14 @@
 
  <!-- Templates List -->
  <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
- <table class="w-full text-sm">
+ <div class="overflow-x-auto">
+ <table class="w-full text-sm min-w-[640px]">
  <thead class="bg-gray-50 dark:bg-gray-700/50">
  <tr>
- <th class="px-4 py-3 text-left">Template</th>
- <th class="px-4 py-3 text-left">Type</th>
- <th class="px-4 py-3 text-left">Status</th>
- <th class="px-4 py-3 text-right">Actions</th>
+ <th class="px-4 py-3 text-left" scope="col">Template</th>
+ <th class="px-4 py-3 text-left" scope="col">Type</th>
+ <th class="px-4 py-3 text-left" scope="col">Status</th>
+ <th class="px-4 py-3 text-right" scope="col">Actions</th>
  </tr>
  </thead>
  <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -80,19 +81,19 @@
  </td>
  <td class="px-4 py-3">
  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
- {{ $template->is_active ?'bg-success-100 text-success-800' :'bg-gray-100 text-gray-800' }}">
- {{ $template->is_active ?'Active' :'Inactive' }}
+ {{ $template->is_active ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
+ {{ $template->is_active ? 'Active' : 'Inactive' }}
  </span>
  </td>
  <td class="px-4 py-3 text-right">
- <button onclick="toggleEditTemplate({{ $template->template_id }})" class="text-primary-600 hover:text-primary-700 mr-3">
- <i class="fas fa-edit"></i>
+ <button onclick="toggleEditTemplate({{ $template->template_id }})" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit template">
+ <i class="fas fa-edit" aria-hidden="true"></i>
  </button>
  <form action="{{ route('admin.templates.destroy', $template) }}" method="POST" class="inline" onsubmit="return confirm('Delete this template?')">
  @csrf
  @method('DELETE')
- <button type="submit" class="text-danger-600 hover:text-danger-700">
- <i class="fas fa-trash"></i>
+ <button type="submit" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg" aria-label="Delete template">
+ <i class="fas fa-trash" aria-hidden="true"></i>
  </button>
  </form>
  </td>
@@ -139,6 +140,7 @@
  @endforelse
  </tbody>
  </table>
+ </div>
  </div>
 
  <div class="mt-4">

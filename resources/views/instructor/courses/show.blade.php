@@ -4,7 +4,7 @@
 @section('page_title', $course->title)
 
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6">
+<div class="max-w-5xl mx-auto space-y-6" x-data="{}">
  <!-- Course Header -->
  <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
  <div class="flex items-center justify-between mb-4">
@@ -35,6 +35,16 @@
  @if(session('error'))
  <div class="p-4 bg-danger-50 border border-danger-200 rounded-lg text-danger-700">
  {{ session('error') }}
+ </div>
+ @endif
+
+ @if($errors->any())
+ <div class="p-4 bg-danger-50 border border-danger-200 rounded-lg text-danger-700">
+ <ul class="list-disc list-inside text-sm">
+ @foreach($errors->all() as $error)
+ <li>{{ $error }}</li>
+ @endforeach
+ </ul>
  </div>
  @endif
 
@@ -123,7 +133,7 @@
  <div>
  <p class="font-medium text-gray-900 dark:text-white text-sm">{{ $lesson->title }}</p>
  <div class="flex items-center gap-2 mt-0.5">
- <span class="text-xs text-gray-500 dark:text-gray-400 capitalize">{{ $lesson->lesson_type }}</span>
+ <span class="text-xs text-gray-500 dark:text-gray-400">{{ $lesson->lesson_type }}</span>
  @if($lesson->duration_minutes)
  <span class="text-xs text-gray-400">&bull; {{ $lesson->duration_minutes }} min</span>
  @endif
@@ -134,21 +144,74 @@
  </div>
  </div>
  <div class="flex items-center gap-2">
- <button onclick="toggleEditLesson({{ $lesson->id }})" class="text-xs text-gray-500 hover:text-primary-600">
+ <button onclick="toggleEditLesson({{ $lesson->id }})" class="text-xs text-gray-500 hover:text-primary-600" title="Edit lesson">
  <i class="fas fa-edit"></i>
+ </button>
+ <button onclick="toggleLessonResources({{ $lesson->id }})" class="text-xs text-gray-500 hover:text-success-600" title="Manage resources">
+ <i class="fas fa-paperclip"></i>
  </button>
  <form action="{{ route('instructor.courses.modules.lessons.destroy', [$course, $module, $lesson]) }}" method="POST" class="inline" onsubmit="return confirm('Delete this lesson?')">
  @csrf
  @method('DELETE')
- <button type="submit" class="text-xs text-gray-500 hover:text-danger-600">
+ <button type="submit" class="text-xs text-gray-500 hover:text-danger-600" title="Delete lesson">
  <i class="fas fa-trash"></i>
  </button>
  </form>
  </div>
  </div>
 
+ <!-- Lesson Resources (hidden by default) -->
+ <div id="lesson-resources-{{ $lesson->id }}" class="hidden mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+ @if($lesson->resources->isNotEmpty())
+ <div class="mb-3">
+ <h5 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Attached Resources</h5>
+ <div class="space-y-1.5">
+ @foreach($lesson->resources as $res)
+ <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 rounded-lg px-3 py-2">
+ <div class="flex items-center gap-2 min-w-0">
+ <i class="fas fa-file text-gray-400 text-xs"></i>
+ <span class="text-xs text-gray-700 dark:text-gray-300 truncate">{{ $res->title }}</span>
+ <span class="text-[10px] text-gray-400">({{ $res->resource_type }}, {{ $res->file_size_kb }} KB)</span>
+ </div>
+ <form action="{{ route('instructor.courses.modules.lessons.resources.destroy', [$course, $module, $lesson, $res]) }}" method="POST" class="inline" onsubmit="return confirm('Delete this resource?')">
+ @csrf
+ @method('DELETE')
+ <button type="submit" class="text-xs text-danger-500 hover:text-danger-700" title="Delete resource">
+ <i class="fas fa-times"></i>
+ </button>
+ </form>
+ </div>
+ @endforeach
+ </div>
+ </div>
+ @endif
+ <form action="{{ route('instructor.courses.modules.lessons.resources.store', [$course, $module, $lesson]) }}" method="POST" enctype="multipart/form-data" class="flex flex-wrap items-end gap-3">
+ @csrf
+ <div class="flex-1 min-w-[200px]">
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Resource Title</label>
+ <input type="text" name="title" required placeholder="e.g., Course Syllabus"
+ class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+ </div>
+ <div class="flex-1 min-w-[200px]">
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Description (optional)</label>
+ <input type="text" name="description" placeholder="Brief description"
+ class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+ </div>
+ <div>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">File (max 50MB)</label>
+ <input type="file" name="resource_file" required
+ class="text-xs text-gray-600 dark:text-gray-300 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+ </div>
+ <button type="submit" class="px-3 py-2 bg-success-600 text-white text-sm rounded-lg hover:bg-success-700">
+ <i class="fas fa-upload mr-1"></i>Upload
+ </button>
+ </form>
+ </div>
+
  <!-- Edit Lesson Form (hidden by default) -->
- <div id="edit-lesson-{{ $lesson->id }}" class="hidden mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+ <div id="edit-lesson-{{ $lesson->id }}" class="hidden mt-3 pt-3 border-t border-gray-100 dark:border-gray-700"
+      x-data="lessonForm('{{ $lesson->lesson_type }}')"
+      x-init="init()">
  <form action="{{ route('instructor.courses.modules.lessons.update', [$course, $module, $lesson]) }}" method="POST" class="space-y-3">
  @csrf
  @method('PUT')
@@ -160,25 +223,82 @@
  </div>
  <div>
  <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Type</label>
- <select name="lesson_type" required
+ <select name="lesson_type" x-model="type" required
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
- <option value="video" {{ $lesson->lesson_type ==='video' ?'selected' :'' }}>Video</option>
- <option value="text" {{ $lesson->lesson_type ==='text' ?'selected' :'' }}>Text</option>
- <option value="quiz" {{ $lesson->lesson_type ==='quiz' ?'selected' :'' }}>Quiz</option>
- <option value="assignment" {{ $lesson->lesson_type ==='assignment' ?'selected' :'' }}>Assignment</option>
+ <option value="Video">Video</option>
+ <option value="Reading">Text / Reading</option>
+ <option value="Quiz">Quiz</option>
+ <option value="Assignment">Assignment</option>
  </select>
  </div>
  </div>
- <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Video URL (optional)</label>
- <input type="url" name="video_url" value="{{ $lesson->video_url }}"
- class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
- placeholder="https://youtube.com/watch?v=...">
+
+ <!-- Type-specific helper banners -->
+ <div x-show="type === 'Quiz'" x-cloak class="p-3 bg-info-50 dark:bg-info-900/20 border border-info-200 dark:border-info-800 rounded-lg">
+ <p class="text-xs text-info-700 dark:text-info-300 flex items-start gap-2">
+ <i class="fas fa-info-circle mt-0.5"></i>
+ <span>Link this lesson to an existing quiz, or create the quiz separately after saving.</span>
+ </p>
  </div>
+ <div x-show="type === 'Assignment'" x-cloak class="p-3 bg-info-50 dark:bg-info-900/20 border border-info-200 dark:border-info-800 rounded-lg">
+ <p class="text-xs text-info-700 dark:text-info-300 flex items-start gap-2">
+ <i class="fas fa-info-circle mt-0.5"></i>
+ <span>Link this lesson to an existing assignment, or create the assignment separately after saving.</span>
+ </p>
+ </div>
+
+ <!-- Quiz Linking -->
+ <div x-show="type === 'Quiz'" x-cloak>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Link to Quiz (optional)</label>
+ <select name="linked_quiz_id"
+ class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+ <option value="">-- Select a quiz --</option>
+ @foreach($unlinkedQuizzes as $q)
+ <option value="{{ $q->id }}">{{ $q->title }}</option>
+ @endforeach
+ </select>
+ <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Only quizzes not already linked to a lesson are shown.</p>
+ </div>
+
+ <!-- Assignment Linking -->
+ <div x-show="type === 'Assignment'" x-cloak>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Link to Assignment (optional)</label>
+ <select name="linked_assignment_id"
+ class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+ <option value="">-- Select an assignment --</option>
+ @foreach($unlinkedAssignments as $a)
+ <option value="{{ $a->id }}">{{ $a->title }}</option>
+ @endforeach
+ </select>
+ <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Only assignments not already linked to a lesson are shown.</p>
+ </div>
+
+ <!-- Video URL -->
+ <div x-show="showVideoUrl" x-cloak>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+ Video URL <span x-show="isVideo" class="text-danger-500">*</span>
+ </label>
+ <input type="url" name="video_url" value="{{ $lesson->video_url }}" :required="isVideo"
+ class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+ placeholder="https://youtube.com/watch?v=... or https://vimeo.com/...">
+ <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Supports YouTube and Vimeo URLs.</p>
+ </div>
+
+ <!-- Content -->
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Content</label>
- <textarea name="content" rows="3"
- class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">{{ $lesson->content }}</textarea>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+ <span x-text="contentLabel"></span>
+ <span x-show="contentRequired" class="text-danger-500">*</span>
+ </label>
+ <textarea name="content" id="tinymce-edit-{{ $lesson->id }}" rows="8"
+ class="tinymce-editor w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">{{ $lesson->content }}</textarea>
+ </div>
+
+ <div>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Change Summary (optional)</label>
+ <input type="text" name="change_summary"
+ class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+ placeholder="e.g. Fixed typos, added images">
  </div>
  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
  <div>
@@ -199,8 +319,9 @@
  </label>
  </div>
  </div>
- <div class="flex gap-2">
+ <div class="flex gap-2 flex-wrap items-center">
  <button type="submit" class="px-3 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700">Update Lesson</button>
+ <a href="{{ route('instructor.lessons.versions', [$course, $module, $lesson]) }}" class="px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">Version History</a>
  <button type="button" onclick="toggleEditLesson({{ $lesson->id }})" class="px-3 py-2 bg-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-300">Cancel</button>
  </div>
  </form>
@@ -219,7 +340,9 @@
  <i class="fas fa-plus mr-1"></i>Add Lesson
  </button>
 
- <div id="add-lesson-{{ $module->id }}" class="hidden mt-3">
+ <div id="add-lesson-{{ $module->id }}" class="hidden mt-3"
+      x-data="lessonForm('Video')"
+      x-init="init()">
  <form action="{{ route('instructor.courses.modules.lessons.store', [$course, $module]) }}" method="POST" class="space-y-3">
  @csrf
  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -231,25 +354,81 @@
  </div>
  <div>
  <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Type</label>
- <select name="lesson_type" required
+ <select name="lesson_type" x-model="type" required
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
- <option value="video">Video</option>
- <option value="text">Text</option>
- <option value="quiz">Quiz</option>
- <option value="assignment">Assignment</option>
+ <option value="Video">Video</option>
+ <option value="Reading">Text / Reading</option>
+ <option value="Quiz">Quiz</option>
+ <option value="Assignment">Assignment</option>
  </select>
  </div>
  </div>
- <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Video URL (optional)</label>
- <input type="url" name="video_url"
- class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
- placeholder="https://youtube.com/watch?v=...">
+
+ <!-- Type-specific helper banners -->
+ <div x-show="type === 'Quiz'" x-cloak class="p-3 bg-info-50 dark:bg-info-900/20 border border-info-200 dark:border-info-800 rounded-lg">
+ <p class="text-xs text-info-700 dark:text-info-300 flex items-start gap-2">
+ <i class="fas fa-info-circle mt-0.5"></i>
+ <span>Link this lesson to an existing quiz, or create the quiz separately after saving.</span>
+ </p>
  </div>
- <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Content</label>
- <textarea name="content" rows="2"
+ <div x-show="type === 'Assignment'" x-cloak class="p-3 bg-info-50 dark:bg-info-900/20 border border-info-200 dark:border-info-800 rounded-lg">
+ <p class="text-xs text-info-700 dark:text-info-300 flex items-start gap-2">
+ <i class="fas fa-info-circle mt-0.5"></i>
+ <span>Link this lesson to an existing assignment, or create the assignment separately after saving.</span>
+ </p>
+ </div>
+
+ <!-- Quiz Linking -->
+ <div x-show="type === 'Quiz'" x-cloak>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Link to Quiz (optional)</label>
+ <select name="linked_quiz_id"
+ class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+ <option value="">-- Select a quiz --</option>
+ @php
+ $linkedQuiz = $lesson->quizzes->first();
+ @endphp
+ @foreach($unlinkedQuizzes->merge($lesson->quizzes)->unique('id') as $q)
+ <option value="{{ $q->id }}" {{ $linkedQuiz && $linkedQuiz->id == $q->id ? 'selected' : '' }}>{{ $q->title }}</option>
+ @endforeach
+ </select>
+ <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Only quizzes not already linked to a lesson are shown.</p>
+ </div>
+
+ <!-- Assignment Linking -->
+ <div x-show="type === 'Assignment'" x-cloak>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Link to Assignment (optional)</label>
+ <select name="linked_assignment_id"
+ class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+ <option value="">-- Select an assignment --</option>
+ @php
+ $linkedAssignment = $lesson->assignments->first();
+ @endphp
+ @foreach($unlinkedAssignments->merge($lesson->assignments)->unique('id') as $a)
+ <option value="{{ $a->id }}" {{ $linkedAssignment && $linkedAssignment->id == $a->id ? 'selected' : '' }}>{{ $a->title }}</option>
+ @endforeach
+ </select>
+ <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Only assignments not already linked to a lesson are shown.</p>
+ </div>
+
+ <!-- Video URL -->
+ <div x-show="showVideoUrl" x-cloak>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+ Video URL <span x-show="isVideo" class="text-danger-500">*</span>
+ </label>
+ <input type="url" name="video_url" :required="isVideo"
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+ placeholder="https://youtube.com/watch?v=... or https://vimeo.com/...">
+ <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Supports YouTube and Vimeo URLs.</p>
+ </div>
+
+ <!-- Content -->
+ <div>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+ <span x-text="contentLabel"></span>
+ <span x-show="contentRequired" class="text-danger-500">*</span>
+ </label>
+ <textarea name="content" id="tinymce-add-{{ $module->id }}" rows="6"
+ class="tinymce-editor w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
  placeholder="Lesson content or description..."></textarea>
  </div>
  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -292,7 +471,30 @@
  @endforelse
 </div>
 
+<script src="{{ asset('assets/js/tinymce/tinymce.min.js') }}"></script>
 <script>
+function lessonForm(initialType) {
+    return {
+        type: initialType,
+        get isVideo() { return this.type === 'Video'; },
+        get isReading() { return this.type === 'Reading'; },
+        get isQuiz() { return this.type === 'Quiz'; },
+        get isAssignment() { return this.type === 'Assignment'; },
+        get showVideoUrl() { return this.isVideo; },
+        get contentLabel() {
+            if (this.isVideo) return 'Supplementary Notes / Description';
+            if (this.isReading) return 'Lesson Content';
+            if (this.isQuiz) return 'Pre-Quiz Instructions';
+            if (this.isAssignment) return 'Assignment Instructions';
+            return 'Content';
+        },
+        get contentRequired() { return this.isReading; },
+        init() {
+            // Watcher is handled by x-model on the select
+        }
+    };
+}
+
 function toggleEditModule(moduleId) {
  const el = document.getElementById('edit-module-' + moduleId);
  el.classList.toggle('hidden');
@@ -301,11 +503,74 @@ function toggleEditModule(moduleId) {
 function toggleEditLesson(lessonId) {
  const el = document.getElementById('edit-lesson-' + lessonId);
  el.classList.toggle('hidden');
+ if (!el.classList.contains('hidden')) {
+     const editorId = 'tinymce-edit-' + lessonId;
+     if (!tinymce.get(editorId)) {
+         initTinyMCE('#' + editorId);
+     }
+ }
 }
 
 function toggleAddLesson(moduleId) {
  const el = document.getElementById('add-lesson-' + moduleId);
  el.classList.toggle('hidden');
+ if (!el.classList.contains('hidden')) {
+     const editorId = 'tinymce-add-' + moduleId;
+     if (!tinymce.get(editorId)) {
+         initTinyMCE('#' + editorId);
+     }
+ }
 }
+
+function toggleLessonResources(lessonId) {
+ const el = document.getElementById('lesson-resources-' + lessonId);
+ el.classList.toggle('hidden');
+}
+
+function initTinyMCE(selector) {
+    const isDark = document.documentElement.classList.contains('dark');
+    tinymce.init({
+        selector: selector,
+        height: 350,
+        menubar: false,
+        plugins: 'advlist autolink lists link image media table codesample fullscreen wordcount searchreplace code preview',
+        toolbar: 'undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media table codesample | fullscreen code preview',
+        content_style: 'body { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.6; color: #374151; } body.dark { color: #d1d5db; }',
+        skin: isDark ? 'oxide-dark' : 'oxide',
+        content_css: isDark ? 'dark' : 'default',
+        images_upload_handler: function (blobInfo, progress) {
+            return new Promise(function (resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+                xhr.open('POST', '{{ route('instructor.upload.lesson-image') }}');
+                xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+                xhr.onload = function() {
+                    if (xhr.status !== 200) { reject('HTTP ' + xhr.status); return; }
+                    var json = JSON.parse(xhr.responseText);
+                    if (!json || typeof json.location !== 'string') { reject('Invalid response'); return; }
+                    resolve(json.location);
+                };
+                xhr.onerror = function() { reject('Upload failed'); };
+                var formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                xhr.send(formData);
+            });
+        },
+        automatic_uploads: true,
+        file_picker_types: 'image',
+        relative_urls: false,
+        remove_script_host: false,
+        convert_urls: true,
+    });
+}
+
+// Initialize any visible editors on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.tinymce-editor').forEach(function(el) {
+        if (el.offsetParent !== null) {
+            initTinyMCE('#' + el.id);
+        }
+    });
+});
 </script>
 @endsection

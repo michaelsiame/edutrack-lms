@@ -106,7 +106,7 @@
  <div class="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-3">
  <div class="flex items-center justify-between mb-2">
  <div class="flex items-center gap-2">
- <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $submission->student->full_name }}</span>
+ <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $submission->student->user->full_name ?? 'Unknown' }}</span>
  <span class="text-xs text-gray-500">{{ $submission->submitted_at->diffForHumans() }}</span>
  @if($submission->is_late)
  <span class="text-xs text-warning-600 bg-warning-50 px-1.5 py-0.5 rounded">Late</span>

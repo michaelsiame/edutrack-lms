@@ -34,25 +34,39 @@
  </select>
  </div>
  <div>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">From</label>
+ <input type="date" name="from" value="{{ request('from') }}"
+ class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ </div>
+ <div>
+ <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">To</label>
+ <input type="date" name="to" value="{{ request('to') }}"
+ class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ </div>
+ <div>
  <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Search</label>
  <input type="text" name="search" value="{{ request('search') }}" placeholder="Student name/email"
  class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
  </div>
  <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm font-medium">Filter</button>
  <a href="{{ route('admin.enrollments.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Clear</a>
+ <a href="{{ route('admin.reports.export', 'enrollments') }}?{{ http_build_query(request()->only(['from','to','status','course'])) }}" class="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 text-sm font-medium">
+ <i class="fas fa-download mr-1"></i>CSV
+ </a>
  </form>
  </div>
 
  <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
- <table class="w-full text-sm">
+ <div class="overflow-x-auto">
+ <table class="w-full text-sm min-w-[640px]">
  <thead class="bg-gray-50 dark:bg-gray-700/50">
  <tr>
- <th class="px-4 py-3 text-left">Student</th>
- <th class="px-4 py-3 text-left">Course</th>
- <th class="px-4 py-3 text-left">Status</th>
- <th class="px-4 py-3 text-left">Progress</th>
- <th class="px-4 py-3 text-left">Payment</th>
- <th class="px-4 py-3 text-right">Actions</th>
+ <th class="px-4 py-3 text-left" scope="col">Student</th>
+ <th class="px-4 py-3 text-left" scope="col">Course</th>
+ <th class="px-4 py-3 text-left" scope="col">Status</th>
+ <th class="px-4 py-3 text-left" scope="col">Progress</th>
+ <th class="px-4 py-3 text-left" scope="col">Payment</th>
+ <th class="px-4 py-3 text-right" scope="col">Actions</th>
  </tr>
  </thead>
  <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -65,11 +79,15 @@
  <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $enrollment->course->title }}</td>
  <td class="px-4 py-3">
  @php
- $statusClass = match($enrollment->enrollment_status) {'Completed' =>'bg-success-100 text-success-800','In Progress' =>'bg-primary-100 text-primary-800','Dropped' =>'bg-danger-100 text-danger-800',
- default =>'bg-gray-100 text-gray-800'
+ $statusClass = match($enrollment->enrollment_status) {
+ 'Completed' => 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400',
+ 'In Progress' => 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400',
+ 'Dropped' => 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400',
+ default => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
  };
  @endphp
  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $statusClass }}">
+ {{ $enrollment->enrollment_status }}
  </span>
  </td>
  <td class="px-4 py-3">
@@ -80,24 +98,24 @@
  </td>
  <td class="px-4 py-3">
  <div class="text-xs">
- <span class="{{ $enrollment->isFullyPaid() ?'text-success-600' :'text-warning-600' }}">
- K{{ number_format($enrollment->amount_paid, 2) }}
+ <span class="{{ $enrollment->isFullyPaid() ? 'text-success-600 dark:text-success-400' : 'text-warning-600 dark:text-warning-400' }}">
+ ZMW {{ number_format($enrollment->amount_paid, 2) }}
  </span>
- <span class="text-gray-400">/ K{{ number_format($enrollment->course->discount_price ?? $enrollment->course->price, 2) }}</span>
+ <span class="text-gray-400 dark:text-gray-500">/ ZMW {{ number_format($enrollment->course->discount_price ?? $enrollment->course->price, 2) }}</span>
  </div>
  @if($enrollment->certificate_blocked)
  <span class="text-xs text-danger-500">Cert blocked</span>
  @endif
  </td>
  <td class="px-4 py-3 text-right">
- <button onclick="toggleEditEnrollment({{ $enrollment->id }})" class="text-primary-600 hover:text-primary-700 mr-3">
- <i class="fas fa-edit"></i>
+ <button onclick="toggleEditEnrollment({{ $enrollment->id }})" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit enrollment">
+ <i class="fas fa-edit" aria-hidden="true"></i>
  </button>
  <form action="{{ route('admin.enrollments.destroy', $enrollment) }}" method="POST" class="inline" onsubmit="return confirm('Delete this enrollment?')">
  @csrf
  @method('DELETE')
- <button type="submit" class="text-danger-600 hover:text-danger-700">
- <i class="fas fa-trash"></i>
+ <button type="submit" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg" aria-label="Delete enrollment">
+ <i class="fas fa-trash" aria-hidden="true"></i>
  </button>
  </form>
  </td>
@@ -105,7 +123,7 @@
  <!-- Edit Form -->
  <tr id="edit-enrollment-{{ $enrollment->id }}" class="hidden bg-gray-50 dark:bg-gray-700/30">
  <td colspan="6" class="px-4 py-4">
- <form action="{{ route('admin.enrollments.update', $enrollment) }}" method="POST" class="flex items-end gap-3">
+ <form action="{{ route('admin.enrollments.update', $enrollment) }}" method="POST" class="flex flex-wrap items-end gap-3">
  @csrf
  @method('PUT')
  <div>
@@ -146,6 +164,7 @@
  @endforelse
  </tbody>
  </table>
+ </div>
  </div>
 
  <div class="mt-4">

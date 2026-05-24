@@ -31,7 +31,7 @@
  @if($upcomingEvents->count() > 0)
  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
  @foreach($upcomingEvents as $event)
- <div class="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+ <a href="{{ route('events.show', $event) }}" class="group block bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
  <div class="relative h-48 overflow-hidden bg-primary-50">
  @if($event->cover_image)
  <img src="{{ asset($event->cover_image) }}" alt="{{ $event->title }}"
@@ -67,8 +67,11 @@
  @endif
  <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{{ $event->title }}</h3>
  <p class="text-gray-600 text-sm line-clamp-3">{{ $event->excerpt ?? Str::limit($event->description, 150) }}</p>
+ <div class="mt-3 text-sm text-primary-600 font-medium group-hover:text-primary-700">
+ Read More <i class="fas fa-arrow-right ml-1 text-xs"></i>
  </div>
  </div>
+ </a>
  @endforeach
  </div>
 
@@ -98,7 +101,7 @@
 
  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
  @foreach($pastEvents as $event)
- <div class="group bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300 border border-gray-100">
+ <a href="{{ route('events.show', $event) }}" class="group block bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300 border border-gray-100">
  <div class="relative h-40 overflow-hidden bg-gray-50">
  @if($event->cover_image)
  <img src="{{ asset($event->cover_image) }}" alt="{{ $event->title }}"
@@ -122,7 +125,7 @@
  <h3 class="text-base font-bold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">{{ $event->title }}</h3>
  <p class="text-gray-500 text-sm line-clamp-2">{{ $event->excerpt ?? Str::limit($event->description, 100) }}</p>
  </div>
- </div>
+ </a>
  @endforeach
  </div>
  </div>

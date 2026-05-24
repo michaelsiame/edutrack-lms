@@ -17,6 +17,7 @@ class Question extends Model
         'question_text',
         'points',
         'explanation',
+        'correct_answer',
     ];
 
     protected $casts = [
@@ -31,8 +32,7 @@ class Question extends Model
     public function quizzes()
     {
         return $this->belongsToMany(Quiz::class, 'quiz_questions', 'question_id', 'quiz_id')
-            ->withPivot('display_order')
-            ->withTimestamps();
+            ->withPivot('display_order');
     }
 
     public function answers()

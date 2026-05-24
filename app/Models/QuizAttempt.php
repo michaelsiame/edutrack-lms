@@ -9,6 +9,8 @@ class QuizAttempt extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'quiz_id',
         'student_id',
@@ -38,7 +40,7 @@ class QuizAttempt extends Model
 
     public function student()
     {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
     public function answers()

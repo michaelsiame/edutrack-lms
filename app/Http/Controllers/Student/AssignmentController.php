@@ -83,6 +83,10 @@ class AssignmentController extends Controller
 
         $isLate = $assignment->due_date && now()->isAfter($assignment->due_date);
 
+        $maxAttempt = AssignmentSubmission::where('assignment_id', $assignment->id)
+            ->where('student_id', $user->id)
+            ->max('attempt_number') ?? 0;
+
         AssignmentSubmission::create([
             'assignment_id' => $assignment->id,
             'student_id' => $user->id,
@@ -91,7 +95,7 @@ class AssignmentController extends Controller
             'submitted_at' => now(),
             'status' => $isLate ? 'Late' : 'Submitted',
             'is_late' => $isLate,
-            'attempt_number' => 1,
+            'attempt_number' => $maxAttempt + 1,
         ]);
 
         return redirect()->route('student.assignments.show', [$course, $assignment])

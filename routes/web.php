@@ -24,6 +24,9 @@ Route::get('/campus', [HomeController::class, 'campus'])->name('campus');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
 Route::get('/testimonials', [HomeController::class, 'testimonials'])->name('testimonials');
 Route::get('/events', [HomeController::class, 'events'])->name('events');
+Route::get('/events/{event}', [HomeController::class, 'showEvent'])->name('events.show');
+Route::get('/terms', function () { return view('pages.terms'); })->name('terms');
+Route::get('/privacy', function () { return view('pages.privacy'); })->name('privacy');
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
@@ -101,6 +104,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
 });
 
+// Public certificate preview (Tailwind CSS browser view)
+Route::get('/certificate-preview/{certificate?}', [CertificateController::class, 'preview'])->name('certificates.preview');
+
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -140,7 +146,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::delete('/templates/{template}', [App\Http\Controllers\Admin\EmailTemplateController::class, 'destroy'])->name('templates.destroy');
 
     Route::get('/reports', [AdminDashboardController::class, 'reports'])->name('reports');
+    Route::get('/reports/export/{type}', [AdminDashboardController::class, 'exportReport'])->name('reports.export');
     Route::get('/settings', [AdminDashboardController::class, 'settings'])->name('settings');
+    Route::post('/settings', [AdminDashboardController::class, 'updateSettings'])->name('settings.update');
 
     // Badges & Achievements
     Route::get('/badges', [App\Http\Controllers\Admin\BadgeController::class, 'index'])->name('badges.index');
@@ -174,18 +182,47 @@ Route::prefix('instructor')->middleware(['auth', 'instructor'])->name('instructo
     Route::put('/courses/{course}/modules/{module}/lessons/{lesson}', [App\Http\Controllers\Instructor\LessonController::class, 'update'])->name('courses.modules.lessons.update');
     Route::delete('/courses/{course}/modules/{module}/lessons/{lesson}', [App\Http\Controllers\Instructor\LessonController::class, 'destroy'])->name('courses.modules.lessons.destroy');
 
+    // Lesson Versions
+    Route::get('/courses/{course}/modules/{module}/lessons/{lesson}/versions', [App\Http\Controllers\Instructor\LessonVersionController::class, 'index'])->name('lessons.versions');
+    Route::put('/courses/{course}/modules/{module}/lessons/{lesson}/versions/{version}/restore', [App\Http\Controllers\Instructor\LessonVersionController::class, 'restore'])->name('lessons.versions.restore');
+
+    // Lesson Resources
+    Route::post('/courses/{course}/modules/{module}/lessons/{lesson}/resources', [App\Http\Controllers\Instructor\LessonResourceController::class, 'store'])->name('courses.modules.lessons.resources.store');
+    Route::delete('/courses/{course}/modules/{module}/lessons/{lesson}/resources/{resource}', [App\Http\Controllers\Instructor\LessonResourceController::class, 'destroy'])->name('courses.modules.lessons.resources.destroy');
+
     // Assignments
     Route::get('/assignments', [App\Http\Controllers\Instructor\AssignmentController::class, 'index'])->name('assignments.index');
     Route::post('/courses/{course}/assignments', [App\Http\Controllers\Instructor\AssignmentController::class, 'store'])->name('courses.assignments.store');
     Route::post('/courses/{course}/assignments/{assignment}/submissions/{submission}/grade', [App\Http\Controllers\Instructor\AssignmentController::class, 'grade'])->name('courses.assignments.grade');
 
     Route::get('/submissions', [InstructorDashboardController::class, 'submissions'])->name('submissions');
+    Route::get('/progress', [InstructorDashboardController::class, 'progress'])->name('progress');
     Route::get('/analytics', [InstructorDashboardController::class, 'analytics'])->name('analytics');
 
     // Live Sessions
     Route::get('/courses/{course}/live-sessions', [App\Http\Controllers\Instructor\LiveSessionController::class, 'index'])->name('live-sessions.index');
     Route::post('/courses/{course}/live-sessions', [App\Http\Controllers\Instructor\LiveSessionController::class, 'store'])->name('live-sessions.store');
     Route::delete('/courses/{course}/live-sessions/{session}', [App\Http\Controllers\Instructor\LiveSessionController::class, 'destroy'])->name('live-sessions.destroy');
+
+    // Quizzes
+    Route::post('/upload/lesson-image', [App\Http\Controllers\Instructor\LessonImageController::class, 'store'])->name('upload.lesson-image');
+
+    Route::resource('quizzes', App\Http\Controllers\Instructor\QuizController::class);
+
+    // Quiz Questions
+    Route::get('/quizzes/{quiz}/questions/create', [App\Http\Controllers\Instructor\QuestionController::class, 'create'])->name('quizzes.questions.create');
+    Route::post('/quizzes/{quiz}/questions', [App\Http\Controllers\Instructor\QuestionController::class, 'store'])->name('quizzes.questions.store');
+    Route::get('/quizzes/{quiz}/questions/{question}/edit', [App\Http\Controllers\Instructor\QuestionController::class, 'edit'])->name('quizzes.questions.edit');
+    Route::put('/quizzes/{quiz}/questions/{question}', [App\Http\Controllers\Instructor\QuestionController::class, 'update'])->name('quizzes.questions.update');
+    Route::delete('/quizzes/{quiz}/questions/{question}', [App\Http\Controllers\Instructor\QuestionController::class, 'destroy'])->name('quizzes.questions.destroy');
+
+    // Quiz Attempts & Grading
+    Route::get('/quizzes/{quiz}/attempts', [App\Http\Controllers\Instructor\QuizController::class, 'attempts'])->name('quizzes.attempts');
+    Route::get('/quizzes/{quiz}/attempts/{attempt}/grade', [App\Http\Controllers\Instructor\QuizController::class, 'grade'])->name('quizzes.attempts.grade');
+    Route::post('/quizzes/{quiz}/attempts/{attempt}/grade', [App\Http\Controllers\Instructor\QuizController::class, 'saveGrades'])->name('quizzes.attempts.grade.save');
+
+    // Certificates
+    Route::post('/courses/{course}/enrollments/{enrollment}/issue-certificate', [InstructorDashboardController::class, 'issueCertificate'])->name('courses.enrollments.issue-certificate');
 });
 
 /*
@@ -198,15 +235,23 @@ Route::prefix('student')->middleware(['auth', 'student'])->name('student.')->gro
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     Route::get('/progress', [StudentDashboardController::class, 'progress'])->name('progress');
     Route::get('/payments', [StudentDashboardController::class, 'payments'])->name('payments');
+    Route::get('/payments/{payment}/receipt', [StudentDashboardController::class, 'downloadReceipt'])->name('payments.receipt');
     Route::get('/certificates', [StudentDashboardController::class, 'certificates'])->name('certificates');
 
     // Learning
     Route::get('/courses/{course}/lessons/{lesson}', [App\Http\Controllers\Student\LearningController::class, 'show'])->name('learning.show');
     Route::post('/courses/{course}/lessons/{lesson}/complete', [App\Http\Controllers\Student\LearningController::class, 'complete'])->name('learning.complete');
 
+    // Lesson Resources Download
+    Route::get('/courses/{course}/lessons/{lesson}/resources/{resource}/download', [App\Http\Controllers\Student\LessonResourceController::class, 'download'])->name('learning.resources.download');
+
     // Quizzes
+    Route::get('/quizzes', [App\Http\Controllers\Student\QuizController::class, 'index'])->name('quizzes.index');
     Route::get('/quizzes/{quiz}/take', [App\Http\Controllers\Student\QuizController::class, 'take'])->name('quizzes.take');
-    Route::post('/quizzes/{quiz}/submit', [App\Http\Controllers\Student\QuizController::class, 'submit'])->name('quizzes.submit');
+    Route::get('/courses/{course}/lessons/{lesson}/download', [App\Http\Controllers\Student\LearningController::class, 'download'])->name('learning.download');
+    Route::match(['get', 'post'], '/quizzes/{quiz}/submit', [App\Http\Controllers\Student\QuizController::class, 'submit'])->name('quizzes.submit');
+    Route::get('/quizzes/{quiz}/attempts', [App\Http\Controllers\Student\QuizController::class, 'attempts'])->name('quizzes.attempts');
+    Route::get('/quiz-attempts/{attempt}', [App\Http\Controllers\Student\QuizController::class, 'showAttempt'])->name('quizzes.attempt');
 
     // Assignments
     Route::get('/assignments', [App\Http\Controllers\Student\AssignmentController::class, 'index'])->name('assignments.index');
@@ -247,7 +292,10 @@ Route::prefix('student')->middleware(['auth', 'student'])->name('student.')->gro
 Route::prefix('finance')->middleware(['auth', 'finance'])->name('finance.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Finance\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/transactions', [App\Http\Controllers\Finance\DashboardController::class, 'transactions'])->name('transactions');
+    Route::get('/payments', [App\Http\Controllers\Finance\DashboardController::class, 'payments'])->name('payments');
+    Route::post('/payments/{payment}/verify', [App\Http\Controllers\Finance\DashboardController::class, 'verify'])->name('payments.verify');
     Route::get('/invoices', [App\Http\Controllers\Finance\DashboardController::class, 'invoices'])->name('invoices');
+    Route::get('/invoices/{invoice}/download', [App\Http\Controllers\Finance\DashboardController::class, 'downloadInvoice'])->name('invoices.download');
 });
 
 /*

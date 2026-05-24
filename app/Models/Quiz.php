@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class Quiz extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'course_id',
@@ -55,7 +56,6 @@ class Quiz extends Model
     {
         return $this->belongsToMany(Question::class, 'quiz_questions', 'quiz_id', 'question_id')
             ->withPivot('display_order')
-            ->withTimestamps()
             ->orderBy('quiz_questions.display_order');
     }
 }

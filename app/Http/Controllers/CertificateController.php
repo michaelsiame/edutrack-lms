@@ -15,6 +15,36 @@ class CertificateController extends Controller
         return view('certificates.index', compact('certificates'));
     }
 
+    /**
+     * Preview a certificate rendered with Tailwind CSS in the browser.
+     * Uses real certificate data if ID provided, otherwise shows a demo.
+     */
+    public function preview(?Certificate $certificate = null)
+    {
+        $service = new CertificateService();
+
+        if ($certificate) {
+            $data = $service->getCertificateData($certificate);
+        } else {
+            // Demo data
+            $data = [
+                'student_name' => 'Catherine Namakanda',
+                'course_title' => 'General Basic Computing',
+                'classification' => 'Merit',
+                'graduation_day' => '27',
+                'graduation_suffix' => 'th',
+                'graduation_month' => 'March',
+                'graduation_year' => '2026',
+                'student_number' => '26Edu249580',
+                'certificate_number' => 'NRC 2495807/1/1',
+                'verification_code' => 'EDU-ABC123XYZ',
+                'final_score' => 87,
+            ];
+        }
+
+        return view('certificates.preview', $data);
+    }
+
     public function verify(string $code)
     {
         $certificate = Certificate::with(['user', 'course'])

@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class Lesson extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'module_id',
@@ -60,5 +61,51 @@ class Lesson extends Model
     public function lessonProgress()
     {
         return $this->hasMany(LessonProgress::class);
+    }
+
+    public function resources()
+    {
+        return $this->hasMany(LessonResource::class);
+    }
+
+    public function versions()
+    {
+        return $this->hasMany(LessonVersion::class)->orderBy('version_number', 'desc');
+    }
+
+    public function latestVersion()
+    {
+        return $this->hasOne(LessonVersion::class)->latestOfMany('version_number');
+    }
+
+    /**
+     * Convert a video URL (YouTube, Vimeo) to an embed URL.
+     */
+    public function embedUrl(): ?string
+    {
+        if (empty($this->video_url)) {
+            return null;
+        }
+
+        $url = $this->video_url;
+
+        // YouTube: watch?v=, youtu.be/, embed/
+        if (preg_match('/youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/', $url, $m)) {
+            return 'https://www.youtube.com/embed/' . $m[1];
+        }
+        if (preg_match('/youtu\.be\/([a-zA-Z0-9_-]{11})/', $url, $m)) {
+            return 'https://www.youtube.com/embed/' . $m[1];
+        }
+        if (preg_match('/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/', $url, $m)) {
+            return 'https://www.youtube.com/embed/' . $m[1];
+        }
+
+        // Vimeo
+        if (preg_match('/vimeo\.com\/(\d+)/', $url, $m)) {
+            return 'https://player.vimeo.com/video/' . $m[1];
+        }
+
+        // If already an embed or other URL, return as-is
+        return $url;
     }
 }

@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'payment_id';
     public $incrementing = true;
@@ -52,6 +53,11 @@ class Payment extends Model
     public function recordedBy()
     {
         return $this->belongsTo(User::class, 'recorded_by');
+    }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class, 'payment_id', 'payment_id');
     }
 
     public function scopeCompleted($query)

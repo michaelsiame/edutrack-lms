@@ -152,4 +152,15 @@ class HomeController extends Controller
         $pastEvents = Event::where('event_date', '<', now())->latest('event_date')->limit(6)->get();
         return view('events', compact('upcomingEvents', 'pastEvents'));
     }
+
+    public function showEvent(Event $event)
+    {
+        $relatedEvents = Event::where('id', '!=', $event->id)
+            ->where('status', '!=', 'cancelled')
+            ->latest('event_date')
+            ->limit(3)
+            ->get();
+
+        return view('events.show', compact('event', 'relatedEvents'));
+    }
 }

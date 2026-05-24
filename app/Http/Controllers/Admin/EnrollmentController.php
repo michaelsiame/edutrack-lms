@@ -14,15 +14,23 @@ class EnrollmentController extends Controller
     {
         $query = Enrollment::with(['user', 'course', 'paymentPlan']);
 
-        if ($request->has('course')) {
+        if ($request->filled('course')) {
             $query->where('course_id', $request->course);
         }
 
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('enrollment_status', $request->status);
         }
 
-        if ($request->has('search')) {
+        if ($request->filled('from')) {
+            $query->whereDate('enrolled_at', '>=', $request->from);
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('enrolled_at', '<=', $request->to);
+        }
+
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->whereHas('user', function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
@@ -31,7 +39,7 @@ class EnrollmentController extends Controller
             });
         }
 
-        $enrollments = $query->latest('enrolled_at')->paginate(20);
+        $enrollments = $query->latest('enrolled_at')->paginate(20)->withQueryString();
         $courses = Course::published()->orderBy('title')->get();
 
         return view('admin.enrollments.index', compact('enrollments', 'courses'));

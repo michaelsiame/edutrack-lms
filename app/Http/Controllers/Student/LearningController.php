@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\LessonProgress;
+use App\Services\LessonExportService;
 use Illuminate\Http\Request;
 
 class LearningController extends Controller
@@ -21,6 +22,9 @@ class LearningController extends Controller
         if ($lesson->module->course_id !== $course->id) {
             abort(404);
         }
+
+        // Load lesson resources, quizzes, and assignments
+        $lesson->load(['resources', 'quizzes', 'assignments']);
 
         // Load modules with lessons
         $modules = $course->modules()
@@ -115,5 +119,26 @@ class LearningController extends Controller
 
         return redirect()->route('student.learning.show', ['course' => $course, 'lesson' => $lesson])
             ->with('success', 'Lesson marked as complete!');
+    }
+
+    public function download(Course $course, Lesson $lesson)
+    {
+        $enrollment = auth()->user()->enrollments()
+            ->where('course_id', $course->id)
+            ->firstOrFail();
+
+        if ($lesson->module->course_id !== $course->id) {
+            abort(404);
+        }
+
+        $service = new LessonExportService();
+        $pdf = $service->generatePdf($course, $lesson);
+
+        $filename = \Illuminate\Support\Str::slug($lesson->title) . '.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 }

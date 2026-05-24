@@ -49,7 +49,7 @@
  <h3 class="text-base font-semibold text-gray-800 dark:text-white">
  <i class="fas fa-chalkboard-teacher text-primary-500 mr-2"></i>My Courses
  </h3>
- <a href="#" class="inline-flex items-center px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">
+ <a href="{{ route('instructor.courses.create') }}" class="inline-flex items-center px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">
  <i class="fas fa-plus mr-1.5"></i> New Course
  </a>
  </div>
@@ -86,15 +86,19 @@
  </td>
  <td class="text-right">
  <div class="flex items-center justify-end gap-2">
- <button class="p-1.5 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Edit">
- <i class="fas fa-pen text-sm"></i>
+ <a href="{{ route('instructor.courses.edit', $course) }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Edit" aria-label="Edit course">
+ <i class="fas fa-pen text-sm" aria-hidden="true"></i>
+ </a>
+ <a href="{{ route('instructor.courses.show', $course) }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="View" aria-label="View course">
+ <i class="fas fa-eye text-sm" aria-hidden="true"></i>
+ </a>
+ <form action="{{ route('instructor.courses.destroy', $course) }}" method="POST" class="inline" onsubmit="return confirm('Delete this course?');">
+ @csrf
+ @method('DELETE')
+ <button type="submit" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-gray-400 hover:text-danger-600 dark:hover:text-danger-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Delete" aria-label="Delete course">
+ <i class="fas fa-trash text-sm" aria-hidden="true"></i>
  </button>
- <button class="p-1.5 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="View">
- <i class="fas fa-eye text-sm"></i>
- </button>
- <button class="p-1.5 text-gray-400 hover:text-danger-600 dark:hover:text-danger-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Delete">
- <i class="fas fa-trash text-sm"></i>
- </button>
+ </form>
  </div>
  </td>
  </tr>
