@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('assignment_submissions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('assignment_id')->constrained('assignments')->onDelete('cascade');
-            $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
             $table->longText('submission_text')->nullable();
             $table->string('file_url', 255)->nullable();
             $table->timestamp('submitted_at')->useCurrent();

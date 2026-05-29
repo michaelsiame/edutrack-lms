@@ -18,10 +18,11 @@
 
  <!-- Dashboard Custom CSS -->
  <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+ <link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
 
  @stack('styles')
 </head>
-<body class="font-sans antialiased bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200">
+<body class="font-sans antialiased text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200" style="background: var(--od-bg);">
  <div class="flex h-screen overflow-hidden">
 
  <!-- Mobile Sidebar Overlay -->
@@ -71,6 +72,12 @@
  @if(Route::has('admin.photos.index'))
  <x-dashboard-nav-item route="admin.photos.index" icon="fa-images" label="Photos" />
  @endif
+ @if(Route::has('admin.team.index'))
+ <x-dashboard-nav-item route="admin.team.index" icon="fa-users" label="Team" />
+ @endif
+ @if(Route::has('admin.testimonials.index'))
+ <x-dashboard-nav-item route="admin.testimonials.index" icon="fa-comment-alt" label="Testimonials" />
+ @endif
  @if(Route::has('admin.templates.index'))
  <x-dashboard-nav-item route="admin.templates.index" icon="fa-envelope" label="Email Templates" />
  @endif
@@ -79,6 +86,9 @@
  @endif
  @if(Route::has('admin.newsletter.index'))
  <x-dashboard-nav-item route="admin.newsletter.index" icon="fa-newspaper" label="Newsletter" />
+ @endif
+ @if(Route::has('admin.promotions.index'))
+ <x-dashboard-nav-item route="admin.promotions.index" icon="fa-tags" label="Promotions" />
  @endif
  <x-dashboard-nav-item route="admin.reports" icon="fa-chart-bar" label="Reports" />
  <x-dashboard-nav-item route="admin.settings" icon="fa-cog" label="Settings" />
@@ -222,6 +232,8 @@
  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.13.5/dist/cdn.min.js"></script>
  <!-- Alpine.js -->
  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+ <!-- Session Heartbeat (prevents 419 CSRF expiry during long study sessions) -->
+ <script src="{{ asset('assets/js/session-heartbeat.js') }}"></script>
  @stack('scripts')
 </body>
 </html>

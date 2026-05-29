@@ -88,6 +88,32 @@ class Enrollment extends Model
 
     public function isFullyPaid(): bool
     {
-        return $this->payment_status === 'completed' && $this->amount_paid >= $this->course->price;
+        $coursePrice = $this->course?->discount_price ?? $this->course?->price ?? 0;
+
+        return $this->payment_status === 'completed' && $this->amount_paid >= $coursePrice;
+    }
+
+    /**
+     * Determine if the enrolled student can access course content.
+     * Free courses: always accessible.
+     * Paid courses: requires payment_status='completed' OR at least 30% deposit paid.
+     */
+    public function canAccessContent(): bool
+    {
+        $coursePrice = $this->course?->discount_price ?? $this->course?->price ?? 0;
+
+        // Free course
+        if ($coursePrice <= 0) {
+            return true;
+        }
+
+        // Fully paid
+        if ($this->payment_status === 'completed') {
+            return true;
+        }
+
+        // Minimum 30% deposit unlocks content access
+        $minDeposit = $coursePrice * 0.30;
+        return $this->amount_paid >= $minDeposit;
     }
 }

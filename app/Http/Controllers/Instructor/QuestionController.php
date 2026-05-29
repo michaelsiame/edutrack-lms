@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Question;
 use App\Models\QuestionOption;
 use App\Models\Quiz;
+use App\Models\QuizAnswer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -89,6 +90,10 @@ class QuestionController extends Controller
     {
         $this->authorizeInstructor($quiz);
 
+        if (!$question->quizzes->contains($quiz)) {
+            abort(403, 'This question does not belong to the specified quiz.');
+        }
+
         $validated = $request->validate([
             'question_text' => 'required|string|max:2000',
             'question_type' => 'required|in:Multiple Choice,True/False,Short Answer,Essay,Fill in Blank',
@@ -117,9 +122,21 @@ class QuestionController extends Controller
             ]);
 
             if (in_array($validated['question_type'], ['Multiple Choice', 'True/False', 'Fill in Blank'])) {
-                $question->options()->delete();
+                $usedOptionIds = QuizAnswer::whereIn('selected_option_id', $question->options->pluck('id'))->pluck('selected_option_id')->unique();
+                $question->options()->whereNotIn('id', $usedOptionIds)->delete();
                 $correctIndex = $validated['correct_option_index'] ?? $request->input('correct_option_index');
                 foreach ($validated['options'] as $index => $option) {
+                    if (isset($option['id'])) {
+                        $existing = $question->options()->where('id', $option['id'])->first();
+                        if ($existing) {
+                            $existing->update([
+                                'option_text' => $option['text'],
+                                'is_correct' => $index == $correctIndex,
+                                'display_order' => $index + 1,
+                            ]);
+                            continue;
+                        }
+                    }
                     QuestionOption::create([
                         'question_id' => $question->question_id,
                         'option_text' => $option['text'],
@@ -144,6 +161,10 @@ class QuestionController extends Controller
     public function destroy(Quiz $quiz, Question $question)
     {
         $this->authorizeInstructor($quiz);
+
+        if (!$question->quizzes->contains($quiz)) {
+            abort(403, 'This question does not belong to the specified quiz.');
+        }
 
         DB::transaction(function () use ($quiz, $question) {
             DB::table('quiz_questions')

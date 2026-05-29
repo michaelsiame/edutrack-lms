@@ -133,17 +133,57 @@ class HomeController extends Controller
         return view('faq');
     }
 
-    public function testimonials()
+    public function testimonials(Request $request)
     {
-        $testimonials = Testimonial::approved()->latest()->paginate(12);
+        $query = Testimonial::approved();
+
+        // Filter by course
+        if ($request->filled('course')) {
+            $query->where('course_taken', $request->input('course'));
+        }
+
+        // Filter by rating
+        if ($request->filled('rating')) {
+            $query->where('rating', $request->input('rating'));
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('student_name', 'like', "%{$search}%")
+                  ->orWhere('testimonial_text', 'like', "%{$search}%")
+                  ->orWhere('course_taken', 'like', "%{$search}%");
+            });
+        }
+
+        // Sort
+        $sort = $request->input('sort', 'latest');
+        match ($sort) {
+            'oldest' => $query->oldest(),
+            'highest' => $query->orderByDesc('rating'),
+            'lowest' => $query->orderBy('rating'),
+            default => $query->latest(),
+        };
+
+        $testimonials = $query->paginate(12)->withQueryString();
         $featuredTestimonials = Testimonial::approved()->featured()->limit(3)->get();
+
+        // Filter options
+        $courses = Testimonial::approved()
+            ->select('course_taken')
+            ->distinct()
+            ->orderBy('course_taken')
+            ->pluck('course_taken');
+
         $stats = [
             'total_students' => User::whereHas('roles', fn($q) => $q->where('role_id', 4))->where('status', 'active')->count(),
             'total_courses' => Course::published()->count(),
             'total_enrollments' => Enrollment::count(),
             'avg_rating' => CourseReview::avg('rating') ?? 0,
         ];
-        return view('testimonials', compact('testimonials', 'featuredTestimonials', 'stats'));
+
+        return view('testimonials', compact('testimonials', 'featuredTestimonials', 'stats', 'courses'));
     }
 
     public function events()

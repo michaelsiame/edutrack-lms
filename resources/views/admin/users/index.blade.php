@@ -18,6 +18,7 @@
  <th>Role</th>
  <th>Status</th>
  <th>Joined</th>
+ <th class="text-right">Actions</th>
  </tr>
  </thead>
  <tbody>
@@ -35,7 +36,7 @@
  <td>
  @foreach($user->roles as $role)
  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400 mr-1">
- {{ $role->name }}
+ {{ $role->role_name }}
  </span>
  @endforeach
  </td>
@@ -45,10 +46,25 @@
  </span>
  </td>
  <td class="text-gray-500 dark:text-gray-400 text-sm">{{ $user->created_at?->format('M d, Y') }}</td>
+ <td class="text-right">
+ <a href="{{ route('admin.users.show', $user) }}" class="inline-flex items-center justify-center min-w-[36px] min-h-[36px] text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="View user">
+ <i class="fas fa-eye text-sm"></i>
+ </a>
+ <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center justify-center min-w-[36px] min-h-[36px] text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit user">
+ <i class="fas fa-edit text-sm"></i>
+ </a>
+ <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Delete this user?')">
+ @csrf
+ @method('DELETE')
+ <button type="submit" class="inline-flex items-center justify-center min-w-[36px] min-h-[36px] text-gray-500 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg" aria-label="Delete user">
+ <i class="fas fa-trash text-sm"></i>
+ </button>
+ </form>
+ </td>
  </tr>
  @empty
  <tr>
- <td colspan="5" class="text-center py-10 text-gray-500 dark:text-gray-400">No users found.</td>
+ <td colspan="6" class="text-center py-10 text-gray-500 dark:text-gray-400">No users found.</td>
  </tr>
  @endforelse
  </tbody>

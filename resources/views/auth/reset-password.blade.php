@@ -2,82 +2,83 @@
 
 @section('title','Reset Password - Edutrack LMS')
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
+@endpush
+
 @section('content')
-<div class="min-h-screen flex flex-col justify-center py-10 px-4 sm:px-6 bg-gray-50">
+<div class="od-auth-page">
  <div class="mx-auto w-full max-w-md">
  {{-- Logo / Header --}}
  <div class="text-center mb-6">
  <a href="{{ url('/') }}" class="inline-block mb-4">
  <img src="{{ asset('assets/images/logo.png') }}" alt="Edutrack Logo" class="h-16 w-auto mx-auto">
  </a>
- <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">
- Set new password
- </h2>
- <p class="mt-2 text-sm text-gray-500">
+ <h2 class="od-h2">Set new password</h2>
+ <p class="mt-2 text-sm od-meta">
  Create a strong password for your account
  </p>
  </div>
 
  {{-- Card --}}
- <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+ <div class="od-auth-card">
  <form class="space-y-5" action="{{ route('password.update') }}" method="POST">
  @csrf
  <input type="hidden" name="token" value="{{ $token }}">
 
  <div>
- <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+ <label for="email" class="od-form-label">Email</label>
  <div class="relative">
  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
- <i class="fas fa-envelope text-gray-400 text-sm"></i>
+ <i class="fas fa-envelope text-sm" style="color: var(--od-muted);"></i>
  </div>
  <input id="email" name="email" type="email" required
- class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+ class="od-input od-input-icon"
  value="{{ old('email') }}">
  </div>
  @error('email')
- <p class="mt-1.5 text-sm text-danger-600">{{ $message }}</p>
+ <p class="mt-1.5 text-sm" style="color: var(--od-danger);">{{ $message }}</p>
  @enderror
  </div>
 
  <div>
- <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">New Password</label>
+ <label for="password" class="od-form-label">New Password</label>
  <div class="relative">
  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
- <i class="fas fa-lock text-gray-400 text-sm"></i>
+ <i class="fas fa-lock text-sm" style="color: var(--od-muted);"></i>
  </div>
  <input id="password" name="password" type="password" required
- class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+ class="od-input od-input-icon od-input-icon-right"
  placeholder="Min. 8 characters">
  <button type="button" onclick="togglePassword('password', this)"
- class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+ class="absolute inset-y-0 right-0 pr-3 flex items-center od-meta hover:text-gray-600 focus:outline-none"
  aria-label="Toggle password visibility">
  <i class="fas fa-eye text-sm"></i>
  </button>
  </div>
  @error('password')
- <p class="mt-1.5 text-sm text-danger-600">{{ $message }}</p>
+ <p class="mt-1.5 text-sm" style="color: var(--od-danger);">{{ $message }}</p>
  @enderror
  </div>
 
  <div>
- <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password</label>
+ <label for="password_confirmation" class="od-form-label">Confirm Password</label>
  <div class="relative">
  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
- <i class="fas fa-lock text-gray-400 text-sm"></i>
+ <i class="fas fa-lock text-sm" style="color: var(--od-muted);"></i>
  </div>
  <input id="password_confirmation" name="password_confirmation" type="password" required
- class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+ class="od-input od-input-icon od-input-icon-right"
  placeholder="Repeat your password">
  <button type="button" onclick="togglePassword('password_confirmation', this)"
- class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+ class="absolute inset-y-0 right-0 pr-3 flex items-center od-meta hover:text-gray-600 focus:outline-none"
  aria-label="Toggle password visibility">
  <i class="fas fa-eye text-sm"></i>
  </button>
  </div>
  </div>
 
- <button type="submit"
- class="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+ <button type="submit" class="od-btn od-btn-primary w-full od-btn-lg">
  <i class="fas fa-check mr-2"></i>
  Reset Password
  </button>

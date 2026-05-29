@@ -16,8 +16,8 @@ class SendReminders extends Command
     {
         $this->info('Sending session reminders...');
 
-        // Live sessions starting in next 24 hours
-        $upcomingSessions = LiveSession::with(['lesson.course', 'attendance.student'])
+        // Live sessions starting in next 24 hours — notify all enrolled students
+        $upcomingSessions = LiveSession::with(['lesson.course'])
             ->where('status', 'scheduled')
             ->whereBetween('scheduled_start_time', [now(), now()->addHours(24)])
             ->get();
@@ -25,17 +25,27 @@ class SendReminders extends Command
         $sent = 0;
 
         foreach ($upcomingSessions as $session) {
-            $attendees = $session->attendance()->with('student')->get();
+            $course = $session->lesson?->course;
+            if (!$course) {
+                continue;
+            }
 
-            foreach ($attendees as $attendance) {
-                $student = $attendance->student;
-                if (!$student) continue;
+            $enrollments = Enrollment::with('user')
+                ->where('course_id', $course->id)
+                ->where('enrollment_status', 'In Progress')
+                ->get();
 
-                $subject = "Reminder: Live Session - {$session->lesson->course->title}";
+            foreach ($enrollments as $enrollment) {
+                $student = $enrollment->user;
+                if (!$student || !$student->email) {
+                    continue;
+                }
+
+                $subject = "Reminder: Live Session - {$course->title}";
                 $body = view('emails.session-reminder', [
                     'student' => $student,
                     'session' => $session,
-                    'course' => $session->lesson->course,
+                    'course' => $course,
                 ])->render();
 
                 $emailService->queue($student->email, $subject, $body, [], 3);
@@ -54,6 +64,10 @@ class SendReminders extends Command
             ->get();
 
         foreach ($lowProgressEnrollments as $enrollment) {
+            if (!$enrollment->user || !$enrollment->user->email) {
+                continue;
+            }
+
             $subject = "Don't Give Up! Continue {$enrollment->course->title}";
             $body = view('emails.progress-reminder', [
                 'student' => $enrollment->user,

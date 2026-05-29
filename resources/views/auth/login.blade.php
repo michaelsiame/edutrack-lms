@@ -2,66 +2,64 @@
 
 @section('title','Login - Edutrack LMS')
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
+@endpush
+
 @section('content')
-<div class="min-h-screen flex flex-col justify-center py-10 px-4 sm:px-6 bg-gray-50">
+<div class="od-auth-page">
  <div class="mx-auto w-full max-w-md">
  {{-- Logo / Header --}}
  <div class="text-center mb-6">
  <a href="{{ url('/') }}" class="inline-block mb-4">
  <img src="{{ asset('assets/images/logo.png') }}" alt="Edutrack Logo" class="h-16 w-auto mx-auto">
  </a>
- <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">
- Welcome back
- </h2>
- <p class="mt-2 text-sm text-gray-500">
+ <h2 class="od-h2">Welcome back</h2>
+ <p class="mt-2 text-sm od-meta">
  Sign in to access your courses and track your progress
  </p>
  </div>
 
  {{-- Card --}}
- <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+ <div class="od-auth-card">
  <form class="space-y-5" action="{{ route('login') }}" method="POST">
  @csrf
 
  {{-- Email --}}
  <div>
- <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">
- Email address
- </label>
+ <label for="email" class="od-form-label">Email address</label>
  <div class="relative">
  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
- <i class="fas fa-envelope text-gray-400 text-sm"></i>
+ <i class="fas fa-envelope text-sm" style="color: var(--od-muted);"></i>
  </div>
  <input id="email" name="email" type="email" autocomplete="email" required
- class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+ class="od-input od-input-icon"
  placeholder="you@example.com"
  value="{{ old('email') }}">
  </div>
  @error('email')
- <p class="mt-1.5 text-sm text-danger-600">{{ $message }}</p>
+ <p class="mt-1.5 text-sm" style="color: var(--od-danger);">{{ $message }}</p>
  @enderror
  </div>
 
  {{-- Password with toggle --}}
  <div>
- <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">
- Password
- </label>
+ <label for="password" class="od-form-label">Password</label>
  <div class="relative">
  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
- <i class="fas fa-lock text-gray-400 text-sm"></i>
+ <i class="fas fa-lock text-sm" style="color: var(--od-muted);"></i>
  </div>
  <input id="password" name="password" type="password" autocomplete="current-password" required
- class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+ class="od-input od-input-icon od-input-icon-right"
  placeholder="Enter your password">
  <button type="button" onclick="togglePassword('password', this)"
- class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+ class="absolute inset-y-0 right-0 pr-3 flex items-center od-meta hover:text-gray-600 focus:outline-none"
  aria-label="Toggle password visibility">
  <i class="fas fa-eye text-sm"></i>
  </button>
  </div>
  @error('password')
- <p class="mt-1.5 text-sm text-danger-600">{{ $message }}</p>
+ <p class="mt-1.5 text-sm" style="color: var(--od-danger);">{{ $message }}</p>
  @enderror
  </div>
 
@@ -69,19 +67,19 @@
  <div class="flex items-center justify-between">
  <div class="flex items-center">
  <input id="remember" name="remember" type="checkbox"
- class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded cursor-pointer">
- <label for="remember" class="ml-2 block text-sm text-gray-600 cursor-pointer">
+ class="h-4 w-4 rounded cursor-pointer" style="accent-color: var(--od-navy);">
+ <label for="remember" class="ml-2 block text-sm cursor-pointer" style="color: var(--od-muted);">
  Remember me
  </label>
  </div>
- <a href="{{ route('password.request') }}" class="text-sm font-medium text-primary-600 hover:text-primary-500">
+ <a href="{{ route('password.request') }}" class="text-sm font-medium" style="color: var(--od-navy);">
  Forgot password?
  </a>
  </div>
 
  {{-- Submit --}}
  <button type="submit"
- class="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+ class="od-btn od-btn-primary w-full od-btn-lg">
  <i class="fas fa-sign-in-alt mr-2"></i>
  Sign in
  </button>
@@ -90,17 +88,17 @@
  {{-- Divider --}}
  <div class="mt-6 relative">
  <div class="absolute inset-0 flex items-center">
- <div class="w-full border-t border-gray-200"></div>
+ <div class="w-full" style="border-top: 1px solid var(--od-border);"></div>
  </div>
  <div class="relative flex justify-center text-sm">
- <span class="px-3 bg-white text-gray-400">or continue with</span>
+ <span class="px-3 od-meta" style="background: var(--od-surface);">or continue with</span>
  </div>
  </div>
 
  {{-- Google Button --}}
  <div class="mt-5">
  <a href="{{ route('google.login') }}"
- class="w-full inline-flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors">
+ class="od-btn od-btn-secondary w-full">
  <svg class="h-5 w-5 mr-2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -113,9 +111,9 @@
  </div>
 
  {{-- Footer link --}}
- <p class="mt-6 text-center text-sm text-gray-500">
+ <p class="mt-6 text-center text-sm od-meta">
  Don't have an account?
- <a href="{{ route('register') }}" class="font-medium text-primary-600 hover:text-primary-500">
+ <a href="{{ route('register') }}" class="font-medium" style="color: var(--od-navy);">
  Create one now
  </a>
  </p>

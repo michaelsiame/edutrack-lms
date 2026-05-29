@@ -5,7 +5,7 @@
  */
 
 :root {
-  /* === BRAND COLORS === */
+  /* === BRAND COLORS (Legacy Blue) === */
   --color-primary-50: #EBF4FF;
   --color-primary-100: #D6E9FF;
   --color-primary-200: #AED3FF;
@@ -25,6 +25,25 @@
   --color-secondary-500: #F6B745;
   --color-secondary-600: #D89E2E;
   --color-secondary-700: #B8851F;
+
+  /* === WARM SCANDINAVIAN PALETTE (Open Design) === */
+  --od-bg: #f7f6f3;
+  --od-surface: #ffffff;
+  --od-fg: #0a1628;
+  --od-muted: #6b6f78;
+  --od-border: #e5e2dc;
+  --od-accent: #c9a44a;
+  --od-accent-hover: #b08d3a;
+  --od-navy: #0b4f8c;
+  --od-navy-hover: #083d6e;
+  --od-green: #1b9e3b;
+  --od-green-hover: #158030;
+  --od-danger: #dc2626;
+
+  --od-accent-soft: color-mix(in oklch, var(--od-accent) 14%, transparent);
+  --od-navy-soft: color-mix(in oklch, var(--od-navy) 12%, transparent);
+  --od-green-soft: color-mix(in oklch, var(--od-green) 12%, transparent);
+  --od-fg-soft: color-mix(in oklch, var(--od-fg) 6%, transparent);
 
   /* === SEMANTIC SURFACES === */
   --surface-primary: #FAFBFC;
@@ -65,6 +84,10 @@
   --status-error-bg: #FEF2F2;
   --status-info: #3B82F6;
   --status-info-bg: #EFF6FF;
+
+  /* === TYPOGRAPHY (Open Design) === */
+  --font-display: 'Iowan Old Style', 'Charter', Georgia, 'Times New Roman', serif;
+  --font-mono: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
 
   /* === SPACING (8px base) === */
   --space-0: 0;

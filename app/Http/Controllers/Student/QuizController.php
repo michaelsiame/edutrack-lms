@@ -29,6 +29,7 @@ class QuizController extends Controller
         $quizData = [];
         foreach ($enrollments as $enrollment) {
             foreach ($enrollment->course->quizzes as $quiz) {
+                if (!$quiz->is_published) continue;
                 $attempts = QuizAttempt::where('quiz_id', $quiz->id)
                     ->where('student_id', $this->studentId())
                     ->orderBy('attempt_number')
@@ -52,10 +53,14 @@ class QuizController extends Controller
 
     public function attempts(Quiz $quiz)
     {
-        auth()->user()->enrollments()
+        $enrollment = auth()->user()->enrollments()
             ->where('course_id', $quiz->course_id)
             ->where('enrollment_status', '!=', 'Dropped')
             ->firstOrFail();
+
+        if (!$enrollment->canAccessContent()) {
+            abort(403, 'Please complete at least a 30% deposit to view quiz attempts.');
+        }
 
         $attempts = QuizAttempt::where('quiz_id', $quiz->id)
             ->where('student_id', $this->studentId())
@@ -74,15 +79,32 @@ class QuizController extends Controller
 
         $attempt->load(['quiz.course', 'answers.question.options']);
 
+        $enrollment = auth()->user()->enrollments()
+            ->where('course_id', $attempt->quiz->course_id)
+            ->firstOrFail();
+
+        if (!$enrollment->canAccessContent()) {
+            abort(403, 'Please complete at least a 30% deposit to view quiz attempts.');
+        }
+
         return view('student.quiz-attempts.show', compact('attempt'));
     }
 
     public function take(Quiz $quiz)
     {
         // Verify enrollment in the quiz's course
-        auth()->user()->enrollments()
+        $enrollment = auth()->user()->enrollments()
             ->where('course_id', $quiz->course_id)
             ->firstOrFail();
+
+        if (!$enrollment->canAccessContent()) {
+            return redirect()->route('checkout.show', $quiz->course)
+                ->with('warning', 'Please complete at least a 30% deposit to take quizzes.');
+        }
+
+        if (!$quiz->is_published) {
+            abort(404);
+        }
 
         $quiz->load(['questions.options', 'course']);
         $questions = $quiz->questions;
@@ -148,9 +170,13 @@ class QuizController extends Controller
         }
 
         // Verify enrollment
-        auth()->user()->enrollments()
+        $enrollment = auth()->user()->enrollments()
             ->where('course_id', $quiz->course_id)
             ->firstOrFail();
+
+        if (!$enrollment->canAccessContent()) {
+            abort(403, 'Please complete at least a 30% deposit to submit quizzes.');
+        }
 
         $quiz->load('questions.options');
 
@@ -164,6 +190,13 @@ class QuizController extends Controller
             ->where('student_id', $this->studentId())
             ->where('status', 'In Progress')
             ->firstOrFail();
+
+        $timeSpent = $attempt->started_at->diffInMinutes(now());
+        if ($quiz->time_limit_minutes && $timeSpent > $quiz->time_limit_minutes) {
+            $attempt->update(['status' => 'Abandoned', 'score' => 0]);
+            return redirect()->route('student.quizzes.attempts', $quiz)
+                ->with('error', 'Time limit exceeded. Your attempt has been abandoned.');
+        }
 
         $answers = $validated['answers'];
         $totalPoints = 0;
@@ -229,6 +262,8 @@ class QuizController extends Controller
             'score' => $score,
             'time_spent_minutes' => $timeSpent,
         ]);
+
+        app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
 
         return redirect()->route('student.quizzes.attempt', $attempt);
     }

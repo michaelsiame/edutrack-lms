@@ -28,16 +28,19 @@ class Payment extends Model
         'phone_number',
         'notes',
         'payment_date',
+        'promotion_id',
+        'discount_amount',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
         'payment_date' => 'datetime',
     ];
 
     public function student()
     {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
     public function course()
@@ -73,5 +76,15 @@ class Payment extends Model
     public function isCompleted(): bool
     {
         return $this->payment_status === 'Completed';
+    }
+
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class, 'payment_method_id', 'payment_method_id');
+    }
+
+    public function getPaymentMethodAttribute(): ?string
+    {
+        return $this->paymentMethod?->method_name ?? 'Online';
     }
 }

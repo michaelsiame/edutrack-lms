@@ -53,11 +53,27 @@ class RegisterController extends Controller
 
         event(new Registered($user));
 
-        // In development, show the verification link
-        if (app()->environment('local', 'development')) {
-            return redirect()->route('verification.notice')
-                ->with('verification_link', route('verification.verify', ['token' => $verificationToken]))
-                ->with('email', $user->email);
+        $emailService = app(\App\Services\EmailQueueService::class);
+
+        // Welcome email
+        $emailService->sendTemplated($user->email, 'Welcome', [
+            'name' => $user->full_name,
+            'email' => $user->email,
+            'login_url' => route('login'),
+        ]);
+        $emailService->sendNotification($user->id, 'Welcome to Edutrack!', 'Your account has been created successfully.', 'welcome');
+
+        // Verification email
+        $verificationUrl = route('verification.verify', ['token' => $verificationToken]);
+        $templated = $emailService->sendTemplated($user->email, 'password_reset', [
+            'name' => $user->full_name,
+            'verification_url' => $verificationUrl,
+        ]);
+
+        if (!$templated) {
+            $subject = 'Verify your email address';
+            $body = view('emails.verify-email', ['user' => $user, 'token' => $verificationToken])->render();
+            $emailService->queue($user->email, $subject, $body);
         }
 
         return redirect()->route('verification.notice')

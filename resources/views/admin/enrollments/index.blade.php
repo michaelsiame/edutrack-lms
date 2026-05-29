@@ -99,9 +99,9 @@
  <td class="px-4 py-3">
  <div class="text-xs">
  <span class="{{ $enrollment->isFullyPaid() ? 'text-success-600 dark:text-success-400' : 'text-warning-600 dark:text-warning-400' }}">
- ZMW {{ number_format($enrollment->amount_paid, 2) }}
+ {{ setting('currency', 'ZMW') }} {{ number_format($enrollment->amount_paid, 2) }}
  </span>
- <span class="text-gray-400 dark:text-gray-500">/ ZMW {{ number_format($enrollment->course->discount_price ?? $enrollment->course->price, 2) }}</span>
+ <span class="text-gray-400 dark:text-gray-500">/ {{ setting('currency', 'ZMW') }} {{ number_format($enrollment->course->discount_price ?? $enrollment->course->price, 2) }}</span>
  </div>
  @if($enrollment->certificate_blocked)
  <span class="text-xs text-danger-500">Cert blocked</span>

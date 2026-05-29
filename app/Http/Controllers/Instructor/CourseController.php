@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\CourseCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
 {
@@ -35,7 +36,7 @@ class CourseController extends Controller
             'category_id' => 'required|exists:course_categories,id',
             'level' => 'nullable|in:beginner,intermediate,advanced',
             'price' => 'required|numeric|min:0',
-            'discount_price' => 'nullable|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0|lt:price',
             'duration_weeks' => 'nullable|integer|min:1',
             'total_hours' => 'nullable|numeric|min:0',
             'max_students' => 'nullable|integer|min:0',
@@ -54,15 +55,27 @@ class CourseController extends Controller
         }
 
         $validated['instructor_id'] = $instructor->id;
-        $validated['is_featured'] = $request->boolean('is_featured');
+        $validated['is_featured'] = false; // Instructors cannot self-feature courses
+
+        // Instructors cannot publish directly; requests go to admin review
+        $wasPublished = ($validated['status'] ?? '') === 'published';
+        if ($wasPublished) {
+            $validated['status'] = 'under_review';
+        }
 
         if ($request->hasFile('thumbnail')) {
+            $request->validate(['thumbnail' => 'image|mimes:jpg,jpeg,png,webp|max:5120']);
             $validated['thumbnail_url'] = $request->file('thumbnail')->store('courses/thumbnails', 'public');
         }
 
         Course::create($validated);
 
-        return redirect()->route('instructor.courses.index')->with('success', 'Course created successfully.');
+        $message = 'Course created successfully.';
+        if ($wasPublished) {
+            $message .= ' It has been submitted for admin approval.';
+        }
+
+        return redirect()->route('instructor.courses.index')->with('success', $message);
     }
 
     public function show(Course $course)
@@ -104,7 +117,7 @@ class CourseController extends Controller
             'category_id' => 'required|exists:course_categories,id',
             'level' => 'nullable|in:beginner,intermediate,advanced',
             'price' => 'required|numeric|min:0',
-            'discount_price' => 'nullable|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0|lt:price',
             'duration_weeks' => 'nullable|integer|min:1',
             'total_hours' => 'nullable|numeric|min:0',
             'max_students' => 'nullable|integer|min:0',
@@ -117,15 +130,34 @@ class CourseController extends Controller
             'status' => 'required|in:draft,published',
         ]);
 
-        $validated['is_featured'] = $request->boolean('is_featured');
+        $validated['is_featured'] = false; // Instructors cannot self-feature courses
+
+        // Instructors cannot publish directly; requests go to admin review
+        // But preserve 'published' if already approved — don't send approved courses back to review
+        $wasPublished = ($validated['status'] ?? '') === 'published';
+        if ($wasPublished && $course->status !== 'published') {
+            $validated['status'] = 'under_review';
+        } elseif ($course->status === 'published' && $validated['status'] !== 'published') {
+            // Instructor chose to revert published course to draft
+            $validated['status'] = 'draft';
+        }
 
         if ($request->hasFile('thumbnail')) {
+            $request->validate(['thumbnail' => 'image|mimes:jpg,jpeg,png,webp|max:5120']);
+            if ($course->thumbnail_url) {
+                Storage::disk('public')->delete($course->thumbnail_url);
+            }
             $validated['thumbnail_url'] = $request->file('thumbnail')->store('courses/thumbnails', 'public');
         }
 
         $course->update($validated);
 
-        return redirect()->route('instructor.courses.index')->with('success', 'Course updated successfully.');
+        $message = 'Course updated successfully.';
+        if ($wasPublished) {
+            $message .= ' It has been submitted for admin approval.';
+        }
+
+        return redirect()->route('instructor.courses.index')->with('success', $message);
     }
 
     public function destroy(Course $course)

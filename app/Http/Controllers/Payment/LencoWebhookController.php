@@ -13,13 +13,15 @@ class LencoWebhookController extends Controller
     public function handle(Request $request)
     {
         $payload = $request->all();
+        $rawPayload = $request->getContent();
         $signature = $request->header('X-Lenco-Signature');
 
         // Log the webhook
         $log = LencoWebhookLog::create([
             'event_type' => $payload['event'] ?? 'unknown',
-            'lenco_transaction_id' => $payload['data']['id'] ?? null,
+            'lenco_transaction_id' => $payload['data']['id'] ?? $payload['data']['transactionReference'] ?? null,
             'payload' => $payload,
+            'signature' => $signature,
             'ip_address' => $request->ip(),
             'processed' => false,
         ]);
@@ -27,12 +29,21 @@ class LencoWebhookController extends Controller
         try {
             $service = app(LencoPaymentService::class);
 
+            // Require signature in production
+            if (app()->environment('production') && empty($signature)) {
+                $log->update([
+                    'signature_valid' => false,
+                    'error_message' => 'Missing webhook signature',
+                ]);
+
+                return response()->json(['error' => 'Missing signature'], 401);
+            }
+
             // Validate signature if provided
             if ($signature) {
-                $isValid = $service->validateWebhookSignature(
-                    json_encode($payload),
-                    $signature
-                );
+                $isValid = $service->validateWebhookSignature($rawPayload, $signature);
+
+                $log->update(['signature_valid' => $isValid]);
 
                 if (!$isValid) {
                     $log->update([

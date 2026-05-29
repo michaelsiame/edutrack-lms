@@ -3,37 +3,44 @@
 @section('title','Notes: ' . $lesson->title . ' - Edutrack LMS')
 @section('page_title','Lesson Notes')
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
+@endpush
+
 @section('content')
-<div class="max-w-3xl mx-auto">
-    <x-back-link route="student.notes.index" label="Back to Notes" class="mb-4" />
+<div class="od-page -m-4 md:-m-6 lg:-m-8 p-4 md:p-6 lg:p-8 min-h-full">
+    <div class="max-w-3xl mx-auto">
+        <x-back-link route="student.notes.index" label="Back to Notes" class="mb-4" variant="od" />
 
-    <x-card variant="elevated">
-        <x-slot:header>
-            <div>
-                <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ $lesson->title }}</h2>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $course->title }} &bull; {{ $lesson->module->title }}</p>
-            </div>
-        </x-slot:header>
-
-        <form action="{{ route('student.notes.store', [$course, $lesson]) }}" method="POST">
-            @csrf
+        <div class="od-card">
             <div class="mb-5">
-                <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Your Notes</label>
-                <textarea name="content" id="content" rows="14"
-                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm leading-relaxed shadow-sm resize-y"
-                    placeholder="Take your notes here...">{{ old('content', $note->content ?? '') }}</textarea>
-                @error('content')
-                    <p class="mt-1.5 text-sm text-danger-600">{{ $message }}</p>
-                @enderror
+                <p class="od-eyebrow" style="margin-bottom: 4px;">{{ $course->title }} &bull; {{ $lesson->module->title }}</p>
+                <h1 class="od-h2">{{ $lesson->title }}</h1>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <x-button type="submit" variant="primary" icon="fa-save">Save Notes</x-button>
-                <x-button :href="route('student.learning.show', [$course, $lesson])" variant="ghost" size="sm" icon="fa-arrow-left">
-                    Back to Lesson
-                </x-button>
-            </div>
-        </form>
-    </x-card>
+            <form action="{{ route('student.notes.store', [$course, $lesson]) }}" method="POST">
+                @csrf
+                <div class="mb-5">
+                    <label for="content" class="block text-sm font-medium mb-1.5" style="color: var(--od-fg);">Your Notes</label>
+                    <textarea name="content" id="content" rows="14"
+                        class="w-full px-4 py-3 border rounded-xl text-sm leading-relaxed shadow-sm resize-y"
+                        style="border-color: var(--od-border); background: var(--od-surface); color: var(--od-fg);"
+                        placeholder="Take your notes here...">{{ old('content', $note->content ?? '') }}</textarea>
+                    @error('content')
+                        <p class="mt-1.5 text-sm" style="color: var(--od-danger);">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    <button type="submit" class="od-btn od-btn-primary">
+                        <i class="fas fa-save"></i> Save Notes
+                    </button>
+                    <a href="{{ route('student.learning.show', [$course, $lesson]) }}" class="od-btn od-btn-ghost od-btn-sm">
+                        <i class="fas fa-arrow-left"></i> Back to Lesson
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection

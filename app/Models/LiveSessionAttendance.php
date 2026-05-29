@@ -9,19 +9,22 @@ class LiveSessionAttendance extends Model
 {
     use HasFactory;
 
+    protected $table = 'live_session_attendance';
+
     protected $fillable = [
         'live_session_id',
-        'student_id',
+        'user_id',
         'joined_at',
         'left_at',
-        'duration_minutes',
-        'status',
+        'duration_seconds',
+        'is_moderator',
     ];
 
     protected $casts = [
         'joined_at' => 'datetime',
         'left_at' => 'datetime',
-        'duration_minutes' => 'integer',
+        'duration_seconds' => 'integer',
+        'is_moderator' => 'boolean',
     ];
 
     public function liveSession()
@@ -31,6 +34,6 @@ class LiveSessionAttendance extends Model
 
     public function student()
     {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

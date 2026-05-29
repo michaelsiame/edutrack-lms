@@ -110,6 +110,12 @@ class DashboardController extends Controller
         $service = new CertificateService();
         $certificate = $service->issueCertificate($enrollment);
 
+        if (!$certificate) {
+            return back()->with('info', 'Certificate has already been issued or is blocked.');
+        }
+
+        $service->sendCertificateNotification($certificate);
+
         return back()->with('success', 'Certificate issued successfully: ' . $certificate->certificate_number);
     }
 

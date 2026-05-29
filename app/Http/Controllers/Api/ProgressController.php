@@ -22,6 +22,10 @@ class ProgressController extends Controller
             ->where('course_id', $lesson->module->course_id)
             ->firstOrFail();
 
+        if (!$enrollment->canAccessContent()) {
+            return response()->json(['success' => false, 'message' => 'Payment required. Minimum 30% deposit needed.'], 403);
+        }
+
         $progress = LessonProgress::updateOrCreate(
             [
                 'enrollment_id' => $enrollment->id,
@@ -54,11 +58,56 @@ class ProgressController extends Controller
         $completedLessons = $enrollment->lessonProgress()->where('status', 'Completed')->count();
 
         $progress = $totalLessons > 0 ? ($completedLessons / $totalLessons) * 100 : 0;
+        $wasCompleted = $enrollment->enrollment_status !== 'Completed';
 
         $enrollment->update([
             'progress' => $progress,
             'enrollment_status' => $progress >= 100 ? 'Completed' : 'In Progress',
             'completion_date' => $progress >= 100 ? now() : null,
         ]);
+
+        // Auto-issue certificate and badge on first completion
+        if ($progress >= 100 && $wasCompleted) {
+            $this->awardCompletionRewards($enrollment);
+        }
+    }
+
+    /**
+     * Auto-issue certificate and award completion badge if eligible.
+     */
+    protected function awardCompletionRewards($enrollment): void
+    {
+        try {
+            $service = new \App\Services\CertificateService();
+            $certificate = $service->issueCertificate($enrollment);
+
+            if ($certificate) {
+                $service->sendCertificateNotification($certificate);
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Auto-certificate failed: ' . $e->getMessage());
+        }
+
+        // Badge: find active completion badge and award it
+        $badge = \App\Models\Badge::where('badge_type', 'Course Completion')
+            ->where('is_active', true)
+            ->first();
+
+        if ($badge && $enrollment->student_id) {
+            $alreadyHas = \App\Models\StudentAchievement::where('student_id', $enrollment->student_id)
+                ->where('badge_id', $badge->badge_id)
+                ->where('course_id', $enrollment->course_id)
+                ->exists();
+
+            if (!$alreadyHas) {
+                \App\Models\StudentAchievement::create([
+                    'student_id' => $enrollment->student_id,
+                    'badge_id' => $badge->badge_id,
+                    'course_id' => $enrollment->course_id,
+                    'earned_date' => now(),
+                    'description' => 'Completed ' . $enrollment->course->title,
+                ]);
+            }
+        }
     }
 }

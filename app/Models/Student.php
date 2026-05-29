@@ -45,4 +45,24 @@ class Student extends Model
     {
         return $this->hasMany(StudentAchievement::class, 'student_id');
     }
+
+    public function getFullNameAttribute(): ?string
+    {
+        return $this->user?->full_name;
+    }
+
+    public function getFirstNameAttribute(): ?string
+    {
+        return $this->user?->first_name;
+    }
+
+    public function getLastNameAttribute(): ?string
+    {
+        return $this->user?->last_name;
+    }
+
+    public function getEmailAttribute(): ?string
+    {
+        return $this->user?->email;
+    }
 }

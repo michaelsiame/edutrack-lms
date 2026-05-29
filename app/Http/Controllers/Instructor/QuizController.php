@@ -101,6 +101,13 @@ class QuizController extends Controller
             'is_published' => 'boolean',
         ]);
 
+        if (isset($validated['course_id'])) {
+            $newCourse = Course::find($validated['course_id']);
+            if (!$newCourse || $newCourse->instructor_id !== auth()->user()->instructor->id) {
+                abort(403, 'You do not own this course.');
+            }
+        }
+
         $quiz->update([
             'course_id' => $validated['course_id'],
             'title' => $validated['title'],
@@ -164,10 +171,21 @@ class QuizController extends Controller
             abort(404);
         }
 
-        $validated = $request->validate([
+        $request->validate([
             'grades' => 'required|array',
-            'grades.*' => 'nullable|numeric|min:0',
         ]);
+
+        foreach ($attempt->answers as $answer) {
+            $question = $answer->question;
+            if (isset($request->grades[$answer->id])) {
+                $gradeValue = $request->grades[$answer->id];
+                if (!is_numeric($gradeValue) || $gradeValue < 0 || $gradeValue > $question->points) {
+                    return redirect()->back()->withInput()->withErrors([
+                        'grades.' . $answer->id => "Grade must be between 0 and {$question->points}."
+                    ]);
+                }
+            }
+        }
 
         $totalPoints = 0;
         $earnedPoints = 0;
@@ -176,8 +194,8 @@ class QuizController extends Controller
             $question = $answer->question;
             $totalPoints += $question->points;
 
-            if (isset($validated['grades'][$answer->id])) {
-                $manualPoints = (float) $validated['grades'][$answer->id];
+            if (isset($request->grades[$answer->id])) {
+                $manualPoints = (float) $request->grades[$answer->id];
                 $answer->update([
                     'points_earned' => $manualPoints,
                     'is_correct' => $manualPoints >= $question->points,
@@ -190,10 +208,25 @@ class QuizController extends Controller
 
         $score = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100, 2) : 0;
 
-        $attempt->update([
+        $updateData = [
             'score' => $score,
             'status' => 'Graded',
-        ]);
+        ];
+
+        if (\Schema::hasColumn('quiz_attempts', 'graded_at')) {
+            $updateData['graded_at'] = now();
+        } else {
+            $updateData['completed_at'] = now();
+        }
+
+        $attempt->update($updateData);
+
+        $enrollment = \App\Models\Enrollment::where('user_id', $attempt->student?->user_id)
+            ->where('course_id', $quiz->course_id)
+            ->first();
+        if ($enrollment) {
+            app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
+        }
 
         return redirect()->route('instructor.quizzes.attempts', $quiz)
             ->with('success', 'Grades saved successfully.');

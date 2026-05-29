@@ -81,7 +81,7 @@ class DashboardController extends Controller
             return back()->with('info', 'Payment is already verified.');
         }
 
-        $service = new PaymentVerificationService();
+        $service = app(PaymentVerificationService::class);
         $service->verifyPayment($payment);
 
         return back()->with('success', 'Payment verified successfully. Enrollment updated.');
@@ -95,7 +95,7 @@ class DashboardController extends Controller
 
     public function downloadInvoice(Invoice $invoice)
     {
-        $service = new InvoiceService();
+        $service = app(InvoiceService::class);
         $pdf = $service->generatePdf($invoice);
 
         return response($pdf, 200, [

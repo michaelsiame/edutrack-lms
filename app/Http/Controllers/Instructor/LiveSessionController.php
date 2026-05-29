@@ -40,8 +40,8 @@ class LiveSessionController extends Controller
             'status' => 'scheduled',
             'max_participants' => $validated['max_participants'] ?? null,
             'description' => $validated['description'],
-            'enable_chat' => $validated['enable_chat'] ?? true,
-            'enable_screen_share' => $validated['enable_screen_share'] ?? true,
+            'enable_chat' => $request->boolean('enable_chat', true),
+            'enable_screen_share' => $request->boolean('enable_screen_share', true),
         ]);
 
         return redirect()->route('instructor.live-sessions.index', $course)->with('success', 'Live session scheduled.');

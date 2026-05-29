@@ -14,20 +14,21 @@ class NewsletterController extends Controller
         return view('admin.newsletter.index', compact('subscribers'));
     }
 
-    public function toggle(NewsletterSubscriber $subscriber)
+    public function toggle(\App\Models\NewsletterSubscriber $subscriber)
     {
         if ($subscriber->is_active) {
             $subscriber->update([
                 'is_active' => false,
                 'unsubscribed_at' => now(),
             ]);
+            return back()->with('success', 'Subscriber deactivated.');
         } else {
             $subscriber->update([
                 'is_active' => true,
                 'unsubscribed_at' => null,
             ]);
+            return back()->with('success', 'Subscriber reactivated.');
         }
-        return redirect()->route('admin.newsletter.index')->with('success', 'Subscriber status updated.');
     }
 
     public function destroy(NewsletterSubscriber $subscriber)

@@ -11,11 +11,12 @@ class CourseCategory extends Model
 
     protected $fillable = [
         'name',
-        'slug',
-        'description',
-        'icon',
+        'category_description',
+        'icon_url',
+        'parent_category_id',
         'display_order',
         'is_active',
+        'color',
     ];
 
     protected $casts = [

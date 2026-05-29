@@ -141,16 +141,14 @@
                         <textarea name="learning_outcomes" id="learning_outcomes" rows="3" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">{{ old('learning_outcomes') }}</textarea>
                     </div>
                     <div class="flex items-center gap-6">
-                        <div class="flex items-center">
-                            <input type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }} class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
-                            <label for="is_featured" class="ml-2 block text-sm text-gray-900 dark:text-white">Featured Course</label>
-                        </div>
+                        <!-- is_featured removed: only admins can feature courses -->
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                             <select name="status" id="status" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
                                 <option value="draft" {{ old('status', 'draft') == 'draft' ? 'selected' : '' }}>Draft</option>
-                                <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
+                                <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Submit for Approval</option>
                             </select>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Publishing requires admin approval.</p>
                         </div>
                     </div>
                 </div>

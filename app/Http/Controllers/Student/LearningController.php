@@ -18,6 +18,12 @@ class LearningController extends Controller
             ->where('course_id', $course->id)
             ->firstOrFail();
 
+        // Verify payment gating
+        if (!$enrollment->canAccessContent()) {
+            return redirect()->route('checkout.show', $course)
+                ->with('warning', 'Please complete at least a 30% deposit to access course content.');
+        }
+
         // Verify lesson belongs to course
         if ($lesson->module->course_id !== $course->id) {
             abort(404);
@@ -78,6 +84,11 @@ class LearningController extends Controller
             ->where('course_id', $course->id)
             ->firstOrFail();
 
+        if (!$enrollment->canAccessContent()) {
+            return redirect()->route('checkout.show', $course)
+                ->with('warning', 'Please complete at least a 30% deposit to access course content.');
+        }
+
         if ($lesson->module->course_id !== $course->id) {
             abort(404);
         }
@@ -112,10 +123,18 @@ class LearningController extends Controller
             ->count();
 
         $enrollmentProgress = $totalLessons > 0 ? round(($completedLessons / $totalLessons) * 100) : 0;
+        $wasCompleted = $enrollment->enrollment_status !== 'Completed';
+
         $enrollment->update([
             'progress' => $enrollmentProgress,
-            'enrollment_status' => $enrollmentProgress >= 100 ? 'completed' : 'active',
+            'enrollment_status' => $enrollmentProgress >= 100 ? 'Completed' : 'In Progress',
+            'completion_date' => $enrollmentProgress >= 100 ? now() : null,
         ]);
+
+        // Auto-issue certificate and badge on first completion
+        if ($enrollmentProgress >= 100 && $wasCompleted) {
+            $this->awardCompletionRewards($enrollment);
+        }
 
         return redirect()->route('student.learning.show', ['course' => $course, 'lesson' => $lesson])
             ->with('success', 'Lesson marked as complete!');
@@ -126,6 +145,11 @@ class LearningController extends Controller
         $enrollment = auth()->user()->enrollments()
             ->where('course_id', $course->id)
             ->firstOrFail();
+
+        if (!$enrollment->canAccessContent()) {
+            return redirect()->route('checkout.show', $course)
+                ->with('warning', 'Please complete at least a 30% deposit to access course content.');
+        }
 
         if ($lesson->module->course_id !== $course->id) {
             abort(404);
@@ -140,5 +164,45 @@ class LearningController extends Controller
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
+    }
+
+    /**
+     * Auto-issue certificate and award completion badge if eligible.
+     */
+    protected function awardCompletionRewards($enrollment): void
+    {
+        // Certificate: auto-issue via service (handles race conditions internally)
+        try {
+            $service = new \App\Services\CertificateService();
+            $certificate = $service->issueCertificate($enrollment);
+
+            if ($certificate) {
+                $service->sendCertificateNotification($certificate);
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Auto-certificate failed: ' . $e->getMessage());
+        }
+
+        // Badge: find active completion badge and award it
+        $badge = \App\Models\Badge::where('badge_type', 'Course Completion')
+            ->where('is_active', true)
+            ->first();
+
+        if ($badge && $enrollment->student_id) {
+            $alreadyHas = \App\Models\StudentAchievement::where('student_id', $enrollment->student_id)
+                ->where('badge_id', $badge->badge_id)
+                ->where('course_id', $enrollment->course_id)
+                ->exists();
+
+            if (!$alreadyHas) {
+                \App\Models\StudentAchievement::create([
+                    'student_id' => $enrollment->student_id,
+                    'badge_id' => $badge->badge_id,
+                    'course_id' => $enrollment->course_id,
+                    'earned_date' => now(),
+                    'description' => 'Completed ' . $enrollment->course->title,
+                ]);
+            }
+        }
     }
 }

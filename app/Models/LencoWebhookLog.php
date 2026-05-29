@@ -15,13 +15,16 @@ class LencoWebhookLog extends Model
         'event_type',
         'lenco_transaction_id',
         'payload',
-        'ip_address',
+        'signature',
+        'signature_valid',
         'processed',
         'error_message',
+        'ip_address',
     ];
 
     protected $casts = [
         'payload' => 'array',
         'processed' => 'boolean',
+        'signature_valid' => 'boolean',
     ];
 }

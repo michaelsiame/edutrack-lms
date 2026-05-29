@@ -3,108 +3,125 @@
 @section('title','Attempt #' . $attempt->attempt_number . ' - ' . $attempt->quiz->title)
 @section('page_title','Quiz Review')
 
-@section('content')
-<div class="max-w-4xl mx-auto">
-    <x-back-link route="student.quizzes.attempts" :routeParams="[$attempt->quiz]" :label="'Back to Attempts'" class="mb-4" />
+@push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
+@endpush
 
-    <!-- Score Header -->
-    <x-card variant="elevated" class="mb-6">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ $attempt->quiz->title }}</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Attempt #{{ $attempt->attempt_number }} &middot; {{ $attempt->submitted_at?->format('M d, Y g:i A') }}
-                </p>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="text-right">
-                    <div class="text-3xl font-bold {{ $attempt->isPassed() ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400' }}">
-                        {{ $attempt->score }}%
-                    </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                        Pass: {{ $attempt->quiz->passing_score ?? 60 }}%
-                    </div>
+@section('content')
+<div class="od-page -m-4 md:-m-6 lg:-m-8 p-4 md:p-6 lg:p-8 min-h-full">
+    <div class="max-w-4xl mx-auto">
+        <x-back-link route="student.quizzes.attempts" :routeParams="[$attempt->quiz]" :label="'Back to Attempts'" class="mb-4" variant="od" />
+
+        <!-- Score Header -->
+        <div class="od-card mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <p class="od-eyebrow" style="margin-bottom: 4px;">{{ $attempt->quiz->title }}</p>
+                    <h1 class="od-h2">Attempt #{{ $attempt->attempt_number }}</h1>
+                    <p class="od-meta mt-1">{{ $attempt->submitted_at?->format('M d, Y g:i A') }}</p>
                 </div>
-                <x-status-badge :status="$attempt->isPassed() ? 'Passed' : 'Failed'" size="md" />
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <div class="text-3xl font-bold" style="color: {{ $attempt->isPassed() ? 'var(--od-green)' : 'var(--od-danger)' }}; font-family: var(--font-display);">
+                            {{ $attempt->score }}%
+                        </div>
+                        <div class="od-meta">Pass: {{ $attempt->quiz->passing_score ?? 60 }}%</div>
+                    </div>
+                    @if($attempt->isPassed())
+                        <span class="od-badge od-badge-success">Passed</span>
+                    @else
+                        <span class="od-badge od-badge-danger">Failed</span>
+                    @endif
+                </div>
             </div>
         </div>
-    </x-card>
 
-    <!-- Question Review -->
-    <div class="space-y-4">
-        @foreach($attempt->answers as $index => $answer)
-            @php
-                $question = $answer->question;
-                $isCorrect = $answer->is_correct;
-            @endphp
-            <x-card variant="default" class="overflow-hidden {{ $isCorrect ? 'border-l-4 border-l-success-500' : 'border-l-4 border-l-danger-500' }}">
-                <div class="flex items-start gap-3">
-                    <div class="flex-shrink-0 w-8 h-8 rounded-full {{ $isCorrect ? 'bg-success-100 text-success-600 dark:bg-success-900/30 dark:text-success-400' : 'bg-danger-100 text-danger-600 dark:bg-danger-900/30 dark:text-danger-400' }} flex items-center justify-center text-sm font-bold">
-                        {{ $index + 1 }}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-medium text-gray-900 dark:text-white text-sm leading-relaxed">{{ $question->question_text }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $question->points }} point{{ $question->points !== 1 ? 's' : '' }}</p>
+        <!-- Question Review -->
+        <div class="space-y-4">
+            @foreach($attempt->answers as $index => $answer)
+                @php
+                    $question = $answer->question;
+                    $isCorrect = $answer->is_correct;
+                @endphp
+                <div class="od-card overflow-hidden" style="border-left: 4px solid {{ $isCorrect ? 'var(--od-green)' : 'var(--od-danger)' }};">
+                    <div class="flex items-start gap-3">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold od-num"
+                             style="background: {{ $isCorrect ? 'var(--od-green-soft)' : 'color-mix(in oklch, var(--od-danger) 10%, transparent)' }}; color: {{ $isCorrect ? 'var(--od-green)' : 'var(--od-danger)' }};">
+                            {{ $index + 1 }}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium text-sm leading-relaxed" style="color: var(--od-fg);">{{ $question->question_text }}</p>
+                            <p class="od-meta mt-1">{{ $question->points }} point{{ $question->points !== 1 ? 's' : '' }}</p>
 
-                        <div class="mt-3 space-y-2">
-                            @if($question->question_type === 'Multiple Choice')
-                                @foreach($question->options as $option)
-                                    <div class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm
-                                        {{ $option->is_correct ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300 border border-success-200 dark:border-success-800' : '' }}
-                                        {{ $answer->selected_option_id == $option->id && !$option->is_correct ? 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-300 border border-danger-200 dark:border-danger-800' : '' }}
-                                        {{ !$option->is_correct && $answer->selected_option_id != $option->id ? 'bg-gray-50 dark:bg-gray-700/30 text-gray-600 dark:text-gray-400' : '' }}">
-                                        <i class="fas {{ $option->is_correct ? 'fa-check-circle text-success-500' : ($answer->selected_option_id == $option->id && !$option->is_correct ? 'fa-times-circle text-danger-500' : 'fa-circle text-gray-300 dark:text-gray-600') }}"></i>
-                                        <span>{{ $option->option_text }}</span>
-                                        @if($option->is_correct)
-                                            <span class="ml-auto text-xs font-semibold text-success-600 dark:text-success-400">Correct</span>
-                                        @endif
-                                        @if($answer->selected_option_id == $option->id && !$option->is_correct)
-                                            <span class="ml-auto text-xs font-semibold text-danger-600 dark:text-danger-400">Your answer</span>
+                            <div class="mt-3 space-y-2">
+                                @if($question->question_type === 'Multiple Choice')
+                                    @foreach($question->options as $option)
+                                        @php
+                                            $isSelected = $answer->selected_option_id == $option->id;
+                                            $optClass = '';
+                                            $optStyle = '';
+                                            if ($option->is_correct) {
+                                                $optStyle = 'background: var(--od-green-soft); border: 1px solid color-mix(in oklch, var(--od-green) 20%, transparent); color: var(--od-green);';
+                                            } elseif ($isSelected && !$option->is_correct) {
+                                                $optStyle = 'background: color-mix(in oklch, var(--od-danger) 8%, transparent); border: 1px solid color-mix(in oklch, var(--od-danger) 20%, transparent); color: var(--od-danger);';
+                                            } else {
+                                                $optStyle = 'background: var(--od-fg-soft); color: var(--od-muted);';
+                                            }
+                                        @endphp
+                                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="{{ $optStyle }}">
+                                            <i class="fas {{ $option->is_correct ? 'fa-check-circle' : ($isSelected && !$option->is_correct ? 'fa-times-circle' : 'fa-circle') }}" style="opacity: 0.6;"></i>
+                                            <span>{{ $option->option_text }}</span>
+                                            @if($option->is_correct)
+                                                <span class="ml-auto text-xs font-semibold">Correct</span>
+                                            @endif
+                                            @if($isSelected && !$option->is_correct)
+                                                <span class="ml-auto text-xs font-semibold">Your answer</span>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                @elseif($question->question_type === 'True/False')
+                                    <div class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="background: var(--od-fg-soft); color: var(--od-muted);">
+                                        <span style="color: var(--od-fg);">Your answer:</span>
+                                        <span class="font-semibold" style="color: {{ $isCorrect ? 'var(--od-green)' : 'var(--od-danger)' }};">{{ $answer->answer_text ?? 'Not answered' }}</span>
+                                        @if(!$isCorrect)
+                                            <span class="ml-auto" style="color: var(--od-green);">Correct: {{ $question->options->firstWhere('is_correct', true)?->option_text ?? 'N/A' }}</span>
                                         @endif
                                     </div>
-                                @endforeach
-                            @elseif($question->question_type === 'True/False')
-                                <div class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-gray-50 dark:bg-gray-700/30">
-                                    <span class="font-medium text-gray-700 dark:text-gray-300">Your answer:</span>
-                                    <span class="{{ $isCorrect ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400' }} font-semibold">{{ $answer->answer_text ?? 'Not answered' }}</span>
-                                    @if(!$isCorrect)
-                                        <span class="ml-auto text-success-600 dark:text-success-400 font-medium">Correct: {{ $question->options->firstWhere('is_correct', true)?->option_text ?? 'N/A' }}</span>
-                                    @endif
-                                </div>
-                            @else
-                                <div class="px-3 py-2 rounded-lg text-sm bg-gray-50 dark:bg-gray-700/30">
-                                    <span class="font-medium text-gray-700 dark:text-gray-300">Your answer:</span>
-                                    <p class="mt-1 text-gray-700 dark:text-gray-300">{{ $answer->answer_text ?? 'Not answered' }}</p>
-                                </div>
-                            @endif
-                        </div>
+                                @else
+                                    <div class="px-3 py-2 rounded-lg text-sm" style="background: var(--od-fg-soft); color: var(--od-muted);">
+                                        <span style="color: var(--od-fg);">Your answer:</span>
+                                        <p class="mt-1" style="color: var(--od-fg);">{{ $answer->answer_text ?? 'Not answered' }}</p>
+                                    </div>
+                                @endif
+                            </div>
 
-                        <div class="mt-2 text-xs">
-                            @if($isCorrect)
-                                <span class="text-success-600 dark:text-success-400 font-semibold"><i class="fas fa-check mr-1"></i>Correct (+{{ $answer->points_earned }} pts)</span>
-                            @else
-                                <span class="text-danger-600 dark:text-danger-400 font-semibold"><i class="fas fa-times mr-1"></i>Incorrect (0 pts)</span>
-                            @endif
+                            <div class="mt-2 text-xs">
+                                @if($isCorrect)
+                                    <span style="color: var(--od-green);" class="font-semibold"><i class="fas fa-check mr-1"></i>Correct (+{{ $answer->points_earned }} pts)</span>
+                                @else
+                                    <span style="color: var(--od-danger);" class="font-semibold"><i class="fas fa-times mr-1"></i>Incorrect (0 pts)</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
-            </x-card>
-        @endforeach
-    </div>
+            @endforeach
+        </div>
 
-    <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-        <x-button :href="route('student.quizzes.attempts', $attempt->quiz)" variant="secondary" icon="fa-arrow-left">
-            Back to Attempts
-        </x-button>
-        @php
-            $attemptsCount = \App\Models\QuizAttempt::where('quiz_id', $attempt->quiz_id)->where('student_id', auth()->user()->student?->id)->whereIn('status', ['Graded', 'Submitted'])->count();
-            $canRetake = !$attempt->quiz->max_attempts || $attemptsCount < $attempt->quiz->max_attempts;
-        @endphp
-        @if($canRetake)
-            <x-button :href="route('student.quizzes.take', $attempt->quiz)" variant="primary" icon="fa-redo">
-                Retake Quiz
-            </x-button>
-        @endif
+        <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+            <a href="{{ route('student.quizzes.attempts', $attempt->quiz) }}" class="od-btn od-btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Attempts
+            </a>
+            @php
+                $attemptsCount = \App\Models\QuizAttempt::where('quiz_id', $attempt->quiz_id)->where('student_id', auth()->user()->student?->id)->whereIn('status', ['Graded', 'Submitted'])->count();
+                $canRetake = !$attempt->quiz->max_attempts || $attemptsCount < $attempt->quiz->max_attempts;
+            @endphp
+            @if($canRetake)
+                <a href="{{ route('student.quizzes.take', $attempt->quiz) }}" class="od-btn od-btn-primary">
+                    <i class="fas fa-redo"></i> Retake Quiz
+                </a>
+            @endif
+        </div>
     </div>
 </div>
 @endsection

@@ -21,7 +21,7 @@
  </div>
  <div class="flex justify-between border-b border-gray-100 dark:border-gray-700 pb-2">
  <span class="text-gray-500 dark:text-gray-400">Amount</span>
- <span class="font-medium text-gray-900 dark:text-white">ZMW {{ number_format($payment->amount, 2) }}</span>
+ <span class="font-medium text-gray-900 dark:text-white">{{ setting('currency', 'ZMW') }} {{ number_format($payment->amount, 2) }}</span>
  </div>
  <div class="flex justify-between border-b border-gray-100 dark:border-gray-700 pb-2">
  <span class="text-gray-500 dark:text-gray-400">Status</span>

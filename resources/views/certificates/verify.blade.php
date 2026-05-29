@@ -2,45 +2,51 @@
 
 @section('title','Verify Certificate - Edutrack LMS')
 
-@section('content')
-<div class="py-12">
- <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
- <div class="bg-white shadow rounded-lg overflow-hidden">
- <div class="px-4 py-5 sm:p-6 text-center">
- <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-success-100 mb-4">
- <svg class="h-8 w-8 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
- </div>
- <h2 class="text-2xl font-bold text-gray-900 mb-2">Certificate Verified</h2>
- <p class="text-gray-500 mb-6">This certificate is authentic and issued by Edutrack Computer Training College.</p>
+@push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
+@endpush
 
- <div class="bg-gray-50 rounded-lg p-6 text-left max-w-lg mx-auto">
- <div class="grid grid-cols-1 gap-4">
- <div class="flex justify-between border-b border-gray-200 pb-2">
- <span class="text-sm text-gray-500">Certificate Number</span>
- <span class="text-sm font-medium text-gray-900">{{ $certificate->certificate_number }}</span>
- </div>
- <div class="flex justify-between border-b border-gray-200 pb-2">
- <span class="text-sm text-gray-500">Student Name</span>
- <span class="text-sm font-medium text-gray-900">{{ $certificate->user?->full_name ??'Unknown' }}</span>
- </div>
- <div class="flex justify-between border-b border-gray-200 pb-2">
- <span class="text-sm text-gray-500">Course</span>
- <span class="text-sm font-medium text-gray-900">{{ $certificate->course?->title ??'Unknown' }}</span>
- </div>
- <div class="flex justify-between border-b border-gray-200 pb-2">
- <span class="text-sm text-gray-500">Issue Date</span>
- <span class="text-sm font-medium text-gray-900">{{ $certificate->issued_date?->format('F d, Y') }}</span>
- </div>
- @if($certificate->final_score)
- <div class="flex justify-between">
- <span class="text-sm text-gray-500">Final Score</span>
- <span class="text-sm font-medium text-gray-900">{{ $certificate->final_score }}%</span>
- </div>
- @endif
- </div>
- </div>
- </div>
- </div>
- </div>
+@section('content')
+<div class="py-12" style="background: var(--od-bg); min-height: 100vh;">
+    <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+        <div class="od-card text-center py-10">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full mb-4" style="background: var(--od-green-soft);">
+                <i class="fas fa-check text-2xl" style="color: var(--od-green);"></i>
+            </div>
+            <h2 class="od-h2 mb-2">Certificate Verified</h2>
+            <p class="od-lead mb-8" style="margin: 0 auto 32px;">This certificate is authentic and issued by Edutrack Computer Training College.</p>
+
+            <div class="p-6 text-left max-w-lg mx-auto rounded-xl" style="background: var(--od-fg-soft);">
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="flex justify-between pb-2" style="border-bottom: 1px solid var(--od-border);">
+                        <span class="text-sm" style="color: var(--od-muted);">Certificate Number</span>
+                        <span class="text-sm font-medium od-num" style="color: var(--od-fg);">{{ $certificate->certificate_number }}</span>
+                    </div>
+                    <div class="flex justify-between pb-2" style="border-bottom: 1px solid var(--od-border);">
+                        <span class="text-sm" style="color: var(--od-muted);">Student Name</span>
+                        <span class="text-sm font-medium" style="color: var(--od-fg);">{{ $certificate->user?->full_name ??'Unknown' }}</span>
+                    </div>
+                    <div class="flex justify-between pb-2" style="border-bottom: 1px solid var(--od-border);">
+                        <span class="text-sm" style="color: var(--od-muted);">Course</span>
+                        <span class="text-sm font-medium" style="color: var(--od-fg);">{{ $certificate->course?->title ??'Unknown' }}</span>
+                    </div>
+                    <div class="flex justify-between pb-2" style="border-bottom: 1px solid var(--od-border);">
+                        <span class="text-sm" style="color: var(--od-muted);">Issue Date</span>
+                        <span class="text-sm font-medium" style="color: var(--od-fg);">{{ $certificate->issued_date?->format('F d, Y') }}</span>
+                    </div>
+                    @if($certificate->final_score)
+                    <div class="flex justify-between">
+                        <span class="text-sm" style="color: var(--od-muted);">Final Score</span>
+                        <span class="text-sm font-medium" style="color: var(--od-green);">{{ $certificate->final_score }}%</span>
+                    </div>
+                    @endif
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <a href="{{ route('home') }}" class="od-btn od-btn-secondary">Back to Home</a>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection

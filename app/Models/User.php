@@ -165,7 +165,7 @@ class User extends Authenticatable
 
     public function liveSessionAttendance()
     {
-        return $this->hasMany(LiveSessionAttendance::class, 'student_id');
+        return $this->hasMany(LiveSessionAttendance::class, 'user_id');
     }
 
     public function notifications()

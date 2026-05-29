@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Certificate;
 use App\Models\Enrollment;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use TCPDF;
 
@@ -24,9 +25,9 @@ class CertificateService
     }
 
     /**
-     * Generate a certificate number in the format: NRC 2495807/1/1
+     * Generate a unique certificate number in the format: NRC-{userId}-{random}
      */
-    public function generateCertificateNumber($user = null): string
+    public function generateCertificateNumber($user = null, ?int $courseId = null): string
     {
         $nrcSuffix = '2495807';
 
@@ -37,7 +38,10 @@ class CertificateService
             $nrcSuffix = $user->id . '/1/1';
         }
 
-        return 'NRC ' . $nrcSuffix;
+        // Append course ID and random suffix to guarantee uniqueness per certificate
+        $uniqueSuffix = ($courseId ?? '') . '-' . Str::random(6);
+
+        return 'NRC ' . $nrcSuffix . '/' . $uniqueSuffix;
     }
 
     /**
@@ -68,24 +72,79 @@ class CertificateService
 
     /**
      * Issue a certificate for an enrollment.
+     * Wrapped in a database transaction with row locking to prevent duplicates.
      */
-    public function issueCertificate(Enrollment $enrollment): Certificate
+    public function issueCertificate(Enrollment $enrollment): ?Certificate
     {
-        $certificate = Certificate::create([
-            'user_id' => $enrollment->user_id,
-            'course_id' => $enrollment->course_id,
-            'enrollment_id' => $enrollment->id,
-            'certificate_number' => $this->generateCertificateNumber($enrollment->user),
-            'issued_date' => now(),
-            'verification_code' => $this->generateVerificationCode(),
-            'final_score' => $enrollment->final_grade ?? 0,
-            'issued_at' => now(),
-            'is_verified' => true,
-        ]);
+        return DB::transaction(function () use ($enrollment) {
+            // Re-fetch with lock to prevent race conditions
+            $lockedEnrollment = Enrollment::lockForUpdate()->find($enrollment->id);
 
-        $enrollment->update(['certificate_issued' => true]);
+            if (!$lockedEnrollment) {
+                return null;
+            }
 
-        return $certificate;
+            // Already issued or blocked
+            if ($lockedEnrollment->certificate_issued) {
+                return Certificate::where('enrollment_id', $lockedEnrollment->id)->first();
+            }
+
+            if ($lockedEnrollment->certificate_blocked) {
+                return null;
+            }
+
+            // Recalculate final grade before issuing
+            app(GradeAggregationService::class)->recalculateFinalGrade($lockedEnrollment);
+            $lockedEnrollment->refresh();
+
+            $certificate = Certificate::create([
+                'user_id' => $lockedEnrollment->user_id,
+                'course_id' => $lockedEnrollment->course_id,
+                'enrollment_id' => $lockedEnrollment->id,
+                'certificate_number' => $this->generateCertificateNumber($lockedEnrollment->user, $lockedEnrollment->course_id),
+                'issued_date' => now(),
+                'verification_code' => $this->generateVerificationCode(),
+                'final_score' => $lockedEnrollment->final_grade ?? 0,
+                'issued_at' => now(),
+                'is_verified' => true,
+            ]);
+
+            $lockedEnrollment->update(['certificate_issued' => true]);
+
+            return $certificate;
+        });
+    }
+
+    /**
+     * Send certificate notification email and in-app notification.
+     */
+    public function sendCertificateNotification(Certificate $certificate): void
+    {
+        try {
+            $emailService = app(EmailQueueService::class);
+            $enrollment = $certificate->enrollment;
+
+            if (!$enrollment || !$enrollment->user) {
+                return;
+            }
+
+            $emailService->sendTemplated($enrollment->user->email, 'certificate', [
+                'name' => $enrollment->user->full_name,
+                'course' => $enrollment->course->title,
+                'certificate_number' => $certificate->certificate_number,
+                'download_url' => route('certificates.download', $certificate),
+            ]);
+
+            $emailService->sendNotification(
+                $enrollment->user_id,
+                'Certificate Issued',
+                "Your certificate for {$enrollment->course->title} is now available.",
+                'certificate',
+                route('certificates.download', $certificate)
+            );
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send certificate notification: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -97,11 +156,9 @@ class CertificateService
         $pdf->SetCreator('Edutrack LMS');
         $pdf->SetAuthor('Edutrack Computer Training College');
         $pdf->SetTitle('Certificate - ' . $certificate->certificate_number);
-        // Disable TCPDF default header/footer lines that break the certificate layout.
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
 
-        // Render at exact full-page size with no automatic page break offsets.
         $pdf->SetMargins(0, 0, 0);
         $pdf->SetAutoPageBreak(false, 0);
         $pdf->SetCellPadding(0);

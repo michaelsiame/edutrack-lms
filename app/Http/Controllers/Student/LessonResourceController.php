@@ -22,6 +22,10 @@ class LessonResourceController extends Controller
             abort(403, 'You must be enrolled in this course to download resources.');
         }
 
+        if (!$enrollment->canAccessContent()) {
+            abort(403, 'Please complete at least a 30% deposit to download resources.');
+        }
+
         if ($resource->lesson_id !== $lesson->id) {
             abort(404);
         }

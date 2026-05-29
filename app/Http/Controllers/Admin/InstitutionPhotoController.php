@@ -11,8 +11,13 @@ class InstitutionPhotoController extends Controller
 {
     public function index()
     {
-        $photos = InstitutionPhoto::orderBy('display_order')->paginate(20);
-        return view('admin.photos.index', compact('photos'));
+        $photos = InstitutionPhoto::orderBy('display_order')->orderBy('id')->paginate(20);
+
+        // Find potential duplicates by title
+        $titles = $photos->pluck('title');
+        $duplicates = $titles->duplicates()->unique()->values();
+
+        return view('admin.photos.index', compact('photos', 'duplicates'));
     }
 
     public function store(Request $request)
@@ -34,11 +39,16 @@ class InstitutionPhotoController extends Controller
             'image_path' => Storage::url($path),
             'category' => $validated['category'] ?? 'general',
             'display_order' => $validated['display_order'] ?? 0,
-            'is_featured' => $request->boolean('is_featured'),
-            'is_featured' => true,
+            'is_featured' => $request->boolean('is_featured', false),
+            'is_active' => true,
         ]);
 
         return back()->with('success', 'Photo uploaded successfully.');
+    }
+
+    public function edit(InstitutionPhoto $photo)
+    {
+        return view('admin.photos.edit', compact('photo'));
     }
 
     public function update(Request $request, InstitutionPhoto $photo)
@@ -49,7 +59,7 @@ class InstitutionPhotoController extends Controller
             'category' => 'nullable|string|max:50',
             'display_order' => 'nullable|integer|min:0',
             'is_featured' => 'nullable|boolean',
-            'is_featured' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
         ]);
 
         $photo->update([
@@ -57,11 +67,11 @@ class InstitutionPhotoController extends Controller
             'description' => $validated['description'] ?? null,
             'category' => $validated['category'] ?? $photo->category,
             'display_order' => $validated['display_order'] ?? $photo->display_order,
-            'is_featured' => $request->boolean('is_featured'),
-            'is_featured' => $request->boolean('is_featured', true),
+            'is_featured' => $request->boolean('is_featured', false),
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
-        return back()->with('success', 'Photo updated successfully.');
+        return redirect()->route('admin.photos.index')->with('success', 'Photo updated successfully.');
     }
 
     public function destroy(InstitutionPhoto $photo)

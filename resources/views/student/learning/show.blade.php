@@ -3,94 +3,188 @@
 @section('title', $lesson->title . ' - ' . $course->title)
 @section('page_title', $lesson->title)
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
+<style>
+    /* Override dashboard bg for learning pages */
+    .od-learn-page { background: var(--od-bg); }
+    .od-learn-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 24px;
+        padding: 24px 0 48px;
+    }
+    @media (max-width: 1024px) {
+        .od-learn-layout { grid-template-columns: 1fr; }
+        .od-learn-sidebar { display: none; }
+        .od-learn-sidebar.open {
+            display: block;
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: var(--od-bg);
+            padding: 24px;
+            overflow-y: auto;
+        }
+    }
+    .od-lesson-content h1, .od-lesson-content h2, .od-lesson-content h3 {
+        color: var(--od-fg);
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+    }
+    .od-lesson-content p { margin-bottom: 1em; line-height: 1.7; }
+    .od-lesson-content ul, .od-lesson-content ol { margin-bottom: 1em; padding-left: 1.5em; }
+    .od-lesson-content img { max-width: 100%; border-radius: 10px; margin: 1em 0; }
+    .od-lesson-content blockquote {
+        border-left: 3px solid var(--od-accent);
+        padding-left: 1em;
+        margin: 1em 0;
+        color: var(--od-muted);
+    }
+</style>
+@endpush
+
 @section('content')
-<div class="max-w-5xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Content -->
-        <div class="lg:col-span-2 space-y-6">
-            <!-- Lesson Video / Type Header -->
-            <x-card :padding="false" class="overflow-hidden shadow-md">
-                @if($lesson->lesson_type === 'Video')
-                    @if($lesson->embedUrl())
-                        <div class="aspect-video bg-black">
-                            <iframe src="{{ $lesson->embedUrl() }}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Lesson video: {{ $lesson->title }}"></iframe>
-                        </div>
-                    @else
-                        <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                            <div class="text-center">
-                                <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
-                                    <i class="fas fa-video text-2xl text-gray-400 dark:text-gray-500"></i>
-                                </div>
-                                <p class="text-gray-500 dark:text-gray-400 font-medium">No video URL set for this lesson.</p>
-                            </div>
-                        </div>
-                    @endif
-                @elseif($lesson->lesson_type === 'Quiz')
-                    <div class="aspect-video bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/30 dark:to-primary-800/20 flex items-center justify-center">
-                        <div class="text-center px-6">
-                            <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center">
-                                <i class="fas fa-clipboard-list text-2xl text-primary-600 dark:text-primary-400"></i>
-                            </div>
-                            <p class="text-gray-700 dark:text-gray-300 font-medium">Quiz Lesson</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Test your knowledge with this quiz.</p>
-                        </div>
+@php
+    // Compute prev/next lessons
+    $allLessons = collect();
+    foreach ($modules as $mod) {
+        foreach ($mod->lessons as $l) {
+            $allLessons->push($l);
+        }
+    }
+    $currentIndex = $allLessons->search(fn($l) => $l->id === $lesson->id);
+    $prevLesson = $currentIndex > 0 ? $allLessons[$currentIndex - 1] : null;
+    $nextLesson = $currentIndex < $allLessons->count() - 1 ? $allLessons[$currentIndex + 1] : null;
+    $module = $lesson->module;
+    $moduleIndex = $modules->search(fn($m) => $m->id === $module->id);
+@endphp
+
+<div class="od-learn-page -m-4 md:-m-6 lg:-m-8">
+    <!-- Sticky Topnav -->
+    <header class="od-topnav">
+        <div class="container od-topnav-inner" style="max-width: 1200px; margin: 0 auto;">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('home') }}" class="logo" style="display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--od-fg);text-decoration:none;">
+                    <img src="{{ asset('assets/images/logo-sm.png') }}" alt="EduTrack" style="height:28px;width:auto;">
+                </a>
+                <span class="od-topnav .course-title" style="font-size:14px;font-weight:500;color:var(--od-muted);max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                    {{ $course->title }} · {{ $module->title }}, {{ $lesson->title }}
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="od-progress-pill">
+                    <span class="od-num">{{ $progress }}</span>% complete
+                </span>
+                <a href="{{ route('student.dashboard') }}" class="od-btn od-btn-ghost od-btn-sm hidden sm:inline-flex">Dashboard</a>
+                <button class="lg:hidden od-btn od-btn-ghost od-btn-sm" onclick="document.getElementById('learnSidebar').classList.toggle('open')" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Learning Layout -->
+    <main class="container od-learn-layout" style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+        <!-- Sidebar -->
+        <aside class="od-learn-sidebar" id="learnSidebar">
+            <div class="flex items-center justify-between mb-4">
+                <p class="od-eyebrow" style="margin:0;">Course content</p>
+                <button class="lg:hidden od-btn od-btn-ghost od-btn-sm" onclick="document.getElementById('learnSidebar').classList.remove('open')">Close</button>
+            </div>
+
+            @foreach($modules as $mod)
+                @php
+                    $modLessons = $mod->lessons;
+                    $completedInMod = $modLessons->where('is_completed', true)->count();
+                    $totalInMod = $modLessons->count();
+                    $isActiveModule = $mod->id === $module->id;
+                @endphp
+                <div class="od-module">
+                    <div class="od-module-header" style="{{ $isActiveModule ? 'background: var(--od-navy-soft); color: var(--od-navy);' : '' }}">
+                        <span>{{ $mod->title }}</span>
+                        <span class="module-num">{{ $completedInMod }}/{{ $totalInMod }}</span>
                     </div>
-                @elseif($lesson->lesson_type === 'Assignment')
-                    <div class="aspect-video bg-gradient-to-br from-warning-50 to-warning-100 dark:from-warning-900/30 dark:to-warning-800/20 flex items-center justify-center">
-                        <div class="text-center px-6">
-                            <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-warning-100 dark:bg-warning-800 flex items-center justify-center">
-                                <i class="fas fa-tasks text-2xl text-warning-600 dark:text-warning-400"></i>
-                            </div>
-                            <p class="text-gray-700 dark:text-gray-300 font-medium">Assignment Lesson</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Complete the assigned task and submit your work.</p>
-                        </div>
+                    <ul class="od-lesson-list">
+                        @foreach($modLessons as $l)
+                            <li class="{{ $l->is_completed ? 'completed' : '' }} {{ $l->id === $lesson->id ? 'active' : '' }}">
+                                <a href="{{ route('student.learning.show', ['course' => $course, 'lesson' => $l]) }}">
+                                    <span class="icon">
+                                        @if($l->is_completed)
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                        @else
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                        @endif
+                                    </span>
+                                    {{ $l->title }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endforeach
+        </aside>
+
+        <!-- Main Content -->
+        <div class="space-y-6">
+            <!-- Video / Header Card -->
+            @if($lesson->lesson_type === 'Video')
+                @if($lesson->embedUrl())
+                    <div class="od-video-wrap">
+                        <iframe src="{{ $lesson->embedUrl() }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Lesson video: {{ $lesson->title }}"></iframe>
                     </div>
                 @else
-                    <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                        <div class="text-center">
-                            <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
-                                <i class="fas fa-book-open text-2xl text-gray-400 dark:text-gray-500"></i>
+                    <div class="od-video-wrap" style="display:grid;place-items:center;background:var(--od-fg-soft);">
+                        <div class="text-center p-8">
+                            <div class="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center" style="background:var(--od-fg-soft);">
+                                <i class="fas fa-video text-2xl" style="color:var(--od-muted);"></i>
                             </div>
-                            <p class="text-gray-500 dark:text-gray-400 font-medium">Reading Lesson</p>
+                            <p style="color:var(--od-muted);font-weight:500;">No video URL set for this lesson.</p>
                         </div>
                     </div>
                 @endif
-            </x-card>
+            @elseif(in_array($lesson->lesson_type, ['Quiz', 'Assignment']))
+                <div class="od-card" style="padding:48px;text-align:center;">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background: {{ $lesson->lesson_type === 'Quiz' ? 'var(--od-navy-soft)' : 'var(--od-accent-soft)' }};">
+                        <i class="fas {{ $lesson->lesson_type === 'Quiz' ? 'fa-clipboard-list' : 'fa-tasks' }} text-2xl" style="color: {{ $lesson->lesson_type === 'Quiz' ? 'var(--od-navy)' : 'var(--od-accent)' }};"></i>
+                    </div>
+                    <h2 class="od-h2 mb-2">{{ $lesson->title }}</h2>
+                    <p class="od-lead" style="max-width:50ch;margin:0 auto 24px;">
+                        {{ $lesson->lesson_type === 'Quiz' ? 'Test your knowledge with this quiz.' : 'Complete the assigned task and submit your work.' }}
+                    </p>
+                </div>
+            @endif
 
-            <!-- Lesson Info -->
-            <x-card variant="default">
+            <!-- Lesson Info Card -->
+            <div class="od-card">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
                     <div>
-                        <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{{ $lesson->title }}</h1>
-                        <p class="text-gray-500 dark:text-gray-400 mt-1 text-sm">
-                            <span class="font-medium text-primary-600 dark:text-primary-400">{{ $lesson->module->course->title }}</span>
-                            <span class="mx-1">/</span>
-                            <span>{{ $lesson->module->title }}</span>
-                        </p>
+                        <p class="od-eyebrow" style="margin-bottom:4px;">{{ $module->title }}</p>
+                        <h1 class="od-h2">{{ $lesson->title }}</h1>
+                        <p class="od-meta mt-1">{{ $course->title }}</p>
                     </div>
                     <div class="flex gap-2 shrink-0">
-                        <a href="{{ route('student.learning.download', [$course, $lesson]) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                            <i class="fas fa-download"></i>Download PDF
+                        <a href="{{ route('student.learning.download', [$course, $lesson]) }}" class="od-btn od-btn-secondary od-btn-sm">
+                            <i class="fas fa-download"></i> PDF
                         </a>
+                        @if($lesson->duration_minutes)
+                            <span class="od-btn od-btn-ghost od-btn-sm" style="cursor:default;">
+                                <i class="fas fa-clock"></i> {{ $lesson->duration_minutes }} min
+                            </span>
+                        @endif
                     </div>
-                    @if($lesson->duration_minutes)
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 shrink-0 self-start">
-                            <i class="fas fa-clock text-gray-400"></i>
-                            {{ $lesson->duration_minutes }} min
-                        </span>
-                    @endif
                 </div>
 
                 <!-- Quiz-specific content -->
                 @if($lesson->lesson_type === 'Quiz')
                     @if($lesson->quizzes->isNotEmpty())
                         @php $quiz = $lesson->quizzes->first(); @endphp
-                        <div class="mb-5 p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-xl">
-                            <h3 class="font-semibold text-primary-800 dark:text-primary-300 mb-1">{{ $quiz->title }}</h3>
+                        <div class="mb-5 p-5 rounded-xl" style="background: var(--od-navy-soft); border: 1px solid color-mix(in oklch, var(--od-navy) 20%, transparent);">
+                            <h3 class="font-semibold mb-1" style="color: var(--od-navy);">{{ $quiz->title }}</h3>
                             @if($quiz->description)
-                                <p class="text-sm text-primary-700 dark:text-primary-400 mb-3">{{ $quiz->description }}</p>
+                                <p class="text-sm mb-3" style="color: var(--od-navy); opacity: 0.8;">{{ $quiz->description }}</p>
                             @endif
-                            <div class="flex flex-wrap gap-3 text-xs text-primary-700 dark:text-primary-400">
+                            <div class="flex flex-wrap gap-3 text-xs" style="color: var(--od-navy); opacity: 0.8;">
                                 @if($quiz->time_limit_minutes)
                                     <span class="inline-flex items-center gap-1"><i class="fas fa-clock"></i> {{ $quiz->time_limit_minutes }} min</span>
                                 @endif
@@ -100,14 +194,14 @@
                                 <span class="inline-flex items-center gap-1"><i class="fas fa-percentage"></i> Pass: {{ $quiz->passing_score }}%</span>
                             </div>
                             <div class="mt-4">
-                                <x-button :href="route('student.quizzes.take', $quiz)" variant="primary" icon="fa-play" size="md">
-                                    Start Quiz
-                                </x-button>
+                                <a href="{{ route('student.quizzes.take', $quiz) }}" class="od-btn od-btn-navy od-btn-sm">
+                                    <i class="fas fa-play"></i> Start Quiz
+                                </a>
                             </div>
                         </div>
                     @else
-                        <div class="mb-5 p-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl">
-                            <p class="text-sm text-gray-600 dark:text-gray-400">This quiz lesson does not have a linked quiz yet. Check back later.</p>
+                        <div class="mb-5 p-4 rounded-xl" style="background: var(--od-fg-soft);">
+                            <p class="text-sm" style="color: var(--od-muted);">This quiz lesson does not have a linked quiz yet. Check back later.</p>
                         </div>
                     @endif
                 @endif
@@ -116,12 +210,12 @@
                 @if($lesson->lesson_type === 'Assignment')
                     @if($lesson->assignments->isNotEmpty())
                         @php $assignment = $lesson->assignments->first(); @endphp
-                        <div class="mb-5 p-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-xl">
-                            <h3 class="font-semibold text-warning-800 dark:text-warning-300 mb-1">{{ $assignment->title }}</h3>
+                        <div class="mb-5 p-5 rounded-xl" style="background: var(--od-accent-soft); border: 1px solid color-mix(in oklch, var(--od-accent) 20%, transparent);">
+                            <h3 class="font-semibold mb-1" style="color: color-mix(in oklch, var(--od-accent) 70%, black);">{{ $assignment->title }}</h3>
                             @if($assignment->description)
-                                <p class="text-sm text-warning-700 dark:text-warning-400 mb-3">{{ $assignment->description }}</p>
+                                <p class="text-sm mb-3" style="color: color-mix(in oklch, var(--od-accent) 60%, black);">{{ $assignment->description }}</p>
                             @endif
-                            <div class="flex flex-wrap gap-3 text-xs text-warning-700 dark:text-warning-400">
+                            <div class="flex flex-wrap gap-3 text-xs" style="color: color-mix(in oklch, var(--od-accent) 60%, black);">
                                 @if($assignment->due_date)
                                     <span class="inline-flex items-center gap-1"><i class="fas fa-calendar-alt"></i> Due: {{ $assignment->due_date->format('M d, Y') }}</span>
                                 @endif
@@ -130,125 +224,133 @@
                                 @endif
                             </div>
                             <div class="mt-4">
-                                <x-button :href="route('student.assignments.show', [$course, $assignment])" variant="warning" icon="fa-external-link-alt" size="md">
-                                    View Assignment
-                                </x-button>
+                                <a href="{{ route('student.assignments.show', [$course, $assignment]) }}" class="od-btn od-btn-primary od-btn-sm">
+                                    <i class="fas fa-external-link-alt"></i> View Assignment
+                                </a>
                             </div>
                         </div>
                     @else
-                        <div class="mb-5 p-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl">
-                            <p class="text-sm text-gray-600 dark:text-gray-400">This assignment lesson does not have a linked assignment yet. Check back later.</p>
+                        <div class="mb-5 p-4 rounded-xl" style="background: var(--od-fg-soft);">
+                            <p class="text-sm" style="color: var(--od-muted);">This assignment lesson does not have a linked assignment yet. Check back later.</p>
                         </div>
                     @endif
                 @endif
 
                 <!-- Lesson Content -->
                 @if($lesson->content)
-                    <div class="lesson-content text-gray-700 dark:text-gray-300">
+                    <div class="od-lesson-content text-gray-700 dark:text-gray-300">
                         {!! \App\Services\HtmlSanitizer::clean($lesson->content) !!}
                     </div>
                 @endif
 
+                <!-- Resources -->
                 @if($lesson->resources->isNotEmpty())
-                    <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
-                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                            <i class="fas fa-paperclip text-gray-400"></i>Lesson Resources
+                    <div class="mt-6 pt-6" style="border-top: 1px solid var(--od-border);">
+                        <h3 class="text-sm font-semibold mb-3 flex items-center gap-2" style="color: var(--od-fg);">
+                            <i class="fas fa-paperclip" style="color: var(--od-muted);"></i> Lesson Resources
                         </h3>
-                        <div class="space-y-2">
-                            @foreach($lesson->resources as $resource)
-                                <a href="{{ route('student.learning.resources.download', [$course, $lesson, $resource]) }}"
-                                   class="flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group">
-                                    <div class="flex items-center gap-3 min-w-0">
-                                        <div class="w-10 h-10 bg-primary-50 dark:bg-primary-900/30 rounded-lg flex items-center justify-center shrink-0">
-                                            <i class="fas fa-file text-primary-600 dark:text-primary-400 text-sm"></i>
-                                        </div>
-                                        <div class="min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $resource->title }}</p>
-                                            @if($resource->description)
-                                                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ $resource->description }}</p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-3 shrink-0">
-                                        <span class="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline">{{ strtoupper($resource->resource_type) }} &middot; {{ $resource->file_size_kb }} KB</span>
-                                        <x-button variant="primary" size="sm" icon="fa-download" class="opacity-0 group-hover:opacity-100 transition-opacity">
-                                            Download
-                                        </x-button>
-                                    </div>
-                                </a>
-                            @endforeach
-                        </div>
+                        @foreach($lesson->resources as $resource)
+                            <a href="{{ route('student.learning.resources.download', [$course, $lesson, $resource]) }}"
+                               class="od-resource">
+                                <i class="fas fa-file" style="color: var(--od-navy);"></i>
+                                <span class="flex-1 truncate">{{ $resource->title }}</span>
+                                <span class="od-meta hidden sm:inline">{{ strtoupper($resource->resource_type) }} · {{ $resource->file_size_kb }} KB</span>
+                                <i class="fas fa-download" style="color: var(--od-muted);"></i>
+                            </a>
+                        @endforeach
                     </div>
                 @endif
 
+                <!-- Notes Button -->
                 <div class="mt-5 flex items-center gap-3">
-                    <x-button :href="route('student.notes.show', [$course, $lesson])" variant="ghost" icon="fa-sticky-note" size="sm">
-                        Take Notes
-                    </x-button>
+                    <a href="{{ route('student.notes.show', [$course, $lesson]) }}" class="od-btn od-btn-ghost od-btn-sm">
+                        <i class="fas fa-sticky-note"></i> Take Notes
+                    </a>
                 </div>
-            </x-card>
+            </div>
+
+            <!-- Lesson Navigation -->
+            <div class="od-lesson-nav">
+                @if($prevLesson)
+                    <a href="{{ route('student.learning.show', ['course' => $course, 'lesson' => $prevLesson]) }}" class="od-btn od-btn-secondary od-btn-sm">
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </a>
+                @else
+                    <span></span>
+                @endif
+
+                @if(!$lesson->is_completed && !in_array($lesson->lesson_type, ['Quiz', 'Assignment']))
+                    <form action="{{ route('student.learning.complete', ['course' => $course, 'lesson' => $lesson]) }}" method="POST" id="completeForm">
+                        @csrf
+                        <button type="submit" class="od-btn od-btn-success od-btn-sm">
+                            <i class="fas fa-check"></i> Mark as Complete
+                        </button>
+                    </form>
+                @elseif($lesson->is_completed)
+                    <div class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium" style="background: var(--od-green-soft); color: var(--od-green);">
+                        <i class="fas fa-check-circle"></i> Lesson Completed
+                    </div>
+                @endif
+
+                @if($nextLesson)
+                    <a href="{{ route('student.learning.show', ['course' => $course, 'lesson' => $nextLesson]) }}" class="od-btn od-btn-primary od-btn-sm">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </a>
+                @else
+                    <span></span>
+                @endif
+            </div>
         </div>
+    </main>
+</div>
 
-        <!-- Sidebar -->
-        <div class="space-y-6">
-            <!-- Progress -->
-            <x-card variant="default">
-                <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Course Progress</h3>
-                <x-progress-bar :value="$progress ?? 0" size="md" showLabel />
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ $progress ?? 0 }}% Complete</p>
-            </x-card>
+@php
+$hasReviewedCourse = $progress >= 100 && auth()->check()
+    ? \App\Models\Testimonial::where('user_id', auth()->id())->where('course_id', $course->id)->exists()
+    : true;
+@endphp
 
-            <!-- Module Navigation -->
-            <x-card variant="default" class="overflow-hidden" :padding="false">
-                <div class="p-4 border-b border-gray-100 dark:border-gray-700">
-                    <h3 class="font-semibold text-gray-900 dark:text-white text-sm">Course Content</h3>
-                </div>
-                <div class="max-h-[28rem] overflow-y-auto">
-                    @foreach($modules as $mod)
-                        <div class="p-4 {{ !$loop->last ? 'border-b border-gray-100 dark:border-gray-700' : '' }}">
-                            <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">{{ $mod->title }}</h4>
-                            <div class="space-y-0.5">
-                                @foreach($mod->lessons as $l)
-                                    <a href="{{ route('student.learning.show', ['course' => $course, 'lesson' => $l]) }}"
-                                       class="flex items-center px-2.5 py-2 text-sm rounded-lg transition-colors {{ $l->id === $lesson->id ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 font-medium' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50' }}">
-                                        @if($l->is_completed)
-                                            <i class="fas fa-check-circle text-success-500 mr-2.5 w-4 text-center"></i>
-                                        @elseif($l->lesson_type === 'Video')
-                                            <i class="fas fa-play-circle text-gray-400 mr-2.5 w-4 text-center"></i>
-                                        @elseif($l->lesson_type === 'Quiz')
-                                            <i class="fas fa-clipboard-list text-gray-400 mr-2.5 w-4 text-center"></i>
-                                        @elseif($l->lesson_type === 'Assignment')
-                                            <i class="fas fa-tasks text-gray-400 mr-2.5 w-4 text-center"></i>
-                                        @else
-                                            <i class="fas fa-file-alt text-gray-400 mr-2.5 w-4 text-center"></i>
-                                        @endif
-                                        <span class="truncate">{{ $l->title }}</span>
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </x-card>
-
-            <!-- Mark Complete -->
-            @if(!$lesson->is_completed && !in_array($lesson->lesson_type, ['Quiz', 'Assignment']))
-                <form action="{{ route('student.learning.complete', ['course' => $course, 'lesson' => $lesson]) }}" method="POST">
-                    @csrf
-                    <x-button type="submit" variant="success" size="lg" icon="fa-check" class="w-full justify-center">
-                        Mark as Complete
-                    </x-button>
-                </form>
-            @elseif($lesson->is_completed)
-                <x-card variant="default" class="bg-success-50 dark:bg-success-900/10 border-success-200 dark:border-success-800 text-center py-5">
-                    <i class="fas fa-check-circle text-success-500 text-2xl mb-2"></i>
-                    <p class="text-success-800 dark:text-success-300 font-semibold text-sm">Lesson Completed</p>
-                </x-card>
+<!-- Celebration Overlay (shown when course is completed) -->
+@if(session('success') && str_contains(session('success'), 'complete') && $progress >= 100)
+<div class="od-celebrate show" id="celebrateOverlay">
+    <div class="od-celebrate-card">
+        <div class="od-celebrate-icon">
+            <i class="fas fa-trophy text-2xl"></i>
+        </div>
+        <h2 class="od-h2 mb-2">Course Complete!</h2>
+        <p class="od-lead mb-6" style="margin: 0 auto 24px;">Congratulations on completing <strong>{{ $course->title }}</strong>. You've earned a certificate!</p>
+        <div class="flex flex-col gap-3">
+            <a href="{{ route('student.certificates') }}" class="od-btn od-btn-primary">
+                <i class="fas fa-certificate"></i> View Certificate
+            </a>
+            @if(!$hasReviewedCourse)
+            <a href="{{ route('student.testimonials.create', $enrollment) }}" class="od-btn od-btn-secondary">
+                <i class="fas fa-star"></i> Write a Review
+            </a>
             @endif
+            <a href="{{ route('student.dashboard') }}" class="od-btn od-btn-ghost">
+                Back to Dashboard
+            </a>
         </div>
     </div>
 </div>
-@push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/lesson-content.css') }}">
-@endpush
+@endif
 @endsection
+
+@push('scripts')
+<script>
+    // Auto-hide celebration overlay on click outside
+    document.getElementById('celebrateOverlay')?.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('show');
+    });
+
+    // Close sidebar on mobile when clicking a lesson link
+    document.querySelectorAll('.od-learn-sidebar a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            if (window.innerWidth < 1024) {
+                document.getElementById('learnSidebar').classList.remove('open');
+            }
+        });
+    });
+</script>
+@endpush

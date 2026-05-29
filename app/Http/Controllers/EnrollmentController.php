@@ -50,8 +50,8 @@ class EnrollmentController extends Controller
                 ->with('warning', 'Please pay the K150 registration fee before enrolling in any course.');
         }
 
-        // Check course capacity
-        if ($course->enrollment_count >= $course->max_students) {
+        // Check course capacity (0 = unlimited)
+        if ($course->max_students > 0 && $course->enrollment_count >= $course->max_students) {
             return back()->with('error', 'This course is full.');
         }
 
@@ -61,7 +61,7 @@ class EnrollmentController extends Controller
         // Create enrollment
         $enrollment = Enrollment::create([
             'user_id' => $user->id,
-            'student_id' => $user->id,
+            'student_id' => $user->student?->id,
             'course_id' => $course->id,
             'enrolled_at' => now(),
             'enrollment_status' => 'Enrolled',
@@ -83,6 +83,14 @@ class EnrollmentController extends Controller
 
         // Increment enrollment count
         $course->increment('enrollment_count');
+
+        $emailService = app(\App\Services\EmailQueueService::class);
+        $emailService->sendTemplated($user->email, 'Enrollment', [
+            'name' => $user->full_name,
+            'course' => $course->title,
+            'course_url' => route('courses.show', $course),
+        ]);
+        $emailService->sendNotification($user->id, 'Enrollment Confirmed', "You are now enrolled in {$course->title}", 'enrollment', route('enrollments.show', $course));
 
         if ($isFree) {
             return redirect()->route('enrollments.show', $course)

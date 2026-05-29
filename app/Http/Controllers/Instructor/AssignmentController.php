@@ -45,6 +45,13 @@ class AssignmentController extends Controller
             'late_penalty_percent' => 'nullable|numeric|min:0|max:100',
         ]);
 
+        if (!empty($validated['lesson_id'])) {
+            $lesson = Lesson::find($validated['lesson_id']);
+            if (!$lesson || $lesson->module->course_id !== $course->id) {
+                return back()->with('error', 'Invalid lesson for this course.');
+            }
+        }
+
         Assignment::create([
             'course_id' => $course->id,
             'lesson_id' => $validated['lesson_id'] ?? null,
@@ -62,14 +69,90 @@ class AssignmentController extends Controller
     }
 
     /**
+     * Show edit form for an assignment.
+     */
+    public function edit(Course $course, Assignment $assignment)
+    {
+        $this->authorizeInstructor($course);
+
+        if ($assignment->course_id !== $course->id) {
+            abort(404);
+        }
+
+        return view('instructor.assignments.edit', compact('course', 'assignment'));
+    }
+
+    /**
+     * Update an assignment.
+     */
+    public function update(Request $request, Course $course, Assignment $assignment)
+    {
+        $this->authorizeInstructor($course);
+
+        if ($assignment->course_id !== $course->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'lesson_id' => 'nullable|exists:lessons,id',
+            'title' => 'required|string|max:200',
+            'description' => 'nullable|string',
+            'instructions' => 'nullable|string',
+            'max_points' => 'nullable|integer|min:1',
+            'passing_points' => 'nullable|integer|min:0',
+            'due_date' => 'nullable|date',
+            'allow_late_submission' => 'nullable|boolean',
+            'late_penalty_percent' => 'nullable|numeric|min:0|max:100',
+        ]);
+
+        if (!empty($validated['lesson_id'])) {
+            $lesson = Lesson::find($validated['lesson_id']);
+            if (!$lesson || $lesson->module->course_id !== $course->id) {
+                return back()->with('error', 'Invalid lesson for this course.');
+            }
+        }
+
+        $assignment->update([
+            'lesson_id' => $validated['lesson_id'] ?? null,
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'instructions' => $validated['instructions'] ?? null,
+            'max_points' => $validated['max_points'] ?? 100,
+            'passing_points' => $validated['passing_points'] ?? 60,
+            'due_date' => $validated['due_date'] ?? null,
+            'allow_late_submission' => $request->boolean('allow_late_submission'),
+            'late_penalty_percent' => $validated['late_penalty_percent'] ?? 0,
+        ]);
+
+        return redirect()->route('instructor.assignments.index')
+            ->with('success', 'Assignment updated successfully.');
+    }
+
+    /**
+     * Delete an assignment.
+     */
+    public function destroy(Course $course, Assignment $assignment)
+    {
+        $this->authorizeInstructor($course);
+
+        if ($assignment->course_id !== $course->id) {
+            abort(404);
+        }
+
+        $assignment->delete();
+
+        return back()->with('success', 'Assignment deleted successfully.');
+    }
+
+    /**
      * Grade a submission.
      */
     public function grade(Request $request, Course $course, Assignment $assignment, AssignmentSubmission $submission)
     {
         $this->authorizeInstructor($course);
 
-        if ($submission->assignment_id !== $assignment->id) {
-            abort(403, 'Invalid submission.');
+        if ($submission->assignment_id !== $assignment->id || $assignment->course_id !== $course->id) {
+            abort(404);
         }
 
         $validated = $request->validate([
@@ -77,33 +160,41 @@ class AssignmentController extends Controller
             'feedback' => 'nullable|string|max:5000',
         ]);
 
+        $points = $validated['points_earned'];
+        if ($submission->is_late && $assignment->late_penalty_percent > 0) {
+            $penalty = $points * ($assignment->late_penalty_percent / 100);
+            $points = max(0, $points - $penalty);
+        }
+
         $submission->update([
-            'points_earned' => $validated['points_earned'],
+            'points_earned' => $points,
             'feedback' => $validated['feedback'] ?? null,
             'status' => 'Graded',
             'graded_by' => auth()->id(),
             'graded_at' => now(),
         ]);
 
-        // Send notification email to student
+        $enrollment = \App\Models\Enrollment::where('user_id', $submission->student?->user_id)
+            ->where('course_id', $course->id)
+            ->first();
+        if ($enrollment) {
+            app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
+        }
+
+        // Send notification and email to student
         try {
-            $student = $submission->student;
-            if ($student && $student->user) {
-                $emailService = app(EmailQueueService::class);
-                $emailService->queue(
-                    $student->user->email,
-                    'Assignment Graded: ' . $assignment->title,
-                    view('emails.assignment-graded', [
-                        'studentName' => $student->user->first_name,
-                        'assignmentTitle' => $assignment->title,
-                        'courseTitle' => $course->title,
-                        'pointsEarned' => $validated['points_earned'],
-                        'maxPoints' => $assignment->max_points,
-                        'feedback' => $validated['feedback'] ?? null,
-                    ])->render(),
-                    [],
-                    5
-                );
+            $emailService = app(EmailQueueService::class);
+            $emailService->sendNotification($submission->student->user_id, 'Assignment Graded', "Your submission for {$assignment->title} has been graded.", 'grade', route('assignments.show', [$course, $assignment]));
+
+            if ($submission->student?->user?->email) {
+                $subject = "Assignment Graded: {$assignment->title}";
+                $body = view('emails.assignment-graded', [
+                    'student' => $submission->student->user,
+                    'assignment' => $assignment,
+                    'submission' => $submission,
+                    'course' => $course,
+                ])->render();
+                $emailService->queue($submission->student->user->email, $subject, $body);
             }
         } catch (\Exception $e) {
             // Silently log email failure; don't block the grading flow

@@ -20,7 +20,7 @@ class AssignmentController extends Controller
         $user = auth()->user();
 
         $enrollments = Enrollment::where('user_id', $user->id)
-            ->whereIn('enrollment_status', ['Enrolled', 'In Progress'])
+            ->whereIn('enrollment_status', ['Enrolled', 'In Progress', 'Completed'])
             ->with('course.assignments')
             ->get();
 
@@ -29,7 +29,7 @@ class AssignmentController extends Controller
             foreach ($enrollment->course->assignments as $assignment) {
                 $assignment->enrollment = $enrollment;
                 $assignment->submission = AssignmentSubmission::where('assignment_id', $assignment->id)
-                    ->where('student_id', $user->id)
+                    ->where('student_id', $user->student?->id)
                     ->first();
                 $assignments->push($assignment);
             }
@@ -45,13 +45,23 @@ class AssignmentController extends Controller
     {
         $user = auth()->user();
 
+        if ($assignment->course_id !== $course->id) {
+            abort(404);
+        }
+
         // Verify enrollment
         $enrollment = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)
             ->firstOrFail();
 
+        if (!$enrollment->canAccessContent()) {
+            return redirect()->route('checkout.show', $course)
+                ->with('warning', 'Please complete at least a 30% deposit to access assignments.');
+        }
+
         $submission = AssignmentSubmission::where('assignment_id', $assignment->id)
-            ->where('student_id', $user->id)
+            ->where('student_id', $user->student?->id)
+            ->latest('submitted_at')
             ->first();
 
         return view('student.assignments.show', compact('course', 'assignment', 'submission'));
@@ -64,15 +74,37 @@ class AssignmentController extends Controller
     {
         $user = auth()->user();
 
+        if ($assignment->course_id !== $course->id) {
+            abort(404);
+        }
+
         // Verify enrollment
         $enrollment = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)
             ->firstOrFail();
 
+        if (!$enrollment->canAccessContent()) {
+            abort(403, 'Please complete at least a 30% deposit to submit assignments.');
+        }
+
+        $isLate = $assignment->due_date && now()->isAfter($assignment->due_date);
+        if ($isLate && !$assignment->allow_late_submission) {
+            return back()->with('error', 'Late submissions are not accepted for this assignment.');
+        }
+
+        $allowedTypes = $assignment->allowed_file_types
+            ? explode(',', $assignment->allowed_file_types)
+            : ['pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png'];
+        $maxSizeKb = ($assignment->max_file_size_mb ?? 50) * 1024;
+
         $validated = $request->validate([
             'submission_text' => 'nullable|string|max:10000',
-            'submission_file' => 'nullable|file|max:51200', // 50MB max
+            'submission_file' => ['nullable', 'file', 'max:' . $maxSizeKb, 'mimes:' . implode(',', $allowedTypes)],
         ]);
+
+        if (empty($validated['submission_text']) && !$request->hasFile('submission_file')) {
+            return back()->with('error', 'Please provide either text or a file submission.');
+        }
 
         $fileUrl = null;
         if ($request->hasFile('submission_file')) {
@@ -81,15 +113,13 @@ class AssignmentController extends Controller
             $fileUrl = Storage::url($path);
         }
 
-        $isLate = $assignment->due_date && now()->isAfter($assignment->due_date);
-
         $maxAttempt = AssignmentSubmission::where('assignment_id', $assignment->id)
-            ->where('student_id', $user->id)
+            ->where('student_id', $user->student?->id)
             ->max('attempt_number') ?? 0;
 
         AssignmentSubmission::create([
             'assignment_id' => $assignment->id,
-            'student_id' => $user->id,
+            'student_id' => $user->student?->id,
             'submission_text' => $validated['submission_text'] ?? null,
             'file_url' => $fileUrl,
             'submitted_at' => now(),

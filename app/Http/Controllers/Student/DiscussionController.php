@@ -6,11 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Discussion;
 use App\Models\DiscussionReply;
+use App\Services\EmailQueueService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DiscussionController extends Controller
 {
+    protected EmailQueueService $emailService;
+
+    public function __construct(EmailQueueService $emailService)
+    {
+        $this->emailService = $emailService;
+    }
+
     public function index(Course $course)
     {
         $this->authorizeAccess($course);
@@ -40,7 +48,7 @@ class DiscussionController extends Controller
             'content' => 'required|string|max:5000',
         ]);
 
-        Discussion::create([
+        $discussion = Discussion::create([
             'course_id' => $course->id,
             'created_by' => auth()->id(),
             'title' => $validated['title'],
@@ -48,6 +56,9 @@ class DiscussionController extends Controller
             'view_count' => 0,
             'reply_count' => 0,
         ]);
+
+        // Notify course instructor about new discussion
+        $this->notifyInstructorOfDiscussion($course, $discussion);
 
         return redirect()->route('student.discussions.index', $course)->with('success', 'Discussion posted successfully.');
     }
@@ -65,12 +76,12 @@ class DiscussionController extends Controller
         ]);
 
         $user = auth()->user();
-        $isInstructor = $user->roles()->where('role_id', 3)->exists();
+        $isInstructor = $user->isInstructor();
 
-        DiscussionReply::create([
+        $reply = DiscussionReply::create([
             'discussion_id' => $discussion->discussion_id,
             'parent_reply_id' => $validated['parent_reply_id'] ?? null,
-            'user_id' => $user->user_id,
+            'user_id' => $user->id,
             'content' => $validated['content'],
             'is_instructor_reply' => $isInstructor,
             'is_best_answer' => false,
@@ -78,15 +89,106 @@ class DiscussionController extends Controller
 
         $discussion->increment('reply_count');
 
+        // Notify discussion creator (if not replying to own discussion)
+        if ($discussion->created_by !== $user->id) {
+            $this->emailService->sendNotification(
+                $discussion->created_by,
+                'New Reply: ' . $discussion->title,
+                $user->full_name . ' replied to your discussion.',
+                'info',
+                route('student.discussions.show', [$course, $discussion])
+            );
+        }
+
+        // Notify parent reply author (if replying to a reply, and not own reply)
+        if (!empty($validated['parent_reply_id'])) {
+            $parentReply = DiscussionReply::find($validated['parent_reply_id']);
+            if ($parentReply && $parentReply->user_id !== $user->id) {
+                $this->emailService->sendNotification(
+                    $parentReply->user_id,
+                    'New Reply to Your Comment',
+                    $user->full_name . ' replied to your comment on "' . $discussion->title . '".',
+                    'info',
+                    route('student.discussions.show', [$course, $discussion])
+                );
+            }
+        }
+
         return redirect()->route('student.discussions.show', [$course, $discussion])->with('success', 'Reply posted.');
+    }
+
+    public function updateReply(Request $request, Course $course, Discussion $discussion, DiscussionReply $reply)
+    {
+        $this->authorizeAccess($course);
+
+        if ($reply->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+            abort(403, 'You can only edit your own replies.');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|string|max:5000',
+        ]);
+
+        $reply->update(['content' => $validated['content']]);
+
+        return redirect()->route('student.discussions.show', [$course, $discussion])->with('success', 'Reply updated.');
+    }
+
+    public function destroyReply(Course $course, Discussion $discussion, DiscussionReply $reply)
+    {
+        $this->authorizeAccess($course);
+
+        if ($reply->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
+            abort(403, 'You can only delete your own replies.');
+        }
+
+        // Recursively delete child replies
+        $this->deleteChildReplies($reply);
+
+        $reply->delete();
+        $discussion->decrement('reply_count');
+
+        return redirect()->route('student.discussions.show', [$course, $discussion])->with('success', 'Reply deleted.');
     }
 
     private function authorizeAccess(Course $course)
     {
-        $enrolled = auth()->user()->enrollments()->where('course_id', $course->id)->exists();
-        $isStaff = auth()->user()->roles()->whereIn('role_id', [1, 2])->exists();
-        if (!$enrolled && !$isStaff) {
-            abort(403, 'You must be enrolled in this course.');
+        $user = auth()->user();
+        $isAdminOrFinance = $user->isAdmin() || $user->isFinance();
+        $isInstructor = $user->isInstructor() && $course->instructor_id === $user->instructor?->id;
+        $enrollment = $user->enrollments()->where('course_id', $course->id)->first();
+
+        // Allow: admins, finance, course instructor, or enrolled students with access
+        if (!$isAdminOrFinance && !$isInstructor && !$enrollment) {
+            abort(403, 'You must be enrolled in this course to access discussions.');
         }
+
+        if ($enrollment && !$enrollment->canAccessContent() && !$isAdminOrFinance && !$isInstructor) {
+            abort(403, 'Please complete at least a 30% deposit to participate in discussions.');
+        }
+    }
+
+    private function deleteChildReplies(DiscussionReply $reply): void
+    {
+        foreach ($reply->childReplies as $child) {
+            $this->deleteChildReplies($child);
+            $child->delete();
+        }
+    }
+
+    private function notifyInstructorOfDiscussion(Course $course, Discussion $discussion): void
+    {
+        $instructor = $course->instructor?->user;
+        if (!$instructor || $instructor->id === $discussion->created_by) {
+            return;
+        }
+
+        $this->emailService->sendNotification(
+            $instructor->id,
+            'New Discussion in ' . $course->title,
+            auth()->user()->full_name . ' started a new discussion: "' . $discussion->title . '"',
+            'info',
+            route('student.discussions.show', [$course, $discussion])
+        );
     }
 }

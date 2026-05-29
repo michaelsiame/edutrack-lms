@@ -50,6 +50,7 @@
  <th>Amount</th>
  <th>Status</th>
  <th>Date</th>
+ <th class="text-right">Actions</th>
  </tr>
  </thead>
  <tbody>
@@ -58,18 +59,33 @@
  <td>
  <span class="font-medium text-gray-900 dark:text-white">{{ $payment->student?->full_name ??'Unknown' }}</span>
  </td>
- <td class="text-gray-600 dark:text-gray-400">{{ $payment->course?->title ??'N/A' }}</td>
- <td class="font-medium text-gray-900 dark:text-white">ZMW {{ number_format($payment->amount, 2) }}</td>
+ <td class="text-gray-600 dark:text-gray-400">{{ $payment->course?->title ?? ($payment->payment_type === 'registration' ? 'Registration Fee' : 'N/A') }}</td>
+ <td class="font-medium text-gray-900 dark:text-white">{{ setting('currency', 'ZMW') }} {{ number_format($payment->amount, 2) }}</td>
  <td>
  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $payment->payment_status ==='Completed' ?'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' :'bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400' }}">
  {{ $payment->payment_status }}
  </span>
  </td>
  <td class="text-gray-500 dark:text-gray-400 text-sm">{{ $payment->created_at?->format('M d, Y') }}</td>
+ <td class="text-right">
+ <a href="{{ route('admin.payments.show', $payment) }}" class="inline-flex items-center justify-center min-w-[36px] min-h-[36px] text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="View payment">
+ <i class="fas fa-eye text-sm"></i>
+ </a>
+ <a href="{{ route('admin.payments.edit', $payment) }}" class="inline-flex items-center justify-center min-w-[36px] min-h-[36px] text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit payment">
+ <i class="fas fa-edit text-sm"></i>
+ </a>
+ <form action="{{ route('admin.payments.destroy', $payment) }}" method="POST" class="inline" onsubmit="return confirm('Delete this payment record?')">
+ @csrf
+ @method('DELETE')
+ <button type="submit" class="inline-flex items-center justify-center min-w-[36px] min-h-[36px] text-gray-500 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg" aria-label="Delete payment">
+ <i class="fas fa-trash text-sm"></i>
+ </button>
+ </form>
+ </td>
  </tr>
  @empty
  <tr>
- <td colspan="5" class="text-center py-10 text-gray-500 dark:text-gray-400">No payments found.</td>
+ <td colspan="6" class="text-center py-10 text-gray-500 dark:text-gray-400">No payments found.</td>
  </tr>
  @endforelse
  </tbody>

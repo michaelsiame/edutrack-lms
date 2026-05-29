@@ -27,9 +27,14 @@ class NoteController extends Controller
         $user = auth()->user();
 
         // Verify enrollment
-        Enrollment::where('user_id', $user->id)
+        $enrollment = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)
             ->firstOrFail();
+
+        if (!$enrollment->canAccessContent()) {
+            return redirect()->route('checkout.show', $course)
+                ->with('warning', 'Please complete at least a 30% deposit to access notes.');
+        }
 
         $note = LessonNote::where('user_id', $user->id)
             ->where('lesson_id', $lesson->id)
@@ -42,9 +47,13 @@ class NoteController extends Controller
     {
         $user = auth()->user();
 
-        Enrollment::where('user_id', $user->id)
+        $enrollment = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)
             ->firstOrFail();
+
+        if (!$enrollment->canAccessContent()) {
+            abort(403, 'Please complete at least a 30% deposit to save notes.');
+        }
 
         $validated = $request->validate([
             'content' => 'required|string|max:10000',

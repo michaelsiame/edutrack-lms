@@ -17,6 +17,12 @@ class Kernel extends ConsoleKernel
 
         // Session reminders daily at 8am CAT
         $schedule->command('reminders:send')->dailyAt('08:00');
+
+        // End expired live sessions every 15 minutes
+        $schedule->command('sessions:end-expired')->everyFifteenMinutes();
+
+        // Poll Lenco for pending payments every 10 minutes (webhook fallback)
+        $schedule->command('lenco:poll-payments --hours=48 --limit=50')->everyTenMinutes();
     }
 
     /**

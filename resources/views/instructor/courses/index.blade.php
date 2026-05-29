@@ -29,8 +29,16 @@
  </td>
  <td class="text-gray-600 dark:text-gray-400">{{ $course->enrollments_count }}</td>
  <td>
- <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $course->status ==='published' ?'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' :'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
- {{ ucfirst($course->status) }}
+ @php
+ $statusClass = match($course->status) {
+ 'published' => 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400',
+ 'under_review' => 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400',
+ default => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+ };
+ $statusLabel = $course->status === 'under_review' ? 'Pending Approval' : ucfirst($course->status);
+ @endphp
+ <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $statusClass }}">
+ {{ $statusLabel }}
  </span>
  </td>
  <td class="text-right">

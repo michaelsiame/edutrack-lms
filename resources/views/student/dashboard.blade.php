@@ -3,152 +3,304 @@
 @section('title','Student Dashboard - Edutrack LMS')
 @section('page_title','My Learning')
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
+@endpush
+
 @section('content')
-<!-- Welcome Banner -->
-<div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 p-6 md:p-8 mb-8 text-white shadow-md">
-    <div class="relative z-10 max-w-2xl">
-        <h2 class="text-xl md:text-2xl font-bold mb-2">Welcome back, {{ auth()->user()->first_name ?? 'Student' }}!</h2>
-        <p class="text-primary-100 text-sm md:text-base leading-relaxed">
-            Continue your learning journey and achieve your goals. You have
-            <span class="font-semibold text-white">{{ $enrollments->where('enrollment_status', 'In Progress')->count() }}</span>
-            course{{ $enrollments->where('enrollment_status', 'In Progress')->count() !== 1 ? 's' : '' }} in progress.
-        </p>
-    </div>
-    <div class="absolute right-0 top-0 h-full w-1/3 opacity-10 pointer-events-none">
-        <i class="fas fa-graduation-cap text-9xl absolute -right-4 -top-4"></i>
-    </div>
-</div>
-
-<!-- Quick Stats -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <x-stat-card icon="fa-book-open" iconColor="primary" :value="$enrollments->count()" label="Courses" :href="route('enrollments.index')" />
-    <x-stat-card icon="fa-check-circle" iconColor="success" :value="$enrollments->where('progress', 100)->count()" label="Completed" :href="route('student.progress')" />
-    <x-stat-card icon="fa-certificate" iconColor="secondary" :value="$certificates->count()" label="Certificates" :href="route('student.certificates')" />
-    <x-stat-card icon="fa-chart-line" iconColor="purple" :value="($enrollments->count() > 0 ? round($enrollments->avg('progress')) : 0) . '%'" label="Avg Progress" :href="route('student.progress')" />
-</div>
-
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-    <!-- My Courses -->
-    <x-card variant="interactive" class="xl:col-span-2 overflow-hidden">
-        <x-slot:header>
-            <div class="flex items-center gap-2">
-                <i class="fas fa-book text-primary-500"></i>
-                <h3 class="text-base font-semibold text-gray-800 dark:text-white">My Courses</h3>
-            </div>
-            <x-slot:headerAction>
-                <a href="{{ route('enrollments.index') }}" class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors">
-                    View All <i class="fas fa-arrow-right ml-1 text-xs"></i>
-                </a>
-            </x-slot:headerAction>
-        </x-slot:header>
-
-        <div class="divide-y divide-gray-100 dark:divide-gray-700 -mx-5 md:-mx-6">
-            @forelse($enrollments->take(5) as $enrollment)
-                @php $firstLesson = $enrollment->course?->modules?->flatMap->lessons->first(); @endphp
-                <a href="{{ $firstLesson ? route('student.learning.show', [$enrollment->course, $firstLesson]) : route('enrollments.show', $enrollment->course) }}"
-                   class="block px-5 md:px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group">
-                    <div class="flex items-center justify-between mb-2">
-                        <p class="text-sm font-semibold text-gray-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                            {{ $enrollment->course?->title ?? 'Unknown' }}
-                        </p>
-                        <x-status-badge :status="$enrollment->progress == 100 ? 'Completed' : $enrollment->enrollment_status" size="sm" />
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="flex-1">
-                            <x-progress-bar :value="$enrollment->progress" size="sm" :color="$enrollment->progress == 100 ? 'success' : 'primary'" />
-                        </div>
-                        <span class="text-xs font-medium text-gray-500 dark:text-gray-400 w-10 text-right">{{ round($enrollment->progress) }}%</span>
-                    </div>
-                    @if($enrollment->last_accessed)
-                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1.5">
-                            Last accessed {{ $enrollment->last_accessed->diffForHumans() }}
-                        </p>
-                    @endif
-                </a>
-            @empty
-                <div class="px-5 md:px-6 py-12 text-center">
-                    <x-empty-state icon="fa-book-open" title="No Courses Yet" description="Enroll in a course to start learning." actionText="Browse Courses" actionRoute="courses.index" />
-                </div>
-            @endforelse
+<div class="od-page -m-4 md:-m-6 lg:-m-8 p-4 md:p-6 lg:p-8 min-h-full">
+    <!-- Topbar -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <p class="od-eyebrow">STUDENT PORTAL</p>
+            <h1 class="od-h1">Welcome back, {{ auth()->user()->first_name ?? 'Student' }}</h1>
         </div>
-    </x-card>
+        <div class="flex items-center gap-3">
+            @if(Route::has('student.notifications'))
+            <a href="{{ route('student.notifications') }}" class="od-btn od-btn-ghost od-btn-sm" title="Notifications">
+                <i class="fas fa-bell"></i>
+            </a>
+            @endif
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold" style="background: var(--od-navy-soft); color: var(--od-navy);">
+                {{ strtoupper(substr(auth()->user()->first_name ?? 'S', 0, 1)) }}
+            </div>
+        </div>
+    </div>
 
-    <!-- Right Column: Certificates + Activity -->
-    <div class="space-y-6">
-        <!-- Certificates -->
-        <x-card variant="interactive" class="overflow-hidden">
-            <x-slot:header>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-certificate text-secondary-400"></i>
-                    <h3 class="text-base font-semibold text-gray-800 dark:text-white">Certificates</h3>
-                </div>
-                <x-slot:headerAction>
-                    <a href="{{ route('student.certificates') }}" class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors">
-                        View All <i class="fas fa-arrow-right ml-1 text-xs"></i>
-                    </a>
-                </x-slot:headerAction>
-            </x-slot:header>
+    <!-- Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="od-stat-card">
+            <div>
+                <div class="od-stat-value od-num">{{ $enrollments->count() }}</div>
+                <div class="od-stat-label">Enrolled courses</div>
+            </div>
+            <div class="od-stat-icon" style="background: var(--od-navy-soft); color: var(--od-navy);">
+                <i class="fas fa-book-open text-sm"></i>
+            </div>
+        </div>
+        <div class="od-stat-card">
+            <div>
+                <div class="od-stat-value od-num">{{ $enrollments->where('progress', 100)->count() }}</div>
+                <div class="od-stat-label">Completed</div>
+            </div>
+            <div class="od-stat-icon" style="background: var(--od-green-soft); color: var(--od-green);">
+                <i class="fas fa-check-circle text-sm"></i>
+            </div>
+        </div>
+        <div class="od-stat-card">
+            <div>
+                <div class="od-stat-value od-num">{{ $enrollments->where('progress', '<', 100)->where('enrollment_status', '!=', 'Dropped')->count() }}</div>
+                <div class="od-stat-label">In progress</div>
+            </div>
+            <div class="od-stat-icon" style="background: var(--od-accent-soft); color: var(--od-accent);">
+                <i class="fas fa-chart-line text-sm"></i>
+            </div>
+        </div>
+        <div class="od-stat-card">
+            <div>
+                <div class="od-stat-value od-num">{{ $certificates->count() }}</div>
+                <div class="od-stat-label">Certificates</div>
+            </div>
+            <div class="od-stat-icon" style="background: var(--od-navy-soft); color: var(--od-navy);">
+                <i class="fas fa-certificate text-sm"></i>
+            </div>
+        </div>
+    </div>
 
-            <div class="divide-y divide-gray-100 dark:divide-gray-700 -mx-5 md:-mx-6">
-                @forelse($certificates->take(4) as $certificate)
-                    <div class="px-5 md:px-6 py-3.5 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-9 h-9 rounded-lg bg-secondary-50 dark:bg-secondary-900/30 flex items-center justify-center text-secondary-500 dark:text-secondary-400 flex-shrink-0">
-                                <i class="fas fa-award text-sm"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $certificate->course?->title ?? 'Unknown' }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $certificate->issued_date?->format('M d, Y') }}</p>
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <!-- Current Courses -->
+        <div class="od-card">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="od-h3">Current courses</h3>
+                <a href="{{ route('enrollments.index') }}" class="od-btn od-btn-ghost od-btn-sm">View all</a>
+            </div>
+            <div>
+                @forelse($enrollments->where('progress', '<', 100)->where('enrollment_status', '!=', 'Dropped')->take(5) as $enrollment)
+                    @php
+                        $course = $enrollment->course;
+                        $lastLesson = null;
+                        if ($course && $course->modules) {
+                            $allLessons = $course->modules->flatMap->lessons->sortBy('display_order');
+                            $lastLesson = $allLessons->first();
+                        }
+                        $progressColor = $enrollment->progress >= 75 ? 'green' : ($enrollment->progress >= 40 ? 'navy' : 'accent');
+                    @endphp
+                    <div class="od-course-row">
+                        <div class="od-course-thumb">
+                            @if($course?->thumbnail_image_url)
+                                <img src="{{ $course->thumbnail_image_url }}" alt="" />
+                            @else
+                                <i class="fas fa-book text-sm" style="color: var(--od-muted);"></i>
+                            @endif
+                        </div>
+                        <div class="od-course-info">
+                            <h4>{{ $course?->title ?? 'Unknown Course' }}</h4>
+                            <p>
+                                @if($lastLesson)
+                                    Next: {{ $lastLesson->title }}
+                                @else
+                                    {{ $course?->modules?->count() ?? 0 }} modules
+                                @endif
+                            </p>
+                        </div>
+                        <div class="od-course-progress">
+                            <span class="od-num">{{ round($enrollment->progress) }}% complete</span>
+                            <div class="od-progress-track">
+                                <div class="od-progress-fill {{ $progressColor }}" style="width: {{ $enrollment->progress }}%;"></div>
                             </div>
                         </div>
-                        <a href="{{ route('certificates.download', $certificate) }}" class="p-2 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors shrink-0" title="Download">
-                            <i class="fas fa-download text-sm"></i>
-                        </a>
+                        <div class="od-course-action">
+                            @if($lastLesson)
+                                <a href="{{ route('student.learning.show', [$course, $lastLesson]) }}" class="od-btn od-btn-primary od-btn-sm">
+                                    Continue
+                                </a>
+                            @else
+                                <a href="{{ route('enrollments.show', $course) }}" class="od-btn od-btn-primary od-btn-sm">
+                                    Open
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 @empty
-                    <div class="px-5 md:px-6 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-                        <i class="fas fa-certificate text-2xl mb-2 text-gray-300 dark:text-gray-600"></i>
-                        <p>No certificates yet.</p>
+                    <div class="od-empty">
+                        <div class="od-empty-icon">
+                            <i class="fas fa-book-open text-xl"></i>
+                        </div>
+                        <h4>No courses yet</h4>
+                        <p>Enroll in a course to start your learning journey.</p>
+                        <a href="{{ route('courses.index') }}" class="od-btn od-btn-primary">Browse Courses</a>
                     </div>
                 @endforelse
             </div>
-        </x-card>
+        </div>
 
-        <!-- Recent Activity -->
-        <x-card variant="default" class="overflow-hidden">
-            <x-slot:header>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-bolt text-warning-500"></i>
-                    <h3 class="text-base font-semibold text-gray-800 dark:text-white">Recent Activity</h3>
-                </div>
-            </x-slot:header>
-
-            @php
-                $activities = [];
-                $notifications = auth()->user()->notifications()->latest()->take(5)->get();
-                foreach ($notifications as $n) {
-                    $iconMap = [
-                        'Success' => ['fa-check-circle', 'success'],
-                        'Grade'   => ['fa-star', 'warning'],
-                        'Assignment' => ['fa-file-alt', 'primary'],
-                        'Warning' => ['fa-exclamation-triangle', 'warning'],
-                        'Info'    => ['fa-info-circle', 'primary'],
-                    ];
-                    $activities[] = [
-                        'icon' => $iconMap[$n->notification_type][0] ?? 'fa-bell',
-                        'iconColor' => $iconMap[$n->notification_type][1] ?? 'primary',
-                        'title' => $n->title,
-                        'description' => $n->message,
-                        'url' => $n->action_url,
-                        'time' => $n->created_at->diffForHumans(),
-                    ];
-                }
-            @endphp
-
-            <div class="px-1">
-                <x-activity-feed :items="$activities" />
+        <!-- Upcoming & Deadlines -->
+        <div class="od-card">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="od-h3">Upcoming deadlines</h3>
+                @if(Route::has('student.schedule'))
+                    <a href="{{ route('student.schedule') }}" class="od-btn od-btn-ghost od-btn-sm">Calendar</a>
+                @endif
             </div>
-        </x-card>
+            @php
+                $deadlines = [];
+                foreach ($enrollments as $enrollment) {
+                    $course = $enrollment->course;
+                    if (!$course) continue;
+                    foreach ($course->assignments ?? [] as $assignment) {
+                        if ($assignment->due_date && $assignment->due_date->isFuture()) {
+                            $deadlines[] = [
+                                'title' => $assignment->title,
+                                'course' => $course->title,
+                                'due' => $assignment->due_date,
+                                'type' => 'assignment',
+                            ];
+                        }
+                    }
+                }
+                usort($deadlines, fn($a, $b) => $a['due']->timestamp <=> $b['due']->timestamp);
+                $deadlines = array_slice($deadlines, 0, 5);
+            @endphp
+            @if(count($deadlines) > 0)
+                <table class="od-table">
+                    <thead>
+                        <tr><th>Task</th><th>Course</th><th class="num-col">Due</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach($deadlines as $task)
+                            @php
+                                $daysUntil = now()->diffInDays($task['due'], false);
+                                $badgeClass = $daysUntil <= 2 ? 'od-badge-warn' : 'od-badge-info';
+                                $badgeText = $daysUntil <= 0 ? 'Today' : ($daysUntil == 1 ? '1 day' : $daysUntil . ' days');
+                            @endphp
+                            <tr>
+                                <td><strong>{{ $task['title'] }}</strong></td>
+                                <td>{{ $task['course'] }}</td>
+                                <td class="num-col"><span class="od-badge {{ $badgeClass }}">{{ $badgeText }}</span></td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @else
+                <div class="od-empty" style="padding: 32px 0;">
+                    <p class="od-meta">No upcoming deadlines. You're all caught up!</p>
+                </div>
+            @endif
+        </div>
     </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+        <!-- Recent Certificates -->
+        <div class="od-card">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="od-h3">Recent certificates</h3>
+                <a href="{{ route('student.certificates') }}" class="od-btn od-btn-ghost od-btn-sm">All certificates</a>
+            </div>
+            <div>
+                @forelse($certificates->take(4) as $certificate)
+                    <div class="od-course-row">
+                        <div class="od-course-thumb" style="background: var(--od-green-soft);">
+                            <i class="fas fa-award text-sm" style="color: var(--od-green);"></i>
+                        </div>
+                        <div class="od-course-info">
+                            <h4>{{ $certificate->course?->title ?? 'Unknown Course' }}</h4>
+                            <p>Issued {{ $certificate->issued_date?->format('d M Y') ?? 'N/A' }} · TEVETA Certificate</p>
+                        </div>
+                        <div class="od-course-action">
+                            <a href="{{ route('certificates.download', $certificate) }}" class="od-btn od-btn-secondary od-btn-sm">
+                                Download
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="od-empty" style="padding: 32px 0;">
+                        <p class="od-meta">Complete a course to earn your first certificate.</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Payment Summary -->
+        <div class="od-card">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="od-h3">Payment summary</h3>
+                <a href="{{ route('student.payments') }}" class="od-btn od-btn-ghost od-btn-sm">History</a>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div style="padding: 12px; background: var(--od-fg-soft); border-radius: 10px;">
+                    <div class="od-meta" style="margin-bottom: 4px;">Total paid</div>
+                    <div class="od-num" style="font-size: 20px; font-weight: 600; color: var(--od-fg);">ZMW {{ number_format($totalPaid, 0) }}</div>
+                </div>
+                <div style="padding: 12px; background: var(--od-fg-soft); border-radius: 10px;">
+                    <div class="od-meta" style="margin-bottom: 4px;">Balance due</div>
+                    <div class="od-num" style="font-size: 20px; font-weight: 600; color: var(--od-fg);">ZMW {{ number_format($balanceDue, 0) }}</div>
+                </div>
+            </div>
+            @if($payments->count() > 0)
+                <table class="od-table">
+                    <thead>
+                        <tr><th>Date</th><th>Course</th><th class="num-col">Amount</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach($payments as $payment)
+                            <tr>
+                                <td>{{ $payment->created_at?->format('d M Y') ?? 'N/A' }}</td>
+                                <td>{{ $payment->course?->title ?? 'N/A' }}</td>
+                                <td class="num-col">ZMW {{ number_format($payment->amount, 0) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @else
+                <div class="od-empty" style="padding: 16px 0;">
+                    <p class="od-meta">No payments recorded yet.</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Completed Courses (if any) -->
+    @php
+        $completed = $enrollments->where('progress', 100);
+        $reviewedEnrollmentIds = \App\Models\Testimonial::where('user_id', auth()->id())->pluck('enrollment_id')->toArray();
+    @endphp
+    @if($completed->count() > 0)
+    <div class="mt-6">
+        <div class="od-card">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="od-h3">Completed courses</h3>
+                <a href="{{ route('student.progress') }}" class="od-btn od-btn-ghost od-btn-sm">View progress</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach($completed->take(3) as $enrollment)
+                    @php
+                        $course = $enrollment->course;
+                        $hasReviewed = in_array($enrollment->id, $reviewedEnrollmentIds);
+                    @endphp
+                    @if($course)
+                    <div class="relative flex items-center gap-4 p-4 rounded-xl" style="background: var(--od-green-soft); border: 1px solid color-mix(in oklch, var(--od-green) 20%, transparent);">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background: var(--od-green-soft);">
+                            <i class="fas fa-check text-sm" style="color: var(--od-green);"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-semibold text-sm truncate" style="color: var(--od-fg);">{{ $course->title }}</p>
+                            <p class="text-xs" style="color: var(--od-muted);">Completed {{ $enrollment->completion_date?->diffForHumans() ?? 'recently' }}</p>
+                        </div>
+                        @if(!$hasReviewed)
+                        <a href="{{ route('student.testimonials.create', $enrollment) }}" class="od-btn od-btn-primary od-btn-sm flex-shrink-0" title="Write a review">
+                            <i class="fas fa-star mr-1"></i> Review
+                        </a>
+                        @else
+                        <span class="od-badge od-badge-success flex-shrink-0">
+                            <i class="fas fa-check mr-1"></i> Reviewed
+                        </span>
+                        @endif
+                    </div>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 @endsection

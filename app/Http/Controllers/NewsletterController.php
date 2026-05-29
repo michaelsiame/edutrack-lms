@@ -14,29 +14,29 @@ class NewsletterController extends Controller
             'name' => 'nullable|string|max:100',
         ]);
 
-        NewsletterSubscriber::create([
+        \App\Models\NewsletterSubscriber::create([
             'email' => $validated['email'],
             'name' => $validated['name'] ?? null,
             'is_active' => true,
             'subscribed_at' => now(),
         ]);
 
-        return back()->with('success', 'Thank you for subscribing to our newsletter!');
+        return back()->with('success', 'You have been subscribed to our newsletter!');
     }
 
     public function unsubscribe(Request $request)
     {
-        $validated = $request->validate([
-            'email' => 'required|email',
-        ]);
+        $request->validate(['email' => 'required|email']);
 
-        $subscriber = NewsletterSubscriber::where('email', $validated['email'])->first();
+        $subscriber = \App\Models\NewsletterSubscriber::where('email', $request->email)->first();
 
         if ($subscriber) {
-            $subscriber->update(['is_active' => false]);
-            return redirect()->route('home')->with('success', 'You have been unsubscribed from our newsletter.');
+            $subscriber->update([
+                'is_active' => false,
+                'unsubscribed_at' => now(),
+            ]);
         }
 
-        return redirect()->route('home')->with('info', 'Email not found in our subscriber list.');
+        return view('newsletter.unsubscribed')->with('success', 'You have been unsubscribed.');
     }
 }

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
+use App\Models\UserRole;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -16,7 +18,8 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('admin.users.create');
+        $roles = Role::orderBy('role_name')->get();
+        return view('admin.users.create', compact('roles'));
     }
 
     public function store(Request $request)
@@ -27,13 +30,26 @@ class UserController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'password_hash' => 'required|string|min:8',
+            'password' => 'required|string|min:8',
             'status' => 'required|in:active,inactive,suspended',
+            'role_id' => 'required|exists:roles,id',
         ]);
 
-        $validated['password_hash'] = bcrypt($validated['password_hash']);
+        $user = User::create([
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'phone' => $validated['phone'] ?? null,
+            'password_hash' => bcrypt($validated['password']),
+            'status' => $validated['status'],
+        ]);
 
-        User::create($validated);
+        UserRole::create([
+            'user_id' => $user->id,
+            'role_id' => $validated['role_id'],
+            'assigned_by' => auth()->id(),
+        ]);
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
@@ -47,7 +63,8 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $user->load('roles');
-        return view('admin.users.edit', compact('user'));
+        $roles = Role::orderBy('role_name')->get();
+        return view('admin.users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)
@@ -59,9 +76,35 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'status' => 'required|in:active,inactive,suspended',
+            'role_id' => 'required|exists:roles,id',
+            'password' => 'nullable|string|min:8',
         ]);
 
-        $user->update($validated);
+        $data = [
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'phone' => $validated['phone'] ?? null,
+            'status' => $validated['status'],
+        ];
+
+        if (!empty($validated['password'])) {
+            $data['password_hash'] = bcrypt($validated['password']);
+        }
+
+        $user->update($data);
+
+        // Update role if changed
+        $currentRoleId = $user->roles->first()?->role_id;
+        if ($currentRoleId != $validated['role_id']) {
+            $user->roles()->delete();
+            UserRole::create([
+                'user_id' => $user->id,
+                'role_id' => $validated['role_id'],
+                'assigned_by' => auth()->id(),
+            ]);
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }

@@ -6,80 +6,68 @@
 @section('content')
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
- <div class="stat-card bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700 shadow-sm">
- <div class="flex items-center justify-between">
+ <div class="od-stat-card">
  <div>
- <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Revenue</p>
- <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">ZMW {{ number_format($stats['total_revenue'], 0) }}</p>
+ <p class="od-stat-label">Total Revenue</p>
+ <p class="od-stat-value od-num">ZMW {{ number_format($stats['total_revenue'], 0) }}</p>
  </div>
- <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
- <i class="fas fa-coins text-primary-600 dark:text-primary-400 text-lg"></i>
- </div>
+ <div class="od-stat-icon" style="background: var(--od-navy-soft); color: var(--od-navy);">
+ <i class="fas fa-coins text-lg"></i>
  </div>
  </div>
 
- <div class="stat-card bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700 shadow-sm">
- <div class="flex items-center justify-between">
+ <div class="od-stat-card">
  <div>
- <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Today's Revenue</p>
- <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">ZMW {{ number_format($stats['today_revenue'], 0) }}</p>
+ <p class="od-stat-label">Today's Revenue</p>
+ <p class="od-stat-value od-num">ZMW {{ number_format($stats['today_revenue'], 0) }}</p>
  </div>
- <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
- <i class="fas fa-calendar-day text-primary-600 dark:text-primary-400 text-lg"></i>
- </div>
+ <div class="od-stat-icon" style="background: var(--od-navy-soft); color: var(--od-navy);">
+ <i class="fas fa-calendar-day text-lg"></i>
  </div>
  </div>
 
- <div class="stat-card bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700 shadow-sm">
- <div class="flex items-center justify-between">
+ <div class="od-stat-card">
  <div>
- <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Month Revenue</p>
- <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">ZMW {{ number_format($stats['month_revenue'], 0) }}</p>
+ <p class="od-stat-label">Month Revenue</p>
+ <p class="od-stat-value od-num">ZMW {{ number_format($stats['month_revenue'], 0) }}</p>
  </div>
- <div class="w-12 h-12 bg-success-100 dark:bg-success-900/30 rounded-xl flex items-center justify-center">
- <i class="fas fa-chart-line text-success-600 dark:text-success-400 text-lg"></i>
- </div>
+ <div class="od-stat-icon" style="background: var(--od-green-soft); color: var(--od-green);">
+ <i class="fas fa-chart-line text-lg"></i>
  </div>
  </div>
 
- <div class="stat-card bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-100 dark:border-gray-700 shadow-sm">
- <div class="flex items-center justify-between">
+ <div class="od-stat-card">
  <div>
- <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pending Payments</p>
- <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ $stats['pending_payments'] }}</p>
+ <p class="od-stat-label">Pending Payments</p>
+ <p class="od-stat-value">{{ $stats['pending_payments'] }}</p>
  </div>
- <div class="w-12 h-12 bg-warning-100 dark:bg-warning-900/30 rounded-xl flex items-center justify-center">
- <i class="fas fa-clock text-warning-600 dark:text-warning-400 text-lg"></i>
- </div>
+ <div class="od-stat-icon" style="background: color-mix(in oklch, var(--od-accent) 12%, transparent); color: var(--od-accent);">
+ <i class="fas fa-clock text-lg"></i>
  </div>
  </div>
 </div>
 
 <!-- Revenue Chart -->
-<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 mb-8">
- <h3 class="text-base font-semibold text-gray-800 dark:text-white mb-4">
- <i class="fas fa-chart-line text-primary-500 mr-2"></i>Revenue Trend (Last 6 Months)
- </h3>
+<div class="od-card mb-8">
+ <h3 class="od-h3 mb-4"><i class="fas fa-chart-line mr-2" style="color: var(--od-navy);"></i>Revenue Trend (Last 6 Months)</h3>
  <div class="h-72">
  <canvas id="revenueChart"></canvas>
  </div>
 </div>
 
 <!-- Recent Transactions -->
-<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
- <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
- <h3 class="text-base font-semibold text-gray-800 dark:text-white">
- <i class="fas fa-money-bill-wave text-success-500 mr-2"></i>Recent Transactions
- </h3>
- <a href="{{ route('finance.transactions') }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">View All</a>
+<div class="od-card" style="padding: 0; overflow: hidden;">
+ <div class="px-6 py-4 flex items-center justify-between" style="border-bottom: 1px solid var(--od-border);">
+ <h3 class="od-h3"><i class="fas fa-money-bill-wave mr-2" style="color: var(--od-green);"></i>Recent Transactions</h3>
+ <a href="{{ route('finance.transactions') }}" class="text-sm font-medium" style="color: var(--od-navy);">View All</a>
  </div>
  <div class="overflow-x-auto">
- <table class="dashboard-table">
+ <table class="dashboard-table od-table">
  <thead>
  <tr>
  <th>Student</th>
  <th>Course</th>
- <th>Amount</th>
+ <th class="num-col">Amount</th>
  <th>Status</th>
  <th>Date</th>
  </tr>
@@ -88,20 +76,20 @@
  @forelse($recentPayments as $payment)
  <tr>
  <td>
- <span class="font-medium text-gray-900 dark:text-white">{{ $payment->student?->full_name ??'Unknown' }}</span>
+ <span class="font-medium" style="color: var(--od-fg);">{{ $payment->student?->full_name ??'Unknown' }}</span>
  </td>
- <td class="text-gray-600 dark:text-gray-400">{{ $payment->course?->title ??'N/A' }}</td>
- <td class="font-medium text-gray-900 dark:text-white">ZMW {{ number_format($payment->amount, 2) }}</td>
+ <td class="od-meta">{{ $payment->course?->title ??'N/A' }}</td>
+ <td class="font-medium num-col" style="color: var(--od-fg);">ZMW {{ number_format($payment->amount, 2) }}</td>
  <td>
- <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $payment->payment_status ==='Completed' ?'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' :'bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400' }}">
+ <span class="od-badge {{ $payment->payment_status ==='Completed' ?'od-badge-success' :'od-badge-warn' }}">
  {{ $payment->payment_status }}
  </span>
  </td>
- <td class="text-gray-500 dark:text-gray-400 text-sm">{{ $payment->created_at?->format('M d, Y') }}</td>
+ <td class="od-meta">{{ $payment->created_at?->format('M d, Y') }}</td>
  </tr>
  @empty
  <tr>
- <td colspan="5" class="text-center py-10 text-gray-500 dark:text-gray-400">No recent transactions</td>
+ <td colspan="5" class="text-center py-10 od-meta">No recent transactions</td>
  </tr>
  @endforelse
  </tbody>
@@ -121,8 +109,8 @@ new Chart(ctx, {
         datasets: [{
             label: 'Revenue (ZMW)',
             data: {!! json_encode($chartData) !!},
-            backgroundColor: 'rgba(59, 130, 246, 0.6)',
-            borderColor: 'rgba(59, 130, 246, 1)',
+            backgroundColor: 'color-mix(in oklch, var(--od-navy), transparent 60%)',
+            borderColor: 'var(--od-navy)',
             borderWidth: 1,
             borderRadius: 6,
         }]

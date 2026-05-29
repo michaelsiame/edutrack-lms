@@ -116,10 +116,10 @@
             {{-- Thumbnail --}}
             <div class="border-t border-gray-100 dark:border-gray-700 pt-6">
                 <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-4">Media</h3>
-                @if($course->thumbnail_url)
+                @if($course->thumbnail_image_url)
                 <div class="mb-4">
                     <p class="text-xs text-gray-500 mb-2">Current Thumbnail</p>
-                    <img src="{{ asset('storage/' . $course->thumbnail_url) }}" alt="Thumbnail" class="w-48 h-32 object-cover rounded-lg border">
+                    <img src="{{ $course->thumbnail_image_url }}" alt="Thumbnail" class="w-48 h-32 object-cover rounded-lg border">
                 </div>
                 @endif
                 <div>
@@ -145,16 +145,22 @@
                         <textarea name="learning_outcomes" id="learning_outcomes" rows="3" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">{{ old('learning_outcomes', $course->learning_outcomes) }}</textarea>
                     </div>
                     <div class="flex items-center gap-6">
-                        <div class="flex items-center">
-                            <input type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured', $course->is_featured) ? 'checked' : '' }} class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
-                            <label for="is_featured" class="ml-2 block text-sm text-gray-900 dark:text-white">Featured Course</label>
-                        </div>
+                        <!-- is_featured removed: only admins can feature courses -->
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                             <select name="status" id="status" class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
-                                <option value="draft" {{ old('status', $course->status) == 'draft' ? 'selected' : '' }}>Draft</option>
-                                <option value="published" {{ old('status', $course->status) == 'published' ? 'selected' : '' }}>Published</option>
+                                @if($course->status === 'published')
+                                    <option value="published" selected>Published (approved)</option>
+                                    <option value="draft">Revert to Draft</option>
+                                @elseif($course->status === 'under_review')
+                                    <option value="draft" {{ old('status', $course->status) == 'draft' ? 'selected' : '' }}>Draft</option>
+                                    <option value="published" selected>Submit for Approval</option>
+                                @else
+                                    <option value="draft" {{ old('status', $course->status) == 'draft' ? 'selected' : '' }}>Draft</option>
+                                    <option value="published" {{ old('status', $course->status) == 'published' ? 'selected' : '' }}>Submit for Approval</option>
+                                @endif
                             </select>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Publishing requires admin approval.</p>
                         </div>
                     </div>
                 </div>

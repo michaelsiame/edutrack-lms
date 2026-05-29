@@ -37,6 +37,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/quizzes/{quiz}', [App\Http\Controllers\Api\QuizController::class, 'show']);
     Route::post('/quizzes/{quiz}/attempt', [App\Http\Controllers\Api\QuizController::class, 'attempt']);
     Route::post('/quizzes/{quiz}/submit', [App\Http\Controllers\Api\QuizController::class, 'submit']);
+
+    // Assignment API
+    Route::get('/assignments', [App\Http\Controllers\Api\AssignmentController::class, 'index']);
+    Route::get('/assignments/{assignment}', [App\Http\Controllers\Api\AssignmentController::class, 'show']);
+    Route::post('/assignments/{assignment}/submit', [App\Http\Controllers\Api\AssignmentController::class, 'submit']);
 });
 
 Route::get('/certificates/verify/{code}', [App\Http\Controllers\Api\CertificateController::class, 'verify']);
+
+// Public promotion validation (no auth required for checking codes)
+Route::post('/promotions/validate', [App\Http\Controllers\Api\PromotionController::class, 'validateCode'])->name('api.promotions.validate');
+
+// Session heartbeat — keeps session alive during long study sessions
+Route::get('/session/heartbeat', function () {
+    return response()->json(['status' => 'ok', 'time' => now()->toIso8601String()]);
+})->middleware('auth');

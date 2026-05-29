@@ -9,14 +9,19 @@ class Notification extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'notification_id';
+    public $incrementing = true;
+
     protected $fillable = [
         'user_id',
         'title',
         'message',
-        'type',
+        'notification_type',
         'action_url',
         'is_read',
         'read_at',
+        'icon',
+        'color',
     ];
 
     protected $casts = [

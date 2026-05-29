@@ -23,24 +23,33 @@ class CertificateController extends Controller
     {
         $service = new CertificateService();
 
-        if ($certificate) {
-            $data = $service->getCertificateData($certificate);
-        } else {
-            // Demo data
-            $data = [
-                'student_name' => 'Catherine Namakanda',
-                'course_title' => 'General Basic Computing',
-                'classification' => 'Merit',
-                'graduation_day' => '27',
-                'graduation_suffix' => 'th',
-                'graduation_month' => 'March',
-                'graduation_year' => '2026',
-                'student_number' => '26Edu249580',
-                'certificate_number' => 'NRC 2495807/1/1',
-                'verification_code' => 'EDU-ABC123XYZ',
-                'final_score' => 87,
-            ];
+        // Public preview only shows demo data — never real certificates
+        if ($certificate && auth()->check()) {
+            // Authenticated users can preview their own certificates
+            $user = auth()->user();
+            $isOwner = $certificate->user_id === $user->id;
+            $isStaff = $user->roles()->whereIn('role_id', [1, 2, 3, 6])->exists();
+
+            if ($isOwner || $isStaff) {
+                $data = $service->getCertificateData($certificate);
+                return view('certificates.preview', $data);
+            }
         }
+
+        // Demo data for public / unauthorized access
+        $data = [
+            'student_name' => 'Catherine Namakanda',
+            'course_title' => 'General Basic Computing',
+            'classification' => 'Merit',
+            'graduation_day' => '27',
+            'graduation_suffix' => 'th',
+            'graduation_month' => 'March',
+            'graduation_year' => '2026',
+            'student_number' => '26Edu249580',
+            'certificate_number' => 'NRC 2495807/1/1',
+            'verification_code' => 'EDU-ABC123XYZ',
+            'final_score' => 87,
+        ];
 
         return view('certificates.preview', $data);
     }
@@ -57,9 +66,13 @@ class CertificateController extends Controller
 
     public function download(Certificate $certificate)
     {
-        // Verify ownership
-        if ($certificate->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
-            abort(403);
+        // Verify ownership — only the student or super-admin/finance can download
+        $user = auth()->user();
+        $isOwner = $certificate->user_id === $user->id;
+        $isAdmin = $user->roles()->whereIn('role_id', [1, 2])->exists(); // Super Admin, Admin only
+
+        if (!$isOwner && !$isAdmin) {
+            abort(403, 'You do not have permission to download this certificate.');
         }
 
         // Check if certificate is blocked

@@ -7,7 +7,7 @@
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
-    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    RewriteRule .* - [E=HTTP:Authorization:%{HTTP:Authorization}]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
@@ -18,4 +18,21 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# Deny access to sensitive files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Disable PHP execution in upload directories
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_URI} ^/storage/.*\.php$ [OR]
+    RewriteCond %{REQUEST_URI} ^/uploads/.*\.php$
+    RewriteRule .* - [F,L]
 </IfModule>

@@ -23,9 +23,33 @@ class PaymentVerificationService
             $this->updateEnrollmentPaymentStatus($payment->enrollment);
         }
 
-        // Generate invoice for this payment
-        $invoiceService = new InvoiceService();
-        $invoiceService->generateInvoice($payment);
+        // Generate invoice for this payment (only if not already generated)
+        if (!$payment->invoice) {
+            $invoiceService = app(InvoiceService::class);
+            $invoiceService->generateInvoice($payment);
+        }
+
+        // Send payment receipt email
+        try {
+            $emailService = app(\App\Services\EmailQueueService::class);
+            $user = $payment->enrollment?->user ?? $payment->student?->user;
+            $userId = $user?->id ?? $payment->student?->user_id;
+
+            if ($user && $user->email) {
+                $emailService->sendTemplated($user->email, 'Payment', [
+                    'name' => $user->full_name,
+                    'course' => $payment->course?->title,
+                    'amount' => number_format($payment->amount, 2),
+                    'date' => $payment->payment_date?->format('F d, Y'),
+                ]);
+            }
+
+            if ($userId) {
+                $emailService->sendNotification($userId, 'Payment Received', "Your payment of ZMW {$payment->amount} for {$payment->course?->title} has been received.", 'payment');
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send payment receipt email: ' . $e->getMessage());
+        }
     }
 
     /**

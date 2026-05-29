@@ -46,9 +46,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'show'])->name('register');
     Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
     Route::get('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'show'])->name('password.request');
-    Route::post('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'send'])->name('password.email');
+    Route::post('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'send'])->name('password.email')->middleware('throttle:password-reset');
     Route::get('/reset-password/{token}', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'resetForm'])->name('password.reset');
-    Route::post('/reset-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'reset'])->name('password.update');
+    Route::post('/reset-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'reset'])->name('password.update')->middleware('throttle:password-reset');
 });
 
 Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout')->middleware('auth');
@@ -56,7 +56,7 @@ Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logou
 // Email Verification
 Route::get('/verify-email', [App\Http\Controllers\Auth\VerifyEmailController::class, 'notice'])->name('verification.notice');
 Route::get('/verify-email/{token}', [App\Http\Controllers\Auth\VerifyEmailController::class, 'verify'])->name('verification.verify');
-Route::post('/verify-email/resend', [App\Http\Controllers\Auth\VerifyEmailController::class, 'resend'])->name('verification.resend');
+Route::post('/verify-email/resend', [App\Http\Controllers\Auth\VerifyEmailController::class, 'resend'])->name('verification.resend')->middleware('throttle:email-verification-resend');
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +98,7 @@ Route::middleware('auth')->group(function () {
     // Registration Fee
     Route::get('/registration-fee', [App\Http\Controllers\RegistrationFeeController::class, 'show'])->name('registration-fee.show');
     Route::post('/registration-fee', [App\Http\Controllers\RegistrationFeeController::class, 'store'])->name('registration-fee.store');
+    Route::get('/registration-fee/check', [App\Http\Controllers\RegistrationFeeController::class, 'checkStatus'])->name('registration-fee.check');
 
     // Certificates
     Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
@@ -116,6 +117,8 @@ Route::get('/certificate-preview/{certificate?}', [CertificateController::class,
 Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('courses', App\Http\Controllers\Admin\CourseController::class);
+    Route::patch('/courses/{course}/approve', [App\Http\Controllers\Admin\CourseController::class, 'approve'])->name('courses.approve');
+    Route::patch('/courses/{course}/reject', [App\Http\Controllers\Admin\CourseController::class, 'reject'])->name('courses.reject');
     Route::resource('users', App\Http\Controllers\Admin\UserController::class);
     Route::resource('payments', App\Http\Controllers\Admin\PaymentController::class);
 
@@ -125,8 +128,23 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     // Institution Photos
     Route::get('/photos', [App\Http\Controllers\Admin\InstitutionPhotoController::class, 'index'])->name('photos.index');
     Route::post('/photos', [App\Http\Controllers\Admin\InstitutionPhotoController::class, 'store'])->name('photos.store');
+    Route::get('/photos/{photo}/edit', [App\Http\Controllers\Admin\InstitutionPhotoController::class, 'edit'])->name('photos.edit');
     Route::put('/photos/{photo}', [App\Http\Controllers\Admin\InstitutionPhotoController::class, 'update'])->name('photos.update');
     Route::delete('/photos/{photo}', [App\Http\Controllers\Admin\InstitutionPhotoController::class, 'destroy'])->name('photos.destroy');
+
+    // Team Members
+    Route::get('/team', [App\Http\Controllers\Admin\TeamMemberController::class, 'index'])->name('team.index');
+    Route::get('/team/create', [App\Http\Controllers\Admin\TeamMemberController::class, 'create'])->name('team.create');
+    Route::post('/team', [App\Http\Controllers\Admin\TeamMemberController::class, 'store'])->name('team.store');
+    Route::get('/team/{member}/edit', [App\Http\Controllers\Admin\TeamMemberController::class, 'edit'])->name('team.edit');
+    Route::put('/team/{member}', [App\Http\Controllers\Admin\TeamMemberController::class, 'update'])->name('team.update');
+    Route::delete('/team/{member}', [App\Http\Controllers\Admin\TeamMemberController::class, 'destroy'])->name('team.destroy');
+
+    // Testimonials
+    Route::get('/testimonials', [App\Http\Controllers\Admin\TestimonialController::class, 'index'])->name('testimonials.index');
+    Route::get('/testimonials/{testimonial}/edit', [App\Http\Controllers\Admin\TestimonialController::class, 'edit'])->name('testimonials.edit');
+    Route::put('/testimonials/{testimonial}', [App\Http\Controllers\Admin\TestimonialController::class, 'update'])->name('testimonials.update');
+    Route::delete('/testimonials/{testimonial}', [App\Http\Controllers\Admin\TestimonialController::class, 'destroy'])->name('testimonials.destroy');
 
     // Events
     Route::get('/events', [App\Http\Controllers\Admin\EventController::class, 'index'])->name('events.index');
@@ -160,6 +178,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::get('/newsletter', [App\Http\Controllers\Admin\NewsletterController::class, 'index'])->name('newsletter.index');
     Route::post('/newsletter/{subscriber}/toggle', [App\Http\Controllers\Admin\NewsletterController::class, 'toggle'])->name('newsletter.toggle');
     Route::delete('/newsletter/{subscriber}', [App\Http\Controllers\Admin\NewsletterController::class, 'destroy'])->name('newsletter.destroy');
+
+    // Promotions
+    Route::resource('promotions', App\Http\Controllers\Admin\PromotionController::class);
 });
 
 /*
@@ -193,6 +214,9 @@ Route::prefix('instructor')->middleware(['auth', 'instructor'])->name('instructo
     // Assignments
     Route::get('/assignments', [App\Http\Controllers\Instructor\AssignmentController::class, 'index'])->name('assignments.index');
     Route::post('/courses/{course}/assignments', [App\Http\Controllers\Instructor\AssignmentController::class, 'store'])->name('courses.assignments.store');
+    Route::get('/courses/{course}/assignments/{assignment}/edit', [App\Http\Controllers\Instructor\AssignmentController::class, 'edit'])->name('courses.assignments.edit');
+    Route::put('/courses/{course}/assignments/{assignment}', [App\Http\Controllers\Instructor\AssignmentController::class, 'update'])->name('courses.assignments.update');
+    Route::delete('/courses/{course}/assignments/{assignment}', [App\Http\Controllers\Instructor\AssignmentController::class, 'destroy'])->name('courses.assignments.destroy');
     Route::post('/courses/{course}/assignments/{assignment}/submissions/{submission}/grade', [App\Http\Controllers\Instructor\AssignmentController::class, 'grade'])->name('courses.assignments.grade');
 
     Route::get('/submissions', [InstructorDashboardController::class, 'submissions'])->name('submissions');
@@ -269,18 +293,35 @@ Route::prefix('student')->middleware(['auth', 'student'])->name('student.')->gro
     // Reviews
     Route::post('/courses/{course}/reviews', [App\Http\Controllers\Student\ReviewController::class, 'store'])->name('reviews.store');
 
-    // Discussions
-    Route::get('/courses/{course}/discussions', [App\Http\Controllers\Student\DiscussionController::class, 'index'])->name('discussions.index');
-    Route::get('/courses/{course}/discussions/{discussion}', [App\Http\Controllers\Student\DiscussionController::class, 'show'])->name('discussions.show');
-    Route::post('/courses/{course}/discussions', [App\Http\Controllers\Student\DiscussionController::class, 'store'])->name('discussions.store');
-    Route::post('/courses/{course}/discussions/{discussion}/reply', [App\Http\Controllers\Student\DiscussionController::class, 'reply'])->name('discussions.reply');
+    // Testimonials
+    Route::get('/enrollments/{enrollment}/testimonial', [App\Http\Controllers\Student\TestimonialController::class, 'create'])->name('testimonials.create');
+    Route::post('/enrollments/{enrollment}/testimonial', [App\Http\Controllers\Student\TestimonialController::class, 'store'])->name('testimonials.store');
 
-    // Live Sessions
-    Route::get('/courses/{course}/live-sessions', [App\Http\Controllers\Student\LiveSessionController::class, 'index'])->name('live-sessions.index');
-    Route::get('/live-sessions/{session}/join', [App\Http\Controllers\Student\LiveSessionController::class, 'join'])->name('live-sessions.join');
+    // Discussions (moved to shared auth group below)
+    // Live Sessions (moved to shared auth group below)
 
     // Achievements
     Route::get('/achievements', [App\Http\Controllers\Student\AchievementController::class, 'index'])->name('achievements.index');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Shared Course Routes (Students, Instructors, Staff)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    // Discussions
+    Route::get('/courses/{course}/discussions', [App\Http\Controllers\Student\DiscussionController::class, 'index'])->name('student.discussions.index');
+    Route::get('/courses/{course}/discussions/{discussion}', [App\Http\Controllers\Student\DiscussionController::class, 'show'])->name('student.discussions.show');
+    Route::post('/courses/{course}/discussions', [App\Http\Controllers\Student\DiscussionController::class, 'store'])->name('student.discussions.store');
+    Route::post('/courses/{course}/discussions/{discussion}/reply', [App\Http\Controllers\Student\DiscussionController::class, 'reply'])->name('student.discussions.reply');
+    Route::put('/courses/{course}/discussions/{discussion}/replies/{reply}', [App\Http\Controllers\Student\DiscussionController::class, 'updateReply'])->name('student.discussions.replies.update');
+    Route::delete('/courses/{course}/discussions/{discussion}/replies/{reply}', [App\Http\Controllers\Student\DiscussionController::class, 'destroyReply'])->name('student.discussions.replies.destroy');
+
+    // Live Sessions
+    Route::get('/courses/{course}/live-sessions', [App\Http\Controllers\Student\LiveSessionController::class, 'index'])->name('student.live-sessions.index');
+    Route::get('/live-sessions/{session}/join', [App\Http\Controllers\Student\LiveSessionController::class, 'join'])->name('student.live-sessions.join');
+    Route::post('/live-sessions/{session}/leave', [App\Http\Controllers\Student\LiveSessionController::class, 'leave'])->name('student.live-sessions.leave');
 });
 
 /*
@@ -307,11 +348,5 @@ Route::prefix('finance')->middleware(['auth', 'finance'])->name('finance.')->gro
 Route::post('/lenco/webhook', [App\Http\Controllers\Payment\LencoWebhookController::class, 'handle'])->name('lenco.webhook');
 
 // Public Newsletter Subscription
-Route::post('/newsletter/subscribe', function (\Illuminate\Http\Request $request) {
-    $validated = $request->validate(['email' => 'required|email|max:255']);
-    \App\Models\NewsletterSubscriber::updateOrCreate(
-        ['email' => $validated['email']],
-        ['is_active' => true, 'subscribed_at' => now(), 'unsubscribed_at' => null]
-    );
-    return response()->json(['success' => true]);
-})->name('newsletter.subscribe');
+Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe')->middleware('throttle:newsletter');
+Route::get('/newsletter/unsubscribe', [App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');

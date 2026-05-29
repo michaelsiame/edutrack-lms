@@ -126,4 +126,23 @@ class Course extends Model
     {
         return 'ZMW ' . number_format($this->price, 2);
     }
+
+    /**
+     * Get the properly resolved thumbnail image URL.
+     * Handles both external URLs and local storage paths.
+     */
+    public function getThumbnailImageUrlAttribute(): ?string
+    {
+        if (empty($this->thumbnail_url)) {
+            return null;
+        }
+
+        // If it's already a full URL, use it directly
+        if (filter_var($this->thumbnail_url, FILTER_VALIDATE_URL)) {
+            return $this->thumbnail_url;
+        }
+
+        // Otherwise it's a local storage path (e.g. courses/thumbnails/filename.jpg)
+        return asset('storage/' . $this->thumbnail_url);
+    }
 }

@@ -12,7 +12,7 @@ class DashboardController extends Controller
     public function index()
     {
         $enrollments = auth()->user()->enrollments()
-            ->with('course')
+            ->with('course.modules.lessons')
             ->latest()
             ->take(5)
             ->get();
@@ -23,7 +23,27 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('student.dashboard', compact('enrollments', 'certificates'));
+        // Payment summary for dashboard
+        $payments = auth()->user()->payments()
+            ->with('course')
+            ->where('payment_status', 'Completed')
+            ->latest()
+            ->take(4)
+            ->get();
+
+        $totalPaid = auth()->user()->payments()
+            ->where('payment_status', 'Completed')
+            ->sum('amount');
+
+        $balanceDue = auth()->user()->enrollments()
+            ->whereIn('enrollment_status', ['Enrolled', 'In Progress'])
+            ->with('course')
+            ->get()
+            ->sum(fn($e) => max(0, ($e->course?->price ?? 0) - ($e->amount_paid ?? 0)));
+
+        return view('student.dashboard', compact(
+            'enrollments', 'certificates', 'payments', 'totalPaid', 'balanceDue'
+        ));
     }
 
     public function progress()
@@ -80,7 +100,7 @@ class DashboardController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $service = new InvoiceService();
+        $service = app(InvoiceService::class);
 
         // Find or generate invoice for this payment
         $invoice = $payment->invoice;

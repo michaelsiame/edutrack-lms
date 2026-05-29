@@ -1,323 +1,754 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Certificate - {{ $certificate_number ?? 'Preview' }}</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-@page { size: A4 portrait; margin: 0; }
-@media print {
-    body { margin: 0; padding: 0; background: white; }
-    .certificate-page { box-shadow: none !important; margin: 0 !important; }
-}
-.font-script { font-family: 'Great Vibes', cursive; }
-.font-serif { font-family: 'Playfair Display', Georgia, serif; }
-.corner-triangle-tl {
-    width: 0; height: 0;
-    border-top: 40px solid #F26522;
-    border-right: 40px solid transparent;
-}
-.corner-triangle-tr {
-    width: 0; height: 0;
-    border-top: 40px solid #F26522;
-    border-left: 40px solid transparent;
-}
-.corner-triangle-bl {
-    width: 0; height: 0;
-    border-bottom: 40px solid #F26522;
-    border-right: 40px solid transparent;
-}
-.corner-triangle-br {
-    width: 0; height: 0;
-    border-bottom: 40px solid #F26522;
-    border-left: 40px solid transparent;
-}
-.gold-line {
-    height: 1px;
-    background: linear-gradient(to right, transparent, #D4A843, transparent);
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate - {{ $certificate_number ?? 'Preview' }} - EduTrack Computer Training College</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            background: #f5f5f5;
+            font-family: 'Open Sans', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+                width: 210mm;
+                height: 297mm;
+            }
+            .cert-page {
+                box-shadow: none !important;
+                margin: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        .cert-page {
+            width: 210mm;
+            height: 297mm;
+            background: #fff;
+            position: relative;
+            margin: 0 auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+
+        /* Outer orange border */
+        .outer-border {
+            position: absolute;
+            top: 8mm;
+            left: 8mm;
+            right: 8mm;
+            bottom: 8mm;
+            border: 3px solid #f26522;
+        }
+
+        /* Inner blue border */
+        .inner-border {
+            position: absolute;
+            top: 10mm;
+            left: 10mm;
+            right: 10mm;
+            bottom: 10mm;
+            border: 4px solid #1e3a8a;
+        }
+
+        /* Corner decorations */
+        .corner {
+            position: absolute;
+            width: 35mm;
+            height: 35mm;
+            z-index: 5;
+        }
+
+        .corner-tl {
+            top: 10mm;
+            left: 10mm;
+            border-top: 3px solid #f26522;
+            border-left: 3px solid #f26522;
+            background: linear-gradient(135deg, rgba(242,101,34,0.15) 0%, transparent 60%);
+        }
+        .corner-tl::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 25mm solid #f26522;
+            border-bottom: 25mm solid transparent;
+        }
+
+        .corner-tr {
+            top: 10mm;
+            right: 10mm;
+            border-top: 3px solid #f26522;
+            border-right: 3px solid #f26522;
+            background: linear-gradient(-135deg, rgba(242,101,34,0.15) 0%, transparent 60%);
+        }
+        .corner-tr::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            border-right: 25mm solid #f26522;
+            border-bottom: 25mm solid transparent;
+        }
+
+        .corner-bl {
+            bottom: 10mm;
+            left: 10mm;
+            border-bottom: 3px solid #f26522;
+            border-left: 3px solid #f26522;
+            background: linear-gradient(45deg, rgba(242,101,34,0.15) 0%, transparent 60%);
+        }
+        .corner-bl::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-left: 25mm solid #f26522;
+            border-top: 25mm solid transparent;
+        }
+
+        .corner-br {
+            bottom: 10mm;
+            right: 10mm;
+            border-bottom: 3px solid #f26522;
+            border-right: 3px solid #f26522;
+            background: linear-gradient(-45deg, rgba(242,101,34,0.15) 0%, transparent 60%);
+        }
+        .corner-br::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border-right: 25mm solid #f26522;
+            border-top: 25mm solid transparent;
+        }
+
+        /* Main content area */
+        .content {
+            position: absolute;
+            top: 18mm;
+            left: 22mm;
+            right: 22mm;
+            bottom: 18mm;
+            text-align: center;
+            z-index: 10;
+        }
+
+        /* Header logos area */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4mm;
+            position: relative;
+        }
+
+        .logo-left, .logo-right {
+            width: 28mm;
+            height: 28mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* EduTrack Logo (left) */
+        .logo-left .shield {
+            width: 22mm;
+            height: 26mm;
+            background: #1e3a8a;
+            border-radius: 0 0 11mm 11mm;
+            position: relative;
+            border: 2px solid #f26522;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-left .shield::before {
+            content: '';
+            position: absolute;
+            top: -6mm;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18mm;
+            height: 8mm;
+            background: #f26522;
+            border-radius: 9mm 9mm 0 0;
+        }
+        .logo-left .shield-text {
+            color: white;
+            font-size: 7pt;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-top: 2mm;
+            z-index: 2;
+        }
+        .logo-left .shield-sub {
+            color: #f26522;
+            font-size: 5pt;
+            margin-top: 1mm;
+            z-index: 2;
+        }
+        .logo-left .tagline {
+            position: absolute;
+            bottom: -4mm;
+            font-size: 5pt;
+            color: #1e3a8a;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* TEVETA Logo (right) */
+        .logo-right .teveta {
+            text-align: center;
+        }
+        .logo-right .teveta-icon {
+            width: 12mm;
+            height: 12mm;
+            background: #1e3a8a;
+            border-radius: 50%;
+            margin: 0 auto 1mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14pt;
+            font-weight: 800;
+            position: relative;
+        }
+        .logo-right .teveta-icon::after {
+            content: '';
+            position: absolute;
+            top: -2mm;
+            right: -2mm;
+            width: 4mm;
+            height: 4mm;
+            background: #f26522;
+            border-radius: 50%;
+        }
+        .logo-right .teveta-name {
+            font-size: 8pt;
+            font-weight: 800;
+            color: #1e3a8a;
+            letter-spacing: 0.5px;
+            line-height: 1;
+        }
+        .logo-right .teveta-sub {
+            font-size: 5pt;
+            color: #1e3a8a;
+            font-weight: 600;
+        }
+
+        /* College Title */
+        .college-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22pt;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            margin-top: 2mm;
+        }
+        .college-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: 12pt;
+            color: #444;
+            font-style: italic;
+            margin-top: 2mm;
+        }
+
+        /* Decorative divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 4mm 0;
+            gap: 3mm;
+        }
+        .divider-line {
+            width: 40mm;
+            height: 1px;
+            background: #1e3a8a;
+        }
+        .divider-diamond {
+            width: 3mm;
+            height: 3mm;
+            background: #f26522;
+            transform: rotate(45deg);
+        }
+
+        /* Certify text */
+        .certify-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16pt;
+            font-weight: 700;
+            color: #1e3a8a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 6mm 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4mm;
+        }
+        .certify-text .side-decor {
+            display: flex;
+            align-items: center;
+            gap: 2mm;
+        }
+        .certify-text .dot {
+            width: 1.5mm;
+            height: 1.5mm;
+            background: #f26522;
+            transform: rotate(45deg);
+        }
+
+        /* Recipient Name */
+        .recipient-name {
+            font-family: 'Great Vibes', cursive;
+            font-size: 42pt;
+            color: #1a1a1a;
+            margin: 4mm 0;
+            line-height: 1.2;
+        }
+        .name-underline {
+            width: 80mm;
+            height: 1px;
+            background: #f26522;
+            margin: 2mm auto;
+        }
+
+        /* Body text */
+        .body-text {
+            font-size: 12pt;
+            color: #333;
+            line-height: 1.6;
+            margin: 4mm 0;
+        }
+        .body-text .highlight {
+            font-weight: 600;
+        }
+
+        /* Course Title */
+        .course-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26pt;
+            font-weight: 800;
+            color: #1e3a8a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 5mm 0;
+            line-height: 1.2;
+        }
+
+        /* Merit text */
+        .merit-text {
+            font-family: 'Great Vibes', cursive;
+            font-size: 28pt;
+            color: #1a1a1a;
+            margin: 3mm 0;
+        }
+        .merit-underline {
+            width: 50mm;
+            height: 1px;
+            background: #f26522;
+            margin: 2mm auto;
+        }
+
+        /* Date section */
+        .date-section {
+            font-size: 12pt;
+            color: #333;
+            line-height: 1.8;
+            margin: 5mm 0;
+        }
+        .date-section .date-day {
+            font-family: 'Great Vibes', cursive;
+            font-size: 18pt;
+            color: #1a1a1a;
+        }
+        .date-section .date-month {
+            font-family: 'Great Vibes', cursive;
+            font-size: 18pt;
+            color: #1a1a1a;
+        }
+        .date-section .date-year {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18pt;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        /* Signatures area */
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin: 8mm 10mm 0;
+            position: relative;
+        }
+        .signature-block {
+            text-align: center;
+            width: 45mm;
+        }
+        .signature-line {
+            width: 100%;
+            height: 1px;
+            background: #333;
+            margin-bottom: 2mm;
+        }
+        .signature-label {
+            font-size: 9pt;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Center seal */
+        .seal-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 5mm;
+            width: 35mm;
+            height: 45mm;
+        }
+        .seal {
+            width: 30mm;
+            height: 30mm;
+            background: #1e3a8a;
+            border-radius: 50%;
+            border: 2px solid #d4af37;
+            position: relative;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .seal::before {
+            content: '';
+            position: absolute;
+            inset: 2mm;
+            border: 1px solid #d4af37;
+            border-radius: 50%;
+        }
+        .seal-star {
+            color: #d4af37;
+            font-size: 16pt;
+        }
+        .seal-ribbon {
+            position: absolute;
+            bottom: -8mm;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8mm solid transparent;
+            border-right: 8mm solid transparent;
+            border-top: 12mm solid #f26522;
+        }
+        .seal-ribbon::after {
+            content: '';
+            position: absolute;
+            top: -12mm;
+            left: -4mm;
+            width: 0;
+            height: 0;
+            border-left: 4mm solid transparent;
+            border-right: 4mm solid transparent;
+            border-top: 8mm solid #d35400;
+        }
+
+        /* Bottom info box */
+        .info-box {
+            position: absolute;
+            bottom: 22mm;
+            left: 22mm;
+            right: 22mm;
+            border: 2px solid #f26522;
+            border-radius: 8px;
+            padding: 4mm 6mm;
+            display: grid;
+            grid-template-columns: 1fr 1px 1fr;
+            gap: 4mm;
+            background: rgba(255,255,255,0.9);
+        }
+        .info-divider {
+            width: 1px;
+            background: #f26522;
+            height: 100%;
+        }
+        .info-col {
+            display: flex;
+            flex-direction: column;
+            gap: 3mm;
+        }
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 3mm;
+        }
+        .info-icon {
+            width: 8mm;
+            height: 8mm;
+            min-width: 8mm;
+            border: 1.5px solid #1e3a8a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e3a8a;
+            font-size: 10pt;
+        }
+        .info-text {
+            text-align: left;
+        }
+        .info-label {
+            font-size: 7pt;
+            color: #1e3a8a;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .info-value {
+            font-size: 10pt;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        /* Bottom center decoration */
+        .bottom-decor {
+            position: absolute;
+            bottom: 14mm;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 2mm;
+        }
+        .bottom-decor .dot {
+            width: 1.5mm;
+            height: 1.5mm;
+            background: #f26522;
+            transform: rotate(45deg);
+        }
+        .bottom-decor .line {
+            width: 15mm;
+            height: 1px;
+            background: #1e3a8a;
+        }
+
+        /* Action bar */
+        .action-bar {
+            text-align: center;
+            padding: 16px;
+            margin-top: 20px;
+        }
+    </style>
+    <base target="_blank">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body>
 
-<!-- Certificate Page -->
-<div class="certificate-page bg-white relative" style="width: 210mm; height: 297mm; box-shadow: 0 10px 40px rgba(0,0,0,0.15);">
+    <!-- Action Bar -->
+    <div class="action-bar no-print">
+        <a href="{{ route('student.certificates') }}" class="od-btn od-btn-secondary od-btn-sm" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--od-border);color:var(--od-fg);text-decoration:none;font-size:13px;font-weight:500;">
+            <i class="fas fa-arrow-left"></i> Back to Certificates
+        </a>
+        @if(isset($certificate) && $certificate)
+        <a href="{{ route('certificates.download', $certificate) }}" class="od-btn od-btn-primary od-btn-sm" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--od-accent);background:var(--od-accent);color:var(--od-surface);text-decoration:none;font-size:13px;font-weight:500;margin-left:8px;">
+            <i class="fas fa-download"></i> Download PDF
+        </a>
+        @endif
+        <button onclick="window.print()" class="od-btn od-btn-ghost od-btn-sm" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--od-muted);text-decoration:none;font-size:13px;font-weight:500;margin-left:8px;cursor:pointer;">
+            <i class="fas fa-print"></i> Print
+        </button>
+    </div>
 
-    <!-- Outer Orange Border -->
-    <div class="absolute inset-0 border-[3px] border-[#F26522]"></div>
+    <div class="cert-page">
+        <div class="outer-border"></div>
+        <div class="inner-border"></div>
 
-    <!-- Middle Blue Border -->
-    <div class="absolute inset-[6px] border-[2px] border-[#1E3A8A]"></div>
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
 
-    <!-- Corner Decorations -->
-    <div class="corner-triangle-tl absolute top-[6px] left-[6px] z-10"></div>
-    <div class="corner-triangle-tr absolute top-[6px] right-[6px] z-10"></div>
-    <div class="corner-triangle-bl absolute bottom-[6px] left-[6px] z-10"></div>
-    <div class="corner-triangle-br absolute bottom-[6px] right-[6px] z-10"></div>
-
-    <!-- Inner Content -->
-    <div class="absolute inset-[14px] flex flex-col">
-
-        <!-- HEADER -->
-        <div class="flex items-center justify-between px-6 pt-6 pb-2">
-            <!-- Logo -->
-            <div class="w-24 flex-shrink-0">
-                @if(file_exists(public_path('assets/images/logo.png')))
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Edutrack" class="h-20 w-auto">
-                @else
-                <div class="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center">
-                    <span class="text-primary-700 font-bold text-sm">EduTrack</span>
+        <div class="content">
+            <!-- Header with Logos -->
+            <div class="header">
+                <div class="logo-left">
+                    <div style="position: relative;">
+                        <div class="shield">
+                            <div class="shield-text">EduTrack</div>
+                            <div class="shield-sub">Excel Through<br>Education</div>
+                        </div>
+                        <div class="tagline">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
+                    </div>
                 </div>
-                @endif
-            </div>
 
-            <!-- College Name -->
-            <div class="flex-1 text-center px-4">
-                <h1 class="font-serif text-[26px] font-bold text-[#1E3A8A] tracking-wider leading-tight">EDUTRACK COMPUTER</h1>
-                <h1 class="font-serif text-[26px] font-bold text-[#1E3A8A] tracking-wider leading-tight">TRAINING COLLEGE</h1>
-                <div class="flex items-center justify-center gap-1 my-2">
-                    <div class="h-px w-16 bg-[#D4A843]"></div>
-                    <span class="text-[#D4A843] text-xs">&#9670; &#9670; &#9670;</span>
-                    <div class="h-px w-16 bg-[#D4A843]"></div>
+                <div style="flex: 1;">
+                    <div class="college-title">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
+                    <div class="divider">
+                        <div class="divider-line"></div>
+                        <div class="divider-diamond"></div>
+                        <div class="divider-line"></div>
+                    </div>
+                    <div class="college-subtitle">A skill training college</div>
                 </div>
-                <p class="text-[#666666] text-[11px] italic tracking-wide">A skill training college</p>
-            </div>
 
-            <!-- TEVETA Logo -->
-            <div class="w-24 flex-shrink-0 text-right">
-                @if(file_exists(public_path('assets/images/teveta-logo.png')))
-                <img src="{{ asset('assets/images/teveta-logo.png') }}" alt="TEVETA" class="h-16 w-auto ml-auto">
-                @else
-                <div class="w-20 h-16 border border-[#1E3A8A] rounded flex items-center justify-center ml-auto">
-                    <span class="text-[#1E3A8A] font-bold text-xs">TEVETA</span>
-                </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- Decorative line -->
-        <div class="px-8 mb-1">
-            <div class="flex items-center">
-                <div class="flex-1 h-px bg-[#D4A843]"></div>
-                <span class="px-2 text-[#D4A843] text-sm">&#9670;</span>
-                <div class="flex-1 h-px bg-[#D4A843]"></div>
-            </div>
-        </div>
-
-        <!-- CERTIFY LINE -->
-        <div class="text-center py-2">
-            <div class="flex items-center justify-center gap-3">
-                <div class="flex items-center gap-1">
-                    <div class="w-1.5 h-1.5 bg-[#D4A843] rotate-45"></div>
-                    <div class="w-1.5 h-1.5 bg-[#D4A843] rotate-45"></div>
-                </div>
-                <h2 class="font-serif text-[13px] font-bold text-[#1E3A8A] tracking-[3px]">THIS IS TO CERTIFY THAT</h2>
-                <div class="flex items-center gap-1">
-                    <div class="w-1.5 h-1.5 bg-[#D4A843] rotate-45"></div>
-                    <div class="w-1.5 h-1.5 bg-[#D4A843] rotate-45"></div>
+                <div class="logo-right">
+                    <div class="teveta">
+                        <div class="teveta-icon">T</div>
+                        <div class="teveta-name">TEVETA</div>
+                        <div class="teveta-sub">ACCREDITED</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- STUDENT NAME -->
-        <div class="text-center py-1">
-            <span class="font-script text-[52px] text-[#111111] leading-none">{{ $student_name ?? 'Catherine Namakanda' }}</span>
-            <div class="flex items-center justify-center mt-1">
-                <div class="w-48 h-[2px] bg-[#D4A843]"></div>
+            <!-- Certify Statement -->
+            <div class="certify-text">
+                <div class="side-decor">
+                    <div class="dot"></div>
+                    <div class="dot" style="width: 1mm; height: 1mm;"></div>
+                    <div class="dot"></div>
+                </div>
+                THIS IS TO CERTIFY THAT
+                <div class="side-decor">
+                    <div class="dot"></div>
+                    <div class="dot" style="width: 1mm; height: 1mm;"></div>
+                    <div class="dot"></div>
+                </div>
             </div>
-        </div>
 
-        <!-- BODY TEXT -->
-        <div class="text-center py-2">
-            <p class="text-[#333333] text-[11px] leading-relaxed">
+            <!-- Recipient -->
+            <div class="recipient-name">{{ $student_name ?? 'Student Name' }}</div>
+            <div class="name-underline"></div>
+
+            <!-- Body -->
+            <div class="body-text">
                 having satisfied the requirements for the<br>
                 award of the certificate of
-            </p>
-        </div>
-
-        <!-- COURSE TITLE -->
-        <div class="text-center py-1">
-            <h3 class="font-serif text-[28px] font-bold text-[#1E3A8A] uppercase tracking-[1px]">{{ strtoupper($course_title ?? 'GENERAL BASIC COMPUTING') }}</h3>
-        </div>
-
-        <!-- CLASSIFICATION -->
-        @if(($classification ?? 'Pass') !== 'Pass')
-        <div class="text-center py-1">
-            <span class="font-script text-[32px] text-[#111111]">With {{ $classification ?? 'Merit' }}</span>
-            <div class="flex items-center justify-center mt-1 gap-2">
-                <div class="w-12 h-px bg-[#D4A843]"></div>
-                <span class="text-[#D4A843] text-xs">&#9670;</span>
-                <div class="w-12 h-px bg-[#D4A843]"></div>
             </div>
-        </div>
-        @endif
 
-        <!-- GRADUATION DATE -->
-        <div class="text-center py-2">
-            <p class="text-[#333333] text-[11px] leading-relaxed">
+            <!-- Course -->
+            <div class="course-title">{{ strtoupper($course_title ?? 'Course Title') }}</div>
+
+            <!-- Merit -->
+            @if(isset($classification) && $classification && $classification !== 'Pass')
+            <div class="merit-text">With {{ $classification }}</div>
+            <div class="merit-underline"></div>
+            @endif
+
+            <!-- Date -->
+            <div class="date-section">
                 was admitted to the certificate at a Graduation<br>
-                Ceremony held on the
-                <span class="text-[16px] font-bold text-[#1E3A8A] font-serif">&nbsp;{{ $graduation_day ?? '27' }}<sup class="text-[8px]">{{ $graduation_suffix ?? 'th' }}</sup>&nbsp;</span>
-                day of
-                <span class="text-[16px] font-bold text-[#1E3A8A] italic font-serif">&nbsp;{{ $graduation_month ?? 'March' }}&nbsp;</span><br>
-                in the year
-                <span class="text-[20px] font-bold text-[#1E3A8A] font-serif">&nbsp;{{ $graduation_year ?? '2026' }}&nbsp;</span>
-            </p>
-        </div>
-
-        <!-- SIGNATURES + SEAL -->
-        <div class="flex items-end justify-between px-8 py-3">
-            <!-- Left Signatures -->
-            <div class="w-[30%] text-center space-y-6">
-                <div>
-                    <div class="w-full h-px bg-[#333333] mb-1"></div>
-                    <span class="text-[9px] text-[#333333]">Principal</span>
-                </div>
-                <div>
-                    <div class="w-full h-px bg-[#333333] mb-1"></div>
-                    <span class="text-[9px] text-[#333333]">Graduate's Signature</span>
-                </div>
+                Ceremony held on the <span class="date-day">{{ $graduation_day ?? '1' }}<sup>{{ $graduation_suffix ?? 'st' }}</sup></span> day of <span class="date-month">{{ $graduation_month ?? 'January' }}</span><br>
+                in the year <span class="date-year">{{ $graduation_year ?? date('Y') }}</span>
             </div>
 
-            <!-- Seal -->
-            <div class="w-[40%] flex justify-center">
-                <svg width="100" height="130" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Outer scalloped ring -->
-                    <circle cx="50" cy="48" r="46" fill="none" stroke="#C9A227" stroke-width="2" stroke-dasharray="4,2"/>
-                    <!-- Blue circle -->
-                    <circle cx="50" cy="48" r="40" fill="#1E3A8A"/>
-                    <!-- Inner gold ring -->
-                    <circle cx="50" cy="48" r="36" fill="none" stroke="#C9A227" stroke-width="2"/>
-                    <!-- Stars on ring -->
-                    <text x="50" y="16" text-anchor="middle" fill="#C9A227" font-size="8">&#9733;</text>
-                    <text x="50" y="84" text-anchor="middle" fill="#C9A227" font-size="8">&#9733;</text>
-                    <text x="18" y="50" text-anchor="middle" fill="#C9A227" font-size="8">&#9733;</text>
-                    <text x="82" y="50" text-anchor="middle" fill="#C9A227" font-size="8">&#9733;</text>
-                    <!-- Laurel wreath left -->
-                    <path d="M22,48 Q30,30 40,28" fill="none" stroke="#C9A227" stroke-width="1.5"/>
-                    <path d="M24,52 Q32,35 42,32" fill="none" stroke="#C9A227" stroke-width="1"/>
-                    <path d="M22,48 Q30,66 40,68" fill="none" stroke="#C9A227" stroke-width="1.5"/>
-                    <path d="M24,44 Q32,61 42,64" fill="none" stroke="#C9A227" stroke-width="1"/>
-                    <!-- Laurel wreath right -->
-                    <path d="M78,48 Q70,30 60,28" fill="none" stroke="#C9A227" stroke-width="1.5"/>
-                    <path d="M76,52 Q68,35 58,32" fill="none" stroke="#C9A227" stroke-width="1"/>
-                    <path d="M78,48 Q70,66 60,68" fill="none" stroke="#C9A227" stroke-width="1.5"/>
-                    <path d="M76,44 Q68,61 58,64" fill="none" stroke="#C9A227" stroke-width="1"/>
-                    <!-- Center star -->
-                    <polygon points="50,34 53,44 64,44 55,51 58,62 50,55 42,62 45,51 36,44 47,44" fill="#C9A227"/>
-                    <!-- Ribbon top bar -->
-                    <rect x="32" y="88" width="36" height="8" rx="2" fill="#F26522"/>
-                    <!-- Left ribbon -->
-                    <polygon points="32,96 44,96 38,126 24,116" fill="#F26522"/>
-                    <!-- Right ribbon -->
-                    <polygon points="68,96 56,96 62,126 76,116" fill="#F26522"/>
-                    <!-- Ribbon details -->
-                    <line x1="38" y1="96" x2="32" y2="122" stroke="#D4520E" stroke-width="1" opacity="0.5"/>
-                    <line x1="62" y1="96" x2="68" y2="122" stroke="#D4520E" stroke-width="1" opacity="0.5"/>
-                </svg>
-            </div>
-
-            <!-- Right Signatures -->
-            <div class="w-[30%] text-center space-y-6">
-                <div>
-                    <div class="w-full h-px bg-[#333333] mb-1"></div>
-                    <span class="text-[9px] text-[#333333]">Director</span>
+            <!-- Signatures -->
+            <div class="signatures">
+                <div class="signature-block">
+                    <div class="signature-line"></div>
+                    <div class="signature-label">Principal</div>
+                    <div style="margin-top: 6mm;">
+                        <div class="signature-line"></div>
+                        <div class="signature-label">Graduate's Signature</div>
+                    </div>
                 </div>
-                <div>
-                    <div class="w-full h-px bg-[#333333] mb-1"></div>
-                    <span class="text-[9px] text-[#333333]">Graduate's I.D. No.</span>
-                </div>
-            </div>
-        </div>
 
-        <!-- BOTTOM INFO BAR -->
-        <div class="mx-6 mb-4">
-            <div class="border border-[#D4A843] rounded-lg bg-[#FFFBF5] p-4">
-                <div class="flex justify-between">
-                    <!-- Left Column -->
-                    <div class="w-[46%] space-y-3">
-                        <!-- Student Number -->
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full border-2 border-[#1E3A8A] flex items-center justify-center flex-shrink-0">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="1.5">
-                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                                    <path d="M6 12v5c0 1.5 2.5 3 6 3s6-1.5 6-3v-5"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="text-[7px] font-bold text-[#1E3A8A] uppercase tracking-wide">Student Number</div>
-                                <div class="text-[13px] font-bold text-black">{{ $student_number ?? '26Edu249580' }}</div>
-                            </div>
-                        </div>
-                        <!-- Certificate Number -->
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full border-2 border-[#1E3A8A] flex items-center justify-center flex-shrink-0">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="1.5">
-                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                                    <path d="M3 9h18"/>
-                                    <path d="M9 21V9"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="text-[7px] font-bold text-[#1E3A8A] uppercase tracking-wide">Certificate Number</div>
-                                <div class="text-[13px] font-bold text-black">{{ $certificate_number ?? 'NRC 2495807/1/1' }}</div>
-                            </div>
+                <div class="seal-container">
+                    <div class="seal">
+                        <div style="color: #d4af37; font-size: 8pt; text-align: center; line-height: 1.2;">
+                            &#9733;<br>
+                            <span style="font-size: 6pt;">EXCELLENCE</span>
                         </div>
                     </div>
+                    <div class="seal-ribbon"></div>
+                </div>
 
-                    <!-- Center Divider -->
-                    <div class="w-[8%] flex items-center justify-center">
-                        <div class="flex flex-col items-center">
-                            <div class="w-px h-4 bg-[#D4A843]"></div>
-                            <span class="text-[#D4A843] text-xs py-0.5">&#9670;</span>
-                            <div class="w-px h-4 bg-[#D4A843]"></div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column -->
-                    <div class="w-[46%] space-y-3">
-                        <!-- Date of Graduation -->
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full border-2 border-[#1E3A8A] flex items-center justify-center flex-shrink-0">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="1.5">
-                                    <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                    <path d="M16 2v4M8 2v4M3 10h18"/>
-                                    <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="text-[7px] font-bold text-[#1E3A8A] uppercase tracking-wide">Date of Graduation</div>
-                                <div class="text-[13px] font-bold text-black">{{ ($graduation_day ?? '27') . ($graduation_suffix ?? 'th') . ' ' . ($graduation_month ?? 'March') . ' ' . ($graduation_year ?? '2026') }}</div>
-                            </div>
-                        </div>
-                        <!-- Course -->
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full border-2 border-[#1E3A8A] flex items-center justify-center flex-shrink-0">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="1.5">
-                                    <circle cx="12" cy="8" r="6"/>
-                                    <path d="M15.5 6.5L12 10l-1.5-1.5"/>
-                                    <path d="M12 14v4M8 18h8"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="text-[7px] font-bold text-[#1E3A8A] uppercase tracking-wide">Course</div>
-                                <div class="text-[13px] font-bold text-black">{{ $course_title ?? 'General Basic Computing' }}</div>
-                            </div>
-                        </div>
+                <div class="signature-block">
+                    <div class="signature-line"></div>
+                    <div class="signature-label">Director</div>
+                    <div style="margin-top: 6mm;">
+                        <div class="signature-line"></div>
+                        <div class="signature-label">Graduate's I.D. No.</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Footer Diamonds -->
-        <div class="text-center pb-4">
-            <span class="text-[#D4A843] text-[10px] tracking-[4px]">&#9670; &#9670; &#9670;</span>
+        <!-- Bottom Info Box -->
+        <div class="info-box">
+            <div class="info-col">
+                <div class="info-row">
+                    <div class="info-icon">&#127891;</div>
+                    <div class="info-text">
+                        <div class="info-label">Student Number</div>
+                        <div class="info-value">{{ $student_number ?? 'N/A' }}</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">&#128196;</div>
+                    <div class="info-text">
+                        <div class="info-label">Certificate Number</div>
+                        <div class="info-value">{{ $certificate_number ?? 'N/A' }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-divider"></div>
+
+            <div class="info-col">
+                <div class="info-row">
+                    <div class="info-icon">&#128197;</div>
+                    <div class="info-text">
+                        <div class="info-label">Date of Graduation</div>
+                        <div class="info-value">{{ ($graduation_day ?? '1') . ($graduation_suffix ?? 'st') . ' ' . ($graduation_month ?? 'January') . ' ' . ($graduation_year ?? date('Y')) }}</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">&#127942;</div>
+                    <div class="info-text">
+                        <div class="info-label">Course</div>
+                        <div class="info-value">{{ $course_title ?? 'N/A' }}</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <div class="bottom-decor">
+            <div class="line"></div>
+            <div class="dot"></div>
+            <div class="dot" style="width: 2mm; height: 2mm;"></div>
+            <div class="dot"></div>
+            <div class="line"></div>
+        </div>
     </div>
-</div>
-
 </body>
 </html>

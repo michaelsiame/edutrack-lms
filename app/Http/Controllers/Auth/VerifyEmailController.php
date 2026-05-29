@@ -71,11 +71,11 @@ class VerifyEmailController extends Controller
             'email_verification_expires' => now()->addHours(24),
         ]);
 
-        // TODO: Send verification email
-        // For now, just show the token in development
-        if (app()->environment('local', 'development')) {
-            return back()->with('success', 'Verification link: ' . route('verification.verify', ['token' => $token]));
-        }
+        $emailService = app(\App\Services\EmailQueueService::class);
+        $verificationUrl = route('verification.verify', ['token' => $token]);
+        $subject = 'Verify your email address';
+        $body = view('emails.verify-email', ['user' => $user, 'token' => $token])->render();
+        $emailService->queue($user->email, $subject, $body);
 
         return back()->with('success', 'A new verification link has been sent to your email.');
     }

@@ -10,22 +10,31 @@ class LencoTransaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'lenco_transaction_id',
+        'reference',
         'payment_id',
+        'user_id',
         'enrollment_id',
+        'course_id',
         'amount',
         'currency',
+        'virtual_account_number',
+        'virtual_account_bank',
+        'virtual_account_name',
+        'lenco_account_id',
+        'lenco_transaction_id',
         'status',
         'payment_method',
         'phone_number',
-        'lenco_response',
-        'processed_at',
+        'paid_at',
+        'expires_at',
+        'metadata',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'lenco_response' => 'array',
-        'processed_at' => 'datetime',
+        'paid_at' => 'datetime',
+        'expires_at' => 'datetime',
+        'metadata' => 'array',
     ];
 
     public function payment()

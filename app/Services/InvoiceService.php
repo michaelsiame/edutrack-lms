@@ -14,12 +14,13 @@ class InvoiceService
         $invoiceNumber = 'INV-' . now()->format('Y') . '-' . str_pad(Invoice::count() + 1, 5, '0', STR_PAD_LEFT);
 
         $amount = $payment->amount;
-        $discount = 0;
-        $total = $amount;
+        $discount = $payment->discount_amount ?? 0;
+        $total = max(0, $amount - $discount);
 
-        if ($payment->course && $payment->course->discount_price && $payment->course->discount_price < $payment->course->price) {
+        // Only apply course-level discount for full payments
+        if ($discount <= 0 && $payment->course && $payment->course->discount_price && $payment->course->discount_price < $payment->course->price) {
             $discount = $payment->course->price - $payment->course->discount_price;
-            $total = $amount - $discount;
+            $total = max(0, $amount - $discount);
         }
 
         return Invoice::create([

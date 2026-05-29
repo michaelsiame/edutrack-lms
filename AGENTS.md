@@ -3,10 +3,10 @@
 
 ## Project Overview
 
-Edutrack LMS is a **custom PHP web application** (not based on Laravel, Symfony, or any major framework) built for Edutrack Computer Training College, a TEVETA-registered vocational training institution based in Kalomo, Zambia. The system manages online courses, student enrollments, payments, certificates, live virtual classes, assignments, quizzes, and discussions.
+Edutrack LMS is a **Laravel 10.x web application** for Edutrack Computer Training College, a TEVETA-registered vocational training institution based in Kalomo, Zambia. The system manages online courses, student enrollments, payments, certificates, live virtual classes, assignments, quizzes, and discussions.
 
 **Key Facts:**
-- **Type**: Custom PHP 8.0+ web application with server-side rendering
+- **Type**: Laravel 10.x monolithic web application with server-side rendering (Blade) and a small REST API (Sanctum)
 - **Language**: English (all code comments and documentation)
 - **Timezone**: Africa/Lusaka (CAT, UTC+2)
 - **Currency**: Zambian Kwacha (ZMW)
@@ -20,38 +20,23 @@ Edutrack LMS is a **custom PHP web application** (not based on Laravel, Symfony,
 
 | Component | Technology |
 |-----------|------------|
-| **Backend** | PHP 8.0+ |
+| **Backend** | PHP 8.1+, Laravel 10.x |
 | **Database** | MySQL 5.7+ / MariaDB 10.3+ |
-| **Frontend** | Tailwind CSS (CDN), Vanilla JavaScript, Font Awesome 6.4.0, Alpine.js, Chart.js |
-| **Package Manager** | Composer |
-| **Email** | PHPMailer with Gmail SMTP |
+| **Frontend** | Tailwind CSS 3.x, Alpine.js, Vite |
+| **Package Manager** | Composer, npm |
+| **Auth** | Laravel session + Laravel Sanctum (API) + Google OAuth (Laravel Socialite) |
+| **Email** | PHPMailer with Gmail SMTP; email queue via `email_queue` table |
 | **PDF Generation** | TCPDF |
-| **Session Storage** | File-based (in `storage/sessions/`) |
+| **QR Codes** | SimpleSoftwareIO Simple QR Code |
 | **Payment Gateway** | Lenco (primary), MTN Mobile Money, Airtel Money, Zamtel Kwacha, Bank Transfer |
 | **Live Video** | Jitsi Meet |
-| **Auth** | Session-based + JWT for API |
+| **HTML Sanitization** | ezyang/htmlpurifier |
 
 ### Composer Dependencies (`composer.json`)
-```json
-{
-    "require": {
-        "php": ">=8.0",
-        "google/apiclient": "^2.18",
-        "phpmailer/phpmailer": "^6.8",
-        "tecnickcom/tcpdf": "^6.6"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "Edutrack\\": "src/"
-        }
-    }
-}
-```
+Key runtime dependencies include `laravel/framework ^10.0`, `laravel/sanctum ^3.2`, `laravel/socialite ^5.27`, `phpmailer/phpmailer ^6.8`, `tecnickcom/tcpdf ^6.6`, `google/apiclient ^2.18`, `guzzlehttp/guzzle ^7.2`, `simplesoftwareio/simple-qrcode ^4.2`, and `ezyang/htmlpurifier ^4.19`.
 
-**Important:** There is no `package.json` or NPM build step. Tailwind CSS is loaded via CDN. The `composer.lock` is committed for consistent deployments.
+### npm Dependencies (`package.json`)
+Dev dependencies include `vite ^5.0.0`, `tailwindcss ^3.4.0`, `alpinejs ^3.15.12`, `laravel-vite-plugin ^1.0.0`, `autoprefixer ^10.4.2`, and `postcss ^8.4.31`.
 
 ---
 
@@ -59,174 +44,92 @@ Edutrack LMS is a **custom PHP web application** (not based on Laravel, Symfony,
 
 ```
 edutrack-lms/
-├── composer.json              # PHP dependencies
-├── composer.lock              # Locked dependency versions (committed)
-├── .env                       # Environment configuration (NEVER commit)
-├── .htaccess                  # Root Apache rewrite: forwards all requests to public/
-│
-├── config/                    # Configuration files
-│   ├── app.php                # App settings, brand colors, TEVETA config, features
-│   ├── database.php           # Database connection config
-│   ├── mail.php               # SMTP configuration
-│   └── payment.php            # Payment gateway settings
-│
+├── app/                           # Application logic
+│   ├── Console/Commands/          # Custom Artisan commands (4 commands)
+│   ├── Exceptions/                # Exception handler
+│   ├── Http/
+│   │   ├── Controllers/           # 49 controllers (Admin, Instructor, Student, Auth, API, Finance)
+│   │   ├── Middleware/            # 11 middleware (role-based + Laravel defaults)
+│   │   └── Kernel.php             # HTTP kernel with custom middleware aliases
+│   ├── Jobs/                      # 3 queued jobs (email sending)
+│   ├── Models/                    # 54 Eloquent models
+│   ├── Policies/                  # CoursePolicy
+│   ├── Providers/                 # App, Auth, Event, Route service providers
+│   ├── Services/                  # 7 business-logic services
+│   └── helpers.php                # Global `setting()` helper
+├── bootstrap/                     # Laravel bootstrap files
+├── config/                        # Laravel configuration files (15 files)
 ├── database/
-│   └── complete_lms_schema.sql # Full database schema dump
-│
-├── migrations/                # Incremental SQL migration files
-│   ├── 002_comprehensive_fixes.sql
-│   ├── 003_add_google_id_to_users.sql
-│   ├── 004_add_unique_constraints.sql
-│   ├── add_lenco_collections_table.sql
-│   └── ... (16 total migration files)
-│
-├── cron/                      # Scheduled task scripts (CLI-only, secret key for web)
-│   ├── process-emails.php     # Processes email_queue every 5 minutes
-│   └── session-reminders.php  # Live session reminders (30min, 5min, start)
-│
-├── public/                    # Web document root
-│   ├── .htaccess              # Apache rules: pretty URLs, security headers
-│   ├── index.php              # Homepage
-│   ├── assets/                # CSS, JS, images, fonts, CSV templates
-│   ├── uploads/               # User-generated content (avatars, certificates, submissions, etc.)
-│   ├── api/                   # REST API endpoints (30+ files)
-│   ├── admin/                 # Admin panel pages and handlers
-│   ├── instructor/            # Instructor dashboard pages
-│   ├── student/               # Student-specific pages
-│   └── actions/               # Form action handlers (lesson CRUD, quiz submit, etc.)
-│
-├── src/                       # Application source code
-│   ├── bootstrap.php          # Central initialization file
-│   ├── api/
-│   │   └── ApiBase.php        # Abstract base class for all API endpoints
-│   ├── classes/               # Domain model classes (34 PHP classes)
-│   │   ├── User.php
-│   │   ├── Course.php
-│   │   ├── Enrollment.php
-│   │   ├── Payment.php
-│   │   ├── Lenco.php          # Lenco payment gateway integration
-│   │   ├── Certificate.php
-│   │   ├── Email.php
-│   │   ├── EmailNotificationService.php
-│   │   ├── Lesson.php
-│   │   ├── Module.php
-│   │   ├── Quiz.php
-│   │   ├── Assignment.php
-│   │   ├── LiveSession.php
-│   │   ├── Notification.php
-│   │   ├── GoogleDriveService.php
-│   │   └── ... (and more)
-│   ├── includes/              # Core functionality files
-│   │   ├── config.php         # Env loader, constants, helper functions (url, asset, redirect)
-│   │   ├── database.php       # Singleton Database class (PDO wrapper)
-│   │   ├── security.php       # CSRF, password hashing, encryption, rate limiting
-│   │   ├── validation.php     # Input validation helpers
-│   │   ├── functions.php      # Core helper functions
-│   │   ├── helpers.php        # Additional helpers
-│   │   ├── auth.php           # Authentication functions (register, login, session)
-│   │   ├── email.php          # Email helper functions
-│   │   ├── security-headers.php # HTTP security headers
-│   │   └── stats.php          # Statistics helpers
-│   ├── middleware/            # Access control middleware
-│   │   ├── authenticate.php   # Requires login
-│   │   ├── admin-only.php     # Admin role required
-│   │   ├── instructor-only.php
-│   │   ├── finance-only.php
-│   │   └── enrolled-only.php  # Must be enrolled in course
-│   ├── mail/                  # Email template files (PHP-based HTML templates)
-│   └── templates/             # Reusable view components
-│       ├── header.php
-│       ├── footer.php
-│       ├── admin-header.php
-│       ├── admin-sidebar.php
-│       ├── instructor-header.php
-│       ├── instructor-footer.php
-│       ├── alerts.php
-│       ├── breadcrumbs.php
-│       └── navigation.php
-│
-├── storage/                   # Writable storage (must be 755)
-│   ├── cache/                 # Application cache
-│   ├── logs/                  # Error and access logs
-│   └── sessions/              # PHP session files
-│
-├── course_materials/          # Static course content (PPTX, PDFs, Python exercises)
-├── docs/                      # Project documentation (code reviews, plans, etc.)
-└── scripts/tools/             # Utility scripts
+│   ├── factories/                 # Model factories
+│   ├── migrations/                # 77 migration files
+│   ├── seeders/                   # 18 seeders + DatabaseSeeder
+│   └── complete_lms_schema.sql    # Full schema dump for fresh installs
+├── public/                        # Web document root
+│   ├── assets/                    # Static CSS, JS, images, fonts, Font Awesome
+│   ├── build/                     # Compiled Vite assets (manifest.json)
+│   ├── uploads/                   # User-generated content (avatars, certificates, submissions, etc.)
+│   └── index.php                  # Laravel entry point
+├── resources/
+│   ├── css/app.css                # Tailwind CSS entry (@tailwind directives)
+│   ├── js/app.js                  # Alpine.js entry
+│   └── views/                     # 142 Blade templates
+├── routes/
+│   ├── api.php                    # Sanctum-protected REST API routes
+│   └── web.php                    # Web routes (340 lines)
+├── storage/                       # Logs, sessions, cache, app uploads
+├── tests/                         # Empty (Feature/ and Unit/ directories exist)
+├── .env / .env.example            # Environment configuration
+├── composer.json / composer.lock  # PHP dependencies
+├── package.json / package-lock.json # Node dependencies
+├── vite.config.js                 # Vite build configuration
+├── artisan                        # Laravel CLI entry point
+└── README.md                      # Human-readable project overview
 ```
 
 ---
 
 ## Architecture Patterns
 
-### 1. Bootstrap Initialization
-Every PHP file that is not an API endpoint MUST include the bootstrap file:
-```php
-require_once '../src/bootstrap.php';
-```
+### 1. MVC with Service Layer
+Controllers handle HTTP concerns and delegate business logic to **Services** in `app/Services/`:
+- `CertificateService` — PDF generation, certificate numbering, verification codes
+- `LencoPaymentService` — Payment initialization, webhook handling, polling, status mapping
+- `EmailQueueService` — Queued email dispatch via `email_queue` table
+- `InvoiceService` — Invoice generation
+- `PaymentVerificationService` — Manual payment verification
+- `LessonExportService` — Lesson content export
+- `HtmlSanitizer` — Input sanitization with HTMLPurifier
 
-This loads in order:
-- Composer autoloader
-- Security headers
-- `includes/config.php` (env vars, constants)
-- `includes/database.php` (Database singleton)
-- `includes/security.php` (CSRF, password functions)
-- `includes/validation.php`
-- `includes/functions.php`
-- `includes/helpers.php`
-- `includes/auth.php`
-- `templates/alerts.php`
-- Class autoloader for `src/classes/`
-- Session initialization
-- CSRF token generation
-- Session validation
+### 2. Eloquent Models
+54 models in `app/Models/` follow standard Laravel conventions. Key models:
+- `User` — Authenticatable with roles, soft deletes, `password_hash` field (hashed via bcrypt)
+- `Course` — Soft deletes, scopes `published()` and `featured()`, formatted price accessor
+- `Enrollment` — Tracks student progress, payment status, certificate blocking
+- `Payment` / `LencoTransaction` / `LencoWebhookLog` — Payment pipeline
+- `Certificate` — TEVETA-accredited certificates with verification codes
+- `Setting` / `SystemSetting` — Dual setting systems (new settings table + legacy system_settings)
 
-### 2. Database Access Pattern
-Singleton `Database` class with PDO (in `src/includes/database.php`):
-```php
-$db = Database::getInstance();
-$results = $db->fetchAll("SELECT * FROM courses WHERE status = ?", ['published']);
-```
+### 3. Role-Based Middleware
+Custom middleware aliases registered in `app/Http/Kernel.php`:
+- `admin` — Super Admin or Admin (roles 1 or 2)
+- `instructor` — Instructor role (3)
+- `finance` — Finance role (6)
+- `student` — Student role (4)
+- `enrolled` — Must be enrolled in the specific course
 
-The class provides:
-- `query($sql, $params)` - prepared statements
-- `fetchAll($sql, $params)`
-- `fetchOne($sql, $params)`
-- `fetchColumn($sql, $params)`
-- `insert($table, $data)` - with identifier validation
-- `update($table, $data, $where, $whereParams)`
-- `delete($table, $where, $params)`
-- `count($table, $where, $params)`
-- `exists($table, $where, $params)`
-- `beginTransaction()`, `commit()`, `rollback()`
-- Auto-reconnect on "MySQL server has gone away" (error 2006)
+The `User` model provides convenience methods: `isAdmin()`, `isInstructor()`, `isFinance()`, `isStudent()`, `hasRole(int)`, `isEnrolledIn(int)`.
 
-A global `$pdo` is also available for backward compatibility: `$pdo = $db->getConnection();`
+### 4. Database Pattern
+- **Migrations**: 77 files in `database/migrations/`. The project also provides `database/complete_lms_schema.sql` for fresh installations.
+- **Seeders**: 18 seeders including demo data and a `MigrateLegacyData` seeder for migrating from the old custom PHP schema (`edutrack_legacy` database).
+- All queries use Eloquent or Query Builder (prepared statements).
 
-### 3. Class-Based Models
-Domain models in `src/classes/` use active-record-style loading:
-- Constructor accepts an optional ID and auto-loads from DB
-- Static `find($id)` and `findByXxx()` methods
-- Classes observed: `User`, `Course`, `Enrollment`, `Payment`, `Lenco`, `Certificate`, `Email`, `EmailNotificationService`, `Lesson`, `Module`, `Quiz`, `Assignment`, `LiveSession`, `Notification`, `GoogleDriveService`, `FileUpload`, `InstitutionPhoto`, `Instructor`, `Invoice`, `PaymentPlan`, `Progress`, `Question`, `RegistrationFee`, `Review`, `Statistics`, `Submission`, `Announcement`, `Badge`, `Category`, `Discussion`, `Event`, `LessonResource`
+### 5. Route Organization
+- `routes/web.php`: 340 lines. Public pages, auth (session + Google OAuth), role-prefixed dashboards (`/admin`, `/instructor`, `/student`, `/finance`), and the Lenco webhook endpoint.
+- `routes/api.php`: 45 lines. Sanctum-protected API for courses, enrollments, progress, certificates, notifications, and quizzes. Plus public certificate verification and promotion validation.
 
-### 4. Middleware Pattern
-Role-based access control in `src/middleware/`:
-```php
-require_once '../src/middleware/authenticate.php';
-require_once '../src/middleware/admin-only.php';
-```
-
-Middleware files are self-contained and load their own dependencies (they do not assume bootstrap has run).
-
-### 5. API Pattern
-API endpoints in `public/api/` typically extend `ApiBase` (in `src/api/ApiBase.php`), which provides:
-- JSON response handling
-- Request data parsing (GET, POST, JSON, form-data)
-- Authentication (JWT Bearer token or session)
-- CORS handling
-- Standard response methods: `successResponse()`, `errorResponse()`, `validationErrorResponse()`, `notFoundResponse()`, `forbiddenResponse()`
-- Validation helper: `validate(['field' => 'required|email|min:3'])`
-- Role checks: `requireRole()`, `requireAdmin()`, `requireInstructor()`
+### 6. Frontend Build
+Vite compiles `resources/css/app.css` and `resources/js/app.js` into `public/build/`. Tailwind CSS is processed via PostCSS. Alpine.js handles lightweight frontend interactivity.
 
 ---
 
@@ -236,78 +139,40 @@ Roles are stored in the `roles` table and linked via `user_roles`:
 
 | Role | ID | Capabilities |
 |------|-----|--------------|
-| **Admin** | 1 | Full system access, user management, financial reports, settings |
-| **Instructor** | 2 | Create/edit courses, grade assignments, view analytics, manage live sessions |
-| **Finance** | 3 | Manage payments, invoices, financial reports |
-| **Student** | 4 | Enroll in courses, take lessons, submit assignments, take quizzes |
-
-Role checks in code:
-- `isAdmin()` - global function in `config.php`
-- `$user->hasRole('admin')` - method on User class
-- `$_SESSION['user_role']` - stored in session
-
----
-
-## Database Schema
-
-The complete schema is in `database/complete_lms_schema.sql` (3,800+ lines, 50+ tables/views). Key tables:
-
-| Table | Purpose |
-|-------|---------|
-| `users` | Core user accounts |
-| `user_profiles` | Extended user information |
-| `user_roles` | Role assignments |
-| `students` | Student-specific records |
-| `instructors` | Instructor records linked to users |
-| `courses` | Course content and metadata |
-| `course_categories` | Course categorization |
-| `modules` | Course modules |
-| `lessons` | Individual lessons |
-| `lesson_progress` | Student lesson completion tracking |
-| `lesson_resources` | Files attached to lessons |
-| `enrollments` | Student course enrollments |
-| `enrollment_payment_plans` | Payment plans per enrollment |
-| `payments` / `transactions` | Payment records |
-| `lenco_transactions` | Lenco gateway transactions |
-| `lenco_webhook_logs` | Lenco webhook audit trail |
-| `certificates` | Issued certificates |
-| `assignments` / `assignment_submissions` | Coursework |
-| `quizzes` / `questions` / `quiz_attempts` / `quiz_answers` | Quiz system |
-| `live_sessions` / `live_session_attendance` | Virtual class sessions |
-| `discussions` / `discussion_replies` | Course discussions |
-| `announcements` | System/course announcements |
-| `notifications` | In-app notifications |
-| `email_queue` / `email_templates` | Email queue system |
-| `badges` / `student_achievements` | Gamification |
-| `activity_logs` | Audit trail |
-| `registration_fees` | Registration fee payments |
-| `v_student_balances` | Database view for student balances |
+| **Super Admin** | 1 | Full system access |
+| **Admin** | 2 | Administrative access (users, courses, payments, settings) |
+| **Instructor** | 3 | Create/edit courses, grade assignments, manage live sessions, view analytics |
+| **Student** | 4 | Enroll, take lessons, submit assignments, take quizzes |
+| **Content Creator** | 5 | Create course content |
+| **Finance** | 6 | Manage payments, invoices, financial reports |
 
 ---
 
 ## Configuration
 
 ### Environment Variables (`.env`)
-The `.env` file is parsed manually in `src/includes/config.php` (no DotEnv library). Key variables:
+Standard Laravel `.env` with Edutrack-specific additions:
 
 ```bash
 # Application
+APP_NAME="Edutrack LMS"
 APP_ENV=production|development
 APP_DEBUG=false|true
 APP_URL=https://edutrackzambia.com
 APP_TIMEZONE=Africa/Lusaka
+APP_CURRENCY=ZMW
+APP_LOCALE=en
 
 # Database
-DB_HOST=localhost
-DB_NAME=edutrack_lms
-DB_USER=root
-DB_PASS=secret
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=edutrack-lms
+DB_USERNAME=root
+DB_PASSWORD=
 
-# Security (generate new for production)
-ENCRYPTION_KEY="..."
-JWT_SECRET="..."
-
-# Email (Gmail SMTP)
+# Mail (Gmail SMTP)
+MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USERNAME=edutrackzambia@gmail.com
@@ -316,105 +181,98 @@ MAIL_PASSWORD="app_specific_password"
 # Google OAuth
 GOOGLE_CLIENT_ID="..."
 GOOGLE_CLIENT_SECRET="..."
+GOOGLE_REDIRECT_URI="..."
 
 # Payment (Lenco)
-LENCO_SANDBOX_API_KEY="..."
-LENCO_SANDBOX_SECRET_KEY="..."
-LENCO_LIVE_API_KEY="..."
-LENCO_LIVE_SECRET_KEY="..."
+LENCO_API_KEY="..."
+LENCO_SECRET_KEY="..."
 LENCO_WEBHOOK_SECRET="..."
-
-# Cron
-CRON_SECRET_KEY="change_this_secret"
 ```
 
 ### Config Files (`config/`)
-- `app.php` - Returns a PHP array with app settings, colors, TEVETA config, video platforms, Jitsi Meet, session, security, rate limiting, pagination.
-- `database.php` - Returns a PHP array with connection settings and backup config.
-- `mail.php` - Returns a PHP array with SMTP/sendmail/log mailers, templates, rate limiting.
-- `payment.php` - Returns a PHP array with Lenco, MTN, Airtel, Zamtel, bank transfer settings.
-
----
-
-## Security Considerations
-
-### Implemented Protections
-- **CSRF Tokens**: All forms require `csrf_token` field. Use `csrfField()` to generate HTML, `verifyCsrfToken()` or `requireCsrfToken()` to validate.
-- **Rate Limiting**: 5 login attempts per 15 minutes (configurable).
-- **Password Requirements**: Min 8 chars, uppercase, number required (configurable).
-- **Password Hashing**: `password_hash()` with `PASSWORD_DEFAULT`.
-- **Encryption**: AES-256 for sensitive data.
-- **JWT**: For API authentication (`JWT_SECRET` required).
-- **Session Security**: HttpOnly, Secure, SameSite=Lax cookies. Session lifetime default 7200 seconds.
-- **SQL Injection**: All queries use prepared statements. The `Database` class validates table/column names for `insert()`/`update()`/`delete()`.
-- **XSS Protection**: Output escaping with `htmlspecialchars()` where implemented.
-- **File Upload Protection**: Allowed extensions whitelist, max size limits, PHP execution disabled in uploads via `.htaccess`.
-
-### Security Headers (`src/includes/security-headers.php` and `public/.htaccess`)
-- X-Frame-Options: DENY
-- X-Content-Type-Options: nosniff
-- X-XSS-Protection: 1; mode=block
-- Referrer-Policy: strict-origin-when-cross-origin
-
-### `.htaccess` Protections
-- `public/.htaccess` denies access to `.env`, `.json`, `.lock`, `.md`, `.sql`, `.sqlite`
-- Denies PHP execution in `/uploads/`
-- Blocks direct access to `/vendor/`, `/src/`, `/config/`, `/database/`, `/migrations/`, `/cron/`
-
-### Important Security Notes
-1. **Delete `public/install.php` after installation** (if present).
-2. **Protect `.env` file** - contains credentials. It is blocked by `.htaccess` but verify server config.
-3. **Secure `storage/` directory** - contains logs and sessions. Must be writable (755) but outside web root access.
-4. **Regenerate keys** in production (`ENCRYPTION_KEY`, `JWT_SECRET`, `CRON_SECRET_KEY`).
-5. **Google Drive folder ID is hardcoded** in `config/app.php` (`GOOGLE_DRIVE_FOLDER_ID`).
+- `config/app.php` — Standard Laravel app config with Edutrack additions: `currency` => `ZMW`, feature toggles array.
+- `config/services.php` — Contains `google` and `lenco` service configurations.
+- `config/filesystems.php` — Includes a custom disk `public_uploads` pointing to `public/uploads`.
+- Other configs are standard Laravel 10 defaults.
 
 ---
 
 ## Build and Deployment
 
-### No Build Step
-There is no frontend build process (no Webpack, Vite, or NPM scripts). Tailwind CSS is loaded via CDN in page templates. JavaScript is vanilla JS in `public/assets/js/`.
-
-### Installation / Setup Commands
+### Local Setup Commands
 ```bash
 # 1. Install PHP dependencies
 composer install
 
-# 2. Configure environment
-cp .env.example .env   # (create .env.example if missing)
-# Edit .env with production credentials
+# 2. Install Node dependencies and build assets
+npm install
+npm run build
 
-# 3. Import database
-mysql -u root -p edutrack_lms < database/complete_lms_schema.sql
+# 3. Environment setup
+copy .env.example .env
+php artisan key:generate
+# Edit .env with database credentials and service keys
 
-# 4. Apply any pending migrations (manual process - run SQL files in migrations/)
+# 4. Database setup
+# Option A: Import full schema dump
+mysql -u root -p edutrack-lms < database/complete_lms_schema.sql
+# Option B: Run migrations (if starting from scratch)
+php artisan migrate
 
-# 5. Ensure writable directories
-chmod -R 755 storage/
-chmod -R 755 public/uploads/
+# 5. Link storage directory
+php artisan storage:link
 
-# 6. Configure Apache to point to public/ directory
+# 6. Optional: seed demo data
+php artisan db:seed
+```
+
+### Development Commands
+```bash
+# Start Laravel dev server
+php artisan serve
+
+# Watch frontend assets during development
+npm run dev
+
+# Build production frontend assets
+npm run build
+
+# Clear all caches
+php artisan optimize:clear
+
+# List all routes
+php artisan route:list
+
+# Check migration status
+php artisan migrate:status
 ```
 
 ### Server Requirements
-- PHP 8.0 or higher
+- PHP 8.1 or higher
 - MySQL 5.7+ or MariaDB 10.3+
 - Apache with `mod_rewrite` enabled
-- Composer for dependency installation
-- SSL certificate (HTTPS required for security headers and Google OAuth)
+- Composer and Node.js 18+ with npm
+- SSL certificate (HTTPS required for Google OAuth and secure cookies)
 - `mbstring`, `openssl`, `pdo_mysql`, `gd` PHP extensions recommended
 
-### Cron Jobs
-Add to crontab for production:
+### Document Root
+Apache must be configured to point to the `public/` directory. Do not serve from the project root.
+
+### Cron Jobs / Scheduled Commands
+The following custom Artisan commands should be run on a schedule:
+
 ```bash
 # Process email queue every 5 minutes
-*/5 * * * * /usr/bin/php /path/to/cron/process-emails.php
+php artisan email:process --limit=50
 
-# Session reminders daily at 8am
-0 8 * * * /usr/bin/php /path/to/cron/session-reminders.php
+# Poll Lenco for pending payments every 15 minutes
+php artisan lenco:poll-payments --hours=24 --limit=50
+
+# Send session and progress reminders daily
+php artisan reminders:send
 ```
 
-Cron scripts can also be triggered via HTTP GET with `?key=CRON_SECRET_KEY` for hosts without CLI cron access.
+These can be added to the system crontab or triggered via HTTP if CLI cron is unavailable.
 
 ---
 
@@ -423,42 +281,41 @@ Cron scripts can also be triggered via HTTP GET with `?key=CRON_SECRET_KEY` for 
 Observed conventions across the codebase:
 
 - **Indentation**: 4 spaces (no tabs)
-- **PHP Tags**: Always use `<?php` (short tags avoided)
+- **PHP Tags**: Always use `<?php`
 - **Comments**: PHPDoc format for functions and classes
 - **Naming**:
-  - Classes: PascalCase (e.g., `EmailNotificationService`, `GoogleDriveService`)
-  - Functions: camelCase (e.g., `registerUser`, `validateSession`)
-  - Variables: snake_case (e.g., `$user_id`, `$course_id`)
-  - Constants: UPPER_CASE (e.g., `APP_DEBUG`, `PRIMARY_COLOR`)
+  - Classes: PascalCase (e.g., `LencoPaymentService`, `CertificateService`)
+  - Functions/Methods: camelCase (e.g., `initializePayment`, `generatePdf`)
+  - Variables: camelCase or snake_case (mixed; Eloquent attributes typically snake_case)
+  - Constants: UPPER_CASE
   - Database tables: snake_case, plural (e.g., `user_profiles`, `live_sessions`)
   - Database columns: snake_case (e.g., `created_at`, `password_hash`)
+- **PHP 8.1+ Features**: Typed properties, `match` expressions, union types, named arguments, arrow functions, and constructor property promotion are used where appropriate.
+- **Laravel Conventions**:
+  - Controllers extend `App\Http\Controllers\Controller`
+  - Models extend `Illuminate\Database\Eloquent\Model`
+  - Form requests validated with `$request->validate([...])`
+  - Redirects with flash messages: `return redirect()->route('...')->with('success', '...')`
 
 ### Adding New Pages
-1. Create PHP file in appropriate `public/` subdirectory
-2. Include bootstrap: `require_once '../src/bootstrap.php';`
-3. Add middleware if needed: `require_once '../src/middleware/authenticate.php';`
-4. Include templates: `require_once '../src/templates/header.php';`
-5. Close with: `require_once '../src/templates/footer.php';`
+1. Create a controller in the appropriate `app/Http/Controllers/` subdirectory.
+2. Add routes in `routes/web.php` with the appropriate middleware group.
+3. Create Blade templates in `resources/views/` following existing directory structure.
+4. Use `Route::get('/path', [Controller::class, 'method'])->name('route.name');`
 
 ### Database Queries
-Always use prepared statements via the `Database` class:
+Always use Eloquent or Query Builder:
 ```php
 // Good
-$db = Database::getInstance();
-$db->query("SELECT * FROM users WHERE email = ?", [$email]);
+User::where('email', $email)->first();
+DB::table('users')->where('email', $email)->first();
 
 // Bad - Never do this
-$db->query("SELECT * FROM users WHERE email = '$email'");
+DB::raw("SELECT * FROM users WHERE email = '$email'")
 ```
 
 ### Form Handling
-Always validate CSRF:
-```php
-if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-    http_response_code(403);
-    die('CSRF token validation failed');
-}
-```
+Laravel's CSRF protection is enabled by default for web routes. Use `@csrf` in Blade forms.
 
 ---
 
@@ -468,8 +325,7 @@ if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
 
 - `phpunit/phpunit` is listed in `require-dev` in `composer.json`.
 - There is no `phpunit.xml` or `phpunit.xml.dist` file.
-- There are no `*.test.php` files.
-- There is no `tests/` directory.
+- There are zero `*.php` test files in `tests/` (the `Feature/` and `Unit/` directories are empty).
 - The `.gitignore` excludes `/phpunit.xml` and `/.phpunit.result.cache`.
 
 ### Manual Testing Strategy
@@ -477,59 +333,49 @@ Test these user flows manually:
 1. **Student Flow**: Registration → Email Verification → Login → Browse Courses → Enrollment → Payment → Learning → Quiz → Assignment → Certificate
 2. **Instructor Flow**: Login → Create Course → Add Modules/Lessons → Create Quiz → Review Submissions → Grade Assignments → Schedule Live Session
 3. **Admin Flow**: Login → User Management → Course Approval → Financial Reports → Payment Verification → Announcements → Settings
+4. **Finance Flow**: Login → View Transactions → Verify Payments → Manage Invoices
 
 ### Debug Mode
 Enable in `.env`:
 ```bash
 APP_DEBUG=true
-APP_ENV=development
+APP_ENV=local
 ```
-This enables:
-- Detailed error messages
-- Display errors on screen
-- SQL query logging
-- Debug logging to `storage/logs/`
+This enables Laravel's detailed error pages (Ignition) and debug logging.
 
 ---
 
-## Key Features and Integrations
+## Security Considerations
 
-### Payment Processing
-- **Lenco** is the primary payment gateway (bank transfer via virtual accounts).
-- Supports sandbox and live modes.
-- Webhook endpoint: `public/api/lenco-webhook.php`
-- Additional methods: MTN Mobile Money, Airtel Money, Zamtel Kwacha, manual bank transfer.
-- Payment callbacks: `public/api/payment-callback.php`
+### Implemented Protections
+- **CSRF Tokens**: Laravel's built-in CSRF protection on all web routes.
+- **Authentication**: Session-based with bcrypt password hashing. The `User` model stores passwords in `password_hash`.
+- **API Auth**: Laravel Sanctum for API token authentication.
+- **Google OAuth**: Via Laravel Socialite; `google_id` stored on users table.
+- **Role-Based Access**: Custom middleware (`admin`, `instructor`, `finance`, `student`, `enrolled`) applied to route groups.
+- **SQL Injection**: Protected by Eloquent/Query Builder prepared statements.
+- **XSS Protection**: Output escaping with `{{ }}` in Blade; `HtmlPurifier` service for rich content sanitization.
+- **File Uploads**: Allowed extensions whitelist; uploads stored in `public/uploads/` organized by type.
+- **Webhook Security**: Lenco webhooks validate HMAC-SHA256 signatures using `LENCO_WEBHOOK_SECRET`.
+- **Rate Limiting**: Default Laravel API throttle applied to API routes.
 
-### Email System
-- PHPMailer with Gmail SMTP.
-- Email queue system (`email_queue` table) for bulk/reliable sending.
-- Templates in `src/mail/`: welcome, enrollment confirmation, password reset, certificate issued, payment received, announcement notification.
-- Cron job processes queue every 5 minutes.
-- Rate limiting: 10 per minute, 100 per hour.
+### Important Security Notes
+1. **Protect `.env` file** — contains credentials. Blocked by `.htaccess` and server config, but verify.
+2. **Secure `storage/` directory** — must be writable (755) but outside direct web access where possible.
+3. **Google OAuth credentials** — ensure redirect URIs are exact matches in Google Cloud Console.
+4. **Lenco webhook secret** — must match the value configured in the Lenco dashboard.
+5. **Default admin account** — If using seeded/demo data, change default credentials immediately in production.
 
-### Certificates
-- Auto-generated PDF certificates using TCPDF.
-- TEVETA accreditation branding.
-- Unique certificate numbers with public verification page (`certificate-verify.php`).
-- Certificates stored in `public/uploads/certificates/generated/`.
+---
 
-### Live Sessions
-- Jitsi Meet integration for virtual classes.
-- Scheduled live sessions per course.
-- Attendance tracking.
-- Recording support (configured in Jitsi settings).
+## Custom Artisan Commands
 
-### Google Integration
-- Google OAuth for login/signup (`public/google-callback.php`).
-- Google Drive for file storage (`GoogleDriveService` class).
-- Drive folder ID hardcoded in `config/app.php`.
-
-### File Uploads
-- Max size: 50MB (configurable).
-- Allowed images: jpg, jpeg, png, gif, webp.
-- Allowed documents: pdf, doc, docx, xls, xlsx, ppt, pptx, txt.
-- Upload paths organized by type: `uploads/courses/thumbnails/`, `uploads/assignments/submissions/`, `uploads/users/avatars/`, `uploads/payments/proofs/`, `uploads/certificates/generated/`.
+| Command | Purpose |
+|---------|---------|
+| `php artisan migrate:data {--source-db=} {--batch=} {--table=}` | Migrate data from a legacy `edutrack_legacy` database into the Laravel schema. |
+| `php artisan lenco:poll-payments {--hours=24} {--limit=50}` | Poll pending Lenco transactions for status updates (fallback when webhooks fail). |
+| `php artisan email:process {--limit=50}` | Send pending emails from the `email_queue` table. |
+| `php artisan reminders:send` | Queue email reminders for upcoming live sessions and students with low progress. |
 
 ---
 
@@ -539,52 +385,58 @@ This enables:
 |---------|---------|---------------|
 | Gmail SMTP | Email sending | `MAIL_*` env vars |
 | Google OAuth | Social login | `GOOGLE_CLIENT_*` env vars |
-| Google Drive | File storage | `config/app.php` |
-| Lenco | Payment processing | `LENCO_*` env vars |
-| Jitsi Meet | Video conferencing | `config/app.php` |
+| Lenco | Payment processing | `LENCO_*` env vars + `config/services.php` |
+| Jitsi Meet | Video conferencing | Configured in views/admin settings |
 | YouTube API | Video embedding | `YOUTUBE_API_KEY` env var |
 
 ---
 
 ## Troubleshooting
 
-### Common Issues
+### 500 Internal Server Error
+- Check `storage/logs/laravel.log`
+- Verify `.env` file exists and `APP_KEY` is generated
+- Ensure `storage/` and `bootstrap/cache/` are writable
+- Run `composer install` and `npm run build`
 
-**500 Internal Server Error**
-- Check `storage/logs/php-errors.log`
-- Verify `.env` file exists and is readable
-- Check file permissions on `storage/` (must be writable)
-- Ensure `vendor/autoload.php` exists (run `composer install`)
-
-**Database Connection Failed**
+### Database Connection Failed
 - Verify DB credentials in `.env`
 - Check MySQL/MariaDB service is running
 - Confirm database exists and user has privileges
 
-**Emails Not Sending**
+### Emails Not Sending
 - Check Gmail app-specific password is correct
-- Review `storage/logs/cron-email.log`
-- Verify cron job is running or trigger manually via URL with secret key
+- Verify `MAIL_MAILER=smtp` and Gmail settings in `.env`
+- Ensure `php artisan email:process` is running on schedule
+- Check `storage/logs/laravel.log` for PHPMailer errors
 
-**File Uploads Failing**
-- Check `uploads/` directory permissions (755)
+### File Uploads Failing
+- Check `public/uploads/` directory permissions (writable by web server)
 - Verify PHP `upload_max_filesize` and `post_max_size` settings
 - Check available disk space
 
-**Pretty URLs / Routing Not Working**
+### Pretty URLs / Routing Not Working
 - Ensure Apache `mod_rewrite` is enabled
-- Verify `.htaccess` files exist in root and `public/`
+- Verify `.htaccess` exists in `public/`
 - Check `AllowOverride All` is set in Apache virtual host config
+
+### Vite / CSS Not Loading
+- Run `npm run build` to generate `public/build/manifest.json`
+- Ensure `VITE_APP_URL` or `APP_URL` in `.env` is correct
+- Check that `public/build/` directory exists and contains assets
 
 ---
 
 ## File Statistics (Approximate)
-- **Total PHP Lines**: ~25,000+
-- **Classes**: 34 domain models
-- **API Endpoints**: 30+ REST endpoints
-- **Database Tables**: 50+ tables and views
-- **Public Pages**: 60+ user-facing and admin pages
-- **Migrations**: 16 SQL migration files
+- **Total PHP Lines**: ~35,000+
+- **Eloquent Models**: 54
+- **Controllers**: 49
+- **Blade Templates**: 142
+- **Database Migrations**: 77
+- **Database Seeders**: 18
+- **API Endpoints**: 15+ REST endpoints
+- **Custom Artisan Commands**: 4
+- **Custom Middleware**: 6 role-based + 5 standard
 
 ---
 

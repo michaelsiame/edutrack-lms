@@ -34,7 +34,7 @@ class EmailQueueService
 
     /**
      * Queue an email for sending.
-     * In sync mode, sends immediately.
+     * Always sends immediately for shared hosting (no queue workers).
      */
     public function queue(string $recipient, string $subject, string $body, array $attachments = [], int $priority = 0): EmailQueue
     {
@@ -48,16 +48,60 @@ class EmailQueueService
             'scheduled_at' => now(),
         ]);
 
-        // Send immediately if queue is set to sync
-        if (config('queue.default') === 'sync') {
-            try {
-                $this->send($email);
-            } catch (\Exception $e) {
-                \Log::error('Sync email failed', ['error' => $e->getMessage(), 'recipient' => $recipient]);
-            }
+        // Always send immediately — shared hosting has no queue workers
+        try {
+            $this->send($email);
+        } catch (\Exception $e) {
+            \Log::error('Sync email failed', ['error' => $e->getMessage(), 'recipient' => $recipient]);
         }
 
         return $email;
+    }
+
+    /**
+     * Send a templated email using an active EmailTemplate.
+     */
+    public function sendTemplated(string $recipient, string $templateType, array $data = [], array $attachments = []): ?EmailQueue
+    {
+        $template = \App\Models\EmailTemplate::where('template_type', $templateType)
+            ->where('is_active', true)
+            ->first();
+
+        if (!$template) {
+            \Log::warning("Email template not found: {$templateType}");
+            return null;
+        }
+
+        $subject = $this->replacePlaceholders($template->subject, $data);
+        $body = $this->replacePlaceholders($template->body, $data);
+
+        return $this->queue($recipient, $subject, $body, $attachments);
+    }
+
+    /**
+     * Replace {{placeholder}} values in a string.
+     */
+    protected function replacePlaceholders(string $text, array $data): string
+    {
+        foreach ($data as $key => $value) {
+            $text = str_replace('{{' . $key . '}}', (string) $value, $text);
+        }
+        return $text;
+    }
+
+    /**
+     * Create an in-app notification for a user.
+     */
+    public function sendNotification(int $userId, string $title, string $message, string $type = 'info', ?string $actionUrl = null): void
+    {
+        \App\Models\Notification::create([
+            'user_id' => $userId,
+            'title' => $title,
+            'message' => $message,
+            'notification_type' => $type,
+            'action_url' => $actionUrl,
+            'is_read' => false,
+        ]);
     }
 
     /**
@@ -89,8 +133,8 @@ class EmailQueueService
                     'last_attempt' => now(),
                 ]);
 
-                // Mark as failed permanently after 3 attempts
-                if ($email->attempts >= 3) {
+                // Mark as failed permanently after 3 attempts (use fresh value)
+                if ($email->fresh()->attempts >= 3) {
                     $email->update(['status' => 'failed']);
                 }
             }
@@ -101,29 +145,58 @@ class EmailQueueService
 
     /**
      * Send a queued email.
+     * Falls back to PHP mail() on shared hosting if SMTP fails.
      */
     public function send(EmailQueue $email): void
     {
         $email->update(['status' => 'processing']);
 
-        $this->mailer->clearAddresses();
-        $this->mailer->addAddress($email->recipient);
-        $this->mailer->Subject = $email->subject;
-        $this->mailer->isHTML(true);
-        $this->mailer->Body = $email->body;
-        $this->mailer->AltBody = strip_tags($email->body);
+        $smtpFailed = false;
 
-        // Handle attachments
-        if ($email->attachments) {
-            $attachments = json_decode($email->attachments, true);
-            foreach ($attachments as $attachment) {
-                if (file_exists($attachment)) {
-                    $this->mailer->addAttachment($attachment);
+        // Try SMTP first if credentials are configured
+        if (!empty(config('mail.mailers.smtp.password'))) {
+            try {
+                $this->mailer->clearAddresses();
+                $this->mailer->addAddress($email->recipient);
+                $this->mailer->Subject = $email->subject;
+                $this->mailer->isHTML(true);
+                $this->mailer->Body = $email->body;
+                $this->mailer->AltBody = strip_tags($email->body);
+
+                if ($email->attachments) {
+                    $attachments = json_decode($email->attachments, true);
+                    foreach ($attachments as $attachment) {
+                        if (file_exists($attachment)) {
+                            $this->mailer->addAttachment($attachment);
+                        }
+                    }
                 }
+
+                $this->mailer->send();
+            } catch (\Exception $e) {
+                Log::warning('SMTP send failed, will try mail() fallback', [
+                    'recipient' => $email->recipient,
+                    'error' => $e->getMessage(),
+                ]);
+                $smtpFailed = true;
             }
+        } else {
+            $smtpFailed = true;
         }
 
-        $this->mailer->send();
+        // Fallback to PHP mail() for shared hosting
+        if ($smtpFailed) {
+            $headers = "MIME-Version: 1.0\r\n";
+            $headers .= "Content-type: text/html; charset=UTF-8\r\n";
+            $headers .= "From: " . config('mail.from.address', 'edutrackzambia@gmail.com') . "\r\n";
+            $headers .= "Reply-To: " . config('mail.from.address', 'edutrackzambia@gmail.com') . "\r\n";
+
+            $sent = mail($email->recipient, $email->subject, $email->body, $headers);
+
+            if (!$sent) {
+                throw new \RuntimeException('Both SMTP and mail() failed to send email to ' . $email->recipient);
+            }
+        }
 
         $email->update([
             'status' => 'sent',
