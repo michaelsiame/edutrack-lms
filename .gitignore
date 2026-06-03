@@ -7,7 +7,6 @@
 /storage/framework/
 /storage/logs/
 /bootstrap/cache/**
-.env
 .env.backup
 .env.production
 .phpactor.json
