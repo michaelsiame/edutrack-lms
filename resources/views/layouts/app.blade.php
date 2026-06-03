@@ -40,7 +40,7 @@
     <!-- Design Tokens + Open Design Components -->
     <link rel="stylesheet" href="{{ asset('assets/css/tokens.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/progress-ring.css') }}">
+
     <link rel="stylesheet" href="{{ asset('assets/css/whatsapp-button.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/ui-fixes.css') }}">
 

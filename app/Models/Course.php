@@ -31,6 +31,8 @@ class Course extends Model
         'enrollment_count',
         'status',
         'is_featured',
+        'is_template',
+        'template_source_id',
         'rating',
         'total_reviews',
         'prerequisites',
@@ -110,6 +112,32 @@ class Course extends Model
     public function discussions()
     {
         return $this->hasMany(Discussion::class, 'course_id');
+    }
+
+    public function intakes()
+    {
+        return $this->hasMany(Intake::class)->orderBy('display_order');
+    }
+
+    public function defaultIntake()
+    {
+        return $this->hasOne(Intake::class)->where('is_default', true);
+    }
+
+    public function hasMultipleIntakes(): bool
+    {
+        return $this->intakes()->where('is_default', false)->exists();
+    }
+
+    public function currentIntakes()
+    {
+        return $this->intakes()
+            ->whereIn('status', ['open', 'draft'])
+            ->where(function ($q) {
+                $q->whereNull('application_deadline')
+                  ->orWhere('application_deadline', '>=', now()->subDay());
+            })
+            ->orderBy('start_date');
     }
 
     public function scopePublished($query)

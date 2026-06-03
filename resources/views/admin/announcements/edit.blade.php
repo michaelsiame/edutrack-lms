@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto">
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+ <div class="od-card p-6">
  <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Edit Announcement</h2>
 
  <form action="{{ route('admin.announcements.update', $announcement) }}" method="POST">

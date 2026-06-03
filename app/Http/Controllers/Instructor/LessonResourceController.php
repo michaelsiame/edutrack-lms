@@ -16,6 +16,10 @@ class LessonResourceController extends Controller
     {
         $this->authorizeInstructor($course);
 
+        if ($lesson->module_id !== $module->id || $module->course_id !== $course->id) {
+            abort(403, 'Invalid lesson for this course.');
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',

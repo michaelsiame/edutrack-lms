@@ -11,14 +11,14 @@
         </a>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+    <div class="od-card p-6">
         <div class="flex items-center gap-3 mb-5">
             <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0" style="background: var(--od-navy); color: var(--od-surface);">
                 {{ strtoupper(substr($testimonial->student_name ?? $testimonial->name, 0, 1)) }}
             </div>
             <div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Edit Testimonial</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Submitted {{ $testimonial->created_at?->diffForHumans() ?? 'unknown' }}</p>
+                <p class="od-meta">Submitted {{ $testimonial->created_at?->diffForHumans() ?? 'unknown' }}</p>
             </div>
         </div>
 

@@ -6,16 +6,16 @@
 @section('content')
 <div class="max-w-6xl mx-auto">
  @if(session('success'))
- <div class="mb-4 p-4 bg-success-50 border border-success-200 rounded-lg text-success-700">{{ session('success') }}</div>
+ <div class="mb-4 p-4 od-toast-success">{{ session('success') }}</div>
  @endif
 
  <!-- Filters -->
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-4 mb-6">
+ <div class="od-card p-4 mb-6">
  <form action="{{ route('admin.enrollments.index') }}" method="GET" class="flex flex-wrap items-end gap-4">
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Course</label>
+ <label class="od-form-label">Course</label>
  <select name="course"
- class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
  <option value="">All Courses</option>
  @foreach($courses as $course)
  <option value="{{ $course->id }}" {{ request('course') == $course->id ?'selected' :'' }}>{{ $course->title }}</option>
@@ -23,9 +23,9 @@
  </select>
  </div>
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Status</label>
+ <label class="od-form-label">Status</label>
  <select name="status"
- class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
  <option value="">All</option>
  <option value="Enrolled" {{ request('status') ==='Enrolled' ?'selected' :'' }}>Enrolled</option>
  <option value="In Progress" {{ request('status') ==='In Progress' ?'selected' :'' }}>In Progress</option>
@@ -34,32 +34,32 @@
  </select>
  </div>
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">From</label>
+ <label class="od-form-label">From</label>
  <input type="date" name="from" value="{{ request('from') }}"
- class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
  </div>
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">To</label>
+ <label class="od-form-label">To</label>
  <input type="date" name="to" value="{{ request('to') }}"
- class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
  </div>
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Search</label>
+ <label class="od-form-label">Search</label>
  <input type="text" name="search" value="{{ request('search') }}" placeholder="Student name/email"
- class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
  </div>
- <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm font-medium">Filter</button>
- <a href="{{ route('admin.enrollments.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Clear</a>
- <a href="{{ route('admin.reports.export', 'enrollments') }}?{{ http_build_query(request()->only(['from','to','status','course'])) }}" class="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 text-sm font-medium">
+ <button type="submit" class="od-btn od-btn-primary od-btn-sm">Filter</button>
+ <a href="{{ route('admin.enrollments.index') }}" class="od-btn od-btn-secondary od-btn-sm">Clear</a>
+ <a href="{{ route('admin.reports.export', 'enrollments') }}?{{ http_build_query(request()->only(['from','to','status','course'])) }}" class="od-btn od-btn-success od-btn-sm">
  <i class="fas fa-download mr-1"></i>CSV
  </a>
  </form>
  </div>
 
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+ <div class="od-card" style="padding: 0; overflow: hidden;">
  <div class="overflow-x-auto">
- <table class="w-full text-sm min-w-[640px]">
- <thead class="bg-gray-50 dark:bg-gray-700/50">
+ <table class="od-table min-w-[640px]">
+ <thead >
  <tr>
  <th class="px-4 py-3 text-left" scope="col">Student</th>
  <th class="px-4 py-3 text-left" scope="col">Course</th>
@@ -69,11 +69,11 @@
  <th class="px-4 py-3 text-right" scope="col">Actions</th>
  </tr>
  </thead>
- <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+ <tbody >
  @forelse($enrollments as $enrollment)
- <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+ <tr >
  <td class="px-4 py-3">
- <div class="font-medium text-gray-900 dark:text-white">{{ $enrollment->user?->full_name ??'Unknown' }}</div>
+ <div class="font-medium" style="color: var(--od-fg);">{{ $enrollment->user?->full_name ??'Unknown' }}</div>
  <div class="text-xs text-gray-500">{{ $enrollment->user?->email ??'-' }}</div>
  </td>
  <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $enrollment->course->title }}</td>
@@ -111,7 +111,7 @@
  <button onclick="toggleEditEnrollment({{ $enrollment->id }})" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit enrollment">
  <i class="fas fa-edit" aria-hidden="true"></i>
  </button>
- <form action="{{ route('admin.enrollments.destroy', $enrollment) }}" method="POST" class="inline" onsubmit="return confirm('Delete this enrollment?')">
+ <form action="{{ route('admin.enrollments.destroy', $enrollment) }}" method="POST" class="inline" data-confirm="Delete this enrollment">
  @csrf
  @method('DELETE')
  <button type="submit" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg" aria-label="Delete enrollment">
@@ -127,9 +127,9 @@
  @csrf
  @method('PUT')
  <div>
- <label class="block text-xs text-gray-500 mb-1">Status</label>
+ <label class="od-form-label">Status</label>
  <select name="enrollment_status" required
- class="px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
  <option value="Enrolled" {{ $enrollment->enrollment_status ==='Enrolled' ?'selected' :'' }}>Enrolled</option>
  <option value="In Progress" {{ $enrollment->enrollment_status ==='In Progress' ?'selected' :'' }}>In Progress</option>
  <option value="Completed" {{ $enrollment->enrollment_status ==='Completed' ?'selected' :'' }}>Completed</option>
@@ -138,28 +138,28 @@
  </select>
  </div>
  <div>
- <label class="block text-xs text-gray-500 mb-1">Progress %</label>
+ <label class="od-form-label">Progress %</label>
  <input type="number" name="progress" value="{{ $enrollment->progress }}" min="0" max="100" step="0.01"
- class="w-24 px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input w-24">
  </div>
  <div>
- <label class="block text-xs text-gray-500 mb-1">Grade</label>
+ <label class="od-form-label">Grade</label>
  <input type="number" name="final_grade" value="{{ $enrollment->final_grade }}" min="0" max="100" step="0.01"
- class="w-24 px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input w-24">
  </div>
  <label class="flex items-center text-sm text-gray-700 dark:text-gray-300 pb-2">
  <input type="checkbox" name="certificate_blocked" value="1" {{ $enrollment->certificate_blocked ?'checked' :'' }}
- class="w-4 h-4 text-primary-600 mr-2">
+ class="w-4 h-4 text-primary-600 mr-2 accent-primary-600">
  Block Certificate
  </label>
- <button type="submit" class="px-3 py-2 bg-primary-600 text-white text-sm rounded hover:bg-primary-700">Save</button>
- <button type="button" onclick="toggleEditEnrollment({{ $enrollment->id }})" class="px-3 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300">Cancel</button>
+ <button type="submit" class="od-btn od-btn-primary od-btn-sm">Save</button>
+ <button type="button" onclick="toggleEditEnrollment({{ $enrollment->id }})" class="od-btn od-btn-secondary od-btn-sm">Cancel</button>
  </form>
  </td>
  </tr>
  @empty
  <tr>
- <td colspan="6" class="px-4 py-8 text-center text-gray-500">No enrollments found.</td>
+ <td colspan="6" class="od-empty-sm">No enrollments found.</td>
  </tr>
  @endforelse
  </tbody>

@@ -26,6 +26,7 @@ class Enrollment extends Model
         'certificate_blocked',
         'last_accessed',
         'total_time_spent',
+        'intake_id',
     ];
 
     protected $casts = [
@@ -54,6 +55,11 @@ class Enrollment extends Model
     public function course()
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function intake()
+    {
+        return $this->belongsTo(Intake::class);
     }
 
     public function certificate()
@@ -86,9 +92,14 @@ class Enrollment extends Model
         return $query->where('enrollment_status', 'Completed');
     }
 
+    public function effectivePrice(): float
+    {
+        return $this->intake?->effective_price ?? $this->course?->discount_price ?? $this->course?->price ?? 0;
+    }
+
     public function isFullyPaid(): bool
     {
-        $coursePrice = $this->course?->discount_price ?? $this->course?->price ?? 0;
+        $coursePrice = $this->effectivePrice();
 
         return $this->payment_status === 'completed' && $this->amount_paid >= $coursePrice;
     }

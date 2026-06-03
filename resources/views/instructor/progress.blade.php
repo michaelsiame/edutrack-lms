@@ -6,8 +6,8 @@
 @section('content')
 <div class="space-y-6">
     @forelse($courses as $course)
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+    <div class="od-card" style="padding: 0; overflow: hidden;">
+        <div class="od-card-header">
             <div>
                 <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ $course->title }}</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ $course->enrollments->count() }} student{{ $course->enrollments->count() !== 1 ? 's' : '' }} enrolled</p>
@@ -19,7 +19,7 @@
 
         @if($course->enrollments->isNotEmpty())
         <div class="overflow-x-auto">
-            <table class="dashboard-table">
+            <table class="od-table min-w-[640px]">
                 <thead>
                     <tr>
                         <th>Student</th>
@@ -45,7 +45,7 @@
                                 <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $enrollment->student->user->full_name ?? 'Unknown' }}</span>
                             </div>
                         </td>
-                        <td class="text-sm text-gray-500 dark:text-gray-400">{{ $enrollment->created_at?->diffForHumans() ?? 'N/A' }}</td>
+                        <td class="od-meta">{{ $enrollment->created_at?->diffForHumans() ?? 'N/A' }}</td>
                         <td>
                             <div class="flex items-center gap-2">
                                 <div class="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full h-2.5 w-24">
@@ -67,7 +67,7 @@
                                     {{ ucfirst($status) }}
                                 </span>
                                 @if(!$enrollment->certificate_issued && $progressPercent >= 80 && !$enrollment->certificate_blocked)
-                                <form action="{{ route('instructor.courses.enrollments.issue-certificate', [$course, $enrollment]) }}" method="POST" class="inline" onsubmit="return confirm('Issue certificate for {{ $enrollment->student->user->full_name ?? 'this student' }}?');">
+                                <form action="{{ route('instructor.courses.enrollments.issue-certificate', [$course, $enrollment]) }}" method="POST" class="inline" data-confirm="Issue certificate for this student?">
                                     @csrf
                                     <button type="submit" class="inline-flex items-center px-2 py-1 bg-secondary-600 hover:bg-secondary-700 text-white text-xs font-medium rounded transition-colors">
                                         <i class="fas fa-certificate mr-1"></i>Issue Cert
@@ -93,7 +93,7 @@
         @endif
     </div>
     @empty
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-8 text-center">
+    <div class="od-card p-8 text-center">
         <div class="w-20 h-20 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="fas fa-user-graduate text-3xl text-primary-600 dark:text-primary-400"></i>
         </div>

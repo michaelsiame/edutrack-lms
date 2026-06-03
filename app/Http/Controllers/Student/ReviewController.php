@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\CourseReview;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReviewController extends Controller
 {
@@ -29,24 +30,26 @@ class ReviewController extends Controller
             'review' => 'required|string|min:10|max:2000',
         ]);
 
-        CourseReview::updateOrCreate(
-            [
-                'course_id' => $course->id,
-                'user_id' => $user->id,
-            ],
-            [
-                'rating' => $validated['rating'],
-                'review' => $validated['review'],
-            ]
-        );
+        DB::transaction(function () use ($course, $user, $validated) {
+            CourseReview::updateOrCreate(
+                [
+                    'course_id' => $course->id,
+                    'user_id' => $user->id,
+                ],
+                [
+                    'rating' => $validated['rating'],
+                    'review' => $validated['review'],
+                ]
+            );
 
-        // Update course average rating
-        $avgRating = CourseReview::where('course_id', $course->id)->avg('rating');
-        $totalReviews = CourseReview::where('course_id', $course->id)->count();
-        $course->update([
-            'rating' => $avgRating,
-            'total_reviews' => $totalReviews,
-        ]);
+            // Update course average rating atomically inside the transaction
+            $avgRating = CourseReview::where('course_id', $course->id)->avg('rating');
+            $totalReviews = CourseReview::where('course_id', $course->id)->count();
+            $course->update([
+                'rating' => $avgRating,
+                'total_reviews' => $totalReviews,
+            ]);
+        });
 
         return back()->with('success', 'Thank you for your review!');
     }

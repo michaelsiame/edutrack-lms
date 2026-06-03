@@ -19,13 +19,13 @@
 
     <div class="flex items-center justify-between">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">All Team Members</h3>
-        <a href="{{ route('admin.team.create') }}" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm transition-colors">
+        <a href="{{ route('admin.team.create') }}" class="od-btn od-btn-primary od-btn-sm font-medium text-sm transition-colors">
             <i class="fas fa-plus mr-1"></i> Add Member
         </a>
     </div>
 
     <!-- Members Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div class="od-card" style="padding: 0; overflow: hidden;">
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
                 <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
@@ -37,7 +37,7 @@
                         <th class="px-4 py-3 font-medium text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                <tbody >
                     @forelse($members as $member)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <td class="px-4 py-3">
@@ -59,7 +59,7 @@
                                 <a href="{{ route('admin.team.edit', $member) }}" class="px-3 py-1.5 bg-primary-50 text-primary-700 text-xs rounded-lg hover:bg-primary-100 font-medium transition-colors">
                                     <i class="fas fa-pen mr-1"></i> Edit
                                 </a>
-                                <form action="{{ route('admin.team.destroy', $member) }}" method="POST" onsubmit="return confirm('Remove {{ $member->name }} from the team?')">
+                                <form action="{{ route('admin.team.destroy', $member) }}" method="POST" data-confirm="Remove {{ $member->name }} from the team">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="px-3 py-1.5 bg-red-50 text-red-700 text-xs rounded-lg hover:bg-red-100 font-medium transition-colors">
@@ -75,7 +75,7 @@
                             <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-users text-2xl"></i>
                             </div>
-                            <p class="text-gray-500 dark:text-gray-400">No team members yet.</p>
+                            <p class="od-meta">No team members yet.</p>
                             <a href="{{ route('admin.team.create') }}" class="text-primary-600 hover:text-primary-700 text-sm mt-2 inline-block">Add your first team member</a>
                         </td>
                     </tr>

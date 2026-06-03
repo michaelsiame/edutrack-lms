@@ -7,6 +7,7 @@ use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\QuizAnswer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
@@ -26,15 +27,29 @@ class QuizController extends Controller
             ->with('course.quizzes')
             ->get();
 
+        $studentId = $this->studentId();
+
+        // Collect all quiz IDs to load attempts in a single query (avoids N+1)
+        $quizIds = [];
+        foreach ($enrollments as $enrollment) {
+            foreach ($enrollment->course->quizzes as $quiz) {
+                if ($quiz->is_published) {
+                    $quizIds[] = $quiz->id;
+                }
+            }
+        }
+
+        $allAttempts = QuizAttempt::whereIn('quiz_id', $quizIds)
+            ->where('student_id', $studentId)
+            ->orderBy('attempt_number')
+            ->get()
+            ->groupBy('quiz_id');
+
         $quizData = [];
         foreach ($enrollments as $enrollment) {
             foreach ($enrollment->course->quizzes as $quiz) {
                 if (!$quiz->is_published) continue;
-                $attempts = QuizAttempt::where('quiz_id', $quiz->id)
-                    ->where('student_id', $this->studentId())
-                    ->orderBy('attempt_number')
-                    ->get();
-
+                $attempts = $allAttempts->get($quiz->id, collect());
                 $completedAttempts = $attempts->whereIn('status', ['Graded', 'Submitted']);
 
                 $quizData[] = [
@@ -129,16 +144,23 @@ class QuizController extends Controller
             ->first();
 
         if (!$attempt) {
-            $attempt = QuizAttempt::create([
-                'quiz_id' => $quiz->id,
-                'student_id' => $studentId,
-                'attempt_number' => QuizAttempt::where('quiz_id', $quiz->id)
+            // Use a transaction + pessimistic lock to prevent race condition
+            // on attempt_number generation
+            $attempt = DB::transaction(function () use ($quiz, $studentId) {
+                $nextAttemptNumber = QuizAttempt::where('quiz_id', $quiz->id)
                     ->where('student_id', $studentId)
-                    ->count() + 1,
-                'started_at' => now(),
-                'status' => 'In Progress',
-                'ip_address' => request()->ip(),
-            ]);
+                    ->lockForUpdate()
+                    ->max('attempt_number') + 1;
+
+                return QuizAttempt::create([
+                    'quiz_id' => $quiz->id,
+                    'student_id' => $studentId,
+                    'attempt_number' => $nextAttemptNumber,
+                    'started_at' => now(),
+                    'status' => 'In Progress',
+                    'ip_address' => request()->ip(),
+                ]);
+            });
         }
 
         $remainingSeconds = null;
@@ -191,7 +213,7 @@ class QuizController extends Controller
             ->where('status', 'In Progress')
             ->firstOrFail();
 
-        $timeSpent = $attempt->started_at->diffInMinutes(now());
+        $timeSpent = round($attempt->started_at->diffInMinutes(now()));
         if ($quiz->time_limit_minutes && $timeSpent > $quiz->time_limit_minutes) {
             $attempt->update(['status' => 'Abandoned', 'score' => 0]);
             return redirect()->route('student.quizzes.attempts', $quiz)
@@ -203,67 +225,68 @@ class QuizController extends Controller
         $earnedPoints = 0;
         $hasEssay = false;
 
-        // Clear any existing answers for this attempt (in case of resubmit)
-        QuizAnswer::where('attempt_id', $attempt->id)->delete();
+        DB::transaction(function () use ($attempt, $quiz, $answers, $timeSpent, &$totalPoints, &$earnedPoints, &$hasEssay, $enrollment) {
+            // Clear any existing answers for this attempt (in case of resubmit)
+            QuizAnswer::where('attempt_id', $attempt->id)->delete();
 
-        foreach ($quiz->questions as $question) {
-            $totalPoints += $question->points;
-            $answerValue = $answers[$question->question_id] ?? null;
-            $isCorrect = false;
-            $pointsEarned = 0;
-            $selectedOptionId = null;
-            $answerText = null;
-
-            if ($question->question_type === 'Multiple Choice') {
-                $selectedOptionId = is_numeric($answerValue) ? (int) $answerValue : null;
-                if ($selectedOptionId) {
-                    $correctOption = $question->options->firstWhere('is_correct', true);
-                    $isCorrect = $correctOption && $correctOption->id == $selectedOptionId;
-                }
-            } elseif ($question->question_type === 'True/False') {
-                $answerText = $answerValue;
-                $correctOption = $question->options->firstWhere('is_correct', true);
-                $isCorrect = $correctOption && strtolower($correctOption->option_text) === strtolower($answerValue);
-            } elseif ($question->question_type === 'Short Answer' || $question->question_type === 'Fill in Blank') {
-                $answerText = $answerValue;
-                if ($question->correct_answer && $answerValue) {
-                    $isCorrect = strtolower(trim($answerValue)) === strtolower(trim($question->correct_answer));
-                }
-            } elseif ($question->question_type === 'Essay') {
-                $answerText = $answerValue;
-                $hasEssay = true;
-                // Essays are manually graded - don't auto-mark as correct
+            foreach ($quiz->questions as $question) {
+                $totalPoints += $question->points;
+                $answerValue = $answers[$question->question_id] ?? null;
                 $isCorrect = false;
                 $pointsEarned = 0;
+                $selectedOptionId = null;
+                $answerText = null;
+
+                if ($question->question_type === 'Multiple Choice') {
+                    $selectedOptionId = is_numeric($answerValue) ? (int) $answerValue : null;
+                    if ($selectedOptionId) {
+                        $correctOption = $question->options->firstWhere('is_correct', true);
+                        $isCorrect = $correctOption && $correctOption->id == $selectedOptionId;
+                    }
+                } elseif ($question->question_type === 'True/False') {
+                    $answerText = $answerValue;
+                    $correctOption = $question->options->firstWhere('is_correct', true);
+                    $isCorrect = $correctOption && strtolower($correctOption->option_text) === strtolower($answerValue);
+                } elseif ($question->question_type === 'Short Answer' || $question->question_type === 'Fill in Blank') {
+                    $answerText = $answerValue;
+                    if ($question->correct_answer && $answerValue) {
+                        $isCorrect = strtolower(trim($answerValue)) === strtolower(trim($question->correct_answer));
+                    }
+                } elseif ($question->question_type === 'Essay') {
+                    $answerText = $answerValue;
+                    $hasEssay = true;
+                    // Essays are manually graded - don't auto-mark as correct
+                    $isCorrect = false;
+                    $pointsEarned = 0;
+                }
+
+                if ($question->question_type !== 'Essay') {
+                    $pointsEarned = $isCorrect ? $question->points : 0;
+                }
+                $earnedPoints += $pointsEarned;
+
+                QuizAnswer::create([
+                    'attempt_id' => $attempt->id,
+                    'question_id' => $question->question_id,
+                    'selected_option_id' => $selectedOptionId,
+                    'answer_text' => $answerText,
+                    'is_correct' => $isCorrect,
+                    'points_earned' => $pointsEarned,
+                ]);
             }
 
-            if ($question->question_type !== 'Essay') {
-                $pointsEarned = $isCorrect ? $question->points : 0;
-            }
-            $earnedPoints += $pointsEarned;
+            $score = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100, 2) : 0;
 
-            QuizAnswer::create([
-                'attempt_id' => $attempt->id,
-                'question_id' => $question->question_id,
-                'selected_option_id' => $selectedOptionId,
-                'answer_text' => $answerText,
-                'is_correct' => $isCorrect,
-                'points_earned' => $pointsEarned,
+            $attempt->update([
+                'submitted_at' => now(),
+                'completed_at' => now(),
+                'status' => $hasEssay ? 'Submitted' : 'Graded',
+                'score' => $score,
+                'time_spent_minutes' => $timeSpent,
             ]);
-        }
 
-        $score = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100, 2) : 0;
-        $timeSpent = round($attempt->started_at->diffInMinutes(now()));
-
-        $attempt->update([
-            'submitted_at' => now(),
-            'completed_at' => now(),
-            'status' => $hasEssay ? 'Submitted' : 'Graded',
-            'score' => $score,
-            'time_spent_minutes' => $timeSpent,
-        ]);
-
-        app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
+            app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
+        });
 
         return redirect()->route('student.quizzes.attempt', $attempt);
     }

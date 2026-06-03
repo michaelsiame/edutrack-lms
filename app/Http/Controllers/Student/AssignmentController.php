@@ -8,6 +8,7 @@ use App\Models\AssignmentSubmission;
 use App\Models\Course;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class AssignmentController extends Controller
@@ -18,19 +19,33 @@ class AssignmentController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $studentId = $user->student?->id;
 
         $enrollments = Enrollment::where('user_id', $user->id)
             ->whereIn('enrollment_status', ['Enrolled', 'In Progress', 'Completed'])
             ->with('course.assignments')
             ->get();
 
+        // Collect all assignment IDs to load submissions in a single query
+        $assignmentIds = [];
+        foreach ($enrollments as $enrollment) {
+            foreach ($enrollment->course->assignments as $assignment) {
+                $assignmentIds[] = $assignment->id;
+            }
+        }
+
+        $allSubmissions = $studentId
+            ? AssignmentSubmission::whereIn('assignment_id', $assignmentIds)
+                ->where('student_id', $studentId)
+                ->get()
+                ->keyBy('assignment_id')
+            : collect();
+
         $assignments = collect();
         foreach ($enrollments as $enrollment) {
             foreach ($enrollment->course->assignments as $assignment) {
                 $assignment->enrollment = $enrollment;
-                $assignment->submission = AssignmentSubmission::where('assignment_id', $assignment->id)
-                    ->where('student_id', $user->student?->id)
-                    ->first();
+                $assignment->submission = $allSubmissions->get($assignment->id);
                 $assignments->push($assignment);
             }
         }
@@ -113,20 +128,28 @@ class AssignmentController extends Controller
             $fileUrl = Storage::url($path);
         }
 
-        $maxAttempt = AssignmentSubmission::where('assignment_id', $assignment->id)
-            ->where('student_id', $user->student?->id)
-            ->max('attempt_number') ?? 0;
+        $studentId = $user->student?->id;
+        if (!$studentId) {
+            abort(403, 'Student record not found.');
+        }
 
-        AssignmentSubmission::create([
-            'assignment_id' => $assignment->id,
-            'student_id' => $user->student?->id,
-            'submission_text' => $validated['submission_text'] ?? null,
-            'file_url' => $fileUrl,
-            'submitted_at' => now(),
-            'status' => $isLate ? 'Late' : 'Submitted',
-            'is_late' => $isLate,
-            'attempt_number' => $maxAttempt + 1,
-        ]);
+        DB::transaction(function () use ($assignment, $studentId, $validated, $fileUrl, $isLate) {
+            $maxAttempt = AssignmentSubmission::where('assignment_id', $assignment->id)
+                ->where('student_id', $studentId)
+                ->lockForUpdate()
+                ->max('attempt_number') ?? 0;
+
+            AssignmentSubmission::create([
+                'assignment_id' => $assignment->id,
+                'student_id' => $studentId,
+                'submission_text' => $validated['submission_text'] ?? null,
+                'file_url' => $fileUrl,
+                'submitted_at' => now(),
+                'status' => $isLate ? 'Late' : 'Submitted',
+                'is_late' => $isLate,
+                'attempt_number' => $maxAttempt + 1,
+            ]);
+        });
 
         return redirect()->route('student.assignments.show', [$course, $assignment])
             ->with('success', 'Assignment submitted successfully.');

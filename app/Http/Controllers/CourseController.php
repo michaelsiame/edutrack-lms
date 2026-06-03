@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Lesson;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
@@ -42,5 +43,32 @@ class CourseController extends Controller
         $isEnrolled = auth()->check() ? auth()->user()->isEnrolledIn($course->id) : false;
 
         return view('courses.show', compact('course', 'isEnrolled'));
+    }
+
+    /**
+     * Show a preview lesson to non-enrolled visitors.
+     * Only lessons marked as is_preview = true are accessible.
+     */
+    public function previewLesson(Course $course, Lesson $lesson)
+    {
+        if ($course->status !== 'published') {
+            abort(404);
+        }
+
+        if (!$lesson->is_preview) {
+            abort(403, 'This lesson is not available for preview.');
+        }
+
+        if (!$lesson->module || $lesson->module->course_id !== $course->id) {
+            abort(404);
+        }
+
+        $course->load(['modules.lessons']);
+        $lesson->load(['resources', 'quizzes', 'assignments']);
+
+        // Determine if user is already enrolled (to show appropriate CTA)
+        $isEnrolled = auth()->check() ? auth()->user()->isEnrolledIn($course->id) : false;
+
+        return view('courses.preview', compact('course', 'lesson', 'isEnrolled'));
     }
 }

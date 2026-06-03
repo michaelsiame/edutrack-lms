@@ -8,7 +8,7 @@
     <!-- Report Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Enrollment Report -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+        <div class="od-card p-6">
             <div class="flex items-center gap-4 mb-4">
                 <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
                     <i class="fas fa-users text-primary-600 dark:text-primary-400 text-lg"></i>
@@ -30,7 +30,7 @@
         </div>
 
         <!-- Payments Report -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+        <div class="od-card p-6">
             <div class="flex items-center gap-4 mb-4">
                 <div class="w-12 h-12 bg-success-100 dark:bg-success-900/30 rounded-xl flex items-center justify-center">
                     <i class="fas fa-money-bill-wave text-success-600 dark:text-success-400 text-lg"></i>
@@ -52,7 +52,7 @@
         </div>
 
         <!-- Courses Report -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+        <div class="od-card p-6">
             <div class="flex items-center gap-4 mb-4">
                 <div class="w-12 h-12 bg-warning-100 dark:bg-warning-900/30 rounded-xl flex items-center justify-center">
                     <i class="fas fa-graduation-cap text-warning-600 dark:text-warning-400 text-lg"></i>
@@ -75,7 +75,7 @@
     </div>
 
     <!-- Summary Stats -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+    <div class="od-card p-6">
         <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4">Quick Stats</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div class="text-center">

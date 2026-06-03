@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto">
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+    <div class="od-card p-6">
         <div class="mb-6">
             <h1 class="text-xl font-bold text-gray-900 dark:text-white">Edit Quiz</h1>
             <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Update quiz settings.</p>

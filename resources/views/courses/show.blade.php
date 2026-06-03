@@ -52,13 +52,19 @@
                                     </div>
                                     <div style="border-top: 1px solid var(--od-border);">
                                         @foreach($module->lessons as $lesson)
-                                            <div class="flex items-center px-4 py-3 text-sm" style="color: var(--od-muted);">
-                                                <span class="w-2 h-2 rounded-full mr-2" style="background: var(--od-navy);"></span>
-                                                {{ $lesson->title }}
-                                                @if($lesson->is_preview)
+                                            @if($lesson->is_preview)
+                                                <a href="{{ route('courses.preview', ['course' => $course, 'lesson' => $lesson]) }}" class="flex items-center px-4 py-3 text-sm transition-colors hover:bg-gray-50 dark:hover:bg-gray-800" style="color: var(--od-muted);">
+                                                    <span class="w-2 h-2 rounded-full mr-2" style="background: var(--od-green);"></span>
+                                                    {{ $lesson->title }}
                                                     <span class="ml-2 text-xs" style="color: var(--od-green);">(Preview)</span>
-                                                @endif
-                                            </div>
+                                                    <i class="fas fa-play-circle ml-auto text-xs" style="color: var(--od-green);"></i>
+                                                </a>
+                                            @else
+                                                <div class="flex items-center px-4 py-3 text-sm" style="color: var(--od-muted);">
+                                                    <span class="w-2 h-2 rounded-full mr-2" style="background: var(--od-navy);"></span>
+                                                    {{ $lesson->title }}
+                                                </div>
+                                            @endif
                                             @if(!$loop->last)
                                                 <div style="border-top: 1px solid var(--od-border);"></div>
                                             @endif
@@ -168,7 +174,7 @@
                                     <i class="fas fa-credit-card mr-2"></i>Complete Payment
                                 </a>
                                 <p class="mt-2 text-xs text-center od-meta">
-                                    Paid: K{{ number_format($enrollment->amount_paid, 2) }} / K{{ number_format($course->discount_price ?? $course->price, 2) }}
+                                    Paid: K{{ number_format($enrollment->amount_paid, 2) }} / K{{ number_format($enrollment->effectivePrice(), 2) }}
                                 </p>
                             @endif
                         @else
@@ -177,6 +183,8 @@
                                     <i class="fas fa-lock mr-2"></i>Pay Registration Fee First
                                 </a>
                                 <p class="mt-2 text-xs text-center od-meta">K150 one-time registration fee required</p>
+                            @elseif($course->hasMultipleIntakes())
+                                @include('courses.partials.intake-selector')
                             @else
                                 <form action="{{ route('enrollments.store', $course) }}" method="POST">
                                     @csrf

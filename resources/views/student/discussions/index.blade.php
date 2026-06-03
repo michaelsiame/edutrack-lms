@@ -38,6 +38,10 @@
             </div>
         </div>
 
+        @php
+            $isCourseInstructor = auth()->check() && auth()->user()->isInstructor() && $course->instructor_id === auth()->user()->instructor?->id;
+        @endphp
+
         <!-- Discussions List -->
         <div class="space-y-4">
             @forelse($discussions as $discussion)
@@ -65,6 +69,29 @@
                                 <span class="flex items-center gap-1"><i class="fas fa-eye text-[10px]"></i>{{ $discussion->view_count }} views</span>
                                 <span class="flex items-center gap-1"><i class="fas fa-comment text-[10px]"></i>{{ $discussion->reply_count }} replies</span>
                             </div>
+                            @if($isCourseInstructor)
+                                <div class="flex flex-wrap items-center gap-2 mt-3 pt-3" style="border-top: 1px solid var(--od-border);">
+                                    <form action="{{ route('instructor.discussions.pin', [$course, $discussion]) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-xs font-medium transition-colors" style="color: var(--od-navy);">
+                                            <i class="fas fa-thumbtack mr-1"></i>{{ $discussion->is_pinned ? 'Unpin' : 'Pin' }}
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('instructor.discussions.lock', [$course, $discussion]) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-xs font-medium transition-colors" style="color: var(--od-navy);">
+                                            <i class="fas fa-lock mr-1"></i>{{ $discussion->is_locked ? 'Unlock' : 'Lock' }}
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('instructor.discussions.destroy', [$course, $discussion]) }}" method="POST" class="inline" data-confirm="Delete this discussion and all its replies?">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-xs font-medium transition-colors" style="color: var(--od-danger);">
+                                            <i class="fas fa-trash mr-1"></i>Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

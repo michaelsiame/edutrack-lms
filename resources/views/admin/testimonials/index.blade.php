@@ -19,26 +19,26 @@
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-4 text-center">
+        <div class="od-card p-4 text-center">
             <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total'] }}</div>
             <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Total</div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-4 text-center">
+        <div class="od-card p-4 text-center">
             <div class="text-2xl font-bold text-amber-600">{{ $stats['pending'] }}</div>
             <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Pending</div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-4 text-center">
+        <div class="od-card p-4 text-center">
             <div class="text-2xl font-bold text-green-600">{{ $stats['approved'] }}</div>
             <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Approved</div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-4 text-center">
+        <div class="od-card p-4 text-center">
             <div class="text-2xl font-bold text-primary-600">{{ $stats['featured'] }}</div>
             <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Featured</div>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-4">
+    <div class="od-card p-4">
         <form action="{{ route('admin.testimonials.index') }}" method="GET" class="flex flex-wrap items-end gap-4">
             <div class="flex-1 min-w-[200px]">
                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Search</label>
@@ -74,7 +74,7 @@
     </div>
 
     <!-- Testimonials Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div class="od-card" style="padding: 0; overflow: hidden;">
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
                 <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
@@ -87,7 +87,7 @@
                         <th class="px-4 py-3 font-medium text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                <tbody >
                     @forelse($testimonials as $t)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <td class="px-4 py-3">
@@ -96,7 +96,7 @@
                                     {{ strtoupper(substr($t->student_name ?? $t->name, 0, 1)) }}
                                 </div>
                                 <div>
-                                    <div class="font-medium text-gray-900 dark:text-white">{{ $t->student_name ?? $t->name }}</div>
+                                    <div class="font-medium" style="color: var(--od-fg);">{{ $t->student_name ?? $t->name }}</div>
                                     <div class="text-xs text-gray-500 dark:text-gray-400">{{ Str::limit($t->testimonial_text, 50) }}</div>
                                 </div>
                             </div>
@@ -130,7 +130,7 @@
                                 <a href="{{ route('admin.testimonials.edit', $t) }}" class="px-3 py-1.5 bg-primary-50 text-primary-700 text-xs rounded-lg hover:bg-primary-100 font-medium transition-colors">
                                     <i class="fas fa-pen mr-1"></i> Edit
                                 </a>
-                                <form action="{{ route('admin.testimonials.destroy', $t) }}" method="POST" onsubmit="return confirm('Delete this testimonial?')">
+                                <form action="{{ route('admin.testimonials.destroy', $t) }}" method="POST" data-confirm="Delete this testimonial">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="px-3 py-1.5 bg-red-50 text-red-700 text-xs rounded-lg hover:bg-red-100 font-medium transition-colors">
@@ -146,7 +146,7 @@
                             <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-comment-alt text-2xl"></i>
                             </div>
-                            <p class="text-gray-500 dark:text-gray-400">No testimonials yet.</p>
+                            <p class="od-meta">No testimonials yet.</p>
                         </td>
                     </tr>
                     @endforelse

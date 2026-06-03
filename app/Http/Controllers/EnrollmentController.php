@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\EnrollmentPaymentPlan;
+use App\Models\Intake;
 use App\Models\RegistrationFee;
 use Illuminate\Http\Request;
 
@@ -50,19 +51,41 @@ class EnrollmentController extends Controller
                 ->with('warning', 'Please pay the K150 registration fee before enrolling in any course.');
         }
 
-        // Check course capacity (0 = unlimited)
-        if ($course->max_students > 0 && $course->enrollment_count >= $course->max_students) {
-            return back()->with('error', 'This course is full.');
+        // Determine intake
+        $intake = null;
+        if ($course->hasMultipleIntakes()) {
+            $request->validate(['intake_id' => 'required|exists:intakes,id']);
+            $intake = Intake::find($request->intake_id);
+
+            if (!$intake || $intake->course_id !== $course->id) {
+                return back()->with('error', 'Invalid intake selected.');
+            }
+
+            if (!$intake->canEnroll()) {
+                return back()->with('error', 'This intake is not open for enrollment.');
+            }
+        } else {
+            $intake = $course->defaultIntake;
         }
 
-        $isFree = $course->price <= 0 || ($course->discount_price !== null && $course->discount_price <= 0);
-        $price = $course->discount_price ?? $course->price;
+        if (!$intake) {
+            return back()->with('error', 'No intake available for this course.');
+        }
+
+        // Check intake capacity (0 = unlimited)
+        if ($intake->is_full) {
+            return back()->with('error', 'This intake is full.');
+        }
+
+        $price = $intake->effective_price ?? $course->discount_price ?? $course->price ?? 0;
+        $isFree = $price <= 0;
 
         // Create enrollment
         $enrollment = Enrollment::create([
             'user_id' => $user->id,
             'student_id' => $user->student?->id,
             'course_id' => $course->id,
+            'intake_id' => $intake->id,
             'enrolled_at' => now(),
             'enrollment_status' => 'Enrolled',
             'payment_status' => $isFree ? 'completed' : 'pending',
@@ -81,7 +104,8 @@ class EnrollmentController extends Controller
             'payment_status' => $isFree ? 'completed' : 'pending',
         ]);
 
-        // Increment enrollment count
+        // Increment counts
+        $intake->incrementEnrollmentCount();
         $course->increment('enrollment_count');
 
         $emailService = app(\App\Services\EmailQueueService::class);
@@ -98,7 +122,7 @@ class EnrollmentController extends Controller
         }
 
         // For paid courses, redirect to checkout
-        return redirect()->route('checkout.show', $course)
+        return redirect()->route('checkout.show', ['course' => $course, 'intake' => $intake->id])
             ->with('info', 'Enrollment created. Please complete your payment to access the course content.');
     }
 }

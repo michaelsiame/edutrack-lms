@@ -46,8 +46,8 @@ class AssignmentController extends Controller
         ]);
 
         if (!empty($validated['lesson_id'])) {
-            $lesson = Lesson::find($validated['lesson_id']);
-            if (!$lesson || $lesson->module->course_id !== $course->id) {
+            $lesson = Lesson::with('module')->find($validated['lesson_id']);
+            if (!$lesson || !$lesson->module || $lesson->module->course_id !== $course->id) {
                 return back()->with('error', 'Invalid lesson for this course.');
             }
         }
@@ -106,8 +106,8 @@ class AssignmentController extends Controller
         ]);
 
         if (!empty($validated['lesson_id'])) {
-            $lesson = Lesson::find($validated['lesson_id']);
-            if (!$lesson || $lesson->module->course_id !== $course->id) {
+            $lesson = Lesson::with('module')->find($validated['lesson_id']);
+            if (!$lesson || !$lesson->module || $lesson->module->course_id !== $course->id) {
                 return back()->with('error', 'Invalid lesson for this course.');
             }
         }
@@ -174,19 +174,25 @@ class AssignmentController extends Controller
             'graded_at' => now(),
         ]);
 
-        $enrollment = \App\Models\Enrollment::where('user_id', $submission->student?->user_id)
-            ->where('course_id', $course->id)
-            ->first();
-        if ($enrollment) {
-            app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
+        $studentUserId = $submission->student?->user_id;
+        if ($studentUserId) {
+            $enrollment = \App\Models\Enrollment::where('user_id', $studentUserId)
+                ->where('course_id', $course->id)
+                ->first();
+            if ($enrollment) {
+                app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
+            }
         }
 
         // Send notification and email to student
         try {
             $emailService = app(EmailQueueService::class);
-            $emailService->sendNotification($submission->student->user_id, 'Assignment Graded', "Your submission for {$assignment->title} has been graded.", 'grade', route('assignments.show', [$course, $assignment]));
+            if ($studentUserId) {
+                $emailService->sendNotification($studentUserId, 'Assignment Graded', "Your submission for {$assignment->title} has been graded.", 'grade', route('assignments.show', [$course, $assignment]));
+            }
 
-            if ($submission->student?->user?->email) {
+            $studentEmail = $submission->student?->user?->email;
+            if ($studentEmail) {
                 $subject = "Assignment Graded: {$assignment->title}";
                 $body = view('emails.assignment-graded', [
                     'student' => $submission->student->user,
@@ -194,7 +200,7 @@ class AssignmentController extends Controller
                     'submission' => $submission,
                     'course' => $course,
                 ])->render();
-                $emailService->queue($submission->student->user->email, $subject, $body);
+                $emailService->queue($studentEmail, $subject, $body);
             }
         } catch (\Exception $e) {
             // Silently log email failure; don't block the grading flow

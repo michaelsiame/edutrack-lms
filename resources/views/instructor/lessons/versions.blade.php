@@ -15,7 +15,7 @@
                     {{ $course->title }} / {{ $module->title }}
                 </p>
             </div>
-            <span class="text-sm text-gray-500 dark:text-gray-400">
+            <span class="od-meta">
                 {{ $versions->total() }} version{{ $versions->total() !== 1 ? 's' : '' }}
             </span>
         </div>
@@ -41,7 +41,7 @@
                         <button type="button" onclick="document.getElementById('preview-{{ $version->id }}').classList.toggle('hidden')" class="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
                             Preview
                         </button>
-                        <form action="{{ route('instructor.lessons.versions.restore', [$course, $module, $lesson, $version]) }}" method="POST" onsubmit="return confirm('Restore this version? Current content will be saved as a new version.')">
+                        <form action="{{ route('instructor.lessons.versions.restore', [$course, $module, $lesson, $version]) }}" method="POST" data-confirm="Restore this version? Current content will be saved as a new version.">
                             @csrf
                             @method('PUT')
                             <button type="submit" class="px-3 py-1.5 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700">

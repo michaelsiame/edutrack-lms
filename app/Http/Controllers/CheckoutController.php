@@ -18,14 +18,14 @@ class CheckoutController extends Controller
     /**
      * Show checkout page for a course.
      */
-    public function show(Course $course)
+    public function show(Request $request, Course $course)
     {
         $user = auth()->user();
 
         // Verify user is enrolled
         $enrollment = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)
-            ->with('paymentPlan')
+            ->with('paymentPlan', 'intake')
             ->first();
 
         if (!$enrollment) {
@@ -39,7 +39,7 @@ class CheckoutController extends Controller
                 ->with('info', 'You have already paid for this course.');
         }
 
-        $price = $course->discount_price ?? $course->price;
+        $price = $enrollment->effectivePrice();
         $totalPaid = $enrollment->amount_paid;
         $balance = $price - $totalPaid;
         $minDeposit = $price * 0.30;
@@ -58,10 +58,10 @@ class CheckoutController extends Controller
 
         $enrollment = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)
-            ->with('paymentPlan')
+            ->with('paymentPlan', 'intake')
             ->firstOrFail();
 
-        $price = $course->discount_price ?? $course->price;
+        $price = $enrollment->effectivePrice();
         $totalPaid = $enrollment->amount_paid;
         $balance = $price - $totalPaid;
 

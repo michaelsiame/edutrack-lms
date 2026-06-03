@@ -24,7 +24,13 @@ class TestimonialController extends Controller
 
         // Ensure the course is completed
         if ($enrollment->progress < 100) {
-            return redirect()->route('student.learning.show', [$enrollment->course, $enrollment->course->modules->first()->lessons->first()])
+            $firstModule = $enrollment->course->modules->first();
+            $firstLesson = $firstModule?->lessons->first();
+            if ($firstLesson) {
+                return redirect()->route('student.learning.show', [$enrollment->course, $firstLesson])
+                    ->with('warning', 'Complete the course before leaving a review.');
+            }
+            return redirect()->route('student.dashboard')
                 ->with('warning', 'Complete the course before leaving a review.');
         }
 

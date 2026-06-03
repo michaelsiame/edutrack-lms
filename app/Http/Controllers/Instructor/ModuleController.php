@@ -64,6 +64,50 @@ class ModuleController extends Controller
         return back()->with('success', 'Module deleted successfully.');
     }
 
+    public function moveUp(Course $course, Module $module)
+    {
+        $this->authorizeInstructor($course);
+
+        if ($module->course_id !== $course->id) {
+            abort(403);
+        }
+
+        $prevModule = Module::where('course_id', $course->id)
+            ->where('display_order', '<', $module->display_order)
+            ->orderBy('display_order', 'desc')
+            ->first();
+
+        if ($prevModule) {
+            $temp = $module->display_order;
+            $module->update(['display_order' => $prevModule->display_order]);
+            $prevModule->update(['display_order' => $temp]);
+        }
+
+        return back();
+    }
+
+    public function moveDown(Course $course, Module $module)
+    {
+        $this->authorizeInstructor($course);
+
+        if ($module->course_id !== $course->id) {
+            abort(403);
+        }
+
+        $nextModule = Module::where('course_id', $course->id)
+            ->where('display_order', '>', $module->display_order)
+            ->orderBy('display_order')
+            ->first();
+
+        if ($nextModule) {
+            $temp = $module->display_order;
+            $module->update(['display_order' => $nextModule->display_order]);
+            $nextModule->update(['display_order' => $temp]);
+        }
+
+        return back();
+    }
+
     protected function authorizeInstructor(Course $course): void
     {
         $instructor = auth()->user()->instructor;

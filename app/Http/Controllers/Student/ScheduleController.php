@@ -50,17 +50,20 @@ class ScheduleController extends Controller
             ];
         }
 
-        // Add course start dates
+        // Add course start dates (only if within current week)
         foreach ($enrollments as $enrollment) {
             if ($enrollment->course->start_date) {
-                $dayName = $enrollment->course->start_date->format('l');
-                $schedule[$dayName][] = [
-                    'type' => 'course_start',
-                    'title' => $enrollment->course->title . ' Starts',
-                    'course' => $enrollment->course->title,
-                    'time' => 'All Day',
-                    'url' => null,
-                ];
+                $startDate = $enrollment->course->start_date;
+                if ($startDate->between($weekStart, $weekEnd)) {
+                    $dayName = $startDate->format('l');
+                    $schedule[$dayName][] = [
+                        'type' => 'course_start',
+                        'title' => $enrollment->course->title . ' Starts',
+                        'course' => $enrollment->course->title,
+                        'time' => 'All Day',
+                        'url' => null,
+                    ];
+                }
             }
         }
 

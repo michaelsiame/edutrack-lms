@@ -5,15 +5,15 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+    <div class="od-card" style="padding: 0; overflow: hidden;">
+        <div class="od-card-header">
             <h3 class="text-base font-semibold text-gray-900 dark:text-white">
                 <i class="fas fa-file-invoice text-primary-500 mr-2"></i>All Invoices
             </h3>
-            <span class="text-sm text-gray-500 dark:text-gray-400">{{ $invoices->total() }} records</span>
+            <span class="od-meta">{{ $invoices->total() }} records</span>
         </div>
         <div class="overflow-x-auto">
-            <table class="dashboard-table">
+            <table class="od-table min-w-[640px]">
                 <thead>
                     <tr>
                         <th>Invoice #</th>
@@ -47,7 +47,7 @@
                                 {{ ucfirst($invoice->status) }}
                             </span>
                         </td>
-                        <td class="text-sm text-gray-500 dark:text-gray-400">{{ $invoice->invoice_date?->format('M d, Y') }}</td>
+                        <td class="od-meta">{{ $invoice->invoice_date?->format('M d, Y') }}</td>
                         <td class="text-right">
                             <a href="{{ route('finance.invoices.download', $invoice) }}" class="inline-flex items-center px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-medium rounded-lg transition-colors">
                                 <i class="fas fa-download mr-1.5"></i>PDF
@@ -56,7 +56,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center py-10 text-gray-500 dark:text-gray-400">
+                        <td colspan="7" class="od-empty-sm">
                             <i class="fas fa-file-invoice text-3xl mb-3 text-gray-300 dark:text-gray-600"></i>
                             <p class="text-sm">No invoices found. Invoices are generated automatically when payments are verified.</p>
                         </td>
@@ -66,7 +66,7 @@
             </table>
         </div>
         @if($invoices->hasPages())
-        <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700">
+        <div class="od-card-header" style="border-top: 1px solid var(--od-border); border-bottom: none;">
             {{ $invoices->links() }}
         </div>
         @endif

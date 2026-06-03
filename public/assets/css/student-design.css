@@ -63,12 +63,6 @@
   border-radius: 14px;
   padding: 20px;
 }
-.od-card-flat {
-  background: transparent;
-  border: 0;
-  padding: 0;
-}
-
 /* ─── Buttons ─────────────────────────────────────────────────────── */
 .od-btn {
   display: inline-flex;
@@ -114,8 +108,19 @@
   border-color: var(--od-green);
 }
 .od-btn-success:hover { background: var(--od-green-hover); }
+.od-btn-danger {
+  background: var(--od-danger);
+  color: var(--od-surface);
+  border-color: var(--od-danger);
+}
+.od-btn-danger:hover { background: color-mix(in oklch, var(--od-danger) 85%, black); }
 .od-btn-sm { padding: 6px 10px; font-size: 12px; }
 .od-btn-lg { padding: 12px 20px; font-size: 15px; }
+.od-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
 
 /* ─── Link Hover (works with .group parent) ──────────────────────── */
 .od-link-hover { transition: color 0.15s; }
@@ -175,12 +180,28 @@
 /* ─── Course Row ──────────────────────────────────────────────────── */
 .od-course-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
-  padding: 14px 0;
+  padding: 16px 24px;
   border-bottom: 1px solid var(--od-border);
 }
 .od-course-row:last-child { border-bottom: 0; }
+@media (max-width: 640px) {
+  .od-course-row {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+  .od-course-row .od-course-progress {
+    order: 3;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .od-course-row .od-course-action {
+    order: 2;
+    margin-left: auto;
+  }
+}
 .od-course-thumb {
   width: 48px;
   height: 48px;
@@ -215,14 +236,26 @@
   margin: 0;
 }
 .od-course-progress {
-  width: 120px;
+  width: 140px;
   flex-shrink: 0;
 }
 .od-course-progress span {
   font-size: 11px;
   color: var(--od-muted);
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+}
+.od-progress-track {
+  height: 8px;
+  background: var(--od-fg-soft);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.od-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s ease;
+  min-width: 4px;
 }
 .od-course-action { flex-shrink: 0; }
 
@@ -435,15 +468,6 @@
 }
 
 /* ─── Toast ───────────────────────────────────────────────────────── */
-.od-toast-wrap {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
 .od-toast {
   background: var(--od-fg);
   color: var(--od-surface);
@@ -785,7 +809,6 @@
   transition: color 0.15s;
 }
 .od-footer-link:hover { color: var(--od-accent); }
-.od-footer-icon { color: var(--od-accent); }
 .od-footer-bottom {
   background: color-mix(in oklch, var(--od-fg) 95%, black);
   padding: 24px 0;
@@ -857,23 +880,6 @@
   padding: 12px 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
-.od-toast-warning {
-  background: color-mix(in oklch, var(--od-accent) 12%, transparent);
-  border: 1px solid color-mix(in oklch, var(--od-accent) 35%, transparent);
-  color: color-mix(in oklch, var(--od-accent) 55%, black);
-  border-radius: 8px;
-  padding: 12px 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
-.od-toast-info {
-  background: var(--od-navy-soft);
-  border: 1px solid color-mix(in oklch, var(--od-navy) 35%, transparent);
-  color: var(--od-navy);
-  border-radius: 8px;
-  padding: 12px 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
-
 /* ─── Reduced Motion ──────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .od-progress-fill { transition: none; }

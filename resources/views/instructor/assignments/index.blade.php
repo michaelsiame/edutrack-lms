@@ -12,7 +12,7 @@
  @endif
 
  @foreach($courses as $course)
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+ <div class="od-card" style="padding: 0; overflow: hidden;">
  <div class="p-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
  <div class="flex items-center justify-between">
  <h3 class="font-semibold text-gray-900 dark:text-white">{{ $course->title }}</h3>
@@ -28,12 +28,12 @@
  @csrf
  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Title</label>
+ <label class="od-form-label">Title</label>
  <input type="text" name="title" required
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
  </div>
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Lesson (optional)</label>
+ <label class="od-form-label">Lesson (optional)</label>
  <select name="lesson_id"
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
  <option value="">-- None --</option>
@@ -46,28 +46,28 @@
  </div>
  </div>
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Description</label>
+ <label class="od-form-label">Description</label>
  <textarea name="description" rows="2"
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"></textarea>
  </div>
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Instructions</label>
+ <label class="od-form-label">Instructions</label>
  <textarea name="instructions" rows="3"
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"></textarea>
  </div>
  <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Max Points</label>
+ <label class="od-form-label">Max Points</label>
  <input type="number" name="max_points" value="100" min="1"
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
  </div>
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Passing Points</label>
+ <label class="od-form-label">Passing Points</label>
  <input type="number" name="passing_points" value="60" min="0"
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
  </div>
  <div>
- <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Due Date</label>
+ <label class="od-form-label">Due Date</label>
  <input type="datetime-local" name="due_date"
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
  </div>
@@ -92,11 +92,11 @@
  No assignments for this course.
  </div>
  @else
- <div class="divide-y divide-gray-100 dark:divide-gray-700">
+ <div >
  @foreach($course->assignments as $assignment)
  <div class="p-4">
  <div class="flex items-center justify-between mb-2">
- <h4 class="font-medium text-gray-900 dark:text-white">{{ $assignment->title }}</h4>
+ <h4 class="font-medium" style="color: var(--od-fg);">{{ $assignment->title }}</h4>
  <span class="text-xs text-gray-500">{{ $assignment->submissions->count() }} submissions</span>
  </div>
 
@@ -139,12 +139,12 @@
  <form action="{{ route('instructor.courses.assignments.grade', [$course, $assignment, $submission]) }}" method="POST" class="flex items-end gap-2 mt-2">
  @csrf
  <div class="w-24">
- <label class="block text-xs text-gray-500 mb-1">Points</label>
+ <label class="od-form-label">Points</label>
  <input type="number" name="points_earned" min="0" max="{{ $assignment->max_points }}" step="0.01" required
  class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
  </div>
  <div class="flex-1">
- <label class="block text-xs text-gray-500 mb-1">Feedback</label>
+ <label class="od-form-label">Feedback</label>
  <input type="text" name="feedback"
  class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
  placeholder="Feedback...">

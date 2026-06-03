@@ -7,17 +7,17 @@
 <div class="max-w-5xl mx-auto">
  <div class="flex items-center justify-between mb-6">
  <h2 class="text-xl font-bold text-gray-900 dark:text-white">Gamification Badges</h2>
- <button onclick="toggleBadgeForm()" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm">
+ <button onclick="toggleBadgeForm()" class="od-btn od-btn-primary od-btn-sm font-medium text-sm">
  <i class="fas fa-plus mr-1"></i>Add Badge
  </button>
  </div>
 
  @if(session('success'))
- <div class="mb-4 p-4 bg-success-50 border border-success-200 rounded-lg text-success-700">{{ session('success') }}</div>
+ <div class="mb-4 p-4 od-toast-success">{{ session('success') }}</div>
  @endif
 
  <!-- Create Form -->
- <div id="badge-form" class="hidden bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 mb-6">
+ <div id="badge-form" class="hidden od-card p-6 mb-6">
  <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Create New Badge</h3>
  <form action="{{ route('admin.badges.store') }}" method="POST">
  @csrf
@@ -61,7 +61,7 @@
  </div>
  </div>
  <div class="flex gap-2">
- <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm">Create Badge</button>
+ <button type="submit" class="od-btn od-btn-primary od-btn-sm font-medium text-sm">Create Badge</button>
  <button type="button" onclick="toggleBadgeForm()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-sm">Cancel</button>
  </div>
  </form>
@@ -70,7 +70,7 @@
  <!-- Badges Grid -->
  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
  @forelse($badges as $badge)
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-5">
+ <div class="od-card p-5">
  <div class="flex items-start gap-4">
  <div class="w-12 h-12 rounded-full bg-warning-100 dark:bg-warning-900 flex items-center justify-center flex-shrink-0">
  <i class="{{ $badge->badge_icon_url }} text-warning-600 dark:text-warning-400 text-lg"></i>
@@ -89,7 +89,7 @@
  {{ $badge->is_active ?'Active' :'Inactive' }}
  </button>
  </form>
- <form action="{{ route('admin.badges.destroy', $badge) }}" method="POST" onsubmit="return confirm('Delete this badge?')">
+ <form action="{{ route('admin.badges.destroy', $badge) }}" method="POST" data-confirm="Delete this badge">
  @csrf @method('DELETE')
  <button type="submit" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-xs text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg" aria-label="Delete badge">
  <i class="fas fa-trash" aria-hidden="true"></i>
@@ -100,7 +100,7 @@
  </div>
  </div>
  @empty
- <div class="col-span-full text-center py-12 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+ <div class="col-span-full text-center py-12 od-card">
  <i class="fas fa-medal text-4xl text-gray-300 mb-4"></i>
  <h3 class="text-lg font-medium text-gray-900 dark:text-white">No Badges Yet</h3>
  <p class="text-gray-500 text-sm mt-1">Create badges to gamify student learning.</p>

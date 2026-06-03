@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto">
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
+ <div class="od-card">
  <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
  <h2 class="text-lg font-bold text-gray-900 dark:text-white">Edit: {{ $user->full_name ?? $user->username }}</h2>
  </div>

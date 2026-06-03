@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto">
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
+ <div class="od-card">
  <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
  <h2 class="text-lg font-bold text-gray-900 dark:text-white">Edit Promotion</h2>
  <span class="font-mono text-sm bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">{{ $promotion->code }}</span>

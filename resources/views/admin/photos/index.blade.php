@@ -35,7 +35,7 @@
     @endif
 
     <!-- Upload Form -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+    <div class="od-card p-6">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <i class="fas fa-cloud-upload-alt text-primary-500"></i>
             Upload New Photo
@@ -74,7 +74,7 @@
                     </label>
                 </div>
                 <div>
-                    <button type="submit" class="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm transition-colors">
+                    <button type="submit" class="w-full od-btn od-btn-primary od-btn-sm font-medium text-sm transition-colors">
                         <i class="fas fa-upload mr-1"></i> Upload
                     </button>
                 </div>
@@ -85,7 +85,7 @@
     <!-- Photo Grid -->
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
         @forelse($photos as $photo)
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden group {{ !$photo->is_active ? 'opacity-60' : '' }}">
+        <div class="od-card" style="padding: 0; overflow: hidden;" group {{ !$photo->is_active ? 'opacity-60' : '' }}">
             <!-- Image -->
             <div class="relative h-44 overflow-hidden bg-gray-100 dark:bg-gray-900">
                 <img src="{{ $photo->image_path }}" alt="{{ $photo->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
@@ -126,7 +126,7 @@
                         class="flex-1 py-1.5 px-3 bg-primary-50 text-primary-700 text-xs rounded-lg hover:bg-primary-100 font-medium text-center transition-colors">
                         <i class="fas fa-pen mr-1"></i> Edit
                     </a>
-                    <form action="{{ route('admin.photos.destroy', $photo) }}" method="POST" class="flex-1" onsubmit="return confirm('Delete &quot;{{ $photo->title }}&quot;? This cannot be undone.')">
+                    <form action="{{ route('admin.photos.destroy', $photo) }}" method="POST" class="flex-1" data-confirm="Delete photo? This cannot be undone.">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="w-full py-1.5 px-3 bg-red-50 text-red-700 text-xs rounded-lg hover:bg-red-100 font-medium transition-colors">
@@ -141,7 +141,7 @@
             <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i class="fas fa-images text-2xl"></i>
             </div>
-            <p class="text-gray-500 dark:text-gray-400">No photos uploaded yet.</p>
+            <p class="od-meta">No photos uploaded yet.</p>
             <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Upload your first campus photo above.</p>
         </div>
         @endforelse

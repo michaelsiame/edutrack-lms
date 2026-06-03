@@ -10,7 +10,7 @@
             <i class="fas fa-arrow-left mr-1"></i>Back to Quiz
         </a>
         <h1 class="text-xl font-bold text-gray-900 dark:text-white mt-2">Submissions: {{ $quiz->title }}</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $attempts->total() }} attempt{{ $attempts->total() !== 1 ? 's' : '' }}</p>
+        <p class="od-meta">{{ $attempts->total() }} attempt{{ $attempts->total() !== 1 ? 's' : '' }}</p>
     </div>
 
     @if(session('success'))
@@ -19,9 +19,9 @@
     </div>
     @endif
 
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div class="od-card" style="padding: 0; overflow: hidden;">
         <div class="overflow-x-auto">
-            <table class="dashboard-table">
+            <table class="od-table min-w-[640px]">
                 <thead>
                     <tr>
                         <th>Student</th>
@@ -45,8 +45,8 @@
                             </div>
                         </td>
                         <td class="text-sm text-gray-600 dark:text-gray-400">#{{ $attempt->attempt_number }}</td>
-                        <td class="text-sm text-gray-500 dark:text-gray-400">{{ $attempt->submitted_at?->diffForHumans() ?? 'N/A' }}</td>
-                        <td class="text-sm text-gray-500 dark:text-gray-400">{{ $attempt->time_spent_minutes ?? 0 }} min</td>
+                        <td class="od-meta">{{ $attempt->submitted_at?->diffForHumans() ?? 'N/A' }}</td>
+                        <td class="od-meta">{{ $attempt->time_spent_minutes ?? 0 }} min</td>
                         <td>
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
                                 {{ $attempt->status === 'Graded' ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400' :

@@ -6,20 +6,20 @@
 @section('content')
 <div class="max-w-6xl mx-auto">
  @if(session('success'))
- <div class="mb-4 p-4 bg-success-50 border border-success-200 rounded-lg text-success-700">{{ session('success') }}</div>
+ <div class="mb-4 p-4 od-toast-success">{{ session('success') }}</div>
  @endif
 
  <div class="flex items-center justify-between mb-6">
  <h2 class="text-xl font-bold text-gray-900 dark:text-white">All Announcements</h2>
- <a href="{{ route('admin.announcements.create') }}" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm">
+ <a href="{{ route('admin.announcements.create') }}" class="od-btn od-btn-primary od-btn-sm font-medium text-sm">
  <i class="fas fa-plus mr-1"></i>New Announcement
  </a>
  </div>
 
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+ <div class="od-card" style="padding: 0; overflow: hidden;">
  <div class="overflow-x-auto">
- <table class="w-full text-sm min-w-[640px]">
- <thead class="bg-gray-50 dark:bg-gray-700/50">
+ <table class="od-table min-w-[640px]">
+ <thead >
  <tr>
  <th class="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300" scope="col">Title</th>
  <th class="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300" scope="col">Type</th>
@@ -29,11 +29,11 @@
  <th class="px-4 py-3 text-right font-medium text-gray-700 dark:text-gray-300" scope="col">Actions</th>
  </tr>
  </thead>
- <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+ <tbody >
  @forelse($announcements as $announcement)
- <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+ <tr >
  <td class="px-4 py-3">
- <div class="font-medium text-gray-900 dark:text-white">{{ $announcement->title }}</div>
+ <div class="font-medium" style="color: var(--od-fg);">{{ $announcement->title }}</div>
  @if($announcement->course)
  <div class="text-xs text-gray-500">{{ $announcement->course->title }}</div>
  @endif
@@ -58,7 +58,7 @@
  <a href="{{ route('admin.announcements.edit', $announcement) }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit announcement">
  <i class="fas fa-edit" aria-hidden="true"></i>
  </a>
- <form action="{{ route('admin.announcements.destroy', $announcement) }}" method="POST" class="inline" onsubmit="return confirm('Delete this announcement?')">
+ <form action="{{ route('admin.announcements.destroy', $announcement) }}" method="POST" class="inline" data-confirm="Delete this announcement">
  @csrf
  @method('DELETE')
  <button type="submit" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg" aria-label="Delete announcement">

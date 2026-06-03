@@ -12,8 +12,8 @@
     <p class="od-eyebrow">LEARNING</p>
     <h1 class="od-h1 mb-8">My Courses</h1>
 
-    <div class="od-card overflow-hidden" style="padding: 0;">
-        <div class="p-6" style="border-bottom: 1px solid var(--od-border);">
+    <div class="od-card" style="padding: 0; overflow: hidden;">
+        <div class="od-card-header">
             <h2 class="od-h3">Enrolled Courses</h2>
         </div>
 
@@ -32,7 +32,7 @@
             <div>
                 @foreach($enrollments as $enrollment)
                     @php $firstLesson = $enrollment->course?->modules?->flatMap->lessons->first(); @endphp
-                    <div class="od-course-row px-6">
+                    <div class="od-course-row">
                         <div class="od-course-thumb">
                             @if($enrollment->course?->thumbnail_image_url)
                                 <img src="{{ $enrollment->course->thumbnail_image_url }}" alt="" />
@@ -41,19 +41,19 @@
                             @endif
                         </div>
                         <div class="od-course-info">
-                            <h4>{{ $enrollment->course?->title ??'Unknown' }}</h4>
+                            <h4>{{ $enrollment->course?->title ?? 'Unknown' }}</h4>
                             <p class="od-meta">Enrolled {{ $enrollment->enrolled_at?->format('M d, Y') }}</p>
-                            <div class="flex items-center gap-2 mt-1.5">
-                                @if($enrollment->enrollment_status ==='Completed')
+                            <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                                @if($enrollment->enrollment_status === 'Completed')
                                     <span class="od-badge od-badge-success">Completed</span>
-                                @elseif($enrollment->enrollment_status ==='In Progress')
+                                @elseif($enrollment->enrollment_status === 'In Progress')
                                     <span class="od-badge od-badge-info">In Progress</span>
-                                @elseif($enrollment->enrollment_status ==='Dropped')
+                                @elseif($enrollment->enrollment_status === 'Dropped')
                                     <span class="od-badge od-badge-danger">Dropped</span>
                                 @else
                                     <span class="od-badge od-badge-warn">{{ $enrollment->enrollment_status }}</span>
                                 @endif
-                                @if($enrollment->payment_status ==='completed')
+                                @if($enrollment->payment_status === 'completed')
                                     <span class="od-badge od-badge-success">Paid</span>
                                 @else
                                     <span class="od-badge od-badge-warn">Payment Pending</span>
@@ -64,13 +64,13 @@
                             <span class="od-num">{{ number_format($enrollment->progress, 0) }}% complete</span>
                             <div class="od-progress-track">
                                 @php $pc = $enrollment->progress >= 75 ? 'green' : ($enrollment->progress >= 40 ? 'navy' : 'accent'); @endphp
-                                <div class="od-progress-fill {{ $pc }}" style="width: {{ $enrollment->progress }}%"></div>
+                                <div class="od-progress-fill {{ $pc }}" style="width: {{ max($enrollment->progress, 2) }}%"></div>
                             </div>
                         </div>
                         <div class="od-course-action">
                             <a href="{{ $firstLesson ? route('student.learning.show', [$enrollment->course, $firstLesson]) : route('enrollments.show', $enrollment->course) }}"
                                class="od-btn od-btn-primary od-btn-sm">
-                                {{ $enrollment->progress > 0 ?'Continue' :'Start' }}
+                                {{ $enrollment->progress > 0 ? 'Continue' : 'Start' }}
                             </a>
                         </div>
                     </div>

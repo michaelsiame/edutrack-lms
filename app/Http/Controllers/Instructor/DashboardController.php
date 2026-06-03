@@ -134,7 +134,7 @@ class DashboardController extends Controller
 
         $courseIds = $courses->pluck('id');
 
-        $totalStudents = Enrollment::whereIn('course_id', $courseIds)->count();
+        $totalStudents = Enrollment::whereIn('course_id', $courseIds)->distinct('user_id')->count('user_id');
         $totalEnrollments = Enrollment::whereIn('course_id', $courseIds)->count();
         $completedEnrollments = Enrollment::whereIn('course_id', $courseIds)->where('enrollment_status', 'Completed')->count();
         $completionRate = $totalEnrollments > 0 ? round(($completedEnrollments / $totalEnrollments) * 100, 1) : 0;

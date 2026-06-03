@@ -6,7 +6,7 @@
 @section('content')
 <div class="space-y-6">
     {{-- Filters --}}
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-4">
+    <div class="od-card p-4">
         <form action="{{ route('finance.payments') }}" method="GET" class="flex flex-wrap gap-4 items-end">
             <div>
                 <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Status</label>
@@ -37,15 +37,15 @@
     </div>
 
     {{-- Payments Table --}}
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+    <div class="od-card" style="padding: 0; overflow: hidden;">
+        <div class="od-card-header">
             <h3 class="text-base font-semibold text-gray-900 dark:text-white">
                 <i class="fas fa-money-bill-wave text-success-500 mr-2"></i>All Payments
             </h3>
-            <span class="text-sm text-gray-500 dark:text-gray-400">{{ $payments->total() }} records</span>
+            <span class="od-meta">{{ $payments->total() }} records</span>
         </div>
         <div class="overflow-x-auto">
-            <table class="dashboard-table">
+            <table class="od-table min-w-[640px]">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -61,7 +61,7 @@
                 <tbody>
                     @forelse($payments as $payment)
                     <tr>
-                        <td class="text-sm text-gray-500 dark:text-gray-400">#{{ $payment->payment_id ?? $payment->id }}</td>
+                        <td class="od-meta">#{{ $payment->payment_id ?? $payment->id }}</td>
                         <td>
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 text-xs font-bold">
@@ -89,10 +89,10 @@
                                 {{ $payment->payment_status }}
                             </span>
                         </td>
-                        <td class="text-sm text-gray-500 dark:text-gray-400">{{ $payment->created_at?->format('M d, Y') }}</td>
+                        <td class="od-meta">{{ $payment->created_at?->format('M d, Y') }}</td>
                         <td class="text-right">
                             @if($payment->payment_status === 'Pending')
-                            <form action="{{ route('finance.payments.verify', $payment) }}" method="POST" class="inline" onsubmit="return confirm('Verify this payment of ZMW {{ number_format($payment->amount, 2) }}?');">
+                            <form action="{{ route('finance.payments.verify', $payment) }}" method="POST" class="inline" data-confirm="Verify this payment?">
                                 @csrf
                                 <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-success-600 hover:bg-success-700 text-white text-xs font-medium rounded-lg transition-colors">
                                     <i class="fas fa-check mr-1.5"></i>Verify
@@ -105,7 +105,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="text-center py-10 text-gray-500 dark:text-gray-400">
+                        <td colspan="8" class="od-empty-sm">
                             <i class="fas fa-money-bill-wave text-3xl mb-3 text-gray-300 dark:text-gray-600"></i>
                             <p class="text-sm">No payments found.</p>
                         </td>
@@ -115,7 +115,7 @@
             </table>
         </div>
         @if($payments->hasPages())
-        <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700">
+        <div class="od-card-header" style="border-top: 1px solid var(--od-border); border-bottom: none;">
             {{ $payments->links() }}
         </div>
         @endif

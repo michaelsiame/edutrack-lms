@@ -30,6 +30,7 @@ Route::get('/privacy', function () { return view('pages.privacy'); })->name('pri
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
+Route::get('/courses/{course:slug}/preview/{lesson}', [CourseController::class, 'previewLesson'])->name('courses.preview');
 Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
 
 Route::get('/certificates/verify/{code}', [CertificateController::class, 'verify'])->name('certificates.verify');
@@ -181,6 +182,11 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 
     // Promotions
     Route::resource('promotions', App\Http\Controllers\Admin\PromotionController::class);
+
+    // Intakes
+    Route::get('/intakes', [App\Http\Controllers\Admin\IntakeController::class, 'index'])->name('intakes.index');
+    Route::get('/intakes/{intake}', [App\Http\Controllers\Admin\IntakeController::class, 'show'])->name('intakes.show');
+    Route::post('/intakes/{intake}/transfer-student', [App\Http\Controllers\Admin\IntakeController::class, 'transferStudent'])->name('intakes.transfer-student');
 });
 
 /*
@@ -192,16 +198,24 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 Route::prefix('instructor')->middleware(['auth', 'instructor'])->name('instructor.')->group(function () {
     Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
     Route::resource('courses', App\Http\Controllers\Instructor\CourseController::class);
+    Route::post('/courses/{course}/save-as-template', [App\Http\Controllers\Instructor\CourseController::class, 'saveAsTemplate'])->name('courses.save-as-template');
+    Route::get('/course-templates', [App\Http\Controllers\Instructor\CourseController::class, 'createFromTemplate'])->name('courses.create-from-template');
+    Route::post('/course-templates', [App\Http\Controllers\Instructor\CourseController::class, 'storeFromTemplate'])->name('courses.store-from-template');
 
     // Module CRUD
     Route::post('/courses/{course}/modules', [App\Http\Controllers\Instructor\ModuleController::class, 'store'])->name('courses.modules.store');
     Route::put('/courses/{course}/modules/{module}', [App\Http\Controllers\Instructor\ModuleController::class, 'update'])->name('courses.modules.update');
     Route::delete('/courses/{course}/modules/{module}', [App\Http\Controllers\Instructor\ModuleController::class, 'destroy'])->name('courses.modules.destroy');
+    Route::post('/courses/{course}/modules/{module}/move-up', [App\Http\Controllers\Instructor\ModuleController::class, 'moveUp'])->name('courses.modules.move-up');
+    Route::post('/courses/{course}/modules/{module}/move-down', [App\Http\Controllers\Instructor\ModuleController::class, 'moveDown'])->name('courses.modules.move-down');
 
     // Lesson CRUD
     Route::post('/courses/{course}/modules/{module}/lessons', [App\Http\Controllers\Instructor\LessonController::class, 'store'])->name('courses.modules.lessons.store');
     Route::put('/courses/{course}/modules/{module}/lessons/{lesson}', [App\Http\Controllers\Instructor\LessonController::class, 'update'])->name('courses.modules.lessons.update');
     Route::delete('/courses/{course}/modules/{module}/lessons/{lesson}', [App\Http\Controllers\Instructor\LessonController::class, 'destroy'])->name('courses.modules.lessons.destroy');
+    Route::post('/courses/{course}/modules/{module}/lessons/{lesson}/move-up', [App\Http\Controllers\Instructor\LessonController::class, 'moveUp'])->name('courses.modules.lessons.move-up');
+    Route::post('/courses/{course}/modules/{module}/lessons/{lesson}/move-down', [App\Http\Controllers\Instructor\LessonController::class, 'moveDown'])->name('courses.modules.lessons.move-down');
+    Route::post('/courses/{course}/lessons/bulk-upload', [App\Http\Controllers\Instructor\LessonController::class, 'bulkUpload'])->name('courses.lessons.bulk-upload');
 
     // Lesson Versions
     Route::get('/courses/{course}/modules/{module}/lessons/{lesson}/versions', [App\Http\Controllers\Instructor\LessonVersionController::class, 'index'])->name('lessons.versions');
@@ -223,9 +237,21 @@ Route::prefix('instructor')->middleware(['auth', 'instructor'])->name('instructo
     Route::get('/progress', [InstructorDashboardController::class, 'progress'])->name('progress');
     Route::get('/analytics', [InstructorDashboardController::class, 'analytics'])->name('analytics');
 
+    // Intakes
+    Route::get('/courses/{course}/intakes', [App\Http\Controllers\Instructor\IntakeController::class, 'index'])->name('courses.intakes.index');
+    Route::get('/courses/{course}/intakes/create', [App\Http\Controllers\Instructor\IntakeController::class, 'create'])->name('courses.intakes.create');
+    Route::post('/courses/{course}/intakes', [App\Http\Controllers\Instructor\IntakeController::class, 'store'])->name('courses.intakes.store');
+    Route::get('/courses/{course}/intakes/{intake}/edit', [App\Http\Controllers\Instructor\IntakeController::class, 'edit'])->name('courses.intakes.edit');
+    Route::put('/courses/{course}/intakes/{intake}', [App\Http\Controllers\Instructor\IntakeController::class, 'update'])->name('courses.intakes.update');
+    Route::delete('/courses/{course}/intakes/{intake}', [App\Http\Controllers\Instructor\IntakeController::class, 'destroy'])->name('courses.intakes.destroy');
+    Route::post('/courses/{course}/intakes/{intake}/close', [App\Http\Controllers\Instructor\IntakeController::class, 'close'])->name('courses.intakes.close');
+    Route::post('/courses/{course}/intakes/{intake}/reopen', [App\Http\Controllers\Instructor\IntakeController::class, 'reopen'])->name('courses.intakes.reopen');
+
     // Live Sessions
     Route::get('/courses/{course}/live-sessions', [App\Http\Controllers\Instructor\LiveSessionController::class, 'index'])->name('live-sessions.index');
     Route::post('/courses/{course}/live-sessions', [App\Http\Controllers\Instructor\LiveSessionController::class, 'store'])->name('live-sessions.store');
+    Route::get('/courses/{course}/live-sessions/{session}/edit', [App\Http\Controllers\Instructor\LiveSessionController::class, 'edit'])->name('live-sessions.edit');
+    Route::put('/courses/{course}/live-sessions/{session}', [App\Http\Controllers\Instructor\LiveSessionController::class, 'update'])->name('live-sessions.update');
     Route::delete('/courses/{course}/live-sessions/{session}', [App\Http\Controllers\Instructor\LiveSessionController::class, 'destroy'])->name('live-sessions.destroy');
 
     // Quizzes
@@ -261,6 +287,8 @@ Route::prefix('student')->middleware(['auth', 'student'])->name('student.')->gro
     Route::get('/payments', [StudentDashboardController::class, 'payments'])->name('payments');
     Route::get('/payments/{payment}/receipt', [StudentDashboardController::class, 'downloadReceipt'])->name('payments.receipt');
     Route::get('/certificates', [StudentDashboardController::class, 'certificates'])->name('certificates');
+    Route::get('/submissions', [StudentDashboardController::class, 'submissions'])->name('submissions');
+    Route::get('/analytics', [StudentDashboardController::class, 'analytics'])->name('analytics');
 
     // Learning
     Route::get('/courses/{course}/lessons/{lesson}', [App\Http\Controllers\Student\LearningController::class, 'show'])->name('learning.show');
@@ -317,6 +345,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/courses/{course}/discussions/{discussion}/reply', [App\Http\Controllers\Student\DiscussionController::class, 'reply'])->name('student.discussions.reply');
     Route::put('/courses/{course}/discussions/{discussion}/replies/{reply}', [App\Http\Controllers\Student\DiscussionController::class, 'updateReply'])->name('student.discussions.replies.update');
     Route::delete('/courses/{course}/discussions/{discussion}/replies/{reply}', [App\Http\Controllers\Student\DiscussionController::class, 'destroyReply'])->name('student.discussions.replies.destroy');
+
+    // Instructor Discussion Moderation (instructors only)
+    Route::post('/courses/{course}/discussions/{discussion}/pin', [App\Http\Controllers\Instructor\DiscussionController::class, 'pin'])->name('instructor.discussions.pin')->middleware('instructor');
+    Route::post('/courses/{course}/discussions/{discussion}/lock', [App\Http\Controllers\Instructor\DiscussionController::class, 'lock'])->name('instructor.discussions.lock')->middleware('instructor');
+    Route::delete('/courses/{course}/discussions/{discussion}', [App\Http\Controllers\Instructor\DiscussionController::class, 'destroy'])->name('instructor.discussions.destroy')->middleware('instructor');
+    Route::post('/courses/{course}/discussions/{discussion}/replies/{reply}/best-answer', [App\Http\Controllers\Instructor\DiscussionController::class, 'markBestAnswer'])->name('instructor.discussions.best-answer')->middleware('instructor');
 
     // Live Sessions
     Route::get('/courses/{course}/live-sessions', [App\Http\Controllers\Student\LiveSessionController::class, 'index'])->name('student.live-sessions.index');

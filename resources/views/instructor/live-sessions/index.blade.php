@@ -16,20 +16,20 @@
  <h2 class="text-xl font-bold text-gray-900 dark:text-white">Live Sessions</h2>
  <p class="text-sm text-gray-500">{{ $course->title }}</p>
  </div>
- <button onclick="toggleCreateForm()" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm">
+ <button onclick="toggleCreateForm()" class="od-btn od-btn-primary od-btn-sm font-medium text-sm">
  <i class="fas fa-plus mr-1"></i>Schedule Session
  </button>
  </div>
 
  @if(session('success'))
- <div class="mb-4 p-4 bg-success-50 border border-success-200 rounded-lg text-success-700">{{ session('success') }}</div>
+ <div class="mb-4 p-4 od-toast-success">{{ session('success') }}</div>
  @endif
  @if(session('error'))
  <div class="mb-4 p-4 bg-danger-50 border border-danger-200 rounded-lg text-danger-700">{{ session('error') }}</div>
  @endif
 
  <!-- Create Form -->
- <div id="create-form" class="hidden bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 mb-6">
+ <div id="create-form" class="hidden od-card p-6 mb-6">
  <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Schedule New Live Session</h3>
  <form action="{{ route('instructor.live-sessions.store', $course) }}" method="POST">
  @csrf
@@ -76,7 +76,7 @@
  </label>
  </div>
  <div class="flex gap-2">
- <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm">Schedule</button>
+ <button type="submit" class="od-btn od-btn-primary od-btn-sm font-medium text-sm">Schedule</button>
  <button type="button" onclick="toggleCreateForm()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-sm">Cancel</button>
  </div>
  </form>
@@ -85,7 +85,7 @@
  <!-- Sessions List -->
  <div class="space-y-4">
  @forelse($sessions as $session)
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-5">
+ <div class="od-card p-5">
  <div class="flex items-start justify-between">
  <div class="flex-1">
  <div class="flex items-center gap-2 mb-2">
@@ -113,7 +113,10 @@
  <i class="fas fa-video mr-1"></i>Join
  </a>
  @endif
- <form action="{{ route('instructor.live-sessions.destroy', [$course, $session]) }}" method="POST" onsubmit="return confirm('Delete this session?')">
+ <a href="{{ route('instructor.live-sessions.edit', [$course, $session]) }}" class="px-3 py-1.5 bg-primary-100 text-primary-700 text-xs rounded-lg hover:bg-primary-200 font-medium">
+ <i class="fas fa-pen"></i>
+ </a>
+ <form action="{{ route('instructor.live-sessions.destroy', [$course, $session]) }}" method="POST" data-confirm="Delete this session">
  @csrf @method('DELETE')
  <button type="submit" class="px-3 py-1.5 bg-danger-100 text-danger-700 text-xs rounded-lg hover:bg-danger-200 font-medium">
  <i class="fas fa-trash"></i>
@@ -123,7 +126,7 @@
  </div>
  </div>
  @empty
- <div class="text-center py-12 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+ <div class="text-center py-12 od-card">
  <i class="fas fa-video text-4xl text-gray-300 mb-4"></i>
  <h3 class="text-lg font-medium text-gray-900 dark:text-white">No Live Sessions</h3>
  <p class="text-gray-500 text-sm mt-1">Schedule your first live class for this course.</p>

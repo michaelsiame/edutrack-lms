@@ -4,13 +4,13 @@
 @section('page_title','Course Management')
 
 @section('content')
-<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
- <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
- <h3 class="text-base font-semibold text-gray-800 dark:text-white">All Courses</h3>
- <span class="text-sm text-gray-500 dark:text-gray-400">{{ $courses->total() }} total</span>
+<div class="od-card" style="padding: 0; overflow: hidden;">
+ <div class="od-card-header">
+ <h3 class="od-h3">All Courses</h3>
+ <span class="od-meta">{{ $courses->total() }} total</span>
  </div>
  <div class="overflow-x-auto">
- <table class="dashboard-table">
+ <table class="od-table min-w-[640px]">
  <thead>
  <tr>
  <th>Course</th>
@@ -25,10 +25,10 @@
  @forelse($courses as $course)
  <tr>
  <td>
- <span class="font-medium text-gray-900 dark:text-white">{{ $course->title }}</span>
+ <span class="font-medium" style="color: var(--od-fg);">{{ $course->title }}</span>
  </td>
- <td class="text-gray-600 dark:text-gray-400">{{ $course->category?->name ??'N/A' }}</td>
- <td class="text-gray-600 dark:text-gray-400">{{ $course->instructor?->user?->name ??'N/A' }}</td>
+ <td class="od-meta">{{ $course->category?->name ??'N/A' }}</td>
+ <td class="od-meta">{{ $course->instructor?->user?->name ??'N/A' }}</td>
  <td>
  @php
  $statusClass = match($course->status) {
@@ -42,7 +42,7 @@
  {{ $statusLabel }}
  </span>
  </td>
- <td class="font-medium text-gray-900 dark:text-white">{{ setting('currency', 'ZMW') }} {{ number_format($course->price, 2) }}</td>
+ <td class="font-medium" style="color: var(--od-fg);">{{ setting('currency', 'ZMW') }} {{ number_format($course->price, 2) }}</td>
  <td class="text-right">
  @if($course->status === 'under_review')
  <form action="{{ route('admin.courses.approve', $course) }}" method="POST" class="inline">
@@ -60,16 +60,16 @@
  </button>
  </form>
  @endif
- <a href="{{ route('admin.courses.show', $course) }}" class="inline-flex items-center justify-center min-w-[36px] min-h-[36px] text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="View course">
+ <a href="{{ route('admin.courses.show', $course) }}" class="od-btn od-btn-ghost od-btn-sm" aria-label="View course">
  <i class="fas fa-eye text-sm"></i>
  </a>
- <a href="{{ route('admin.courses.edit', $course) }}" class="inline-flex items-center justify-center min-w-[36px] min-h-[36px] text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit course">
+ <a href="{{ route('admin.courses.edit', $course) }}" class="od-btn od-btn-ghost od-btn-sm" aria-label="Edit course">
  <i class="fas fa-edit text-sm"></i>
  </a>
- <form action="{{ route('admin.courses.destroy', $course) }}" method="POST" class="inline" onsubmit="return confirm('Delete this course?')">
+ <form action="{{ route('admin.courses.destroy', $course) }}" method="POST" class="inline" data-confirm="Delete this course">
  @csrf
  @method('DELETE')
- <button type="submit" class="inline-flex items-center justify-center min-w-[36px] min-h-[36px] text-gray-500 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg" aria-label="Delete course">
+ <button type="submit" class="od-btn od-btn-ghost od-btn-sm text-danger-600 hover:text-danger-700" aria-label="Delete course">
  <i class="fas fa-trash text-sm"></i>
  </button>
  </form>
@@ -77,13 +77,13 @@
  </tr>
  @empty
  <tr>
- <td colspan="6" class="text-center py-10 text-gray-500 dark:text-gray-400">No courses found.</td>
+ <td colspan="6" class="od-empty-sm">No courses found.</td>
  </tr>
  @endforelse
  </tbody>
  </table>
  </div>
- <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700">
+ <div class="od-card-header" style="border-top: 1px solid var(--od-border); border-bottom: none;">
  {{ $courses->links() }}
  </div>
 </div>

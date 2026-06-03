@@ -8,6 +8,7 @@ use App\Models\Lesson;
 use App\Models\LessonProgress;
 use App\Services\LessonExportService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LearningController extends Controller
 {
@@ -25,7 +26,7 @@ class LearningController extends Controller
         }
 
         // Verify lesson belongs to course
-        if ($lesson->module->course_id !== $course->id) {
+        if (!$lesson->module || $lesson->module->course_id !== $course->id) {
             abort(404);
         }
 
@@ -89,7 +90,7 @@ class LearningController extends Controller
                 ->with('warning', 'Please complete at least a 30% deposit to access course content.');
         }
 
-        if ($lesson->module->course_id !== $course->id) {
+        if (!$lesson->module || $lesson->module->course_id !== $course->id) {
             abort(404);
         }
 
@@ -116,7 +117,7 @@ class LearningController extends Controller
             ]);
         }
 
-        // Recalculate enrollment progress
+        // Recalculate enrollment progress and handle completion rewards atomically
         $totalLessons = $course->modules()->withCount('lessons')->get()->sum('lessons_count');
         $completedLessons = LessonProgress::where('enrollment_id', $enrollment->id)
             ->where('status', 'Completed')
@@ -125,16 +126,18 @@ class LearningController extends Controller
         $enrollmentProgress = $totalLessons > 0 ? round(($completedLessons / $totalLessons) * 100) : 0;
         $wasCompleted = $enrollment->enrollment_status !== 'Completed';
 
-        $enrollment->update([
-            'progress' => $enrollmentProgress,
-            'enrollment_status' => $enrollmentProgress >= 100 ? 'Completed' : 'In Progress',
-            'completion_date' => $enrollmentProgress >= 100 ? now() : null,
-        ]);
+        DB::transaction(function () use ($enrollment, $enrollmentProgress, $wasCompleted) {
+            $enrollment->update([
+                'progress' => $enrollmentProgress,
+                'enrollment_status' => $enrollmentProgress >= 100 ? 'Completed' : 'In Progress',
+                'completion_date' => $enrollmentProgress >= 100 ? now() : null,
+            ]);
 
-        // Auto-issue certificate and badge on first completion
-        if ($enrollmentProgress >= 100 && $wasCompleted) {
-            $this->awardCompletionRewards($enrollment);
-        }
+            // Auto-issue certificate and badge on first completion
+            if ($enrollmentProgress >= 100 && $wasCompleted) {
+                $this->awardCompletionRewards($enrollment);
+            }
+        });
 
         return redirect()->route('student.learning.show', ['course' => $course, 'lesson' => $lesson])
             ->with('success', 'Lesson marked as complete!');
@@ -151,7 +154,7 @@ class LearningController extends Controller
                 ->with('warning', 'Please complete at least a 30% deposit to access course content.');
         }
 
-        if ($lesson->module->course_id !== $course->id) {
+        if (!$lesson->module || $lesson->module->course_id !== $course->id) {
             abort(404);
         }
 

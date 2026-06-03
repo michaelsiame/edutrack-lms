@@ -142,11 +142,15 @@ class DiscussionController extends Controller
             abort(403, 'You can only delete your own replies.');
         }
 
-        // Recursively delete child replies
-        $this->deleteChildReplies($reply);
+        // Recursively delete child replies and count total deletions
+        $deletedCount = $this->countChildReplies($reply) + 1; // +1 for the parent reply itself
 
+        $this->deleteChildReplies($reply);
         $reply->delete();
-        $discussion->decrement('reply_count');
+
+        // Decrement by total deleted count, but not below zero
+        $discussion->reply_count = max(0, $discussion->reply_count - $deletedCount);
+        $discussion->save();
 
         return redirect()->route('student.discussions.show', [$course, $discussion])->with('success', 'Reply deleted.');
     }
@@ -174,6 +178,15 @@ class DiscussionController extends Controller
             $this->deleteChildReplies($child);
             $child->delete();
         }
+    }
+
+    private function countChildReplies(DiscussionReply $reply): int
+    {
+        $count = 0;
+        foreach ($reply->childReplies as $child) {
+            $count += 1 + $this->countChildReplies($child);
+        }
+        return $count;
     }
 
     private function notifyInstructorOfDiscussion(Course $course, Discussion $discussion): void

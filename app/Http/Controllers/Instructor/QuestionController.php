@@ -28,7 +28,6 @@ class QuestionController extends Controller
             'points' => 'required|integer|min:1|max:100',
             'explanation' => 'nullable|string|max:5000',
             'correct_answer' => 'nullable|string|max:2000',
-            'correct_answer' => 'nullable|string|max:2000',
             'options' => 'nullable|array|min:2',
             'options.*.text' => 'required_with:options|string|max:1000',
             'options.*.is_correct' => 'boolean',

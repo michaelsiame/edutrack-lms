@@ -25,6 +25,7 @@ class Certificate extends Model
         'expiry_date',
         'classification',
         'graduation_ceremony_date',
+        'intake_name',
     ];
 
     protected $casts = [

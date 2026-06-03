@@ -11,7 +11,7 @@
         </a>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+    <div class="od-card p-6">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-5">Add New Team Member</h3>
 
         <form action="{{ route('admin.team.store') }}" method="POST" enctype="multipart/form-data">

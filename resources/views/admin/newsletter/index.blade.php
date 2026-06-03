@@ -14,10 +14,10 @@
  </div>
 
  @if(session('success'))
- <div class="mb-4 p-4 bg-success-50 border border-success-200 rounded-lg text-success-700">{{ session('success') }}</div>
+ <div class="mb-4 p-4 od-toast-success">{{ session('success') }}</div>
  @endif
 
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+ <div class="od-card" style="padding: 0; overflow: hidden;">
  <div class="overflow-x-auto">
  <table class="w-full text-sm text-left">
  <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
@@ -29,7 +29,7 @@
  <th class="px-4 py-3 font-medium">Actions</th>
  </tr>
  </thead>
- <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+ <tbody >
  @forelse($subscribers as $sub)
  <tr>
  <td class="px-4 py-3 font-mono text-xs">{{ $sub->email }}</td>
@@ -49,7 +49,7 @@
  {{ $sub->is_active ?'Deactivate' :'Activate' }}
  </button>
  </form>
- <form action="{{ route('admin.newsletter.destroy', $sub) }}" method="POST" class="inline" onsubmit="return confirm('Delete subscriber?')">
+ <form action="{{ route('admin.newsletter.destroy', $sub) }}" method="POST" class="inline" data-confirm="Delete subscriber">
  @csrf @method('DELETE')
  <button type="submit" class="text-xs text-danger-600 hover:text-danger-700">Delete</button>
  </form>
@@ -57,7 +57,7 @@
  </tr>
  @empty
  <tr>
- <td colspan="5" class="px-4 py-8 text-center text-gray-500">No subscribers yet.</td>
+ <td colspan="5" class="od-empty-sm">No subscribers yet.</td>
  </tr>
  @endforelse
  </tbody>

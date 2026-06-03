@@ -10,7 +10,7 @@
             <i class="fas fa-arrow-left mr-1"></i>Back to Quiz
         </a>
         <h1 class="text-xl font-bold text-gray-900 dark:text-white mt-2">Edit Question</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Quiz: {{ $quiz->title }}</p>
+        <p class="od-meta">Quiz: {{ $quiz->title }}</p>
     </div>
 
     @if($errors->any())
@@ -23,7 +23,7 @@
     </div>
     @endif
 
-    <form action="{{ route('instructor.quizzes.questions.update', [$quiz, $question]) }}" method="POST" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 space-y-6" x-data="questionForm()" x-init="init()">
+    <form action="{{ route('instructor.quizzes.questions.update', [$quiz, $question]) }}" method="POST" class="od-card p-6 space-y-6" x-data="questionForm()" x-init="init()">
         @csrf
         @method('PUT')
 

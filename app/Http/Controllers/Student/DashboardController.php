@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\AssignmentSubmission;
+use App\Models\LiveSessionAttendance;
 use App\Models\Payment;
+use App\Models\QuizAttempt;
 use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 
@@ -37,9 +40,9 @@ class DashboardController extends Controller
 
         $balanceDue = auth()->user()->enrollments()
             ->whereIn('enrollment_status', ['Enrolled', 'In Progress'])
-            ->with('course')
-            ->get()
-            ->sum(fn($e) => max(0, ($e->course?->price ?? 0) - ($e->amount_paid ?? 0)));
+            ->leftJoin('courses', 'enrollments.course_id', '=', 'courses.id')
+            ->selectRaw('SUM(GREATEST(0, COALESCE(courses.price, 0) - COALESCE(enrollments.amount_paid, 0))) as balance')
+            ->value('balance') ?? 0;
 
         return view('student.dashboard', compact(
             'enrollments', 'certificates', 'payments', 'totalPaid', 'balanceDue'
@@ -93,10 +96,77 @@ class DashboardController extends Controller
         return view('student.certificates', compact('certificates'));
     }
 
+    public function submissions()
+    {
+        $studentId = auth()->user()->student?->id;
+
+        $assignmentSubmissions = AssignmentSubmission::where('student_id', $studentId)
+            ->with(['assignment.course'])
+            ->latest('submitted_at')
+            ->paginate(10, ['*'], 'assignment_page');
+
+        $quizAttempts = QuizAttempt::where('student_id', $studentId)
+            ->with(['quiz.course'])
+            ->latest('completed_at')
+            ->paginate(10, ['*'], 'quiz_page');
+
+        return view('student.submissions', compact('assignmentSubmissions', 'quizAttempts'));
+    }
+
+    public function analytics()
+    {
+        $user = auth()->user();
+        $studentId = $user->student?->id;
+
+        $enrollments = $user->enrollments()
+            ->with('course')
+            ->latest()
+            ->get();
+
+        $totalCourses = $enrollments->count();
+        $completedCourses = $enrollments->where('enrollment_status', 'Completed')->count();
+        $inProgressCourses = $enrollments->where('enrollment_status', 'In Progress')->count();
+
+        // Quiz analytics
+        $quizAttempts = QuizAttempt::where('student_id', $studentId)
+            ->with('quiz.course')
+            ->latest()
+            ->get();
+        $avgQuizScore = $quizAttempts->whereNotNull('score')->avg('score') ?? 0;
+        $totalQuizzesTaken = $quizAttempts->count();
+        $quizzesPassed = $quizAttempts->filter(fn($a) => $a->isPassed())->count();
+
+        // Assignment analytics
+        $assignments = AssignmentSubmission::where('student_id', $studentId)
+            ->with('assignment.course')
+            ->latest()
+            ->get();
+        $avgAssignmentScore = $assignments->whereNotNull('points_earned')->avg('points_earned') ?? 0;
+        $totalAssignmentsSubmitted = $assignments->count();
+        $assignmentsGraded = $assignments->where('status', 'Graded')->count();
+
+        // Live session attendance time
+        $totalLiveMinutes = LiveSessionAttendance::where('user_id', $user->id)
+            ->sum('duration_seconds') / 60;
+
+        // Monthly enrollment trend
+        $monthlyEnrollments = $enrollments
+            ->groupBy(fn($e) => $e->enrolled_at?->format('Y-m') ?? 'Unknown')
+            ->map->count()
+            ->sortKeys();
+
+        return view('student.analytics', compact(
+            'totalCourses', 'completedCourses', 'inProgressCourses',
+            'avgQuizScore', 'totalQuizzesTaken', 'quizzesPassed',
+            'avgAssignmentScore', 'totalAssignmentsSubmitted', 'assignmentsGraded',
+            'totalLiveMinutes', 'monthlyEnrollments', 'quizAttempts', 'assignments'
+        ));
+    }
+
     public function downloadReceipt(Request $request, Payment $payment)
     {
         // Ensure the payment belongs to the current user
-        if ($payment->student_id !== auth()->user()->student?->id && $payment->student_id !== auth()->id()) {
+        if ($payment->student_id !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
 

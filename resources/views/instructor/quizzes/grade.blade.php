@@ -10,7 +10,7 @@
             <i class="fas fa-arrow-left mr-1"></i>Back to Submissions
         </a>
         <h1 class="text-xl font-bold text-gray-900 dark:text-white mt-2">Grade Submission</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="od-meta">
             {{ $attempt->student->user->full_name ?? 'Unknown' }} &bull; Attempt #{{ $attempt->attempt_number }} &bull; {{ $attempt->submitted_at?->format('M d, Y H:i') }}
         </p>
     </div>
@@ -26,7 +26,7 @@
 
         @foreach($attempt->answers as $answer)
         @php $question = $answer->question; @endphp
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+        <div class="od-card p-6">
             <div class="flex items-start justify-between gap-4 mb-4">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-1">

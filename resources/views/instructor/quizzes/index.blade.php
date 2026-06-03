@@ -7,19 +7,19 @@
 <div class="max-w-6xl mx-auto">
  <div class="flex items-center justify-between mb-6">
  <h2 class="text-xl font-bold text-gray-900 dark:text-white">Quizzes</h2>
- <a href="{{ route('instructor.quizzes.create') }}" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm">
+ <a href="{{ route('instructor.quizzes.create') }}" class="od-btn od-btn-primary od-btn-sm font-medium text-sm">
  <i class="fas fa-plus mr-1"></i>New Quiz
  </a>
  </div>
 
  @if(session('success'))
- <div class="mb-4 p-4 bg-success-50 border border-success-200 rounded-lg text-success-700">{{ session('success') }}</div>
+ <div class="mb-4 p-4 od-toast-success">{{ session('success') }}</div>
  @endif
 
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+ <div class="od-card" style="padding: 0; overflow: hidden;">
  <div class="overflow-x-auto">
- <table class="w-full text-sm min-w-[640px]">
- <thead class="bg-gray-50 dark:bg-gray-700/50">
+ <table class="od-table min-w-[640px]">
+ <thead >
  <tr>
  <th class="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300" scope="col">Title</th>
  <th class="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300" scope="col">Course</th>
@@ -28,11 +28,11 @@
  <th class="px-4 py-3 text-right font-medium text-gray-700 dark:text-gray-300" scope="col">Actions</th>
  </tr>
  </thead>
- <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+ <tbody >
  @forelse($quizzes as $quiz)
- <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+ <tr >
  <td class="px-4 py-3">
- <div class="font-medium text-gray-900 dark:text-white">{{ $quiz->title }}</div>
+ <div class="font-medium" style="color: var(--od-fg);">{{ $quiz->title }}</div>
  </td>
  <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $quiz->course->title ?? 'N/A' }}</td>
  <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $quiz->questions_count ?? 0 }}</td>

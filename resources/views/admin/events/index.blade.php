@@ -6,11 +6,11 @@
 @section('content')
 <div class="max-w-6xl mx-auto">
  @if(session('success'))
- <div class="mb-4 p-4 bg-success-50 border border-success-200 rounded-lg text-success-700">{{ session('success') }}</div>
+ <div class="mb-4 p-4 od-toast-success">{{ session('success') }}</div>
  @endif
 
  <!-- Create Form -->
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 mb-6">
+ <div class="od-card p-6 mb-6">
  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Create New Event</h3>
  <form action="{{ route('admin.events.store') }}" method="POST" enctype="multipart/form-data">
  @csrf
@@ -75,10 +75,10 @@
  </div>
 
  <!-- Events List -->
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+ <div class="od-card" style="padding: 0; overflow: hidden;">
  <div class="overflow-x-auto">
- <table class="w-full text-sm min-w-[640px]">
- <thead class="bg-gray-50 dark:bg-gray-700/50">
+ <table class="od-table min-w-[640px]">
+ <thead >
  <tr>
  <th class="px-4 py-3 text-left" scope="col">Event</th>
  <th class="px-4 py-3 text-left" scope="col">Date</th>
@@ -86,16 +86,16 @@
  <th class="px-4 py-3 text-right" scope="col">Actions</th>
  </tr>
  </thead>
- <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+ <tbody >
  @forelse($events as $event)
- <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+ <tr >
  <td class="px-4 py-3">
  <div class="flex items-center gap-3">
  @if($event->cover_image)
  <img src="{{ $event->cover_image }}" alt="{{ $event->title }} cover" class="w-10 h-10 rounded object-cover">
  @endif
  <div>
- <div class="font-medium text-gray-900 dark:text-white">{{ $event->title }}</div>
+ <div class="font-medium" style="color: var(--od-fg);">{{ $event->title }}</div>
  <div class="text-xs text-gray-500">{{ $event->location }}</div>
  </div>
  </div>
@@ -114,7 +114,7 @@
  <button onclick="toggleEditEvent({{ $event->id }})" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit event">
  <i class="fas fa-edit" aria-hidden="true"></i>
  </button>
- <form action="{{ route('admin.events.destroy', $event) }}" method="POST" class="inline" onsubmit="return confirm('Delete this event?')">
+ <form action="{{ route('admin.events.destroy', $event) }}" method="POST" class="inline" data-confirm="Delete this event">
  @csrf
  @method('DELETE')
  <button type="submit" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg" aria-label="Delete event">
@@ -131,24 +131,24 @@
  @method('PUT')
  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
  <input type="text" name="title" value="{{ $event->title }}" required
- class="px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
  <input type="datetime-local" name="event_date" value="{{ $event->event_date->format('Y-m-d\TH:i') }}" required
- class="px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
  <input type="text" name="location" value="{{ $event->location }}"
- class="px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
  </div>
  <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
- <select name="status" class="px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ <select name="status" class="od-input">
  <option value="upcoming" {{ $event->status ==='upcoming' ?'selected' :'' }}>Upcoming</option>
  <option value="ongoing" {{ $event->status ==='ongoing' ?'selected' :'' }}>Ongoing</option>
  <option value="completed" {{ $event->status ==='completed' ?'selected' :'' }}>Completed</option>
  <option value="cancelled" {{ $event->status ==='cancelled' ?'selected' :'' }}>Cancelled</option>
  </select>
  <input type="text" name="category" value="{{ $event->category }}"
- class="px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
  <label class="flex items-center text-sm text-gray-700 dark:text-gray-300">
  <input type="checkbox" name="is_featured" value="1" {{ $event->is_featured ?'checked' :'' }}
- class="w-4 h-4 text-primary-600 mr-2">
+ class="w-4 h-4 text-primary-600 mr-2 accent-primary-600">
  Featured
  </label>
  </div>
@@ -162,7 +162,7 @@
  </tr>
  @empty
  <tr>
- <td colspan="4" class="px-4 py-8 text-center text-gray-500">No events yet.</td>
+ <td colspan="4" class="od-empty-sm">No events yet.</td>
  </tr>
  @endforelse
  </tbody>

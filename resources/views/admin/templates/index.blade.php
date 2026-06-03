@@ -6,11 +6,11 @@
 @section('content')
 <div class="max-w-6xl mx-auto">
  @if(session('success'))
- <div class="mb-4 p-4 bg-success-50 border border-success-200 rounded-lg text-success-700">{{ session('success') }}</div>
+ <div class="mb-4 p-4 od-toast-success">{{ session('success') }}</div>
  @endif
 
  <!-- Create Form -->
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 mb-6">
+ <div class="od-card p-6 mb-6">
  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Create New Template</h3>
  <form action="{{ route('admin.templates.store') }}" method="POST">
  @csrf
@@ -58,10 +58,10 @@
  </div>
 
  <!-- Templates List -->
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+ <div class="od-card" style="padding: 0; overflow: hidden;">
  <div class="overflow-x-auto">
- <table class="w-full text-sm min-w-[640px]">
- <thead class="bg-gray-50 dark:bg-gray-700/50">
+ <table class="od-table min-w-[640px]">
+ <thead >
  <tr>
  <th class="px-4 py-3 text-left" scope="col">Template</th>
  <th class="px-4 py-3 text-left" scope="col">Type</th>
@@ -69,11 +69,11 @@
  <th class="px-4 py-3 text-right" scope="col">Actions</th>
  </tr>
  </thead>
- <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+ <tbody >
  @forelse($templates as $template)
- <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+ <tr >
  <td class="px-4 py-3">
- <div class="font-medium text-gray-900 dark:text-white">{{ $template->template_name }}</div>
+ <div class="font-medium" style="color: var(--od-fg);">{{ $template->template_name }}</div>
  <div class="text-xs text-gray-500">{{ Str::limit($template->subject, 50) }}</div>
  </td>
  <td class="px-4 py-3">
@@ -89,7 +89,7 @@
  <button onclick="toggleEditTemplate({{ $template->template_id }})" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit template">
  <i class="fas fa-edit" aria-hidden="true"></i>
  </button>
- <form action="{{ route('admin.templates.destroy', $template) }}" method="POST" class="inline" onsubmit="return confirm('Delete this template?')">
+ <form action="{{ route('admin.templates.destroy', $template) }}" method="POST" class="inline" data-confirm="Delete this template">
  @csrf
  @method('DELETE')
  <button type="submit" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg" aria-label="Delete template">
@@ -106,10 +106,10 @@
  @method('PUT')
  <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
  <input type="text" name="template_name" value="{{ $template->template_name }}" required
- class="px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
  <input type="text" name="subject" value="{{ $template->subject }}" required
- class="px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:text-white">
- <select name="template_type" class="px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+ class="od-input">
+ <select name="template_type" class="od-input">
  <option value="welcome" {{ $template->template_type ==='welcome' ?'selected' :'' }}>Welcome</option>
  <option value="enrollment" {{ $template->template_type ==='enrollment' ?'selected' :'' }}>Enrollment</option>
  <option value="payment" {{ $template->template_type ==='payment' ?'selected' :'' }}>Payment</option>
@@ -124,7 +124,7 @@
  <div class="flex items-center gap-3 mt-3">
  <label class="flex items-center text-sm text-gray-700 dark:text-gray-300">
  <input type="checkbox" name="is_active" value="1" {{ $template->is_active ?'checked' :'' }}
- class="w-4 h-4 text-primary-600 mr-2">
+ class="w-4 h-4 text-primary-600 mr-2 accent-primary-600">
  Active
  </label>
  <button type="submit" class="px-3 py-1.5 bg-primary-600 text-white text-sm rounded hover:bg-primary-700">Update</button>
@@ -135,7 +135,7 @@
  </tr>
  @empty
  <tr>
- <td colspan="4" class="px-4 py-8 text-center text-gray-500">No email templates yet.</td>
+ <td colspan="4" class="od-empty-sm">No email templates yet.</td>
  </tr>
  @endforelse
  </tbody>

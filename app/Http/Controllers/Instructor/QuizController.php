@@ -149,15 +149,18 @@ class QuizController extends Controller
         $attempt->load(['student.user', 'answers.question.options']);
 
         // Find next and previous ungraded attempts for navigation
+        // Ordered by submitted_at to match the attempts list display order
         $nextAttempt = QuizAttempt::where('quiz_id', $quiz->id)
-            ->where('id', '>', $attempt->id)
+            ->where('submitted_at', '>', $attempt->submitted_at ?? $attempt->created_at)
             ->where('status', '!=', 'Graded')
+            ->orderBy('submitted_at')
             ->orderBy('id')
             ->first();
 
         $prevAttempt = QuizAttempt::where('quiz_id', $quiz->id)
-            ->where('id', '<', $attempt->id)
+            ->where('submitted_at', '<', $attempt->submitted_at ?? $attempt->created_at)
             ->where('status', '!=', 'Graded')
+            ->orderBy('submitted_at', 'desc')
             ->orderBy('id', 'desc')
             ->first();
 
@@ -208,18 +211,11 @@ class QuizController extends Controller
 
         $score = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100, 2) : 0;
 
-        $updateData = [
+        $attempt->update([
             'score' => $score,
             'status' => 'Graded',
-        ];
-
-        if (\Schema::hasColumn('quiz_attempts', 'graded_at')) {
-            $updateData['graded_at'] = now();
-        } else {
-            $updateData['completed_at'] = now();
-        }
-
-        $attempt->update($updateData);
+            'completed_at' => now(),
+        ]);
 
         $enrollment = \App\Models\Enrollment::where('user_id', $attempt->student?->user_id)
             ->where('course_id', $quiz->course_id)

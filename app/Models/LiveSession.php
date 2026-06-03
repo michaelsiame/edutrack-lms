@@ -48,6 +48,11 @@ class LiveSession extends Model
         return $this->belongsTo(Lesson::class);
     }
 
+    public function intake()
+    {
+        return $this->belongsTo(Intake::class);
+    }
+
     public function instructor()
     {
         return $this->belongsTo(Instructor::class);

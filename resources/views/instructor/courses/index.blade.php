@@ -4,15 +4,20 @@
 @section('page_title','My Courses')
 
 @section('content')
-<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
- <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
- <h3 class="text-base font-semibold text-gray-800 dark:text-white">My Courses</h3>
- <a href="{{ route('instructor.courses.create') }}" class="inline-flex items-center px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">
+<div class="od-card" style="padding: 0; overflow: hidden;">
+ <div class="od-card-header">
+ <h3 class="od-h3">My Courses</h3>
+ <div class="flex items-center gap-2">
+ <a href="{{ route('instructor.courses.create-from-template') }}" class="od-btn od-btn-secondary od-btn-sm">
+ <i class="fas fa-clone mr-1.5"></i> From Template
+ </a>
+ <a href="{{ route('instructor.courses.create') }}" class="od-btn od-btn-primary od-btn-sm">
  <i class="fas fa-plus mr-1.5"></i> New Course
  </a>
  </div>
+ </div>
  <div class="overflow-x-auto">
- <table class="dashboard-table">
+ <table class="od-table min-w-[640px]">
  <thead>
  <tr>
  <th>Course</th>
@@ -25,9 +30,9 @@
  @forelse($courses as $course)
  <tr>
  <td>
- <span class="font-medium text-gray-900 dark:text-white">{{ $course->title }}</span>
+ <span class="font-medium" style="color: var(--od-fg);">{{ $course->title }}</span>
  </td>
- <td class="text-gray-600 dark:text-gray-400">{{ $course->enrollments_count }}</td>
+ <td class="od-meta">{{ $course->enrollments_count }}</td>
  <td>
  @php
  $statusClass = match($course->status) {
@@ -54,7 +59,7 @@
  </tr>
  @empty
  <tr>
- <td colspan="4" class="text-center py-10 text-gray-500 dark:text-gray-400">No courses yet.</td>
+ <td colspan="4" class="od-empty-sm">No courses yet.</td>
  </tr>
  @endforelse
  </tbody>

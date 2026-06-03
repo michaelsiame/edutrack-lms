@@ -11,7 +11,7 @@
         </a>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div class="od-card" style="padding: 0; overflow: hidden;">
         <!-- Photo Preview -->
         <div class="h-56 bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
             @if($member->image_url && file_exists(public_path('uploads/team/' . $member->image_url)))

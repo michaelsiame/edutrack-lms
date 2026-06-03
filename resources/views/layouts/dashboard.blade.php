@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_','-', app()->getLocale()) }}" x-data="{ sidebarOpen: localStorage.getItem('sidebarOpen') !=='false', darkMode: localStorage.getItem('darkMode') ==='true' }" x-init="$watch('sidebarOpen', val => localStorage.setItem('sidebarOpen', val)); $watch('darkMode', val => localStorage.setItem('darkMode', val))" :class="{'dark': darkMode }">
+<html lang="{{ str_replace('_','-', app()->getLocale()) }}" x-data="{ sidebarOpen: window.innerWidth >= 768 ? (localStorage.getItem('sidebarOpen') !== 'false') : false, darkMode: localStorage.getItem('darkMode') === 'true' }" x-init="$watch('sidebarOpen', val => localStorage.setItem('sidebarOpen', val)); $watch('darkMode', val => localStorage.setItem('darkMode', val)); window.addEventListener('resize', () => { if(window.innerWidth >= 768) sidebarOpen = localStorage.getItem('sidebarOpen') !== 'false'; })" :class="{'dark': darkMode }">
 <head>
  <meta charset="utf-8">
  <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,10 +26,10 @@
  <div class="flex h-screen overflow-hidden">
 
  <!-- Mobile Sidebar Overlay -->
- <div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition.opacity.duration.300ms class="fixed inset-0 z-40 bg-black/50 md:hidden"></div>
+ <div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition.opacity.duration.300ms class="fixed inset-0 z-40 bg-black/50 md:hidden" style="display: none;"></div>
 
  <!-- Sidebar -->
- <aside :class="sidebarOpen ?'translate-x-0' :'-translate-x-full'" class="fixed md:relative z-50 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out flex flex-col" :style="sidebarOpen ?'width: 260px;' :'width: 0; overflow: hidden;'" style="width: 260px;">
+ <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'" class="fixed md:relative z-50 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-transform duration-300 ease-in-out flex flex-col w-[260px] flex-shrink-0">
  <!-- Logo -->
  <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
  <a href="{{ url('/') }}" class="flex items-center gap-3">
@@ -56,6 +56,9 @@
  @endif
  @if(Route::has('admin.courses.index'))
  <x-dashboard-nav-item route="admin.courses.index" icon="fa-book" label="Courses" />
+ @endif
+ @if(Route::has('admin.intakes.index'))
+ <x-dashboard-nav-item route="admin.intakes.index" icon="fa-calendar-alt" label="Intakes" />
  @endif
  @if(Route::has('admin.enrollments.index'))
  <x-dashboard-nav-item route="admin.enrollments.index" icon="fa-user-graduate" label="Enrollments" />
@@ -156,10 +159,13 @@
  <!-- Main Content Area -->
  <div class="flex-1 flex flex-col h-full overflow-hidden">
  <!-- Top Bar -->
- <header class="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 md:px-6 flex-shrink-0">
+ <header class="h-16 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 md:px-6 flex-shrink-0 sticky top-0 z-30">
  <div class="flex items-center gap-4">
- <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors">
+ <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors md:hidden" aria-label="Toggle sidebar">
  <i class="fas fa-bars text-lg"></i>
+ </button>
+ <button @click="sidebarOpen = !sidebarOpen" class="hidden md:flex p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle sidebar">
+ <i class="fas fa-bars text-lg" :class="sidebarOpen ? '' : 'rotate-180'"></i>
  </button>
  <h1 class="text-lg font-semibold text-gray-800 dark:text-white hidden sm:block">@yield('page_title','Dashboard')</h1>
  </div>
@@ -204,27 +210,71 @@
  </header>
 
  <!-- Flash Messages / Toast Notifications -->
- @if(session('success') || session('error') || session('warning') || session('info'))
- <div class="fixed top-4 right-4 z-[60] w-full max-w-sm space-y-2 px-4">
- @if(session('success'))
- <x-toast type="success" :message="session('success')" />
- @endif
- @if(session('error'))
- <x-toast type="error" :message="session('error')" />
- @endif
- @if(session('warning'))
- <x-toast type="warning" :message="session('warning')" />
- @endif
- @if(session('info'))
- <x-toast type="info" :message="session('info')" />
- @endif
+ <div
+ x-data="{ toasts: [] }"
+ x-init="
+ @if(session('success')) toasts.push({type:'success', message:'{{ addslashes(session('success')) }}', id:Date.now()}); @endif
+ @if(session('error')) toasts.push({type:'error', message:'{{ addslashes(session('error')) }}', id:Date.now()+1}); @endif
+ @if(session('warning')) toasts.push({type:'warning', message:'{{ addslashes(session('warning')) }}', id:Date.now()+2}); @endif
+ @if(session('info')) toasts.push({type:'info', message:'{{ addslashes(session('info')) }}', id:Date.now()+3}); @endif
+ "
+ class="fixed top-4 right-4 z-[60] w-full max-w-sm space-y-2 px-4 pointer-events-none"
+ >
+ <template x-for="toast in toasts" :key="toast.id">
+ <div
+ x-data="{ show: false }"
+ x-init="$nextTick(() => { show = true; setTimeout(() => show = false, 5000); setTimeout(() => toasts = toasts.filter(t => t.id !== toast.id), 5500); })"
+ x-show="show"
+ x-transition:enter="transition ease-out duration-300"
+ x-transition:enter-start="translate-x-full opacity-0"
+ x-transition:enter-end="translate-x-0 opacity-100"
+ x-transition:leave="transition ease-in duration-200"
+ x-transition:leave-start="translate-x-0 opacity-100"
+ x-transition:leave-end="translate-x-full opacity-0"
+ :class="{
+ 'od-toast-success': toast.type === 'success',
+ 'od-toast-error': toast.type === 'error',
+ 'od-toast-warning': toast.type === 'warning',
+ 'od-toast-info': toast.type === 'info'
+ }"
+ class="pointer-events-auto"
+ role="alert"
+ >
+ <i class="fas" :class="{
+ 'fa-check-circle': toast.type === 'success',
+ 'fa-exclamation-circle': toast.type === 'error',
+ 'fa-exclamation-triangle': toast.type === 'warning',
+ 'fa-info-circle': toast.type === 'info'
+ }"></i>
+ <span x-text="toast.message"></span>
+ <button @click="show = false; setTimeout(() => toasts = toasts.filter(t => t.id !== toast.id), 200)" class="ml-auto opacity-60 hover:opacity-100" aria-label="Dismiss notification">
+ <i class="fas fa-times"></i>
+ </button>
  </div>
- @endif
+ </template>
+ </div>
 
  <!-- Page Content -->
- <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+ <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 page-enter">
  @yield('content')
  </main>
+ </div>
+ </div>
+
+ <!-- Confirm Modal -->
+ <div id="confirmModal" class="od-modal-backdrop" style="display: none;">
+ <div class="od-modal-card">
+ <div class="text-center mb-4">
+ <div class="w-12 h-12 rounded-full bg-warning-100 dark:bg-warning-900/30 text-warning-600 dark:text-warning-400 flex items-center justify-center mx-auto mb-3">
+ <i class="fas fa-exclamation-triangle text-xl"></i>
+ </div>
+ <h3 class="text-lg font-semibold" style="color: var(--od-fg);">Are you sure?</h3>
+ <p class="text-sm mt-1 od-meta" id="confirmMessage">This action cannot be undone.</p>
+ </div>
+ <div class="flex gap-3">
+ <button id="confirmCancel" class="od-btn od-btn-secondary flex-1">Cancel</button>
+ <button id="confirmOk" class="od-btn od-btn-danger flex-1 bg-danger-600 text-white border-danger-600 hover:bg-danger-700">Delete</button>
+ </div>
  </div>
  </div>
 
@@ -234,6 +284,63 @@
  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
  <!-- Session Heartbeat (prevents 419 CSRF expiry during long study sessions) -->
  <script src="{{ asset('assets/js/session-heartbeat.js') }}"></script>
+ <script>
+ // Global confirm modal
+ window.confirmModal = function(message, onConfirm) {
+ const modal = document.getElementById('confirmModal');
+ const msgEl = document.getElementById('confirmMessage');
+ const okBtn = document.getElementById('confirmOk');
+ const cancelBtn = document.getElementById('confirmCancel');
+ msgEl.textContent = message || 'This action cannot be undone.';
+ modal.style.display = 'grid';
+ requestAnimationFrame(() => modal.classList.add('show'));
+
+ function cleanup() {
+ modal.classList.remove('show');
+ setTimeout(() => modal.style.display = 'none', 200);
+ okBtn.removeEventListener('click', handleOk);
+ cancelBtn.removeEventListener('click', handleCancel);
+ modal.removeEventListener('click', handleBackdrop);
+ document.removeEventListener('keydown', handleKey);
+ }
+
+ function handleOk() { cleanup(); onConfirm && onConfirm(); }
+ function handleCancel() { cleanup(); }
+ function handleBackdrop(e) { if (e.target === modal) cleanup(); }
+ function handleKey(e) { if (e.key === 'Escape') cleanup(); }
+
+ okBtn.addEventListener('click', handleOk);
+ cancelBtn.addEventListener('click', handleCancel);
+ modal.addEventListener('click', handleBackdrop);
+ document.addEventListener('keydown', handleKey);
+ };
+
+ // Auto-replace native confirm on forms with data-confirm
+document.addEventListener('DOMContentLoaded', () => {
+ document.querySelectorAll('form[data-confirm]').forEach(form => {
+ form.addEventListener('submit', e => {
+ if (form.dataset.confirmed) return;
+ e.preventDefault();
+ window.confirmModal(form.dataset.confirm, () => {
+ form.dataset.confirmed = 'true';
+ form.submit();
+ });
+ });
+ });
+
+ // Button loading states
+ document.querySelectorAll('form').forEach(form => {
+ form.addEventListener('submit', () => {
+ const btn = form.querySelector('button[type="submit"]:not([data-no-loading])');
+ if (btn && !btn.disabled) {
+ btn.dataset.originalText = btn.innerHTML;
+ btn.disabled = true;
+ btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-1.5"></i> ' + (btn.dataset.loadingText || 'Processing...');
+ }
+ });
+ });
+ });
+ </script>
  @stack('scripts')
 </body>
 </html>

@@ -9,6 +9,10 @@
 
 @section('content')
 <div class="od-page -m-4 md:-m-6 lg:-m-8 p-4 md:p-6 lg:p-8 min-h-full">
+    @php
+        $isCourseInstructor = auth()->check() && auth()->user()->isInstructor() && $course->instructor_id === auth()->user()->instructor?->id;
+    @endphp
+
     <div class="max-w-4xl mx-auto">
         <x-back-link route="student.discussions.index" :routeParams="[$course]" label="Back to Discussions" class="mb-4" variant="od" />
 
@@ -24,12 +28,41 @@
                         @if($discussion->creator->isInstructor())
                             <span class="od-badge od-badge-info">Instructor</span>
                         @endif
+                        @if($discussion->is_pinned)
+                            <span class="od-badge od-badge-warn"><i class="fas fa-thumbtack mr-1"></i>Pinned</span>
+                        @endif
+                        @if($discussion->is_locked)
+                            <span class="od-badge od-badge-danger"><i class="fas fa-lock mr-1"></i>Locked</span>
+                        @endif
                         <span class="od-meta">{{ $discussion->created_at->diffForHumans() }}</span>
                     </div>
                     <h1 class="od-h2 mb-3">{{ $discussion->title }}</h1>
                     <div class="prose dark:prose-invert max-w-none text-sm leading-relaxed" style="color: var(--od-muted);">
                         {!! nl2br(e($discussion->content)) !!}
                     </div>
+                    @if($isCourseInstructor)
+                        <div class="flex flex-wrap items-center gap-3 mt-4 pt-3" style="border-top: 1px solid var(--od-border);">
+                            <form action="{{ route('instructor.discussions.pin', [$course, $discussion]) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="od-btn od-btn-ghost od-btn-sm">
+                                    <i class="fas fa-thumbtack mr-1"></i>{{ $discussion->is_pinned ? 'Unpin' : 'Pin' }}
+                                </button>
+                            </form>
+                            <form action="{{ route('instructor.discussions.lock', [$course, $discussion]) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="od-btn od-btn-ghost od-btn-sm">
+                                    <i class="fas fa-lock mr-1"></i>{{ $discussion->is_locked ? 'Unlock' : 'Lock' }}
+                                </button>
+                            </form>
+                            <form action="{{ route('instructor.discussions.destroy', [$course, $discussion]) }}" method="POST" class="inline" data-confirm="Delete this discussion and all its replies?">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="od-btn od-btn-ghost od-btn-sm text-danger-600 hover:text-danger-700">
+                                    <i class="fas fa-trash mr-1"></i>Delete
+                                </button>
+                            </form>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -63,10 +96,21 @@
                                     {!! nl2br(e($reply->content)) !!}
                                 </div>
 
-                                @if(!$discussion->is_locked)
-                                    <button onclick="toggleReplyForm({{ $reply->reply_id }})" class="text-xs font-medium mt-3 transition-colors" style="color: var(--od-navy);">
-                                        <i class="fas fa-reply mr-1"></i>Reply
-                                    </button>
+                                <div class="flex flex-wrap items-center gap-3 mt-3">
+                                    @if(!$discussion->is_locked)
+                                        <button onclick="toggleReplyForm({{ $reply->reply_id }})" class="text-xs font-medium transition-colors" style="color: var(--od-navy);">
+                                            <i class="fas fa-reply mr-1"></i>Reply
+                                        </button>
+                                    @endif
+                                    @if($isCourseInstructor)
+                                        <form action="{{ route('instructor.discussions.best-answer', [$course, $discussion, $reply]) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="text-xs font-medium transition-colors {{ $reply->is_best_answer ? 'text-green-600' : 'text-gray-500 hover:text-green-600' }}">
+                                                <i class="fas fa-check-circle mr-1"></i>{{ $reply->is_best_answer ? 'Remove Best Answer' : 'Mark Best Answer' }}
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                                     <div id="reply-form-{{ $reply->reply_id }}" class="hidden mt-3">
                                         <form action="{{ route('student.discussions.reply', [$course, $discussion]) }}" method="POST">
                                             @csrf

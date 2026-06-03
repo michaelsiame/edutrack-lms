@@ -21,14 +21,11 @@
                 <i class="fas fa-bell"></i>
             </a>
             @endif
-            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold" style="background: var(--od-navy-soft); color: var(--od-navy);">
-                {{ strtoupper(substr(auth()->user()->first_name ?? 'S', 0, 1)) }}
-            </div>
         </div>
     </div>
 
     <!-- Stats -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 stagger-children">
         <div class="od-stat-card">
             <div>
                 <div class="od-stat-value od-num">{{ $enrollments->count() }}</div>
@@ -96,12 +93,30 @@
                         <div class="od-course-info">
                             <h4>{{ $course?->title ?? 'Unknown Course' }}</h4>
                             <p>
+                                @if($enrollment->intake && !$enrollment->intake->is_default)
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary-100 text-primary-700 mr-1">{{ $enrollment->intake->name }}</span>
+                                @endif
                                 @if($lastLesson)
                                     Next: {{ $lastLesson->title }}
                                 @else
                                     {{ $course?->modules?->count() ?? 0 }} modules
                                 @endif
                             </p>
+                            @if($enrollment->intake?->learning_deadline)
+                                @php
+                                    $daysLeft = now()->diffInDays($enrollment->intake->learning_deadline, false);
+                                @endphp
+                                <p class="text-xs {{ $daysLeft <= 7 ? 'text-danger-600' : 'text-gray-500' }}">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    @if($daysLeft > 0)
+                                        {{ $daysLeft }} days left to complete
+                                    @elseif($daysLeft === 0)
+                                        Deadline today
+                                    @else
+                                        Deadline passed
+                                    @endif
+                                </p>
+                            @endif
                         </div>
                         <div class="od-course-progress">
                             <span class="od-num">{{ round($enrollment->progress) }}% complete</span>

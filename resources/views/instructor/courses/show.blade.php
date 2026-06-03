@@ -6,7 +6,7 @@
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6" x-data="{}">
  <!-- Course Header -->
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+ <div class="od-card p-6">
  <div class="flex items-center justify-between mb-4">
  <div>
  <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ $course->title }}</h2>
@@ -16,6 +16,17 @@
  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $course->status ==='published' ?'bg-success-100 text-success-800' :'bg-gray-100 text-gray-800' }}">
  {{ ucfirst($course->status) }}
  </span>
+ @if(!$course->is_template)
+ <form action="{{ route('instructor.courses.save-as-template', $course) }}" method="POST" class="inline" data-confirm="Save this course as a reusable template?">
+ @csrf
+ <button type="submit" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
+ <i class="fas fa-clone mr-1"></i>Save as Template
+ </button>
+ </form>
+ @endif
+ <a href="{{ route('instructor.courses.intakes.index', $course) }}" class="text-sm text-success-600 hover:text-success-700 font-medium">
+ <i class="fas fa-calendar-alt mr-1"></i>Intakes ({{ $course->intakes->count() }})
+ </a>
  <a href="{{ route('instructor.live-sessions.index', $course) }}" class="text-sm text-danger-600 hover:text-danger-700 font-medium">
  <i class="fas fa-video mr-1"></i>Live Sessions
  </a>
@@ -48,8 +59,35 @@
  </div>
  @endif
 
+ <!-- Bulk Upload Lessons -->
+ <div class="od-card p-6">
+ <div class="flex items-center justify-between mb-4">
+ <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Bulk Upload Lessons</h3>
+ <button onclick="toggleBulkUpload()" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
+ <i class="fas fa-upload mr-1"></i>Show Upload Form
+ </button>
+ </div>
+ <div id="bulk-upload-form" class="hidden">
+ <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+ CSV format: <code>module_id,title,lesson_type,content,duration_minutes,video_url,is_preview,display_order</code>
+ <br>Lesson types: Video, Reading, Quiz, Assignment. is_preview: 0 or 1.
+ </p>
+ <form action="{{ route('instructor.courses.lessons.bulk-upload', $course) }}" method="POST" enctype="multipart/form-data" class="flex flex-wrap items-end gap-4">
+ @csrf
+ <div class="flex-1 min-w-[250px]">
+ <input type="file" name="csv_file" accept=".csv" required
+ class="text-sm text-gray-600 dark:text-gray-300 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+ </div>
+ <button type="submit" class="od-btn od-btn-primary od-btn-sm font-medium">
+ <i class="fas fa-file-csv mr-1"></i>Import CSV
+ </button>
+ <button type="button" onclick="toggleBulkUpload()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-sm">Cancel</button>
+ </form>
+ </div>
+ </div>
+
  <!-- Add Module -->
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+ <div class="od-card p-6">
  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add New Module</h3>
  <form action="{{ route('instructor.courses.modules.store', $course) }}" method="POST" class="flex items-end gap-4">
  @csrf
@@ -65,7 +103,7 @@
  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
  placeholder="1">
  </div>
- <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium">
+ <button type="submit" class="od-btn od-btn-primary od-btn-sm font-medium">
  <i class="fas fa-plus mr-1"></i>Add Module
  </button>
  </form>
@@ -73,7 +111,7 @@
 
  <!-- Modules & Lessons -->
  @forelse($course->modules as $module)
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+ <div class="od-card" style="padding: 0; overflow: hidden;">
  <!-- Module Header -->
  <div class="p-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
  <div class="flex items-center justify-between">
@@ -87,10 +125,22 @@
  </div>
  </div>
  <div class="flex items-center gap-2">
+ <form action="{{ route('instructor.courses.modules.move-up', [$course, $module]) }}" method="POST" class="inline">
+ @csrf
+ <button type="submit" class="text-sm text-gray-400 hover:text-primary-600" title="Move up">
+ <i class="fas fa-arrow-up"></i>
+ </button>
+ </form>
+ <form action="{{ route('instructor.courses.modules.move-down', [$course, $module]) }}" method="POST" class="inline">
+ @csrf
+ <button type="submit" class="text-sm text-gray-400 hover:text-primary-600" title="Move down">
+ <i class="fas fa-arrow-down"></i>
+ </button>
+ </form>
  <button onclick="toggleEditModule({{ $module->id }})" class="text-sm text-gray-500 hover:text-primary-600">
  <i class="fas fa-edit"></i>
  </button>
- <form action="{{ route('instructor.courses.modules.destroy', [$course, $module]) }}" method="POST" class="inline" onsubmit="return confirm('Delete this module and all its lessons?')">
+ <form action="{{ route('instructor.courses.modules.destroy', [$course, $module]) }}" method="POST" class="inline" data-confirm="Delete this module and all its lessons">
  @csrf
  @method('DELETE')
  <button type="submit" class="text-sm text-gray-500 hover:text-danger-600">
@@ -144,13 +194,25 @@
  </div>
  </div>
  <div class="flex items-center gap-2">
+ <form action="{{ route('instructor.courses.modules.lessons.move-up', [$course, $module, $lesson]) }}" method="POST" class="inline">
+ @csrf
+ <button type="submit" class="text-xs text-gray-400 hover:text-primary-600" title="Move up">
+ <i class="fas fa-arrow-up"></i>
+ </button>
+ </form>
+ <form action="{{ route('instructor.courses.modules.lessons.move-down', [$course, $module, $lesson]) }}" method="POST" class="inline">
+ @csrf
+ <button type="submit" class="text-xs text-gray-400 hover:text-primary-600" title="Move down">
+ <i class="fas fa-arrow-down"></i>
+ </button>
+ </form>
  <button onclick="toggleEditLesson({{ $lesson->id }})" class="text-xs text-gray-500 hover:text-primary-600" title="Edit lesson">
  <i class="fas fa-edit"></i>
  </button>
  <button onclick="toggleLessonResources({{ $lesson->id }})" class="text-xs text-gray-500 hover:text-success-600" title="Manage resources">
  <i class="fas fa-paperclip"></i>
  </button>
- <form action="{{ route('instructor.courses.modules.lessons.destroy', [$course, $module, $lesson]) }}" method="POST" class="inline" onsubmit="return confirm('Delete this lesson?')">
+ <form action="{{ route('instructor.courses.modules.lessons.destroy', [$course, $module, $lesson]) }}" method="POST" class="inline" data-confirm="Delete this lesson">
  @csrf
  @method('DELETE')
  <button type="submit" class="text-xs text-gray-500 hover:text-danger-600" title="Delete lesson">
@@ -173,7 +235,7 @@
  <span class="text-xs text-gray-700 dark:text-gray-300 truncate">{{ $res->title }}</span>
  <span class="text-[10px] text-gray-400">({{ $res->resource_type }}, {{ $res->file_size_kb }} KB)</span>
  </div>
- <form action="{{ route('instructor.courses.modules.lessons.resources.destroy', [$course, $module, $lesson, $res]) }}" method="POST" class="inline" onsubmit="return confirm('Delete this resource?')">
+ <form action="{{ route('instructor.courses.modules.lessons.resources.destroy', [$course, $module, $lesson, $res]) }}" method="POST" class="inline" data-confirm="Delete this resource">
  @csrf
  @method('DELETE')
  <button type="submit" class="text-xs text-danger-500 hover:text-danger-700" title="Delete resource">
@@ -461,7 +523,7 @@
  </div>
  </div>
  @empty
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-8 text-center">
+ <div class="od-card p-8 text-center">
  <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
  <i class="fas fa-folder-open text-2xl text-gray-400"></i>
  </div>
@@ -524,6 +586,11 @@ function toggleAddLesson(moduleId) {
 
 function toggleLessonResources(lessonId) {
  const el = document.getElementById('lesson-resources-' + lessonId);
+ el.classList.toggle('hidden');
+}
+
+function toggleBulkUpload() {
+ const el = document.getElementById('bulk-upload-form');
  el.classList.toggle('hidden');
 }
 

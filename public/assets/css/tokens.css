@@ -128,64 +128,6 @@
   --easing-out: cubic-bezier(0, 0, 0.2, 1);
 }
 
-/* === PROGRESS RING UTILITIES === */
-.progress-ring {
-  transform: rotate(-90deg);
-}
-.progress-ring-circle {
-  transition: stroke-dashoffset var(--duration-slow) var(--easing-out);
-}
-
-/* === CARD HOVER LIFT === */
-.card-hover {
-  transition: transform var(--duration-normal) var(--easing-default),
-              box-shadow var(--duration-normal) var(--easing-default);
-}
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-card-hover);
-}
-
-/* === STAT CARD === */
-.stat-card {
-  background: var(--surface-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-xl);
-  padding: var(--space-5);
-  transition: box-shadow var(--duration-normal) var(--easing-default);
-}
-.stat-card:hover {
-  box-shadow: var(--shadow-lg);
-}
-.stat-card-icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* === COURSE CARD === */
-.course-card {
-  background: var(--surface-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  transition: transform var(--duration-normal) var(--easing-default),
-              box-shadow var(--duration-normal) var(--easing-default);
-}
-.course-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-card-hover);
-}
-
-/* === COMPLETED COURSE CARD === */
-.course-card-completed {
-  background-color: var(--surface-success);
-  border-color: #A7F3D0;
-}
-
 /* === BUTTON PATTERNS === */
 .btn-primary {
   background-color: var(--accent-primary);
@@ -205,84 +147,30 @@
   transform: translateY(0);
 }
 
-/* === ONBOARDING CHECKLIST === */
-.checklist-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-lg);
-  transition: background-color var(--duration-fast) var(--easing-default);
-}
-.checklist-item:hover {
-  background-color: var(--surface-tertiary);
-}
-.checklist-item-done {
-  background-color: var(--surface-success);
-}
-.checklist-icon {
-  width: 2rem;
-  height: 2rem;
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
+/* === DARK MODE OVERRIDES (Open Design) === */
+.dark {
+  --od-bg: #0f1623;
+  --od-surface: #1a2236;
+  --od-fg: #f0f2f5;
+  --od-muted: #8b92a8;
+  --od-border: #2a324a;
+  --od-accent: #d4b156;
+  --od-accent-hover: #e0c06a;
+  --od-navy: #5b9bd5;
+  --od-navy-hover: #7ab0e0;
+  --od-green: #34d399;
+  --od-green-hover: #4ade80;
+  --od-danger: #f87171;
 
-/* === LESSON SIDEBAR === */
-.lesson-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
-  transition: background-color var(--duration-fast) var(--easing-default);
-}
-.lesson-item:hover {
-  background-color: var(--surface-tertiary);
-}
-.lesson-item-active {
-  background-color: var(--color-primary-50);
-  color: var(--accent-primary);
-}
-.lesson-item-completed {
-  color: var(--status-success);
-}
-
-/* === EMPTY STATE === */
-.empty-state {
-  text-align: center;
-  padding: var(--space-12) var(--space-6);
-}
-.empty-state-icon {
-  width: 4rem;
-  height: 4rem;
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto var(--space-4);
-}
-
-/* === CELEBRATION ANIMATION === */
-@keyframes celebration-pop {
-  0% { transform: scale(0.8); opacity: 0; }
-  50% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-.celebration-pop {
-  animation: celebration-pop var(--duration-slow) var(--easing-bounce);
+  --od-accent-soft: color-mix(in oklch, var(--od-accent) 14%, transparent);
+  --od-navy-soft: color-mix(in oklch, var(--od-navy) 15%, transparent);
+  --od-green-soft: color-mix(in oklch, var(--od-green) 15%, transparent);
+  --od-fg-soft: color-mix(in oklch, var(--od-fg) 8%, transparent);
 }
 
 /* === REDUCED MOTION === */
 @media (prefers-reduced-motion: reduce) {
-  .card-hover:hover,
-  .course-card:hover,
   .btn-primary:hover {
     transform: none;
-  }
-  .progress-ring-circle {
-    transition: none;
   }
 }

@@ -26,6 +26,10 @@ class NoteController extends Controller
     {
         $user = auth()->user();
 
+        if (!$lesson->module || $lesson->module->course_id !== $course->id) {
+            abort(404);
+        }
+
         // Verify enrollment
         $enrollment = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)
@@ -46,6 +50,10 @@ class NoteController extends Controller
     public function store(Request $request, Course $course, Lesson $lesson)
     {
         $user = auth()->user();
+
+        if (!$lesson->module || $lesson->module->course_id !== $course->id) {
+            abort(404);
+        }
 
         $enrollment = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)

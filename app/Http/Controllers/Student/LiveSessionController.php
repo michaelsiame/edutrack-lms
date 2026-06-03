@@ -37,17 +37,17 @@ class LiveSessionController extends Controller
 
         $user = Auth::user();
 
-        // Auto-start session if in scheduled window
-        if ($session->status === 'scheduled' && now() >= $session->scheduled_start_time && now() <= $session->scheduled_end_time) {
-            $session->update(['status' => 'live']);
+        // Determine effective status without mutating the database
+        // (Session status should be managed by instructor or cron, not students)
+        $effectiveStatus = $session->status;
+        if ($effectiveStatus === 'scheduled' && now() >= $session->scheduled_start_time && now() <= $session->scheduled_end_time) {
+            $effectiveStatus = 'live';
+        }
+        if ($effectiveStatus === 'live' && now() > $session->scheduled_end_time) {
+            $effectiveStatus = 'ended';
         }
 
-        // Auto-end session if past end time
-        if ($session->status === 'live' && now() > $session->scheduled_end_time) {
-            $session->update(['status' => 'ended']);
-        }
-
-        if ($session->status === 'ended') {
+        if ($effectiveStatus === 'ended') {
             return redirect()->route('student.live-sessions.index', $course)
                 ->with('error', 'This session has already ended.');
         }

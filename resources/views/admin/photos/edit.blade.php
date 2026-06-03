@@ -11,7 +11,7 @@
         </a>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div class="od-card" style="padding: 0; overflow: hidden;">
         <!-- Image Preview -->
         <div class="h-64 bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
             <img src="{{ $photo->image_path }}" alt="{{ $photo->title }}" class="max-h-full max-w-full object-contain">

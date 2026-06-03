@@ -16,10 +16,10 @@
  </a>
  </div>
 
- <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+ <div class="od-card" style="padding: 0; overflow: hidden;">
  <div class="overflow-x-auto">
- <table class="w-full text-sm min-w-[640px]">
- <thead class="bg-gray-50 dark:bg-gray-700/50">
+ <table class="od-table min-w-[640px]">
+ <thead >
  <tr>
  <th class="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300" scope="col">Code</th>
  <th class="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300" scope="col">Name</th>
@@ -30,14 +30,14 @@
  <th class="px-4 py-3 text-right font-medium text-gray-700 dark:text-gray-300" scope="col">Actions</th>
  </tr>
  </thead>
- <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+ <tbody >
  @forelse($promotions as $promotion)
- <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+ <tr >
  <td class="px-4 py-3">
  <div class="font-mono font-bold text-gray-900 dark:text-white">{{ $promotion->code }}</div>
  </td>
  <td class="px-4 py-3">
- <div class="font-medium text-gray-900 dark:text-white">{{ $promotion->name }}</div>
+ <div class="font-medium" style="color: var(--od-fg);">{{ $promotion->name }}</div>
  </td>
  <td class="px-4 py-3">
  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400">
@@ -65,7 +65,7 @@
  <a href="{{ route('admin.promotions.edit', $promotion) }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit promotion">
  <i class="fas fa-edit" aria-hidden="true"></i>
  </a>
- <form action="{{ route('admin.promotions.destroy', $promotion) }}" method="POST" class="inline" onsubmit="return confirm('Delete this promotion?')">
+ <form action="{{ route('admin.promotions.destroy', $promotion) }}" method="POST" class="inline" data-confirm="Delete this promotion">
  @csrf
  @method('DELETE')
  <button type="submit" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-lg" aria-label="Delete promotion">
