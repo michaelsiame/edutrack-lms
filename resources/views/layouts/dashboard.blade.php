@@ -254,7 +254,7 @@
  </div>
 
  <!-- Page Content -->
- <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 page-enter">
+ <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
  @yield('content')
  </main>
  </div>

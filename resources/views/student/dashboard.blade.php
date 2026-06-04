@@ -8,7 +8,7 @@
 @endpush
 
 @section('content')
-<div class="od-page -m-4 md:-m-6 lg:-m-8 p-4 md:p-6 lg:p-8 min-h-full">
+<div class="od-page min-h-full">
     <!-- Topbar -->
     <div class="flex items-center justify-between mb-8">
         <div>
