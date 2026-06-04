@@ -25,8 +25,6 @@
 
     <!-- Preconnect -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/tailwind.css') }}">
@@ -34,9 +32,8 @@
     <!-- Font Awesome (local for reliability) -->
     <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/all.min.css') }}">
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">display=swap" rel="stylesheet">
-    <style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}</style>
+    <!-- Self-hosted Inter font (no external CDN dependency) -->
+    <link rel="stylesheet" href="{{ asset('assets/css/inter-font.css') }}">
 
     <!-- Design Tokens + Open Design Components -->
     <link rel="stylesheet" href="{{ asset('assets/css/tokens.css') }}">
