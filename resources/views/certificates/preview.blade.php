@@ -135,11 +135,9 @@
         /* Content Area */
         .content {
             position: absolute;
-            top: 18mm; left: 24mm; right: 24mm; bottom: 52mm;
+            top: 16mm; left: 24mm; right: 24mm; bottom: 58mm;
             text-align: center;
             z-index: 10;
-            display: flex;
-            flex-direction: column;
         }
 
         /* Header */
@@ -273,20 +271,20 @@
         /* Recipient */
         .recipient-name {
             font-family: 'Great Vibes', cursive;
-            font-size: 34pt; color: var(--cert-text);
-            margin: 2mm 0; line-height: 1.1;
+            font-size: 32pt; color: var(--cert-text);
+            margin: 3mm 0 4mm; line-height: 1.4;
         }
         .name-underline {
             width: 75mm; height: 1px;
             background: var(--cert-accent);
-            margin: 1.5mm auto;
+            margin: 0 auto 2mm;
         }
 
         /* Body */
         .body-text {
             font-family: 'Montserrat', sans-serif;
-            font-size: 10.5pt; color: var(--cert-text-muted);
-            line-height: 1.6; margin: 2mm 0;
+            font-size: 10pt; color: var(--cert-text-muted);
+            line-height: 1.5; margin: 1mm 0 2mm;
         }
         .body-text .highlight { font-weight: 600; color: var(--cert-text); }
 
@@ -332,7 +330,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            margin: 4mm 8mm 0;
+            margin: 3mm 8mm 0;
             position: relative;
         }
         .signature-block {
@@ -353,13 +351,13 @@
         .seal-container {
             position: absolute;
             left: 50%; transform: translateX(-50%);
-            bottom: 4mm; width: 32mm; height: 42mm;
+            bottom: 2mm; width: 24mm; height: 30mm;
         }
         .seal {
-            width: 28mm; height: 28mm;
+            width: 20mm; height: 20mm;
             background: var(--cert-navy);
             border-radius: 50%;
-            border: 2px solid var(--cert-gold);
+            border: 1.5px solid var(--cert-gold);
             position: relative;
             margin: 0 auto;
             display: flex; align-items: center; justify-content: center;
@@ -367,38 +365,38 @@
         }
         .seal::before {
             content: '';
-            position: absolute; inset: 1.5mm;
+            position: absolute; inset: 1mm;
             border: 1px solid var(--cert-gold);
             border-radius: 50%; opacity: 0.7;
         }
-        .seal-star { color: var(--cert-gold); font-size: 14pt; }
+        .seal-star { color: var(--cert-gold); font-size: 10pt; }
         .seal-text {
-            color: var(--cert-gold); font-size: 7pt;
+            color: var(--cert-gold); font-size: 5pt;
             text-align: center; line-height: 1.2;
             font-family: 'Montserrat', sans-serif;
         }
         .seal-ribbon {
             position: absolute;
-            bottom: -7mm; left: 50%; transform: translateX(-50%);
+            bottom: -5mm; left: 50%; transform: translateX(-50%);
             width: 0; height: 0;
-            border-left: 7mm solid transparent;
-            border-right: 7mm solid transparent;
-            border-top: 11mm solid var(--cert-accent);
+            border-left: 5mm solid transparent;
+            border-right: 5mm solid transparent;
+            border-top: 8mm solid var(--cert-accent);
         }
         .seal-ribbon::after {
             content: '';
             position: absolute;
-            top: -11mm; left: -3.5mm;
+            top: -8mm; left: -2.5mm;
             width: 0; height: 0;
-            border-left: 3.5mm solid transparent;
-            border-right: 3.5mm solid transparent;
-            border-top: 7mm solid var(--cert-accent-dark);
+            border-left: 2.5mm solid transparent;
+            border-right: 2.5mm solid transparent;
+            border-top: 5mm solid var(--cert-accent-dark);
         }
 
         /* Info Box */
         .info-box {
             position: absolute;
-            bottom: 20mm; left: 24mm; right: 24mm;
+            bottom: 14mm; left: 24mm; right: 24mm;
             border: 1.5px solid var(--cert-accent);
             border-radius: 6px;
             padding: 3.5mm 5mm;
@@ -440,7 +438,7 @@
         /* Bottom Decor */
         .bottom-decor {
             position: absolute;
-            bottom: 13mm; left: 50%; transform: translateX(-50%);
+            bottom: 10mm; left: 50%; transform: translateX(-50%);
             display: flex; align-items: center; gap: 1.5mm;
         }
         .bottom-decor .dot {
