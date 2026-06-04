@@ -135,7 +135,7 @@
         /* Content Area */
         .content {
             position: absolute;
-            top: 20mm; left: 24mm; right: 24mm; bottom: 20mm;
+            top: 18mm; left: 24mm; right: 24mm; bottom: 52mm;
             text-align: center;
             z-index: 10;
             display: flex;
@@ -223,7 +223,7 @@
         /* College Title */
         .college-title {
             font-family: 'Montserrat', sans-serif;
-            font-size: 20pt; font-weight: 800;
+            font-size: 18pt; font-weight: 800;
             color: var(--cert-text);
             text-transform: uppercase;
             letter-spacing: 1.5px; line-height: 1.2;
@@ -231,14 +231,14 @@
         }
         .college-subtitle {
             font-family: 'Playfair Display', serif;
-            font-size: 11pt; color: var(--cert-text-muted);
-            font-style: italic; margin-top: 1.5mm;
+            font-size: 10pt; color: var(--cert-text-muted);
+            font-style: italic; margin-top: 1mm;
         }
 
         /* Divider */
         .divider {
             display: flex; align-items: center;
-            justify-content: center; margin: 4mm 0; gap: 3mm;
+            justify-content: center; margin: 2.5mm 0; gap: 3mm;
         }
         .divider-line {
             width: 35mm; height: 1px;
@@ -253,10 +253,10 @@
         /* Certify Statement */
         .certify-text {
             font-family: 'Montserrat', sans-serif;
-            font-size: 14pt; font-weight: 700;
+            font-size: 13pt; font-weight: 700;
             color: var(--cert-navy);
             text-transform: uppercase;
-            letter-spacing: 2.5px; margin: 5mm 0;
+            letter-spacing: 2px; margin: 3mm 0;
             display: flex; align-items: center;
             justify-content: center; gap: 4mm;
         }
@@ -273,8 +273,8 @@
         /* Recipient */
         .recipient-name {
             font-family: 'Great Vibes', cursive;
-            font-size: 40pt; color: var(--cert-text);
-            margin: 3mm 0; line-height: 1.2;
+            font-size: 34pt; color: var(--cert-text);
+            margin: 2mm 0; line-height: 1.1;
         }
         .name-underline {
             width: 75mm; height: 1px;
@@ -285,26 +285,26 @@
         /* Body */
         .body-text {
             font-family: 'Montserrat', sans-serif;
-            font-size: 11pt; color: var(--cert-text-muted);
-            line-height: 1.7; margin: 3mm 0;
+            font-size: 10.5pt; color: var(--cert-text-muted);
+            line-height: 1.6; margin: 2mm 0;
         }
         .body-text .highlight { font-weight: 600; color: var(--cert-text); }
 
         /* Course */
         .course-title {
             font-family: 'Montserrat', sans-serif;
-            font-size: 24pt; font-weight: 800;
+            font-size: 20pt; font-weight: 800;
             color: var(--cert-navy);
             text-transform: uppercase;
-            letter-spacing: 1px; margin: 4mm 0;
+            letter-spacing: 1px; margin: 3mm 0;
             line-height: 1.2;
         }
 
         /* Merit */
         .merit-text {
             font-family: 'Great Vibes', cursive;
-            font-size: 26pt; color: var(--cert-text);
-            margin: 2mm 0;
+            font-size: 22pt; color: var(--cert-text);
+            margin: 1.5mm 0;
         }
         .merit-underline {
             width: 45mm; height: 1px;
@@ -315,8 +315,8 @@
         /* Date */
         .date-section {
             font-family: 'Montserrat', sans-serif;
-            font-size: 11pt; color: var(--cert-text-muted);
-            line-height: 1.8; margin: 4mm 0;
+            font-size: 10.5pt; color: var(--cert-text-muted);
+            line-height: 1.7; margin: 2.5mm 0;
         }
         .date-section span {
             font-family: 'Great Vibes', cursive;
@@ -332,7 +332,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            margin: 6mm 8mm 0;
+            margin: 4mm 8mm 0;
             position: relative;
         }
         .signature-block {
@@ -585,7 +585,7 @@
                 <div class="signature-block">
                     <div class="signature-line"></div>
                     <div class="signature-label">Principal</div>
-                    <div style="margin-top: 5mm;">
+                    <div style="margin-top: 3mm;">
                         <div class="signature-line"></div>
                         <div class="signature-label">Graduate's Signature</div>
                     </div>
@@ -604,7 +604,7 @@
                 <div class="signature-block">
                     <div class="signature-line"></div>
                     <div class="signature-label">Director</div>
-                    <div style="margin-top: 5mm;">
+                    <div style="margin-top: 3mm;">
                         <div class="signature-line"></div>
                         <div class="signature-label">Graduate's I.D. No.</div>
                     </div>
