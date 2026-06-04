@@ -143,7 +143,7 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{{ asset('assets/js/chart.min.js') }}"></script>
 <script>
 const ctx = document.getElementById('enrollmentChart').getContext('2d');
 new Chart(ctx, {

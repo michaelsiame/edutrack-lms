@@ -23,9 +23,6 @@
     <link rel="icon" type="image/png" href="{{ asset('assets/images/logo.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('assets/images/logo.png') }}">
 
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/tailwind.css') }}">
 
