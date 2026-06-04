@@ -277,10 +277,9 @@
  </div>
  </div>
 
- <!-- Alpine.js Plugins -->
- <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.13.5/dist/cdn.min.js"></script>
- <!-- Alpine.js -->
- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+ <!-- Alpine.js (self-hosted for speed in Zambia) -->
+ <script defer src="{{ asset('assets/js/alpine/collapse.min.js') }}"></script>
+ <script defer src="{{ asset('assets/js/alpine/alpine.min.js') }}"></script>
  <!-- Session Heartbeat (prevents 419 CSRF expiry during long study sessions) -->
  <script src="{{ asset('assets/js/session-heartbeat.js') }}"></script>
  <script>
