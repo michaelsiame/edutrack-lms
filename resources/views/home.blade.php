@@ -6,7 +6,7 @@
 @push('styles')
 <style>
 .od-hero { position: relative; color: var(--od-surface); overflow: hidden; min-height: 640px; }
-.od-hero-overlay { position: absolute; inset: 0; background: color-mix(in oklch, var(--od-fg), transparent 50%); }
+.od-hero-overlay { position: absolute; inset: 0; background: color-mix(in oklch, var(--od-fg), transparent 70%); }
 .od-hero-content { position: relative; }
 .od-intake-banner { background: var(--od-accent); color: var(--od-fg); }
 .od-testimonials-dark { background: var(--od-fg); color: var(--od-surface); }
@@ -28,7 +28,7 @@
   </div>
 
   <div class="od-hero-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-    <div class="text-center rounded-3xl p-6 md:p-12" style="background: color-mix(in oklch, var(--od-fg), transparent 85%); backdrop-filter: blur(6px);">
+    <div class="text-center rounded-3xl p-6 md:p-12" style="background: color-mix(in oklch, var(--od-fg), transparent 92%); backdrop-filter: blur(4px);">
       <div class="mb-6 animate-fade-in">
         <span class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold shadow-lg border-2" style="background: var(--od-accent); color: var(--od-fg); border-color: color-mix(in oklch, var(--od-accent), black 10%);">
           <i class="fas fa-certificate mr-2"></i>
