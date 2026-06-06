@@ -6,7 +6,7 @@
 @push('styles')
 <style>
 .od-hero { position: relative; color: var(--od-surface); overflow: hidden; min-height: 640px; }
-.od-hero-overlay { position: absolute; inset: 0; background: color-mix(in oklch, var(--od-fg), transparent 70%); }
+.od-hero-overlay { position: absolute; inset: 0; background: color-mix(in oklch, var(--od-fg), transparent 95%); }
 .od-hero-content { position: relative; }
 .od-intake-banner { background: var(--od-accent); color: var(--od-fg); }
 .od-testimonials-dark { background: var(--od-fg); color: var(--od-surface); }
