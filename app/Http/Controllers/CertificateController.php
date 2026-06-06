@@ -69,7 +69,7 @@ class CertificateController extends Controller
         // Verify ownership — only the student or super-admin/finance can download
         $user = auth()->user();
         $isOwner = $certificate->user_id === $user->id;
-        $isAdmin = $user->roles()->whereIn('role_id', [1, 2])->exists(); // Super Admin, Admin only
+        $isAdmin = $user->roles()->whereIn('role_id', [1, 2, 3, 6])->exists(); // Super Admin, Admin, Instructor, Finance
 
         if (!$isOwner && !$isAdmin) {
             abort(403, 'You do not have permission to download this certificate.');

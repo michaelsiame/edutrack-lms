@@ -116,8 +116,13 @@ class Intake extends Model
 
     public function incrementEnrollmentCount(): void
     {
-        $this->increment('enrollment_count');
-        $this->checkCapacity();
+        \DB::transaction(function () {
+            $fresh = self::lockForUpdate()->find($this->id);
+            if ($fresh) {
+                $fresh->increment('enrollment_count');
+                $fresh->checkCapacity();
+            }
+        });
     }
 
     public function decrementEnrollmentCount(): void

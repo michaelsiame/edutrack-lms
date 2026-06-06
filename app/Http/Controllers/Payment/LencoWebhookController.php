@@ -63,6 +63,10 @@ class LencoWebhookController extends Controller
                 'error_message' => $processed ? null : 'Processing failed',
             ]);
 
+            if (!$processed) {
+                return response()->json(['error' => 'Processing failed'], 422);
+            }
+
             return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
             Log::error('Lenco webhook processing failed', [

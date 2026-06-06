@@ -111,7 +111,7 @@ class Enrollment extends Model
      */
     public function canAccessContent(): bool
     {
-        $coursePrice = $this->course?->discount_price ?? $this->course?->price ?? 0;
+        $coursePrice = $this->effectivePrice();
 
         // Free course
         if ($coursePrice <= 0) {

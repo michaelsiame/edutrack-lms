@@ -38,10 +38,15 @@ class CertificateService
             $nrcSuffix = $user->id . '/1/1';
         }
 
-        // Append course ID and random suffix to guarantee uniqueness per certificate
-        $uniqueSuffix = ($courseId ?? '') . '-' . Str::random(6);
+        // Append course ID and random suffix, retry on collision
+        $attempts = 0;
+        do {
+            $uniqueSuffix = ($courseId ?? '') . '-' . Str::random(8);
+            $number = 'NRC ' . $nrcSuffix . '/' . $uniqueSuffix;
+            $attempts++;
+        } while (\App\Models\Certificate::where('certificate_number', $number)->exists() && $attempts < 10);
 
-        return 'NRC ' . $nrcSuffix . '/' . $uniqueSuffix;
+        return $number;
     }
 
     /**
@@ -91,6 +96,13 @@ class CertificateService
 
             if ($lockedEnrollment->certificate_blocked) {
                 return null;
+            }
+
+            // Extra guard: check if certificate already exists (handles edge cases)
+            $existingCertificate = Certificate::where('enrollment_id', $lockedEnrollment->id)->first();
+            if ($existingCertificate) {
+                $lockedEnrollment->update(['certificate_issued' => true]);
+                return $existingCertificate;
             }
 
             // Recalculate final grade before issuing

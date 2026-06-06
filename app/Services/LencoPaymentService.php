@@ -576,7 +576,7 @@ class LencoPaymentService
      */
     protected function updateEnrollmentPaymentStatus(Enrollment $enrollment): void
     {
-        $coursePrice = $enrollment->course->discount_price ?? $enrollment->course->price;
+        $coursePrice = $enrollment->effectivePrice();
 
         $totalPaid = Payment::where('enrollment_id', $enrollment->id)
             ->where('payment_status', 'Completed')
@@ -717,20 +717,12 @@ class LencoPaymentService
             return '';
         }
 
-        // Remove leading + if present
-        $phone = ltrim($phone, '+');
-
         // If starts with 0, replace with 260
         if (str_starts_with($phone, '0')) {
             $phone = '260' . substr($phone, 1);
         }
 
-        // If starts with 26 but not 260, add 0
-        if (str_starts_with($phone, '26') && !str_starts_with($phone, '260')) {
-            $phone = '260' . substr($phone, 2);
-        }
-
-        // If doesn't start with country code, assume Zambia and add 260
+        // If doesn't start with 260, prepend it
         if (!str_starts_with($phone, '260')) {
             $phone = '260' . $phone;
         }

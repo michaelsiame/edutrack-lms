@@ -125,7 +125,10 @@ class User extends Authenticatable
 
     public function payments()
     {
-        return $this->hasManyThrough(Payment::class, Student::class, 'user_id', 'student_id', 'id', 'id');
+        return $this->hasMany(Payment::class, 'student_id')
+            ->whereIn('student_id', function ($query) {
+                $query->select('id')->from('students')->where('user_id', $this->id);
+            });
     }
 
     public function certificates()

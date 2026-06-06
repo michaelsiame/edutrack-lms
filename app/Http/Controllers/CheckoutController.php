@@ -102,102 +102,134 @@ class CheckoutController extends Controller
         $discount = 0;
         if ($promotion && $amount >= $effectiveBalance) {
             $discount = $promotionDiscount;
-            $promotion->increment('used_count');
         }
 
         $isFullPayment = $amount >= $effectiveBalance;
 
-        // Create pending payment record
-        $payment = Payment::create([
-            'student_id' => $user->student?->id ?? $user->id,
-            'course_id' => $course->id,
-            'enrollment_id' => $enrollment->id,
-            'payment_method_id' => $paymentMethodId,
-            'amount' => $amount,
-            'currency' => 'ZMW',
-            'payment_type' => $isFullPayment ? 'course_fee' : 'partial_payment',
-            'payment_status' => 'Pending',
-            'transaction_id' => $reference,
-            'phone_number' => $validated['phone_number'] ?? $user->phone,
-            'promotion_id' => $promotion?->id,
-            'discount_amount' => $discount,
-        ]);
-
-        // Lenco v2 collections
-        if (in_array($paymentMethod, ['lenco', 'mobile_money'])) {
-            // Prevent duplicate pending payments within the last 30 minutes
+        // Wrap payment + Lenco transaction creation in DB transaction
+        $result = \DB::transaction(function () use ($user, $course, $enrollment, $amount, $paymentMethod, $paymentMethodId, $reference, $isFullPayment, $promotion, $discount, $validated) {
+            // Prevent duplicate pending payments within the last 30 minutes (atomic check)
             $existingPendingTx = LencoTransaction::where('enrollment_id', $enrollment->id)
                 ->where('status', 'pending')
                 ->where('created_at', '>=', now()->subMinutes(30))
+                ->lockForUpdate()
                 ->first();
 
             if ($existingPendingTx) {
-                return redirect()->route('payment.success', ['course' => $course->slug])
-                    ->with('info', 'You already have a pending payment. Please check your phone to authorize the transaction, or wait a few minutes before trying again.');
+                return ['type' => 'duplicate', 'message' => 'You already have a pending payment. Please check your phone to authorize the transaction, or wait a few minutes before trying again.'];
             }
 
-            $service = app(LencoPaymentService::class);
+            // Create pending payment record
+            $payment = Payment::create([
+                'student_id' => $user->student?->id ?? $user->id,
+                'course_id' => $course->id,
+                'enrollment_id' => $enrollment->id,
+                'payment_method_id' => $paymentMethodId,
+                'amount' => $amount,
+                'currency' => 'ZMW',
+                'payment_type' => $isFullPayment ? 'course_fee' : 'partial_payment',
+                'payment_status' => 'Pending',
+                'transaction_id' => $reference,
+                'phone_number' => $validated['phone_number'] ?? $user->phone,
+                'promotion_id' => $promotion?->id,
+                'discount_amount' => $discount,
+            ]);
 
-            if ($paymentMethod === 'mobile_money') {
-                $result = $service->initializeMobileMoneyCollection([
-                    'amount' => $amount,
-                    'currency' => 'ZMW',
-                    'reference' => $reference,
-                    'phone_number' => $validated['phone_number'] ?? $user->phone,
-                    'callback_url' => route('lenco.webhook'),
-                ]);
-            } else {
-                $result = $service->initializeBankTransferCollection([
-                    'amount' => $amount,
-                    'currency' => 'ZMW',
-                    'reference' => $reference,
-                    'email' => $user->email,
-                    'phone_number' => $validated['phone_number'] ?? $user->phone,
-                    'customer_name' => $user->full_name,
-                    'customer_first_name' => $user->first_name,
-                    'customer_last_name' => $user->last_name,
-                    'callback_url' => route('lenco.webhook'),
-                    'redirect_url' => route('payment.success', ['course' => $course->slug]),
-                ]);
+            // Increment promotion used_count only inside transaction
+            if ($promotion && $amount >= ($enrollment->effectivePrice() - $enrollment->amount_paid - $discount)) {
+                $promotion->increment('used_count');
             }
 
-            if ($result['success']) {
-                // Store Lenco transaction reference
-                LencoTransaction::create([
-                    'reference' => $reference,
-                    'user_id' => $user->id,
-                    'payment_id' => $payment->payment_id,
-                    'enrollment_id' => $enrollment->id,
-                    'course_id' => $course->id,
-                    'amount' => $amount,
-                    'currency' => 'ZMW',
-                    'lenco_transaction_id' => $result['lenco_id'] ?? $reference,
-                    'status' => 'pending',
-                    'payment_method' => $paymentMethod,
-                    'phone_number' => $validated['phone_number'] ?? $user->phone,
-                ]);
+            // Lenco v2 collections
+            if (in_array($paymentMethod, ['lenco', 'mobile_money'])) {
+                $service = app(LencoPaymentService::class);
 
-                // For bank transfer/card, redirect to authorization URL if provided
-                $authUrl = $result['authorization_url'] ?? null;
-                if ($authUrl) {
-                    return redirect()->away($authUrl);
-                }
-
-                // For mobile money, show pending page
                 if ($paymentMethod === 'mobile_money') {
-                    return redirect()->route('payment.success', ['course' => $course->slug])
-                        ->with('success', 'Payment initiated! Please check your phone and authorize the mobile money transaction. You will receive confirmation once the payment is complete.');
+                    $lencoResult = $service->initializeMobileMoneyCollection([
+                        'amount' => $amount,
+                        'currency' => 'ZMW',
+                        'reference' => $reference,
+                        'phone_number' => $validated['phone_number'] ?? $user->phone,
+                        'callback_url' => route('lenco.webhook'),
+                    ]);
+                } else {
+                    $lencoResult = $service->initializeBankTransferCollection([
+                        'amount' => $amount,
+                        'currency' => 'ZMW',
+                        'reference' => $reference,
+                        'email' => $user->email,
+                        'phone_number' => $validated['phone_number'] ?? $user->phone,
+                        'customer_name' => $user->full_name,
+                        'customer_first_name' => $user->first_name,
+                        'customer_last_name' => $user->last_name,
+                        'callback_url' => route('lenco.webhook'),
+                        'redirect_url' => route('payment.success', ['course' => $course->slug]),
+                    ]);
                 }
 
-                return redirect()->route('payment.success', ['course' => $course->slug])
-                    ->with('success', 'Payment initiated successfully. Please complete the payment.');
+                if ($lencoResult['success']) {
+                    // Store Lenco transaction reference
+                    LencoTransaction::create([
+                        'reference' => $reference,
+                        'user_id' => $user->id,
+                        'payment_id' => $payment->payment_id,
+                        'enrollment_id' => $enrollment->id,
+                        'course_id' => $course->id,
+                        'amount' => $amount,
+                        'currency' => 'ZMW',
+                        'lenco_transaction_id' => $lencoResult['lenco_id'] ?? $reference,
+                        'status' => 'pending',
+                        'payment_method' => $paymentMethod,
+                        'phone_number' => $validated['phone_number'] ?? $user->phone,
+                    ]);
+
+                    return [
+                        'type' => 'lenco_success',
+                        'payment_method' => $paymentMethod,
+                        'auth_url' => $lencoResult['authorization_url'] ?? null,
+                        'course_slug' => $course->slug,
+                    ];
+                }
+
+                // Mark payment as failed
+                $payment->update(['payment_status' => 'Failed']);
+
+                return [
+                    'type' => 'lenco_failed',
+                    'error' => $lencoResult['error'] ?? 'Payment initialization failed. Please try again.',
+                    'course_slug' => $course->slug,
+                ];
             }
 
-            // Mark payment as failed
-            $payment->update(['payment_status' => 'Failed']);
+            // For manual bank transfer only
+            return ['type' => 'manual_transfer'];
+        });
 
+        // Handle result outside transaction
+        if ($result['type'] === 'duplicate') {
+            return redirect()->route('payment.success', ['course' => $course->slug])
+                ->with('info', $result['message']);
+        }
+
+        if ($result['type'] === 'lenco_success') {
+            // For bank transfer/card, redirect to authorization URL if provided
+            if ($result['auth_url']) {
+                return redirect()->away($result['auth_url']);
+            }
+
+            // For mobile money, show pending page
+            if ($result['payment_method'] === 'mobile_money') {
+                return redirect()->route('payment.success', ['course' => $course->slug])
+                    ->with('success', 'Payment initiated! Please check your phone and authorize the mobile money transaction. You will receive confirmation once the payment is complete.');
+            }
+
+            return redirect()->route('payment.success', ['course' => $course->slug])
+                ->with('success', 'Payment initiated successfully. Please complete the payment.');
+        }
+
+        if ($result['type'] === 'lenco_failed') {
             return redirect()->route('payment.failed', ['course' => $course->slug])
-                ->with('error', $result['error'] ?? 'Payment initialization failed. Please try again.');
+                ->with('error', $result['error']);
         }
 
         // For manual bank transfer only, show instructions
