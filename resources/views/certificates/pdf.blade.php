@@ -19,26 +19,26 @@ body {
     width: 210mm;
     height: 297mm;
     background: #f26522;
-    padding: 2mm;
+    padding: 1.5mm;
 }
 .frame-blue {
     width: 100%;
     height: 100%;
     background: #1e3a8a;
-    padding: 2mm;
+    padding: 1.5mm;
 }
 .frame-white {
     width: 100%;
     height: 100%;
     background: #ffffff;
-    padding: 10mm 14mm 8mm 14mm;
+    padding: 14mm 14mm 10mm 14mm;
 }
 
 /* Header */
 .header-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 3mm;
+    margin-bottom: 4mm;
 }
 .header-table td {
     vertical-align: middle;
@@ -46,7 +46,7 @@ body {
 }
 .college-title {
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 16pt;
+    font-size: 15pt;
     font-weight: 800;
     color: #1a1a1a;
     text-transform: uppercase;
@@ -56,7 +56,7 @@ body {
 }
 .college-subtitle {
     font-family: 'DejaVu Serif', Georgia, serif;
-    font-size: 9pt;
+    font-size: 8.5pt;
     color: #444;
     font-style: italic;
     text-align: center;
@@ -66,7 +66,7 @@ body {
 /* Divider */
 .divider-wrap {
     text-align: center;
-    margin: 1.5mm 0;
+    margin: 2mm 0;
 }
 .divider-table {
     width: 70%;
@@ -88,11 +88,11 @@ body {
 .banner-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 3mm 0;
+    margin: 5mm 0 4mm 0;
 }
 .banner-table td {
     text-align: center;
-    padding: 1.5mm 0;
+    padding: 2mm 0;
 }
 .banner-text {
     font-family: 'DejaVu Sans', Arial, sans-serif;
@@ -110,15 +110,15 @@ body {
 /* Student name */
 .student-name {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
-    font-size: 30pt;
+    font-size: 32pt;
     color: #1a1a1a;
     text-align: center;
     line-height: 1.2;
-    margin: 2mm 0 1mm 0;
+    margin: 3mm 0 1mm 0;
 }
 .name-underline {
-    width: 80mm;
-    margin: 0 auto 2mm auto;
+    width: 85mm;
+    margin: 0 auto 3mm auto;
     border-top: 0.75pt solid #f26522;
     height: 0;
 }
@@ -129,33 +129,33 @@ body {
     font-size: 9.5pt;
     color: #333;
     line-height: 1.6;
-    margin: 2mm 0;
+    margin: 3mm 0;
 }
 
 /* Course title */
 .course-title {
     text-align: center;
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 18pt;
+    font-size: 17pt;
     font-weight: 800;
     color: #1e3a8a;
     text-transform: uppercase;
     letter-spacing: 1pt;
     line-height: 1.2;
-    margin: 2mm 0;
+    margin: 3mm 0;
 }
 
 /* Classification */
 .classification {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
-    font-size: 20pt;
+    font-size: 22pt;
     color: #1a1a1a;
     text-align: center;
     line-height: 1.2;
-    margin: 2mm 0 1mm 0;
+    margin: 3mm 0 1mm 0;
 }
 .merit-underline {
-    width: 45mm;
+    width: 50mm;
     margin: 0 auto;
     border-top: 0.75pt solid #f26522;
     height: 0;
@@ -177,7 +177,7 @@ body {
     font-size: 9.5pt;
     color: #333;
     line-height: 1.6;
-    margin: 3mm 0;
+    margin: 4mm 0;
 }
 .date-script {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
@@ -196,7 +196,7 @@ sup { font-size: 6pt; }
 .sig-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 4mm 0;
+    margin: 6mm 0;
 }
 .sig-table td {
     vertical-align: bottom;
@@ -204,11 +204,11 @@ sup { font-size: 6pt; }
 }
 .sig-item {
     text-align: center;
-    margin-bottom: 5mm;
+    margin-bottom: 6mm;
 }
 .sig-line {
     border-top: 0.5pt solid #333;
-    width: 70%;
+    width: 75%;
     margin: 0 auto 1mm auto;
     height: 0;
 }
@@ -218,7 +218,7 @@ sup { font-size: 6pt; }
     font-weight: 600;
 }
 .seal-img {
-    width: 24mm;
+    width: 26mm;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -228,8 +228,8 @@ sup { font-size: 6pt; }
 .info-box {
     border: 1.5pt solid #f26522;
     border-radius: 4pt;
-    padding: 3mm 4mm;
-    margin: 3mm auto 0 auto;
+    padding: 4mm 5mm;
+    margin: 4mm auto 0 auto;
     width: 95%;
 }
 .info-table {
@@ -281,7 +281,7 @@ sup { font-size: 6pt; }
 /* Bottom decor */
 .bottom-decor {
     text-align: center;
-    margin-top: 3mm;
+    margin-top: 4mm;
 }
 .bottom-table {
     width: 30%;
@@ -304,7 +304,7 @@ sup { font-size: 6pt; }
     text-align: center;
     font-size: 6.5pt;
     color: #666;
-    margin-top: 2mm;
+    margin-top: 3mm;
 }
 </style>
 </head>
@@ -318,7 +318,7 @@ sup { font-size: 6pt; }
     <table class="header-table">
     <tr>
         <td width="22%" style="text-align:center;">
-            <img src="{{ public_path('assets/images/logo.png') }}" style="width:16mm;height:auto;display:block;margin:0 auto;" alt="">
+            <img src="{{ public_path('assets/images/logo-pdf.png') }}" style="width:16mm;height:auto;display:block;margin:0 auto;" alt="">
             <div style="font-size:6pt;font-weight:700;color:#1e3a8a;text-align:center;line-height:1.2;">Excel Through Education</div>
         </td>
         <td width="56%">
@@ -326,7 +326,7 @@ sup { font-size: 6pt; }
             <div class="divider-wrap">
                 <table class="divider-table"><tr><td></td><td class="divider-diamond">&#9670;</td><td></td></tr></table>
             </div>
-            <div class="college-subtitle">A skill training college</div>
+            <div class="college-subtitle">TEVETA Registered Institution &mdash; TVA/2064</div>
         </td>
         <td width="22%" style="text-align:right;">
             <img src="{{ public_path('assets/images/teveta-logo.png') }}" style="width:20mm;height:auto;display:inline-block;" alt="">
@@ -349,8 +349,8 @@ sup { font-size: 6pt; }
 
     <!-- BODY TEXT -->
     <div class="body-text">
-        having satisfied the requirements for the<br>
-        award of the certificate of
+        has successfully completed the requirements<br>
+        for the award of this certificate in
     </div>
 
     <!-- COURSE TITLE -->
@@ -363,7 +363,7 @@ sup { font-size: 6pt; }
 
     <!-- DATE -->
     <div class="date-section">
-        was admitted to the certificate at a Graduation Ceremony held on the&nbsp;
+        was admitted to this certificate at a Graduation Ceremony held on the&nbsp;
         <span class="date-script">{{ $graduation_day }}<sup>{{ $graduation_suffix }}</sup></span>&nbsp;
         day of&nbsp;
         <span class="date-script">{{ $graduation_month }}</span>&nbsp;
