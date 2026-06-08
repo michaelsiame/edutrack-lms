@@ -7,26 +7,40 @@
     size: 210mm 297mm;
     margin: 0;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { margin: 0; padding: 0; box-sizing: border-box; height: 100%; }
 body {
     font-family: 'DejaVu Sans', 'DejaVu Serif', Arial, sans-serif;
     font-size: 9pt;
     color: #1a1a1a;
 }
 
+/* Page wrapper forces full A4 height in mPDF */
+.page-wrap {
+    width: 210mm;
+    height: 297mm;
+    border-collapse: collapse;
+}
+.page-wrap td {
+    padding: 0;
+    vertical-align: top;
+}
+
 /* Frame using nested divs with padding (mPDF-friendly) */
 .frame-orange {
-    width: 210mm;
+    width: 100%;
+    height: 100%;
     background: #f26522;
     padding: 1.5mm;
 }
 .frame-blue {
     width: 100%;
+    height: 100%;
     background: #1e3a8a;
     padding: 1.5mm;
 }
 .frame-white {
     width: 100%;
+    min-height: 100%;
     background: #ffffff;
     padding: 8mm 14mm 3mm 14mm;
 }
@@ -273,6 +287,9 @@ sup { font-size: 6pt; }
 </head>
 <body>
 
+<table class="page-wrap">
+<tr>
+<td>
 <div class="frame-orange">
 <div class="frame-blue">
 <div class="frame-white">
@@ -433,6 +450,9 @@ sup { font-size: 6pt; }
 </div>
 </div>
 </div>
+</td>
+</tr>
+</table>
 
 </body>
 </html>
