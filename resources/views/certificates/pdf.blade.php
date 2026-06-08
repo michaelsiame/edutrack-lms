@@ -34,11 +34,19 @@ body {
     padding: 10mm 14mm 8mm 14mm;
 }
 
+/* Corner decorations */
+.corner {
+    position: absolute;
+    width: 14mm;
+    height: 14mm;
+    z-index: 10;
+}
+
 /* Header */
 .header-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 8mm;
+    margin-bottom: 10mm;
 }
 .header-table td {
     vertical-align: middle;
@@ -46,12 +54,12 @@ body {
 }
 .college-title {
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 15pt;
+    font-size: 19pt;
     font-weight: 800;
     color: #1a1a1a;
     text-transform: uppercase;
     letter-spacing: 0.5pt;
-    line-height: 1.2;
+    line-height: 1.25;
     text-align: center;
 }
 .college-subtitle {
@@ -96,10 +104,10 @@ body {
 }
 .banner-text {
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 12pt;
-    font-weight: 700;
+    font-size: 17pt;
+    font-weight: 800;
     color: #1e3a8a;
-    letter-spacing: 1.5pt;
+    letter-spacing: 2pt;
     text-transform: uppercase;
 }
 .banner-deco {
@@ -110,14 +118,14 @@ body {
 /* Student name */
 .student-name {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
-    font-size: 34pt;
+    font-size: 38pt;
     color: #1a1a1a;
     text-align: center;
     line-height: 1.2;
     margin: 5mm 0 2mm 0;
 }
 .name-underline {
-    width: 110mm;
+    width: 130mm;
     margin: 0 auto 3mm auto;
     border-top: 0.75pt solid #f26522;
     height: 0;
@@ -132,23 +140,23 @@ body {
     margin: 3mm 0;
 }
 
-/* Course title */
+/* Course title - DOMINANT */
 .course-title {
     text-align: center;
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 20pt;
-    font-weight: 800;
+    font-size: 28pt;
+    font-weight: 900;
     color: #1e3a8a;
     text-transform: uppercase;
-    letter-spacing: 1.5pt;
+    letter-spacing: 1pt;
     line-height: 1.2;
     margin: 5mm 0;
 }
 
-/* Classification */
+/* Classification - supporting element */
 .classification {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
-    font-size: 22pt;
+    font-size: 18pt;
     color: #1a1a1a;
     text-align: center;
     line-height: 1.2;
@@ -171,7 +179,7 @@ body {
     padding: 0 2mm;
 }
 
-/* Date */
+/* Date - restructured for visual impact */
 .date-section {
     text-align: center;
     font-size: 9.5pt;
@@ -181,14 +189,16 @@ body {
 }
 .date-script {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
-    font-size: 15pt;
+    font-size: 16pt;
     color: #1a1a1a;
 }
 .date-year {
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 15pt;
+    font-size: 20pt;
     font-weight: 700;
     color: #1a1a1a;
+    display: block;
+    margin-top: 2mm;
 }
 sup { font-size: 6pt; }
 
@@ -208,7 +218,7 @@ sup { font-size: 6pt; }
 }
 .sig-line {
     border-top: 0.8pt solid #333;
-    width: 85%;
+    width: 65%;
     margin: 0 auto 1mm auto;
     height: 0;
 }
@@ -218,7 +228,7 @@ sup { font-size: 6pt; }
     font-weight: 600;
 }
 .seal-img {
-    width: 32mm;
+    width: 38mm;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -228,9 +238,9 @@ sup { font-size: 6pt; }
 .info-box {
     border: 1.5pt solid #f26522;
     border-radius: 4pt;
-    padding: 4mm 5mm;
+    padding: 5mm 6mm;
     margin: 8mm auto 0 auto;
-    width: 88%;
+    width: 95%;
 }
 .info-table {
     width: 100%;
@@ -315,6 +325,12 @@ sup { font-size: 6pt; }
 <div class="frame-blue">
 <div class="frame-white">
 
+    <!-- Corner decorations -->
+    <img src="{{ public_path('assets/images/cert-corners/tl.png') }}" class="corner" style="top:4.5mm;left:4.5mm;" alt="">
+    <img src="{{ public_path('assets/images/cert-corners/tr.png') }}" class="corner" style="top:4.5mm;right:4.5mm;" alt="">
+    <img src="{{ public_path('assets/images/cert-corners/bl.png') }}" class="corner" style="bottom:4.5mm;left:4.5mm;" alt="">
+    <img src="{{ public_path('assets/images/cert-corners/br.png') }}" class="corner" style="bottom:4.5mm;right:4.5mm;" alt="">
+
     <!-- HEADER -->
     <table class="header-table">
     <tr>
@@ -363,11 +379,10 @@ sup { font-size: 6pt; }
 
     <!-- DATE -->
     <div class="date-section">
-        was admitted to this certificate at a Graduation Ceremony held on the&nbsp;
-        <span class="date-script">{{ $graduation_day }}<sup>{{ $graduation_suffix }}</sup></span>&nbsp;
-        day of&nbsp;
-        <span class="date-script">{{ $graduation_month }}</span>&nbsp;
-        in the year&nbsp;
+        was admitted to this certificate at a Graduation Ceremony held on the<br><br>
+        <span class="date-script">{{ $graduation_day }}<sup>{{ $graduation_suffix }}</sup></span>
+        &nbsp;&nbsp;day of&nbsp;&nbsp;
+        <span class="date-script">{{ $graduation_month }}</span><br>
         <span class="date-year">{{ $graduation_year }}</span>
     </div>
 
