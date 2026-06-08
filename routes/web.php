@@ -86,13 +86,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/transcript/download', [App\Http\Controllers\Student\TranscriptController::class, 'download'])->name('transcript.download');
 
     // Enrollment
-    Route::post('/courses/{course}/enroll', [EnrollmentController::class, 'store'])->name('enrollments.store');
+    Route::post('/courses/{course}/enroll', [EnrollmentController::class, 'store'])->name('enrollments.store')->middleware('throttle:enrollment');
     Route::get('/my-courses', [EnrollmentController::class, 'index'])->name('enrollments.index');
     Route::get('/my-courses/{course}', [EnrollmentController::class, 'show'])->name('enrollments.show');
 
     // Checkout & Payments
     Route::get('/courses/{course}/checkout', [App\Http\Controllers\CheckoutController::class, 'show'])->name('checkout.show');
-    Route::post('/courses/{course}/checkout', [App\Http\Controllers\CheckoutController::class, 'process'])->name('checkout.process');
+    Route::post('/courses/{course}/checkout', [App\Http\Controllers\CheckoutController::class, 'process'])->name('checkout.process')->middleware('throttle:payment');
     Route::get('/payment/success', [App\Http\Controllers\CheckoutController::class, 'success'])->name('payment.success');
     Route::get('/payment/failed', [App\Http\Controllers\CheckoutController::class, 'failed'])->name('payment.failed');
 

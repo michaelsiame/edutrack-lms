@@ -36,7 +36,8 @@ class Certificate extends Model
         'is_verified' => 'boolean',
     ];
 
-    const UPDATED_AT = null;
+    // Note: certificates can be updated (e.g., corrections to name/course)
+    // Removed UPDATED_AT = null to allow updates
 
     public function user()
     {

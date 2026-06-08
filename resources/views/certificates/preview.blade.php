@@ -6,452 +6,277 @@
     <title>Certificate - {{ $certificate_number ?? 'Preview' }} - EduTrack Computer Training College</title>
     <link rel="stylesheet" href="{{ asset('assets/css/cert-fonts.css') }}">
     <style>
-        @page {
-            size: A4 portrait;
-            margin: 0;
-        }
-
+        @page { size: A4 portrait; margin: 0; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            width: 210mm;
-            min-height: 297mm;
-            margin: 0 auto;
+            width: 210mm; min-height: 297mm; margin: 0 auto;
             background: #f5f5f5;
             font-family: 'Montserrat', 'Inter', sans-serif;
-            position: relative;
-            overflow-x: hidden;
             padding: 20px;
         }
-
         @media print {
-            body {
-                background: #fff;
-                padding: 0;
-                width: 210mm;
-                height: 297mm;
-            }
-            .cert-page {
-                box-shadow: none !important;
-                margin: 0 !important;
-            }
+            body { background: #fff; padding: 0; width: 210mm; height: 297mm; }
+            .cert-page { box-shadow: none !important; margin: 0 !important; }
             .no-print { display: none !important; }
         }
 
         .cert-page {
-            width: 210mm;
-            height: 297mm;
-            background: #fff;
-            position: relative;
-            margin: 0 auto;
+            width: 210mm; height: 297mm; background: #fff;
+            position: relative; margin: 0 auto;
             box-shadow: 0 4px 20px rgba(0,0,0,0.12);
             overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
-        /* === OPEN DESIGN CERTIFICATE SYSTEM === */
-        :root {
-            --cert-navy: #1e3a8a;
-            --cert-navy-light: #2563eb;
-            --cert-accent: #f26522;
-            --cert-accent-dark: #d35400;
-            --cert-gold: #d4af37;
-            --cert-gold-light: #f0d878;
-            --cert-text: #1a1a1a;
-            --cert-text-muted: #444;
-            --cert-border: #e5e7eb;
-        }
-
-        /* Border Frame */
+        /* Frame borders */
         .frame-outer {
-            position: absolute;
-            top: 7mm; left: 7mm; right: 7mm; bottom: 7mm;
-            border: 2px solid var(--cert-accent);
-            border-radius: 2px;
+            position: absolute; top: 7mm; left: 7mm; right: 7mm; bottom: 7mm;
+            border: 2px solid #f26522; border-radius: 2px; pointer-events: none;
         }
         .frame-inner {
-            position: absolute;
-            top: 9mm; left: 9mm; right: 9mm; bottom: 9mm;
-            border: 3px solid var(--cert-navy);
-            border-radius: 1px;
+            position: absolute; top: 9mm; left: 9mm; right: 9mm; bottom: 9mm;
+            border: 3px solid #1e3a8a; border-radius: 1px; pointer-events: none;
         }
         .frame-line {
-            position: absolute;
-            top: 11mm; left: 11mm; right: 11mm; bottom: 11mm;
-            border: 1px solid var(--cert-gold);
-            opacity: 0.6;
+            position: absolute; top: 11mm; left: 11mm; right: 11mm; bottom: 11mm;
+            border: 1px solid #d4af37; opacity: 0.5; pointer-events: none;
         }
 
-        /* Corner Ornaments */
-        .corner {
-            position: absolute;
-            width: 28mm; height: 28mm;
-            z-index: 5;
-        }
-        .corner-tl {
-            top: 11mm; left: 11mm;
-            border-top: 2px solid var(--cert-accent);
-            border-left: 2px solid var(--cert-accent);
-        }
-        .corner-tl::after {
-            content: '';
-            position: absolute; top: 0; left: 0;
-            width: 18mm; height: 18mm;
-            background: linear-gradient(135deg, rgba(242,101,34,0.12) 0%, transparent 70%);
-        }
-        .corner-tr {
-            top: 11mm; right: 11mm;
-            border-top: 2px solid var(--cert-accent);
-            border-right: 2px solid var(--cert-accent);
-        }
-        .corner-tr::after {
-            content: '';
-            position: absolute; top: 0; right: 0;
-            width: 18mm; height: 18mm;
-            background: linear-gradient(-135deg, rgba(242,101,34,0.12) 0%, transparent 70%);
-        }
-        .corner-bl {
-            bottom: 11mm; left: 11mm;
-            border-bottom: 2px solid var(--cert-accent);
-            border-left: 2px solid var(--cert-accent);
-        }
-        .corner-bl::after {
-            content: '';
-            position: absolute; bottom: 0; left: 0;
-            width: 18mm; height: 18mm;
-            background: linear-gradient(45deg, rgba(242,101,34,0.12) 0%, transparent 70%);
-        }
-        .corner-br {
-            bottom: 11mm; right: 11mm;
-            border-bottom: 2px solid var(--cert-accent);
-            border-right: 2px solid var(--cert-accent);
-        }
-        .corner-br::after {
-            content: '';
-            position: absolute; bottom: 0; right: 0;
-            width: 18mm; height: 18mm;
-            background: linear-gradient(-45deg, rgba(242,101,34,0.12) 0%, transparent 70%);
-        }
+        /* Corner ornaments */
+        .corner { position: absolute; width: 28mm; height: 28mm; z-index: 5; }
+        .corner-tl { top: 11mm; left: 11mm; border-top: 2px solid #f26522; border-left: 2px solid #f26522; }
+        .corner-tl::after { content: ''; position: absolute; top: 0; left: 0; width: 18mm; height: 18mm; background: linear-gradient(135deg, rgba(242,101,34,0.12) 0%, transparent 70%); }
+        .corner-tr { top: 11mm; right: 11mm; border-top: 2px solid #f26522; border-right: 2px solid #f26522; }
+        .corner-tr::after { content: ''; position: absolute; top: 0; right: 0; width: 18mm; height: 18mm; background: linear-gradient(-135deg, rgba(242,101,34,0.12) 0%, transparent 70%); }
+        .corner-bl { bottom: 11mm; left: 11mm; border-bottom: 2px solid #f26522; border-left: 2px solid #f26522; }
+        .corner-bl::after { content: ''; position: absolute; bottom: 0; left: 0; width: 18mm; height: 18mm; background: linear-gradient(45deg, rgba(242,101,34,0.12) 0%, transparent 70%); }
+        .corner-br { bottom: 11mm; right: 11mm; border-bottom: 2px solid #f26522; border-right: 2px solid #f26522; }
+        .corner-br::after { content: ''; position: absolute; bottom: 0; right: 0; width: 18mm; height: 18mm; background: linear-gradient(-45deg, rgba(242,101,34,0.12) 0%, transparent 70%); }
 
-        /* Content Area */
+        /* Main content area - uses flex, NOT absolute positioning */
         .content {
-            position: absolute;
-            top: 16mm; left: 24mm; right: 24mm; bottom: 58mm;
-            text-align: center;
+            flex: 1;
+            padding: 18mm 24mm 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             z-index: 10;
+            position: relative;
         }
 
         /* Header */
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 5mm;
+            display: flex; justify-content: space-between;
+            align-items: flex-start; width: 100%;
+            margin-bottom: 4mm;
         }
-
         .logo-left {
-            width: 26mm; height: 26mm;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .logo-left .shield {
-            width: 20mm; height: 24mm;
-            background: var(--cert-navy);
-            border-radius: 0 0 10mm 10mm;
+            width: 24mm; display: flex; align-items: center; justify-content: center;
             position: relative;
-            border: 1.5px solid var(--cert-accent);
+        }
+        .shield {
+            width: 18mm; height: 22mm; background: #1e3a8a;
+            border-radius: 0 0 9mm 9mm; position: relative;
+            border: 1.5px solid #f26522;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
         }
-        .logo-left .shield::before {
-            content: '';
-            position: absolute;
-            top: -5mm; left: 50%; transform: translateX(-50%);
-            width: 16mm; height: 7mm;
-            background: var(--cert-accent);
-            border-radius: 8mm 8mm 0 0;
+        .shield::before {
+            content: ''; position: absolute;
+            top: -4.5mm; left: 50%; transform: translateX(-50%);
+            width: 14mm; height: 6mm; background: #f26522;
+            border-radius: 7mm 7mm 0 0;
         }
-        .shield-text {
-            color: white; font-size: 6.5pt; font-weight: 700;
-            line-height: 1.1; margin-top: 1.5mm; z-index: 2;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .shield-sub {
-            color: var(--cert-gold); font-size: 4.5pt;
-            margin-top: 0.5mm; z-index: 2;
-            font-family: 'Montserrat', sans-serif;
-        }
+        .shield-text { color: white; font-size: 6pt; font-weight: 700; line-height: 1; margin-top: 1mm; z-index: 2; font-family: 'Montserrat', sans-serif; }
+        .shield-sub { color: #d4af37; font-size: 4pt; margin-top: 0.5mm; z-index: 2; font-family: 'Montserrat', sans-serif; text-align: center; }
         .tagline {
-            position: absolute; bottom: -3.5mm;
-            font-size: 4.5pt; color: var(--cert-navy);
-            font-weight: 600; width: 100%; text-align: center;
-            font-family: 'Montserrat', sans-serif;
+            position: absolute; bottom: -3mm; left: 50%; transform: translateX(-50%);
+            font-size: 4pt; color: #1e3a8a; font-weight: 600;
+            width: 100%; text-align: center; font-family: 'Montserrat', sans-serif;
+            white-space: nowrap;
         }
 
-        .logo-right {
-            width: 26mm;
-            text-align: center;
+        .header-center { flex: 1; text-align: center; padding: 0 4mm; }
+        .college-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15pt; font-weight: 800; color: #1a1a1a;
+            text-transform: uppercase; letter-spacing: 1.5px; line-height: 1.2;
         }
-        .teveta-icon {
-            width: 11mm; height: 11mm;
-            background: var(--cert-navy);
-            border-radius: 50%;
-            margin: 0 auto 1mm;
+        .divider {
             display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 12pt; font-weight: 800;
-            position: relative;
+            margin: 2mm 0; gap: 2mm;
+        }
+        .divider-line { width: 30mm; height: 1px; background: #1e3a8a; }
+        .divider-diamond { width: 2mm; height: 2mm; background: #f26522; transform: rotate(45deg); }
+        .college-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: 9pt; color: #444; font-style: italic;
+        }
+
+        .logo-right { width: 24mm; text-align: center; }
+        .teveta-icon {
+            width: 10mm; height: 10mm; background: #1e3a8a; border-radius: 50%;
+            margin: 0 auto 1mm; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 10pt; font-weight: 800; position: relative;
             font-family: 'Montserrat', sans-serif;
         }
         .teveta-icon::after {
-            content: '';
-            position: absolute;
-            top: -1.5mm; right: -1.5mm;
-            width: 3.5mm; height: 3.5mm;
-            background: var(--cert-accent);
-            border-radius: 50%;
+            content: ''; position: absolute;
+            top: -1.5mm; right: -1.5mm; width: 3mm; height: 3mm;
+            background: #f26522; border-radius: 50%;
         }
-        .teveta-name {
-            font-size: 7pt; font-weight: 800;
-            color: var(--cert-navy); letter-spacing: 0.5px;
-            line-height: 1; font-family: 'Montserrat', sans-serif;
-        }
-        .teveta-sub {
-            font-size: 4.5pt; color: var(--cert-navy);
-            font-weight: 600; font-family: 'Montserrat', sans-serif;
-        }
+        .teveta-name { font-size: 6.5pt; font-weight: 800; color: #1e3a8a; letter-spacing: 0.5px; font-family: 'Montserrat', sans-serif; }
+        .teveta-sub { font-size: 4pt; color: #1e3a8a; font-weight: 600; font-family: 'Montserrat', sans-serif; }
 
-        /* College Title */
-        .college-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 18pt; font-weight: 800;
-            color: var(--cert-text);
-            text-transform: uppercase;
-            letter-spacing: 1.5px; line-height: 1.2;
-            margin-top: 1mm;
-        }
-        .college-subtitle {
-            font-family: 'Playfair Display', serif;
-            font-size: 10pt; color: var(--cert-text-muted);
-            font-style: italic; margin-top: 1mm;
-        }
-
-        /* Divider */
-        .divider {
-            display: flex; align-items: center;
-            justify-content: center; margin: 2.5mm 0; gap: 3mm;
-        }
-        .divider-line {
-            width: 35mm; height: 1px;
-            background: var(--cert-navy);
-        }
-        .divider-diamond {
-            width: 2.5mm; height: 2.5mm;
-            background: var(--cert-accent);
-            transform: rotate(45deg);
-        }
-
-        /* Certify Statement */
+        /* Certify statement */
         .certify-text {
             font-family: 'Montserrat', sans-serif;
-            font-size: 13pt; font-weight: 700;
-            color: var(--cert-navy);
-            text-transform: uppercase;
-            letter-spacing: 2px; margin: 3mm 0;
-            display: flex; align-items: center;
-            justify-content: center; gap: 4mm;
+            font-size: 12pt; font-weight: 700; color: #1e3a8a;
+            text-transform: uppercase; letter-spacing: 2px;
+            margin: 3mm 0; display: flex; align-items: center; gap: 3mm;
         }
-        .side-decor {
-            display: flex; align-items: center; gap: 1.5mm;
-        }
-        .dot {
-            width: 1.2mm; height: 1.2mm;
-            background: var(--cert-accent);
-            transform: rotate(45deg);
-        }
-        .dot-sm { width: 0.8mm; height: 0.8mm; }
+        .side-decor { display: flex; align-items: center; gap: 1mm; }
+        .dot { width: 1mm; height: 1mm; background: #f26522; transform: rotate(45deg); }
+        .dot-sm { width: 0.7mm; height: 0.7mm; }
 
         /* Recipient */
         .recipient-name {
             font-family: 'Great Vibes', cursive;
-            font-size: 32pt; color: var(--cert-text);
-            margin: 3mm 0 4mm; line-height: 1.4;
+            font-size: 28pt; color: #1a1a1a;
+            margin: 1mm 0 0.5mm; line-height: 1.3;
         }
         .name-underline {
-            width: 75mm; height: 1px;
-            background: var(--cert-accent);
-            margin: 0 auto 2mm;
+            width: 70mm; height: 1px;
+            background: #f26522; margin: 0 auto 2mm;
         }
 
-        /* Body */
+        /* Body text */
         .body-text {
             font-family: 'Montserrat', sans-serif;
-            font-size: 10pt; color: var(--cert-text-muted);
-            line-height: 1.5; margin: 1mm 0 2mm;
+            font-size: 9.5pt; color: #333; line-height: 1.5;
+            margin: 1mm 0 2mm;
         }
-        .body-text .highlight { font-weight: 600; color: var(--cert-text); }
 
         /* Course */
         .course-title {
             font-family: 'Montserrat', sans-serif;
-            font-size: 20pt; font-weight: 800;
-            color: var(--cert-navy);
-            text-transform: uppercase;
-            letter-spacing: 1px; margin: 3mm 0;
-            line-height: 1.2;
+            font-size: 17pt; font-weight: 800; color: #1e3a8a;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin: 1mm 0; line-height: 1.2;
         }
 
         /* Merit */
         .merit-text {
             font-family: 'Great Vibes', cursive;
-            font-size: 22pt; color: var(--cert-text);
-            margin: 1.5mm 0;
+            font-size: 20pt; color: #1a1a1a; margin: 1mm 0;
         }
         .merit-underline {
-            width: 45mm; height: 1px;
-            background: var(--cert-accent);
-            margin: 1.5mm auto;
+            width: 40mm; height: 1px;
+            background: #f26522; margin: 0.5mm auto 1mm;
         }
 
         /* Date */
         .date-section {
             font-family: 'Montserrat', sans-serif;
-            font-size: 10.5pt; color: var(--cert-text-muted);
-            line-height: 1.7; margin: 2.5mm 0;
+            font-size: 9.5pt; color: #333; line-height: 1.6; margin: 2mm 0;
         }
-        .date-section span {
-            font-family: 'Great Vibes', cursive;
-            font-size: 16pt; color: var(--cert-text);
-        }
-        .date-section .date-year {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 16pt; font-weight: 700;
-        }
+        .date-section span { font-family: 'Great Vibes', cursive; font-size: 15pt; color: #1a1a1a; }
+        .date-section .date-year { font-family: 'Montserrat', sans-serif; font-size: 15pt; font-weight: 700; }
 
         /* Signatures */
-        .signatures {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin: 3mm 8mm 0;
-            position: relative;
+        .signatures-area {
+            width: 100%; display: flex;
+            justify-content: space-between; align-items: flex-end;
+            margin-top: auto;
+            padding-bottom: 2mm;
         }
         .signature-block {
-            text-align: center; width: 42mm;
+            text-align: center; width: 40mm;
         }
         .signature-line {
             width: 100%; height: 1px;
-            background: var(--cert-text-muted);
-            margin-bottom: 1.5mm;
+            background: #333; margin-bottom: 1mm;
         }
         .signature-label {
             font-family: 'Montserrat', sans-serif;
-            font-size: 8pt; color: var(--cert-text-muted);
-            font-weight: 600;
+            font-size: 7.5pt; color: #333; font-weight: 600;
+        }
+        .signature-block .sub-sig {
+            margin-top: 3mm;
         }
 
         /* Seal */
-        .seal-container {
-            position: absolute;
-            left: 50%; transform: translateX(-50%);
-            bottom: 2mm; width: 24mm; height: 30mm;
+        .seal-wrap {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-end;
         }
         .seal {
-            width: 20mm; height: 20mm;
-            background: var(--cert-navy);
-            border-radius: 50%;
-            border: 1.5px solid var(--cert-gold);
-            position: relative;
-            margin: 0 auto;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            width: 18mm; height: 18mm; background: #1e3a8a;
+            border-radius: 50%; border: 1.5px solid #d4af37;
+            position: relative; display: flex;
+            align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         }
         .seal::before {
-            content: '';
-            position: absolute; inset: 1mm;
-            border: 1px solid var(--cert-gold);
-            border-radius: 50%; opacity: 0.7;
+            content: ''; position: absolute; inset: 1mm;
+            border: 1px solid #d4af37; border-radius: 50%; opacity: 0.7;
         }
-        .seal-star { color: var(--cert-gold); font-size: 10pt; }
         .seal-text {
-            color: var(--cert-gold); font-size: 5pt;
-            text-align: center; line-height: 1.2;
+            color: #d4af37; font-size: 5pt;
+            text-align: center; line-height: 1.1;
             font-family: 'Montserrat', sans-serif;
         }
+        .seal-text span { font-size: 9pt; }
         .seal-ribbon {
-            position: absolute;
-            bottom: -5mm; left: 50%; transform: translateX(-50%);
             width: 0; height: 0;
             border-left: 5mm solid transparent;
             border-right: 5mm solid transparent;
-            border-top: 8mm solid var(--cert-accent);
-        }
-        .seal-ribbon::after {
-            content: '';
-            position: absolute;
-            top: -8mm; left: -2.5mm;
-            width: 0; height: 0;
-            border-left: 2.5mm solid transparent;
-            border-right: 2.5mm solid transparent;
-            border-top: 5mm solid var(--cert-accent-dark);
+            border-top: 7mm solid #f26522;
+            margin-top: -2mm;
         }
 
         /* Info Box */
         .info-box {
-            position: absolute;
-            bottom: 14mm; left: 24mm; right: 24mm;
-            border: 1.5px solid var(--cert-accent);
+            width: calc(100% - 48mm);
+            margin: 0 auto 12mm;
+            border: 1.5px solid #f26522;
             border-radius: 6px;
-            padding: 3.5mm 5mm;
+            padding: 3mm 5mm;
             display: grid;
             grid-template-columns: 1fr 1px 1fr;
-            gap: 3.5mm;
+            gap: 3mm;
             background: rgba(255,255,255,0.95);
         }
-        .info-divider {
-            width: 1px; background: var(--cert-accent);
-            height: 100%; opacity: 0.4;
-        }
-        .info-col {
-            display: flex; flex-direction: column; gap: 2.5mm;
-        }
-        .info-row {
-            display: flex; align-items: center; gap: 2.5mm;
-        }
+        .info-divider { width: 1px; background: #f26522; height: 100%; opacity: 0.4; }
+        .info-col { display: flex; flex-direction: column; gap: 2mm; }
+        .info-row { display: flex; align-items: center; gap: 2mm; }
         .info-icon {
-            width: 7mm; height: 7mm; min-width: 7mm;
-            border: 1.5px solid var(--cert-navy);
-            border-radius: 50%;
+            width: 6.5mm; height: 6.5mm; min-width: 6.5mm;
+            border: 1.5px solid #1e3a8a; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            color: var(--cert-navy); font-size: 9pt;
+            color: #1e3a8a; font-size: 8pt;
         }
         .info-text { text-align: left; }
         .info-label {
             font-family: 'Montserrat', sans-serif;
-            font-size: 6.5pt; color: var(--cert-navy);
-            font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 6pt; color: #1e3a8a;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
         }
         .info-value {
             font-family: 'Montserrat', sans-serif;
-            font-size: 9pt; color: var(--cert-text);
-            font-weight: 700;
+            font-size: 8.5pt; color: #1a1a1a; font-weight: 700;
         }
 
-        /* Bottom Decor */
+        /* Bottom decor */
         .bottom-decor {
-            position: absolute;
-            bottom: 10mm; left: 50%; transform: translateX(-50%);
             display: flex; align-items: center; gap: 1.5mm;
+            margin-bottom: 10mm;
         }
-        .bottom-decor .dot {
-            width: 1.2mm; height: 1.2mm;
-            background: var(--cert-accent);
-            transform: rotate(45deg);
-        }
-        .bottom-decor .line {
-            width: 12mm; height: 1px;
-            background: var(--cert-navy);
-        }
+        .bottom-decor .line { width: 12mm; height: 1px; background: #1e3a8a; }
+        .bottom-decor .dot { width: 1.2mm; height: 1.2mm; background: #f26522; transform: rotate(45deg); }
 
-        /* Action Bar */
+        /* Action bar */
         .action-bar {
             text-align: center; padding: 16px;
             margin-top: 20px;
@@ -463,20 +288,9 @@
             font-weight: 500; cursor: pointer;
             font-family: 'Inter', sans-serif;
         }
-        .btn-secondary {
-            border: 1px solid #e5e7eb;
-            color: #1f2937; background: #fff;
-        }
-        .btn-primary {
-            border: 1px solid #f26522;
-            background: #f26522; color: #fff;
-            margin-left: 8px;
-        }
-        .btn-ghost {
-            border: 1px solid transparent;
-            background: transparent; color: #6b7280;
-            margin-left: 8px;
-        }
+        .btn-secondary { border: 1px solid #e5e7eb; color: #1f2937; background: #fff; }
+        .btn-primary { border: 1px solid #f26522; background: #f26522; color: #fff; margin-left: 8px; }
+        .btn-ghost { border: 1px solid transparent; background: transparent; color: #6b7280; margin-left: 8px; }
     </style>
     <base target="_blank">
 </head>
@@ -511,16 +325,14 @@
             <!-- Header -->
             <div class="header">
                 <div class="logo-left">
-                    <div style="position: relative;">
-                        <div class="shield">
-                            <div class="shield-text">EduTrack</div>
-                            <div class="shield-sub">Excel Through<br>Education</div>
-                        </div>
-                        <div class="tagline">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
+                    <div class="shield">
+                        <div class="shield-text">EduTrack</div>
+                        <div class="shield-sub">Excel<br>Through<br>Education</div>
                     </div>
+                    <div class="tagline">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
                 </div>
 
-                <div style="flex: 1;">
+                <div class="header-center">
                     <div class="college-title">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
                     <div class="divider">
                         <div class="divider-line"></div>
@@ -579,20 +391,20 @@
             </div>
 
             <!-- Signatures -->
-            <div class="signatures">
+            <div class="signatures-area">
                 <div class="signature-block">
                     <div class="signature-line"></div>
                     <div class="signature-label">Principal</div>
-                    <div style="margin-top: 3mm;">
+                    <div class="sub-sig">
                         <div class="signature-line"></div>
                         <div class="signature-label">Graduate's Signature</div>
                     </div>
                 </div>
 
-                <div class="seal-container">
+                <div class="seal-wrap">
                     <div class="seal">
                         <div class="seal-text">
-                            <span style="font-size: 10pt;">&#9733;</span><br>
+                            <span>&#9733;</span><br>
                             EXCELLENCE
                         </div>
                     </div>
@@ -602,7 +414,7 @@
                 <div class="signature-block">
                     <div class="signature-line"></div>
                     <div class="signature-label">Director</div>
-                    <div style="margin-top: 3mm;">
+                    <div class="sub-sig">
                         <div class="signature-line"></div>
                         <div class="signature-label">Graduate's I.D. No.</div>
                     </div>
@@ -610,7 +422,7 @@
             </div>
         </div>
 
-        <!-- Bottom Info Box -->
+        <!-- Info Box (outside content, positioned at bottom via margin) -->
         <div class="info-box">
             <div class="info-col">
                 <div class="info-row">
