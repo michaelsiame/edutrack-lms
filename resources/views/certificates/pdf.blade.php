@@ -7,66 +7,60 @@
     size: 210mm 297mm;
     margin: 0;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    height: 100%; 
+    background: #fff;
+}
 body {
     font-family: 'DejaVu Sans', 'DejaVu Serif', Arial, sans-serif;
     font-size: 9pt;
     color: #1a1a1a;
 }
 
-/* Outer page frame: explicit A4 size, backgrounds act as borders */
-.page-frame {
+/* Page wrapper forces full A4 size in mPDF */
+.page-wrap {
     width: 210mm;
     height: 297mm;
     border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+}
+.page-wrap td {
+    padding: 0;
+    vertical-align: top;
+}
+
+/* Frame using exact mm calculations to fix mPDF overflow/shrink issues */
+.frame-orange {
+    width: 207mm;  /* 210mm total - 1.5mm left pad - 1.5mm right pad */
+    height: 294mm; /* 297mm total - 1.5mm top pad - 1.5mm bottom pad */
     background: #f26522;
-}
-.page-frame > tbody > tr > td {
     padding: 1.5mm;
-    vertical-align: top;
+    margin: 0;
 }
-.blue-frame {
-    width: 100%;
-    height: 100%;
-    border-collapse: collapse;
+.frame-blue {
+    width: 204mm;  /* 207mm total - 1.5mm left pad - 1.5mm right pad */
+    height: 291mm; /* 294mm total - 1.5mm top pad - 1.5mm bottom pad */
     background: #1e3a8a;
-}
-.blue-frame > tbody > tr > td {
     padding: 1.5mm;
-    vertical-align: top;
+    margin: 0;
 }
-.white-frame {
-    width: 100%;
-    height: 100%;
-    border-collapse: collapse;
+.frame-white {
+    width: 176mm;  /* 204mm total - 14mm left pad - 14mm right pad */
+    height: 280mm; /* 291mm total - 8mm top pad - 3mm bottom pad */
     background: #ffffff;
+    padding: 8mm 14mm 3mm 14mm;
+    margin: 0;
 }
-.white-frame > tbody > tr > td {
-    padding: 12mm 14mm 8mm 14mm;
-    vertical-align: top;
-}
-
-/* Content distributor pushes info box + footer to bottom */
-.content-distributor {
-    width: 100%;
-    height: 100%;
-    border-collapse: collapse;
-}
-.content-distributor td {
-    vertical-align: top;
-}
-.content-distributor .spacer {
-    height: 100%;
-    line-height: 0;
-    font-size: 0;
-}
-
 
 /* Header */
 .header-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 12mm;
+    margin-bottom: 10mm;
 }
 .header-table td {
     vertical-align: middle;
@@ -91,12 +85,11 @@ body {
     margin-top: 1mm;
 }
 
-
 /* Banner */
 .banner-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 6mm 0;
+    margin: 5mm 0 4mm 0;
 }
 .banner-table td {
     text-align: center;
@@ -122,7 +115,7 @@ body {
     color: #1a1a1a;
     text-align: center;
     line-height: 1.2;
-    margin: 5mm 0 3mm 0;
+    margin: 4mm 0 2mm 0;
 }
 .name-underline {
     width: 130mm;
@@ -140,7 +133,7 @@ body {
     margin: 2mm 0;
 }
 
-/* Course title - DOMINANT */
+/* Course title */
 .course-title {
     text-align: center;
     font-family: 'DejaVu Sans', Arial, sans-serif;
@@ -150,10 +143,10 @@ body {
     text-transform: uppercase;
     letter-spacing: 1pt;
     line-height: 1.2;
-    margin: 6mm 0;
+    margin: 3mm 0;
 }
 
-/* Classification - supporting element */
+/* Classification */
 .classification {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
     font-size: 16pt;
@@ -179,13 +172,13 @@ body {
     padding: 0 2mm;
 }
 
-/* Date - restructured for visual impact */
+/* Date */
 .date-section {
     text-align: center;
     font-size: 9.5pt;
     color: #333;
     line-height: 1.5;
-    margin: 8mm 0;
+    margin: 4mm 0;
 }
 .date-script {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
@@ -202,30 +195,42 @@ body {
 }
 sup { font-size: 6pt; }
 
-/* Signatures */
+/* Fixed Signatures & NRC Placements */
 .sig-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 12mm 0;
+    margin: 6mm 0;
 }
 .sig-table td {
-    vertical-align: bottom;
+    vertical-align: bottom; /* Aligns all blocks to the bottom */
     padding: 0;
 }
-.sig-item {
+.sig-block {
     text-align: center;
-    margin-bottom: 6mm;
+    width: 100%;
 }
 .sig-line {
-    border-top: 0.8pt solid #333;
-    width: 65%;
+    border-bottom: 0.8pt solid #333; /* border-bottom is more reliable in mPDF */
+    width: 75%;
     margin: 0 auto 1mm auto;
-    height: 0;
+    min-height: 5mm; /* Gives space above the line for physical signatures */
+}
+.nrc-value {
+    border-bottom: 0.8pt solid #333;
+    width: 75%;
+    margin: 0 auto 1mm auto;
+    font-size: 9pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    min-height: 5mm;
 }
 .sig-label {
     font-size: 8pt;
     color: #333;
     font-weight: 600;
+}
+.sig-spacing {
+    height: 10mm; /* Space between top row and bottom row signatures */
 }
 .seal-img {
     width: 38mm;
@@ -239,7 +244,7 @@ sup { font-size: 6pt; }
     border: 1.5pt solid #f26522;
     border-radius: 4pt;
     padding: 3mm 4mm;
-    margin: 0 auto;
+    margin: 2mm auto 0 auto;
     width: 95%;
 }
 .info-table {
@@ -291,33 +296,24 @@ sup { font-size: 6pt; }
     margin: 1mm 0;
 }
 
-
 /* Footer */
 .footer-text {
     text-align: center;
     font-size: 6.5pt;
     color: #666;
-    margin-top: 4mm;
+    margin-top: 3mm;
 }
 </style>
 </head>
 <body>
 
-<table class="page-frame">
+<table class="page-wrap">
 <tr>
 <td>
+<div class="frame-orange">
+<div class="frame-blue">
+<div class="frame-white">
 
-<table class="blue-frame">
-<tr>
-<td>
-
-<table class="white-frame">
-<tr>
-<td>
-
-<table class="content-distributor">
-<tr>
-<td>
 
     <!-- HEADER -->
     <table class="header-table">
@@ -371,56 +367,49 @@ sup { font-size: 6pt; }
         <span class="date-year">{{ $graduation_year }}</span>
     </div>
 
-    <!-- SIGNATURES + SEAL -->
+    <!-- SIGNATURES + SEAL (REDESIGNED) -->
     <table class="sig-table">
     <tr>
-        <td width="30%">
-            <table width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                    <td style="text-align:center;padding-bottom:6mm;">
-                        <div class="sig-line"></div>
-                        <div class="sig-label">Principal</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="text-align:center;padding-bottom:6mm;">
-                        <div class="sig-line"></div>
-                        <div class="sig-label">Graduate's Signature</div>
-                    </td>
-                </tr>
-            </table>
+        <!-- LEFT COLUMN -->
+        <td width="33%">
+            <!-- Graduate Signature (Top) -->
+            <div class="sig-block">
+                <div class="sig-line"></div>
+                <div class="sig-label">Graduate's Signature</div>
+            </div>
+            
+            <div class="sig-spacing"></div>
+            
+            <!-- Principal Signature (Bottom) -->
+            <div class="sig-block">
+                <div class="sig-line"></div>
+                <div class="sig-label">Principal</div>
+            </div>
         </td>
-        <td width="40%" style="text-align:center;vertical-align:bottom;padding-top:4mm;">
-            <img src="{{ public_path('assets/images/certificate-seal.png') }}" class="seal-img" alt="">
+
+        <!-- CENTER COLUMN -->
+        <td width="34%" style="text-align:center;">
+            <img src="{{ public_path('assets/images/certificate-seal.png') }}" class="seal-img" alt="Seal">
         </td>
-        <td width="30%">
-            <table width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                    <td style="text-align:center;padding-bottom:6mm;">
-                        <div class="sig-line"></div>
-                        <div class="sig-label">Director</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="text-align:center;padding-bottom:6mm;">
-                        <div style="border-bottom:0.8pt solid #333;width:85%;margin:0 auto 1mm auto;padding-bottom:1mm;font-size:8pt;font-weight:700;color:#1a1a1a;min-height:3.5mm;">
-                            {{ $nrc_number ?? '' }}
-                        </div>
-                        <div class="sig-label">Graduate's I.D. No.</div>
-                    </td>
-                </tr>
-            </table>
+
+        <!-- RIGHT COLUMN -->
+        <td width="33%">
+            <!-- NRC Number (Top) -->
+            <div class="sig-block">
+                <div class="nrc-value">{{ $nrc_number ?? '&nbsp;' }}</div>
+                <div class="sig-label">Graduate's I.D. No. (NRC)</div>
+            </div>
+            
+            <div class="sig-spacing"></div>
+
+            <!-- Director Signature (Bottom) -->
+            <div class="sig-block">
+                <div class="sig-line"></div>
+                <div class="sig-label">Director</div>
+            </div>
         </td>
     </tr>
     </table>
-
-</td>
-</tr>
-<tr>
-<td class="spacer"></td>
-</tr>
-<tr>
-<td style="vertical-align:bottom;">
 
     <!-- INFO BOX -->
     <div class="info-box">
@@ -473,24 +462,14 @@ sup { font-size: 6pt; }
     </table>
     </div>
 
-
     <!-- FOOTER -->
     <div class="footer-text">
         Verification Code: <strong>{{ $verification_code }}</strong> | Verify at {{ config('app.url') }}/certificates/verify
     </div>
 
-</td>
-</tr>
-</table>
-
-</td>
-</tr>
-</table>
-
-</td>
-</tr>
-</table>
-
+</div>
+</div>
+</div>
 </td>
 </tr>
 </table>
