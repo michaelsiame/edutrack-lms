@@ -6,7 +6,7 @@ use App\Models\Certificate;
 use App\Models\Enrollment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use TCPDF;
+use Mpdf\Mpdf;
 
 class CertificateService
 {
@@ -164,27 +164,32 @@ class CertificateService
      */
     public function generatePdf(Certificate $certificate): string
     {
-        $pdf = new TCPDF('P', 'mm', 'A4');
-        $pdf->SetCreator('Edutrack LMS');
-        $pdf->SetAuthor('Edutrack Computer Training College');
-        $pdf->SetTitle('Certificate - ' . $certificate->certificate_number);
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
-
-        $pdf->SetMargins(0, 0, 0);
-        $pdf->SetAutoPageBreak(false, 0);
-        $pdf->SetCellPadding(0);
-        $pdf->SetCellMargins(0);
-        $pdf->setImageScale(1);
-        $pdf->SetFont('dejavuserif', '', 10);
-        $pdf->AddPage();
-
         $data = $this->getCertificateData($certificate);
+
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4-L',
+            'default_font_size' => 10,
+            'default_font' => 'DejaVuSerif',
+            'margin_left' => 0,
+            'margin_right' => 0,
+            'margin_top' => 0,
+            'margin_bottom' => 0,
+            'margin_header' => 0,
+            'margin_footer' => 0,
+            'title' => 'Certificate - ' . $certificate->certificate_number,
+            'author' => 'Edutrack Computer Training College',
+            'creator' => 'Edutrack LMS',
+        ]);
+
+        $mpdf->SetTitle('Certificate - ' . $certificate->certificate_number);
+        $mpdf->SetAuthor('Edutrack Computer Training College');
+        $mpdf->SetCreator('Edutrack LMS');
+
         $html = view('certificates.pdf', $data)->render();
+        $mpdf->WriteHTML($html);
 
-        $pdf->writeHTML($html, true, false, true, false, '');
-
-        return $pdf->Output('', 'S');
+        return $mpdf->Output('', 'S');
     }
 
     /**
