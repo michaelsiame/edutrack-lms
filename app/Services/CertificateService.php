@@ -7,6 +7,8 @@ use App\Models\Enrollment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Mpdf\Mpdf;
+use Mpdf\Config\ConfigVariables;
+use Mpdf\Config\FontVariables;
 
 class CertificateService
 {
@@ -166,9 +168,15 @@ class CertificateService
     {
         $data = $this->getCertificateData($certificate);
 
+        $defaultConfig = (new ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+
+        $defaultFontConfig = (new FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'format' => 'A4-L',
+            'format' => 'A4',
             'default_font_size' => 10,
             'default_font' => 'DejaVuSerif',
             'margin_left' => 0,
@@ -180,6 +188,14 @@ class CertificateService
             'title' => 'Certificate - ' . $certificate->certificate_number,
             'author' => 'Edutrack Computer Training College',
             'creator' => 'Edutrack LMS',
+            'fontDir' => array_merge($fontDirs, [
+                public_path('assets/fonts/cert/'),
+            ]),
+            'fontdata' => $fontData + [
+                'greatvibes' => [
+                    'R' => 'GreatVibes-Regular.ttf',
+                ],
+            ],
         ]);
 
         $mpdf->SetTitle('Certificate - ' . $certificate->certificate_number);
