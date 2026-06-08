@@ -318,18 +318,18 @@ sup { font-size: 6pt; }
     <!-- HEADER -->
     <table class="header-table">
     <tr>
-        <td width="22%" style="text-align:center;">
-            <img src="{{ public_path('assets/images/logo-pdf.png') }}" style="width:22mm;height:auto;display:block;margin:0 auto;" alt="">
+        <td width="20%" style="text-align:center;">
+            <img src="{{ public_path('assets/images/logo-pdf.png') }}" style="height:20mm;width:auto;display:block;margin:0 auto;" alt="">
         </td>
-        <td width="56%">
+        <td width="60%" style="text-align:center;">
             <div class="college-title">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
             <div class="divider-wrap">
                 <table class="divider-table"><tr><td></td><td class="divider-diamond">&#9670;</td><td></td></tr></table>
             </div>
             <div class="college-subtitle">TEVETA Registered Institution &mdash; TVA/2064</div>
         </td>
-        <td width="22%" style="text-align:right;">
-            <img src="{{ public_path('assets/images/teveta-logo.png') }}" style="width:22mm;height:auto;display:inline-block;" alt="">
+        <td width="20%" style="text-align:right;">
+            <img src="{{ public_path('assets/images/teveta-logo.png') }}" style="height:20mm;width:auto;display:inline-block;" alt="">
         </td>
     </tr>
     </table>
