@@ -31,7 +31,7 @@ body {
     width: 100%;
     height: 100%;
     background: #ffffff;
-    padding: 14mm 14mm 10mm 14mm;
+    padding: 10mm 14mm 8mm 14mm;
 }
 
 /* Header */
@@ -41,7 +41,7 @@ body {
     margin-bottom: 4mm;
 }
 .header-table td {
-    vertical-align: middle;
+    vertical-align: top;
     padding: 0;
 }
 .college-title {
@@ -88,7 +88,7 @@ body {
 .banner-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 5mm 0 4mm 0;
+    margin: 8mm 0 6mm 0;
 }
 .banner-table td {
     text-align: center;
@@ -110,14 +110,14 @@ body {
 /* Student name */
 .student-name {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
-    font-size: 32pt;
+    font-size: 34pt;
     color: #1a1a1a;
     text-align: center;
     line-height: 1.2;
-    margin: 3mm 0 1mm 0;
+    margin: 5mm 0 2mm 0;
 }
 .name-underline {
-    width: 85mm;
+    width: 110mm;
     margin: 0 auto 3mm auto;
     border-top: 0.75pt solid #f26522;
     height: 0;
@@ -136,13 +136,13 @@ body {
 .course-title {
     text-align: center;
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 17pt;
+    font-size: 20pt;
     font-weight: 800;
     color: #1e3a8a;
     text-transform: uppercase;
-    letter-spacing: 1pt;
+    letter-spacing: 1.5pt;
     line-height: 1.2;
-    margin: 3mm 0;
+    margin: 5mm 0;
 }
 
 /* Classification */
@@ -177,7 +177,7 @@ body {
     font-size: 9.5pt;
     color: #333;
     line-height: 1.6;
-    margin: 4mm 0;
+    margin: 8mm 0;
 }
 .date-script {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
@@ -196,7 +196,7 @@ sup { font-size: 6pt; }
 .sig-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 6mm 0;
+    margin: 10mm 0;
 }
 .sig-table td {
     vertical-align: bottom;
@@ -204,11 +204,11 @@ sup { font-size: 6pt; }
 }
 .sig-item {
     text-align: center;
-    margin-bottom: 6mm;
+    margin-bottom: 10mm;
 }
 .sig-line {
-    border-top: 0.5pt solid #333;
-    width: 75%;
+    border-top: 0.8pt solid #333;
+    width: 85%;
     margin: 0 auto 1mm auto;
     height: 0;
 }
@@ -218,7 +218,7 @@ sup { font-size: 6pt; }
     font-weight: 600;
 }
 .seal-img {
-    width: 26mm;
+    width: 32mm;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -229,20 +229,21 @@ sup { font-size: 6pt; }
     border: 1.5pt solid #f26522;
     border-radius: 4pt;
     padding: 4mm 5mm;
-    margin: 4mm auto 0 auto;
-    width: 95%;
+    margin: 8mm auto 0 auto;
+    width: 88%;
 }
 .info-table {
     width: 100%;
     border-collapse: collapse;
 }
 .info-table td {
-    vertical-align: middle;
+    vertical-align: top;
 }
 .info-icon-img {
     width: 7mm;
     height: 7mm;
     display: block;
+    margin-top: 1mm;
 }
 .info-label {
     font-family: 'DejaVu Sans', Arial, sans-serif;
@@ -304,7 +305,7 @@ sup { font-size: 6pt; }
     text-align: center;
     font-size: 6.5pt;
     color: #666;
-    margin-top: 3mm;
+    margin-top: 6mm;
 }
 </style>
 </head>
@@ -317,7 +318,7 @@ sup { font-size: 6pt; }
     <!-- HEADER -->
     <table class="header-table">
     <tr>
-        <td width="22%" style="text-align:center;">
+        <td width="22%" style="text-align:center;padding-top:4mm;">
             <img src="{{ public_path('assets/images/logo-pdf.png') }}" style="width:16mm;height:auto;display:block;margin:0 auto;" alt="">
             <div style="font-size:6pt;font-weight:700;color:#1e3a8a;text-align:center;line-height:1.2;">Excel Through Education</div>
         </td>
@@ -328,7 +329,7 @@ sup { font-size: 6pt; }
             </div>
             <div class="college-subtitle">TEVETA Registered Institution &mdash; TVA/2064</div>
         </td>
-        <td width="22%" style="text-align:right;">
+        <td width="22%" style="text-align:right;padding-top:4mm;">
             <img src="{{ public_path('assets/images/teveta-logo.png') }}" style="width:20mm;height:auto;display:inline-block;" alt="">
         </td>
     </tr>
@@ -384,7 +385,7 @@ sup { font-size: 6pt; }
                 <div class="sig-label">Graduate's Signature</div>
             </div>
         </td>
-        <td width="40%" style="text-align:center;vertical-align:bottom;">
+        <td width="40%" style="text-align:center;vertical-align:bottom;padding-top:4mm;">
             <img src="{{ public_path('assets/images/certificate-seal.png') }}" class="seal-img" alt="">
         </td>
         <td width="30%">
