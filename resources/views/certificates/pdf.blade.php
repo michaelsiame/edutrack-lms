@@ -80,18 +80,6 @@ body {
     text-align: center;
     margin-top: 1mm;
 }
-.teveta-name {
-    font-size: 8pt;
-    font-weight: 800;
-    color: #1e3a8a;
-    letter-spacing: 0.5pt;
-}
-.teveta-sub {
-    font-size: 5.5pt;
-    color: #1e3a8a;
-    font-weight: 600;
-}
-
 /* Divider with diamond */
 .divider-wrap {
     text-align: center;
@@ -358,7 +346,7 @@ sup { font-size: 6pt; }
         <table class="header-table">
             <tr>
                 <td width="22%" style="text-align:center;">
-                    <img src="{{ public_path('assets/images/logo-sm.png') }}" style="width:18mm;height:auto;display:block;margin:0 auto;" alt="">
+                    <img src="{{ public_path('assets/images/logo.png') }}" style="width:18mm;height:auto;display:block;margin:0 auto;" alt="">
                     <div style="font-size:6pt;font-weight:700;color:#1e3a8a;text-align:center;line-height:1.2;">Excel Through Education</div>
                 </td>
                 <td width="56%">
@@ -369,23 +357,7 @@ sup { font-size: 6pt; }
                     <div class="college-subtitle">A skill training college</div>
                 </td>
                 <td width="22%" style="text-align:right;">
-                    <table cellpadding="0" cellspacing="0" style="display:inline-table;border:1pt solid #1e3a8a;border-radius:2pt;">
-                        <tr>
-                            <td style="padding:1.5mm 2mm;">
-                                <table cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td style="vertical-align:middle;">
-                                            <div style="width:5mm;height:5mm;background:#f26522;border-radius:50%;text-align:center;line-height:5mm;color:#fff;font-size:7pt;font-weight:900;">7</div>
-                                        </td>
-                                        <td style="vertical-align:middle;padding-left:1mm;">
-                                            <div class="teveta-name">TEVETA</div>
-                                            <div class="teveta-sub">Computer<br>Education</div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
+                    <img src="{{ public_path('assets/images/teveta-logo.png') }}" style="width:22mm;height:auto;display:inline-block;" alt="">
                 </td>
             </tr>
         </table>
