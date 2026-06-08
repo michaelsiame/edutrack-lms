@@ -38,10 +38,10 @@ body {
 .header-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 4mm;
+    margin-bottom: 8mm;
 }
 .header-table td {
-    vertical-align: top;
+    vertical-align: middle;
     padding: 0;
 }
 .college-title {
@@ -318,9 +318,8 @@ sup { font-size: 6pt; }
     <!-- HEADER -->
     <table class="header-table">
     <tr>
-        <td width="22%" style="text-align:center;padding-top:4mm;">
-            <img src="{{ public_path('assets/images/logo-pdf.png') }}" style="width:16mm;height:auto;display:block;margin:0 auto;" alt="">
-            <div style="font-size:6pt;font-weight:700;color:#1e3a8a;text-align:center;line-height:1.2;">Excel Through Education</div>
+        <td width="22%" style="text-align:center;">
+            <img src="{{ public_path('assets/images/logo-pdf.png') }}" style="width:22mm;height:auto;display:block;margin:0 auto;" alt="">
         </td>
         <td width="56%">
             <div class="college-title">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
@@ -329,8 +328,8 @@ sup { font-size: 6pt; }
             </div>
             <div class="college-subtitle">TEVETA Registered Institution &mdash; TVA/2064</div>
         </td>
-        <td width="22%" style="text-align:right;padding-top:4mm;">
-            <img src="{{ public_path('assets/images/teveta-logo.png') }}" style="width:20mm;height:auto;display:inline-block;" alt="">
+        <td width="22%" style="text-align:right;">
+            <img src="{{ public_path('assets/images/teveta-logo.png') }}" style="width:22mm;height:auto;display:inline-block;" alt="">
         </td>
     </tr>
     </table>
