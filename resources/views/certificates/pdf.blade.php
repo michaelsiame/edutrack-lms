@@ -362,9 +362,10 @@ sup { font-size: 6pt; }
                 </tr>
                 <tr>
                     <td style="text-align:center;padding-bottom:6mm;">
-                        <div style="border-bottom:0.8pt solid #333;width:85%;margin:0 auto 1mm auto;padding-bottom:1mm;font-size:8pt;font-weight:700;color:#1a1a1a;min-height:3.5mm;">
-                            {{ $nrc_number ?? '' }}
+                        <div style="font-size:8.5pt;font-weight:700;color:#1a1a1a;margin-bottom:1.5mm;min-height:3.5mm;">
+                            {{ $nrc_number ?? '&nbsp;' }}
                         </div>
+                        <div class="sig-line"></div>
                         <div class="sig-label">Graduate's I.D. No.</div>
                     </td>
                 </tr>
