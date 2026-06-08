@@ -36,7 +36,7 @@ body {
 .header-table {
     width: 100%;
     border-collapse: collapse;
-    padding-bottom: 10mm;
+    margin-bottom: 10mm;
 }
 .header-table td {
     vertical-align: middle;
@@ -61,26 +61,6 @@ body {
     margin-top: 1mm;
 }
 
-/* Divider */
-.divider-wrap {
-    text-align: center;
-    margin: 2mm 0;
-}
-.divider-table {
-    width: 70%;
-    margin: 0 auto;
-    border-collapse: collapse;
-}
-.divider-table td {
-    border-top: 1pt solid #1e3a8a;
-    height: 0;
-}
-.divider-diamond {
-    color: #f26522;
-    font-size: 9pt;
-    text-align: center;
-    width: 6mm;
-}
 
 /* Banner */
 .banner-table {
@@ -204,7 +184,7 @@ sup { font-size: 6pt; }
 }
 .sig-item {
     text-align: center;
-    padding-bottom: 10mm;
+    margin-bottom: 10mm;
 }
 .sig-line {
     border-top: 0.8pt solid #333;
@@ -304,9 +284,6 @@ sup { font-size: 6pt; }
         </td>
         <td width="60%" style="text-align:center;">
             <div class="college-title">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
-            <div class="divider-wrap">
-                <table class="divider-table"><tr><td></td><td class="divider-diamond">&#9670;</td><td></td></tr></table>
-            </div>
             <div class="college-subtitle">TEVETA Registered Institution &mdash; TVA/2064</div>
         </td>
         <td width="20%" style="text-align:right;">
@@ -355,27 +332,39 @@ sup { font-size: 6pt; }
     <table class="sig-table">
     <tr>
         <td width="30%">
-            <div class="sig-item">
-                <div class="sig-line"></div>
-                <div class="sig-label">Principal</div>
-            </div>
-            <div class="sig-item">
-                <div class="sig-line"></div>
-                <div class="sig-label">Graduate's Signature</div>
-            </div>
+            <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td style="text-align:center;padding-bottom:10mm;">
+                        <div class="sig-line"></div>
+                        <div class="sig-label">Principal</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:center;padding-bottom:10mm;">
+                        <div class="sig-line"></div>
+                        <div class="sig-label">Graduate's Signature</div>
+                    </td>
+                </tr>
+            </table>
         </td>
         <td width="40%" style="text-align:center;vertical-align:bottom;padding-top:4mm;">
             <img src="{{ public_path('assets/images/certificate-seal.png') }}" class="seal-img" alt="">
         </td>
         <td width="30%">
-            <div class="sig-item">
-                <div class="sig-line"></div>
-                <div class="sig-label">Director</div>
-            </div>
-            <div class="sig-item">
-                <div class="sig-line"></div>
-                <div class="sig-label">Graduate's I.D. No.</div>
-            </div>
+            <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td style="text-align:center;padding-bottom:10mm;">
+                        <div class="sig-line"></div>
+                        <div class="sig-label">Director</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:center;padding-bottom:10mm;">
+                        <div class="sig-line"></div>
+                        <div class="sig-label">Graduate's I.D. No.</div>
+                    </td>
+                </tr>
+            </table>
         </td>
     </tr>
     </table>
