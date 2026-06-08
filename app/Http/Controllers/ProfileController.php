@@ -30,6 +30,7 @@ class ProfileController extends Controller
             'first_name' => 'required|string|max:50',
             'last_name' => 'required|string|max:50',
             'phone' => 'nullable|string|max:20',
+            'nrc_number' => 'nullable|string|max:20',
             'avatar' => 'nullable|image|max:2048',
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|in:male,female,other',
@@ -64,6 +65,7 @@ class ProfileController extends Controller
 
         // Update or create profile
         $profileData = [
+            'nrc_number' => $validated['nrc_number'] ?? null,
             'date_of_birth' => $validated['date_of_birth'] ?? null,
             'gender' => $validated['gender'] ?? null,
             'address' => $validated['address'] ?? null,

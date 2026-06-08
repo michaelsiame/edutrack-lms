@@ -28,7 +28,7 @@ body {
 .frame-white {
     width: 100%;
     background: #ffffff;
-    padding: 10mm 14mm 4mm 14mm;
+    padding: 8mm 14mm 3mm 14mm;
 }
 
 
@@ -66,7 +66,7 @@ body {
 .banner-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 8mm 0 6mm 0;
+    margin: 5mm 0 4mm 0;
 }
 .banner-table td {
     text-align: center;
@@ -92,7 +92,7 @@ body {
     color: #1a1a1a;
     text-align: center;
     line-height: 1.2;
-    margin: 5mm 0 2mm 0;
+    margin: 4mm 0 2mm 0;
 }
 .name-underline {
     width: 130mm;
@@ -106,31 +106,31 @@ body {
     text-align: center;
     font-size: 9.5pt;
     color: #333;
-    line-height: 1.6;
-    margin: 3mm 0;
+    line-height: 1.5;
+    margin: 2mm 0;
 }
 
 /* Course title - DOMINANT */
 .course-title {
     text-align: center;
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 24pt;
+    font-size: 22pt;
     font-weight: 900;
     color: #1e3a8a;
     text-transform: uppercase;
     letter-spacing: 1pt;
     line-height: 1.2;
-    margin: 5mm 0;
+    margin: 3mm 0;
 }
 
 /* Classification - supporting element */
 .classification {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
-    font-size: 18pt;
+    font-size: 16pt;
     color: #1a1a1a;
     text-align: center;
     line-height: 1.2;
-    margin: 3mm 0 1mm 0;
+    margin: 2mm 0 1mm 0;
 }
 .merit-underline {
     width: 50mm;
@@ -154,8 +154,8 @@ body {
     text-align: center;
     font-size: 9.5pt;
     color: #333;
-    line-height: 1.6;
-    margin: 6mm 0;
+    line-height: 1.5;
+    margin: 4mm 0;
 }
 .date-script {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
@@ -176,7 +176,7 @@ sup { font-size: 6pt; }
 .sig-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 8mm 0;
+    margin: 5mm 0;
 }
 .sig-table td {
     vertical-align: bottom;
@@ -184,7 +184,7 @@ sup { font-size: 6pt; }
 }
 .sig-item {
     text-align: center;
-    margin-bottom: 10mm;
+    margin-bottom: 6mm;
 }
 .sig-line {
     border-top: 0.8pt solid #333;
@@ -208,8 +208,8 @@ sup { font-size: 6pt; }
 .info-box {
     border: 1.5pt solid #f26522;
     border-radius: 4pt;
-    padding: 4mm 5mm;
-    margin: 6mm auto 0 auto;
+    padding: 3mm 4mm;
+    margin: 4mm auto 0 auto;
     width: 95%;
 }
 .info-table {
@@ -221,9 +221,11 @@ sup { font-size: 6pt; }
 }
 .info-icon-img {
     width: 8mm;
-    height: 8mm;
+    height: auto;
     display: block;
-    margin-top: 1mm;
+}
+.info-table .info-table td {
+    vertical-align: middle;
 }
 .info-label {
     font-family: 'DejaVu Sans', Arial, sans-serif;
@@ -265,7 +267,7 @@ sup { font-size: 6pt; }
     text-align: center;
     font-size: 6.5pt;
     color: #666;
-    margin-top: 3mm;
+    margin-top: 2mm;
 }
 </style>
 </head>
@@ -334,13 +336,13 @@ sup { font-size: 6pt; }
         <td width="30%">
             <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                    <td style="text-align:center;padding-bottom:10mm;">
+                    <td style="text-align:center;padding-bottom:6mm;">
                         <div class="sig-line"></div>
                         <div class="sig-label">Principal</div>
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align:center;padding-bottom:10mm;">
+                    <td style="text-align:center;padding-bottom:6mm;">
                         <div class="sig-line"></div>
                         <div class="sig-label">Graduate's Signature</div>
                     </td>
@@ -353,14 +355,16 @@ sup { font-size: 6pt; }
         <td width="30%">
             <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                    <td style="text-align:center;padding-bottom:10mm;">
+                    <td style="text-align:center;padding-bottom:6mm;">
                         <div class="sig-line"></div>
                         <div class="sig-label">Director</div>
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align:center;padding-bottom:10mm;">
-                        <div class="sig-line"></div>
+                    <td style="text-align:center;padding-bottom:6mm;">
+                        <div style="border-bottom:0.8pt solid #333;width:85%;margin:0 auto 1mm auto;padding-bottom:1mm;font-size:8pt;font-weight:700;color:#1a1a1a;min-height:3.5mm;">
+                            {{ $nrc_number ?? '' }}
+                        </div>
                         <div class="sig-label">Graduate's I.D. No.</div>
                     </td>
                 </tr>

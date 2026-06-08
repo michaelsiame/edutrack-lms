@@ -67,6 +67,17 @@
                             @enderror
                         </div>
                         <div>
+                            <label for="nrc_number" class="od-form-label">NRC Number</label>
+                            <input type="text" name="nrc_number" id="nrc_number" value="{{ old('nrc_number', $profile->nrc_number) }}"
+                                class="od-input" placeholder="e.g. 249580/71/1">
+                            @error('nrc_number')
+                                <p class="mt-1 text-sm" style="color: var(--od-danger);">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
                             <label for="date_of_birth" class="od-form-label">Date of Birth</label>
                             <input type="date" name="date_of_birth" id="date_of_birth" value="{{ old('date_of_birth', $profile->date_of_birth?->format('Y-m-d')) }}"
                                 class="od-input">
@@ -74,16 +85,15 @@
                                 <p class="mt-1 text-sm" style="color: var(--od-danger);">{{ $message }}</p>
                             @enderror
                         </div>
-                    </div>
-
-                    <div>
-                        <label for="gender" class="od-form-label">Gender</label>
-                        <select name="gender" id="gender" class="od-input">
+                        <div>
+                            <label for="gender" class="od-form-label">Gender</label>
+                            <select name="gender" id="gender" class="od-input">
                             <option value="">-- Select --</option>
                             <option value="male" {{ old('gender', $profile->gender) ==='male' ?'selected' :'' }}>Male</option>
                             <option value="female" {{ old('gender', $profile->gender) ==='female' ?'selected' :'' }}>Female</option>
                             <option value="other" {{ old('gender', $profile->gender) ==='other' ?'selected' :'' }}>Other</option>
                         </select>
+                    </div>
                     </div>
 
                     <div>

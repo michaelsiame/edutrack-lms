@@ -33,8 +33,10 @@ class CertificateService
     {
         $nrcSuffix = '2495807';
 
-        if ($user && $user->national_id) {
-            $nrcSuffix = preg_replace('/[^0-9\/]/', '', $user->national_id);
+        $nrcNumber = $user?->profile?->nrc_number;
+
+        if ($nrcNumber) {
+            $nrcSuffix = preg_replace('/[^0-9\/]/', '', $nrcNumber);
             if (empty($nrcSuffix)) $nrcSuffix = '2495807/1/1';
         } elseif ($user && $user->id) {
             $nrcSuffix = $user->id . '/1/1';
@@ -59,8 +61,10 @@ class CertificateService
         $yearSuffix = substr($certificate->graduation_ceremony_date?->format('Y') ?? date('Y'), -2);
         $userId = $certificate->user_id;
 
-        if ($certificate->user && $certificate->user->national_id) {
-            $numberPart = preg_replace('/[^0-9]/', '', $certificate->user->national_id);
+        $nrcNumber = $certificate->user?->profile?->nrc_number;
+
+        if ($nrcNumber) {
+            $numberPart = preg_replace('/[^0-9]/', '', $nrcNumber);
             if (strlen($numberPart) > 6) $numberPart = substr($numberPart, -6);
         } else {
             $numberPart = str_pad((string) $userId, 6, '0', STR_PAD_LEFT);
@@ -213,7 +217,7 @@ class CertificateService
      */
     public function getCertificateData(Certificate $certificate): array
     {
-        $certificate->load(['user', 'course', 'enrollment']);
+        $certificate->load(['user.profile', 'course', 'enrollment']);
 
         $issuedDate = $certificate->issued_date ?? now();
         $graduationDate = $certificate->graduation_ceremony_date ?? $issuedDate;
@@ -232,6 +236,7 @@ class CertificateService
             'graduation_month' => $graduationDate->format('F'),
             'graduation_year' => $graduationDate->format('Y'),
             'student_number' => $this->generateStudentNumber($certificate),
+            'nrc_number' => $certificate->user?->profile?->nrc_number,
         ];
     }
 }

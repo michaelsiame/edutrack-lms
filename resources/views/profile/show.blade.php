@@ -41,6 +41,10 @@
                                 <dd class="font-medium" style="color: var(--od-fg);">{{ $user->phone ??'Not set' }}</dd>
                             </div>
                             <div class="flex justify-between text-sm">
+                                <dt style="color: var(--od-muted);">NRC Number</dt>
+                                <dd class="font-medium" style="color: var(--od-fg);">{{ $profile->nrc_number ??'Not set' }}</dd>
+                            </div>
+                            <div class="flex justify-between text-sm">
                                 <dt style="color: var(--od-muted);">Date of Birth</dt>
                                 <dd class="font-medium" style="color: var(--od-fg);">{{ $profile->date_of_birth?->format('M d, Y') ??'Not set' }}</dd>
                             </div>
