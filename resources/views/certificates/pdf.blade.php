@@ -28,14 +28,15 @@ body {
 .frame-white {
     width: 100%;
     background: #ffffff;
-    padding: 10mm 14mm 8mm 14mm;
+    padding: 10mm 14mm 4mm 14mm;
 }
+
 
 /* Header */
 .header-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 6mm;
+    margin-bottom: 10mm;
 }
 .header-table td {
     vertical-align: middle;
@@ -85,7 +86,7 @@ body {
 .banner-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 4mm 0 3mm 0;
+    margin: 8mm 0 6mm 0;
 }
 .banner-table td {
     text-align: center;
@@ -93,7 +94,7 @@ body {
 }
 .banner-text {
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 15pt;
+    font-size: 17pt;
     font-weight: 800;
     color: #1e3a8a;
     letter-spacing: 2pt;
@@ -107,11 +108,11 @@ body {
 /* Student name */
 .student-name {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
-    font-size: 34pt;
+    font-size: 38pt;
     color: #1a1a1a;
     text-align: center;
     line-height: 1.2;
-    margin: 2mm 0 1mm 0;
+    margin: 5mm 0 2mm 0;
 }
 .name-underline {
     width: 130mm;
@@ -126,20 +127,20 @@ body {
     font-size: 9.5pt;
     color: #333;
     line-height: 1.6;
-    margin: 2mm 0;
+    margin: 3mm 0;
 }
 
 /* Course title - DOMINANT */
 .course-title {
     text-align: center;
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 20pt;
+    font-size: 24pt;
     font-weight: 900;
     color: #1e3a8a;
     text-transform: uppercase;
     letter-spacing: 1pt;
     line-height: 1.2;
-    margin: 3mm 0;
+    margin: 5mm 0;
 }
 
 /* Classification - supporting element */
@@ -174,7 +175,7 @@ body {
     font-size: 9.5pt;
     color: #333;
     line-height: 1.6;
-    margin: 4mm 0;
+    margin: 6mm 0;
 }
 .date-script {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
@@ -195,7 +196,7 @@ sup { font-size: 6pt; }
 .sig-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 4mm 0;
+    margin: 8mm 0;
 }
 .sig-table td {
     vertical-align: bottom;
@@ -217,7 +218,7 @@ sup { font-size: 6pt; }
     font-weight: 600;
 }
 .seal-img {
-    width: 32mm;
+    width: 38mm;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -227,8 +228,8 @@ sup { font-size: 6pt; }
 .info-box {
     border: 1.5pt solid #f26522;
     border-radius: 4pt;
-    padding: 5mm 6mm;
-    margin: 4mm auto 0 auto;
+    padding: 4mm 5mm;
+    margin: 6mm auto 0 auto;
     width: 95%;
 }
 .info-table {
@@ -313,6 +314,7 @@ sup { font-size: 6pt; }
 <div class="frame-orange">
 <div class="frame-blue">
 <div class="frame-white">
+
 
     <!-- HEADER -->
     <table class="header-table">
