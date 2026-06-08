@@ -36,7 +36,7 @@ body {
 .header-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 10mm;
+    padding-bottom: 10mm;
 }
 .header-table td {
     vertical-align: middle;
@@ -45,7 +45,7 @@ body {
 .college-title {
     font-family: 'DejaVu Sans', Arial, sans-serif;
     font-size: 19pt;
-    font-weight: 800;
+    font-weight: 900;
     color: #1a1a1a;
     text-transform: uppercase;
     letter-spacing: 0.5pt;
@@ -72,12 +72,12 @@ body {
     border-collapse: collapse;
 }
 .divider-table td {
-    border-top: 0.5pt solid #1e3a8a;
+    border-top: 1pt solid #1e3a8a;
     height: 0;
 }
 .divider-diamond {
     color: #f26522;
-    font-size: 7pt;
+    font-size: 9pt;
     text-align: center;
     width: 6mm;
 }
@@ -95,7 +95,7 @@ body {
 .banner-text {
     font-family: 'DejaVu Sans', Arial, sans-serif;
     font-size: 17pt;
-    font-weight: 800;
+    font-weight: 900;
     color: #1e3a8a;
     letter-spacing: 2pt;
     text-transform: uppercase;
@@ -204,7 +204,7 @@ sup { font-size: 6pt; }
 }
 .sig-item {
     text-align: center;
-    margin-bottom: 10mm;
+    padding-bottom: 10mm;
 }
 .sig-line {
     border-top: 0.8pt solid #333;
@@ -240,8 +240,8 @@ sup { font-size: 6pt; }
     vertical-align: top;
 }
 .info-icon-img {
-    width: 7mm;
-    height: 7mm;
+    width: 8mm;
+    height: 8mm;
     display: block;
     margin-top: 1mm;
 }
@@ -249,7 +249,7 @@ sup { font-size: 6pt; }
     font-family: 'DejaVu Sans', Arial, sans-serif;
     font-size: 6pt;
     color: #1e3a8a;
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.3pt;
     margin-bottom: 0.5mm;
@@ -279,26 +279,6 @@ sup { font-size: 6pt; }
     margin: 1mm 0;
 }
 
-/* Bottom decor */
-.bottom-decor {
-    text-align: center;
-    margin-top: 4mm;
-}
-.bottom-table {
-    width: 30%;
-    margin: 0 auto;
-    border-collapse: collapse;
-}
-.bottom-table td {
-    border-top: 0.5pt solid #1e3a8a;
-    height: 0;
-}
-.bottom-diamond {
-    color: #f26522;
-    font-size: 7pt;
-    text-align: center;
-    width: 5mm;
-}
 
 /* Footer */
 .footer-text {
@@ -451,12 +431,6 @@ sup { font-size: 6pt; }
     </table>
     </div>
 
-    <!-- BOTTOM DECOR -->
-    <div class="bottom-decor">
-        <table class="bottom-table">
-            <tr><td></td><td class="bottom-diamond">&#9670;</td><td></td></tr>
-        </table>
-    </div>
 
     <!-- FOOTER -->
     <div class="footer-text">
