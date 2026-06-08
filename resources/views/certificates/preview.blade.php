@@ -75,26 +75,9 @@
             width: 24mm; display: flex; align-items: center; justify-content: center;
             position: relative;
         }
-        .shield {
-            width: 18mm; height: 22mm; background: #1e3a8a;
-            border-radius: 0 0 9mm 9mm; position: relative;
-            border: 1.5px solid #f26522;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-        }
-        .shield::before {
-            content: ''; position: absolute;
-            top: -4.5mm; left: 50%; transform: translateX(-50%);
-            width: 14mm; height: 6mm; background: #f26522;
-            border-radius: 7mm 7mm 0 0;
-        }
-        .shield-text { color: white; font-size: 6pt; font-weight: 700; line-height: 1; margin-top: 1mm; z-index: 2; font-family: 'Montserrat', sans-serif; }
-        .shield-sub { color: #d4af37; font-size: 4pt; margin-top: 0.5mm; z-index: 2; font-family: 'Montserrat', sans-serif; text-align: center; }
-        .tagline {
-            position: absolute; bottom: -3mm; left: 50%; transform: translateX(-50%);
-            font-size: 4pt; color: #1e3a8a; font-weight: 600;
-            width: 100%; text-align: center; font-family: 'Montserrat', sans-serif;
-            white-space: nowrap;
+        .logo-left img {
+            width: 20mm; height: auto;
+            object-fit: contain;
         }
 
         .header-center { flex: 1; text-align: center; padding: 0 4mm; }
@@ -211,29 +194,9 @@
             display: flex; flex-direction: column;
             align-items: center; justify-content: flex-end;
         }
-        .seal {
-            width: 18mm; height: 18mm; background: #1e3a8a;
-            border-radius: 50%; border: 1.5px solid #d4af37;
-            position: relative; display: flex;
-            align-items: center; justify-content: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        }
-        .seal::before {
-            content: ''; position: absolute; inset: 1mm;
-            border: 1px solid #d4af37; border-radius: 50%; opacity: 0.7;
-        }
-        .seal-text {
-            color: #d4af37; font-size: 5pt;
-            text-align: center; line-height: 1.1;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .seal-text span { font-size: 9pt; }
-        .seal-ribbon {
-            width: 0; height: 0;
-            border-left: 5mm solid transparent;
-            border-right: 5mm solid transparent;
-            border-top: 7mm solid #f26522;
-            margin-top: -2mm;
+        .seal-wrap img {
+            width: 22mm; height: auto;
+            object-fit: contain;
         }
 
         /* Info Box */
@@ -325,11 +288,7 @@
             <!-- Header -->
             <div class="header">
                 <div class="logo-left">
-                    <div class="shield">
-                        <div class="shield-text">EduTrack</div>
-                        <div class="shield-sub">Excel<br>Through<br>Education</div>
-                    </div>
-                    <div class="tagline">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
+                    <img src="{{ asset('assets/images/logo-sm.png') }}" alt="Edutrack Logo">
                 </div>
 
                 <div class="header-center">
@@ -402,13 +361,7 @@
                 </div>
 
                 <div class="seal-wrap">
-                    <div class="seal">
-                        <div class="seal-text">
-                            <span>&#9733;</span><br>
-                            EXCELLENCE
-                        </div>
-                    </div>
-                    <div class="seal-ribbon"></div>
+                    <img src="{{ asset('assets/images/certificate-seal.png') }}" alt="Official Seal">
                 </div>
 
                 <div class="signature-block">
