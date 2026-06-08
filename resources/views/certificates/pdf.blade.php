@@ -17,36 +17,25 @@ body {
 /* Frame using nested divs with padding (mPDF-friendly) */
 .frame-orange {
     width: 210mm;
-    height: 297mm;
     background: #f26522;
     padding: 1.5mm;
 }
 .frame-blue {
     width: 100%;
-    height: 100%;
     background: #1e3a8a;
     padding: 1.5mm;
 }
 .frame-white {
     width: 100%;
-    height: 100%;
     background: #ffffff;
     padding: 10mm 14mm 8mm 14mm;
-}
-
-/* Corner decorations */
-.corner {
-    position: absolute;
-    width: 14mm;
-    height: 14mm;
-    z-index: 10;
 }
 
 /* Header */
 .header-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 10mm;
+    margin-bottom: 6mm;
 }
 .header-table td {
     vertical-align: middle;
@@ -96,7 +85,7 @@ body {
 .banner-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 8mm 0 6mm 0;
+    margin: 4mm 0 3mm 0;
 }
 .banner-table td {
     text-align: center;
@@ -104,7 +93,7 @@ body {
 }
 .banner-text {
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 17pt;
+    font-size: 15pt;
     font-weight: 800;
     color: #1e3a8a;
     letter-spacing: 2pt;
@@ -118,11 +107,11 @@ body {
 /* Student name */
 .student-name {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
-    font-size: 38pt;
+    font-size: 34pt;
     color: #1a1a1a;
     text-align: center;
     line-height: 1.2;
-    margin: 5mm 0 2mm 0;
+    margin: 2mm 0 1mm 0;
 }
 .name-underline {
     width: 130mm;
@@ -137,20 +126,20 @@ body {
     font-size: 9.5pt;
     color: #333;
     line-height: 1.6;
-    margin: 3mm 0;
+    margin: 2mm 0;
 }
 
 /* Course title - DOMINANT */
 .course-title {
     text-align: center;
     font-family: 'DejaVu Sans', Arial, sans-serif;
-    font-size: 28pt;
+    font-size: 20pt;
     font-weight: 900;
     color: #1e3a8a;
     text-transform: uppercase;
     letter-spacing: 1pt;
     line-height: 1.2;
-    margin: 5mm 0;
+    margin: 3mm 0;
 }
 
 /* Classification - supporting element */
@@ -185,7 +174,7 @@ body {
     font-size: 9.5pt;
     color: #333;
     line-height: 1.6;
-    margin: 8mm 0;
+    margin: 4mm 0;
 }
 .date-script {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
@@ -206,7 +195,7 @@ sup { font-size: 6pt; }
 .sig-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 10mm 0;
+    margin: 4mm 0;
 }
 .sig-table td {
     vertical-align: bottom;
@@ -228,7 +217,7 @@ sup { font-size: 6pt; }
     font-weight: 600;
 }
 .seal-img {
-    width: 38mm;
+    width: 32mm;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -239,7 +228,7 @@ sup { font-size: 6pt; }
     border: 1.5pt solid #f26522;
     border-radius: 4pt;
     padding: 5mm 6mm;
-    margin: 8mm auto 0 auto;
+    margin: 4mm auto 0 auto;
     width: 95%;
 }
 .info-table {
@@ -315,7 +304,7 @@ sup { font-size: 6pt; }
     text-align: center;
     font-size: 6.5pt;
     color: #666;
-    margin-top: 6mm;
+    margin-top: 3mm;
 }
 </style>
 </head>
@@ -324,12 +313,6 @@ sup { font-size: 6pt; }
 <div class="frame-orange">
 <div class="frame-blue">
 <div class="frame-white">
-
-    <!-- Corner decorations -->
-    <img src="{{ public_path('assets/images/cert-corners/tl.png') }}" class="corner" style="top:4.5mm;left:4.5mm;" alt="">
-    <img src="{{ public_path('assets/images/cert-corners/tr.png') }}" class="corner" style="top:4.5mm;right:4.5mm;" alt="">
-    <img src="{{ public_path('assets/images/cert-corners/bl.png') }}" class="corner" style="bottom:4.5mm;left:4.5mm;" alt="">
-    <img src="{{ public_path('assets/images/cert-corners/br.png') }}" class="corner" style="bottom:4.5mm;right:4.5mm;" alt="">
 
     <!-- HEADER -->
     <table class="header-table">
