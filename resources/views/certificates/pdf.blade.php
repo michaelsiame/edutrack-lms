@@ -7,42 +7,58 @@
     size: 210mm 297mm;
     margin: 0;
 }
-html, body { margin: 0; padding: 0; box-sizing: border-box; height: 100%; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
     font-family: 'DejaVu Sans', 'DejaVu Serif', Arial, sans-serif;
     font-size: 9pt;
     color: #1a1a1a;
 }
 
-/* Page wrapper forces full A4 height in mPDF */
-.page-wrap {
+/* Outer page frame: explicit A4 size, backgrounds act as borders */
+.page-frame {
     width: 210mm;
     height: 297mm;
     border-collapse: collapse;
+    background: #f26522;
 }
-.page-wrap td {
-    padding: 0;
+.page-frame > tbody > tr > td {
+    padding: 1.5mm;
+    vertical-align: top;
+}
+.blue-frame {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    background: #1e3a8a;
+}
+.blue-frame > tbody > tr > td {
+    padding: 1.5mm;
+    vertical-align: top;
+}
+.white-frame {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+}
+.white-frame > tbody > tr > td {
+    padding: 12mm 14mm 8mm 14mm;
     vertical-align: top;
 }
 
-/* Frame using nested divs with padding (mPDF-friendly) */
-.frame-orange {
+/* Content distributor pushes info box + footer to bottom */
+.content-distributor {
     width: 100%;
     height: 100%;
-    background: #f26522;
-    padding: 1.5mm;
+    border-collapse: collapse;
 }
-.frame-blue {
-    width: 100%;
+.content-distributor td {
+    vertical-align: top;
+}
+.content-distributor .spacer {
     height: 100%;
-    background: #1e3a8a;
-    padding: 1.5mm;
-}
-.frame-white {
-    width: 100%;
-    min-height: 100%;
-    background: #ffffff;
-    padding: 8mm 14mm 3mm 14mm;
+    line-height: 0;
+    font-size: 0;
 }
 
 
@@ -50,7 +66,7 @@ body {
 .header-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 10mm;
+    margin-bottom: 12mm;
 }
 .header-table td {
     vertical-align: middle;
@@ -80,7 +96,7 @@ body {
 .banner-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 5mm 0 4mm 0;
+    margin: 6mm 0;
 }
 .banner-table td {
     text-align: center;
@@ -106,7 +122,7 @@ body {
     color: #1a1a1a;
     text-align: center;
     line-height: 1.2;
-    margin: 4mm 0 2mm 0;
+    margin: 5mm 0 3mm 0;
 }
 .name-underline {
     width: 130mm;
@@ -134,7 +150,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 1pt;
     line-height: 1.2;
-    margin: 3mm 0;
+    margin: 6mm 0;
 }
 
 /* Classification - supporting element */
@@ -169,7 +185,7 @@ body {
     font-size: 9.5pt;
     color: #333;
     line-height: 1.5;
-    margin: 4mm 0;
+    margin: 8mm 0;
 }
 .date-script {
     font-family: 'greatvibes', 'DejaVu Serif', serif;
@@ -190,7 +206,7 @@ sup { font-size: 6pt; }
 .sig-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 5mm 0;
+    margin: 12mm 0;
 }
 .sig-table td {
     vertical-align: bottom;
@@ -223,7 +239,7 @@ sup { font-size: 6pt; }
     border: 1.5pt solid #f26522;
     border-radius: 4pt;
     padding: 3mm 4mm;
-    margin: 4mm auto 0 auto;
+    margin: 0 auto;
     width: 95%;
 }
 .info-table {
@@ -281,19 +297,27 @@ sup { font-size: 6pt; }
     text-align: center;
     font-size: 6.5pt;
     color: #666;
-    margin-top: 2mm;
+    margin-top: 4mm;
 }
 </style>
 </head>
 <body>
 
-<table class="page-wrap">
+<table class="page-frame">
 <tr>
 <td>
-<div class="frame-orange">
-<div class="frame-blue">
-<div class="frame-white">
 
+<table class="blue-frame">
+<tr>
+<td>
+
+<table class="white-frame">
+<tr>
+<td>
+
+<table class="content-distributor">
+<tr>
+<td>
 
     <!-- HEADER -->
     <table class="header-table">
@@ -390,6 +414,14 @@ sup { font-size: 6pt; }
     </tr>
     </table>
 
+</td>
+</tr>
+<tr>
+<td class="spacer"></td>
+</tr>
+<tr>
+<td style="vertical-align:bottom;">
+
     <!-- INFO BOX -->
     <div class="info-box">
     <table class="info-table">
@@ -447,9 +479,18 @@ sup { font-size: 6pt; }
         Verification Code: <strong>{{ $verification_code }}</strong> | Verify at {{ config('app.url') }}/certificates/verify
     </div>
 
-</div>
-</div>
-</div>
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+
 </td>
 </tr>
 </table>
