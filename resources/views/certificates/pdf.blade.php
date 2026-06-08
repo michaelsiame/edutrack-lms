@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <style>
-/* CSS is minimized. We rely on strict HTML Table attributes for PDF safety */
 @page {
     size: A4;
     margin: 0;
@@ -16,26 +15,24 @@ html, body {
     height: 100%;
     font-family: 'DejaVu Sans', Arial, sans-serif;
     color: #1a1a1a;
-    -webkit-print-color-adjust: exact !important; 
-    print-color-adjust: exact !important;
 }
 .script-font { font-family: 'greatvibes', 'DejaVu Serif', serif; }
 </style>
 </head>
 <body>
 
-<!-- Outer Orange Border (100% Table) -->
-<table width="100%" style="width: 210mm; height: 296mm; background-color: #f26522; border-collapse: collapse; margin: 0; padding: 0;">
+<!-- Outer Orange Border -->
+<table width="100%" cellpadding="0" cellspacing="0" style="width: 210mm; height: 297mm; background-color: #f26522;">
 <tr>
 <td valign="top" style="padding: 1.5mm;">
     
     <!-- Inner Blue Border -->
-    <table width="100%" style="height: 293mm; background-color: #1e3a8a; border-collapse: collapse;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="height: 100%; background-color: #1e3a8a;">
     <tr>
     <td valign="top" style="padding: 1.5mm;">
         
         <!-- Center White Content Area -->
-        <table width="100%" style="height: 290mm; background-color: #ffffff; border-collapse: collapse;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="height: 100%; background-color: #ffffff;">
         <tr>
         <td valign="top" style="padding: 8mm 14mm 3mm 14mm;">
 
@@ -43,18 +40,14 @@ html, body {
             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 15px;">
                 <tr>
                     <td width="20%" align="center">
-                        <img src="{{ public_path('assets/images/logo-pdf.png') }}" style="height: 20mm; width: auto;" alt="">
+                        <img src="{{ public_path('assets/images/logo-pdf.png') }}" style="height: 20mm; width: auto;" alt="Logo">
                     </td>
                     <td width="60%" align="center">
-                        <div style="font-size: 19pt; font-weight: 900; color: #1a1a1a; line-height: 1.2;">
-                            EDUTRACK COMPUTER<br>TRAINING COLLEGE
-                        </div>
-                        <div style="font-family: 'DejaVu Serif', serif; font-size: 8.5pt; color: #444; font-style: italic; margin-top: 3px;">
-                            TEVETA Registered Institution &mdash; TVA/2064
-                        </div>
+                        <span style="font-size: 19pt; font-weight: 900; color: #1a1a1a; line-height: 1.2;">EDUTRACK COMPUTER<br>TRAINING COLLEGE</span><br>
+                        <span style="font-family: 'DejaVu Serif', serif; font-size: 8.5pt; color: #444; font-style: italic;">TEVETA Registered Institution &mdash; TVA/2064</span>
                     </td>
                     <td width="20%" align="right">
-                        <img src="{{ public_path('assets/images/teveta-logo.png') }}" style="height: 20mm; width: auto;" alt="">
+                        <img src="{{ public_path('assets/images/teveta-logo.png') }}" style="height: 20mm; width: auto;" alt="Teveta">
                     </td>
                 </tr>
             </table>
@@ -76,8 +69,10 @@ html, body {
                     </td>
                 </tr>
                 <tr>
-                    <td align="center">
-                        <div style="border-bottom: 1px solid #f26522; width: 130mm; height: 5px;"></div>
+                    <td align="center" style="padding-top: 5px;">
+                        <table width="130mm" align="center" cellpadding="0" cellspacing="0">
+                            <tr><td style="border-top: 1px solid #f26522; font-size: 0; line-height: 0;">&nbsp;</td></tr>
+                        </table>
                     </td>
                 </tr>
             </table>
@@ -109,8 +104,10 @@ html, body {
                     </td>
                 </tr>
                 <tr>
-                    <td align="center">
-                        <div style="border-bottom: 1px solid #f26522; width: 50mm; height: 5px;"></div>
+                    <td align="center" style="padding-top: 5px;">
+                        <table width="50mm" align="center" cellpadding="0" cellspacing="0">
+                            <tr><td style="border-top: 1px solid #f26522; font-size: 0; line-height: 0;">&nbsp;</td></tr>
+                        </table>
                         <div style="color: #f26522; font-size: 8pt; margin-top: -6px;"><span style="background: #fff; padding: 0 4px;">&#9670;</span></div>
                     </td>
                 </tr>
@@ -129,18 +126,20 @@ html, body {
                 </tr>
             </table>
 
-            <!-- SIGNATURES + SEAL (Strict Table Layout) -->
+            <!-- SIGNATURES + SEAL (Crash-Proof Layout) -->
             <table width="100%" cellpadding="0" cellspacing="0" style="margin: 20px 0;">
                 <tr>
                     <!-- LEFT COLUMN (Graduate & Principal) -->
                     <td width="30%" valign="bottom">
                         <table width="100%" cellpadding="0" cellspacing="0">
-                            <tr><td style="border-bottom: 1px solid #333; height: 25px;">&nbsp;</td></tr>
+                            <tr><td style="height: 25px; font-size: 0;">&nbsp;</td></tr>
+                            <tr><td style="border-top: 1px solid #333; font-size: 0; line-height: 0;">&nbsp;</td></tr>
                             <tr><td align="center" style="font-size: 8pt; font-weight: 600; color: #333; padding-top: 4px;">Graduate's Signature</td></tr>
                             
-                            <tr><td style="height: 15px;"></td></tr> <!-- Spacing -->
+                            <tr><td style="height: 15px; font-size: 0;">&nbsp;</td></tr> <!-- Spacing -->
                             
-                            <tr><td style="border-bottom: 1px solid #333; height: 25px;">&nbsp;</td></tr>
+                            <tr><td style="height: 25px; font-size: 0;">&nbsp;</td></tr>
+                            <tr><td style="border-top: 1px solid #333; font-size: 0; line-height: 0;">&nbsp;</td></tr>
                             <tr><td align="center" style="font-size: 8pt; font-weight: 600; color: #333; padding-top: 4px;">Principal</td></tr>
                         </table>
                     </td>
@@ -153,25 +152,27 @@ html, body {
                     <!-- RIGHT COLUMN (NRC & Director) -->
                     <td width="30%" valign="bottom">
                         <table width="100%" cellpadding="0" cellspacing="0">
-                            <!-- NRC Section -->
+                            <!-- NRC Section (Safely handles empty string variables) -->
                             <tr>
-                                <td align="center" valign="bottom" style="border-bottom: 1px solid #333; height: 25px; font-size: 9pt; font-weight: bold; color: #1a1a1a;">
-                                    {{ $nrc_number ?? '&nbsp;' }}
+                                <td align="center" valign="bottom" style="height: 25px; font-size: 9pt; font-weight: bold; color: #1a1a1a;">
+                                    {!! !empty($nrc_number) ? e($nrc_number) : '&nbsp;' !!}
                                 </td>
                             </tr>
+                            <tr><td style="border-top: 1px solid #333; font-size: 0; line-height: 0;">&nbsp;</td></tr>
                             <tr><td align="center" style="font-size: 8pt; font-weight: 600; color: #333; padding-top: 4px;">Graduate's I.D. No. (NRC)</td></tr>
                             
-                            <tr><td style="height: 15px;"></td></tr> <!-- Spacing -->
+                            <tr><td style="height: 15px; font-size: 0;">&nbsp;</td></tr> <!-- Spacing -->
                             
                             <!-- Director Section -->
-                            <tr><td style="border-bottom: 1px solid #333; height: 25px;">&nbsp;</td></tr>
+                            <tr><td style="height: 25px; font-size: 0;">&nbsp;</td></tr>
+                            <tr><td style="border-top: 1px solid #333; font-size: 0; line-height: 0;">&nbsp;</td></tr>
                             <tr><td align="center" style="font-size: 8pt; font-weight: 600; color: #333; padding-top: 4px;">Director</td></tr>
                         </table>
                     </td>
                 </tr>
             </table>
 
-            <!-- INFO BOX (Table wrapped to prevent border breaks) -->
+            <!-- INFO BOX -->
             <table width="96%" align="center" cellpadding="0" cellspacing="0" style="border: 2px solid #f26522; margin-top: 15px;">
                 <tr>
                     <td style="padding: 10px;">
@@ -182,18 +183,18 @@ html, body {
                                 <td width="48%">
                                     <table width="100%" cellpadding="0" cellspacing="0">
                                         <tr>
-                                            <td width="30px" valign="top"><img src="{{ public_path('assets/images/cert-icons/icon-student.png') }}" style="width: 8mm;" alt=""></td>
+                                            <td width="30" valign="top"><img src="{{ public_path('assets/images/cert-icons/icon-student.png') }}" style="width: 8mm;" alt="Icon"></td>
                                             <td valign="top" style="padding-left: 5px;">
-                                                <div style="font-size: 6pt; font-weight: 800; color: #1e3a8a;">STUDENT NUMBER</div>
-                                                <div style="font-size: 9pt; font-weight: 700; color: #1a1a1a;">{{ $student_number }}</div>
+                                                <span style="font-size: 6pt; font-weight: 800; color: #1e3a8a;">STUDENT NUMBER</span><br>
+                                                <span style="font-size: 9pt; font-weight: 700; color: #1a1a1a;">{{ $student_number }}</span>
                                             </td>
                                         </tr>
-                                        <tr><td colspan="2" style="height: 8px;"></td></tr>
+                                        <tr><td colspan="2" style="height: 8px; font-size: 0;">&nbsp;</td></tr>
                                         <tr>
-                                            <td width="30px" valign="top"><img src="{{ public_path('assets/images/cert-icons/icon-cert.png') }}" style="width: 8mm;" alt=""></td>
+                                            <td width="30" valign="top"><img src="{{ public_path('assets/images/cert-icons/icon-cert.png') }}" style="width: 8mm;" alt="Icon"></td>
                                             <td valign="top" style="padding-left: 5px;">
-                                                <div style="font-size: 6pt; font-weight: 800; color: #1e3a8a;">CERTIFICATE NUMBER</div>
-                                                <div style="font-size: 9pt; font-weight: 700; color: #1a1a1a;">{{ $certificate_number }}</div>
+                                                <span style="font-size: 6pt; font-weight: 800; color: #1e3a8a;">CERTIFICATE NUMBER</span><br>
+                                                <span style="font-size: 9pt; font-weight: 700; color: #1a1a1a;">{{ $certificate_number }}</span>
                                             </td>
                                         </tr>
                                     </table>
@@ -208,18 +209,18 @@ html, body {
                                 <td width="48%">
                                     <table width="100%" cellpadding="0" cellspacing="0">
                                         <tr>
-                                            <td width="30px" valign="top"><img src="{{ public_path('assets/images/cert-icons/icon-date.png') }}" style="width: 8mm;" alt=""></td>
+                                            <td width="30" valign="top"><img src="{{ public_path('assets/images/cert-icons/icon-date.png') }}" style="width: 8mm;" alt="Icon"></td>
                                             <td valign="top" style="padding-left: 5px;">
-                                                <div style="font-size: 6pt; font-weight: 800; color: #1e3a8a;">DATE OF GRADUATION</div>
-                                                <div style="font-size: 9pt; font-weight: 700; color: #1a1a1a;">{{ $graduation_day }}{{ $graduation_suffix }} {{ $graduation_month }} {{ $graduation_year }}</div>
+                                                <span style="font-size: 6pt; font-weight: 800; color: #1e3a8a;">DATE OF GRADUATION</span><br>
+                                                <span style="font-size: 9pt; font-weight: 700; color: #1a1a1a;">{{ $graduation_day }}{{ $graduation_suffix }} {{ $graduation_month }} {{ $graduation_year }}</span>
                                             </td>
                                         </tr>
-                                        <tr><td colspan="2" style="height: 8px;"></td></tr>
+                                        <tr><td colspan="2" style="height: 8px; font-size: 0;">&nbsp;</td></tr>
                                         <tr>
-                                            <td width="30px" valign="top"><img src="{{ public_path('assets/images/cert-icons/icon-course.png') }}" style="width: 8mm;" alt=""></td>
+                                            <td width="30" valign="top"><img src="{{ public_path('assets/images/cert-icons/icon-course.png') }}" style="width: 8mm;" alt="Icon"></td>
                                             <td valign="top" style="padding-left: 5px;">
-                                                <div style="font-size: 6pt; font-weight: 800; color: #1e3a8a;">COURSE</div>
-                                                <div style="font-size: 9pt; font-weight: 700; color: #1a1a1a;">{{ $course_title }}</div>
+                                                <span style="font-size: 6pt; font-weight: 800; color: #1e3a8a;">COURSE</span><br>
+                                                <span style="font-size: 9pt; font-weight: 700; color: #1a1a1a;">{{ $course_title }}</span>
                                             </td>
                                         </tr>
                                     </table>
