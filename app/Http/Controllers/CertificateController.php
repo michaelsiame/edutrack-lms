@@ -45,8 +45,8 @@ class CertificateController extends Controller
             'graduation_suffix' => 'th',
             'graduation_month' => 'March',
             'graduation_year' => '2026',
-            'student_number' => '26Edu249580',
-            'certificate_number' => 'NRC 2495807/1/1',
+            'student_number' => 'ECTC26001',
+            'certificate_number' => 'NRC 249580/11/1',
             'verification_code' => 'EDU-ABC123XYZ',
             'final_score' => 87,
         ];

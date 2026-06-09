@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificate - {{ $certificate_number ?? 'Preview' }} - EduTrack Computer Training College</title>
-    <link rel="stylesheet" href="{{ asset('assets/css/cert-fonts.css') }}">
+    <title>Certificate - NRC 249580/11/1 - EduTrack Computer Training College</title>
+    <link rel="stylesheet" href="https://edutrackzambia.com/assets/css/cert-fonts.css">
     <style>
         @page { size: A4 portrait; margin: 0; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -252,15 +252,10 @@
 
     <!-- Action Bar -->
     <div class="action-bar no-print">
-        <a href="{{ route('student.certificates') }}" class="btn btn-secondary">
+        <a href="https://edutrackzambia.com/student/certificates" class="btn btn-secondary">
             <span>&#8592;</span> Back to Certificates
         </a>
-        @if(isset($certificate) && $certificate)
-        <a href="{{ route('certificates.download', $certificate) }}" class="btn btn-primary">
-            <span>&#11015;</span> Download PDF
-        </a>
-        @endif
-        <button onclick="window.print()" class="btn btn-ghost">
+                <button onclick="window.print()" class="btn btn-ghost">
             <span>&#128424;</span> Print
         </button>
     </div>
@@ -269,22 +264,39 @@
         <div class="frame-outer"></div>
         <div class="frame-inner"></div>
 
-        <div class="corner corner-tl"><img src="{{ asset('assets/images/cert-corners/tl.png') }}" alt=""></div>
-        <div class="corner corner-tr"><img src="{{ asset('assets/images/cert-corners/tr.png') }}" alt=""></div>
-        <div class="corner corner-bl"><img src="{{ asset('assets/images/cert-corners/bl.png') }}" alt=""></div>
-        <div class="corner corner-br"><img src="{{ asset('assets/images/cert-corners/br.png') }}" alt=""></div>
+        <div class="corner corner-tl"><img src="https://edutrackzambia.com/assets/images/cert-corners/tl.png" alt=""></div>
+        <div class="corner corner-tr"><img src="https://edutrackzambia.com/assets/images/cert-corners/tr.png" alt=""></div>
+        <div class="corner corner-bl"><img src="https://edutrackzambia.com/assets/images/cert-corners/bl.png" alt=""></div>
+        <div class="corner corner-br"><img src="https://edutrackzambia.com/assets/images/cert-corners/br.png" alt=""></div>
 
         <div class="watermark">
-            @for ($i = 0; $i < 20; $i++)
-                EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
-            @endfor
-        </div>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                            EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
+                    </div>
 
         <div class="content">
             <!-- Header -->
             <div class="header">
                 <div class="logo-left">
-                    <img src="{{ asset('assets/images/logo-sm.png') }}" alt="Edutrack Logo">
+                    <img src="https://edutrackzambia.com/assets/images/logo-sm.png" alt="Edutrack Logo">
                 </div>
 
                 <div class="header-center">
@@ -298,7 +310,7 @@
                 </div>
 
                 <div class="logo-right">
-                    <img src="{{ asset('assets/images/teveta-logo.png') }}" alt="TEVETA Logo">
+                    <img src="https://edutrackzambia.com/assets/images/teveta-logo.png" alt="TEVETA Logo">
                 </div>
             </div>
 
@@ -310,7 +322,7 @@
             </div>
 
             <!-- Recipient -->
-            <div class="recipient-name">{{ $student_name ?? 'Student Name' }}</div>
+            <div class="recipient-name">Catherine Namakanda</div>
             <div class="name-underline"></div>
 
             <!-- Body -->
@@ -320,19 +332,17 @@
             </div>
 
             <!-- Course -->
-            <div class="course-title">{{ strtoupper($course_title ?? 'Course Title') }}</div>
+            <div class="course-title">GENERAL BASIC COMPUTING</div>
 
             <!-- Merit -->
-            @if(isset($classification) && $classification && $classification !== 'Pass')
-            <div class="merit-text">With {{ $classification }}</div>
+                        <div class="merit-text">With Merit</div>
             <div class="merit-underline-wrap"></div>
-            @endif
-
+            
             <!-- Date -->
             <div class="date-section">
                 Was admitted to the certificate at a Graduation<br>
-                Ceremony held on the <span class="script">{{ $graduation_day ?? '1' }}<sup>{{ $graduation_suffix ?? 'st' }}</sup></span> day of <span class="script">{{ $graduation_month ?? 'January' }}</span><br>
-                in the year <span class="script">{{ $graduation_year ?? date('Y') }}</span>
+                Ceremony held on the <span class="script">27<sup>th</sup></span> day of <span class="script">March</span><br>
+                in the year <span class="script">2026</span>
             </div>
 
             <!-- Signatures -->
@@ -362,8 +372,8 @@
 
             <!-- Bottom Info -->
             <div class="bottom-info">
-                <div class="bottom-info-item">{{ $certificate_number ?? 'NRC 000000/00/0' }}</div>
-                <div class="bottom-info-item">{{ $student_number ?? 'ECTC00000' }}</div>
+                <div class="bottom-info-item">NRC 249580/11/1</div>
+                <div class="bottom-info-item">ECTC26001</div>
             </div>
         </div>
     </div>

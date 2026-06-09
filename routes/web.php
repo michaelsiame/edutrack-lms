@@ -106,10 +106,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
 });
 
-// Certificate preview requires auth to prevent ID enumeration
-Route::middleware(['auth'])->group(function () {
-    Route::get('/certificate-preview/{certificate?}', [CertificateController::class, 'preview'])->name('certificates.preview');
-});
+// Certificate preview - public demo; real certificates require auth
+Route::get('/certificate-preview/{certificate?}', [CertificateController::class, 'preview'])->name('certificates.preview');
 
 /*
 |--------------------------------------------------------------------------
