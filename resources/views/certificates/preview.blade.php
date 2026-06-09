@@ -7,227 +7,298 @@
     <link rel="stylesheet" href="{{ asset('assets/css/cert-fonts.css') }}">
     <style>
         @page { size: A4 portrait; margin: 0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            width: 210mm; min-height: 297mm; margin: 0 auto;
-            background: #f5f5f5;
-            font-family: 'Montserrat', 'Inter', sans-serif;
-            padding: 20px;
-        }
-        @media print {
-            body { background: #fff; padding: 0; width: 210mm; height: 297mm; }
-            .cert-page { box-shadow: none !important; margin: 0 !important; }
-            .no-print { display: none !important; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --gold: #D4952A;
+            --gold-light: #E8B84A;
+            --navy: #1B3A6B;
+            --navy-dark: #0F2B52;
+            --dark: #0A1628;
+            --bg: #FFFFFF;
         }
 
-        .cert-page {
-            width: 210mm; height: 297mm; background: #fff;
-            position: relative; margin: 0 auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            background: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 24px 0;
+            font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        }
+
+        .cert-sheet {
+            width: 210mm;
+            height: 297mm;
+            background: var(--bg);
+            position: relative;
+            box-shadow: 0 6px 32px rgba(0,0,0,0.22);
             overflow: hidden;
+            border: 20px solid var(--gold);
         }
 
-        /* Border frames */
-        .frame-outer {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            border: 3mm solid #f26522; pointer-events: none;
-        }
-        .frame-inner {
-            position: absolute; top: 3mm; left: 3mm; right: 3mm; bottom: 3mm;
-            border: 3mm solid #1e3a8a; pointer-events: none;
+        .cert-sheet::before {
+            content: "";
+            position: absolute;
+            top: 14px; left: 14px; right: 14px; bottom: 14px;
+            border: 10px solid var(--navy);
+            pointer-events: none;
+            z-index: 10;
         }
 
-        /* Corner decorations */
         .corner {
             position: absolute;
-            width: 20mm; height: 20mm;
-            z-index: 5; pointer-events: none;
-        }
-        .corner img { width: 100%; height: auto; }
-        .corner-tl { top: 5mm; left: 5mm; }
-        .corner-tr { top: 5mm; right: 5mm; }
-        .corner-bl { bottom: 5mm; left: 5mm; }
-        .corner-br { bottom: 5mm; right: 5mm; }
-
-        /* Watermark */
-        .watermark {
-            position: absolute;
-            top: 22mm; left: 10mm; right: 10mm; bottom: 22mm;
-            opacity: 0.03;
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: 10pt;
-            color: #1e3a8a;
-            line-height: 2.0;
-            text-align: center;
-            overflow: hidden;
+            width: 0; height: 0;
+            z-index: 11;
             pointer-events: none;
-            z-index: 0;
-            user-select: none;
+        }
+        .corner-tl {
+            top: 24px; left: 24px;
+            border-top: 80px solid var(--navy);
+            border-right: 80px solid transparent;
+        }
+        .corner-tr {
+            top: 24px; right: 24px;
+            border-top: 80px solid var(--navy);
+            border-left: 80px solid transparent;
+        }
+        .corner-bl {
+            bottom: 24px; left: 24px;
+            border-bottom: 80px solid var(--navy);
+            border-right: 80px solid transparent;
+        }
+        .corner-br {
+            bottom: 24px; right: 24px;
+            border-bottom: 80px solid var(--navy);
+            border-left: 80px solid transparent;
         }
 
-        /* Main content */
+        .watermark-bg {
+            position: absolute;
+            inset: 24px;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.055;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='48'%3E%3Ctext x='0' y='32' font-family='Georgia,serif' font-size='14' font-weight='700' fill='%231B3A6B' letter-spacing='1' text-transform='uppercase'%3EEdutrack Computer Training College%3C/text%3E%3C/svg%3E");
+            background-repeat: repeat;
+            transform: rotate(-14deg) scale(1.15);
+            transform-origin: center center;
+        }
+
         .content {
             position: relative;
-            z-index: 1;
-            padding: 10mm 16mm 8mm 16mm;
-        }
-
-        /* Header */
-        .header {
+            z-index: 5;
+            padding: 28px 56px 20px;
+            height: 100%;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            text-align: center;
+        }
+
+        .logos-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             width: 100%;
-            margin-bottom: 4mm;
+            margin-bottom: 6px;
+            padding: 0 16px;
         }
-        .logo-left {
-            width: 20mm;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .logo-left img { width: 18mm; height: auto; object-fit: contain; }
+        .logo-edutrack { height: 90px; width: auto; }
+        .logo-teveta { height: 48px; width: auto; }
 
-        .header-center { flex: 1; text-align: center; padding: 0 3mm; }
-        .college-title {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: 16pt; font-weight: 700; color: #1a1a1a;
-            text-transform: uppercase; letter-spacing: 1px; line-height: 1.25;
-        }
-        .divider {
-            display: flex; align-items: center; justify-content: center;
-            margin: 1.5mm 0; gap: 0;
-        }
-        .divider-line { flex: 1; max-width: 28mm; height: 1px; background: #1e3a8a; }
-        .divider-diamond { width: 1.8mm; height: 1.8mm; background: #f26522; transform: rotate(45deg); margin: 0 2mm; }
-        .college-subtitle {
-            font-family: 'Playfair Display', serif;
-            font-size: 9pt; color: #444;
+        .institution-name {
+            font-size: 27px;
+            font-weight: 700;
+            color: var(--navy-dark);
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            line-height: 1.25;
+            margin-bottom: 3px;
         }
 
-        .logo-right {
-            width: 20mm;
-            display: flex; align-items: center; justify-content: center;
+        .institution-sub {
+            font-size: 16px;
+            font-style: italic;
+            color: var(--dark);
+            margin-bottom: 8px;
         }
-        .logo-right img { width: 16mm; height: auto; object-fit: contain; }
 
-        /* Certify statement */
-        .certify-text {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 12pt; font-weight: 700; color: #1e3a8a;
-            text-transform: uppercase; letter-spacing: 2px;
-            margin: 2mm 0;
+        .deco-rule {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 3mm;
-        }
-        .side-decor { color: #f26522; font-size: 10pt; letter-spacing: 2px; }
-
-        /* Recipient */
-        .recipient-name {
-            font-family: 'Great Vibes', cursive;
-            font-size: 30pt; color: #1a1a1a;
-            margin: 1mm 0 0.5mm; line-height: 1.2;
-            text-align: center;
-        }
-        .name-underline {
-            width: 75mm; height: 1px;
-            background: #f26522; margin: 0 auto 2mm;
-        }
-
-        /* Body text */
-        .body-text {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 9pt; color: #333; line-height: 1.4;
-            margin: 1mm 0 2mm;
-            text-align: center;
-        }
-
-        /* Course */
-        .course-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 20pt; font-weight: 900; color: #1e3a8a;
-            text-transform: uppercase; letter-spacing: 1px;
-            margin: 1mm 0; line-height: 1.2;
-            text-align: center;
-        }
-
-        /* Merit */
-        .merit-text {
-            font-family: 'Great Vibes', cursive;
-            font-size: 18pt; color: #1a1a1a; margin: 1mm 0;
-            text-align: center;
-        }
-        .merit-underline-wrap {
-            width: 45mm; height: 1px;
-            background: #f26522; margin: 0.5mm auto 1mm;
-            position: relative;
-        }
-        .merit-underline-wrap::after {
-            content: '';
-            width: 1.8mm; height: 1.8mm;
-            background: #f26522;
-            transform: rotate(45deg);
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            margin-left: -0.9mm;
-            margin-top: -0.9mm;
-        }
-
-        /* Date */
-        .date-section {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 9pt; color: #333; line-height: 1.5;
-            margin: 2mm 0;
-            text-align: center;
-        }
-        .date-section .script { font-family: 'Great Vibes', cursive; font-size: 15pt; color: #1a1a1a; }
-
-        /* Signatures */
-        .signatures-area {
+            gap: 10px;
             width: 100%;
+            margin: 6px 0;
+        }
+        .deco-rule .line {
+            flex: 1;
+            max-width: 170px;
+            height: 0;
+            border-top: 2px solid var(--gold);
+        }
+        .deco-rule .diamond {
+            width: 10px; height: 10px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+        .deco-rule .diamond-sm {
+            width: 6px; height: 6px;
+            background: var(--gold-light);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+
+        .flanked {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            width: 100%;
+            margin: 8px 0 4px;
+        }
+        .flanked .flank {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .flanked .flank .f-line {
+            width: 50px;
+            height: 0;
+            border-top: 2px solid var(--gold);
+        }
+        .flanked .flank .f-diamond {
+            width: 7px; height: 7px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+        .flanked .flank .f-diamond-sm {
+            width: 5px; height: 5px;
+            background: var(--gold-light);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+
+        .certify-text {
+            font-size: 23px;
+            font-weight: 700;
+            color: var(--navy);
+            text-transform: uppercase;
+            letter-spacing: 3.5px;
+            white-space: nowrap;
+        }
+
+        .recipient {
+            font-family: "Great Vibes", "Brush Script MT", cursive;
+            font-size: 56px;
+            color: var(--dark);
+            line-height: 1.05;
+            margin: 4px 0 8px;
+        }
+
+        .body-text {
+            font-size: 17.5px;
+            font-style: italic;
+            color: var(--dark);
+            line-height: 1.5;
+            max-width: 540px;
+            margin: 4px 0;
+        }
+
+        .course-title {
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--navy);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            line-height: 1.15;
+            margin: 14px 0 6px;
+        }
+
+        .merit {
+            font-family: "Great Vibes", "Brush Script MT", cursive;
+            font-size: 44px;
+            color: var(--dark);
+            line-height: 1.05;
+            margin: 4px 0 8px;
+        }
+
+        .date-text {
+            font-size: 15px;
+            font-style: italic;
+            color: var(--dark);
+            line-height: 1.4;
+            max-width: 520px;
+            margin: 4px 0 10px;
+        }
+        .date-text .ordinal {
+            font-size: 12px;
+            vertical-align: super;
+            font-style: normal;
+        }
+        .date-text .year {
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        .signatures {
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
-            margin-top: 18mm;
-            padding-bottom: 1mm;
+            width: 100%;
+            max-width: 560px;
+            margin-top: 24px;
+            padding-bottom: 4px;
         }
-        .signature-col {
-            width: 42%;
+        .sig-block {
             display: flex;
             flex-direction: column;
-            gap: 5mm;
+            align-items: center;
+            min-width: 190px;
         }
-        .signature-block { text-align: center; }
-        .signature-line {
-            width: 100%; height: 1px;
-            background: #333; margin-bottom: 1mm;
+        .sig-line {
+            width: 100%;
+            border-top: 1.5px solid var(--dark);
+            margin-bottom: 5px;
         }
-        .signature-label {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 7.5pt; color: #333; font-weight: 600;
-        }
-        .signature-value {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 9.5pt; color: #1a1a1a; font-weight: 700;
-            margin-top: -1mm;
+        .sig-label {
+            font-size: 14px;
+            color: var(--dark);
+            font-weight: 700;
         }
 
-        /* Bottom info */
-        .bottom-info {
-            width: 100%;
+        .bottom-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-top: 4mm;
-            padding: 0 2mm;
+            width: 100%;
+            max-width: 620px;
+            margin-top: 12px;
+            padding: 0 8px;
         }
-        .bottom-info-item {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 10pt;
+        .bottom-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .bottom-block.right {
+            align-items: flex-end;
+        }
+        .bottom-label {
+            font-size: 13px;
+            color: var(--dark);
             font-weight: 700;
-            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+        .bottom-value {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 18px;
+            color: var(--dark);
+            font-weight: 700;
         }
 
         /* Action bar */
@@ -243,8 +314,27 @@
             font-family: 'Inter', sans-serif;
         }
         .btn-secondary { border: 1px solid #e5e7eb; color: #1f2937; background: #fff; }
-        .btn-primary { border: 1px solid #f26522; background: #f26522; color: #fff; margin-left: 8px; }
+        .btn-primary { border: 1px solid var(--gold); background: var(--gold); color: #fff; margin-left: 8px; }
         .btn-ghost { border: 1px solid transparent; background: transparent; color: #6b7280; margin-left: 8px; }
+
+        @media print {
+            html, body {
+                background: #fff;
+                padding: 0;
+                margin: 0;
+            }
+            .cert-sheet {
+                box-shadow: none;
+                margin: 0;
+                page-break-inside: avoid;
+                border: 20px solid var(--gold);
+            }
+            .cert-sheet::before {
+                top: 14px; left: 14px; right: 14px; bottom: 14px;
+                border: 10px solid var(--navy);
+            }
+            .no-print { display: none !important; }
+        }
     </style>
     <base target="_blank">
 </head>
@@ -265,107 +355,105 @@
         </button>
     </div>
 
-    <div class="cert-page">
-        <div class="frame-outer"></div>
-        <div class="frame-inner"></div>
+    <div class="cert-sheet">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
 
-        <div class="corner corner-tl"><img src="{{ asset('assets/images/cert-corners/tl.png') }}" alt=""></div>
-        <div class="corner corner-tr"><img src="{{ asset('assets/images/cert-corners/tr.png') }}" alt=""></div>
-        <div class="corner corner-bl"><img src="{{ asset('assets/images/cert-corners/bl.png') }}" alt=""></div>
-        <div class="corner corner-br"><img src="{{ asset('assets/images/cert-corners/br.png') }}" alt=""></div>
-
-        <div class="watermark">
-            @for ($i = 0; $i < 20; $i++)
-                EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE &mdash; EDUTRACK COMPUTER TRAINING COLLEGE<br>
-            @endfor
-        </div>
+        <div class="watermark-bg"></div>
 
         <div class="content">
-            <!-- Header -->
-            <div class="header">
-                <div class="logo-left">
-                    <img src="{{ asset('assets/images/logo-sm.png') }}" alt="Edutrack Logo">
-                </div>
+            <div class="logos-row">
+                <img src="{{ asset('assets/images/logo-sm.png') }}" alt="EduTrack Logo" class="logo-edutrack">
+                <img src="{{ asset('assets/images/teveta-logo.png') }}" alt="TEVETA Logo" class="logo-teveta">
+            </div>
 
-                <div class="header-center">
-                    <div class="college-title">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
-                    <div class="divider">
-                        <div class="divider-line"></div>
-                        <div class="divider-diamond"></div>
-                        <div class="divider-line"></div>
-                    </div>
-                    <div class="college-subtitle">A skill training college</div>
-                </div>
+            <div class="institution-name">
+                EduTrack Computer<br>Training College
+            </div>
+            <div class="institution-sub">A skill training college</div>
 
-                <div class="logo-right">
-                    <img src="{{ asset('assets/images/teveta-logo.png') }}" alt="TEVETA Logo">
+            <div class="deco-rule">
+                <div class="line"></div>
+                <div class="diamond-sm"></div>
+                <div class="diamond"></div>
+                <div class="diamond-sm"></div>
+                <div class="line"></div>
+            </div>
+
+            <div class="flanked">
+                <div class="flank">
+                    <div class="f-line"></div>
+                    <div class="f-diamond-sm"></div>
+                    <div class="f-diamond"></div>
+                </div>
+                <div class="certify-text">This is to Certify That</div>
+                <div class="flank">
+                    <div class="f-diamond"></div>
+                    <div class="f-diamond-sm"></div>
+                    <div class="f-line"></div>
                 </div>
             </div>
 
-            <!-- Certify Statement -->
-            <div class="certify-text">
-                <span class="side-decor">&mdash; &mdash; &mdash;</span>
-                THIS IS TO CERTIFY THAT
-                <span class="side-decor">&mdash; &mdash; &mdash;</span>
+            <div class="deco-rule">
+                <div class="line"></div>
+                <div class="diamond-sm"></div>
+                <div class="diamond"></div>
+                <div class="diamond-sm"></div>
+                <div class="line"></div>
             </div>
 
-            <!-- Recipient -->
-            <div class="recipient-name">{{ $student_name ?? 'Student Name' }}</div>
-            <div class="name-underline"></div>
+            <div class="recipient">{{ $student_name ?? 'Student Name' }}</div>
 
-            <!-- Body -->
-            <div class="body-text">
-                having satisfied the requirements for the<br>
-                award of the certificate of
-            </div>
+            <p class="body-text">
+                having satisfied the requirements for the award of the certificate of
+            </p>
 
-            <!-- Course -->
             <div class="course-title">{{ strtoupper($course_title ?? 'Course Title') }}</div>
 
-            <!-- Merit -->
             @if(isset($classification) && $classification && $classification !== 'Pass')
-            <div class="merit-text">With {{ $classification }}</div>
-            <div class="merit-underline-wrap"></div>
+            <div class="merit">With {{ $classification }}</div>
+            @else
+            <div style="margin: 8px 0;"></div>
             @endif
 
-            <!-- Date -->
-            <div class="date-section">
-                Was admitted to the certificate at a Graduation<br>
-                Ceremony held on the <span class="script">{{ $graduation_day ?? '1' }}<sup>{{ $graduation_suffix ?? 'st' }}</sup></span> day of <span class="script">{{ $graduation_month ?? 'January' }}</span><br>
-                in the year <span class="script">{{ $graduation_year ?? date('Y') }}</span>
+            <div class="deco-rule">
+                <div class="line"></div>
+                <div class="diamond-sm"></div>
+                <div class="diamond"></div>
+                <div class="diamond-sm"></div>
+                <div class="line"></div>
             </div>
 
-            <!-- Signatures -->
-            <div class="signatures-area">
-                <div class="signature-col">
-                    <div class="signature-block">
-                        <div class="signature-line"></div>
-                        <div class="signature-label">Principal</div>
-                    </div>
-                    <div class="signature-block">
-                        <div class="signature-line"></div>
-                        <div class="signature-label">Graduate's Signature</div>
-                    </div>
-                </div>
+            <p class="date-text">
+                Was admitted to the certificate at a Graduation Ceremony held on the
+                {{ $graduation_day ?? '1' }}<span class="ordinal"><sup>{{ $graduation_suffix ?? 'st' }}</sup></span> day of {{ $graduation_month ?? 'January' }}<br>in the year <span class="year">{{ $graduation_year ?? date('Y') }}</span>
+            </p>
 
-                <div class="signature-col" style="align-items: flex-end;">
-                    <div class="signature-block">
-                        <div class="signature-line"></div>
-                        <div class="signature-label">Director</div>
-                    </div>
-                    <div class="signature-block">
-                        <div class="signature-line"></div>
-                        <div class="signature-label">Graduate's I.D. No.</div>
-                    </div>
+            <div class="signatures">
+                <div class="sig-block">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Principal</div>
+                </div>
+                <div class="sig-block">
+                    <div class="sig-line"></div>
+                    <div class="sig-label">Director</div>
                 </div>
             </div>
 
-            <!-- Bottom Info -->
-            <div class="bottom-info">
-                <div class="bottom-info-item">{{ $certificate_number ?? 'NRC 000000/00/0' }}</div>
-                <div class="bottom-info-item">{{ $student_number ?? 'ECTC00000' }}</div>
+            <div class="bottom-row">
+                <div class="bottom-block">
+                    <div class="bottom-label">Graduate's Signature</div>
+                    <div class="bottom-value">{{ $certificate_number ?? 'NRC 000000/00/0' }}</div>
+                </div>
+                <div class="bottom-block right">
+                    <div class="bottom-label">Graduate's ID No.</div>
+                    <div class="bottom-value">{{ $student_number ?? 'ECTC00000' }}</div>
+                </div>
             </div>
         </div>
     </div>
+
 </body>
 </html>
