@@ -45,11 +45,14 @@
                     </div>
 
                     <div class="mt-6 pt-5 flex gap-3" style="border-top: 1px solid var(--od-border);">
+                        <a href="{{ route('certificates.preview', $certificate) }}" target="_blank" class="od-btn od-btn-secondary od-btn-sm flex-1 justify-center">
+                            <i class="fas fa-eye"></i> View
+                        </a>
                         <a href="{{ route('certificates.download', $certificate) }}" class="od-btn od-btn-primary od-btn-sm flex-1 justify-center">
                             <i class="fas fa-download"></i> Download
                         </a>
-                        <a href="{{ route('certificates.verify', $certificate->certificate_number) }}" target="_blank" class="od-btn od-btn-secondary od-btn-sm">
-                            <i class="fas fa-check-circle"></i> Verify
+                        <a href="{{ route('certificates.verify', $certificate->certificate_number) }}" target="_blank" class="od-btn od-btn-ghost od-btn-sm">
+                            <i class="fas fa-check-circle"></i>
                         </a>
                     </div>
                 </div>

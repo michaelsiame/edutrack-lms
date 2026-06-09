@@ -124,6 +124,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::patch('/courses/{course}/reject', [App\Http\Controllers\Admin\CourseController::class, 'reject'])->name('courses.reject');
     Route::resource('users', App\Http\Controllers\Admin\UserController::class);
     Route::resource('payments', App\Http\Controllers\Admin\PaymentController::class);
+    Route::get('/certificates', [App\Http\Controllers\Admin\CertificateController::class, 'index'])->name('certificates.index');
 
     // Announcements
     Route::resource('announcements', App\Http\Controllers\Admin\AnnouncementController::class)->except(['show']);

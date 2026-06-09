@@ -221,7 +221,10 @@
                             <h4>{{ $certificate->course?->title ?? 'Unknown Course' }}</h4>
                             <p>Issued {{ $certificate->issued_date?->format('d M Y') ?? 'N/A' }} · TEVETA Certificate</p>
                         </div>
-                        <div class="od-course-action">
+                        <div class="od-course-action flex gap-2">
+                            <a href="{{ route('certificates.preview', $certificate) }}" target="_blank" class="od-btn od-btn-ghost od-btn-sm">
+                                <i class="fas fa-eye"></i>
+                            </a>
                             <a href="{{ route('certificates.download', $certificate) }}" class="od-btn od-btn-secondary od-btn-sm">
                                 Download
                             </a>

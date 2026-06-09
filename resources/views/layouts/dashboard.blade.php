@@ -92,6 +92,7 @@
  @if(Route::has('admin.promotions.index'))
  <x-dashboard-nav-item route="admin.promotions.index" icon="fa-tags" label="Promotions" />
  @endif
+ <x-dashboard-nav-item route="admin.certificates.index" icon="fa-certificate" label="Certificates" />
  <x-dashboard-nav-item route="admin.reports" icon="fa-chart-bar" label="Reports" />
  <x-dashboard-nav-item route="admin.settings" icon="fa-cog" label="Settings" />
  @elseif($user->isInstructor())

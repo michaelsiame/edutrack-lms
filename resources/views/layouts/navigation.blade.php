@@ -136,6 +136,9 @@ if (auth()->check()) {
                         <a href="{{ route('enrollments.index') }}" class="od-nav-dropdown-link">
                             <i class="fas fa-book w-4 text-center mr-2" style="color: var(--od-muted);"></i> My Courses
                         </a>
+                        <a href="{{ route('certificates.index') }}" class="od-nav-dropdown-link">
+                            <i class="fas fa-certificate w-4 text-center mr-2" style="color: var(--od-muted);"></i> Certificates
+                        </a>
                         <hr class="my-1 od-nav-divider">
                         <form method="POST" action="{{ route('logout') }}" class="m-0">
                             @csrf
