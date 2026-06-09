@@ -149,6 +149,17 @@ class CertificateService
 
     /**
      * Generate PDF for a certificate.
+     *
+     * The fixed certificate design (borders, watermark, logos, headings,
+     * static text, signature labels) lives in a pre-rendered PNG at
+     * public/assets/images/certificate-template.png — generated from
+     * resources/views/certificates/template.blade.php via wkhtmltopdf
+     * (see scripts/generate-certificate-template.php). Here we only overlay
+     * the dynamic per-student text on top of that background.
+     *
+     * Y positions below are calibrated empirically against the rendered
+     * template — see the comment block above each overlay for the
+     * corresponding template anchor.
      */
     public function generatePdf(Certificate $certificate): string
     {
@@ -160,7 +171,6 @@ class CertificateService
         $pdf->SetTitle('Certificate - ' . $certificate->certificate_number);
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
-
         $pdf->SetMargins(0, 0, 0);
         $pdf->SetAutoPageBreak(false, 0);
         $pdf->SetCellPadding(0);
@@ -168,7 +178,6 @@ class CertificateService
         $pdf->setImageScale(1);
         $pdf->SetFont('dejavuserif', '', 10);
 
-        // Register the cursive font shipped in public/assets/fonts/tcpdf
         try {
             $pdf->AddFont('greatvibes', '', 'greatvibes.php');
         } catch (\Throwable $e) {
@@ -177,144 +186,81 @@ class CertificateService
 
         $pdf->AddPage();
 
-        // Layer 1: tiled "Edutrack Computer Training College" watermark
-        $this->drawWatermark($pdf);
-
-        // Layer 2: outer/inner frames + decorative orange corner triangles
-        $this->drawFrames($pdf);
-
-        // Layer 3: logos (EduTrack shield top-left, TEVETA top-right) and seal
-        $logoPath = public_path('assets/images/logo-pdf.png'); // transparent variant
-        if (!file_exists($logoPath)) {
-            $logoPath = public_path('assets/images/logo.png');
-        }
-        if (file_exists($logoPath)) {
-            $pdf->Image($logoPath, 16, 16, 32, 32, '', '', '', true, 300, '', false, false, 0);
-        }
-
-        $tevetaPath = public_path('assets/images/teveta-logo.png');
-        if (!file_exists($tevetaPath)) {
-            $tevetaPath = public_path('assets/images/teveta-logo.jpg');
-        }
-        if (file_exists($tevetaPath)) {
-            $pdf->Image($tevetaPath, 162, 20, 38, 0, '', '', '', true, 300, '', false, false, 0);
-        }
-
-        // Layer 4: the main HTML content, rendered as fragments positioned by Y
-        $data = $this->getCertificateData($certificate);
-        $html = view('certificates.pdf', $data)->render();
-        $sections = $this->splitSections($html);
-
-        $hasMerit = ($data['classification'] ?? 'Pass') !== 'Pass';
-
-        // (yPos, height) layout — tuned to match the reference PDF's compact
-        // vertical rhythm. The bottom block (signatures + graduate + IDs)
-        // stacks right after the date paragraph.
-        $layout = [
-            ['header',         16,  16],
-            ['tagline',        38,  10],
-            ['certify',        54,  12],
-            ['name',           70,  22],
-            ['requirement',    98,  12],
-            ['course',        114,  16],
-        ];
-        if ($hasMerit) {
-            $layout[] = ['classification', 136, 18];
-            $dateY = 158;
+        // Full-page template background — contains the fixed design.
+        $template = public_path('assets/images/certificate-template.png');
+        if (file_exists($template)) {
+            $pdf->Image($template, 0, 0, 210, 297, '', '', '', false, 300, '', false, false, 0);
         } else {
-            $dateY = 136;
-        }
-        // Compact bottom block, matching the reference's tight signature stack.
-        $signaturesY = $dateY + 34;
-        $layout[] = ['date',        $dateY,            28];
-        $layout[] = ['signatures',  $signaturesY,      12];
-        $layout[] = ['graduate',    $signaturesY + 14, 10];
-        $layout[] = ['ids',         $signaturesY + 26, 10];
-
-        foreach ($layout as [$section, $y, $h]) {
-            if (!isset($sections[$section])) {
-                continue;
-            }
-            $pdf->writeHTMLCell(190, $h, 10, $y, $sections[$section], 0, 1, false, true, '', true);
+            // Fallback: draw the frames + watermark natively if the template
+            // image is missing (e.g., template not yet generated on this host).
+            $this->drawWatermark($pdf);
+            $this->drawFrames($pdf);
         }
 
+        $data = $this->getCertificateData($certificate);
+        $hasMerit = ($data['classification'] ?? 'Pass') !== 'Pass';
         $orange = [242, 101, 34];
-        $blue   = [30, 58, 138];
 
-        // Decorative blue divider with centre diamond, above "A skill training
-        // college" — matches the reference's tagline ornament.
-        $taglineDecorY = 36;
-        $pdf->SetLineWidth(0.4);
-        $pdf->SetDrawColor(...$blue);
-        $pdf->Line(60, $taglineDecorY, 100, $taglineDecorY);
-        $pdf->Line(110, $taglineDecorY, 150, $taglineDecorY);
-        $pdf->SetFillColor(...$orange);
-        $pdf->Polygon([
-            105, $taglineDecorY - 1.4,
-            106.4, $taglineDecorY,
-            105, $taglineDecorY + 1.4,
-            103.6, $taglineDecorY,
-        ], 'F');
+        // 1. Student name — sits just above the orange underline at y≈100mm.
+        $pdf->writeHTMLCell(190, 18, 10, 80,
+            '<div style="text-align:center;">'
+            . '<span style="font-family:greatvibes; font-size:42px; color:#111111;">' . e($data['student_name']) . '</span>'
+            . '</div>',
+            0, 0, false, true, '', true);
 
-        // Solid orange lines flanking "THIS IS TO CERTIFY THAT".
-        $certifyY = 60;
-        $pdf->SetLineWidth(0.4);
-        $pdf->SetDrawColor(...$orange);
-        $pdf->Line(30, $certifyY, 60, $certifyY);
-        $pdf->Line(150, $certifyY, 180, $certifyY);
+        // 2. Course title — well below "award of the certificate of" (y≈122mm).
+        $pdf->writeHTMLCell(190, 14, 10, 140,
+            '<div style="text-align:center;">'
+            . '<span style="font-family:helvetica; font-size:28px; font-weight:bold; color:#1e3a8a; letter-spacing:1px;">' . strtoupper(e($data['course_title'])) . '</span>'
+            . '</div>',
+            0, 0, false, true, '', true);
 
-        // Orange underline beneath the student name. Drawn natively so the
-        // line sits below the cursive descenders instead of cutting through them.
-        $nameRow = $layout[3] ?? null;
-        if ($nameRow) {
-            $nameUnderlineY = $nameRow[1] + $nameRow[2] - 1;
+        // 3. Classification "With <X>" + orange underline with centre diamond.
+        if ($hasMerit) {
+            $pdf->writeHTMLCell(190, 12, 10, 162,
+                '<div style="text-align:center;">'
+                . '<span style="font-family:greatvibes; font-size:30px; color:#111111;">With ' . e($data['classification']) . '</span>'
+                . '</div>',
+                0, 0, false, true, '', true);
+
+            $meritY = 180;
             $pdf->SetLineWidth(0.4);
             $pdf->SetDrawColor(...$orange);
-            $pdf->Line(35, $nameUnderlineY, 175, $nameUnderlineY);
+            $pdf->Line(75, $meritY, 100, $meritY);
+            $pdf->Line(110, $meritY, 135, $meritY);
+            $pdf->SetFillColor(...$orange);
+            $pdf->Polygon([
+                105, $meritY - 1.2, 106.4, $meritY,
+                105, $meritY + 1.2, 103.6, $meritY,
+            ], 'F');
         }
 
-        // Solid orange underline beneath "With Merit" with a centre diamond.
-        if ($hasMerit) {
-            $classRow = $layout[6] ?? null; // classification row
-            if ($classRow) {
-                $meritUnderlineY = $classRow[1] + $classRow[2] - 2;
-                $pdf->SetLineWidth(0.4);
-                $pdf->SetDrawColor(...$orange);
-                $pdf->Line(70, $meritUnderlineY, 100, $meritUnderlineY);
-                $pdf->Line(110, $meritUnderlineY, 140, $meritUnderlineY);
-                $pdf->SetFillColor(...$orange);
-                $pdf->Polygon([
-                    105, $meritUnderlineY - 1.2,
-                    106.2, $meritUnderlineY,
-                    105, $meritUnderlineY + 1.2,
-                    103.8, $meritUnderlineY,
-                ], 'F');
-            }
-        }
+        // 4. Date paragraph — multi-font block (sans body + cursive
+        //    day/month/year). Between the merit divider and the signature row
+        //    (template's first sig line is at y≈250mm).
+        $dateY = $hasMerit ? 190 : 175;
+        $dateHtml = '<div style="text-align:center; font-family:helvetica; font-size:11px; color:#333333; line-height:1.6;">'
+                  . 'Was admitted to the certificate at a Graduation<br>'
+                  . 'Ceremony held on the '
+                  . '<span style="font-family:greatvibes; font-size:20px; color:#1e3a8a;">' . e($data['graduation_day'] . $data['graduation_suffix']) . '</span>'
+                  . ' day of '
+                  . '<span style="font-family:greatvibes; font-size:20px; color:#1e3a8a;">' . e($data['graduation_month']) . '</span>'
+                  . '<br>in the year '
+                  . '<span style="font-family:greatvibes; font-size:20px; color:#1e3a8a;">' . e($data['graduation_year']) . '</span>'
+                  . '</div>';
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->writeHTMLCell(190, 28, 10, $dateY, $dateHtml, 0, 0, false, true, '', true);
 
-        // Solid signature lines drawn natively above each label row.
-        $pdf->SetLineWidth(0.4);
-        $pdf->SetDrawColor(0, 0, 0);
-        foreach ([$signaturesY - 1, $signaturesY + 13, $signaturesY + 25] as $lineY) {
-            $pdf->Line(20, $lineY, 95, $lineY);
-            $pdf->Line(115, $lineY, 190, $lineY);
-        }
+        // 5. Certificate number (left) and student number (right) — sit on the
+        //    template's third (no-label) signature line at y≈275mm.
+        $pdf->SetFont('helvetica', 'B', 11);
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->SetXY(28, 271);
+        $pdf->Cell(60, 5, $data['certificate_number'], 0, 0, 'C');
+        $pdf->SetXY(122, 271);
+        $pdf->Cell(60, 5, $data['student_number'], 0, 0, 'C');
 
         return $pdf->Output('', 'S');
-    }
-
-    /**
-     * Split the rendered blade into named sections using {{-- @section:NAME --}} markers.
-     */
-    protected function splitSections(string $html): array
-    {
-        $sections = [];
-        if (preg_match_all('/##(\w+)##\s*-->(.*?)<!--\s*##end##/s', $html, $matches, PREG_SET_ORDER)) {
-            foreach ($matches as $m) {
-                $sections[$m[1]] = trim($m[2]);
-            }
-        }
-        return $sections;
     }
 
     /**
