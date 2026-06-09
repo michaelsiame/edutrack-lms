@@ -201,31 +201,49 @@ class CertificateService
 
         $hasMerit = ($data['classification'] ?? 'Pass') !== 'Pass';
 
-        // (yPos, height) layout — tuned for A4 portrait with 32mm logo at top-left
+        // (yPos, height) layout — tuned for A4 portrait with 32mm logo at top-left.
+        // The bottom block (signatures + graduate row + IDs) is pinned near the
+        // page bottom so we don't leave a big empty band of watermark below it.
         $layout = [
             ['header',         16,  16],
-            ['tagline',        38,  10],
-            ['certify',        56,  12],
-            ['name',           72,  22],
-            ['requirement',   100,  12],
-            ['course',        116,  16],
+            ['tagline',        40,  10],
+            ['certify',        58,  12],
+            ['name',           76,  22],
+            ['requirement',   110,  14],
+            ['course',        128,  16],
         ];
         if ($hasMerit) {
-            $layout[] = ['classification', 138, 18];
-            $dateY = 164;
+            $layout[] = ['classification', 152, 20];
+            $layout[] = ['date',           180, 32];
         } else {
-            $dateY = 140;
+            $layout[] = ['date',           160, 32];
         }
-        $layout[] = ['date',        $dateY,           28];
-        $layout[] = ['signatures',  $dateY + 38,      14];
-        $layout[] = ['graduate',    $dateY + 58,      10];
-        $layout[] = ['ids',         $dateY + 72,      10];
+        $layout[] = ['signatures',  230, 14];
+        $layout[] = ['graduate',    250, 10];
+        $layout[] = ['ids',         264, 10];
 
         foreach ($layout as [$section, $y, $h]) {
             if (!isset($sections[$section])) {
                 continue;
             }
             $pdf->writeHTMLCell(190, $h, 10, $y, $sections[$section], 0, 1, false, true, '', true);
+        }
+
+        // Orange underline beneath the student name. Drawn natively so the
+        // line sits below the cursive descenders instead of cutting through them.
+        $nameRow = $layout[3] ?? null; // ['name', y, h]
+        if ($nameRow) {
+            $nameUnderlineY = $nameRow[1] + $nameRow[2] - 1;
+            $pdf->SetLineWidth(0.4);
+            $pdf->SetDrawColor(242, 101, 34);
+            $pdf->Line(35, $nameUnderlineY, 175, $nameUnderlineY);
+        }
+
+        // Seal image centered between Principal and Director, aligned to the
+        // signature row.
+        $sealPath = public_path('assets/images/certificate-seal.png');
+        if (file_exists($sealPath)) {
+            $pdf->Image($sealPath, 96, 222, 18, 0, '', '', '', true, 300, '', false, false, 0);
         }
 
         return $pdf->Output('', 'S');

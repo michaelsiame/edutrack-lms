@@ -33,13 +33,9 @@
 <!-- ##end## -->
 
 <!-- ##name## -->
-<table cellpadding="0" cellspacing="0" border="0" style="width:75%; margin:0 auto;" align="center">
-<tr>
-    <td style="text-align:center; padding-bottom:1mm; border-bottom:1px solid #f26522;">
-        <span style="font-family:greatvibes; font-size:54px; color:#111111;">{{ $student_name }}</span>
-    </td>
-</tr>
-</table>
+<div style="text-align:center;">
+    <span style="font-family:greatvibes; font-size:54px; color:#111111;">{{ $student_name }}</span>
+</div>
 <!-- ##end## -->
 
 <!-- ##requirement## -->
