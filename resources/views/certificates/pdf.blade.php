@@ -1,191 +1,158 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<style>
-@page {
-    size: A4;
-    margin: 0;
-    padding: 0;
-}
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    font-family: 'DejaVu Sans', Arial, sans-serif;
-    color: #1a1a1a;
-}
-.script-font { font-family: 'greatvibes', 'DejaVu Serif', serif; }
-</style>
-</head>
-<body>
+{{-- This view is rendered in fragments by CertificateService::generatePdf,
+     positioned at known Y coordinates. Each top-level section is wrapped in
+     an HTML comment marker so the service can split them. --}}
 
-<!-- Outer Orange Border -->
-<table width="100%" cellpadding="0" cellspacing="0" style="width: 210mm; height: 297mm; background-color: #f26522;">
+<!-- ##header## -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 <tr>
-<td valign="top" style="padding: 1.5mm;">
-
-    <!-- Inner Blue Border -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="height: 100%; background-color: #1e3a8a;">
-    <tr>
-    <td valign="top" style="padding: 1.5mm;">
-
-        <!-- Center White Content Area -->
-        <table width="100%" cellpadding="0" cellspacing="0" style="height: 100%; background-color: #ffffff;">
+    <td style="width:42mm;">&nbsp;</td>
+    <td style="width:100mm; text-align:center; vertical-align:top;">
+        <span style="font-family:helvetica; font-size:22px; font-weight:bold; color:#1a1a1a; letter-spacing:1px;">EDUTRACK COMPUTER</span><br>
+        <span style="font-family:helvetica; font-size:22px; font-weight:bold; color:#1a1a1a; letter-spacing:1px;">TRAINING COLLEGE</span>
+    </td>
+    <td style="width:44mm; vertical-align:top; text-align:center;">
+        <table cellpadding="0" cellspacing="0" border="1" bordercolor="#1e3a8a" style="background:#FFFFFF; border-collapse:collapse;">
         <tr>
-        <td valign="top" style="padding: 0; position: relative;">
-
-            <!-- Watermark -->
-            <div style="position: absolute; top: 25mm; left: 12mm; right: 12mm; bottom: 25mm; opacity: 0.025; font-family: 'DejaVu Serif', Georgia, serif; font-size: 11pt; color: #1e3a8a; line-height: 2.2; text-align: center; overflow: hidden;">
-                <?php
-                $wm = 'EDUTRACK COMPUTER TRAINING COLLEGE';
-                for ($r = 0; $r < 18; $r++) {
-                    echo $wm . ' &mdash; ' . $wm . ' &mdash; ' . $wm . ' &mdash; ' . $wm . '<br>';
-                }
-                ?>
-            </div>
-
-            <!-- Corner Decorations -->
-            <img src="{{ public_path('assets/images/cert-corners/tl.png') }}" style="position: absolute; top: 3mm; left: 3mm; width: 22mm; height: auto; z-index: 2;">
-            <img src="{{ public_path('assets/images/cert-corners/tr.png') }}" style="position: absolute; top: 3mm; right: 3mm; width: 22mm; height: auto; z-index: 2;">
-            <img src="{{ public_path('assets/images/cert-corners/bl.png') }}" style="position: absolute; bottom: 3mm; left: 3mm; width: 22mm; height: auto; z-index: 2;">
-            <img src="{{ public_path('assets/images/cert-corners/br.png') }}" style="position: absolute; bottom: 3mm; right: 3mm; width: 22mm; height: auto; z-index: 2;">
-
-            <!-- Main Content -->
-            <div style="padding: 10mm 16mm 8mm 16mm; position: relative; z-index: 1;">
-
-                <!-- HEADER -->
-                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 8mm;">
-                    <tr>
-                        <td width="20%" align="center" valign="middle">
-                            <img src="{{ public_path('assets/images/logo-pdf.png') }}" style="height: 22mm; width: auto;" alt="Logo">
-                        </td>
-                        <td width="60%" align="center" valign="middle">
-                            <div style="font-family: 'DejaVu Serif', Georgia, serif; font-size: 18pt; font-weight: bold; color: #1a1a1a; line-height: 1.25; text-transform: uppercase;">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
-                            <table width="55%" align="center" cellpadding="0" cellspacing="0" style="margin: 2mm 0;">
-                                <tr>
-                                    <td style="border-top: 1px solid #1e3a8a; line-height: 1px;">&nbsp;</td>
-                                    <td width="8%" align="center" style="color: #f26522; font-size: 7pt;">&#9670;</td>
-                                    <td style="border-top: 1px solid #1e3a8a; line-height: 1px;">&nbsp;</td>
-                                </tr>
-                            </table>
-                            <div style="font-family: 'DejaVu Serif', serif; font-size: 9pt; color: #444;">A skill training college</div>
-                        </td>
-                        <td width="20%" align="center" valign="middle">
-                            <img src="{{ public_path('assets/images/teveta-logo.png') }}" style="height: 18mm; width: auto;" alt="Teveta">
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- CERTIFY BANNER -->
-                <table width="100%" cellpadding="0" cellspacing="0" style="margin: 4mm 0;">
-                    <tr>
-                        <td width="15%" align="right" style="color: #f26522; font-size: 10pt; letter-spacing: 2px;">&mdash; &mdash; &mdash;</td>
-                        <td width="70%" align="center" style="font-size: 16pt; font-weight: bold; color: #1e3a8a; letter-spacing: 2px; text-transform: uppercase;">THIS IS TO CERTIFY THAT</td>
-                        <td width="15%" align="left" style="color: #f26522; font-size: 10pt; letter-spacing: 2px;">&mdash; &mdash; &mdash;</td>
-                    </tr>
-                </table>
-
-                <!-- STUDENT NAME -->
-                <div class="script-font" style="text-align: center; font-size: 36pt; color: #1a1a1a; margin-top: 3mm;">
-                    {{ $student_name }}
-                </div>
-                <table width="120mm" align="center" cellpadding="0" cellspacing="0" style="margin-top: 1mm;">
-                    <tr><td style="border-top: 1px solid #f26522; line-height: 1px; padding: 0;">&nbsp;</td></tr>
-                </table>
-
-                <!-- BODY TEXT -->
-                <div style="text-align: center; font-size: 9.5pt; color: #333; line-height: 1.5; margin: 4mm 0;">
-                    having satisfied the requirements for the<br>
-                    award of the certificate of
-                </div>
-
-                <!-- COURSE TITLE -->
-                <div style="text-align: center; font-size: 24pt; font-weight: 900; color: #1e3a8a; letter-spacing: 1px; margin: 3mm 0; text-transform: uppercase;">
-                    {{ $course_title }}
-                </div>
-
-                <!-- CLASSIFICATION -->
-                @if(isset($classification) && $classification && $classification !== 'Pass')
-                <div class="script-font" style="text-align: center; font-size: 18pt; color: #1a1a1a; margin-top: 2mm;">
-                    With {{ $classification }}
-                </div>
-                <table width="55mm" align="center" cellpadding="0" cellspacing="0" style="margin-top: 1mm;">
-                    <tr>
-                        <td width="42%" style="border-top: 1px solid #f26522; line-height: 1px; padding: 0;">&nbsp;</td>
-                        <td width="16%" align="center" style="color: #f26522; font-size: 7pt;">&#9670;</td>
-                        <td width="42%" style="border-top: 1px solid #f26522; line-height: 1px; padding: 0;">&nbsp;</td>
-                    </tr>
-                </table>
-                @endif
-
-                <!-- DATE -->
-                <div style="text-align: center; font-size: 9.5pt; color: #333; line-height: 1.6; margin: 5mm 0;">
-                    Was admitted to the certificate at a Graduation<br>
-                    Ceremony held on the <span class="script-font" style="font-size: 16pt; color: #1a1a1a;">{{ $graduation_day }}<sup>{{ $graduation_suffix }}</sup></span> day of <span class="script-font" style="font-size: 16pt; color: #1a1a1a;">{{ $graduation_month }}</span><br>
-                    in the year <span class="script-font" style="font-size: 16pt; color: #1a1a1a;">{{ $graduation_year }}</span>
-                </div>
-
-                <!-- SIGNATURES -->
-                <table width="100%" cellpadding="0" cellspacing="0" style="margin: 18mm 0 4mm;">
-                    <tr>
-                        <!-- LEFT COLUMN -->
-                        <td width="45%" align="center" valign="bottom">
-                            <table width="80%" align="center" cellpadding="0" cellspacing="0">
-                                <tr><td align="center" valign="bottom" style="height: 10mm; border-bottom: 1px solid #333; line-height: 10mm;">&nbsp;</td></tr>
-                                <tr><td align="center" style="font-size: 8pt; font-weight: 600; color: #333; padding-top: 1mm;">Principal</td></tr>
-
-                                <tr><td style="height: 10mm; line-height: 10mm;">&nbsp;</td></tr>
-
-                                <tr><td align="center" valign="bottom" style="height: 10mm; border-bottom: 1px solid #333; line-height: 10mm;">&nbsp;</td></tr>
-                                <tr><td align="center" style="font-size: 8pt; font-weight: 600; color: #333; padding-top: 1mm;">Graduate's Signature</td></tr>
-                            </table>
-                        </td>
-
-                        <!-- CENTER SPACER -->
-                        <td width="10%">&nbsp;</td>
-
-                        <!-- RIGHT COLUMN -->
-                        <td width="45%" align="center" valign="bottom">
-                            <table width="80%" align="center" cellpadding="0" cellspacing="0">
-                                <tr><td align="center" valign="bottom" style="height: 10mm; border-bottom: 1px solid #333; line-height: 10mm;">&nbsp;</td></tr>
-                                <tr><td align="center" style="font-size: 8pt; font-weight: 600; color: #333; padding-top: 1mm;">Director</td></tr>
-
-                                <tr><td style="height: 10mm; line-height: 10mm;">&nbsp;</td></tr>
-
-                                <tr><td align="center" valign="bottom" style="height: 10mm; border-bottom: 1px solid #333; line-height: 10mm;">&nbsp;</td></tr>
-                                <tr><td align="center" style="font-size: 8pt; font-weight: 600; color: #333; padding-top: 1mm;">Graduate's I.D. No.</td></tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- BOTTOM INFO -->
-                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 6mm;">
-                    <tr>
-                        <td width="50%" align="left" style="font-size: 10pt; font-weight: bold; color: #1a1a1a;">
-                            {{ $certificate_number }}
-                        </td>
-                        <td width="50%" align="right" style="font-size: 10pt; font-weight: bold; color: #1a1a1a;">
-                            {{ $student_number }}
-                        </td>
-                    </tr>
-                </table>
-
-            </div>
-
-        </td>
+            <td style="padding:2mm 3mm; text-align:center;">
+                <span style="font-family:helvetica; color:#1e3a8a; font-size:14px; font-weight:bold; letter-spacing:1px;">TEVETA</span><br>
+                <span style="font-family:helvetica; color:#1e3a8a; font-size:5px; font-weight:bold;">Technical Education, Vocational and</span><br>
+                <span style="font-family:helvetica; color:#1e3a8a; font-size:5px; font-weight:bold;">Entrepreneurship Training Authority</span>
+            </td>
         </tr>
         </table>
-
     </td>
-    </tr>
-    </table>
-
-</td>
 </tr>
 </table>
+<!-- ##end## -->
 
-</body>
-</html>
+<!-- ##tagline## -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:60%; margin:0 auto;" align="center">
+<tr>
+    <td style="border-top:1px solid #1e3a8a; height:1px;"></td>
+    <td style="width:8mm; text-align:center; vertical-align:middle; color:#f26522; font-size:11px;">&#9670;</td>
+    <td style="border-top:1px solid #1e3a8a; height:1px;"></td>
+</tr>
+</table>
+<div style="text-align:center; font-family:dejavuserif; font-size:11px; color:#444; font-style:italic;">A skill training college</div>
+<!-- ##end## -->
+
+<!-- ##certify## -->
+<div style="text-align:center;">
+    <span style="color:#f26522; font-size:11px;">&mdash;&nbsp;&mdash;&nbsp;&#9830;&nbsp;</span>
+    <span style="font-family:helvetica; font-size:19px; font-weight:bold; color:#1e3a8a; letter-spacing:2px;">THIS IS TO CERTIFY THAT</span>
+    <span style="color:#f26522; font-size:11px;">&nbsp;&#9830;&nbsp;&mdash;&nbsp;&mdash;</span>
+</div>
+<!-- ##end## -->
+
+<!-- ##name## -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:75%; margin:0 auto;" align="center">
+<tr>
+    <td style="text-align:center; padding-bottom:1mm; border-bottom:1px solid #f26522;">
+        <span style="font-family:greatvibes; font-size:54px; color:#111111;">{{ $student_name }}</span>
+    </td>
+</tr>
+</table>
+<!-- ##end## -->
+
+<!-- ##requirement## -->
+<div style="text-align:center; font-family:dejavuserif; font-size:13px; color:#333333; line-height:1.7;">
+    having satisfied the requirements for the<br>award of the certificate of
+</div>
+<!-- ##end## -->
+
+<!-- ##course## -->
+<div style="text-align:center;">
+    <span style="font-family:helvetica; font-size:30px; font-weight:bold; color:#1e3a8a; letter-spacing:1px;">{{ strtoupper($course_title) }}</span>
+</div>
+<!-- ##end## -->
+
+<!-- ##classification## -->
+@if($classification && $classification !== 'Pass')
+<div style="text-align:center;">
+    <span style="font-family:greatvibes; font-size:38px; color:#111111;">With {{ $classification }}</span>
+</div>
+<table cellpadding="0" cellspacing="0" border="0" style="width:45%; margin:0 auto;" align="center">
+<tr>
+    <td style="border-top:1px solid #f26522; height:1px;"></td>
+    <td style="width:8mm; text-align:center; vertical-align:middle; color:#f26522; font-size:11px;">&#9670;</td>
+    <td style="border-top:1px solid #f26522; height:1px;"></td>
+</tr>
+</table>
+@endif
+<!-- ##end## -->
+
+<!-- ##date## -->
+<div style="text-align:center; font-family:dejavuserif; font-size:13px; color:#333333; line-height:1.8;">
+    Was admitted to the certificate at a Graduation<br>
+    Ceremony held on the
+    <span style="font-family:greatvibes; font-size:24px; color:#1e3a8a;">&nbsp;{{ $graduation_day }}<sup style="font-size:9px;">{{ $graduation_suffix }}</sup>&nbsp;</span>
+    day of
+    <span style="font-family:greatvibes; font-size:24px; color:#1e3a8a;">&nbsp;{{ $graduation_month }}&nbsp;</span><br>
+    in the year
+    <span style="font-family:greatvibes; font-size:24px; color:#1e3a8a;">&nbsp;{{ $graduation_year }}&nbsp;</span>
+</div>
+<!-- ##end## -->
+
+<!-- ##signatures## -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+<tr>
+    <td style="width:33%; text-align:center;">
+        <table cellpadding="0" cellspacing="0" border="0" style="width:80%; margin:0 auto;">
+        <tr><td style="border-top:1px solid #000000; padding-top:1mm; text-align:center; font-family:dejavuserif; font-size:10px; color:#222222; font-weight:bold;">Principal</td></tr>
+        </table>
+    </td>
+    <td style="width:34%; text-align:center;">
+        <table cellpadding="0" cellspacing="0" border="2" bordercolor="#d4af37" style="width:18mm; height:18mm; margin:0 auto; background:#1e3a8a; border-collapse:collapse;">
+        <tr>
+            <td style="text-align:center; vertical-align:middle;">
+                <span style="color:#d4af37; font-size:13px;">&#9733;</span><br>
+                <span style="font-family:helvetica; font-size:6px; font-weight:bold; color:#d4af37;">EXCELLENCE</span><br>
+                <span style="color:#d4af37; font-size:8px;">&#9830;</span>
+            </td>
+        </tr>
+        </table>
+    </td>
+    <td style="width:33%; text-align:center;">
+        <table cellpadding="0" cellspacing="0" border="0" style="width:80%; margin:0 auto;">
+        <tr><td style="border-top:1px solid #000000; padding-top:1mm; text-align:center; font-family:dejavuserif; font-size:10px; color:#222222; font-weight:bold;">Director</td></tr>
+        </table>
+    </td>
+</tr>
+</table>
+<!-- ##end## -->
+
+<!-- ##graduate## -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+<tr>
+    <td style="width:33%; text-align:center;">
+        <table cellpadding="0" cellspacing="0" border="0" style="width:80%; margin:0 auto;">
+        <tr><td style="border-top:1px solid #000000; padding-top:1mm; text-align:center; font-family:dejavuserif; font-size:10px; color:#222222; font-weight:bold;">Graduate's Signature</td></tr>
+        </table>
+    </td>
+    <td style="width:34%;">&nbsp;</td>
+    <td style="width:33%; text-align:center;">
+        <table cellpadding="0" cellspacing="0" border="0" style="width:80%; margin:0 auto;">
+        <tr><td style="border-top:1px solid #000000; padding-top:1mm; text-align:center; font-family:dejavuserif; font-size:10px; color:#222222; font-weight:bold;">Graduate's ID No.</td></tr>
+        </table>
+    </td>
+</tr>
+</table>
+<!-- ##end## -->
+
+<!-- ##ids## -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+<tr>
+    <td style="width:33%; text-align:center;">
+        <table cellpadding="0" cellspacing="0" border="0" style="width:80%; margin:0 auto;">
+        <tr><td style="border-top:1px solid #000000; padding-top:1mm; text-align:center; font-family:helvetica; font-size:11px; color:#000000; font-weight:bold;">{{ $certificate_number }}</td></tr>
+        </table>
+    </td>
+    <td style="width:34%;">&nbsp;</td>
+    <td style="width:33%; text-align:center;">
+        <table cellpadding="0" cellspacing="0" border="0" style="width:80%; margin:0 auto;">
+        <tr><td style="border-top:1px solid #000000; padding-top:1mm; text-align:center; font-family:helvetica; font-size:11px; color:#000000; font-weight:bold;">{{ $student_number }}</td></tr>
+        </table>
+    </td>
+</tr>
+</table>
+<!-- ##end## -->

@@ -6,9 +6,7 @@ use App\Models\Certificate;
 use App\Models\Enrollment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Mpdf\Mpdf;
-use Mpdf\Config\ConfigVariables;
-use Mpdf\Config\FontVariables;
+use TCPDF;
 
 class CertificateService
 {
@@ -33,24 +31,17 @@ class CertificateService
     {
         $nrcSuffix = '2495807';
 
-        $nrcNumber = $user?->profile?->nrc_number;
-
-        if ($nrcNumber) {
-            $nrcSuffix = preg_replace('/[^0-9\/]/', '', $nrcNumber);
+        if ($user && $user->national_id) {
+            $nrcSuffix = preg_replace('/[^0-9\/]/', '', $user->national_id);
             if (empty($nrcSuffix)) $nrcSuffix = '2495807/1/1';
         } elseif ($user && $user->id) {
             $nrcSuffix = $user->id . '/1/1';
         }
 
-        // Append course ID and random suffix, retry on collision
-        $attempts = 0;
-        do {
-            $uniqueSuffix = ($courseId ?? '') . '-' . Str::random(8);
-            $number = 'NRC ' . $nrcSuffix . '/' . $uniqueSuffix;
-            $attempts++;
-        } while (\App\Models\Certificate::where('certificate_number', $number)->exists() && $attempts < 10);
+        // Append course ID and random suffix to guarantee uniqueness per certificate
+        $uniqueSuffix = ($courseId ?? '') . '-' . Str::random(6);
 
-        return $number;
+        return 'NRC ' . $nrcSuffix . '/' . $uniqueSuffix;
     }
 
     /**
@@ -61,10 +52,8 @@ class CertificateService
         $yearSuffix = substr($certificate->graduation_ceremony_date?->format('Y') ?? date('Y'), -2);
         $userId = $certificate->user_id;
 
-        $nrcNumber = $certificate->user?->profile?->nrc_number;
-
-        if ($nrcNumber) {
-            $numberPart = preg_replace('/[^0-9]/', '', $nrcNumber);
+        if ($certificate->user && $certificate->user->national_id) {
+            $numberPart = preg_replace('/[^0-9]/', '', $certificate->user->national_id);
             if (strlen($numberPart) > 6) $numberPart = substr($numberPart, -6);
         } else {
             $numberPart = str_pad((string) $userId, 6, '0', STR_PAD_LEFT);
@@ -102,13 +91,6 @@ class CertificateService
 
             if ($lockedEnrollment->certificate_blocked) {
                 return null;
-            }
-
-            // Extra guard: check if certificate already exists (handles edge cases)
-            $existingCertificate = Certificate::where('enrollment_id', $lockedEnrollment->id)->first();
-            if ($existingCertificate) {
-                $lockedEnrollment->update(['certificate_issued' => true]);
-                return $existingCertificate;
             }
 
             // Recalculate final grade before issuing
@@ -170,46 +152,170 @@ class CertificateService
      */
     public function generatePdf(Certificate $certificate): string
     {
+        $this->ensureCustomFontsAvailable();
+
+        $pdf = new TCPDF('P', 'mm', 'A4');
+        $pdf->SetCreator('Edutrack LMS');
+        $pdf->SetAuthor('Edutrack Computer Training College');
+        $pdf->SetTitle('Certificate - ' . $certificate->certificate_number);
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+
+        $pdf->SetMargins(0, 0, 0);
+        $pdf->SetAutoPageBreak(false, 0);
+        $pdf->SetCellPadding(0);
+        $pdf->SetCellMargins(0);
+        $pdf->setImageScale(1);
+        $pdf->SetFont('dejavuserif', '', 10);
+
+        // Register the cursive font shipped in public/assets/fonts/tcpdf
+        try {
+            $pdf->AddFont('greatvibes', '', 'greatvibes.php');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Great Vibes font missing, falling back: ' . $e->getMessage());
+        }
+
+        $pdf->AddPage();
+
+        // Layer 1: tiled "Edutrack Computer Training College" watermark
+        $this->drawWatermark($pdf);
+
+        // Layer 2: outer/inner frames + decorative orange corner triangles
+        $this->drawFrames($pdf);
+
+        // Layer 3: EduTrack shield logo (top-left)
+        $logoPath = public_path('assets/images/logo.png');
+        if (file_exists($logoPath)) {
+            $pdf->Image($logoPath, 16, 16, 32, 32, '', '', '', true, 300, '', false, false, 0);
+        }
+
+        // Layer 4: the main HTML content, rendered as fragments positioned by Y
         $data = $this->getCertificateData($certificate);
-
-        $defaultConfig = (new ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
-
-        $defaultFontConfig = (new FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
-
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'default_font_size' => 10,
-            'default_font' => 'DejaVuSerif',
-            'margin_left' => 0,
-            'margin_right' => 0,
-            'margin_top' => 0,
-            'margin_bottom' => 0,
-            'margin_header' => 0,
-            'margin_footer' => 0,
-            'title' => 'Certificate - ' . $certificate->certificate_number,
-            'author' => 'Edutrack Computer Training College',
-            'creator' => 'Edutrack LMS',
-            'fontDir' => array_merge($fontDirs, [
-                public_path('assets/fonts/cert/'),
-            ]),
-            'fontdata' => $fontData + [
-                'greatvibes' => [
-                    'R' => 'GreatVibes-Regular.ttf',
-                ],
-            ],
-        ]);
-
-        $mpdf->SetTitle('Certificate - ' . $certificate->certificate_number);
-        $mpdf->SetAuthor('Edutrack Computer Training College');
-        $mpdf->SetCreator('Edutrack LMS');
-
         $html = view('certificates.pdf', $data)->render();
-        $mpdf->WriteHTML($html);
+        $sections = $this->splitSections($html);
 
-        return $mpdf->Output('', 'S');
+        $hasMerit = ($data['classification'] ?? 'Pass') !== 'Pass';
+
+        // (yPos, height) layout — tuned for A4 portrait with 32mm logo at top-left
+        $layout = [
+            ['header',         16,  16],
+            ['tagline',        38,  10],
+            ['certify',        56,  12],
+            ['name',           72,  22],
+            ['requirement',   100,  12],
+            ['course',        116,  16],
+        ];
+        if ($hasMerit) {
+            $layout[] = ['classification', 138, 18];
+            $dateY = 162;
+        } else {
+            $dateY = 138;
+        }
+        $layout[] = ['date',        $dateY,           28];
+        $layout[] = ['signatures',  $dateY + 32,      24];
+        $layout[] = ['graduate',    $dateY + 64,      10];
+        $layout[] = ['ids',         $dateY + 78,      10];
+
+        foreach ($layout as [$section, $y, $h]) {
+            if (!isset($sections[$section])) {
+                continue;
+            }
+            $pdf->writeHTMLCell(190, $h, 10, $y, $sections[$section], 0, 1, false, true, '', true);
+        }
+
+        return $pdf->Output('', 'S');
+    }
+
+    /**
+     * Split the rendered blade into named sections using {{-- @section:NAME --}} markers.
+     */
+    protected function splitSections(string $html): array
+    {
+        $sections = [];
+        if (preg_match_all('/##(\w+)##\s*-->(.*?)<!--\s*##end##/s', $html, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $m) {
+                $sections[$m[1]] = trim($m[2]);
+            }
+        }
+        return $sections;
+    }
+
+    /**
+     * Copy the bundled Great Vibes font files into TCPDF's font directory if they
+     * aren't already there. Lets shared-hosting deploys keep working after a
+     * fresh `composer install` wipes vendor/.
+     */
+    protected function ensureCustomFontsAvailable(): void
+    {
+        $sourceDir = public_path('assets/fonts/tcpdf/');
+        $targetDir = base_path('vendor/tecnickcom/tcpdf/fonts/');
+
+        if (!is_dir($targetDir) || !is_dir($sourceDir)) {
+            return;
+        }
+
+        foreach (['greatvibes.php', 'greatvibes.z', 'greatvibes.ctg.z'] as $file) {
+            $target = $targetDir . $file;
+            $source = $sourceDir . $file;
+            if (!file_exists($target) && file_exists($source)) {
+                @copy($source, $target);
+            }
+        }
+    }
+
+    /**
+     * Draw the orange + blue page frames and the four orange corner triangles.
+     */
+    protected function drawFrames(TCPDF $pdf): void
+    {
+        $orange = [242, 101, 34];
+        $blue   = [30, 58, 138];
+
+        // Outer orange rectangle
+        $pdf->SetLineWidth(0.9);
+        $pdf->SetDrawColor(...$orange);
+        $pdf->Rect(6, 6, 198, 285);
+
+        // Inner blue rectangle (slightly inset)
+        $pdf->SetLineWidth(1.4);
+        $pdf->SetDrawColor(...$blue);
+        $pdf->Rect(10, 10, 190, 277);
+
+        // Decorative orange corner triangles (sit on top of the inner frame)
+        $pdf->SetFillColor(...$orange);
+        $pdf->SetDrawColor(...$orange);
+        $size = 26;
+
+        // top-left
+        $pdf->Polygon([6, 6, 6 + $size, 6, 6, 6 + $size], 'F');
+        // top-right
+        $pdf->Polygon([204 - $size, 6, 204, 6, 204, 6 + $size], 'F');
+        // bottom-left
+        $pdf->Polygon([6, 291 - $size, 6, 291, 6 + $size, 291], 'F');
+        // bottom-right
+        $pdf->Polygon([204, 291 - $size, 204, 291, 204 - $size, 291], 'F');
+    }
+
+    /**
+     * Render the tiled "Edutrack Computer Training College" watermark
+     * across the whole page at low opacity.
+     */
+    protected function drawWatermark(TCPDF $pdf): void
+    {
+        $pdf->SetAlpha(0.07);
+        $pdf->SetFont('helvetica', '', 4);
+        $pdf->SetTextColor(30, 58, 138);
+
+        $unit = 'Edutrack Computer Training College  ';
+        $row  = str_repeat($unit, 16);
+
+        for ($y = 14; $y < 286; $y += 2.6) {
+            $pdf->SetXY(8, $y);
+            $pdf->Cell(196, 2.2, $row, 0, 0, 'L');
+        }
+
+        $pdf->SetAlpha(1);
+        $pdf->SetTextColor(0, 0, 0);
     }
 
     /**
@@ -217,7 +323,7 @@ class CertificateService
      */
     public function getCertificateData(Certificate $certificate): array
     {
-        $certificate->load(['user.profile', 'course', 'enrollment']);
+        $certificate->load(['user', 'course', 'enrollment']);
 
         $issuedDate = $certificate->issued_date ?? now();
         $graduationDate = $certificate->graduation_ceremony_date ?? $issuedDate;
@@ -236,7 +342,6 @@ class CertificateService
             'graduation_month' => $graduationDate->format('F'),
             'graduation_year' => $graduationDate->format('Y'),
             'student_number' => $this->generateStudentNumber($certificate),
-            'nrc_number' => $certificate->user?->profile?->nrc_number,
         ];
     }
 }
