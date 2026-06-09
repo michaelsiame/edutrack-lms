@@ -189,7 +189,10 @@ class CertificateService
             $pdf->Image($logoPath, 16, 16, 32, 32, '', '', '', true, 300, '', false, false, 0);
         }
 
-        $tevetaPath = public_path('assets/images/teveta-logo.jpg');
+        $tevetaPath = public_path('assets/images/teveta-logo.png');
+        if (!file_exists($tevetaPath)) {
+            $tevetaPath = public_path('assets/images/teveta-logo.jpg');
+        }
         if (file_exists($tevetaPath)) {
             $pdf->Image($tevetaPath, 162, 20, 38, 0, '', '', '', true, 300, '', false, false, 0);
         }
@@ -201,26 +204,33 @@ class CertificateService
 
         $hasMerit = ($data['classification'] ?? 'Pass') !== 'Pass';
 
-        // (yPos, height) layout — tuned for A4 portrait with 32mm logo at top-left.
-        // The bottom block (signatures + graduate row + IDs) is pinned near the
-        // page bottom so we don't leave a big empty band of watermark below it.
+        // (yPos, height) layout — tuned to match the reference PDF's compact
+        // vertical rhythm. The bottom block (signatures + graduate + IDs)
+        // stacks right after the date paragraph.
         $layout = [
             ['header',         16,  16],
-            ['tagline',        40,  10],
-            ['certify',        58,  12],
-            ['name',           76,  22],
-            ['requirement',   110,  14],
-            ['course',        128,  16],
+            ['tagline',        38,  10],
+            ['certify',        54,  12],
+            ['name',           70,  22],
+            ['requirement',    98,  12],
+            ['course',        114,  16],
         ];
         if ($hasMerit) {
-            $layout[] = ['classification', 152, 20];
-            $layout[] = ['date',           180, 32];
+            $layout[] = ['classification', 136, 18];
+            $dateY = 158;
         } else {
-            $layout[] = ['date',           160, 32];
+            $dateY = 136;
         }
-        $layout[] = ['signatures',  230, 14];
-        $layout[] = ['graduate',    250, 10];
-        $layout[] = ['ids',         264, 10];
+        // Date paragraph (3 lines), then a gap for the seal, then the
+        // signature block stacked compactly.
+        $sealY        = $dateY + 30;
+        $sealHeight   = 32;
+        $signaturesY  = $sealY + $sealHeight + 4;
+
+        $layout[] = ['date',        $dateY,           28];
+        $layout[] = ['signatures',  $signaturesY,     14];
+        $layout[] = ['graduate',    $signaturesY + 18, 10];
+        $layout[] = ['ids',         $signaturesY + 32, 10];
 
         foreach ($layout as [$section, $y, $h]) {
             if (!isset($sections[$section])) {
@@ -239,11 +249,12 @@ class CertificateService
             $pdf->Line(35, $nameUnderlineY, 175, $nameUnderlineY);
         }
 
-        // Seal image centered between Principal and Director, aligned to the
-        // signature row.
+        // Seal image — centred between the date paragraph and the signature
+        // block, so it sits in the space the reference layout leaves blank.
         $sealPath = public_path('assets/images/certificate-seal.png');
         if (file_exists($sealPath)) {
-            $pdf->Image($sealPath, 96, 222, 18, 0, '', '', '', true, 300, '', false, false, 0);
+            $sealWidth = 22;
+            $pdf->Image($sealPath, 105 - $sealWidth / 2, $sealY, $sealWidth, $sealHeight, '', '', '', true, 300, '', false, false, 0);
         }
 
         return $pdf->Output('', 'S');
@@ -325,16 +336,16 @@ class CertificateService
      */
     protected function drawWatermark(TCPDF $pdf): void
     {
-        $pdf->SetAlpha(0.12);
-        $pdf->SetFont('helvetica', '', 5);
+        $pdf->SetAlpha(0.07);
+        $pdf->SetFont('helvetica', '', 4);
         $pdf->SetTextColor(30, 58, 138);
 
         $unit = 'Edutrack Computer Training College  ';
-        $row  = str_repeat($unit, 14);
+        $row  = str_repeat($unit, 16);
 
-        for ($y = 14; $y < 286; $y += 3.2) {
+        for ($y = 14; $y < 286; $y += 2.8) {
             $pdf->SetXY(8, $y);
-            $pdf->Cell(196, 2.8, $row, 0, 0, 'L');
+            $pdf->Cell(196, 2.4, $row, 0, 0, 'L');
         }
 
         $pdf->SetAlpha(1);
