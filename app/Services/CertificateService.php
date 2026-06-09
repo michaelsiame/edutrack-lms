@@ -224,16 +224,12 @@ class CertificateService
         } else {
             $dateY = 136;
         }
-        // Date paragraph (3 lines), then a gap for the seal, then the
-        // signature block stacked compactly.
-        $sealY        = $dateY + 30;
-        $sealHeight   = 32;
-        $signaturesY  = $sealY + $sealHeight + 4;
-
-        $layout[] = ['date',        $dateY,           28];
-        $layout[] = ['signatures',  $signaturesY,     14];
-        $layout[] = ['graduate',    $signaturesY + 18, 10];
-        $layout[] = ['ids',         $signaturesY + 32, 10];
+        // Compact bottom block, matching the reference's tight signature stack.
+        $signaturesY = $dateY + 34;
+        $layout[] = ['date',        $dateY,            28];
+        $layout[] = ['signatures',  $signaturesY,      12];
+        $layout[] = ['graduate',    $signaturesY + 14, 10];
+        $layout[] = ['ids',         $signaturesY + 26, 10];
 
         foreach ($layout as [$section, $y, $h]) {
             if (!isset($sections[$section])) {
@@ -242,22 +238,66 @@ class CertificateService
             $pdf->writeHTMLCell(190, $h, 10, $y, $sections[$section], 0, 1, false, true, '', true);
         }
 
+        $orange = [242, 101, 34];
+        $blue   = [30, 58, 138];
+
+        // Decorative blue divider with centre diamond, above "A skill training
+        // college" — matches the reference's tagline ornament.
+        $taglineDecorY = 36;
+        $pdf->SetLineWidth(0.4);
+        $pdf->SetDrawColor(...$blue);
+        $pdf->Line(60, $taglineDecorY, 100, $taglineDecorY);
+        $pdf->Line(110, $taglineDecorY, 150, $taglineDecorY);
+        $pdf->SetFillColor(...$orange);
+        $pdf->Polygon([
+            105, $taglineDecorY - 1.4,
+            106.4, $taglineDecorY,
+            105, $taglineDecorY + 1.4,
+            103.6, $taglineDecorY,
+        ], 'F');
+
+        // Solid orange lines flanking "THIS IS TO CERTIFY THAT".
+        $certifyY = 60;
+        $pdf->SetLineWidth(0.4);
+        $pdf->SetDrawColor(...$orange);
+        $pdf->Line(30, $certifyY, 60, $certifyY);
+        $pdf->Line(150, $certifyY, 180, $certifyY);
+
         // Orange underline beneath the student name. Drawn natively so the
         // line sits below the cursive descenders instead of cutting through them.
-        $nameRow = $layout[3] ?? null; // ['name', y, h]
+        $nameRow = $layout[3] ?? null;
         if ($nameRow) {
             $nameUnderlineY = $nameRow[1] + $nameRow[2] - 1;
             $pdf->SetLineWidth(0.4);
-            $pdf->SetDrawColor(242, 101, 34);
+            $pdf->SetDrawColor(...$orange);
             $pdf->Line(35, $nameUnderlineY, 175, $nameUnderlineY);
         }
 
-        // Seal image — centred between the date paragraph and the signature
-        // block, so it sits in the space the reference layout leaves blank.
-        $sealPath = public_path('assets/images/certificate-seal.png');
-        if (file_exists($sealPath)) {
-            $sealWidth = 22;
-            $pdf->Image($sealPath, 105 - $sealWidth / 2, $sealY, $sealWidth, $sealHeight, '', '', '', true, 300, '', false, false, 0);
+        // Solid orange underline beneath "With Merit" with a centre diamond.
+        if ($hasMerit) {
+            $classRow = $layout[6] ?? null; // classification row
+            if ($classRow) {
+                $meritUnderlineY = $classRow[1] + $classRow[2] - 2;
+                $pdf->SetLineWidth(0.4);
+                $pdf->SetDrawColor(...$orange);
+                $pdf->Line(70, $meritUnderlineY, 100, $meritUnderlineY);
+                $pdf->Line(110, $meritUnderlineY, 140, $meritUnderlineY);
+                $pdf->SetFillColor(...$orange);
+                $pdf->Polygon([
+                    105, $meritUnderlineY - 1.2,
+                    106.2, $meritUnderlineY,
+                    105, $meritUnderlineY + 1.2,
+                    103.8, $meritUnderlineY,
+                ], 'F');
+            }
+        }
+
+        // Solid signature lines drawn natively above each label row.
+        $pdf->SetLineWidth(0.4);
+        $pdf->SetDrawColor(0, 0, 0);
+        foreach ([$signaturesY - 1, $signaturesY + 13, $signaturesY + 25] as $lineY) {
+            $pdf->Line(20, $lineY, 95, $lineY);
+            $pdf->Line(115, $lineY, 190, $lineY);
         }
 
         return $pdf->Output('', 'S');
@@ -302,49 +342,45 @@ class CertificateService
 
     /**
      * Draw the orange + blue page frames and the four orange corner triangles.
-     * Layout matches the reference: thin orange outer ring, a small gap, then
-     * a double-line blue frame, then orange corner triangles with blue
-     * diagonal trim lines on the inside of each triangle.
+     * Heavier multi-band frame matching the reference: thick orange outer,
+     * thick blue inner, thin gold accent between them.
      */
     protected function drawFrames(TCPDF $pdf): void
     {
         $orange = [242, 101, 34];
         $blue   = [30, 58, 138];
+        $gold   = [212, 175, 55];
 
-        // Outer orange ring (thin)
-        $pdf->SetLineWidth(0.5);
+        // Thick orange outer band
+        $pdf->SetLineWidth(2.0);
         $pdf->SetDrawColor(...$orange);
         $pdf->Rect(6, 6, 198, 285);
 
-        // Blue double-line frame (two lines with a thin white channel between)
-        $pdf->SetDrawColor(...$blue);
-        $pdf->SetLineWidth(0.6);
+        // Thin gold accent line between the orange and blue bands
+        $pdf->SetLineWidth(0.3);
+        $pdf->SetDrawColor(...$gold);
         $pdf->Rect(9, 9, 192, 279);
-        $pdf->SetLineWidth(0.6);
+
+        // Thick blue inner band
+        $pdf->SetLineWidth(2.0);
+        $pdf->SetDrawColor(...$blue);
         $pdf->Rect(12, 12, 186, 273);
 
-        // Orange corner triangles
+        // Orange corner triangles with blue diagonal trim stripes inside
         $pdf->SetFillColor(...$orange);
         $pdf->SetDrawColor(...$orange);
         $size = 22;
-
         $pdf->Polygon([6, 6, 6 + $size, 6, 6, 6 + $size], 'F');
         $pdf->Polygon([204 - $size, 6, 204, 6, 204, 6 + $size], 'F');
         $pdf->Polygon([6, 291 - $size, 6, 291, 6 + $size, 291], 'F');
         $pdf->Polygon([204, 291 - $size, 204, 291, 204 - $size, 291], 'F');
 
-        // Blue diagonal stripes inside each triangle, parallel to the
-        // hypotenuse — the layered "trim" detail visible in the reference.
         $pdf->SetDrawColor(...$blue);
         $pdf->SetLineWidth(0.7);
         foreach ([4, 7] as $inset) {
-            // top-left: hypotenuse (6+size,6) -> (6,6+size); inset toward (6,6)
             $pdf->Line(6 + $size - $inset, 6,            6,            6 + $size - $inset);
-            // top-right: hypotenuse (204-size,6) -> (204,6+size); inset toward (204,6)
             $pdf->Line(204 - $size + $inset, 6,           204,          6 + $size - $inset);
-            // bottom-left: hypotenuse (6,291-size) -> (6+size,291); inset toward (6,291)
             $pdf->Line(6,            291 - $size + $inset, 6 + $size - $inset, 291);
-            // bottom-right: hypotenuse (204-size,291) -> (204,291-size); inset toward (204,291)
             $pdf->Line(204 - $size + $inset, 291,          204,          291 - $size + $inset);
         }
     }
@@ -355,16 +391,18 @@ class CertificateService
      */
     protected function drawWatermark(TCPDF $pdf): void
     {
-        $pdf->SetAlpha(0.07);
-        $pdf->SetFont('helvetica', '', 4);
+        // Dense tiled text watermark — covers the whole inner area like the
+        // reference. Kept faint enough that body text stays legible on top.
+        $pdf->SetAlpha(0.13);
+        $pdf->SetFont('helvetica', '', 4.5);
         $pdf->SetTextColor(30, 58, 138);
 
-        $unit = 'Edutrack Computer Training College  ';
-        $row  = str_repeat($unit, 16);
+        $unit = 'Edutrack Computer Training College ';
+        $row  = str_repeat($unit, 18);
 
-        for ($y = 14; $y < 286; $y += 2.8) {
+        for ($y = 14; $y < 287; $y += 2.2) {
             $pdf->SetXY(8, $y);
-            $pdf->Cell(196, 2.4, $row, 0, 0, 'L');
+            $pdf->Cell(196, 2, $row, 0, 0, 'L');
         }
 
         $pdf->SetAlpha(1);
