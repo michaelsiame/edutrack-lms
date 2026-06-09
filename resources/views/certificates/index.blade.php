@@ -66,7 +66,7 @@
                             <a href="{{ route('certificates.preview', $certificate) }}" class="od-btn od-btn-secondary od-btn-sm flex-1 text-center">
                                 <i class="fas fa-eye"></i> View
                             </a>
-                            <a href="{{ route('certificates.download', $certificate) }}" class="od-btn od-btn-primary od-btn-sm flex-1 text-center">
+                            <a href="{{ route('certificates.download', $certificate) }}" target="_blank" class="od-btn od-btn-primary od-btn-sm flex-1 text-center">
                                 <i class="fas fa-download"></i> PDF
                             </a>
                         </div>

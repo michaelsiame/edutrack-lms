@@ -6,6 +6,9 @@ use App\Models\Certificate;
 use App\Models\Enrollment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Mpdf\Mpdf;
+use Mpdf\Config\ConfigVariables;
+use Mpdf\Config\FontVariables;
 
 class CertificateService
 {
@@ -147,39 +150,41 @@ class CertificateService
     }
 
     /**
-     * Generate PDF for a certificate using Puppeteer (headless Chromium).
-     * Produces pixel-perfect output matching the browser print preview.
+     * Generate PDF for a certificate using mPDF.
+     * Suitable for shared hosting where Puppeteer/Chrome is unavailable.
      */
     public function generatePdf(Certificate $certificate): string
     {
+        $defaultConfig = (new ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+
+        $defaultFontConfig = (new FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+
+        $mpdf = new Mpdf([
+            'format' => 'A4',
+            'margin_left' => 0,
+            'margin_right' => 0,
+            'margin_top' => 0,
+            'margin_bottom' => 0,
+            'fontDir' => array_merge($fontDirs, [public_path('assets/fonts/cert/')]),
+            'fontdata' => $fontData + [
+                'greatvibes' => ['R' => 'GreatVibes-Regular.ttf'],
+            ],
+            'default_font' => 'dejavuserif',
+            'tempDir' => storage_path('app/temp'),
+        ]);
+
+        $mpdf->SetCreator('Edutrack LMS');
+        $mpdf->SetAuthor('Edutrack Computer Training College');
+        $mpdf->SetTitle('Certificate - ' . $certificate->certificate_number);
+
         $data = $this->getCertificateData($certificate);
-        $html = view('certificates.pdf-browser', $data)->render();
+        $html = view('certificates.pdf', $data)->render();
 
-        $tempDir = storage_path('app/temp');
-        if (!is_dir($tempDir)) {
-            mkdir($tempDir, 0755, true);
-        }
+        $mpdf->WriteHTML($html);
 
-        $tempHtml = tempnam($tempDir, 'cert_html_') . '.html';
-        $tempPdf = tempnam($tempDir, 'cert_pdf_') . '.pdf';
-
-        file_put_contents($tempHtml, $html);
-
-        $scriptPath = base_path('scripts/generate-pdf.cjs');
-        $cmd = 'node ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($tempHtml) . ' ' . escapeshellarg($tempPdf) . ' 2>&1';
-        exec($cmd, $output, $returnCode);
-
-        if ($returnCode !== 0 || !file_exists($tempPdf) || filesize($tempPdf) === 0) {
-            @unlink($tempHtml);
-            throw new \RuntimeException('PDF generation failed via Puppeteer: ' . implode("\n", $output));
-        }
-
-        $pdfContent = file_get_contents($tempPdf);
-
-        @unlink($tempHtml);
-        @unlink($tempPdf);
-
-        return $pdfContent;
+        return $mpdf->Output('', 'S');
     }
 
     /**

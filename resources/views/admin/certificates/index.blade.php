@@ -70,7 +70,7 @@
                                 <a href="{{ route('certificates.preview', $certificate) }}" target="_blank" class="od-btn od-btn-ghost od-btn-sm" aria-label="Preview certificate">
                                     <i class="fas fa-eye text-sm"></i>
                                 </a>
-                                <a href="{{ route('certificates.download', $certificate) }}" class="od-btn od-btn-ghost od-btn-sm" aria-label="Download certificate">
+                                <a href="{{ route('certificates.download', $certificate) }}" target="_blank" class="od-btn od-btn-ghost od-btn-sm" aria-label="Download certificate">
                                     <i class="fas fa-download text-sm"></i>
                                 </a>
                                 <a href="{{ route('certificates.verify', $certificate->certificate_number) }}" target="_blank" class="od-btn od-btn-ghost od-btn-sm" aria-label="Verify certificate">

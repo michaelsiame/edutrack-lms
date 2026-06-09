@@ -80,17 +80,7 @@ class CertificateController extends Controller
             abort(403, 'Certificate is blocked until full payment is received.');
         }
 
-        $pdf = $this->generatePdf($certificate);
-
-        return response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="certificate-' . $certificate->certificate_number . '.pdf"',
-        ]);
-    }
-
-    protected function generatePdf(Certificate $certificate): string
-    {
-        $service = new CertificateService();
-        return $service->generatePdf($certificate);
+        // Shared hosting: use browser auto-print for pixel-perfect output
+        return redirect()->route('certificates.preview', ['certificate' => $certificate, 'download' => 1]);
     }
 }

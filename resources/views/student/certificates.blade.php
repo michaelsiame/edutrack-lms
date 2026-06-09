@@ -48,7 +48,7 @@
                         <a href="{{ route('certificates.preview', $certificate) }}" target="_blank" class="od-btn od-btn-secondary od-btn-sm flex-1 justify-center">
                             <i class="fas fa-eye"></i> View
                         </a>
-                        <a href="{{ route('certificates.download', $certificate) }}" class="od-btn od-btn-primary od-btn-sm flex-1 justify-center">
+                        <a href="{{ route('certificates.download', $certificate) }}" target="_blank" class="od-btn od-btn-primary od-btn-sm flex-1 justify-center">
                             <i class="fas fa-download"></i> Download
                         </a>
                         <a href="{{ route('certificates.verify', $certificate->certificate_number) }}" target="_blank" class="od-btn od-btn-ghost od-btn-sm">

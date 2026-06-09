@@ -346,7 +346,7 @@
             <span>&#8592;</span> Back to Certificates
         </a>
         @if(isset($certificate) && $certificate)
-        <a href="{{ route('certificates.download', $certificate) }}" class="btn btn-primary">
+        <a href="{{ route('certificates.download', $certificate) }}" target="_blank" class="btn btn-primary">
             <span>&#11015;</span> Download PDF
         </a>
         @endif
@@ -454,6 +454,35 @@
             </div>
         </div>
     </div>
+
+    @if(request('download'))
+    <div id="print-overlay" class="no-print" style="position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Inter', sans-serif;">
+        <div style="width: 48px; height: 48px; border: 4px solid #e5e7eb; border-top-color: #D4952A; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
+        <h2 style="font-size: 20px; color: #1f2937; margin-bottom: 8px;">Preparing your certificate</h2>
+        <p style="font-size: 14px; color: #6b7280;">Your print dialog will open shortly. Please select "Save as PDF" to download.</p>
+    </div>
+    <style>
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+    <script>
+        (function() {
+            function triggerPrint() {
+                var overlay = document.getElementById('print-overlay');
+                if (overlay) overlay.style.display = 'none';
+                window.print();
+            }
+            if (document.fonts) {
+                document.fonts.ready.then(function() {
+                    setTimeout(triggerPrint, 600);
+                });
+            } else {
+                window.addEventListener('load', function() {
+                    setTimeout(triggerPrint, 1200);
+                });
+            }
+        })();
+    </script>
+    @endif
 
 </body>
 </html>
