@@ -29,6 +29,10 @@
         }
 
         @media print {
+            html, body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
             body {
                 background: #fff;
                 padding: 0;
@@ -38,6 +42,8 @@
             .cert-page {
                 box-shadow: none !important;
                 margin: 0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
             .no-print {
                 display: none !important;
@@ -47,11 +53,16 @@
         .cert-page {
             width: 210mm;
             height: 297mm;
-            background: #fff;
+            background-color: #fff;
+            background-image: url("{{ asset('assets/images/cert-watermark.png') }}");
+            background-repeat: repeat;
+            background-size: 90mm auto;
             position: relative;
             margin: 0 auto;
             box-shadow: 0 4px 20px rgba(0,0,0,0.12);
             overflow: hidden;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         /* Outer orange border */
