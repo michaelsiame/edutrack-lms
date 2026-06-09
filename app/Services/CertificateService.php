@@ -184,7 +184,10 @@ class CertificateService
         $this->drawFrames($pdf);
 
         // Layer 3: logos (EduTrack shield top-left, TEVETA top-right) and seal
-        $logoPath = public_path('assets/images/logo.png');
+        $logoPath = public_path('assets/images/logo-pdf.png'); // transparent variant
+        if (!file_exists($logoPath)) {
+            $logoPath = public_path('assets/images/logo.png');
+        }
         if (file_exists($logoPath)) {
             $pdf->Image($logoPath, 16, 16, 32, 32, '', '', '', true, 300, '', false, false, 0);
         }
@@ -299,35 +302,51 @@ class CertificateService
 
     /**
      * Draw the orange + blue page frames and the four orange corner triangles.
+     * Layout matches the reference: thin orange outer ring, a small gap, then
+     * a double-line blue frame, then orange corner triangles with blue
+     * diagonal trim lines on the inside of each triangle.
      */
     protected function drawFrames(TCPDF $pdf): void
     {
         $orange = [242, 101, 34];
         $blue   = [30, 58, 138];
 
-        // Outer orange rectangle
-        $pdf->SetLineWidth(0.9);
+        // Outer orange ring (thin)
+        $pdf->SetLineWidth(0.5);
         $pdf->SetDrawColor(...$orange);
         $pdf->Rect(6, 6, 198, 285);
 
-        // Inner blue rectangle (slightly inset)
-        $pdf->SetLineWidth(1.4);
+        // Blue double-line frame (two lines with a thin white channel between)
         $pdf->SetDrawColor(...$blue);
-        $pdf->Rect(10, 10, 190, 277);
+        $pdf->SetLineWidth(0.6);
+        $pdf->Rect(9, 9, 192, 279);
+        $pdf->SetLineWidth(0.6);
+        $pdf->Rect(12, 12, 186, 273);
 
-        // Decorative orange corner triangles (sit on top of the inner frame)
+        // Orange corner triangles
         $pdf->SetFillColor(...$orange);
         $pdf->SetDrawColor(...$orange);
-        $size = 26;
+        $size = 22;
 
-        // top-left
         $pdf->Polygon([6, 6, 6 + $size, 6, 6, 6 + $size], 'F');
-        // top-right
         $pdf->Polygon([204 - $size, 6, 204, 6, 204, 6 + $size], 'F');
-        // bottom-left
         $pdf->Polygon([6, 291 - $size, 6, 291, 6 + $size, 291], 'F');
-        // bottom-right
         $pdf->Polygon([204, 291 - $size, 204, 291, 204 - $size, 291], 'F');
+
+        // Blue diagonal stripes inside each triangle, parallel to the
+        // hypotenuse — the layered "trim" detail visible in the reference.
+        $pdf->SetDrawColor(...$blue);
+        $pdf->SetLineWidth(0.7);
+        foreach ([4, 7] as $inset) {
+            // top-left: hypotenuse (6+size,6) -> (6,6+size); inset toward (6,6)
+            $pdf->Line(6 + $size - $inset, 6,            6,            6 + $size - $inset);
+            // top-right: hypotenuse (204-size,6) -> (204,6+size); inset toward (204,6)
+            $pdf->Line(204 - $size + $inset, 6,           204,          6 + $size - $inset);
+            // bottom-left: hypotenuse (6,291-size) -> (6+size,291); inset toward (6,291)
+            $pdf->Line(6,            291 - $size + $inset, 6 + $size - $inset, 291);
+            // bottom-right: hypotenuse (204-size,291) -> (204,291-size); inset toward (204,291)
+            $pdf->Line(204 - $size + $inset, 291,          204,          291 - $size + $inset);
+        }
     }
 
     /**
