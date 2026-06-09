@@ -202,16 +202,34 @@ class CertificateService
         $orange = [242, 101, 34];
 
         // 1. Student name — sits just above the orange underline at y≈100mm.
+        //    Auto-shrink if a very long name would overflow the 180mm box.
+        //    GetStringWidth() sets the current font as a side effect — reset
+        //    afterwards so writeHTMLCell's inline font-family is the source of truth.
+        $studentName = $data['student_name'];
+        $nameFontSize = 42;
+        while ($nameFontSize > 28 && $pdf->GetStringWidth($studentName, 'greatvibes', '', $nameFontSize) > 170) {
+            $nameFontSize -= 2;
+        }
+        $pdf->SetFont('dejavuserif', '', 10);
         $pdf->writeHTMLCell(190, 18, 10, 80,
             '<div style="text-align:center;">'
-            . '<span style="font-family:greatvibes; font-size:42px; color:#111111;">' . e($data['student_name']) . '</span>'
+            . '<span style="font-family:greatvibes; font-size:' . $nameFontSize . 'px; color:#111111;">' . e($studentName) . '</span>'
             . '</div>',
             0, 0, false, true, '', true);
 
         // 2. Course title — well below "award of the certificate of" (y≈122mm).
+        //    Auto-fit: 28px is the design size; shrink in 2px steps until it fits
+        //    a single line within 180mm so long titles don't overflow into the
+        //    classification block below.
+        $courseUpper = strtoupper($data['course_title']);
+        $courseFontSize = 28;
+        while ($courseFontSize > 16 && $pdf->GetStringWidth($courseUpper, 'helvetica', 'B', $courseFontSize) > 178) {
+            $courseFontSize -= 2;
+        }
+        $pdf->SetFont('dejavuserif', '', 10);
         $pdf->writeHTMLCell(190, 14, 10, 140,
             '<div style="text-align:center;">'
-            . '<span style="font-family:helvetica; font-size:28px; font-weight:bold; color:#1e3a8a; letter-spacing:1px;">' . strtoupper(e($data['course_title'])) . '</span>'
+            . '<span style="font-family:helvetica; font-size:' . $courseFontSize . 'px; font-weight:bold; color:#1e3a8a; letter-spacing:1px;">' . e($courseUpper) . '</span>'
             . '</div>',
             0, 0, false, true, '', true);
 
