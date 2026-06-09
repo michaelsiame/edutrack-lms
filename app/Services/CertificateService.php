@@ -183,10 +183,15 @@ class CertificateService
         // Layer 2: outer/inner frames + decorative orange corner triangles
         $this->drawFrames($pdf);
 
-        // Layer 3: EduTrack shield logo (top-left)
+        // Layer 3: logos (EduTrack shield top-left, TEVETA top-right) and seal
         $logoPath = public_path('assets/images/logo.png');
         if (file_exists($logoPath)) {
             $pdf->Image($logoPath, 16, 16, 32, 32, '', '', '', true, 300, '', false, false, 0);
+        }
+
+        $tevetaPath = public_path('assets/images/teveta-logo.jpg');
+        if (file_exists($tevetaPath)) {
+            $pdf->Image($tevetaPath, 162, 20, 38, 0, '', '', '', true, 300, '', false, false, 0);
         }
 
         // Layer 4: the main HTML content, rendered as fragments positioned by Y
@@ -207,14 +212,14 @@ class CertificateService
         ];
         if ($hasMerit) {
             $layout[] = ['classification', 138, 18];
-            $dateY = 162;
+            $dateY = 164;
         } else {
-            $dateY = 138;
+            $dateY = 140;
         }
         $layout[] = ['date',        $dateY,           28];
-        $layout[] = ['signatures',  $dateY + 32,      24];
-        $layout[] = ['graduate',    $dateY + 64,      10];
-        $layout[] = ['ids',         $dateY + 78,      10];
+        $layout[] = ['signatures',  $dateY + 38,      14];
+        $layout[] = ['graduate',    $dateY + 58,      10];
+        $layout[] = ['ids',         $dateY + 72,      10];
 
         foreach ($layout as [$section, $y, $h]) {
             if (!isset($sections[$section])) {
@@ -302,16 +307,16 @@ class CertificateService
      */
     protected function drawWatermark(TCPDF $pdf): void
     {
-        $pdf->SetAlpha(0.07);
-        $pdf->SetFont('helvetica', '', 4);
+        $pdf->SetAlpha(0.12);
+        $pdf->SetFont('helvetica', '', 5);
         $pdf->SetTextColor(30, 58, 138);
 
         $unit = 'Edutrack Computer Training College  ';
-        $row  = str_repeat($unit, 16);
+        $row  = str_repeat($unit, 14);
 
-        for ($y = 14; $y < 286; $y += 2.6) {
+        for ($y = 14; $y < 286; $y += 3.2) {
             $pdf->SetXY(8, $y);
-            $pdf->Cell(196, 2.2, $row, 0, 0, 'L');
+            $pdf->Cell(196, 2.8, $row, 0, 0, 'L');
         }
 
         $pdf->SetAlpha(1);
