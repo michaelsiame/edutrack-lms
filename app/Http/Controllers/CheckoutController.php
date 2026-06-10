@@ -244,6 +244,38 @@ class CheckoutController extends Controller
     }
 
     /**
+     * Payment status JSON endpoint for polling.
+     */
+    public function status(Request $request)
+    {
+        $query = LencoTransaction::where('user_id', auth()->id());
+
+        if ($request->has('course')) {
+            $course = Course::where('slug', $request->query('course'))->first();
+            if ($course) {
+                $query->where('course_id', $course->id);
+            }
+        }
+
+        $tx = $query->latest()->first();
+
+        if (!$tx) {
+            return response()->json(['status' => 'none']);
+        }
+
+        if ($tx->status === 'pending' && $tx->updated_at->diffInSeconds(now()) > 10) {
+            try {
+                app(LencoPaymentService::class)->pollTransaction($tx);
+                $tx->refresh();
+            } catch (\Exception $e) {
+                // ignore failures
+            }
+        }
+
+        return response()->json(['status' => $tx->status]);
+    }
+
+    /**
      * Payment failed page.
      */
     public function failed(Request $request)

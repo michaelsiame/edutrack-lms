@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Role;
 use App\Models\UserRole;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -49,7 +50,7 @@ class GoogleController extends Controller
             // Assign student role
             UserRole::create([
                 'user_id' => $user->id,
-                'role_id' => 4, // Student
+                'role_id' => Role::STUDENT, // Student
             ]);
         }
 

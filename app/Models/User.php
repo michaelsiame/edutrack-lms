@@ -64,22 +64,22 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->roles()->whereIn('role_id', [1, 2])->exists();
+        return $this->roles()->whereIn('role_id', [Role::SUPER_ADMIN, Role::ADMIN])->exists();
     }
 
     public function isInstructor(): bool
     {
-        return $this->roles()->where('role_id', 3)->exists();
+        return $this->roles()->where('role_id', Role::INSTRUCTOR)->exists();
     }
 
     public function isFinance(): bool
     {
-        return $this->roles()->where('role_id', 6)->exists();
+        return $this->roles()->where('role_id', Role::FINANCE)->exists();
     }
 
     public function isStudent(): bool
     {
-        return $this->roles()->where('role_id', 4)->exists();
+        return $this->roles()->where('role_id', Role::STUDENT)->exists();
     }
 
     public function student()

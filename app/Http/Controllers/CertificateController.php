@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Certificate;
+use App\Models\Role;
 use App\Services\CertificateService;
 use Illuminate\Http\Request;
 
@@ -28,7 +29,7 @@ class CertificateController extends Controller
             // Authenticated users can preview their own certificates
             $user = auth()->user();
             $isOwner = $certificate->user_id === $user->id;
-            $isStaff = $user->roles()->whereIn('role_id', [1, 2, 3, 6])->exists();
+            $isStaff = $user->roles()->whereIn('role_id', [Role::SUPER_ADMIN, Role::ADMIN, Role::INSTRUCTOR, Role::FINANCE])->exists();
 
             if ($isOwner || $isStaff) {
                 $data = $service->getCertificateData($certificate);
@@ -71,7 +72,7 @@ class CertificateController extends Controller
         // Verify ownership — only the student or super-admin/finance can download
         $user = auth()->user();
         $isOwner = $certificate->user_id === $user->id;
-        $isAdmin = $user->roles()->whereIn('role_id', [1, 2])->exists(); // Super Admin, Admin only
+        $isAdmin = $user->roles()->whereIn('role_id', [Role::SUPER_ADMIN, Role::ADMIN])->exists(); // Super Admin, Admin only
 
         if (!$isOwner && !$isAdmin) {
             abort(403, 'You do not have permission to download this certificate.');

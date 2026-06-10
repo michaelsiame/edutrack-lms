@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Role;
 use App\Models\UserRole;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -48,7 +49,7 @@ class RegisterController extends Controller
         // Assign student role by default
         UserRole::create([
             'user_id' => $user->id,
-            'role_id' => 4, // Student
+            'role_id' => Role::STUDENT, // Student
         ]);
 
         event(new Registered($user));

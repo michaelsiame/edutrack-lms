@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/courses/{course}/checkout', [App\Http\Controllers\CheckoutController::class, 'process'])->name('checkout.process')->middleware('throttle:payment');
     Route::get('/payment/success', [App\Http\Controllers\CheckoutController::class, 'success'])->name('payment.success');
     Route::get('/payment/failed', [App\Http\Controllers\CheckoutController::class, 'failed'])->name('payment.failed');
+    Route::get('/payment/status', [App\Http\Controllers\CheckoutController::class, 'status'])->name('payment.status')->middleware('throttle:30,1');
 
     // Registration Fee
     Route::get('/registration-fee', [App\Http\Controllers\RegistrationFeeController::class, 'show'])->name('registration-fee.show');

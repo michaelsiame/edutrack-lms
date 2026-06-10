@@ -21,6 +21,12 @@ class Role extends Model
 
     const UPDATED_AT = null;
 
+    public const SUPER_ADMIN = 1;
+    public const ADMIN = 2;
+    public const INSTRUCTOR = 3;
+    public const STUDENT = 4;
+    public const FINANCE = 6;
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'user_roles');

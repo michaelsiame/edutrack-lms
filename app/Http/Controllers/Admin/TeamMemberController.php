@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\TeamMember;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class TeamMemberController extends Controller
 
     public function create()
     {
-        $users = User::whereHas('roles', fn($q) => $q->whereIn('role_id', [1, 2, 3, 6]))
+        $users = User::whereHas('roles', fn($q) => $q->whereIn('role_id', [Role::SUPER_ADMIN, Role::ADMIN, Role::INSTRUCTOR, Role::FINANCE]))
             ->orderBy('first_name')
             ->get();
         return view('admin.team.create', compact('users'));
@@ -55,7 +56,7 @@ class TeamMemberController extends Controller
 
     public function edit(TeamMember $member)
     {
-        $users = User::whereHas('roles', fn($q) => $q->whereIn('role_id', [1, 2, 3, 6]))
+        $users = User::whereHas('roles', fn($q) => $q->whereIn('role_id', [Role::SUPER_ADMIN, Role::ADMIN, Role::INSTRUCTOR, Role::FINANCE]))
             ->orderBy('first_name')
             ->get();
         return view('admin.team.edit', compact('member', 'users'));

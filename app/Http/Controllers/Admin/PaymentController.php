@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -33,7 +34,7 @@ class PaymentController extends Controller
         $students = \App\Models\Student::with('user')
             ->whereHas('user', function ($q) {
                 $q->whereHas('roles', function ($r) {
-                    $r->where('role_id', 4); // Student role
+                    $r->where('role_id', Role::STUDENT); // Student role
                 });
             })
             ->orWhereDoesntHave('user.roles')
