@@ -449,14 +449,6 @@
       <div class="num">{{ $total_credits ?? '32' }}</div>
       <div class="lbl">Credit Hours</div>
     </div>
-    <div class="summary-item">
-      <div class="num">{{ $gpa ?? '4.50' }}</div>
-      <div class="lbl">Cumulative GPA</div>
-    </div>
-    <div class="summary-item">
-      <div class="num">{{ $classification ?? 'Merit' }}</div>
-      <div class="lbl">Overall Class</div>
-    </div>
   </div>
 
 @php
@@ -570,12 +562,12 @@ $demo_enrollments = $enrollments ?? [
   <div class="scale-box">
     <h4>Grading Scale</h4>
     <div class="scale-grid">
-      <div class="scale-item"><div class="grade">A</div><div>90-100%</div><div>5.0 pts</div><div>Distinction</div></div>
-      <div class="scale-item"><div class="grade">B+</div><div>80-89%</div><div>4.5 pts</div><div>Merit</div></div>
-      <div class="scale-item"><div class="grade">B</div><div>70-79%</div><div>4.0 pts</div><div>Merit</div></div>
-      <div class="scale-item"><div class="grade">C+</div><div>60-69%</div><div>3.5 pts</div><div>Credit</div></div>
-      <div class="scale-item"><div class="grade">C</div><div>50-59%</div><div>3.0 pts</div><div>Pass</div></div>
-      <div class="scale-item"><div class="grade">D</div><div>Below 50%</div><div>2.0 pts</div><div>Fail</div></div>
+      <div class="scale-item"><div class="grade">A</div><div>90-100%</div><div>Distinction</div></div>
+      <div class="scale-item"><div class="grade">B+</div><div>80-89%</div><div>Merit</div></div>
+      <div class="scale-item"><div class="grade">B</div><div>70-79%</div><div>Merit</div></div>
+      <div class="scale-item"><div class="grade">C+</div><div>60-69%</div><div>Credit</div></div>
+      <div class="scale-item"><div class="grade">C</div><div>50-59%</div><div>Pass</div></div>
+      <div class="scale-item"><div class="grade">D</div><div>Below 50%</div><div>Fail</div></div>
     </div>
   </div>
 

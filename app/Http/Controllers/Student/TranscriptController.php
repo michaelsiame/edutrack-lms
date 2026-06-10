@@ -55,7 +55,6 @@ class TranscriptController extends Controller
         $enrollmentData = [];
         $totalCredits = 0;
         $completedCount = 0;
-        $gpaSum = 0;
 
         foreach ($enrollments as $enrollment) {
             $course = $enrollment->course;
@@ -72,11 +71,8 @@ class TranscriptController extends Controller
             $finalScore = $enrollment->final_grade ?? $enrollment->progress ?? 0;
             if ($isCompleted) {
                 $grade = $this->scoreToGrade($finalScore);
-                $points = $this->scoreToPoints($finalScore);
-                $gpaSum += $points;
             } else {
                 $grade = 'In Progress';
-                $points = 0;
             }
 
             $modules = [];
@@ -181,9 +177,6 @@ class TranscriptController extends Controller
             ];
         }
 
-        $overallGpa = $completedCount > 0 ? round($gpaSum / $completedCount, 2) : 0;
-        $overallClass = $this->pointsToClassification($overallGpa);
-
         return [
             'user' => $user,
             'student_name' => $user->full_name,
@@ -197,8 +190,6 @@ class TranscriptController extends Controller
             'total_courses' => $enrollments->count(),
             'completed_courses' => $completedCount,
             'total_credits' => $totalCredits,
-            'gpa' => number_format($overallGpa, 2),
-            'classification' => $overallClass,
             'enrollments' => $enrollmentData,
             'institution_name' => SystemSetting::get('institution_name', 'EduTrack Computer Training College'),
             'institution_address' => SystemSetting::get('site_address', 'Kalomo, Zambia'),
@@ -368,8 +359,6 @@ class TranscriptController extends Controller
             'Total Courses: ' . $data['total_courses'],
             'Completed: ' . $data['completed_courses'],
             'Credits: ' . $data['total_credits'],
-            'GPA: ' . $data['gpa'] . '/5.0',
-            'Class: ' . $data['classification'],
         ];
         $cellW = 176 / count($summaryItems);
         foreach ($summaryItems as $item) {
@@ -465,18 +454,17 @@ class TranscriptController extends Controller
         $pdf->SetFont('helvetica', '', 8);
         $pdf->SetTextColor(0, 0, 0);
         $scale = [
-            ['A', '90-100%', '5.0', 'Distinction'],
-            ['B+', '80-89%', '4.5', 'Merit'],
-            ['B', '70-79%', '4.0', 'Merit'],
-            ['C+', '60-69%', '3.5', 'Credit'],
-            ['C', '50-59%', '3.0', 'Pass'],
-            ['D', '<50%', '2.0', 'Fail'],
+            ['A', '90-100%', 'Distinction'],
+            ['B+', '80-89%', 'Merit'],
+            ['B', '70-79%', 'Merit'],
+            ['C+', '60-69%', 'Credit'],
+            ['C', '50-59%', 'Pass'],
+            ['D', '<50%', 'Fail'],
         ];
         foreach ($scale as $s) {
-            $pdf->Cell(20, 5, $s[0], 1, 0, 'C');
-            $pdf->Cell(35, 5, $s[1], 1, 0, 'C');
-            $pdf->Cell(25, 5, $s[2] . ' pts', 1, 0, 'C');
-            $pdf->Cell(40, 5, $s[3], 1, 1, 'C');
+            $pdf->Cell(25, 5, $s[0], 1, 0, 'C');
+            $pdf->Cell(45, 5, $s[1], 1, 0, 'C');
+            $pdf->Cell(50, 5, $s[2], 1, 1, 'C');
         }
         $pdf->Ln(6);
 
