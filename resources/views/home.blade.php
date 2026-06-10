@@ -5,9 +5,7 @@
 
 @push('styles')
 <style>
-.od-hero { position: relative; color: var(--od-surface); overflow: hidden; min-height: 640px; }
-.od-hero-overlay { position: absolute; inset: 0; background: color-mix(in oklch, var(--od-fg), transparent 95%); }
-.od-hero-content { position: relative; }
+.od-hero { position: relative; color: var(--od-surface); overflow: hidden; }
 .od-intake-banner { background: var(--od-accent); color: var(--od-fg); }
 .od-testimonials-dark { background: var(--od-fg); color: var(--od-surface); }
 .od-step-line { position: absolute; left: 28px; top: 56px; bottom: 0; width: 2px; background: var(--od-border); }
@@ -20,29 +18,97 @@
 @section('content')
 
 <!-- Hero Section -->
-<section class="od-hero">
-  <!-- Background Image with Overlay -->
-  <div class="absolute inset-0">
-    <img src="{{ asset('assets/images/hero-bg-1.jpg') }}" alt="Edutrack Campus" class="w-full h-full object-cover">
-    <div class="od-hero-overlay"></div>
+<section class="od-hero relative overflow-hidden" style="color: var(--od-surface); background: var(--od-fg);">
+  <!-- Desktop -->
+  <div class="hidden lg:flex relative w-full" style="min-height: 600px;">
+    <!-- Background image on right -->
+    <div class="absolute top-0 right-0 h-full w-[45%]">
+      <img
+        src="{{ asset('assets/images/hero/campus-students.jpg') }}"
+        alt="Edutrack Campus"
+        class="w-full h-full object-cover"
+        style="object-position: center 30%;"
+        loading="eager"
+        fetchpriority="high"
+        srcset="{{ asset('assets/images/hero/campus-students-480.jpg') }} 480w, {{ asset('assets/images/hero/campus-students.jpg') }} 809w"
+        sizes="(min-width:1024px) 45vw, 100vw"
+      >
+      <!-- Left-edge gradient on image -->
+      <div class="absolute inset-y-0 left-0 w-full" style="background: linear-gradient(90deg, var(--od-fg) 0%, transparent 30%);"></div>
+    </div>
+
+    <!-- Left panel with diagonal edge -->
+    <div class="relative z-10 flex items-center" style="width: calc(55% + 80px); min-height: 600px; background: var(--od-fg); clip-path: polygon(0 0, 100% 0, calc(100% - 80px) 100%, 0 100%);">
+      <div class="px-8 xl:px-14 py-12 max-w-xl">
+        <div class="mb-6 animate-fade-in">
+          <span class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold shadow-lg border-2" style="background: var(--od-accent); color: var(--od-fg); border-color: color-mix(in oklch, var(--od-accent), black 10%);">
+            <i class="fas fa-certificate mr-2"></i>
+            TEVETA Registered Institution
+          </span>
+        </div>
+        <h1 class="od-h1 animate-fade-in" style="color: var(--od-surface); text-shadow: 0 2px 12px rgba(0,0,0,.45);">
+          Transform Your Future with
+          <span class="block mt-2" style="color: var(--od-accent);">Edutrack Computer Training College</span>
+        </h1>
+        <p class="text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl leading-relaxed" style="color: color-mix(in oklch, var(--od-surface), transparent 12%);">
+          Practical computer training in Kalomo. No theory overload. Just real skills — web design, digital marketing, graphic design, and office packages — taught by instructors who've done the work.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-start items-center max-w-2xl pb-6">
+          @auth
+          <a href="{{ route('dashboard') }}" class="od-btn od-btn-lg" style="background: var(--od-surface); color: var(--od-fg);">
+            <i class="fas fa-tachometer-alt mr-2"></i>
+            Go to Dashboard
+          </a>
+          @else
+          <a href="{{ route('register') }}" class="od-btn od-btn-primary od-btn-lg">
+            <i class="fas fa-user-plus mr-2"></i>
+            Start Learning Free
+          </a>
+          @endauth
+          <a href="{{ route('courses.index') }}" class="od-btn od-btn-lg od-btn-secondary" style="color: var(--od-surface); border-color: color-mix(in oklch, var(--od-surface), transparent 50%);">
+            <i class="fas fa-book mr-2"></i>
+            Browse Courses
+          </a>
+        </div>
+        <p class="text-sm" style="color: color-mix(in oklch, var(--od-surface), transparent 35%);">
+          <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> No prior experience needed &nbsp;|&nbsp;
+          <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> Flexible payment plans &nbsp;|&nbsp;
+          <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> Certificate on completion
+        </p>
+      </div>
+    </div>
   </div>
 
-  <div class="od-hero-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-    <div class="text-center rounded-3xl p-6 md:p-12" style="background: color-mix(in oklch, var(--od-fg), transparent 92%); backdrop-filter: blur(4px);">
-      <div class="mb-6 animate-fade-in">
+  <!-- Mobile/Tablet -->
+  <div class="lg:hidden relative" style="min-height: 72vh;">
+    <img
+      src="{{ asset('assets/images/hero/campus-students.jpg') }}"
+      alt="Edutrack Campus"
+      class="absolute inset-0 w-full h-full object-cover"
+      style="object-position: center 25%;"
+      loading="eager"
+      fetchpriority="high"
+      srcset="{{ asset('assets/images/hero/campus-students-480.jpg') }} 480w, {{ asset('assets/images/hero/campus-students.jpg') }} 809w"
+      sizes="(min-width:1024px) 45vw, 100vw"
+    >
+    <!-- Bottom-up gradient -->
+    <div class="absolute inset-0" style="background: linear-gradient(to top, var(--od-fg) 22%, color-mix(in oklch, var(--od-fg), transparent 30%) 52%, transparent 82%);"></div>
+
+    <div class="relative z-10 flex flex-col justify-end px-4 sm:px-6 py-10 text-center" style="min-height: 78vh;">
+      <div class="mb-4 animate-fade-in">
         <span class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold shadow-lg border-2" style="background: var(--od-accent); color: var(--od-fg); border-color: color-mix(in oklch, var(--od-accent), black 10%);">
           <i class="fas fa-certificate mr-2"></i>
           TEVETA Registered Institution
         </span>
       </div>
-      <h1 class="od-h1 animate-fade-in" style="color: var(--od-surface);">
+      <h1 class="od-h1 animate-fade-in" style="color: var(--od-surface); text-shadow: 0 2px 12px rgba(0,0,0,.45);">
         Transform Your Future with
         <span class="block mt-2" style="color: var(--od-accent);">Edutrack Computer Training College</span>
       </h1>
-      <p class="text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto leading-relaxed" style="color: color-mix(in oklch, var(--od-surface), transparent 12%);">
+      <p class="text-base md:text-xl lg:text-2xl mb-6 max-w-3xl mx-auto leading-relaxed" style="color: color-mix(in oklch, var(--od-surface), transparent 12%);">
         Practical computer training in Kalomo. No theory overload. Just real skills — web design, digital marketing, graphic design, and office packages — taught by instructors who've done the work.
       </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto pb-6">
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto pb-4">
         @auth
         <a href="{{ route('dashboard') }}" class="od-btn od-btn-lg" style="background: var(--od-surface); color: var(--od-fg);">
           <i class="fas fa-tachometer-alt mr-2"></i>
@@ -59,50 +125,50 @@
           Browse Courses
         </a>
       </div>
-      <p class="text-sm" style="color: color-mix(in oklch, var(--od-surface), transparent 35%);">
+      <p class="text-sm hidden sm:block" style="color: color-mix(in oklch, var(--od-surface), transparent 35%);">
         <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> No prior experience needed &nbsp;|&nbsp;
         <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> Flexible payment plans &nbsp;|&nbsp;
         <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> Certificate on completion
       </p>
     </div>
+  </div>
 
-    <!-- Trust Indicators -->
-    <div class="mt-10 md:mt-14 pt-8" style="border-top: 1px solid color-mix(in oklch, var(--od-surface), transparent 80%);">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-        <div class="animate-slide-up animation-delay-100 rounded-2xl p-5 md:p-6 text-center border transition-all duration-300 hover:bg-white/15" style="background: color-mix(in oklch, var(--od-surface), transparent 90%); backdrop-filter: blur(8px); border-color: color-mix(in oklch, var(--od-surface), transparent 70%);">
-          <div class="w-14 h-14 mx-auto mb-3 rounded-xl flex items-center justify-center" style="background: color-mix(in oklch, var(--od-accent), transparent 80%);">
-            <i class="fas fa-certificate text-2xl" style="color: var(--od-accent);"></i>
-          </div>
-          <h3 class="text-base md:text-lg font-bold" style="color: var(--od-surface);">TEVETA Registered</h3>
-          <p class="text-xs mt-1" style="color: color-mix(in oklch, var(--od-surface), transparent 30%);">Government Certified (TVA/2064)</p>
+  <!-- Trust Indicators -->
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14" style="border-top: 1px solid color-mix(in oklch, var(--od-surface), transparent 80%);">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+      <div class="animate-slide-up animation-delay-100 rounded-2xl p-5 md:p-6 text-center border transition-all duration-300 hover:bg-white/15" style="background: color-mix(in oklch, var(--od-surface), transparent 90%); backdrop-filter: blur(8px); border-color: color-mix(in oklch, var(--od-surface), transparent 70%);">
+        <div class="w-14 h-14 mx-auto mb-3 rounded-xl flex items-center justify-center" style="background: color-mix(in oklch, var(--od-accent), transparent 80%);">
+          <i class="fas fa-certificate text-2xl" style="color: var(--od-accent);"></i>
         </div>
-        <div class="animate-slide-up animation-delay-200 rounded-2xl p-5 md:p-6 text-center border transition-all duration-300 hover:bg-white/15" style="background: color-mix(in oklch, var(--od-surface), transparent 90%); backdrop-filter: blur(8px); border-color: color-mix(in oklch, var(--od-surface), transparent 70%);">
-          <div class="w-14 h-14 mx-auto mb-3 rounded-xl flex items-center justify-center" style="background: color-mix(in oklch, var(--od-navy), transparent 80%);">
-            <i class="fas fa-users text-2xl" style="color: color-mix(in oklch, var(--od-surface), transparent 20%);"></i>
-          </div>
-          <h3 class="text-base md:text-lg font-bold" style="color: var(--od-surface);">
-            @if(($stats['total_students'] ?? 0) > 0)
-            {{ number_format($stats['total_students']) }}+ Graduates
-            @else
-            Growing Alumni
-            @endif
-          </h3>
-          <p class="text-xs mt-1" style="color: color-mix(in oklch, var(--od-surface), transparent 30%);">Across Zambia</p>
+        <h3 class="text-base md:text-lg font-bold" style="color: var(--od-surface);">TEVETA Registered</h3>
+        <p class="text-xs mt-1" style="color: color-mix(in oklch, var(--od-surface), transparent 30%);">Government Certified (TVA/2064)</p>
+      </div>
+      <div class="animate-slide-up animation-delay-200 rounded-2xl p-5 md:p-6 text-center border transition-all duration-300 hover:bg-white/15" style="background: color-mix(in oklch, var(--od-surface), transparent 90%); backdrop-filter: blur(8px); border-color: color-mix(in oklch, var(--od-surface), transparent 70%);">
+        <div class="w-14 h-14 mx-auto mb-3 rounded-xl flex items-center justify-center" style="background: color-mix(in oklch, var(--od-navy), transparent 80%);">
+          <i class="fas fa-users text-2xl" style="color: color-mix(in oklch, var(--od-surface), transparent 20%);"></i>
         </div>
-        <div class="animate-slide-up animation-delay-300 rounded-2xl p-5 md:p-6 text-center border transition-all duration-300 hover:bg-white/15" style="background: color-mix(in oklch, var(--od-surface), transparent 90%); backdrop-filter: blur(8px); border-color: color-mix(in oklch, var(--od-surface), transparent 70%);">
-          <div class="w-14 h-14 mx-auto mb-3 rounded-xl flex items-center justify-center" style="background: color-mix(in oklch, var(--od-accent), transparent 80%);">
-            <i class="fas fa-briefcase text-2xl" style="color: color-mix(in oklch, var(--od-surface), transparent 20%);"></i>
-          </div>
-          <h3 class="text-base md:text-lg font-bold" style="color: var(--od-surface);">Job-Ready Skills</h3>
-          <p class="text-xs mt-1" style="color: color-mix(in oklch, var(--od-surface), transparent 30%);">Project-Based Learning</p>
+        <h3 class="text-base md:text-lg font-bold" style="color: var(--od-surface);">
+          @if(($stats['total_students'] ?? 0) > 0)
+          {{ number_format($stats['total_students']) }}+ Graduates
+          @else
+          Growing Alumni
+          @endif
+        </h3>
+        <p class="text-xs mt-1" style="color: color-mix(in oklch, var(--od-surface), transparent 30%);">Across Zambia</p>
+      </div>
+      <div class="animate-slide-up animation-delay-300 rounded-2xl p-5 md:p-6 text-center border transition-all duration-300 hover:bg-white/15" style="background: color-mix(in oklch, var(--od-surface), transparent 90%); backdrop-filter: blur(8px); border-color: color-mix(in oklch, var(--od-surface), transparent 70%);">
+        <div class="w-14 h-14 mx-auto mb-3 rounded-xl flex items-center justify-center" style="background: color-mix(in oklch, var(--od-accent), transparent 80%);">
+          <i class="fas fa-briefcase text-2xl" style="color: color-mix(in oklch, var(--od-surface), transparent 20%);"></i>
         </div>
-        <div class="animate-slide-up animation-delay-400 rounded-2xl p-5 md:p-6 text-center border transition-all duration-300 hover:bg-white/15" style="background: color-mix(in oklch, var(--od-surface), transparent 90%); backdrop-filter: blur(8px); border-color: color-mix(in oklch, var(--od-surface), transparent 70%);">
-          <div class="w-14 h-14 mx-auto mb-3 rounded-xl flex items-center justify-center" style="background: color-mix(in oklch, var(--od-navy), transparent 80%);">
-            <i class="fas fa-hand-holding-usd text-2xl" style="color: color-mix(in oklch, var(--od-surface), transparent 20%);"></i>
-          </div>
-          <h3 class="text-base md:text-lg font-bold" style="color: var(--od-surface);">Pay in Instalments</h3>
-          <p class="text-xs mt-1" style="color: color-mix(in oklch, var(--od-surface), transparent 30%);">Mobile Money Accepted</p>
+        <h3 class="text-base md:text-lg font-bold" style="color: var(--od-surface);">Job-Ready Skills</h3>
+        <p class="text-xs mt-1" style="color: color-mix(in oklch, var(--od-surface), transparent 30%);">Project-Based Learning</p>
+      </div>
+      <div class="animate-slide-up animation-delay-400 rounded-2xl p-5 md:p-6 text-center border transition-all duration-300 hover:bg-white/15" style="background: color-mix(in oklch, var(--od-surface), transparent 90%); backdrop-filter: blur(8px); border-color: color-mix(in oklch, var(--od-surface), transparent 70%);">
+        <div class="w-14 h-14 mx-auto mb-3 rounded-xl flex items-center justify-center" style="background: color-mix(in oklch, var(--od-navy), transparent 80%);">
+          <i class="fas fa-hand-holding-usd text-2xl" style="color: color-mix(in oklch, var(--od-surface), transparent 20%);"></i>
         </div>
+        <h3 class="text-base md:text-lg font-bold" style="color: var(--od-surface);">Pay in Instalments</h3>
+        <p class="text-xs mt-1" style="color: color-mix(in oklch, var(--od-surface), transparent 30%);">Mobile Money Accepted</p>
       </div>
     </div>
   </div>

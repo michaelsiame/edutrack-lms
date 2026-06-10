@@ -158,10 +158,10 @@ class CertificateService
     /** Certificate colors (RGB). */
     private const ORANGE = [237, 119, 47];
     private const BLUE_BORDER = [21, 56, 145];
-    private const BG_LIGHT_BLUE = [163, 220, 246];
     private const NAVY_TITLE = [15, 43, 112];
     private const BLACK = [0, 0, 0];
-    private const WATERMARK_TEXT = [110, 162, 196];
+    private const WM_BLUE = [193, 214, 240];
+    private const WM_ORANGE = [248, 220, 198];
 
     /** Page geometry (mm). */
     private const PAGE_W = 210;
@@ -189,51 +189,51 @@ class CertificateService
 
         $this->drawFrame($pdf);
         $this->drawWatermark($pdf);
+        $this->drawCornerTriangles($pdf);
         $this->drawContent($pdf, $data);
 
         return $pdf->Output('', 'S');
     }
 
     /**
-     * Border frame (full page edge, draw as filled rectangles, outermost first).
+     * Border frame: 0.4mm NAVY rule inset 4mm, then solid NAVY band 6.5-9.3mm.
      */
     protected function drawFrame(TCPDF $pdf): void
     {
-        // 1. Black filled rect: full page
-        $pdf->Rect(0, 0, self::PAGE_W, self::PAGE_H, 'F', [], self::BLACK);
-        // 2. Orange filled rect inset 1.4mm
-        $pdf->Rect(1.4, 1.4, 207.2, 294.2, 'F', [], self::ORANGE);
-        // 3. Black filled rect inset 6.0mm
-        $pdf->Rect(6.0, 6.0, 198.0, 285.0, 'F', [], self::BLACK);
-        // 4. Blue filled rect inset 6.9mm
-        $pdf->Rect(6.9, 6.9, 196.2, 283.2, 'F', [], self::BLUE_BORDER);
-        // 5. Background BG_LIGHT_BLUE filled rect inset 9.9mm
-        $pdf->Rect(9.9, 9.9, 190.2, 277.2, 'F', [], self::BG_LIGHT_BLUE);
+        // 0.4mm NAVY rule inset 4mm from page edge
+        $pdf->SetLineWidth(0.4);
+        $pdf->SetDrawColor(...self::BLUE_BORDER);
+        $pdf->Rect(4, 4, 202, 289, 'D');
+
+        // Solid NAVY band from 6.5mm to 9.3mm inset
+        $pdf->Rect(6.5, 6.5, 197, 284, 'F', [], self::BLUE_BORDER);
+        $pdf->Rect(9.3, 9.3, 191.4, 278.4, 'F', [], [255, 255, 255]);
     }
 
     /**
-     * Horizontal rows of repeating microtext inside the background area only.
+     * Horizontal rows of repeating microtext inside the white area only.
+     * Rows alternate between WM_ORANGE and WM_BLUE.
      */
     protected function drawWatermark(TCPDF $pdf): void
     {
         $phrase = 'Edutrack Computer Training College ';
         $pdf->StartTransform();
-        // Clip to inner background area (9.9mm inset)
-        $pdf->Rect(9.9, 9.9, 190.2, 277.2, 'CNZ');
+        // Clip to inner white area (~10mm inset)
+        $pdf->Rect(10, 10, 190, 277, 'CNZ');
 
-        $pdf->SetTextColor(...self::WATERMARK_TEXT);
         $pdf->SetFont('helvetica', '', 5.5);
 
         $phraseWidth = $pdf->GetStringWidth($phrase);
         $rowPitch = 2.4;
-        $startY = 9.9;
-        $endY = self::PAGE_H - 9.9;
+        $startY = 10;
+        $endY = self::PAGE_H - 10;
 
         $row = 0;
         for ($y = $startY; $y < $endY; $y += $rowPitch) {
+            $pdf->SetTextColor(...($row % 2 === 0 ? self::WM_ORANGE : self::WM_BLUE));
             $offsetX = ($row % 2) * ($phraseWidth / 2);
-            $x = 9.9 + $offsetX;
-            while ($x < self::PAGE_W - 9.9) {
+            $x = 10 + $offsetX;
+            while ($x < self::PAGE_W - 10) {
                 $pdf->Text($x, $y, $phrase);
                 $x += $phraseWidth;
             }
@@ -244,22 +244,48 @@ class CertificateService
     }
 
     /**
-     * Small orange ribbon/award glyph between the college name and subtitle.
+     * Layered corner triangles at all 4 corners.
+     * Orange (30mm), White (26.5mm), Navy (23mm).
+     */
+    protected function drawCornerTriangles(TCPDF $pdf): void
+    {
+        // Top-left
+        $pdf->Polygon([0, 0, 30, 0, 0, 30], 'F', [], self::ORANGE);
+        $pdf->Polygon([0, 0, 26.5, 0, 0, 26.5], 'F', [], [255, 255, 255]);
+        $pdf->Polygon([0, 0, 23, 0, 0, 23], 'F', [], self::BLUE_BORDER);
+
+        // Top-right
+        $pdf->Polygon([210, 0, 180, 0, 210, 30], 'F', [], self::ORANGE);
+        $pdf->Polygon([210, 0, 183.5, 0, 210, 26.5], 'F', [], [255, 255, 255]);
+        $pdf->Polygon([210, 0, 187, 0, 210, 23], 'F', [], self::BLUE_BORDER);
+
+        // Bottom-left
+        $pdf->Polygon([0, 297, 30, 297, 0, 267], 'F', [], self::ORANGE);
+        $pdf->Polygon([0, 297, 26.5, 297, 0, 270.5], 'F', [], [255, 255, 255]);
+        $pdf->Polygon([0, 297, 23, 297, 0, 274], 'F', [], self::BLUE_BORDER);
+
+        // Bottom-right
+        $pdf->Polygon([210, 297, 180, 297, 210, 267], 'F', [], self::ORANGE);
+        $pdf->Polygon([210, 297, 183.5, 297, 210, 270.5], 'F', [], [255, 255, 255]);
+        $pdf->Polygon([210, 297, 187, 297, 210, 274], 'F', [], self::BLUE_BORDER);
+    }
+
+    /**
+     * Small orange diamond with flanking dashes between the college name and subtitle.
      */
     protected function drawRibbon(TCPDF $pdf): void
     {
-        // Filled orange circle
+        // Small ORANGE diamond centered at (105, 49.5), ~2.2mm diagonal
         $pdf->SetFillColor(...self::ORANGE);
-        $pdf->Circle(105, 49, 1.8, 0, 360, 'F');
+        $pdf->Polygon([105, 48.4, 106.1, 49.5, 105, 50.6, 103.9, 49.5], 'F', [], self::ORANGE);
 
-        // Two filled-triangle ribbon tails hanging below
-        $pdf->Polygon([104.5, 50.8, 103.3, 53.8, 104.9, 53.8], 'F', [], self::ORANGE);
-        $pdf->Polygon([105.5, 50.8, 105.1, 53.8, 106.7, 53.8], 'F', [], self::ORANGE);
-
-        // Thin white inner circle outline
-        $pdf->SetDrawColor(255, 255, 255);
-        $pdf->SetLineWidth(0.2);
-        $pdf->Circle(105, 49, 1.1, 0, 360, 'D');
+        // Horizontal ORANGE dashes flanking the diamond
+        $pdf->SetLineWidth(0.5);
+        $pdf->SetDrawColor(...self::ORANGE);
+        // Left dash: ~8mm long, 3mm gap from diamond
+        $pdf->Line(92.9, 49.5, 100.9, 49.5);
+        // Right dash: ~8mm long, 3mm gap from diamond
+        $pdf->Line(109.1, 49.5, 117.1, 49.5);
 
         // Reset draw state
         $pdf->SetDrawColor(...self::BLACK);
@@ -284,7 +310,7 @@ class CertificateService
         }
 
         // Element 1: "EDUTRACK COMPUTER"
-        $pdf->SetTextColor(...self::BLACK);
+        $pdf->SetTextColor(...self::BLUE_BORDER);
         $this->certFont($pdf, 'caps', 23.3);
         $this->centeredAtBaseline($pdf, 32.7, 'EDUTRACK COMPUTER');
 
@@ -294,22 +320,52 @@ class CertificateService
         $this->drawRibbon($pdf);
 
         // Element 3: "A skill training college"
+        $pdf->SetTextColor(...self::BLACK);
         $this->certFont($pdf, 'serif', 14.6);
         $this->centeredAtBaseline($pdf, 58.6, 'A skill training college');
 
-        // Element 4: "THIS IS TO CERTIFY THAT" with flanking rules
+        // Element 4: "THIS IS TO CERTIFY THAT" with flanking ornaments
         $this->certFont($pdf, 'serif-bold', 21.3);
         $certifyText = 'THIS IS TO CERTIFY THAT';
         $certifyWidth = $pdf->GetStringWidth($certifyText);
-        $ruleLength = 14;
+        $ornamentWidth = 7 + 1.6 + 3; // 11.6
         $ruleGap = 4;
-        $totalWidth = $ruleLength + $ruleGap + $certifyWidth + $ruleGap + $ruleLength;
+        $totalWidth = $ornamentWidth + $ruleGap + $certifyWidth + $ruleGap + $ornamentWidth;
         $startX = $cx - $totalWidth / 2;
 
-        $pdf->SetLineStyle(['width' => 0.5, 'color' => self::BLACK]);
-        $pdf->Line($startX, 83.8, $startX + $ruleLength, 83.8);
-        $pdf->Line($startX + $totalWidth - $ruleLength, 83.8, $startX + $totalWidth, 83.8);
+        $pdf->SetLineWidth(0.5);
+        $pdf->SetDrawColor(...self::ORANGE);
+        $pdf->SetFillColor(...self::ORANGE);
+
+        // Left ornament: dash (7mm) + diamond (1.6mm) + dash (3mm)
+        $leftOrnamentX = $startX;
+        $pdf->Line($leftOrnamentX, 83.8, $leftOrnamentX + 7, 83.8);
+        $pdf->Polygon([
+            $leftOrnamentX + 7.8, 83.8 - 0.8,
+            $leftOrnamentX + 7.8 + 0.8, 83.8,
+            $leftOrnamentX + 7.8, 83.8 + 0.8,
+            $leftOrnamentX + 7.8 - 0.8, 83.8,
+        ], 'F', [], self::ORANGE);
+        $pdf->Line($leftOrnamentX + 8.6, 83.8, $leftOrnamentX + 11.6, 83.8);
+
+        // Right ornament: dash (7mm) + diamond (1.6mm) + dash (3mm)
+        $rightOrnamentX = $startX + $totalWidth - $ornamentWidth;
+        $pdf->Line($rightOrnamentX, 83.8, $rightOrnamentX + 7, 83.8);
+        $pdf->Polygon([
+            $rightOrnamentX + 7.8, 83.8 - 0.8,
+            $rightOrnamentX + 7.8 + 0.8, 83.8,
+            $rightOrnamentX + 7.8, 83.8 + 0.8,
+            $rightOrnamentX + 7.8 - 0.8, 83.8,
+        ], 'F', [], self::ORANGE);
+        $pdf->Line($rightOrnamentX + 8.6, 83.8, $rightOrnamentX + 11.6, 83.8);
+
+        $pdf->SetTextColor(...self::BLUE_BORDER);
         $this->centeredAtBaseline($pdf, 83.8, $certifyText);
+        $pdf->SetTextColor(...self::BLACK);
+
+        // Reset line state
+        $pdf->SetLineWidth(0.3);
+        $pdf->SetDrawColor(...self::BLACK);
 
         // Element 5: student_name
         $this->certFont($pdf, 'script', 34);
@@ -318,7 +374,7 @@ class CertificateService
         $this->centeredAtBaseline($pdf, 102.2, $name);
 
         // Underline for name
-        $pdf->SetLineStyle(['width' => 0.3, 'color' => self::BLACK]);
+        $pdf->SetLineStyle(['width' => 0.5, 'color' => self::ORANGE]);
         $pdf->Line(38, 106.5, 172, 106.5);
 
         // Element 6: "having satisfied the requirements for the"
@@ -338,6 +394,10 @@ class CertificateService
         if ($classification && trim($classification) !== '' && strcasecmp($classification, 'Pass') !== 0) {
             $this->certFont($pdf, 'script', 28.5);
             $this->centeredAtBaseline($pdf, 169.7, 'With ' . $classification);
+
+            // Small ORANGE diamond centered at (105, 175.5)
+            $pdf->SetFillColor(...self::ORANGE);
+            $pdf->Polygon([105, 174.5, 106, 175.5, 105, 176.5, 104, 175.5], 'F', [], self::ORANGE);
         }
 
         // Element 10: "Was admitted to the certificate at a Graduation"
@@ -360,7 +420,7 @@ class CertificateService
         ]);
 
         // --- Signature block ---
-        $pdf->SetLineStyle(['width' => 0.4, 'color' => self::BLACK]);
+        $pdf->SetLineStyle(['width' => 0.4, 'color' => self::ORANGE]);
 
         // Top row rules
         $pdf->Line(26, 230.5, 75, 230.5);
@@ -383,7 +443,7 @@ class CertificateService
         $this->rightAtBaseline($pdf, 184, 270.2, $data['certificate_number'] ?? '');
 
         // Bottom underlines
-        $pdf->SetLineStyle(['width' => 0.3, 'color' => self::BLACK]);
+        $pdf->SetLineStyle(['width' => 0.3, 'color' => self::ORANGE]);
         $pdf->Line(26, 271.8, 78, 271.8);
         $pdf->Line(132, 271.8, 184, 271.8);
     }
