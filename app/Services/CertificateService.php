@@ -174,6 +174,12 @@ class CertificateService
      */
     public function renderPdf(array $data): string
     {
+        $template = resource_path('certificates/edutrack-certificate-template.pdf');
+
+        if (is_file($template)) {
+            return $this->renderFromTemplate($template, $data);
+        }
+
         $pdf = new \App\Pdf\EdutrackPdf('P', 'mm', 'A4');
         $pdf->SetCreator('Edutrack LMS');
         $pdf->SetAuthor('Edutrack Computer Training College');
@@ -193,6 +199,78 @@ class CertificateService
         $this->drawContent($pdf, $data);
 
         return $pdf->Output('', 'S');
+    }
+
+    /**
+     * Render onto the official certificate artwork: the template PDF is the
+     * original design with only the variable text removed, so every static
+     * element (frame, watermark, logos, fonts, ornaments) is authentic.
+     */
+    protected function renderFromTemplate(string $template, array $data): string
+    {
+        $pdf = new \App\Pdf\EdutrackFpdi('P', 'mm', 'A4');
+        $pdf->SetCreator('Edutrack LMS');
+        $pdf->SetAuthor('Edutrack Computer Training College');
+        $pdf->SetTitle('Certificate - ' . ($data['certificate_number'] ?? ''));
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+        $pdf->SetMargins(0, 0, 0);
+        $pdf->SetAutoPageBreak(false, 0);
+        $pdf->setSourceFile($template);
+        $page = $pdf->importPage(1);
+        $pdf->AddPage();
+        $pdf->useTemplate($page, 0, 0, self::PAGE_W, self::PAGE_H);
+
+        $this->drawVariableFields($pdf, $data);
+
+        return $pdf->Output('', 'S');
+    }
+
+    /**
+     * The dynamic fields stamped onto the template, at the baselines measured
+     * from the original certificate. The template keeps its own underlines.
+     */
+    protected function drawVariableFields(TCPDF $pdf, array $data): void
+    {
+        $pdf->SetTextColor(...self::BLACK);
+
+        // Student name
+        $name = $data['student_name'] ?? '';
+        $this->certFont($pdf, 'script', 34);
+        $this->fitFont($pdf, 'script', 34, $name, 134);
+        $this->centeredAtBaseline($pdf, 102.2, $name);
+
+        // Course title
+        $pdf->SetTextColor(...self::NAVY_TITLE);
+        $this->drawCourseTitle($pdf, mb_strtoupper($data['course_title'] ?? ''));
+        $pdf->SetTextColor(...self::BLACK);
+
+        // "With {classification}"
+        $classification = $data['classification'] ?? null;
+        if ($classification && trim($classification) !== '' && strcasecmp($classification, 'Pass') !== 0) {
+            $this->certFont($pdf, 'script', 28.5);
+            $this->centeredAtBaseline($pdf, 169.7, 'With ' . $classification);
+        }
+
+        // Graduation date lines (the template's static text was removed with
+        // the fills because the day/month/year sit inline)
+        $this->centeredSegments($pdf, 195.3, [
+            ['Ceremony held on the ', 'serif', 16.6, 0],
+            [($data['graduation_day'] ?? ''), 'script', 19.8, 0],
+            [($data['graduation_suffix'] ?? ''), 'script', 9.9, 3.5],
+            [' day of ', 'serif', 16.6, 0],
+            [($data['graduation_month'] ?? ''), 'script', 19.8, 0],
+        ]);
+
+        $this->centeredSegments($pdf, 204.6, [
+            ['in the year ', 'serif', 16.6, 0],
+            [($data['graduation_year'] ?? ''), 'script', 19.8, 0],
+        ]);
+
+        // Bottom row
+        $this->certFont($pdf, 'serif', 14.8);
+        $this->leftAtBaseline($pdf, 29, 270.2, $data['national_id'] ?? '');
+        $this->rightAtBaseline($pdf, 184, 270.2, $data['certificate_number'] ?? '');
     }
 
     /**
