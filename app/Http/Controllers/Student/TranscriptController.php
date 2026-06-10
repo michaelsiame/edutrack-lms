@@ -337,20 +337,36 @@ class TranscriptController extends Controller
         $pdf->SetTextColor(...$navy);
 
         $infoRows = [
-            ['Student Name:', $data['student_name'], 'Student Number:', $data['student_number']],
-            ['NRC Number:', $data['national_id'], 'Date of Birth:', $data['date_of_birth']],
-            ['Email:', $data['email'], 'Phone:', $data['phone']],
-            ['Date of Issue:', $data['issue_date'], 'Transcript Ref:', $data['transcript_ref']],
+            ['Student Name:', $data['student_name'], 'Student Number:',
+             $data['student_number']],
+            ['NRC Number:', $data['national_id'], 
+            'Date of Birth:', $data['date_of_birth']],
+            ['Email:', $data['email'], 
+            'Phone:', $data['phone']],
+            ['Date of Issue:',
+             $data['issue_date'], 
+             'Transcript Ref:', 
+             $data['transcript_ref']],
         ];
 
         foreach ($infoRows as $row) {
+
+            // First label
+            $pdf->SetFont('helvetica', 'B', 9);
+            $pdf->SetTextColor(...$navy);
             $pdf->Cell(30, 6, $row[0], 0, 0, 'L');
+
+            // First value
             $pdf->SetFont('helvetica', '', 9);
             $pdf->SetTextColor(30, 30, 30);
             $pdf->Cell(65, 6, $row[1], 0, 0, 'L');
+
+            // Second label
             $pdf->SetFont('helvetica', 'B', 9);
             $pdf->SetTextColor(...$navy);
             $pdf->Cell(30, 6, $row[2], 0, 0, 'L');
+
+            // Second value
             $pdf->SetFont('helvetica', '', 9);
             $pdf->SetTextColor(30, 30, 30);
             $pdf->Cell(0, 6, $row[3], 0, 1, 'L');
