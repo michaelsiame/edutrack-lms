@@ -49,6 +49,7 @@ class TranscriptController extends Controller
         $enrollments = Enrollment::where('user_id', $user->id)
             ->whereIn('enrollment_status', ['Completed', 'In Progress'])
             ->with(['course', 'certificate', 'course.modules', 'course.modules.lessons', 'course.modules.lessons.assignments', 'course.modules.lessons.quizzes'])
+            ->orderByRaw("FIELD(enrollment_status, 'Completed', 'In Progress')")
             ->orderBy('enrolled_at', 'desc')
             ->get();
 
