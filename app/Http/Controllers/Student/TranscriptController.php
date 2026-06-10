@@ -296,18 +296,33 @@ class TranscriptController extends Controller
         $borderGray = [226, 232, 240];
 
         // ===== HEADER =====
+        $logoPath = public_path('assets/images/logo.png');
+        $hasLogo = is_file($logoPath);
+        $headerY = $pdf->GetY();
+
+        if ($hasLogo) {
+            // Logo on the left
+            $pdf->Image($logoPath, 12, $headerY, 0, 18);
+            $pdf->SetXY(38, $headerY + 1);
+        } else {
+            $pdf->SetXY(12, $headerY);
+        }
+
         $pdf->SetFont('helvetica', 'B', 16);
         $pdf->SetTextColor(...$navy);
         $pdf->Cell(0, 8, $data['institution_name'], 0, 1, 'L');
+        $pdf->SetX($hasLogo ? 38 : 12);
         $pdf->SetFont('helvetica', '', 9);
         $pdf->SetTextColor(80, 80, 80);
         $pdf->Cell(0, 5, $data['institution_address'], 0, 1, 'L');
+        $pdf->SetX($hasLogo ? 38 : 12);
         $pdf->Cell(0, 5, 'TEVETA Reg: ' . $data['teveta_reg'], 0, 1, 'L');
 
         $pdf->SetDrawColor(...$navy);
         $pdf->SetLineWidth(0.8);
-        $pdf->Line(12, $pdf->GetY() + 2, 198, $pdf->GetY() + 2);
-        $pdf->Ln(6);
+        $lineY = max($pdf->GetY(), $headerY + 20) + 2;
+        $pdf->Line(12, $lineY, 198, $lineY);
+        $pdf->SetY($lineY + 4);
 
         // ===== TITLE =====
         $pdf->SetFont('helvetica', 'B', 14);
