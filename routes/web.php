@@ -83,6 +83,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 
     // Transcript
+    Route::get('/transcript', [App\Http\Controllers\Student\TranscriptController::class, 'preview'])->name('transcript.preview');
     Route::get('/transcript/download', [App\Http\Controllers\Student\TranscriptController::class, 'download'])->name('transcript.download');
 
     // Enrollment

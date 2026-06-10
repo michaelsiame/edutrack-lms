@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: May 27, 2026 at 10:49 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Host: 127.0.0.1:3306
+-- Generation Time: Jun 10, 2026 at 12:02 PM
+-- Server version: 11.8.6-MariaDB-log
+-- PHP Version: 7.2.34
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `edutrack-lms`
+-- Database: `u605780771_edutrack_lms`
 --
 
 -- --------------------------------------------------------
@@ -156,81 +156,82 @@ CREATE TABLE `assignment_submissions` (
   `graded_by` int(11) DEFAULT NULL,
   `graded_at` timestamp NULL DEFAULT NULL,
   `attempt_number` int(11) DEFAULT 1,
-  `is_late` tinyint(1) DEFAULT 0
+  `is_late` tinyint(1) DEFAULT 0,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `assignment_submissions`
 --
 
-INSERT INTO `assignment_submissions` (`id`, `assignment_id`, `student_id`, `submission_text`, `file_url`, `submitted_at`, `status`, `points_earned`, `feedback`, `graded_by`, `graded_at`, `attempt_number`, `is_late`) VALUES
-(1, 1, 1, 'Calculator project completed. File uploaded to repository.', NULL, '2025-02-14 16:30:00', 'Graded', 95.00, 'Excellent work! Clean code and proper error handling. Well done.', 2, '2025-02-16 08:00:00', 1, 0),
-(2, 1, 4, 'My calculator implementation with extended features.', NULL, '2025-02-15 18:00:00', 'Graded', 88.00, 'Good implementation. Consider adding more comments for clarity.', 2, '2025-02-17 12:30:00', 1, 0),
-(3, 3, 2, 'Portfolio website completed with all requirements.', NULL, '2025-03-19 14:45:00', 'Graded', 142.00, 'Beautiful design and excellent responsive implementation!', 2, '2025-03-21 09:00:00', 1, 0),
-(4, 5, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(5, 6, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(6, 7, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(7, 8, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(8, 9, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 89.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(9, 5, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(10, 6, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(11, 7, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(12, 8, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 84.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(13, 9, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 88.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(14, 5, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 93.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(15, 6, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(16, 7, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(17, 8, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 74.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(18, 9, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 83.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(19, 5, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 83.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(20, 6, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(21, 7, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(22, 8, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 72.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(23, 9, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 77.00, NULL, 1, '2026-05-08 15:03:43', 1, 0),
-(24, 5, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 82.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(25, 6, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(26, 7, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(27, 8, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 74.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(28, 9, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 72.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(29, 5, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 87.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(30, 6, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(31, 7, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 86.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(32, 8, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 70.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(33, 9, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 80.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(34, 5, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(35, 6, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(36, 7, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(37, 8, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(38, 9, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 71.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(39, 5, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 69.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(40, 6, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(41, 7, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(42, 8, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 80.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(43, 9, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(44, 5, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 89.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(45, 6, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(46, 7, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 88.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(47, 8, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 58.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(48, 9, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(49, 5, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 73.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(50, 6, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(51, 7, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(52, 8, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(53, 9, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 57.00, NULL, 1, '2026-05-08 15:03:44', 1, 0),
-(54, 5, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 50.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
-(55, 6, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 62.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
-(56, 7, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
-(57, 8, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
-(58, 9, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 73.00, NULL, 1, '2026-05-08 15:03:45', 1, 0),
-(59, 5, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 80.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
-(60, 6, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 85.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
-(61, 7, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 90.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
-(62, 8, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 75.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
-(63, 9, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 88.00, NULL, 1, '2026-05-08 15:20:22', 1, 0),
-(64, 1, 82, 'Completed the Python Basics project. Created a calculator app using functions and loops.', 'uploads/assignments/test_user_python_project.zip', '2026-05-15 07:56:21', 'Graded', 85.00, 'Great work! Good use of functions. Could improve variable naming.', 6, '2026-05-16 07:56:21', 1, 0),
-(65, 2, 82, 'Data structures assignment - implemented lists, dictionaries, and sets with practical examples.', NULL, '2026-05-20 07:56:21', 'Submitted', NULL, NULL, NULL, NULL, 1, 0),
-(66, 6, 82, 'Microsoft Word practical project completed.', 'uploads/assignments/test_user_word_project.docx', '2026-05-08 07:56:21', 'Graded', 92.00, 'Excellent formatting and use of styles.', 6, '2026-05-09 07:56:21', 1, 0),
-(67, 7, 82, 'Excel budget project with formulas and charts.', 'uploads/assignments/test_user_excel_project.xlsx', '2026-05-11 07:56:21', 'Returned', 78.00, 'Good effort but some formulas are incorrect. Please review VLOOKUP section.', 6, '2026-05-12 07:56:21', 1, 0);
+INSERT INTO `assignment_submissions` (`id`, `assignment_id`, `student_id`, `submission_text`, `file_url`, `submitted_at`, `status`, `points_earned`, `feedback`, `graded_by`, `graded_at`, `attempt_number`, `is_late`, `deleted_at`) VALUES
+(1, 1, 1, 'Calculator project completed. File uploaded to repository.', NULL, '2025-02-14 16:30:00', 'Graded', 95.00, 'Excellent work! Clean code and proper error handling. Well done.', 2, '2025-02-16 08:00:00', 1, 0, NULL),
+(2, 1, 4, 'My calculator implementation with extended features.', NULL, '2025-02-15 18:00:00', 'Graded', 88.00, 'Good implementation. Consider adding more comments for clarity.', 2, '2025-02-17 12:30:00', 1, 0, NULL),
+(3, 3, 2, 'Portfolio website completed with all requirements.', NULL, '2025-03-19 14:45:00', 'Graded', 142.00, 'Beautiful design and excellent responsive implementation!', 2, '2025-03-21 09:00:00', 1, 0, NULL),
+(4, 5, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(5, 6, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(6, 7, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(7, 8, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 100.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(8, 9, 72, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 89.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(9, 5, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(10, 6, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(11, 7, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(12, 8, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 84.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(13, 9, 77, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 88.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(14, 5, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 93.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(15, 6, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(16, 7, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(17, 8, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 74.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(18, 9, 71, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 83.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(19, 5, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 83.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(20, 6, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(21, 7, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 98.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(22, 8, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 72.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(23, 9, 73, NULL, NULL, '2026-05-08 15:03:43', 'Graded', 77.00, NULL, 1, '2026-05-08 15:03:43', 1, 0, NULL),
+(24, 5, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 82.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(25, 6, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(26, 7, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(27, 8, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 74.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(28, 9, 79, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 72.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(29, 5, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 87.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(30, 6, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(31, 7, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 86.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(32, 8, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 70.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(33, 9, 80, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 80.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(34, 5, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(35, 6, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(36, 7, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 96.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(37, 8, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(38, 9, 78, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 71.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(39, 5, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 69.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(40, 6, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(41, 7, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 90.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(42, 8, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 80.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(43, 9, 81, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(44, 5, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 89.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(45, 6, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 94.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(46, 7, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 88.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(47, 8, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 58.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(48, 9, 74, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(49, 5, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 73.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(50, 6, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(51, 7, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 92.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(52, 8, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 76.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(53, 9, 75, NULL, NULL, '2026-05-08 15:03:44', 'Graded', 57.00, NULL, 1, '2026-05-08 15:03:44', 1, 0, NULL),
+(54, 5, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 50.00, NULL, 1, '2026-05-08 15:03:45', 1, 0, NULL),
+(55, 6, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 62.00, NULL, 1, '2026-05-08 15:03:45', 1, 0, NULL),
+(56, 7, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:45', 1, 0, NULL),
+(57, 8, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 68.00, NULL, 1, '2026-05-08 15:03:45', 1, 0, NULL),
+(58, 9, 76, NULL, NULL, '2026-05-08 15:03:45', 'Graded', 73.00, NULL, 1, '2026-05-08 15:03:45', 1, 0, NULL),
+(59, 5, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 80.00, NULL, 1, '2026-05-08 15:20:22', 1, 0, NULL),
+(60, 6, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 85.00, NULL, 1, '2026-05-08 15:20:22', 1, 0, NULL),
+(61, 7, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 90.00, NULL, 1, '2026-05-08 15:20:22', 1, 0, NULL),
+(62, 8, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 75.00, NULL, 1, '2026-05-08 15:20:22', 1, 0, NULL),
+(63, 9, 82, NULL, NULL, '2026-05-08 15:20:22', 'Graded', 88.00, NULL, 1, '2026-05-08 15:20:22', 1, 0, NULL),
+(64, 1, 82, 'Completed the Python Basics project. Created a calculator app using functions and loops.', 'uploads/assignments/test_user_python_project.zip', '2026-05-15 07:56:21', 'Graded', 85.00, 'Great work! Good use of functions. Could improve variable naming.', 6, '2026-05-16 07:56:21', 1, 0, NULL),
+(65, 2, 82, 'Data structures assignment - implemented lists, dictionaries, and sets with practical examples.', NULL, '2026-05-20 07:56:21', 'Submitted', NULL, NULL, NULL, NULL, 1, 0, NULL),
+(66, 6, 82, 'Microsoft Word practical project completed.', 'uploads/assignments/test_user_word_project.docx', '2026-05-08 07:56:21', 'Graded', 92.00, 'Excellent formatting and use of styles.', 6, '2026-05-09 07:56:21', 1, 0, NULL),
+(67, 7, 82, 'Excel budget project with formulas and charts.', 'uploads/assignments/test_user_excel_project.xlsx', '2026-05-11 07:56:21', 'Returned', 78.00, 'Good effort but some formulas are incorrect. Please review VLOOKUP section.', 6, '2026-05-12 07:56:21', 1, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -273,6 +274,7 @@ CREATE TABLE `certificates` (
   `certificate_id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `course_id` int(11) DEFAULT NULL,
+  `intake_name` varchar(255) DEFAULT NULL,
   `enrollment_id` int(11) NOT NULL,
   `certificate_number` varchar(50) NOT NULL,
   `issued_date` date NOT NULL,
@@ -288,25 +290,25 @@ CREATE TABLE `certificates` (
 -- Dumping data for table `certificates`
 --
 
-INSERT INTO `certificates` (`certificate_id`, `user_id`, `course_id`, `enrollment_id`, `certificate_number`, `issued_date`, `verification_code`, `final_score`, `issued_at`, `is_verified`, `expiry_date`, `created_at`) VALUES
-(1, 8, 1, 1, 'EDTRK-2025-000001', '2025-04-10', 'VRF-001-ABCD1234', 0.00, '2025-04-10 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(2, 9, 7, 4, 'EDTRK-2025-000002', '2025-04-25', 'VRF-002-EFGH5678', 0.00, '2025-04-25 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(3, 10, 18, 7, 'EDTRK-2025-000003', '2025-04-08', 'VRF-003-IJKL9012', 0.00, '2025-04-08 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(4, 10, 1, 9, 'EDTRK-2025-000004', '2025-04-12', 'VRF-004-MNOP3456', 0.00, '2025-04-12 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(5, 11, 5, 10, 'EDTRK-2025-000005', '2025-04-05', 'VRF-005-QRST7890', 0.00, '2025-04-05 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(6, 15, 3, 21, 'EDTRK-2025-000006', '2025-03-15', 'VRF-006-UVWX1234', 0.00, '2025-03-15 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
-(7, 78, 1, 39, 'EDTRK-2026-100039', '2026-05-08', 'VRF-139-9C509B3A', 97.40, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
-(8, 83, 1, 40, 'EDTRK-2026-100040', '2026-05-08', 'VRF-140-D4DE494F', 92.00, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
-(9, 77, 1, 41, 'EDTRK-2026-100041', '2026-05-08', 'VRF-141-E87AC841', 88.80, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
-(10, 79, 1, 42, 'EDTRK-2026-100042', '2026-05-08', 'VRF-142-4D668F4B', 84.00, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
-(11, 85, 1, 43, 'EDTRK-2026-100043', '2026-05-08', 'VRF-143-C87545D6', 83.60, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
-(12, 86, 1, 44, 'EDTRK-2026-100044', '2026-05-08', 'VRF-144-230A46A9', 83.40, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
-(13, 84, 1, 45, 'EDTRK-2026-100045', '2026-05-08', 'VRF-145-F8DE372C', 81.80, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
-(14, 87, 1, 46, 'EDTRK-2026-100046', '2026-05-08', 'VRF-146-6235A06E', 79.80, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
-(15, 80, 1, 47, 'EDTRK-2026-100047', '2026-05-08', 'VRF-147-CB541394', 79.40, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
-(16, 81, 1, 48, 'EDTRK-2026-100048', '2026-05-08', 'VRF-148-E8A683F9', 78.00, '2026-05-08 15:09:05', 1, NULL, '2026-05-08 15:09:05'),
-(17, 82, 1, 49, 'EDTRK-2026-100049', '2026-05-08', 'VRF-149-89859207', 64.20, '2026-05-08 15:09:05', 1, NULL, '2026-05-08 15:09:05'),
-(18, 88, 1, 50, 'EDTRK-2026-100050', '2026-05-08', 'VRF-150-5ECC1A26', 83.60, '2026-05-08 15:20:22', 1, NULL, '2026-05-08 15:20:22');
+INSERT INTO `certificates` (`certificate_id`, `user_id`, `course_id`, `intake_name`, `enrollment_id`, `certificate_number`, `issued_date`, `verification_code`, `final_score`, `issued_at`, `is_verified`, `expiry_date`, `created_at`) VALUES
+(1, 8, 1, NULL, 1, 'EDTRK-2025-000001', '2025-04-10', 'VRF-001-ABCD1234', 0.00, '2025-04-10 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(2, 9, 7, NULL, 4, 'EDTRK-2025-000002', '2025-04-25', 'VRF-002-EFGH5678', 0.00, '2025-04-25 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(3, 10, 18, NULL, 7, 'EDTRK-2025-000003', '2025-04-08', 'VRF-003-IJKL9012', 0.00, '2025-04-08 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(4, 10, 1, NULL, 9, 'EDTRK-2025-000004', '2025-04-12', 'VRF-004-MNOP3456', 0.00, '2025-04-12 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(5, 11, 5, NULL, 10, 'EDTRK-2025-000005', '2025-04-05', 'VRF-005-QRST7890', 0.00, '2025-04-05 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(6, 15, 3, NULL, 21, 'EDTRK-2025-000006', '2025-03-15', 'VRF-006-UVWX1234', 0.00, '2025-03-15 00:00:00', 1, NULL, '2025-11-18 22:21:01'),
+(7, 78, 1, NULL, 39, 'EDTRK-2026-100039', '2026-05-08', 'VRF-139-9C509B3A', 97.40, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
+(8, 83, 1, NULL, 40, 'EDTRK-2026-100040', '2026-05-08', 'VRF-140-D4DE494F', 92.00, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
+(9, 77, 1, NULL, 41, 'EDTRK-2026-100041', '2026-05-08', 'VRF-141-E87AC841', 88.80, '2026-05-08 15:09:03', 1, NULL, '2026-05-08 15:09:03'),
+(10, 79, 1, NULL, 42, 'EDTRK-2026-100042', '2026-05-08', 'VRF-142-4D668F4B', 84.00, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(11, 85, 1, NULL, 43, 'EDTRK-2026-100043', '2026-05-08', 'VRF-143-C87545D6', 83.60, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(12, 86, 1, NULL, 44, 'EDTRK-2026-100044', '2026-05-08', 'VRF-144-230A46A9', 83.40, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(13, 84, 1, NULL, 45, 'EDTRK-2026-100045', '2026-05-08', 'VRF-145-F8DE372C', 81.80, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(14, 87, 1, NULL, 46, 'EDTRK-2026-100046', '2026-05-08', 'VRF-146-6235A06E', 79.80, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(15, 80, 1, NULL, 47, 'EDTRK-2026-100047', '2026-05-08', 'VRF-147-CB541394', 79.40, '2026-05-08 15:09:04', 1, NULL, '2026-05-08 15:09:04'),
+(16, 81, 1, NULL, 48, 'EDTRK-2026-100048', '2026-05-08', 'VRF-148-E8A683F9', 78.00, '2026-05-08 15:09:05', 1, NULL, '2026-05-08 15:09:05'),
+(17, 82, 1, NULL, 49, 'EDTRK-2026-100049', '2026-05-08', 'VRF-149-89859207', 64.20, '2026-05-08 15:09:05', 1, NULL, '2026-05-08 15:09:05'),
+(18, 88, 1, NULL, 50, 'EDTRK-2026-100050', '2026-05-08', 'VRF-150-5ECC1A26', 83.60, '2026-05-08 15:20:22', 1, NULL, '2026-05-08 15:20:22');
 
 -- --------------------------------------------------------
 
@@ -352,7 +354,9 @@ INSERT INTO `contacts` (`id`, `name`, `email`, `phone`, `subject`, `message`, `i
 (20, 'MichaelPek', 'jacksrenome@gmx.com', '87499932667', 'general', 'YyErjcwdkdjwjjwjjdwjddjwsjf ndsaKAqwdweihduncbbwebidaa iudwnishqwuvdwqihbfvweuiojsqjqioqdefiw dwqsqwijbfiewdncbhvdifqhioqsjnqw edutrackzambia.com', 0, '2026-05-06 04:34:02'),
 (21, 'SamuelRer', 'yourmail@gmail.com', '88897564112', 'general', 'This professional campaign titled \'The Path You Make\' was published in United States in February, 2018. It was created for the brand: Delta Airlines, by ad agency: Digitas. This Film medium campaign is related to the Transport industry and contains 1 media asset. It was submitted about 8 years ago. \r\nhttps://www.adsoftheworld.com/campaigns/the-path-you-make', 0, '2026-05-08 18:27:36'),
 (22, 'Donnellcique', 'dowell637@gmail.com', '84525656159', 'general', 'THE $27,000,000 JACKPOT IS A TROPHY FOR TENACITY https://hiurls.com/EWbLr \r\n \r\n \r\n \r\n \r\n \r\nBATCH ID: c0to6n2z4b1l7r7um6tf5e6m9h3s2m7iq3rm0h1n3a0e6f6zb1uj6d4q2n7w0j3bl7om2j6w1q3i7w8fd1aw5u2i9x6n3g3jn8fn5x0m3p4k7j0q', 0, '2026-05-18 12:27:58'),
-(23, 'Donnellcique', 'ramy.t.trade@gmail.com', '82778214969', 'general', 'IMPORTANT! Your 1.3426 BTC is Confirmed Withdraw https://orb.tl/ytUGB \r\n \r\n \r\n \r\n \r\n \r\nVALUE: j7px9g9h3i3q9e0lq6tn2c0k7p4b7e0mt6xf0g3a2o5l5r7bm4pt2k7r8d7x3a1ke9af4r4m0x4e7s0mo5ds4p8c6w4a6p4oc7ci5j4f4w1k7l6n', 0, '2026-05-19 03:04:24');
+(23, 'Donnellcique', 'ramy.t.trade@gmail.com', '82778214969', 'general', 'IMPORTANT! Your 1.3426 BTC is Confirmed Withdraw https://orb.tl/ytUGB \r\n \r\n \r\n \r\n \r\n \r\nVALUE: j7px9g9h3i3q9e0lq6tn2c0k7p4b7e0mt6xf0g3a2o5l5r7bm4pt2k7r8d7x3a1ke9af4r4m0x4e7s0mo5ds4p8c6w4a6p4oc7ci5j4f4w1k7l6n', 0, '2026-05-19 03:04:24'),
+(24, 'Gemma Marshall', 'gemmamarshall811@gmail.com', '46923259', 'Instagram Growth', 'Hi,\r\n\r\nI was just looking at edutrackzambia.com and wanted to ask: are you looking to scale your Instagram presence right now?\r\n\r\nWe help brands like yours add 300+ targeted Instagram followers every month using manual outreach and ads. We can grow your existing page or even build a brand-new profile from scratch for you if you\'d prefer a fresh start.\r\n\r\nWould you like me to send over some more info on how it works?\r\n\r\nThanks for your time,\r\nGemma', 0, '2026-06-05 09:52:11'),
+(25, 'Joanna Holden', 'joannaholden1981@gmail.com', '2691664503', 'Google Ads setup for edutrackzambia.com', 'Hi,\r\n\r\nI was looking over edutrackzambia.com and wanted to see if you\'ve ever looked into using Google Ads to capture search traffic in your market.\r\n\r\nWe’ve been managing these campaigns for over 20 years (back when it was still called AdWords). It’s usually the fastest way to step ahead of your competitors and secure top-tier visibility on Google.\r\n\r\nAre you open to a quick, text-based example of how this would look for edutrackzambia.com?\r\n\r\nRegards,\r\nJoanna', 0, '2026-06-10 09:01:53');
 
 -- --------------------------------------------------------
 
@@ -380,7 +384,9 @@ CREATE TABLE `courses` (
   `total_hours` decimal(5,2) DEFAULT NULL,
   `max_students` int(11) DEFAULT 30,
   `enrollment_count` int(11) DEFAULT 0,
-  `status` enum('draft','published','archived','under review') DEFAULT 'draft',
+  `status` enum('draft','published','archived','under_review') NOT NULL DEFAULT 'draft',
+  `is_template` tinyint(1) NOT NULL DEFAULT 0,
+  `template_source_id` int(11) DEFAULT NULL,
   `is_featured` tinyint(1) DEFAULT 0,
   `rating` decimal(3,2) DEFAULT 0.00,
   `total_reviews` int(11) DEFAULT 0,
@@ -395,39 +401,39 @@ CREATE TABLE `courses` (
 -- Dumping data for table `courses`
 --
 
-INSERT INTO `courses` (`id`, `title`, `slug`, `description`, `short_description`, `category_id`, `instructor_id`, `level`, `language`, `thumbnail_url`, `video_intro_url`, `start_date`, `end_date`, `price`, `discount_price`, `duration_weeks`, `total_hours`, `max_students`, `enrollment_count`, `status`, `is_featured`, `rating`, `total_reviews`, `prerequisites`, `learning_outcomes`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(0, 'Cybersecurity Fundamentals', 'cybersecurity-fundamentals', '<p>This comprehensive cybersecurity course prepares you for entry-level roles in the rapidly growing field of cybersecurity. You will learn fundamental concepts, network security, threat detection, ethical hacking basics, and security operations.</p>\n    <p>By the end of this course, you will understand how to protect systems, detect threats, and respond to security incidents using industry-standard tools and frameworks.</p>', 'Master cybersecurity fundamentals and protect digital assets from cyber threats', 7, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800', NULL, NULL, NULL, 4500.00, NULL, 12, 96.00, 30, 0, 'published', 1, 0.00, 0, 'Basic computer literacy, Understanding of operating systems (Windows/Linux)', 'Understand cybersecurity principles and the threat landscape|Identify and mitigate common network vulnerabilities|Implement security controls and defense strategies|Detect and respond to security incidents|Understand ethical hacking basics|Apply security frameworks like NIST', '2026-05-04 18:50:46', '2026-05-04 18:50:46', NULL),
-(1, 'Certificate in Microsoft Office Suite', 'microsoft-office-suite', 'Transform your productivity with comprehensive Microsoft Office training. This industry-leading program covers the complete Office Suite including Word, Excel, PowerPoint, Publisher, and essential internet skills. Learn to create professional documents, analyze data with powerful spreadsheets, design compelling presentations, and master desktop publishing. Perfect for professionals seeking to enhance workplace efficiency, students preparing for academic success, or career changers entering the digital workplace. Our hands-on approach ensures you gain practical, job-ready skills that employers value. By course end, you\'ll confidently handle complex office tasks, automate workflows, and present information professionally.', 'Master Word, Excel, PowerPoint, Publisher & Internet skills for professional success', 1, 13, 'Beginner', 'English', 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=800', NULL, '2025-01-15', '2025-04-15', 2500.00, NULL, 8, 64.00, 30, 18, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2026-05-23 11:41:01', NULL),
-(3, 'Certificate in Digital Literacy', 'digital-literacy', 'Bridge the digital divide with essential 21st-century skills. This foundational course equips you with critical digital competencies for modern life and work. Learn professional email communication, effective internet research techniques, cloud storage management, online collaboration tools, and digital safety practices. Understand social media etiquette, basic troubleshooting, file management, and online privacy protection. Ideal for beginners, seniors transitioning to digital workplaces, or anyone looking to build confidence with technology. Our patient, step-by-step instruction ensures no one gets left behind in the digital age. Gain the digital fluency needed to thrive in today\'s connected world.', 'Essential digital skills for navigating modern technology confidently', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800', NULL, '2025-01-20', '2025-03-20', 850.00, NULL, 2, 16.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(4, 'Certificate in Record Management', 'record-management', 'Master professional records and information management systems that keep organizations running smoothly. Learn comprehensive filing systems, document control procedures, archiving best practices, and compliance with data protection regulations including GDPR. Understand records lifecycle management, retention schedules, digitization processes, and efficient retrieval systems. This course covers both physical and electronic records management, preparing you for roles in government, healthcare, legal, and corporate environments. Gain expertise in maintaining confidentiality, ensuring audit trails, and implementing secure disposal methods. Essential for administrative professionals, office managers, and those pursuing careers in information governance.', 'Professional records and information management for compliance and efficiency', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800', NULL, '2025-02-15', '2025-05-15', 1500.00, NULL, 6, 48.00, 30, 1, 'published', 0, 4.50, 0, NULL, NULL, '2025-11-18 22:21:01', '2026-05-27 08:04:19', NULL),
-(5, 'Certificate in Python Programming', 'python-programming', 'Launch your programming career with Python, the world\'s most popular and versatile programming language. This comprehensive course takes you from absolute beginner to confident developer. Master Python fundamentals including variables, data types, control structures, and functions. Progress to advanced topics like object-oriented programming, file handling, error management, and popular libraries including NumPy, Pandas, and Matplotlib. Build real-world projects including data analysis tools, automation scripts, and web applications. Python\'s readability and extensive community support make it perfect for beginners, while its power suits professional developers. Ideal for aspiring programmers, data scientists, automation engineers, or anyone entering tech careers.', 'Learn Python from basics to advanced - the most in-demand programming language', 2, 2, 'Beginner', 'English', 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800', NULL, '2025-01-10', '2025-04-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(6, 'Certificate in Java Programming', 'java-programming', 'Master Java, the enterprise-standard programming language powering billions of devices worldwide. This rigorous course covers Java fundamentals through advanced enterprise development. Learn object-oriented programming principles, Java collections framework, multithreading, exception handling, and JDBC for database connectivity. Build robust, scalable applications using industry best practices. Understand design patterns, unit testing with JUnit, and modern development tools. Java\'s \"write once, run anywhere\" philosophy makes it essential for enterprise applications, Android development, and large-scale systems. Perfect for aspiring software engineers, mobile developers, or professionals transitioning into backend development roles.', 'Master Java for enterprise applications and Android development', 2, 2, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800', NULL, '2025-02-01', '2025-06-01', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(7, 'Certificate in Web Development', 'web-development', 'Build stunning, professional websites from scratch with our comprehensive full-stack web development program. Master the complete web development toolkit: HTML5 for structure, CSS3 for beautiful styling, JavaScript for interactivity, and modern frameworks for responsive design. Learn mobile-first development, CSS Grid and Flexbox layouts, JavaScript ES6+ features, DOM manipulation, and API integration. Create portfolio-worthy projects including responsive business websites, interactive web applications, and dynamic user interfaces. Understand version control with Git, browser developer tools, and deployment processes. This hands-on course prepares you for frontend developer roles or freelance web design careers. No prior experience required.', 'Build modern, responsive websites with HTML5, CSS3, JavaScript & frameworks', 2, 2, 'Beginner', 'English', 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=800', NULL, '2025-01-15', '2025-04-30', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(8, 'Certificate in Mobile App Development', 'mobile-app-development', 'Create professional mobile applications for the world\'s two dominant platforms - Android and iOS. This comprehensive program covers native mobile development using Java/Kotlin for Android and Swift for iOS. Learn mobile UI/UX principles, lifecycle management, data persistence, API integration, and app publishing processes. Build real apps including social media clients, e-commerce apps, and location-based services. Understand mobile-specific challenges like varying screen sizes, touch interfaces, push notifications, and offline functionality. Master app store submission, monetization strategies, and user analytics. Perfect for aspiring mobile developers, entrepreneurs launching apps, or web developers expanding their skillset into the lucrative mobile market.', 'Develop native iOS and Android applications professionally', 2, 2, 'Advanced', 'English', 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800', NULL, '2025-03-01', '2025-07-30', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 1, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(9, 'Certificate in Software Engineering', 'software-engineering-git', 'Learn professional software development practices that distinguish hobbyists from industry professionals. Master essential software engineering methodologies including Agile, Scrum, and DevOps. Gain expertise in version control with Git and GitHub for collaborative development, branching strategies, pull requests, and code reviews. Understand software testing principles, continuous integration/continuous deployment (CI/CD), code quality tools, and documentation best practices. Learn project management, technical communication, and team collaboration workflows used by leading tech companies. This course bridges the gap between writing code and building enterprise-grade software. Essential for junior developers preparing for professional roles or programmers seeking to adopt industry standards.', 'Professional software development with Git, testing, CI/CD & methodologies', 2, 2, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=800', NULL, '2025-02-10', '2025-05-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(10, 'Certificate in Data Analysis', 'data-analysis', 'Transform raw data into actionable business insights with comprehensive data analysis training. Master the complete data analytics workflow: collection, cleaning, analysis, visualization, and reporting. Learn Excel for data manipulation and pivot tables, SQL for database querying, and Python with Pandas for advanced analysis. Create compelling data visualizations using Tableau-style dashboards, statistical analysis techniques, and predictive modeling basics. Understand key performance indicators (KPIs), A/B testing, and data-driven decision making. Work with real-world datasets from business, healthcare, and finance sectors. This practical course prepares you for data analyst, business intelligence, or market research roles. No advanced math required - just curiosity and attention to detail.', 'Analyze data and create insights using Excel, SQL, Python & visualization tools', 3, 4, 'Beginner', 'English', 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800', NULL, '2025-01-20', '2025-04-20', 1500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(11, 'Certificate in Cyber Security', 'cyber-security', 'Defend organizations against evolving cyber threats with industry-recognized cybersecurity training. This advanced program covers network security fundamentals, ethical hacking techniques, threat analysis, penetration testing, and security best practices. Learn cryptography, firewall configuration, intrusion detection systems, security auditing, and incident response protocols. Master vulnerability assessment tools, security frameworks (NIST, ISO 27001), and compliance requirements. Understand social engineering, malware analysis, and secure coding practices. Gain hands-on experience with Kali Linux, Wireshark, Metasploit, and other professional tools. This comprehensive course prepares you for security analyst, penetration tester, or security consultant roles. Help protect critical infrastructure in our increasingly connected world.', 'Advanced cybersecurity: ethical hacking, network defense & threat analysis', 3, 3, 'Advanced', 'English', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800', NULL, '2025-02-15', '2025-06-30', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(12, 'Certificate in Database Management Systems', 'database-management', 'Master the backbone of modern applications - professional database design and management. Learn relational database concepts, SQL mastery, database design principles, and normalization techniques. Work with industry-standard systems including MySQL, PostgreSQL, and SQL Server. Understand indexing strategies, query optimization, stored procedures, triggers, and transactions. Learn database administration tasks including backup/recovery, user management, performance tuning, and security. Explore NoSQL basics and data warehousing concepts. Build real-world database projects from e-commerce platforms to content management systems. Essential for backend developers, data engineers, database administrators, or anyone working with data-intensive applications. Transform messy data into organized, efficient database systems.', 'Design, manage & optimize databases using MySQL, PostgreSQL & SQL Server', 3, 3, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800', NULL, '2025-01-25', '2025-05-25', 1500.00, NULL, 6, 48.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(13, 'Certificate in Artificial Intelligence', 'ai-machine-learning', 'Explore the transformative world of Artificial Intelligence and its practical applications across industries. This introductory course demystifies AI concepts including machine learning, neural networks, natural language processing, and computer vision. Understand how AI powers recommendation systems, autonomous vehicles, virtual assistants, and medical diagnostics. Learn AI ethics, bias considerations, and societal implications. Gain hands-on experience with AI tools and platforms without deep mathematical knowledge. Explore real-world case studies from healthcare, finance, retail, and manufacturing. Perfect for business professionals, managers, entrepreneurs, or anyone curious about AI\'s impact on their industry. No programming background required - focus on understanding and applying AI strategically.', 'Understand AI fundamentals and practical applications across industries', 4, 4, 'Advanced', 'English', 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800', NULL, '2025-03-01', '2025-07-01', 850.00, NULL, 3, 24.00, 30, 0, 'published', 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(14, 'Certificate in Internet of Things', 'internet-of-things', 'Build smart, connected devices with Internet of Things (IoT) technology. Learn IoT architecture, sensor integration, microcontroller programming (Arduino, Raspberry Pi), wireless communication protocols, and cloud connectivity. Understand MQTT, REST APIs, and IoT security challenges. Build practical IoT projects including smart home systems, environmental monitoring, and industrial automation solutions. Explore IoT platforms like AWS IoT, Azure IoT Hub, and ThingSpeak. Learn data collection from sensors, real-time processing, and remote device control. Perfect for electronics enthusiasts, embedded systems developers, or engineers implementing Industry 4.0 solutions. Transform everyday objects into intelligent, internet-connected devices.', 'Build smart IoT solutions with sensors, microcontrollers & cloud integration', 4, 4, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=800', NULL, '2025-02-20', '2025-05-20', 450.00, NULL, 12, 60.00, 30, 0, 'archived', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(15, 'Certificate in Graphic Designing', 'graphic-designing', 'Unleash your creativity with professional graphic design training using industry-standard Adobe Creative Suite. Master Photoshop for photo editing and digital art, Illustrator for vector graphics and logos, and InDesign for layouts and publications. Learn fundamental design principles including typography, color theory, composition, and visual hierarchy. Create professional materials: business cards, brochures, posters, social media graphics, and brand identities. Understand print vs. digital design requirements, file formats, and client collaboration. Build a stunning portfolio showcasing diverse design projects. Perfect for aspiring graphic designers, marketing professionals, small business owners, or creative individuals. Transform ideas into visually compelling designs that capture attention and communicate effectively.', 'Master Adobe Creative Suite for professional graphic design and branding', 5, 6, 'Beginner', 'English', 'https://images.unsplash.com/photo-1626785774625-ddcddc3445e9?w=800', NULL, '2025-01-15', '2025-04-30', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(16, 'Certificate in Digital & Content Creation', 'digital-content-creation', 'Create engaging multimedia content that educates, entertains, and converts. Master video editing, motion graphics, animation, interactive presentations, and e-learning materials. Learn industry-standard tools for video production, audio editing, screen recording, and multimedia authoring. Understand storytelling techniques, scriptwriting, storyboarding, and visual communication strategies. Create professional content for corporate training, educational institutions, YouTube channels, and social media platforms. Learn content strategy, audience engagement, and multimedia accessibility. Perfect for educators, corporate trainers, content creators, marketing professionals, or entrepreneurs. Transform complex information into captivating visual experiences that resonate with modern audiences.', 'Create engaging multimedia content: videos, animations & e-learning materials', 5, 6, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800', NULL, '2025-02-05', '2025-05-05', 950.00, NULL, 3, 24.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(17, 'Certificate in Digital Marketing', 'digital-marketing', 'Master the complete digital marketing ecosystem to grow businesses online. Learn search engine optimization (SEO), social media marketing, content marketing, email campaigns, and paid advertising (Google Ads, Facebook Ads). Understand marketing analytics, conversion optimization, customer journey mapping, and ROI measurement. Create comprehensive digital marketing strategies, develop engaging content, and build effective campaigns. Master tools including Google Analytics, Facebook Business Manager, Mailchimp, and keyword research platforms. Learn influencer marketing, affiliate marketing, and marketing automation. Perfect for marketing professionals, business owners, entrepreneurs, or anyone entering the digital marketing field. Drive traffic, generate leads, and grow revenue through strategic online marketing.', 'Master SEO, social media, content marketing & digital advertising strategies', 5, 6, 'Beginner', 'English', 'https://images.unsplash.com/photo-1557838923-2985c318be48?w=800', NULL, '2025-01-20', '2025-04-20', 950.00, NULL, 3, 24.00, 30, 0, 'published', 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(18, 'Certificate in Entrepreneurship', 'entrepreneurship', 'Transform your business idea into reality with comprehensive entrepreneurship training. Learn business planning, market research, financial management, and growth strategies. Understand business registration, legal structures, taxation, and regulatory compliance. Master customer validation, minimum viable product development, and lean startup methodologies. Learn sales strategies, negotiation skills, and customer relationship management. Understand funding options including bootstrapping, angel investment, venture capital, and crowdfunding. Develop essential entrepreneurial skills: leadership, decision-making, risk management, and resilience. Create a comprehensive business plan investors will take seriously. Perfect for aspiring entrepreneurs, freelancers transitioning to business ownership, or intrapreneurs driving innovation within organizations. Turn your passion into a profitable venture.', 'Launch and grow your business: planning, financing, marketing & operations', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800', NULL, '2025-01-10', '2025-04-10', 2500.00, NULL, 11, 88.00, 30, 0, 'published', 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(19, 'Certificate in Project Management', 'project-management', 'Lead successful projects using professional project management methodologies. Master PMBOK framework, Agile principles, and Scrum practices. Learn project initiation, planning, execution, monitoring, and closure. Understand scope management, time estimation, budget control, risk management, and stakeholder communication. Use project management tools including Gantt charts, Kanban boards, and collaboration platforms. Learn team leadership, conflict resolution, and change management. Understand earned value management, critical path analysis, and quality assurance. Prepare for PMP or Agile certifications. Perfect for project managers, team leaders, coordinators, or professionals managing complex initiatives. Deliver projects on time, within budget, and exceeding stakeholder expectations.', 'Professional project management: PMBOK, Agile, Scrum & leadership skills', 6, 5, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800', NULL, '2025-02-01', '2025-06-01', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(20, 'Certificate in Financial Technology', 'financial-technology', 'Explore the digital revolution transforming financial services worldwide. Understand blockchain technology, cryptocurrency fundamentals, digital payments systems, mobile money platforms, and digital banking. Learn about fintech ecosystems, regulatory technology (RegTech), peer-to-peer lending, robo-advisors, and insurtech innovations. Understand payment gateways, digital wallets, and cross-border transactions. Explore real-world case studies from M-Pesa, PayPal, Stripe, and emerging fintech startups. Learn about financial inclusion, cybersecurity in finance, and future trends. Perfect for banking professionals, entrepreneurs entering fintech, financial advisors adapting to digital trends, or anyone curious about money\'s digital future. Position yourself at the intersection of finance and technology.', 'Explore digital payments, blockchain, cryptocurrency & digital banking innovations', 6, 5, 'Advanced', 'English', 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800', NULL, '2025-03-01', '2025-06-15', 1200.00, NULL, 3, 24.00, 30, 0, 'published', 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
-(24, 'Certificate in ICT Support & Hardware Repair', 'ict-support-hardware-repair', 'Become a skilled ICT technician with comprehensive computer hardware training. Learn computer architecture, component identification, hardware installation, troubleshooting methodologies, and repair techniques. Master operating system installation (Windows, Linux), driver management, and system optimization. Understand common hardware problems: motherboard issues, power supply failures, storage problems, and peripheral connectivity. Learn diagnostic tools, preventive maintenance, data recovery basics, and customer service skills. Gain hands-on experience assembling PCs, upgrading components, and resolving technical issues. Understand mobile device repair fundamentals. Perfect for aspiring IT support professionals, computer technicians, or entrepreneurs starting repair businesses. Provide essential technical support that keeps organizations running smoothly.', 'Computer hardware repair, troubleshooting & technical support expertise', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
-(25, 'Certificate in Computer Studies', 'computer-studies', 'Build a solid foundation in computer science through this comprehensive introductory program. Explore fundamental computing concepts, computer architecture, operating systems, networking basics, and software applications. Understand binary systems, logic gates, algorithms, and problem-solving techniques. Learn essential applications including word processing, spreadsheets, presentations, and internet usage. Gain exposure to programming concepts, database fundamentals, and cybersecurity awareness. Perfect foundation for further ICT studies or professional certifications. Ideal for students beginning their technology journey, career changers entering IT fields, or professionals needing comprehensive computer literacy. Develop the core knowledge essential for any technology-related career path.', 'Comprehensive computer fundamentals: ideal foundation for ICT careers', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800', NULL, NULL, NULL, 3850.00, NULL, 12, 96.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
-(26, 'Certificate in Computer Science General', 'computer-science-general', 'Master both theoretical and practical aspects of computer science through this balanced curriculum. Learn computer organization, system architecture, programming fundamentals, data structures, algorithms, and software engineering principles. Understand operating systems, computer networks, database systems, and web technologies. Gain programming experience in multiple languages while learning core CS concepts like recursion, sorting algorithms, and object-oriented design. Explore hardware-software interaction, memory management, and system optimization. Perfect for students pursuing computer science careers, professionals transitioning into technical roles, or those seeking comprehensive IT knowledge. Build the versatile skillset needed for software development, systems administration, or further specialization.', 'Balanced computer science: software development & hardware fundamentals', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800', NULL, NULL, NULL, 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
-(27, 'Certificate in Information Technology', 'information-technology', 'Master enterprise IT fundamentals preparing you for professional IT positions. Learn network administration, systems infrastructure, IT security principles, and technical support procedures. Understand TCP/IP networking, routing, switching, Active Directory, and server management. Master troubleshooting methodologies, help desk operations, and customer service excellence. Learn virtualization, cloud computing basics, backup solutions, and disaster recovery. Understand IT service management (ITIL), documentation practices, and change management. Gain practical experience with Windows Server, Linux administration, and network configuration. Perfect preparation for entry-level IT roles including help desk technician, systems administrator, or network support specialist. Build the practical skills IT departments need.', 'Enterprise IT fundamentals: networking, systems administration & support', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
-(28, 'Certificate in Computer & Business Handling', 'computer-business-handling', 'Bridge technology and business operations with essential computer skills for business professionals. Master Microsoft Office Suite for business: advanced Excel for financial analysis, Word for professional documentation, PowerPoint for business presentations, and Outlook for communication management. Learn business email etiquette, calendar management, task organization, and digital collaboration. Understand basic accounting software, data entry best practices, report generation, and business communication standards. Learn office automation, time management with digital tools, and remote work technologies. Perfect for administrative assistants, office managers, receptionists, bookkeepers, or anyone handling business operations. Boost workplace productivity and professional competence.', 'Essential business computer skills for administrative and office professionals', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800', NULL, NULL, NULL, 1200.00, NULL, 4, 32.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
-(29, 'Certificate in C++ Programming', 'cpp-programming', 'Master C++, the powerful programming language behind operating systems, game engines, and high-performance applications. Learn C++ fundamentals, pointers, memory management, and object-oriented programming. Understand templates, Standard Template Library (STL), exception handling, and file I/O. Master advanced topics including operator overloading, inheritance, polymorphism, and design patterns. Learn efficient algorithms, data structures implementation, and performance optimization. Understand modern C++ features (C++11/14/17/20). Build projects including games, system utilities, and performance-critical applications. Perfect for aspiring game developers, systems programmers, or software engineers needing high-performance computing skills. C++ powers everything from embedded systems to AAA video games.', 'Master C++ for high-performance applications, game development & systems programming', 2, 2, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800', NULL, NULL, NULL, 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
-(30, 'Certificate in Sales & Marketing', 'sales-marketing', 'Master the art and science of sales and marketing to drive business growth. Learn customer psychology, persuasion techniques, relationship building, and consultative selling. Understand marketing fundamentals: market segmentation, targeting, positioning, and the marketing mix. Master lead generation, sales funnel optimization, objection handling, and closing techniques. Learn customer relationship management (CRM), sales forecasting, and territory management. Understand brand building, competitive analysis, and market research methods. Develop essential skills: negotiation, presentation, communication, and customer service excellence. Create effective marketing campaigns and sales strategies. Perfect for sales professionals, marketing coordinators, business development representatives, or entrepreneurs growing their ventures. Turn prospects into loyal customers.', 'Master sales techniques, marketing strategies & customer relationship management', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1556155092-490a1ba16284?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
-(31, 'Certificate in Monitoring & Evaluation', 'monitoring-evaluation', 'Become an expert in program assessment and performance measurement with professional M&E training. Learn monitoring frameworks, evaluation methodologies, indicator development, and data collection techniques. Master logical frameworks, theory of change, results-based management, and impact assessment. Understand quantitative and qualitative research methods, sampling techniques, survey design, and data analysis. Learn M&E planning, reporting standards, stakeholder engagement, and lessons learned documentation. Use M&E software and tools for data visualization and reporting. Perfect for program managers, development professionals, NGO staff, government officials, or consultants working in international development, public health, education, or social programs. Demonstrate program effectiveness and drive evidence-based decision making.', 'Professional M&E: frameworks, data collection, analysis & reporting', 6, 5, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
-(32, 'Certificate in Purchasing & Supply', 'purchasing-supply', 'Master professional procurement and supply chain management for organizational efficiency. Learn strategic sourcing, vendor selection, contract negotiation, and supplier relationship management. Understand purchase order processing, inventory control systems, just-in-time delivery, and warehouse management. Master logistics coordination, demand forecasting, and supply chain optimization. Learn procurement ethics, tender processes, compliance requirements, and risk management. Understand cost analysis, value for money principles, and purchase budgeting. Explore e-procurement systems, supply chain software, and procurement best practices. Perfect for purchasing officers, supply chain coordinators, inventory managers, or business owners managing procurement. Reduce costs while maintaining quality and reliability.', 'Professional procurement, supply chain management & logistics expertise', 6, 5, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
-(33, 'Certificate in E-Commerce & Online Business', 'ecommerce-online-business', 'Launch and grow a successful online business in the booming e-commerce market. Learn e-commerce platforms (Shopify, WooCommerce, Magento), online store setup, product listing optimization, and digital storefront design. Master payment gateway integration, shipping logistics, inventory management, and order fulfillment. Understand online customer service, returns management, and reputation building. Learn digital marketing for e-commerce: SEO, social media advertising, email marketing, and conversion optimization. Explore dropshipping, print-on-demand, and various e-commerce business models. Understand legal requirements, taxation, and international selling. Perfect for entrepreneurs starting online stores, retailers moving online, or anyone entering the e-commerce industry. Build your profitable online business empire.', 'Launch and scale your online store: e-commerce platforms & digital selling strategies', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800', NULL, NULL, NULL, 950.00, NULL, 3, 24.00, 30, 0, 'published', 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
-(34, 'Certificate in Secretarial & Office Management', 'secretarial-office-management', 'Become an indispensable administrative professional with comprehensive secretarial and office management training. Master advanced typing skills, business correspondence, minutes taking, and professional communication. Learn office organization, filing systems, records management, and document control. Understand meeting coordination, travel arrangements, calendar management, and executive support. Master business etiquette, telephone techniques, customer service excellence, and professional image. Learn time management, priority setting, and workflow optimization. Understand office technology, database management, and basic bookkeeping. Perfect for executive assistants, office administrators, personal assistants, or professionals in administrative roles. Become the organizational backbone that enables business success.', 'Professional secretarial training: office management, typing & administrative excellence', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
-(35, 'Cybersecurity Fundamentals', 'cybersecurity-fundamentals', '<p>This comprehensive cybersecurity course prepares you for entry-level roles in the rapidly growing field of cybersecurity. You will learn fundamental concepts, network security, threat detection, ethical hacking basics, and security operations.</p><p>By the end of this course, you will understand how to protect systems, detect threats, and respond to security incidents using industry-standard tools and frameworks.</p>', 'Master cybersecurity fundamentals and protect digital assets from cyber threats', 12, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800', NULL, NULL, NULL, 4500.00, NULL, 12, 96.00, 30, 0, 'draft', 1, 0.00, 0, 'Basic computer literacy, Understanding of operating systems (Windows/Linux)', 'Understand cybersecurity principles and the threat landscape|Identify and mitigate common network vulnerabilities|Implement security controls and defense strategies|Detect and respond to security incidents|Understand ethical hacking basics|Apply security frameworks like NIST', '2026-05-04 21:14:27', '2026-05-04 23:15:16', NULL);
+INSERT INTO `courses` (`id`, `title`, `slug`, `description`, `short_description`, `category_id`, `instructor_id`, `level`, `language`, `thumbnail_url`, `video_intro_url`, `start_date`, `end_date`, `price`, `discount_price`, `duration_weeks`, `total_hours`, `max_students`, `enrollment_count`, `status`, `is_template`, `template_source_id`, `is_featured`, `rating`, `total_reviews`, `prerequisites`, `learning_outcomes`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(0, 'Cybersecurity Fundamentals', 'cybersecurity-fundamentals', '<p>This comprehensive cybersecurity course prepares you for entry-level roles in the rapidly growing field of cybersecurity. You will learn fundamental concepts, network security, threat detection, ethical hacking basics, and security operations.</p>\n    <p>By the end of this course, you will understand how to protect systems, detect threats, and respond to security incidents using industry-standard tools and frameworks.</p>', 'Master cybersecurity fundamentals and protect digital assets from cyber threats', 7, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800', NULL, NULL, NULL, 4500.00, NULL, 12, 96.00, 30, 0, 'published', 0, NULL, 1, 0.00, 0, 'Basic computer literacy, Understanding of operating systems (Windows/Linux)', 'Understand cybersecurity principles and the threat landscape|Identify and mitigate common network vulnerabilities|Implement security controls and defense strategies|Detect and respond to security incidents|Understand ethical hacking basics|Apply security frameworks like NIST', '2026-05-04 18:50:46', '2026-05-04 18:50:46', NULL),
+(1, 'Certificate in Microsoft Office Suite', 'microsoft-office-suite', 'Transform your productivity with comprehensive Microsoft Office training. This industry-leading program covers the complete Office Suite including Word, Excel, PowerPoint, Publisher, and essential internet skills. Learn to create professional documents, analyze data with powerful spreadsheets, design compelling presentations, and master desktop publishing. Perfect for professionals seeking to enhance workplace efficiency, students preparing for academic success, or career changers entering the digital workplace. Our hands-on approach ensures you gain practical, job-ready skills that employers value. By course end, you\'ll confidently handle complex office tasks, automate workflows, and present information professionally.', 'Master Word, Excel, PowerPoint, Publisher & Internet skills for professional success', 1, 13, 'Beginner', 'English', 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=800', NULL, '2025-01-15', '2025-04-15', 2500.00, NULL, 8, 64.00, 30, 18, 'published', 0, NULL, 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2026-05-23 11:41:01', NULL),
+(3, 'Certificate in Digital Literacy', 'digital-literacy', 'Bridge the digital divide with essential 21st-century skills. This foundational course equips you with critical digital competencies for modern life and work. Learn professional email communication, effective internet research techniques, cloud storage management, online collaboration tools, and digital safety practices. Understand social media etiquette, basic troubleshooting, file management, and online privacy protection. Ideal for beginners, seniors transitioning to digital workplaces, or anyone looking to build confidence with technology. Our patient, step-by-step instruction ensures no one gets left behind in the digital age. Gain the digital fluency needed to thrive in today\'s connected world.', 'Essential digital skills for navigating modern technology confidently', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800', NULL, '2025-01-20', '2025-03-20', 850.00, NULL, 2, 16.00, 30, 0, 'published', 0, NULL, 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(4, 'Certificate in Record Management', 'record-management', 'Master professional records and information management systems that keep organizations running smoothly. Learn comprehensive filing systems, document control procedures, archiving best practices, and compliance with data protection regulations including GDPR. Understand records lifecycle management, retention schedules, digitization processes, and efficient retrieval systems. This course covers both physical and electronic records management, preparing you for roles in government, healthcare, legal, and corporate environments. Gain expertise in maintaining confidentiality, ensuring audit trails, and implementing secure disposal methods. Essential for administrative professionals, office managers, and those pursuing careers in information governance.', 'Professional records and information management for compliance and efficiency', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800', NULL, '2025-02-15', '2025-05-15', 1500.00, NULL, 6, 48.00, 30, 1, 'published', 0, NULL, 0, 4.50, 0, NULL, NULL, '2025-11-18 22:21:01', '2026-05-27 08:04:19', NULL),
+(5, 'Certificate in Python Programming', 'python-programming', 'Launch your programming career with Python, the world\'s most popular and versatile programming language. This comprehensive course takes you from absolute beginner to confident developer. Master Python fundamentals including variables, data types, control structures, and functions. Progress to advanced topics like object-oriented programming, file handling, error management, and popular libraries including NumPy, Pandas, and Matplotlib. Build real-world projects including data analysis tools, automation scripts, and web applications. Python\'s readability and extensive community support make it perfect for beginners, while its power suits professional developers. Ideal for aspiring programmers, data scientists, automation engineers, or anyone entering tech careers.', 'Learn Python from basics to advanced - the most in-demand programming language', 2, 2, 'Beginner', 'English', 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800', NULL, '2025-01-10', '2025-04-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, NULL, 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(6, 'Certificate in Java Programming', 'java-programming', 'Master Java, the enterprise-standard programming language powering billions of devices worldwide. This rigorous course covers Java fundamentals through advanced enterprise development. Learn object-oriented programming principles, Java collections framework, multithreading, exception handling, and JDBC for database connectivity. Build robust, scalable applications using industry best practices. Understand design patterns, unit testing with JUnit, and modern development tools. Java\'s \"write once, run anywhere\" philosophy makes it essential for enterprise applications, Android development, and large-scale systems. Perfect for aspiring software engineers, mobile developers, or professionals transitioning into backend development roles.', 'Master Java for enterprise applications and Android development', 2, 2, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800', NULL, '2025-02-01', '2025-06-01', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, NULL, 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(7, 'Certificate in Web Development', 'web-development', 'Build stunning, professional websites from scratch with our comprehensive full-stack web development program. Master the complete web development toolkit: HTML5 for structure, CSS3 for beautiful styling, JavaScript for interactivity, and modern frameworks for responsive design. Learn mobile-first development, CSS Grid and Flexbox layouts, JavaScript ES6+ features, DOM manipulation, and API integration. Create portfolio-worthy projects including responsive business websites, interactive web applications, and dynamic user interfaces. Understand version control with Git, browser developer tools, and deployment processes. This hands-on course prepares you for frontend developer roles or freelance web design careers. No prior experience required.', 'Build modern, responsive websites with HTML5, CSS3, JavaScript & frameworks', 2, 2, 'Beginner', 'English', 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=800', NULL, '2025-01-15', '2025-04-30', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, NULL, 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(8, 'Certificate in Mobile App Development', 'mobile-app-development', 'Create professional mobile applications for the world\'s two dominant platforms - Android and iOS. This comprehensive program covers native mobile development using Java/Kotlin for Android and Swift for iOS. Learn mobile UI/UX principles, lifecycle management, data persistence, API integration, and app publishing processes. Build real apps including social media clients, e-commerce apps, and location-based services. Understand mobile-specific challenges like varying screen sizes, touch interfaces, push notifications, and offline functionality. Master app store submission, monetization strategies, and user analytics. Perfect for aspiring mobile developers, entrepreneurs launching apps, or web developers expanding their skillset into the lucrative mobile market.', 'Develop native iOS and Android applications professionally', 2, 2, 'Advanced', 'English', 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800', NULL, '2025-03-01', '2025-07-30', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, NULL, 1, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(9, 'Certificate in Software Engineering', 'software-engineering-git', 'Learn professional software development practices that distinguish hobbyists from industry professionals. Master essential software engineering methodologies including Agile, Scrum, and DevOps. Gain expertise in version control with Git and GitHub for collaborative development, branching strategies, pull requests, and code reviews. Understand software testing principles, continuous integration/continuous deployment (CI/CD), code quality tools, and documentation best practices. Learn project management, technical communication, and team collaboration workflows used by leading tech companies. This course bridges the gap between writing code and building enterprise-grade software. Essential for junior developers preparing for professional roles or programmers seeking to adopt industry standards.', 'Professional software development with Git, testing, CI/CD & methodologies', 2, 2, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=800', NULL, '2025-02-10', '2025-05-10', 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, NULL, 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(10, 'Certificate in Data Analysis', 'data-analysis', 'Transform raw data into actionable business insights with comprehensive data analysis training. Master the complete data analytics workflow: collection, cleaning, analysis, visualization, and reporting. Learn Excel for data manipulation and pivot tables, SQL for database querying, and Python with Pandas for advanced analysis. Create compelling data visualizations using Tableau-style dashboards, statistical analysis techniques, and predictive modeling basics. Understand key performance indicators (KPIs), A/B testing, and data-driven decision making. Work with real-world datasets from business, healthcare, and finance sectors. This practical course prepares you for data analyst, business intelligence, or market research roles. No advanced math required - just curiosity and attention to detail.', 'Analyze data and create insights using Excel, SQL, Python & visualization tools', 3, 4, 'Beginner', 'English', 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800', NULL, '2025-01-20', '2025-04-20', 1500.00, NULL, 8, 64.00, 30, 0, 'published', 0, NULL, 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(11, 'Certificate in Cyber Security', 'cyber-security', 'Defend organizations against evolving cyber threats with industry-recognized cybersecurity training. This advanced program covers network security fundamentals, ethical hacking techniques, threat analysis, penetration testing, and security best practices. Learn cryptography, firewall configuration, intrusion detection systems, security auditing, and incident response protocols. Master vulnerability assessment tools, security frameworks (NIST, ISO 27001), and compliance requirements. Understand social engineering, malware analysis, and secure coding practices. Gain hands-on experience with Kali Linux, Wireshark, Metasploit, and other professional tools. This comprehensive course prepares you for security analyst, penetration tester, or security consultant roles. Help protect critical infrastructure in our increasingly connected world.', 'Advanced cybersecurity: ethical hacking, network defense & threat analysis', 3, 3, 'Advanced', 'English', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800', NULL, '2025-02-15', '2025-06-30', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, NULL, 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(12, 'Certificate in Database Management Systems', 'database-management', 'Master the backbone of modern applications - professional database design and management. Learn relational database concepts, SQL mastery, database design principles, and normalization techniques. Work with industry-standard systems including MySQL, PostgreSQL, and SQL Server. Understand indexing strategies, query optimization, stored procedures, triggers, and transactions. Learn database administration tasks including backup/recovery, user management, performance tuning, and security. Explore NoSQL basics and data warehousing concepts. Build real-world database projects from e-commerce platforms to content management systems. Essential for backend developers, data engineers, database administrators, or anyone working with data-intensive applications. Transform messy data into organized, efficient database systems.', 'Design, manage & optimize databases using MySQL, PostgreSQL & SQL Server', 3, 3, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800', NULL, '2025-01-25', '2025-05-25', 1500.00, NULL, 6, 48.00, 30, 0, 'published', 0, NULL, 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(13, 'Certificate in Artificial Intelligence', 'ai-machine-learning', 'Explore the transformative world of Artificial Intelligence and its practical applications across industries. This introductory course demystifies AI concepts including machine learning, neural networks, natural language processing, and computer vision. Understand how AI powers recommendation systems, autonomous vehicles, virtual assistants, and medical diagnostics. Learn AI ethics, bias considerations, and societal implications. Gain hands-on experience with AI tools and platforms without deep mathematical knowledge. Explore real-world case studies from healthcare, finance, retail, and manufacturing. Perfect for business professionals, managers, entrepreneurs, or anyone curious about AI\'s impact on their industry. No programming background required - focus on understanding and applying AI strategically.', 'Understand AI fundamentals and practical applications across industries', 4, 4, 'Advanced', 'English', 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800', NULL, '2025-03-01', '2025-07-01', 850.00, NULL, 3, 24.00, 30, 0, 'published', 0, NULL, 1, 4.90, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(14, 'Certificate in Internet of Things', 'internet-of-things', 'Build smart, connected devices with Internet of Things (IoT) technology. Learn IoT architecture, sensor integration, microcontroller programming (Arduino, Raspberry Pi), wireless communication protocols, and cloud connectivity. Understand MQTT, REST APIs, and IoT security challenges. Build practical IoT projects including smart home systems, environmental monitoring, and industrial automation solutions. Explore IoT platforms like AWS IoT, Azure IoT Hub, and ThingSpeak. Learn data collection from sensors, real-time processing, and remote device control. Perfect for electronics enthusiasts, embedded systems developers, or engineers implementing Industry 4.0 solutions. Transform everyday objects into intelligent, internet-connected devices.', 'Build smart IoT solutions with sensors, microcontrollers & cloud integration', 4, 4, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=800', NULL, '2025-02-20', '2025-05-20', 450.00, NULL, 12, 60.00, 30, 0, 'archived', 0, NULL, 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(15, 'Certificate in Graphic Designing', 'graphic-designing', 'Unleash your creativity with professional graphic design training using industry-standard Adobe Creative Suite. Master Photoshop for photo editing and digital art, Illustrator for vector graphics and logos, and InDesign for layouts and publications. Learn fundamental design principles including typography, color theory, composition, and visual hierarchy. Create professional materials: business cards, brochures, posters, social media graphics, and brand identities. Understand print vs. digital design requirements, file formats, and client collaboration. Build a stunning portfolio showcasing diverse design projects. Perfect for aspiring graphic designers, marketing professionals, small business owners, or creative individuals. Transform ideas into visually compelling designs that capture attention and communicate effectively.', 'Master Adobe Creative Suite for professional graphic design and branding', 5, 6, 'Beginner', 'English', 'https://images.unsplash.com/photo-1626785774625-ddcddc3445e9?w=800', NULL, '2025-01-15', '2025-04-30', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, NULL, 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(16, 'Certificate in Digital & Content Creation', 'digital-content-creation', 'Create engaging multimedia content that educates, entertains, and converts. Master video editing, motion graphics, animation, interactive presentations, and e-learning materials. Learn industry-standard tools for video production, audio editing, screen recording, and multimedia authoring. Understand storytelling techniques, scriptwriting, storyboarding, and visual communication strategies. Create professional content for corporate training, educational institutions, YouTube channels, and social media platforms. Learn content strategy, audience engagement, and multimedia accessibility. Perfect for educators, corporate trainers, content creators, marketing professionals, or entrepreneurs. Transform complex information into captivating visual experiences that resonate with modern audiences.', 'Create engaging multimedia content: videos, animations & e-learning materials', 5, 6, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800', NULL, '2025-02-05', '2025-05-05', 950.00, NULL, 3, 24.00, 30, 0, 'published', 0, NULL, 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(17, 'Certificate in Digital Marketing', 'digital-marketing', 'Master the complete digital marketing ecosystem to grow businesses online. Learn search engine optimization (SEO), social media marketing, content marketing, email campaigns, and paid advertising (Google Ads, Facebook Ads). Understand marketing analytics, conversion optimization, customer journey mapping, and ROI measurement. Create comprehensive digital marketing strategies, develop engaging content, and build effective campaigns. Master tools including Google Analytics, Facebook Business Manager, Mailchimp, and keyword research platforms. Learn influencer marketing, affiliate marketing, and marketing automation. Perfect for marketing professionals, business owners, entrepreneurs, or anyone entering the digital marketing field. Drive traffic, generate leads, and grow revenue through strategic online marketing.', 'Master SEO, social media, content marketing & digital advertising strategies', 5, 6, 'Beginner', 'English', 'https://images.unsplash.com/photo-1557838923-2985c318be48?w=800', NULL, '2025-01-20', '2025-04-20', 950.00, NULL, 3, 24.00, 30, 0, 'published', 0, NULL, 1, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(18, 'Certificate in Entrepreneurship', 'entrepreneurship', 'Transform your business idea into reality with comprehensive entrepreneurship training. Learn business planning, market research, financial management, and growth strategies. Understand business registration, legal structures, taxation, and regulatory compliance. Master customer validation, minimum viable product development, and lean startup methodologies. Learn sales strategies, negotiation skills, and customer relationship management. Understand funding options including bootstrapping, angel investment, venture capital, and crowdfunding. Develop essential entrepreneurial skills: leadership, decision-making, risk management, and resilience. Create a comprehensive business plan investors will take seriously. Perfect for aspiring entrepreneurs, freelancers transitioning to business ownership, or intrapreneurs driving innovation within organizations. Turn your passion into a profitable venture.', 'Launch and grow your business: planning, financing, marketing & operations', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800', NULL, '2025-01-10', '2025-04-10', 2500.00, NULL, 11, 88.00, 30, 0, 'published', 0, NULL, 0, 4.60, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(19, 'Certificate in Project Management', 'project-management', 'Lead successful projects using professional project management methodologies. Master PMBOK framework, Agile principles, and Scrum practices. Learn project initiation, planning, execution, monitoring, and closure. Understand scope management, time estimation, budget control, risk management, and stakeholder communication. Use project management tools including Gantt charts, Kanban boards, and collaboration platforms. Learn team leadership, conflict resolution, and change management. Understand earned value management, critical path analysis, and quality assurance. Prepare for PMP or Agile certifications. Perfect for project managers, team leaders, coordinators, or professionals managing complex initiatives. Deliver projects on time, within budget, and exceeding stakeholder expectations.', 'Professional project management: PMBOK, Agile, Scrum & leadership skills', 6, 5, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800', NULL, '2025-02-01', '2025-06-01', 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, NULL, 1, 4.80, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(20, 'Certificate in Financial Technology', 'financial-technology', 'Explore the digital revolution transforming financial services worldwide. Understand blockchain technology, cryptocurrency fundamentals, digital payments systems, mobile money platforms, and digital banking. Learn about fintech ecosystems, regulatory technology (RegTech), peer-to-peer lending, robo-advisors, and insurtech innovations. Understand payment gateways, digital wallets, and cross-border transactions. Explore real-world case studies from M-Pesa, PayPal, Stripe, and emerging fintech startups. Learn about financial inclusion, cybersecurity in finance, and future trends. Perfect for banking professionals, entrepreneurs entering fintech, financial advisors adapting to digital trends, or anyone curious about money\'s digital future. Position yourself at the intersection of finance and technology.', 'Explore digital payments, blockchain, cryptocurrency & digital banking innovations', 6, 5, 'Advanced', 'English', 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800', NULL, '2025-03-01', '2025-06-15', 1200.00, NULL, 3, 24.00, 30, 0, 'published', 0, NULL, 0, 4.70, 0, NULL, NULL, '2025-11-18 22:21:01', '2025-12-18 18:05:42', NULL),
+(24, 'Certificate in ICT Support & Hardware Repair', 'ict-support-hardware-repair', 'Become a skilled ICT technician with comprehensive computer hardware training. Learn computer architecture, component identification, hardware installation, troubleshooting methodologies, and repair techniques. Master operating system installation (Windows, Linux), driver management, and system optimization. Understand common hardware problems: motherboard issues, power supply failures, storage problems, and peripheral connectivity. Learn diagnostic tools, preventive maintenance, data recovery basics, and customer service skills. Gain hands-on experience assembling PCs, upgrading components, and resolving technical issues. Understand mobile device repair fundamentals. Perfect for aspiring IT support professionals, computer technicians, or entrepreneurs starting repair businesses. Provide essential technical support that keeps organizations running smoothly.', 'Computer hardware repair, troubleshooting & technical support expertise', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, NULL, 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
+(25, 'Certificate in Computer Studies', 'computer-studies', 'Build a solid foundation in computer science through this comprehensive introductory program. Explore fundamental computing concepts, computer architecture, operating systems, networking basics, and software applications. Understand binary systems, logic gates, algorithms, and problem-solving techniques. Learn essential applications including word processing, spreadsheets, presentations, and internet usage. Gain exposure to programming concepts, database fundamentals, and cybersecurity awareness. Perfect foundation for further ICT studies or professional certifications. Ideal for students beginning their technology journey, career changers entering IT fields, or professionals needing comprehensive computer literacy. Develop the core knowledge essential for any technology-related career path.', 'Comprehensive computer fundamentals: ideal foundation for ICT careers', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800', NULL, NULL, NULL, 3850.00, NULL, 12, 96.00, 30, 0, 'published', 0, NULL, 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
+(26, 'Certificate in Computer Science General', 'computer-science-general', 'Master both theoretical and practical aspects of computer science through this balanced curriculum. Learn computer organization, system architecture, programming fundamentals, data structures, algorithms, and software engineering principles. Understand operating systems, computer networks, database systems, and web technologies. Gain programming experience in multiple languages while learning core CS concepts like recursion, sorting algorithms, and object-oriented design. Explore hardware-software interaction, memory management, and system optimization. Perfect for students pursuing computer science careers, professionals transitioning into technical roles, or those seeking comprehensive IT knowledge. Build the versatile skillset needed for software development, systems administration, or further specialization.', 'Balanced computer science: software development & hardware fundamentals', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800', NULL, NULL, NULL, 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, NULL, 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
+(27, 'Certificate in Information Technology', 'information-technology', 'Master enterprise IT fundamentals preparing you for professional IT positions. Learn network administration, systems infrastructure, IT security principles, and technical support procedures. Understand TCP/IP networking, routing, switching, Active Directory, and server management. Master troubleshooting methodologies, help desk operations, and customer service excellence. Learn virtualization, cloud computing basics, backup solutions, and disaster recovery. Understand IT service management (ITIL), documentation practices, and change management. Gain practical experience with Windows Server, Linux administration, and network configuration. Perfect preparation for entry-level IT roles including help desk technician, systems administrator, or network support specialist. Build the practical skills IT departments need.', 'Enterprise IT fundamentals: networking, systems administration & support', 1, 1, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, NULL, 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
+(28, 'Certificate in Computer & Business Handling', 'computer-business-handling', 'Bridge technology and business operations with essential computer skills for business professionals. Master Microsoft Office Suite for business: advanced Excel for financial analysis, Word for professional documentation, PowerPoint for business presentations, and Outlook for communication management. Learn business email etiquette, calendar management, task organization, and digital collaboration. Understand basic accounting software, data entry best practices, report generation, and business communication standards. Learn office automation, time management with digital tools, and remote work technologies. Perfect for administrative assistants, office managers, receptionists, bookkeepers, or anyone handling business operations. Boost workplace productivity and professional competence.', 'Essential business computer skills for administrative and office professionals', 1, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800', NULL, NULL, NULL, 1200.00, NULL, 4, 32.00, 30, 0, 'published', 0, NULL, 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
+(29, 'Certificate in C++ Programming', 'cpp-programming', 'Master C++, the powerful programming language behind operating systems, game engines, and high-performance applications. Learn C++ fundamentals, pointers, memory management, and object-oriented programming. Understand templates, Standard Template Library (STL), exception handling, and file I/O. Master advanced topics including operator overloading, inheritance, polymorphism, and design patterns. Learn efficient algorithms, data structures implementation, and performance optimization. Understand modern C++ features (C++11/14/17/20). Build projects including games, system utilities, and performance-critical applications. Perfect for aspiring game developers, systems programmers, or software engineers needing high-performance computing skills. C++ powers everything from embedded systems to AAA video games.', 'Master C++ for high-performance applications, game development & systems programming', 2, 2, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800', NULL, NULL, NULL, 3000.00, NULL, 12, 96.00, 30, 0, 'published', 0, NULL, 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
+(30, 'Certificate in Sales & Marketing', 'sales-marketing', 'Master the art and science of sales and marketing to drive business growth. Learn customer psychology, persuasion techniques, relationship building, and consultative selling. Understand marketing fundamentals: market segmentation, targeting, positioning, and the marketing mix. Master lead generation, sales funnel optimization, objection handling, and closing techniques. Learn customer relationship management (CRM), sales forecasting, and territory management. Understand brand building, competitive analysis, and market research methods. Develop essential skills: negotiation, presentation, communication, and customer service excellence. Create effective marketing campaigns and sales strategies. Perfect for sales professionals, marketing coordinators, business development representatives, or entrepreneurs growing their ventures. Turn prospects into loyal customers.', 'Master sales techniques, marketing strategies & customer relationship management', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1556155092-490a1ba16284?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, NULL, 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
+(31, 'Certificate in Monitoring & Evaluation', 'monitoring-evaluation', 'Become an expert in program assessment and performance measurement with professional M&E training. Learn monitoring frameworks, evaluation methodologies, indicator development, and data collection techniques. Master logical frameworks, theory of change, results-based management, and impact assessment. Understand quantitative and qualitative research methods, sampling techniques, survey design, and data analysis. Learn M&E planning, reporting standards, stakeholder engagement, and lessons learned documentation. Use M&E software and tools for data visualization and reporting. Perfect for program managers, development professionals, NGO staff, government officials, or consultants working in international development, public health, education, or social programs. Demonstrate program effectiveness and drive evidence-based decision making.', 'Professional M&E: frameworks, data collection, analysis & reporting', 6, 5, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, NULL, 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
+(32, 'Certificate in Purchasing & Supply', 'purchasing-supply', 'Master professional procurement and supply chain management for organizational efficiency. Learn strategic sourcing, vendor selection, contract negotiation, and supplier relationship management. Understand purchase order processing, inventory control systems, just-in-time delivery, and warehouse management. Master logistics coordination, demand forecasting, and supply chain optimization. Learn procurement ethics, tender processes, compliance requirements, and risk management. Understand cost analysis, value for money principles, and purchase budgeting. Explore e-procurement systems, supply chain software, and procurement best practices. Perfect for purchasing officers, supply chain coordinators, inventory managers, or business owners managing procurement. Reduce costs while maintaining quality and reliability.', 'Professional procurement, supply chain management & logistics expertise', 6, 5, 'Intermediate', 'English', 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, NULL, 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
+(33, 'Certificate in E-Commerce & Online Business', 'ecommerce-online-business', 'Launch and grow a successful online business in the booming e-commerce market. Learn e-commerce platforms (Shopify, WooCommerce, Magento), online store setup, product listing optimization, and digital storefront design. Master payment gateway integration, shipping logistics, inventory management, and order fulfillment. Understand online customer service, returns management, and reputation building. Learn digital marketing for e-commerce: SEO, social media advertising, email marketing, and conversion optimization. Explore dropshipping, print-on-demand, and various e-commerce business models. Understand legal requirements, taxation, and international selling. Perfect for entrepreneurs starting online stores, retailers moving online, or anyone entering the e-commerce industry. Build your profitable online business empire.', 'Launch and scale your online store: e-commerce platforms & digital selling strategies', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800', NULL, NULL, NULL, 950.00, NULL, 3, 24.00, 30, 0, 'published', 0, NULL, 1, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
+(34, 'Certificate in Secretarial & Office Management', 'secretarial-office-management', 'Become an indispensable administrative professional with comprehensive secretarial and office management training. Master advanced typing skills, business correspondence, minutes taking, and professional communication. Learn office organization, filing systems, records management, and document control. Understand meeting coordination, travel arrangements, calendar management, and executive support. Master business etiquette, telephone techniques, customer service excellence, and professional image. Learn time management, priority setting, and workflow optimization. Understand office technology, database management, and basic bookkeeping. Perfect for executive assistants, office administrators, personal assistants, or professionals in administrative roles. Become the organizational backbone that enables business success.', 'Professional secretarial training: office management, typing & administrative excellence', 6, 5, 'Beginner', 'English', 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800', NULL, NULL, NULL, 2500.00, NULL, 8, 64.00, 30, 0, 'published', 0, NULL, 0, 0.00, 0, NULL, NULL, '2025-11-24 11:25:37', '2025-12-18 18:05:42', NULL),
+(35, 'Cybersecurity Fundamentals', 'cybersecurity-fundamentals', '<p>This comprehensive cybersecurity course prepares you for entry-level roles in the rapidly growing field of cybersecurity. You will learn fundamental concepts, network security, threat detection, ethical hacking basics, and security operations.</p><p>By the end of this course, you will understand how to protect systems, detect threats, and respond to security incidents using industry-standard tools and frameworks.</p>', 'Master cybersecurity fundamentals and protect digital assets from cyber threats', 12, 1, 'Beginner', 'English', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800', NULL, NULL, NULL, 4500.00, NULL, 12, 96.00, 30, 0, 'draft', 0, NULL, 1, 0.00, 0, 'Basic computer literacy, Understanding of operating systems (Windows/Linux)', 'Understand cybersecurity principles and the threat landscape|Identify and mitigate common network vulnerabilities|Implement security controls and defense strategies|Detect and respond to security incidents|Understand ethical hacking basics|Apply security frameworks like NIST', '2026-05-04 21:14:27', '2026-05-04 23:15:16', NULL);
 
 -- --------------------------------------------------------
 
@@ -517,11 +523,11 @@ CREATE TABLE `course_reviews` (
   `id` int(11) NOT NULL,
   `course_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `rating` decimal(2,1) NOT NULL CHECK (`rating` >= 0 and `rating` <= 5),
+  `rating` decimal(2,1) NOT NULL,
   `review` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ;
 
 --
 -- Dumping data for table `course_reviews`
@@ -608,8 +614,8 @@ CREATE TABLE `email_queue` (
   `body` longtext NOT NULL,
   `attachments` text DEFAULT NULL,
   `status` enum('pending','processing','sent','failed') DEFAULT 'pending',
-  `attempts` tinyint(3) DEFAULT 0,
-  `priority` tinyint(3) DEFAULT 0,
+  `attempts` tinyint(4) DEFAULT 0,
+  `priority` tinyint(4) DEFAULT 0,
   `scheduled_at` datetime DEFAULT NULL,
   `sent_at` datetime DEFAULT NULL,
   `last_attempt` datetime DEFAULT NULL,
@@ -672,7 +678,9 @@ INSERT INTO `email_queue` (`id`, `recipient`, `subject`, `body`, `attachments`, 
 (72, 'marvinmoonga69@gmail.com', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
 (73, 'edwardmusole76@gmail.com', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
 (74, 'inutu.simasiku@edutrack.edu', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
-(75, 'nita.sichimwa@edutrack.edu', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59');
+(75, 'nita.sichimwa@edutrack.edu', 'New Enrollment - Certificate in Information Technology', '<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n    <h2 style=\"color: #2E70DA;\">New Course Enrollment</h2>\n    \n    <p>Hello Admin,</p>\n    \n    <p>A student has just enrolled in a course:</p>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-left: 4px solid #10B981; margin: 20px 0;\">\n        <h3 style=\"margin: 0 0 15px 0; color: #333;\">Certificate in Information Technology</h3>\n        \n        <table width=\"100%\" cellpadding=\"5\" style=\"border-collapse: collapse;\">\n            <tr>\n                <td style=\"color: #666; width: 140px;\"><strong>Student:</strong></td>\n                <td>Mary Maseleni</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Email:</strong></td>\n                <td><a href=\"mailto:maselenimary854@gmail.com\" style=\"color: #2E70DA;\">maselenimary854@gmail.com</a></td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Phone:</strong></td>\n                <td>Not provided</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Course Price:</strong></td>\n                <td style=\"font-size: 18px; color: #2E70DA; font-weight: bold;\">\n                    ZMW 2,500.00                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Payment Status:</strong></td>\n                <td>\n                    <span style=\"background: #fff3cd; \n                                 color: #856404; \n                                 padding: 3px 10px; border-radius: 3px; font-size: 12px; text-transform: uppercase;\">\n                        pending                    </span>\n                </td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrollment Status:</strong></td>\n                <td>Enrolled</td>\n            </tr>\n            <tr>\n                <td style=\"color: #666;\"><strong>Enrolled:</strong></td>\n                <td>May 13, 2026 12:00 AM</td>\n            </tr>\n        </table>\n    </div>\n    \n    <p style=\"text-align: center; margin: 30px 0;\">\n        <a href=\"https://edutrackzambia.com/admin/pages/enrollments.php?action=view&amp;id=51\" \n           style=\"background: #10B981; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;\">\n            View Enrollment Details\n        </a>\n    </p>\n    \n    <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\">\n    <p style=\"color: #666; font-size: 12px;\">\n        This is an automated notification from EduTrack LMS.<br>\n        You are receiving this because you are an administrator.\n    </p>\n</div>\n', NULL, 'pending', 0, 10, NULL, NULL, NULL, '2026-05-13 15:55:59'),
+(76, 'marvinmoonga69@gmail.com', 'Verify your email address', '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Verify Your Email Address</title>\n    <style>\n        body { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif; background: #f3f4f6; margin: 0; padding: 20px; color: #374151; line-height: 1.6; }\n        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }\n        .header { background: #1e3a5f; padding: 32px 30px; text-align: center; }\n        .header h1 { color: #ffffff; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }\n        .header p { color: rgba(255,255,255,0.8); margin: 6px 0 0; font-size: 14px; }\n        .body { padding: 32px 30px; }\n        .body p { margin: 0 0 14px; }\n        .card { background: #f8fafc; border-left: 4px solid #1e3a5f; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }\n        .card-success { border-left-color: #059669; background: #ecfdf5; }\n        .card-warning { border-left-color: #d97706; background: #fffbeb; }\n        .btn { display: inline-block; padding: 12px 28px; background: #1e3a5f; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 15px; margin-top: 10px; }\n        .btn-success { background: #059669; }\n        .btn-warning { background: #d97706; }\n        .footer { padding: 24px 30px; text-align: center; font-size: 12px; color: #9ca3af; background: #f9fafb; border-top: 1px solid #e5e7eb; }\n        .footer a { color: #6b7280; text-decoration: none; }\n        .divider { border: none; border-top: 1px solid #e5e7eb; margin: 24px 0; }\n        .small { font-size: 13px; color: #6b7280; }\n        .center { text-align: center; }\n        table.meta { width: 100%; border-collapse: collapse; margin: 16px 0; }\n        table.meta td { padding: 10px 0; border-bottom: 1px solid #e5e7eb; }\n        table.meta td:last-child { text-align: right; font-weight: 500; }\n        @media only screen and (max-width: 480px) {\n            body { padding: 10px; }\n            .header, .body, .footer { padding-left: 20px; padding-right: 20px; }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <div class=\"header\">\n            <h1>Edutrack LMS</h1>\n            <p>One quick step to get started</p>\n        </div>\n        <div class=\"body\">\n            <p>Hi Chilala,</p>\n<p>Thank you for registering with Edutrack LMS. Please verify your email address to activate your account and access all features.</p>\n\n<div class=\"center\" style=\"margin: 28px 0;\">\n    <a href=\"https://edutrackzambia.com/verify-email/fe89aff3b6f7149d5500abccdbf6e02fa0f24e34571742b3d8210392f44311dd\" class=\"btn\">Verify Email Address</a>\n</div>\n\n<p class=\"small\">Or copy and paste this link into your browser:</p>\n<p class=\"small\" style=\"word-break: break-all; color: #6b7280;\">https://edutrackzambia.com/verify-email/fe89aff3b6f7149d5500abccdbf6e02fa0f24e34571742b3d8210392f44311dd</p>\n\n<div class=\"card card-warning\" style=\"margin-top: 24px;\">\n    <strong>Important:</strong> This verification link will expire in 24 hours. If you did not create this account, you can safely ignore this email.\n</div>\n        </div>\n        <div class=\"footer\">\n            <p><strong>Edutrack Computer Training College</strong><br>Kalomo, Zambia</p>\n            <p>edutrackzambia@gmail.com &bull; +260 770 666 937</p>\n            <p style=\"margin-top: 10px;\">&copy; 2026 Edutrack LMS. All rights reserved.</p>\n                    </div>\n    </div>\n</body>\n</html>\n', NULL, 'sent', 1, 0, '2026-06-05 11:28:10', '2026-06-05 11:28:10', NULL, '2026-06-05 11:28:10'),
+(77, 'marvinmoonga69@gmail.com', 'Verify your email address', '<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Verify Your Email Address</title>\n    <style>\n        body { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif; background: #f3f4f6; margin: 0; padding: 20px; color: #374151; line-height: 1.6; }\n        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }\n        .header { background: #1e3a5f; padding: 32px 30px; text-align: center; }\n        .header h1 { color: #ffffff; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }\n        .header p { color: rgba(255,255,255,0.8); margin: 6px 0 0; font-size: 14px; }\n        .body { padding: 32px 30px; }\n        .body p { margin: 0 0 14px; }\n        .card { background: #f8fafc; border-left: 4px solid #1e3a5f; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }\n        .card-success { border-left-color: #059669; background: #ecfdf5; }\n        .card-warning { border-left-color: #d97706; background: #fffbeb; }\n        .btn { display: inline-block; padding: 12px 28px; background: #1e3a5f; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 15px; margin-top: 10px; }\n        .btn-success { background: #059669; }\n        .btn-warning { background: #d97706; }\n        .footer { padding: 24px 30px; text-align: center; font-size: 12px; color: #9ca3af; background: #f9fafb; border-top: 1px solid #e5e7eb; }\n        .footer a { color: #6b7280; text-decoration: none; }\n        .divider { border: none; border-top: 1px solid #e5e7eb; margin: 24px 0; }\n        .small { font-size: 13px; color: #6b7280; }\n        .center { text-align: center; }\n        table.meta { width: 100%; border-collapse: collapse; margin: 16px 0; }\n        table.meta td { padding: 10px 0; border-bottom: 1px solid #e5e7eb; }\n        table.meta td:last-child { text-align: right; font-weight: 500; }\n        @media only screen and (max-width: 480px) {\n            body { padding: 10px; }\n            .header, .body, .footer { padding-left: 20px; padding-right: 20px; }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <div class=\"header\">\n            <h1>Edutrack LMS</h1>\n            <p>One quick step to get started</p>\n        </div>\n        <div class=\"body\">\n            <p>Hi Chilala,</p>\n<p>Thank you for registering with Edutrack LMS. Please verify your email address to activate your account and access all features.</p>\n\n<div class=\"center\" style=\"margin: 28px 0;\">\n    <a href=\"https://www.edutrackzambia.com/verify-email/96c1723cd57241736211adb75d65b3db7fe01032461f1d35961c64d5434a6e7e\" class=\"btn\">Verify Email Address</a>\n</div>\n\n<p class=\"small\">Or copy and paste this link into your browser:</p>\n<p class=\"small\" style=\"word-break: break-all; color: #6b7280;\">https://www.edutrackzambia.com/verify-email/96c1723cd57241736211adb75d65b3db7fe01032461f1d35961c64d5434a6e7e</p>\n\n<div class=\"card card-warning\" style=\"margin-top: 24px;\">\n    <strong>Important:</strong> This verification link will expire in 24 hours. If you did not create this account, you can safely ignore this email.\n</div>\n        </div>\n        <div class=\"footer\">\n            <p><strong>Edutrack Computer Training College</strong><br>Kalomo, Zambia</p>\n            <p>edutrackzambia@gmail.com &bull; +260 770 666 937</p>\n            <p style=\"margin-top: 10px;\">&copy; 2026 Edutrack LMS. All rights reserved.</p>\n                    </div>\n    </div>\n</body>\n</html>\n', NULL, 'sent', 1, 0, '2026-06-05 13:25:32', '2026-06-05 13:25:32', NULL, '2026-06-05 13:25:32');
 
 -- --------------------------------------------------------
 
@@ -685,7 +693,7 @@ CREATE TABLE `email_templates` (
   `template_name` varchar(100) NOT NULL,
   `subject` varchar(200) NOT NULL,
   `body` longtext NOT NULL,
-  `template_type` enum('Welcome','Enrollment','Certificate','Payment','Reminder','Custom') DEFAULT 'Custom',
+  `template_type` varchar(50) DEFAULT 'Custom',
   `is_active` tinyint(1) DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -713,6 +721,7 @@ CREATE TABLE `enrollments` (
   `user_id` int(11) NOT NULL,
   `student_id` int(11) NOT NULL,
   `course_id` int(11) NOT NULL,
+  `intake_id` int(11) DEFAULT NULL,
   `enrolled_at` date NOT NULL,
   `start_date` date DEFAULT NULL,
   `progress` decimal(5,2) NOT NULL DEFAULT 0.00,
@@ -734,60 +743,60 @@ CREATE TABLE `enrollments` (
 -- Dumping data for table `enrollments`
 --
 
-INSERT INTO `enrollments` (`id`, `user_id`, `student_id`, `course_id`, `enrolled_at`, `start_date`, `progress`, `final_grade`, `enrollment_status`, `payment_status`, `amount_paid`, `completion_date`, `certificate_issued`, `certificate_blocked`, `last_accessed`, `total_time_spent`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 8, 1, 1, '2025-01-15', '2025-01-15', 100.00, 92.50, 'Enrolled', 'completed', 250.00, '2025-04-10', 1, 1, NULL, 2880, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(2, 8, 1, 5, '2025-01-15', '2025-01-16', 75.00, NULL, 'Enrolled', 'completed', 315.00, NULL, 0, 1, NULL, 2700, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(3, 8, 1, 10, '2025-01-20', '2025-01-21', 45.00, NULL, 'Enrolled', 'completed', 360.00, NULL, 0, 1, NULL, 1620, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(4, 9, 2, 7, '2025-01-15', '2025-01-15', 100.00, 88.00, 'Enrolled', 'completed', 342.00, '2025-04-25', 1, 1, NULL, 4200, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(5, 9, 2, 15, '2025-01-15', '2025-01-16', 85.00, NULL, 'Enrolled', 'completed', 380.00, NULL, 0, 1, NULL, 2856, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(6, 9, 2, 17, '2025-01-20', '2025-01-21', 60.00, NULL, 'In Progress', 'completed', 320.00, NULL, 0, 1, NULL, 1728, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(7, 10, 3, 18, '2025-01-10', '2025-01-10', 100.00, 95.00, 'Enrolled', 'completed', 300.00, '2025-04-08', 1, 1, NULL, 2880, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(8, 10, 3, 19, '2025-02-01', '2025-02-02', 30.00, NULL, 'Enrolled', 'completed', 405.00, NULL, 0, 1, NULL, 1152, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(9, 10, 3, 1, '2025-01-15', '2025-01-15', 100.00, 87.50, 'Enrolled', 'completed', 250.00, '2025-04-12', 1, 1, NULL, 2640, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(10, 11, 4, 5, '2025-01-10', '2025-01-10', 100.00, 91.00, 'Enrolled', 'completed', 315.00, '2025-04-05', 1, 1, NULL, 3600, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(11, 11, 4, 6, '2025-02-01', '2025-02-02', 50.00, NULL, 'Enrolled', 'completed', 400.00, NULL, 0, 1, NULL, 2400, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(12, 11, 4, 9, '2025-02-10', '2025-02-11', 25.00, NULL, 'Enrolled', 'completed', 320.00, NULL, 0, 1, NULL, 720, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(13, 12, 5, 11, '2025-02-15', '2025-02-16', 40.00, NULL, 'Enrolled', 'completed', 495.00, NULL, 0, 1, NULL, 2160, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(14, 12, 5, 12, '2025-01-25', '2025-01-26', 70.00, NULL, 'Enrolled', 'completed', 400.00, NULL, 0, 1, NULL, 2688, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(16, 13, 6, 3, '2025-01-20', '2025-01-20', 35.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 672, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(17, 13, 6, 17, '2025-01-20', '2025-01-21', 40.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1152, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(18, 14, 7, 13, '2025-03-01', '2025-03-02', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 720, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(19, 14, 7, 8, '2025-03-01', '2025-03-02', 20.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1200, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(20, 15, 8, 18, '2025-01-10', '2025-01-10', 90.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 2592, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(21, 15, 8, 3, '2025-01-20', '2025-01-20', 100.00, 94.00, 'Enrolled', 'pending', 0.00, '2025-03-15', 1, 1, NULL, 1920, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(22, 16, 9, 10, '2025-01-20', '2025-01-21', 65.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 2340, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(23, 16, 9, 12, '2025-01-25', '2025-01-26', 40.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1536, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(24, 17, 10, 15, '2025-01-15', '2025-01-16', 80.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 2688, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(25, 17, 10, 16, '2025-02-05', '2025-02-06', 45.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1296, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(26, 18, 11, 1, '2025-01-15', '2025-01-16', 55.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1584, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(27, 18, 11, 4, '2025-02-15', '2025-02-16', 30.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 864, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(28, 19, 12, 5, '2025-01-20', '2025-01-21', 10.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 360, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(29, 19, 12, 3, '2025-01-20', '2025-01-21', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 288, '2025-11-18 22:21:01', '2025-12-09 13:26:07', NULL),
-(30, 26, 13, 1, '2025-11-23', '2025-11-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2025-11-23 11:45:51', '2025-12-09 13:26:07', NULL),
-(31, 39, 33, 1, '2025-12-28', '2025-12-28', 0.00, NULL, 'In Progress', '', 0.00, NULL, 0, 1, NULL, 0, '2025-12-28 18:42:19', '2025-12-28 18:42:19', NULL),
-(34, 43, 37, 1, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 0.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:42:00', '2026-01-09 04:42:00', NULL),
-(35, 40, 34, 1, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 0.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:42:00', '2026-01-09 04:42:00', NULL),
-(37, 68, 62, 11, '2026-03-16', '2026-03-16', 0.00, NULL, 'Enrolled', 'completed', 100.00, NULL, 0, 1, NULL, 0, '2026-03-16 21:36:01', '2026-03-16 21:37:27', NULL),
-(38, 56, 50, 7, '2026-03-17', '2026-03-17', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-03-17 14:57:36', '2026-03-17 14:57:36', NULL),
-(39, 78, 72, 1, '2026-05-08', '2026-05-08', 100.00, 97.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:47:43', '2026-05-08 15:12:52', NULL),
-(40, 83, 77, 1, '2026-05-08', '2026-05-08', 100.00, 92.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:52', NULL),
-(41, 77, 71, 1, '2026-05-08', '2026-05-08', 100.00, 88.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:52', NULL),
-(42, 79, 73, 1, '2026-05-08', '2026-05-08', 100.00, 84.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:52', NULL),
-(43, 85, 79, 1, '2026-05-08', '2026-05-08', 100.00, 83.60, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53', NULL),
-(44, 86, 80, 1, '2026-05-08', '2026-05-08', 100.00, 83.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53', NULL),
-(45, 84, 78, 1, '2026-05-08', '2026-05-08', 100.00, 81.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53', NULL),
-(46, 87, 81, 1, '2026-05-08', '2026-05-08', 100.00, 79.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53', NULL),
-(47, 80, 74, 1, '2026-05-08', '2026-05-08', 100.00, 79.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53', NULL),
-(48, 81, 75, 1, '2026-05-08', '2026-05-08', 100.00, 78.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53', NULL),
-(49, 82, 76, 1, '2026-05-08', '2026-05-08', 100.00, 64.20, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-05-08 15:12:53', NULL),
-(50, 88, 82, 1, '2026-05-08', '2026-05-08', 100.00, 83.60, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 15:20:22', '2026-05-27 08:34:32', NULL),
-(51, 90, 84, 27, '2026-05-13', '2026-05-13', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-05-13 13:55:59', '2026-05-13 13:55:59', NULL),
-(52, 88, 82, 5, '2026-05-09', '2026-05-09', 65.00, NULL, 'In Progress', 'completed', 3000.00, NULL, 0, 0, '2026-05-22 07:56:21', 720, '2026-05-09 07:56:21', '2026-05-23 07:56:21', NULL),
-(53, 88, 82, 7, '2026-05-16', '2026-05-16', 30.00, NULL, 'In Progress', 'pending', 500.00, NULL, 0, 0, '2026-05-22 07:56:21', 180, '2026-05-16 07:56:21', '2026-05-23 07:56:21', NULL),
-(54, 88, 82, 11, '2026-05-22', '2026-05-22', 5.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, '2026-05-22 07:56:21', 45, '2026-05-22 07:56:21', '2026-05-23 07:56:21', NULL),
-(55, 88, 82, 3, '2026-05-23', '2026-05-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 0, '2026-05-23 07:56:21', '2026-05-23 07:56:21', NULL),
-(56, 91, 85, 1, '2026-05-03', NULL, 75.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 0, '2026-05-23 12:46:07', '2026-05-23 12:46:07', NULL),
-(58, 88, 82, 4, '2026-05-27', NULL, 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-05-27 08:04:19', '2026-05-27 08:04:19', NULL);
+INSERT INTO `enrollments` (`id`, `user_id`, `student_id`, `course_id`, `intake_id`, `enrolled_at`, `start_date`, `progress`, `final_grade`, `enrollment_status`, `payment_status`, `amount_paid`, `completion_date`, `certificate_issued`, `certificate_blocked`, `last_accessed`, `total_time_spent`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 8, 1, 1, 2, '2025-01-15', '2025-01-15', 100.00, 92.50, 'Enrolled', 'completed', 250.00, '2025-04-10', 1, 1, NULL, 2880, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(2, 8, 1, 5, 5, '2025-01-15', '2025-01-16', 75.00, NULL, 'Enrolled', 'completed', 315.00, NULL, 0, 1, NULL, 2700, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(3, 8, 1, 10, 10, '2025-01-20', '2025-01-21', 45.00, NULL, 'Enrolled', 'completed', 360.00, NULL, 0, 1, NULL, 1620, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(4, 9, 2, 7, 7, '2025-01-15', '2025-01-15', 100.00, 88.00, 'Enrolled', 'completed', 342.00, '2025-04-25', 1, 1, NULL, 4200, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(5, 9, 2, 15, 15, '2025-01-15', '2025-01-16', 85.00, NULL, 'Enrolled', 'completed', 380.00, NULL, 0, 1, NULL, 2856, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(6, 9, 2, 17, 17, '2025-01-20', '2025-01-21', 60.00, NULL, 'In Progress', 'completed', 320.00, NULL, 0, 1, NULL, 1728, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(7, 10, 3, 18, 18, '2025-01-10', '2025-01-10', 100.00, 95.00, 'Enrolled', 'completed', 300.00, '2025-04-08', 1, 1, NULL, 2880, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(8, 10, 3, 19, 19, '2025-02-01', '2025-02-02', 30.00, NULL, 'Enrolled', 'completed', 405.00, NULL, 0, 1, NULL, 1152, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(9, 10, 3, 1, 2, '2025-01-15', '2025-01-15', 100.00, 87.50, 'Enrolled', 'completed', 250.00, '2025-04-12', 1, 1, NULL, 2640, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(10, 11, 4, 5, 5, '2025-01-10', '2025-01-10', 100.00, 91.00, 'Enrolled', 'completed', 315.00, '2025-04-05', 1, 1, NULL, 3600, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(11, 11, 4, 6, 6, '2025-02-01', '2025-02-02', 50.00, NULL, 'Enrolled', 'completed', 400.00, NULL, 0, 1, NULL, 2400, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(12, 11, 4, 9, 9, '2025-02-10', '2025-02-11', 25.00, NULL, 'Enrolled', 'completed', 320.00, NULL, 0, 1, NULL, 720, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(13, 12, 5, 11, 11, '2025-02-15', '2025-02-16', 40.00, NULL, 'Enrolled', 'completed', 495.00, NULL, 0, 1, NULL, 2160, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(14, 12, 5, 12, 12, '2025-01-25', '2025-01-26', 70.00, NULL, 'Enrolled', 'completed', 400.00, NULL, 0, 1, NULL, 2688, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(16, 13, 6, 3, 3, '2025-01-20', '2025-01-20', 35.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 672, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(17, 13, 6, 17, 17, '2025-01-20', '2025-01-21', 40.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1152, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(18, 14, 7, 13, 13, '2025-03-01', '2025-03-02', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 720, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(19, 14, 7, 8, 8, '2025-03-01', '2025-03-02', 20.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1200, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(20, 15, 8, 18, 18, '2025-01-10', '2025-01-10', 90.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 2592, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(21, 15, 8, 3, 3, '2025-01-20', '2025-01-20', 100.00, 94.00, 'Enrolled', 'pending', 0.00, '2025-03-15', 1, 1, NULL, 1920, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(22, 16, 9, 10, 10, '2025-01-20', '2025-01-21', 65.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 2340, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(23, 16, 9, 12, 12, '2025-01-25', '2025-01-26', 40.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1536, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(24, 17, 10, 15, 15, '2025-01-15', '2025-01-16', 80.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 2688, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(25, 17, 10, 16, 16, '2025-02-05', '2025-02-06', 45.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1296, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(26, 18, 11, 1, 2, '2025-01-15', '2025-01-16', 55.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 1584, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(27, 18, 11, 4, 4, '2025-02-15', '2025-02-16', 30.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 864, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(28, 19, 12, 5, 5, '2025-01-20', '2025-01-21', 10.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 360, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(29, 19, 12, 3, 3, '2025-01-20', '2025-01-21', 15.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 288, '2025-11-18 22:21:01', '2026-06-02 11:24:14', NULL),
+(30, 26, 13, 1, 2, '2025-11-23', '2025-11-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2025-11-23 11:45:51', '2026-06-02 11:24:14', NULL),
+(31, 39, 33, 1, 2, '2025-12-28', '2025-12-28', 0.00, NULL, 'In Progress', '', 0.00, NULL, 0, 1, NULL, 0, '2025-12-28 18:42:19', '2026-06-02 11:24:14', NULL),
+(34, 43, 37, 1, 2, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 0.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:42:00', '2026-06-02 11:24:14', NULL),
+(35, 40, 34, 1, 2, '2026-01-09', NULL, 0.00, NULL, 'Enrolled', 'completed', 0.00, NULL, 0, 1, NULL, 0, '2026-01-09 04:42:00', '2026-06-02 11:24:14', NULL),
+(37, 68, 62, 11, 11, '2026-03-16', '2026-03-16', 0.00, NULL, 'Enrolled', 'completed', 100.00, NULL, 0, 1, NULL, 0, '2026-03-16 21:36:01', '2026-06-02 11:24:14', NULL),
+(38, 56, 50, 7, 7, '2026-03-17', '2026-03-17', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-03-17 14:57:36', '2026-06-02 11:24:14', NULL),
+(39, 78, 72, 1, 2, '2026-05-08', '2026-05-08', 100.00, 97.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:47:43', '2026-06-02 11:24:14', NULL),
+(40, 83, 77, 1, 2, '2026-05-08', '2026-05-08', 100.00, 92.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-06-02 11:24:14', NULL),
+(41, 77, 71, 1, 2, '2026-05-08', '2026-05-08', 100.00, 88.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-06-02 11:24:14', NULL),
+(42, 79, 73, 1, 2, '2026-05-08', '2026-05-08', 100.00, 84.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-06-02 11:24:14', NULL),
+(43, 85, 79, 1, 2, '2026-05-08', '2026-05-08', 100.00, 83.60, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-06-02 11:24:14', NULL),
+(44, 86, 80, 1, 2, '2026-05-08', '2026-05-08', 100.00, 83.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-06-02 11:24:14', NULL),
+(45, 84, 78, 1, 2, '2026-05-08', '2026-05-08', 100.00, 81.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-06-02 11:24:14', NULL),
+(46, 87, 81, 1, 2, '2026-05-08', '2026-05-08', 100.00, 79.80, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-06-02 11:24:14', NULL),
+(47, 80, 74, 1, 2, '2026-05-08', '2026-05-08', 100.00, 79.40, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-06-02 11:24:14', NULL),
+(48, 81, 75, 1, 2, '2026-05-08', '2026-05-08', 100.00, 78.00, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-06-02 11:24:14', NULL),
+(49, 82, 76, 1, 2, '2026-05-08', '2026-05-08', 100.00, 64.20, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 14:56:55', '2026-06-02 11:24:14', NULL),
+(50, 88, 82, 1, 2, '2026-05-08', '2026-05-08', 100.00, 83.60, 'Completed', 'completed', 2500.00, '2026-05-08', 1, 0, NULL, 0, '2026-05-08 15:20:22', '2026-06-02 11:24:14', NULL),
+(51, 90, 84, 27, 24, '2026-05-13', '2026-05-13', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-05-13 13:55:59', '2026-06-02 11:24:14', NULL),
+(52, 88, 82, 5, 5, '2026-05-09', '2026-05-09', 65.00, NULL, 'In Progress', 'completed', 3000.00, NULL, 0, 0, '2026-05-22 07:56:21', 720, '2026-05-09 07:56:21', '2026-06-02 11:24:14', NULL),
+(53, 88, 82, 7, 7, '2026-05-16', '2026-05-16', 30.00, NULL, 'In Progress', 'pending', 500.00, NULL, 0, 0, '2026-05-22 07:56:21', 180, '2026-05-16 07:56:21', '2026-06-02 11:24:14', NULL),
+(54, 88, 82, 11, 11, '2026-05-22', '2026-05-22', 5.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, '2026-05-22 07:56:21', 45, '2026-05-22 07:56:21', '2026-06-02 11:24:14', NULL),
+(55, 88, 82, 3, 3, '2026-05-23', '2026-05-23', 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 0, '2026-05-23 07:56:21', '2026-06-02 11:24:14', NULL),
+(56, 91, 85, 1, 2, '2026-05-03', NULL, 75.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 0, NULL, 0, '2026-05-23 12:46:07', '2026-06-02 11:24:14', NULL),
+(58, 88, 82, 4, 4, '2026-05-27', NULL, 0.00, NULL, 'Enrolled', 'pending', 0.00, NULL, 0, 1, NULL, 0, '2026-05-27 08:04:19', '2026-06-02 11:24:14', NULL);
 
 -- --------------------------------------------------------
 
@@ -1016,6 +1025,68 @@ INSERT INTO `instructors` (`id`, `user_id`, `bio`, `specialization`, `years_expe
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `intakes`
+--
+
+CREATE TABLE `intakes` (
+  `id` int(11) NOT NULL,
+  `course_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `application_deadline` date DEFAULT NULL,
+  `learning_deadline` date DEFAULT NULL,
+  `max_students` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `enrollment_count` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `price_override` decimal(10,2) DEFAULT NULL,
+  `status` enum('draft','open','closed','in_progress','completed') NOT NULL DEFAULT 'draft',
+  `is_default` tinyint(1) NOT NULL DEFAULT 0,
+  `display_order` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `intakes`
+--
+
+INSERT INTO `intakes` (`id`, `course_id`, `name`, `start_date`, `end_date`, `application_deadline`, `learning_deadline`, `max_students`, `enrollment_count`, `price_override`, `status`, `is_default`, `display_order`, `created_at`, `updated_at`) VALUES
+(1, 0, 'Cybersecurity Fundamentals (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(2, 1, 'Certificate in Microsoft Office Suite (Default)', '2025-01-15', '2025-04-15', '2025-04-15', NULL, 30, 18, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(3, 3, 'Certificate in Digital Literacy (Default)', '2025-01-20', '2025-03-20', '2025-03-20', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(4, 4, 'Certificate in Record Management (Default)', '2025-02-15', '2025-05-15', '2025-05-15', NULL, 30, 1, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(5, 5, 'Certificate in Python Programming (Default)', '2025-01-10', '2025-04-10', '2025-04-10', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(6, 6, 'Certificate in Java Programming (Default)', '2025-02-01', '2025-06-01', '2025-06-01', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(7, 7, 'Certificate in Web Development (Default)', '2025-01-15', '2025-04-30', '2025-04-30', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(8, 8, 'Certificate in Mobile App Development (Default)', '2025-03-01', '2025-07-30', '2025-07-30', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(9, 9, 'Certificate in Software Engineering (Default)', '2025-02-10', '2025-05-10', '2025-05-10', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(10, 10, 'Certificate in Data Analysis (Default)', '2025-01-20', '2025-04-20', '2025-04-20', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(11, 11, 'Certificate in Cyber Security (Default)', '2025-02-15', '2025-06-30', '2025-06-30', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(12, 12, 'Certificate in Database Management Systems (Default)', '2025-01-25', '2025-05-25', '2025-05-25', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(13, 13, 'Certificate in Artificial Intelligence (Default)', '2025-03-01', '2025-07-01', '2025-07-01', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(14, 14, 'Certificate in Internet of Things (Default)', '2025-02-20', '2025-05-20', '2025-05-20', NULL, 30, 0, NULL, 'draft', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(15, 15, 'Certificate in Graphic Designing (Default)', '2025-01-15', '2025-04-30', '2025-04-30', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(16, 16, 'Certificate in Digital & Content Creation (Default)', '2025-02-05', '2025-05-05', '2025-05-05', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(17, 17, 'Certificate in Digital Marketing (Default)', '2025-01-20', '2025-04-20', '2025-04-20', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(18, 18, 'Certificate in Entrepreneurship (Default)', '2025-01-10', '2025-04-10', '2025-04-10', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(19, 19, 'Certificate in Project Management (Default)', '2025-02-01', '2025-06-01', '2025-06-01', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(20, 20, 'Certificate in Financial Technology (Default)', '2025-03-01', '2025-06-15', '2025-06-15', NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(21, 24, 'Certificate in ICT Support & Hardware Repair (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(22, 25, 'Certificate in Computer Studies (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(23, 26, 'Certificate in Computer Science General (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(24, 27, 'Certificate in Information Technology (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(25, 28, 'Certificate in Computer & Business Handling (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(26, 29, 'Certificate in C++ Programming (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(27, 30, 'Certificate in Sales & Marketing (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(28, 31, 'Certificate in Monitoring & Evaluation (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(29, 32, 'Certificate in Purchasing & Supply (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(30, 33, 'Certificate in E-Commerce & Online Business (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(31, 34, 'Certificate in Secretarial & Office Management (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'open', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14'),
+(32, 35, 'Cybersecurity Fundamentals (Default)', NULL, NULL, NULL, NULL, 30, 0, NULL, 'draft', 1, 0, '2026-06-02 20:24:14', '2026-06-02 20:24:14');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `invoices`
 --
 
@@ -1095,12 +1166,14 @@ CREATE TABLE `lenco_transactions` (
   `lenco_account_id` varchar(100) DEFAULT NULL COMMENT 'Lenco internal account ID',
   `lenco_transaction_id` varchar(100) DEFAULT NULL COMMENT 'Lenco transaction ID (set on completion)',
   `status` enum('pending','successful','failed','expired','reversed') NOT NULL DEFAULT 'pending',
+  `payment_method` varchar(50) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
   `paid_at` datetime DEFAULT NULL COMMENT 'When payment was confirmed',
   `expires_at` datetime DEFAULT NULL COMMENT 'When this payment request expires',
-  `metadata` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Additional transaction metadata' CHECK (json_valid(`metadata`)),
+  `metadata` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Additional transaction metadata',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tracks Lenco payment gateway transactions';
+) ;
 
 -- --------------------------------------------------------
 
@@ -1112,14 +1185,14 @@ CREATE TABLE `lenco_webhook_logs` (
   `id` int(11) NOT NULL,
   `event_type` varchar(100) NOT NULL COMMENT 'Webhook event type',
   `lenco_transaction_id` varchar(255) DEFAULT NULL,
-  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'Raw webhook payload' CHECK (json_valid(`payload`)),
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'Raw webhook payload',
   `signature` varchar(255) DEFAULT NULL COMMENT 'Webhook signature',
   `signature_valid` tinyint(1) DEFAULT NULL COMMENT 'Was signature valid?',
   `processed` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Has this been processed?',
   `error_message` text DEFAULT NULL COMMENT 'Error if processing failed',
   `ip_address` varchar(45) DEFAULT NULL COMMENT 'Source IP address',
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Logs incoming Lenco webhooks for debugging';
+) ;
 
 --
 -- Dumping data for table `lenco_webhook_logs`
@@ -1770,6 +1843,7 @@ CREATE TABLE `lesson_versions` (
 CREATE TABLE `live_sessions` (
   `id` int(11) NOT NULL,
   `lesson_id` int(11) NOT NULL,
+  `intake_id` int(11) DEFAULT NULL,
   `instructor_id` int(11) NOT NULL,
   `meeting_room_id` varchar(255) NOT NULL,
   `scheduled_start_time` datetime NOT NULL,
@@ -1795,8 +1869,8 @@ CREATE TABLE `live_sessions` (
 -- Dumping data for table `live_sessions`
 --
 
-INSERT INTO `live_sessions` (`id`, `lesson_id`, `instructor_id`, `meeting_room_id`, `scheduled_start_time`, `scheduled_end_time`, `duration_minutes`, `status`, `max_participants`, `description`, `recording_url`, `moderator_password`, `participant_password`, `allow_recording`, `auto_start_recording`, `enable_chat`, `enable_screen_share`, `buffer_minutes_before`, `buffer_minutes_after`, `created_at`, `updated_at`) VALUES
-(1, 28, 13, 'edutrack-word-intro', '2026-05-25 13:44:37', '2026-05-25 14:44:37', 60, 'scheduled', 30, 'Live walkthrough of Word interface and basic formatting', NULL, NULL, NULL, 1, 0, 1, 1, 15, 30, '2026-05-23 11:44:37', '2026-05-23 11:44:37');
+INSERT INTO `live_sessions` (`id`, `lesson_id`, `intake_id`, `instructor_id`, `meeting_room_id`, `scheduled_start_time`, `scheduled_end_time`, `duration_minutes`, `status`, `max_participants`, `description`, `recording_url`, `moderator_password`, `participant_password`, `allow_recording`, `auto_start_recording`, `enable_chat`, `enable_screen_share`, `buffer_minutes_before`, `buffer_minutes_after`, `created_at`, `updated_at`) VALUES
+(1, 28, 2, 13, 'edutrack-word-intro', '2026-05-25 13:44:37', '2026-05-25 14:44:37', 60, 'scheduled', 30, 'Live walkthrough of Word interface and basic formatting', NULL, NULL, NULL, 1, 0, 1, 1, 15, 30, '2026-05-23 11:44:37', '2026-06-02 11:24:14');
 
 -- --------------------------------------------------------
 
@@ -1805,7 +1879,7 @@ INSERT INTO `live_sessions` (`id`, `lesson_id`, `instructor_id`, `meeting_room_i
 --
 
 CREATE TABLE `live_session_attendance` (
-  `id` int(11) NOT NULL,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `live_session_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `joined_at` datetime NOT NULL,
@@ -1937,7 +2011,28 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (78, '2026_05_25_131500_fix_lenco_columns', 19),
 (79, '2026_05_25_132000_add_mobile_fields_to_registration_fees', 20),
 (80, '2026_05_25_133000_add_lenco_tx_to_registration_fees', 21),
-(81, '2026_05_25_154010_make_payments_course_id_nullable', 22);
+(81, '2026_05_25_154010_make_payments_course_id_nullable', 22),
+(82, '2026_05_27_000000_fix_lenco_transactions_columns', 23),
+(83, '2026_05_27_121134_add_payment_method_and_phone_to_lenco_transactions', 23),
+(84, '2026_05_27_143702_fix_course_status_enum_under_review', 23),
+(85, '2026_05_27_151911_add_points_override_to_quiz_questions', 23),
+(86, '2026_05_27_151912_add_soft_deletes_to_questions', 23),
+(87, '2026_05_27_151913_add_soft_deletes_to_assignment_submissions', 23),
+(88, '2026_05_27_153202_fix_quiz_attempts_student_id_fk', 23),
+(89, '2026_05_27_153203_fix_assignment_submissions_student_id_fk', 23),
+(90, '2026_05_27_153204_fix_notifications_column_names', 23),
+(91, '2026_05_27_153205_fix_email_template_enum_values', 23),
+(92, '2026_05_27_153206_add_unsubscribed_at_to_newsletter_subscribers', 23),
+(93, '2026_05_27_171904_fix_live_session_attendance_id_autoincrement', 23),
+(95, '2026_05_28_213615_add_certificates_indexes', 24),
+(97, '2026_05_31_010224_add_is_template_to_courses', 25),
+(101, '2026_06_01_100000_create_intakes_table', 26),
+(102, '2026_06_01_100001_add_intake_id_to_enrollments', 26),
+(103, '2026_06_01_100002_add_intake_id_to_live_sessions', 26),
+(104, '2026_06_01_100003_add_intake_name_to_certificates', 26),
+(105, '2026_06_01_100004_seed_default_intakes', 26),
+(106, '2025_06_04_000001_add_missing_indexes', 27),
+(107, '2026_06_08_161500_add_nrc_number_to_user_profiles_table', 28);
 
 -- --------------------------------------------------------
 
@@ -2044,7 +2139,8 @@ CREATE TABLE `newsletter_subscribers` (
   `email` varchar(255) NOT NULL,
   `name` varchar(100) DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
-  `subscribed_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `subscribed_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `unsubscribed_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -2268,12 +2364,12 @@ CREATE TABLE `promotions` (
   `starts_at` timestamp NULL DEFAULT NULL,
   `ends_at` timestamp NULL DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
-  `applicable_courses` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`applicable_courses`)),
+  `applicable_courses` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `min_order_amount` decimal(10,2) DEFAULT NULL,
   `created_by` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ;
 
 --
 -- Dumping data for table `promotions`
@@ -2296,88 +2392,89 @@ CREATE TABLE `questions` (
   `explanation` text DEFAULT NULL,
   `correct_answer` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `questions`
 --
 
-INSERT INTO `questions` (`question_id`, `question_type`, `question_text`, `points`, `explanation`, `correct_answer`, `created_at`, `updated_at`) VALUES
-(1, 'Multiple Choice', 'What is the correct file extension for Python files?', 2, 'Python files use the .py extension', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(2, 'Multiple Choice', 'Which of the following is a mutable data type in Python?', 2, 'Lists are mutable, while tuples and strings are immutable', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(3, 'True/False', 'Python is a compiled language.', 1, 'Python is an interpreted language, not compiled', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(4, 'Multiple Choice', 'What does HTML stand for?', 2, 'HTML stands for HyperText Markup Language', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(5, 'Multiple Choice', 'Which CSS property is used to change text color?', 2, 'The color property is used to change text color', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(6, 'Short Answer', 'Explain the difference between a list and a tuple in Python.', 5, 'Lists are mutable and use square brackets, tuples are immutable and use parentheses', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(7, 'Multiple Choice', 'What does the \"C\" in the CIA Triad stand for?', 1, 'The CIA Triad consists of Confidentiality, Integrity, and Availability - the three core principles of cybersecurity.', NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(8, 'Multiple Choice', 'Which of the following is NOT a type of threat actor?', 1, 'System Administrators are typically defenders, not threat actors.', NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(9, 'Multiple Choice', 'A weakness in a system that could be exploited is called a(n):', 1, 'A vulnerability is a weakness in a system. A threat is a potential danger. Risk is the combination of threat and vulnerability.', NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(10, 'Multiple Choice', 'What is the primary motivation of cybercriminals?', 1, 'Cybercriminals are primarily motivated by financial gain through activities like ransomware, fraud, and data theft.', NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(11, 'Multiple Choice', 'Which principle ensures data is accessible when needed?', 1, 'Availability ensures that systems and data are accessible to authorized users when they need them.', NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46'),
-(12, 'Multiple Choice', 'What does the \"C\" in the CIA Triad stand for?', 1, 'The CIA Triad consists of Confidentiality, Integrity, and Availability.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(13, 'Multiple Choice', 'Which of the following is NOT a type of threat actor?', 1, 'System Administrators are defenders, not threat actors.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(14, 'Multiple Choice', 'A weakness in a system that could be exploited is called a(n):', 1, 'A vulnerability is a weakness in a system.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(15, 'Multiple Choice', 'What is the primary motivation of cybercriminals?', 1, 'Cybercriminals are primarily motivated by financial gain.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(16, 'Multiple Choice', 'Which principle ensures data is accessible when needed?', 1, 'Availability ensures systems and data are accessible.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(17, 'Multiple Choice', 'At which OSI layer does routing occur?', 1, 'Routing occurs at Layer 3 (Network Layer).', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(18, 'Multiple Choice', 'Which protocol uses port 443 by default?', 1, 'HTTPS uses port 443.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(19, 'Multiple Choice', 'What does ARP stand for?', 1, 'ARP maps IP addresses to MAC addresses.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(20, 'Multiple Choice', 'Which is the encrypted alternative to Telnet?', 1, 'SSH provides encrypted remote access.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(21, 'Multiple Choice', 'Network segmentation using VLANs primarily helps with:', 1, 'VLANs segment networks to contain breaches.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(22, 'Multiple Choice', 'Which malware type encrypts files and demands payment?', 1, 'Ransomware encrypts files and demands payment.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(23, 'Multiple Choice', 'What is phishing?', 1, 'Phishing is a fraudulent attempt to obtain sensitive information.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(24, 'Multiple Choice', 'In the Cyber Kill Chain, what comes after \"Delivery\"?', 1, 'The phases are: Reconnaissance -> Weaponization -> Delivery -> Exploitation.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(25, 'Multiple Choice', 'Which of the following is a social engineering technique?', 1, 'Tailgating is a physical social engineering technique.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(26, 'Multiple Choice', 'What is the primary purpose of a keylogger?', 1, 'A keylogger records keystrokes to capture passwords.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(27, 'Multiple Choice', 'Which encryption type uses the same key for encryption and decryption?', 1, 'Symmetric encryption uses a single shared key.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(28, 'Multiple Choice', 'What does MFA stand for?', 1, 'Multi-Factor Authentication requires two or more verification factors.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(29, 'Multiple Choice', 'In RBAC, access is determined by:', 1, 'Role-Based Access Control grants access based on user roles.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(30, 'Multiple Choice', 'Which system actively blocks detected threats in real-time?', 1, 'IPS actively blocks threats while IDS only detects and alerts.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(31, 'Multiple Choice', 'TLS is used for:', 1, 'TLS encrypts web traffic and enables HTTPS.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(32, 'Multiple Choice', 'Which OWASP Top 10 item involves untrusted data sent to interpreters?', 1, 'Injection flaws occur when untrusted data is sent to interpreters.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(33, 'Multiple Choice', 'What is the best defense against SQL Injection?', 1, 'Parameterized queries separate SQL code from data.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(34, 'Multiple Choice', 'Which XSS type stores the malicious script on the server?', 1, 'Stored (Persistent) XSS stores scripts permanently on the server.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(35, 'Multiple Choice', 'Which header prevents clickjacking attacks?', 1, 'X-Frame-Options controls whether a page can be displayed in frames.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(36, 'Multiple Choice', 'What does CSP stand for in web security?', 1, 'Content Security Policy helps prevent XSS and data injection.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(37, 'Multiple Choice', 'Which type of hacker is authorized to test systems?', 1, 'White Hat hackers have authorization to test and improve security.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(38, 'Multiple Choice', 'What does OSINT stand for?', 1, 'OSINT refers to intelligence gathered from publicly available sources.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(39, 'Multiple Choice', 'Which tool is commonly used for port scanning?', 1, 'Nmap is the industry-standard tool for port scanning.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(40, 'Multiple Choice', 'In a Black Box test, the tester has:', 1, 'Black Box testing simulates an external attacker with no prior knowledge.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(41, 'Multiple Choice', 'What does CVE stand for?', 1, 'CVE provides standardized identifiers for known vulnerabilities.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(42, 'Multiple Choice', 'Which NIST phase involves removing threats and vulnerabilities?', 1, 'Eradication removes threats and eliminates vulnerabilities.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(43, 'Multiple Choice', 'What is the primary purpose of chain of custody?', 1, 'Chain of custody ensures digital evidence is admissible in court.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(44, 'Multiple Choice', 'Which tool is used for memory forensics?', 1, 'Volatility is an open-source memory forensics framework.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(45, 'Multiple Choice', 'What should be done FIRST when responding to an incident?', 1, 'Preserving evidence is critical for investigation.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(46, 'Multiple Choice', 'A bit-for-bit copy of storage media is called a:', 1, 'A disk image preserves all data including deleted files.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(47, 'Multiple Choice', 'What does SIEM stand for?', 1, 'SIEM collects, correlates, and analyzes security events.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(48, 'Multiple Choice', 'Which SOC tier is responsible for initial alert review?', 1, 'Tier 1 analysts handle initial alert triage.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(49, 'Multiple Choice', 'MTTD stands for:', 1, 'MTTD measures average time to detect threats.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(50, 'Multiple Choice', 'Which of the following is an open-source SIEM tool?', 1, 'Wazuh is an open-source security monitoring platform.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(51, 'Multiple Choice', 'What is the MITRE ATT&CK framework used for?', 1, 'MITRE ATT&CK is used for threat modeling and detection.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(52, 'Multiple Choice', 'The NIST CSF consists of how many core functions?', 1, 'NIST CSF has 5 core functions.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(53, 'Multiple Choice', 'ISO 27001 is a standard for:', 1, 'ISO 27001 is for Information Security Management Systems.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(54, 'Multiple Choice', 'Risk is calculated as:', 1, 'Risk = Likelihood x Impact.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(55, 'Multiple Choice', 'Which risk treatment involves transferring risk to a third party?', 1, 'Risk transfer moves financial consequence to another party.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(56, 'Multiple Choice', 'Which NIST function involves taking action on detected incidents?', 1, 'The Respond function includes taking action on incidents.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(57, 'Multiple Choice', 'The three principles of the CIA Triad are:', 1, 'Confidentiality, Integrity, and Availability.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(58, 'Multiple Choice', 'Which layer of the OSI model handles routing?', 1, 'Layer 3 (Network Layer).', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(59, 'Multiple Choice', 'Which malware type does NOT need a host program?', 1, 'Worms are self-replicating and do not need a host.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(60, 'Multiple Choice', 'Which encryption algorithm is symmetric?', 1, 'AES is symmetric. RSA and ECC are asymmetric.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(61, 'Multiple Choice', 'What is the primary defense against SQL Injection?', 1, 'Parameterized queries are the most effective defense.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(62, 'Multiple Choice', 'In a Black Box penetration test, the tester has:', 1, 'No prior knowledge.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(63, 'Multiple Choice', 'Which phase of incident response involves limiting damage?', 1, 'Containment isolates the incident.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(64, 'Multiple Choice', 'What does a SIEM system primarily do?', 1, 'Collects and analyzes security events.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(65, 'Multiple Choice', 'The NIST Cybersecurity Framework has how many functions?', 1, 'NIST CSF has 5 functions.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(66, 'Multiple Choice', 'Which access control model grants permissions based on user roles?', 1, 'RBAC grants permissions based on roles.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(67, 'Multiple Choice', 'What is the purpose of a honeypot?', 1, 'A honeypot attracts and detects attackers.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(68, 'Multiple Choice', 'Which social engineering technique involves following someone into a secure area?', 1, 'Tailgating follows someone into restricted areas.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(69, 'Multiple Choice', 'TLS is used to:', 1, 'TLS encrypts web traffic for HTTPS.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(70, 'Multiple Choice', 'What does OWASP stand for?', 1, 'Open Web Application Security Project.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(71, 'Multiple Choice', 'Risk is best defined as:', 1, 'Risk = Likelihood x Impact.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27'),
-(75, 'Multiple Choice', 'What is the capital of Zambia?', 2, 'Lusaka is the capital and largest city of Zambia.', NULL, '2026-05-23 15:42:48', '2026-05-23 15:42:48'),
-(76, 'Short Answer', 'What is the capital of Zambia?', 2, 'Lusaka is the capital.', 'Lusaka', '2026-05-23 16:38:19', '2026-05-23 16:38:19'),
-(77, 'Essay', 'Explain the importance of computer literacy in modern Zambia.', 5, 'Look for discussion of employment, education, and digital divide.', 'Should mention: job opportunities, access to information, online services, education, and economic growth.', '2026-05-23 16:38:19', '2026-05-23 16:38:19');
+INSERT INTO `questions` (`question_id`, `question_type`, `question_text`, `points`, `explanation`, `correct_answer`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'Multiple Choice', 'What is the correct file extension for Python files?', 2, 'Python files use the .py extension', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01', NULL),
+(2, 'Multiple Choice', 'Which of the following is a mutable data type in Python?', 2, 'Lists are mutable, while tuples and strings are immutable', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01', NULL),
+(3, 'True/False', 'Python is a compiled language.', 1, 'Python is an interpreted language, not compiled', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01', NULL),
+(4, 'Multiple Choice', 'What does HTML stand for?', 2, 'HTML stands for HyperText Markup Language', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01', NULL),
+(5, 'Multiple Choice', 'Which CSS property is used to change text color?', 2, 'The color property is used to change text color', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01', NULL),
+(6, 'Short Answer', 'Explain the difference between a list and a tuple in Python.', 5, 'Lists are mutable and use square brackets, tuples are immutable and use parentheses', NULL, '2025-11-18 22:21:01', '2025-11-18 22:21:01', NULL),
+(7, 'Multiple Choice', 'What does the \"C\" in the CIA Triad stand for?', 1, 'The CIA Triad consists of Confidentiality, Integrity, and Availability - the three core principles of cybersecurity.', NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46', NULL),
+(8, 'Multiple Choice', 'Which of the following is NOT a type of threat actor?', 1, 'System Administrators are typically defenders, not threat actors.', NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46', NULL),
+(9, 'Multiple Choice', 'A weakness in a system that could be exploited is called a(n):', 1, 'A vulnerability is a weakness in a system. A threat is a potential danger. Risk is the combination of threat and vulnerability.', NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46', NULL),
+(10, 'Multiple Choice', 'What is the primary motivation of cybercriminals?', 1, 'Cybercriminals are primarily motivated by financial gain through activities like ransomware, fraud, and data theft.', NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46', NULL),
+(11, 'Multiple Choice', 'Which principle ensures data is accessible when needed?', 1, 'Availability ensures that systems and data are accessible to authorized users when they need them.', NULL, '2026-05-04 18:50:46', '2026-05-04 18:50:46', NULL),
+(12, 'Multiple Choice', 'What does the \"C\" in the CIA Triad stand for?', 1, 'The CIA Triad consists of Confidentiality, Integrity, and Availability.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(13, 'Multiple Choice', 'Which of the following is NOT a type of threat actor?', 1, 'System Administrators are defenders, not threat actors.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(14, 'Multiple Choice', 'A weakness in a system that could be exploited is called a(n):', 1, 'A vulnerability is a weakness in a system.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(15, 'Multiple Choice', 'What is the primary motivation of cybercriminals?', 1, 'Cybercriminals are primarily motivated by financial gain.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(16, 'Multiple Choice', 'Which principle ensures data is accessible when needed?', 1, 'Availability ensures systems and data are accessible.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(17, 'Multiple Choice', 'At which OSI layer does routing occur?', 1, 'Routing occurs at Layer 3 (Network Layer).', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(18, 'Multiple Choice', 'Which protocol uses port 443 by default?', 1, 'HTTPS uses port 443.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(19, 'Multiple Choice', 'What does ARP stand for?', 1, 'ARP maps IP addresses to MAC addresses.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(20, 'Multiple Choice', 'Which is the encrypted alternative to Telnet?', 1, 'SSH provides encrypted remote access.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(21, 'Multiple Choice', 'Network segmentation using VLANs primarily helps with:', 1, 'VLANs segment networks to contain breaches.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(22, 'Multiple Choice', 'Which malware type encrypts files and demands payment?', 1, 'Ransomware encrypts files and demands payment.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(23, 'Multiple Choice', 'What is phishing?', 1, 'Phishing is a fraudulent attempt to obtain sensitive information.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(24, 'Multiple Choice', 'In the Cyber Kill Chain, what comes after \"Delivery\"?', 1, 'The phases are: Reconnaissance -> Weaponization -> Delivery -> Exploitation.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(25, 'Multiple Choice', 'Which of the following is a social engineering technique?', 1, 'Tailgating is a physical social engineering technique.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(26, 'Multiple Choice', 'What is the primary purpose of a keylogger?', 1, 'A keylogger records keystrokes to capture passwords.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(27, 'Multiple Choice', 'Which encryption type uses the same key for encryption and decryption?', 1, 'Symmetric encryption uses a single shared key.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(28, 'Multiple Choice', 'What does MFA stand for?', 1, 'Multi-Factor Authentication requires two or more verification factors.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(29, 'Multiple Choice', 'In RBAC, access is determined by:', 1, 'Role-Based Access Control grants access based on user roles.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(30, 'Multiple Choice', 'Which system actively blocks detected threats in real-time?', 1, 'IPS actively blocks threats while IDS only detects and alerts.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(31, 'Multiple Choice', 'TLS is used for:', 1, 'TLS encrypts web traffic and enables HTTPS.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(32, 'Multiple Choice', 'Which OWASP Top 10 item involves untrusted data sent to interpreters?', 1, 'Injection flaws occur when untrusted data is sent to interpreters.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(33, 'Multiple Choice', 'What is the best defense against SQL Injection?', 1, 'Parameterized queries separate SQL code from data.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(34, 'Multiple Choice', 'Which XSS type stores the malicious script on the server?', 1, 'Stored (Persistent) XSS stores scripts permanently on the server.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(35, 'Multiple Choice', 'Which header prevents clickjacking attacks?', 1, 'X-Frame-Options controls whether a page can be displayed in frames.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(36, 'Multiple Choice', 'What does CSP stand for in web security?', 1, 'Content Security Policy helps prevent XSS and data injection.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(37, 'Multiple Choice', 'Which type of hacker is authorized to test systems?', 1, 'White Hat hackers have authorization to test and improve security.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(38, 'Multiple Choice', 'What does OSINT stand for?', 1, 'OSINT refers to intelligence gathered from publicly available sources.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(39, 'Multiple Choice', 'Which tool is commonly used for port scanning?', 1, 'Nmap is the industry-standard tool for port scanning.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(40, 'Multiple Choice', 'In a Black Box test, the tester has:', 1, 'Black Box testing simulates an external attacker with no prior knowledge.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(41, 'Multiple Choice', 'What does CVE stand for?', 1, 'CVE provides standardized identifiers for known vulnerabilities.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(42, 'Multiple Choice', 'Which NIST phase involves removing threats and vulnerabilities?', 1, 'Eradication removes threats and eliminates vulnerabilities.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(43, 'Multiple Choice', 'What is the primary purpose of chain of custody?', 1, 'Chain of custody ensures digital evidence is admissible in court.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(44, 'Multiple Choice', 'Which tool is used for memory forensics?', 1, 'Volatility is an open-source memory forensics framework.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(45, 'Multiple Choice', 'What should be done FIRST when responding to an incident?', 1, 'Preserving evidence is critical for investigation.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(46, 'Multiple Choice', 'A bit-for-bit copy of storage media is called a:', 1, 'A disk image preserves all data including deleted files.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(47, 'Multiple Choice', 'What does SIEM stand for?', 1, 'SIEM collects, correlates, and analyzes security events.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(48, 'Multiple Choice', 'Which SOC tier is responsible for initial alert review?', 1, 'Tier 1 analysts handle initial alert triage.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(49, 'Multiple Choice', 'MTTD stands for:', 1, 'MTTD measures average time to detect threats.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(50, 'Multiple Choice', 'Which of the following is an open-source SIEM tool?', 1, 'Wazuh is an open-source security monitoring platform.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(51, 'Multiple Choice', 'What is the MITRE ATT&CK framework used for?', 1, 'MITRE ATT&CK is used for threat modeling and detection.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(52, 'Multiple Choice', 'The NIST CSF consists of how many core functions?', 1, 'NIST CSF has 5 core functions.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(53, 'Multiple Choice', 'ISO 27001 is a standard for:', 1, 'ISO 27001 is for Information Security Management Systems.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(54, 'Multiple Choice', 'Risk is calculated as:', 1, 'Risk = Likelihood x Impact.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(55, 'Multiple Choice', 'Which risk treatment involves transferring risk to a third party?', 1, 'Risk transfer moves financial consequence to another party.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(56, 'Multiple Choice', 'Which NIST function involves taking action on detected incidents?', 1, 'The Respond function includes taking action on incidents.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(57, 'Multiple Choice', 'The three principles of the CIA Triad are:', 1, 'Confidentiality, Integrity, and Availability.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(58, 'Multiple Choice', 'Which layer of the OSI model handles routing?', 1, 'Layer 3 (Network Layer).', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(59, 'Multiple Choice', 'Which malware type does NOT need a host program?', 1, 'Worms are self-replicating and do not need a host.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(60, 'Multiple Choice', 'Which encryption algorithm is symmetric?', 1, 'AES is symmetric. RSA and ECC are asymmetric.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(61, 'Multiple Choice', 'What is the primary defense against SQL Injection?', 1, 'Parameterized queries are the most effective defense.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(62, 'Multiple Choice', 'In a Black Box penetration test, the tester has:', 1, 'No prior knowledge.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(63, 'Multiple Choice', 'Which phase of incident response involves limiting damage?', 1, 'Containment isolates the incident.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(64, 'Multiple Choice', 'What does a SIEM system primarily do?', 1, 'Collects and analyzes security events.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(65, 'Multiple Choice', 'The NIST Cybersecurity Framework has how many functions?', 1, 'NIST CSF has 5 functions.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(66, 'Multiple Choice', 'Which access control model grants permissions based on user roles?', 1, 'RBAC grants permissions based on roles.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(67, 'Multiple Choice', 'What is the purpose of a honeypot?', 1, 'A honeypot attracts and detects attackers.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(68, 'Multiple Choice', 'Which social engineering technique involves following someone into a secure area?', 1, 'Tailgating follows someone into restricted areas.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(69, 'Multiple Choice', 'TLS is used to:', 1, 'TLS encrypts web traffic for HTTPS.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(70, 'Multiple Choice', 'What does OWASP stand for?', 1, 'Open Web Application Security Project.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(71, 'Multiple Choice', 'Risk is best defined as:', 1, 'Risk = Likelihood x Impact.', NULL, '2026-05-04 21:14:27', '2026-05-04 21:14:27', NULL),
+(75, 'Multiple Choice', 'What is the capital of Zambia?', 2, 'Lusaka is the capital and largest city of Zambia.', NULL, '2026-05-23 15:42:48', '2026-05-23 15:42:48', NULL),
+(76, 'Short Answer', 'What is the capital of Zambia?', 2, 'Lusaka is the capital.', 'Lusaka', '2026-05-23 16:38:19', '2026-05-23 16:38:19', NULL),
+(77, 'Essay', 'Explain the importance of computer literacy in modern Zambia.', 5, 'Look for discussion of employment, education, and digital divide.', 'Should mention: job opportunities, access to information, online services, education, and economic growth.', '2026-05-23 16:38:19', '2026-05-23 16:38:19', NULL);
 
 -- --------------------------------------------------------
 
@@ -3298,9 +3395,9 @@ CREATE TABLE `roles` (
   `id` int(11) NOT NULL,
   `role_name` varchar(50) NOT NULL,
   `description` text DEFAULT NULL,
-  `permissions` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`permissions`)),
+  `permissions` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ;
 
 --
 -- Dumping data for table `roles`
@@ -3396,30 +3493,30 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `city`, `country`, `postal_code`, `enrollment_date`, `total_courses_enrolled`, `total_courses_completed`, `total_certificates`, `created_at`, `updated_at`) VALUES
-(1, 8, '1998-05-15', 'Male', NULL, 'Lusaka', 'Zambia', NULL, '2024-12-01', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(2, 9, '2000-08-22', 'Female', NULL, 'Ndola', 'Zambia', NULL, '2024-12-05', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(3, 10, '1995-03-10', 'Male', NULL, 'Kitwe', 'Zambia', NULL, '2024-12-10', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(4, 11, '1999-11-30', 'Female', NULL, 'Livingstone', 'Zambia', NULL, '2024-12-15', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(5, 12, '1997-07-18', 'Male', NULL, 'Lusaka', 'Zambia', NULL, '2024-12-20', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(6, 13, '2001-02-25', 'Female', NULL, 'Kabwe', 'Zambia', NULL, '2025-01-02', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(7, 14, '1996-09-12', 'Male', NULL, 'Chingola', 'Zambia', NULL, '2025-01-05', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(8, 15, '1998-12-05', 'Female', NULL, 'Lusaka', 'Zambia', NULL, '2025-01-08', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(9, 16, '2000-04-20', 'Male', NULL, 'Solwezi', 'Zambia', NULL, '2025-01-10', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(10, 17, '1999-06-08', 'Female', NULL, 'Mongu', 'Zambia', NULL, '2025-01-12', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(11, 18, '1997-10-15', 'Male', NULL, 'Kasama', 'Zambia', NULL, '2025-01-15', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(12, 19, '2001-01-30', 'Female', NULL, 'Lusaka', 'Zambia', NULL, '2025-01-18', 0, 0, 0, '2025-11-18 22:21:01', '2025-11-18 22:21:01'),
-(13, 26, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-23', 0, 0, 0, '2025-11-23 11:45:50', '2025-11-23 11:45:50'),
+(1, 8, '1998-05-15', 'Male', NULL, 'Lusaka', 'Zambia', NULL, '2024-12-01', 3, 0, 1, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(2, 9, '2000-08-22', 'Female', NULL, 'Ndola', 'Zambia', NULL, '2024-12-05', 3, 0, 1, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(3, 10, '1995-03-10', 'Male', NULL, 'Kitwe', 'Zambia', NULL, '2024-12-10', 3, 0, 2, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(4, 11, '1999-11-30', 'Female', NULL, 'Livingstone', 'Zambia', NULL, '2024-12-15', 3, 0, 1, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(5, 12, '1997-07-18', 'Male', NULL, 'Lusaka', 'Zambia', NULL, '2024-12-20', 2, 0, 0, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(6, 13, '2001-02-25', 'Female', NULL, 'Kabwe', 'Zambia', NULL, '2025-01-02', 2, 0, 0, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(7, 14, '1996-09-12', 'Male', NULL, 'Chingola', 'Zambia', NULL, '2025-01-05', 2, 0, 0, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(8, 15, '1998-12-05', 'Female', NULL, 'Lusaka', 'Zambia', NULL, '2025-01-08', 2, 0, 1, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(9, 16, '2000-04-20', 'Male', NULL, 'Solwezi', 'Zambia', NULL, '2025-01-10', 2, 0, 0, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(10, 17, '1999-06-08', 'Female', NULL, 'Mongu', 'Zambia', NULL, '2025-01-12', 2, 0, 0, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(11, 18, '1997-10-15', 'Male', NULL, 'Kasama', 'Zambia', NULL, '2025-01-15', 2, 0, 0, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(12, 19, '2001-01-30', 'Female', NULL, 'Lusaka', 'Zambia', NULL, '2025-01-18', 2, 0, 0, '2025-11-18 22:21:01', '2026-06-08 11:06:40'),
+(13, 26, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-23', 1, 0, 0, '2025-11-23 11:45:50', '2026-06-08 11:06:40'),
 (14, 30, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-09', 0, 0, 0, '2025-12-09 11:30:29', '2025-12-09 11:30:29'),
 (28, 34, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-20', 0, 0, 0, '2025-12-20 13:21:55', '2025-12-20 13:21:55'),
 (29, 35, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-21', 0, 0, 0, '2025-12-21 12:57:29', '2025-12-21 12:57:29'),
 (30, 36, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-22', 0, 0, 0, '2025-12-22 16:20:20', '2025-12-22 16:20:20'),
 (31, 37, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-23', 0, 0, 0, '2025-12-23 07:18:25', '2025-12-23 07:18:25'),
 (32, 38, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-25', 0, 0, 0, '2025-12-25 10:05:01', '2025-12-25 10:05:01'),
-(33, 39, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-28', 0, 0, 0, '2025-12-28 15:13:44', '2025-12-28 15:13:44'),
-(34, 40, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-29', 0, 0, 0, '2025-12-29 10:01:21', '2025-12-29 10:01:21'),
+(33, 39, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-28', 1, 0, 0, '2025-12-28 15:13:44', '2026-06-08 11:06:40'),
+(34, 40, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-29', 1, 0, 0, '2025-12-29 10:01:21', '2026-06-08 11:06:40'),
 (35, 41, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-30', 0, 0, 0, '2025-12-30 12:45:53', '2025-12-30 12:45:53'),
 (36, 42, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-31', 0, 0, 0, '2025-12-31 09:03:33', '2025-12-31 09:03:33'),
-(37, 43, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-08', 0, 0, 0, '2026-01-08 10:47:56', '2026-01-08 10:47:56'),
+(37, 43, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-08', 1, 0, 0, '2026-01-08 10:47:56', '2026-06-08 11:06:40'),
 (38, 44, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-11', 0, 0, 0, '2026-01-11 17:02:07', '2026-01-11 17:02:07'),
 (39, 45, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13', 0, 0, 0, '2026-01-13 16:02:31', '2026-01-13 16:02:31'),
 (40, 46, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13', 0, 0, 0, '2026-01-13 16:04:02', '2026-01-13 16:04:02'),
@@ -3432,7 +3529,7 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (47, 53, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-20', 0, 0, 0, '2026-02-20 11:11:55', '2026-02-20 11:11:55'),
 (48, 54, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-22', 0, 0, 0, '2026-02-22 17:15:58', '2026-02-22 17:15:58'),
 (49, 55, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-23', 0, 0, 0, '2026-02-23 10:27:32', '2026-02-23 10:27:32'),
-(50, 56, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-25', 0, 0, 0, '2026-02-25 18:15:00', '2026-02-25 18:15:00'),
+(50, 56, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-25', 1, 0, 0, '2026-02-25 18:15:00', '2026-06-08 11:06:40'),
 (51, 57, NULL, NULL, NULL, NULL, NULL, NULL, '2026-02-26', 0, 0, 0, '2026-02-26 20:06:15', '2026-02-26 20:06:15'),
 (52, 58, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-02', 0, 0, 0, '2026-03-02 22:26:34', '2026-03-02 22:26:34'),
 (53, 59, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-04', 0, 0, 0, '2026-03-04 09:22:55', '2026-03-04 09:22:55'),
@@ -3444,7 +3541,7 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (59, 65, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-13', 0, 0, 0, '2026-03-13 09:46:59', '2026-03-13 09:46:59'),
 (60, 66, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-14', 0, 0, 0, '2026-03-14 12:46:43', '2026-03-14 12:46:43'),
 (61, 67, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-15', 0, 0, 0, '2026-03-15 13:13:55', '2026-03-15 13:13:55'),
-(62, 68, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-16', 0, 0, 0, '2026-03-16 12:45:20', '2026-03-16 12:45:20'),
+(62, 68, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-16', 1, 0, 0, '2026-03-16 12:45:20', '2026-06-08 11:06:40'),
 (63, 69, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-20', 0, 0, 0, '2026-03-20 10:44:56', '2026-03-20 10:44:56'),
 (64, 70, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-26', 0, 0, 0, '2026-03-26 11:30:42', '2026-03-26 11:30:42'),
 (65, 71, NULL, NULL, NULL, NULL, NULL, NULL, '2026-03-29', 0, 0, 0, '2026-03-29 09:00:10', '2026-03-29 09:00:10'),
@@ -3453,21 +3550,21 @@ INSERT INTO `students` (`id`, `user_id`, `date_of_birth`, `gender`, `address`, `
 (68, 74, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-23', 0, 0, 0, '2026-04-23 08:10:47', '2026-04-23 08:10:47'),
 (69, 75, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-26', 0, 0, 0, '2026-04-26 04:56:43', '2026-04-26 04:56:43'),
 (70, 76, NULL, NULL, NULL, NULL, NULL, NULL, '2026-04-30', 0, 0, 0, '2026-04-30 12:33:28', '2026-04-30 12:33:28'),
-(71, 77, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:11:18', '2026-05-08 12:11:18'),
-(72, 78, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:12:26', '2026-05-08 12:12:26'),
-(73, 79, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:16:52', '2026-05-08 12:16:52'),
-(74, 80, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:16:59', '2026-05-08 12:16:59'),
-(75, 81, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:19:00', '2026-05-08 12:19:00'),
-(76, 82, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:19:44', '2026-05-08 12:19:44'),
-(77, 83, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:22:17', '2026-05-08 12:22:17'),
-(78, 84, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:24:57', '2026-05-08 12:24:57'),
-(79, 85, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:38:39', '2026-05-08 12:38:39'),
-(80, 86, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 12:46:55', '2026-05-08 12:46:55'),
-(81, 87, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 14:47:43', '2026-05-08 14:47:43'),
-(82, 88, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 0, 0, 0, '2026-05-08 15:20:22', '2026-05-08 15:20:22'),
+(71, 77, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 1, 1, 1, '2026-05-08 12:11:18', '2026-06-08 11:06:40'),
+(72, 78, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 1, 1, 1, '2026-05-08 12:12:26', '2026-06-08 11:06:40'),
+(73, 79, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 1, 1, 1, '2026-05-08 12:16:52', '2026-06-08 11:06:40'),
+(74, 80, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 1, 1, 1, '2026-05-08 12:16:59', '2026-06-08 11:06:40'),
+(75, 81, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 1, 1, 1, '2026-05-08 12:19:00', '2026-06-08 11:06:40'),
+(76, 82, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 1, 1, 1, '2026-05-08 12:19:44', '2026-06-08 11:06:40'),
+(77, 83, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 1, 1, 1, '2026-05-08 12:22:17', '2026-06-08 11:06:40'),
+(78, 84, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 1, 1, 1, '2026-05-08 12:24:57', '2026-06-08 11:06:40'),
+(79, 85, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 1, 1, 1, '2026-05-08 12:38:39', '2026-06-08 11:06:40'),
+(80, 86, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 1, 1, 1, '2026-05-08 12:46:55', '2026-06-08 11:06:40'),
+(81, 87, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 1, 1, 1, '2026-05-08 14:47:43', '2026-06-08 11:06:40'),
+(82, 88, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08', 6, 1, 1, '2026-05-08 15:20:22', '2026-06-08 11:06:40'),
 (83, 89, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-11', 0, 0, 0, '2026-05-11 09:41:30', '2026-05-11 09:41:30'),
-(84, 90, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-12', 0, 0, 0, '2026-05-12 16:26:41', '2026-05-12 16:26:41'),
-(85, 91, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-23', 2, 1, 1, '2026-05-23 11:41:01', '2026-05-23 11:41:01');
+(84, 90, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-12', 1, 0, 0, '2026-05-12 16:26:41', '2026-06-08 11:06:40'),
+(85, 91, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-23', 1, 0, 0, '2026-05-23 11:41:01', '2026-06-08 11:06:40');
 
 -- --------------------------------------------------------
 
@@ -3684,7 +3781,7 @@ INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `password_hash`, `r
 (6, 'michael.siame', 'michael.siame@edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', NULL, 'Michael', 'Siame', '+260933567890', NULL, 'active', NULL, NULL, 1, '2025-12-25 21:53:14', NULL, 0, NULL, '2025-11-18 22:21:01', '2025-12-25 19:53:14', NULL),
 (25, 'taona', 'taona@gmail.com', NULL, '$2y$10$iJ4P8BDECzTdPhAwoP4pXOsf2rSZelFAfogVU6JCj2XfVdSVWHRlW', NULL, 'toana', 'ndlovuli', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2025-11-22 09:07:23', '2025-11-22 09:08:14', NULL),
 (26, 'jaysiame076', 'jaysiame076@gmail.com', NULL, '$2y$10$QQ0Z4AD75f/2TyPP6zdrYebKdTkhnHo3IFuCz/AT07KQD.v7pWgei', NULL, 'joe', 'siame', '', NULL, 'active', NULL, NULL, 0, '2025-12-09 11:32:59', NULL, 0, NULL, '2025-11-23 11:05:46', '2025-12-09 09:32:59', NULL),
-(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', NULL, 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2026-05-14 20:12:13', NULL, 0, NULL, '2025-12-04 20:34:20', '2026-05-14 18:12:13', NULL),
+(27, 'marvinmoonga69', 'marvinmoonga69@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', 't12AJUshqgSa8nxHrcIxvww6gSXFsdvJxEcrTk8i52AXQewQbqnLk1YtImXj', 'Chilala', 'Moonga', '+260979536820', NULL, 'active', NULL, NULL, 0, '2026-05-14 20:12:13', NULL, 0, NULL, '2025-12-04 20:34:20', '2026-06-05 11:25:21', NULL),
 (28, 'it', 'it@witmanmiyande.com', NULL, '$2y$10$kbm0yafbxD0Iu0Vk7uZYoOKTaqE1DTV47I7FHEFmeRESglBLmnWve', NULL, 'Witman', 'Miyande', '+260976062621', NULL, 'active', NULL, NULL, 0, '2025-12-08 13:07:32', NULL, 0, NULL, '2025-12-05 14:38:37', '2025-12-08 17:45:29', NULL),
 (29, 'edwardmusole76', 'edwardmusole76@gmail.com', NULL, '$2y$10$WAgkucanVQ4OuVJtxfZeIuH2gxPk4lH7tTmhKT0I8awfPWiBBakdC', NULL, 'Edward', 'Musole', '+260978605960', NULL, 'active', NULL, NULL, 0, '2025-12-29 12:47:56', NULL, 0, NULL, '2025-12-05 14:42:37', '2025-12-29 10:47:56', NULL),
 (30, 'siamem570', 'siamem570@gmail.com', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', NULL, 'michael', 'siame', '+260771216339', NULL, 'active', NULL, NULL, 0, '2026-03-16 22:27:06', NULL, 0, NULL, '2025-12-09 11:30:29', '2026-03-16 20:27:06', NULL),
@@ -3745,7 +3842,7 @@ INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `password_hash`, `r
 (85, 'fragestermudenda46', 'fragestermudenda46@gmail.com', NULL, '$2y$10$G3Y6MsNAovpiLFByVeoJGuAKW2DkKk0Zw.qnKJuNGiSzISAEQMLni', NULL, 'Fragester', 'Mudenda', '+260773137696', NULL, 'active', NULL, NULL, 0, '2026-05-09 20:57:06', NULL, 0, NULL, '2026-05-08 12:38:39', '2026-05-09 18:57:06', NULL),
 (86, 'lishebelajoyce', 'lishebelajoyce@gmail.com', '114562181971949631777', '$2y$10$tdt46skZDQ7/OpXlrmmwRe1fCTa9DDZbgqUbbD2vf6LGFNpe9g0g6', NULL, 'Joyce', 'Lishebela', '', NULL, 'active', NULL, NULL, 1, '2026-05-13 13:55:43', NULL, 0, NULL, '2026-05-08 12:46:55', '2026-05-13 11:55:43', NULL),
 (87, 'patricia.siamukopa', 'patricia.siamukopa@student.edutrack.edu', NULL, '$2y$10$dxWyurt7ibrP4JzRuvqFjOnaNiF/XGmKtkOP5OEf8.fXJWke3bWxW', NULL, 'Patricia', 'Siamukopa', NULL, NULL, 'inactive', NULL, NULL, 0, NULL, NULL, 0, NULL, '2026-05-08 14:47:43', '2026-05-22 19:15:06', NULL),
-(88, 'testuser', 'testuser@edutrack.edu', NULL, '$2y$10$OpR3oP3xhNb7m93AOklNjerKmIRoMAVNbxVY73S3QL6xdwjpIuily', 'l20lCfOTxb6Eo8IwPcNk4otPjWgLMyMNkC7zU11e924sXmxSTDIlLNW76eCU', 'Test', 'User', NULL, NULL, 'active', NULL, NULL, 1, '2026-05-15 19:18:30', NULL, 0, NULL, '2026-05-08 15:20:22', '2026-05-25 08:33:51', NULL),
+(88, 'testuser', 'testuser@edutrack.edu', NULL, '$2y$10$OpR3oP3xhNb7m93AOklNjerKmIRoMAVNbxVY73S3QL6xdwjpIuily', 'l20lCfOTxb6Eo8IwPcNk4otPjWgLMyMNkC7zU11e924sXmxSTDIlLNW76eCU', 'Michael', 'Siame', '0771216339', NULL, 'active', NULL, NULL, 1, '2026-05-15 19:18:30', NULL, 0, NULL, '2026-05-08 15:20:22', '2026-06-04 22:49:06', NULL),
 (89, 'dicksonchangwe6', 'dicksonchangwe6@gmail.com', '108102239233611028894', '$2y$10$nP2ndbj28eDx7UbVwEBXm.BOfs71ZmOigmqBl8u1.rK624JFuonhe', NULL, 'DICKSON', 'CHANGWE', '', NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-05-11 09:41:30', '2026-05-11 09:41:30', NULL),
 (90, 'maselenimary854', 'maselenimary854@gmail.com', '103272139780537937302', '$2y$10$b7vc5viRZaU0FKVsJX/lZuTpCKojZ1SChFSGzGoVRtuYvW7RpK7QW', NULL, 'Mary', 'Maseleni', '', NULL, 'active', NULL, NULL, 1, '2026-05-19 11:07:37', NULL, 0, NULL, '2026-05-12 16:26:41', '2026-05-19 09:07:37', NULL),
 (91, 'testinstructor', 'testinstructor@edutrack.edu', NULL, '$2y$12$ZahKrD/0E1YG23Y63cuTzefUWPupaj4MbWGE/KXqAsgtyDsPI6v4G', NULL, 'Test', 'Instructor', NULL, NULL, 'active', NULL, NULL, 1, NULL, NULL, 0, NULL, '2026-05-23 11:39:38', '2026-05-23 11:39:38', NULL);
@@ -3866,7 +3963,7 @@ INSERT INTO `user_profiles` (`id`, `user_id`, `bio`, `phone`, `date_of_birth`, `
 (98, 85, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:38:39', '2026-05-08 12:38:39', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (99, 86, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 12:46:55', '2026-05-08 12:46:55', 'https://lh3.googleusercontent.com/a/ACg8ocIRHsx4T3M7WKNEEW_rq6LciDWwizWiOc_RjquzY-rbJE_btA=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (100, 87, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 14:47:43', '2026-05-08 14:47:43', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(101, 88, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-08 15:20:22', '2026-05-08 15:20:22', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(101, 88, NULL, NULL, '2002-05-03', NULL, '1038 accra road', 'kitwe', 'Zambia', '10101', NULL, NULL, NULL, '2026-05-08 15:20:22', '2026-06-08 16:36:15', NULL, NULL, '398943/65/1', NULL, NULL, 'horizon garages', NULL, NULL, NULL),
 (102, 89, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-11 09:41:30', '2026-05-11 09:41:30', 'https://lh3.googleusercontent.com/a/ACg8ocLzYDrYyeaYVaVyJ_2D-67NdpbzFNbFV6ekRPztD_A1HdndTVA=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (103, 90, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-05-12 16:26:41', '2026-05-12 16:26:41', 'https://lh3.googleusercontent.com/a/ACg8ocLxVlsZJvZYFF0TUg6QbetxEJFSn6J1zX5k9Dwhjv8L02-RUA=s96-c', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
@@ -4006,34 +4103,6 @@ CREATE TABLE `user_sessions` (
 INSERT INTO `user_sessions` (`id`, `user_id`, `session_token`, `ip_address`, `user_agent`, `expires_at`, `created_at`, `updated_at`) VALUES
 (206, 90, '6395104652e067e1be0e36bbb842b17c58c0e25f56c304808027f0971be3b434', '102.212.183.105', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '2026-05-19 13:07:37', '2026-05-19 09:07:37', '2026-05-19 09:07:37');
 
--- --------------------------------------------------------
-
---
--- Stand-in structure for view `v_student_balances`
--- (See below for the actual view)
---
-CREATE TABLE `v_student_balances` (
-`user_id` int(11)
-,`username` varchar(50)
-,`full_name` varchar(101)
-,`email` varchar(100)
-,`student_id` int(11)
-,`total_courses` bigint(21)
-,`total_course_fees` decimal(32,2)
-,`total_paid` decimal(32,2)
-,`total_balance` decimal(33,2)
-,`overall_status` varchar(11)
-);
-
--- --------------------------------------------------------
-
---
--- Structure for view `v_student_balances`
---
-DROP TABLE IF EXISTS `v_student_balances`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`u605780771_root`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_student_balances`  AS SELECT `u`.`id` AS `user_id`, `u`.`username` AS `username`, concat(`u`.`first_name`,' ',`u`.`last_name`) AS `full_name`, `u`.`email` AS `email`, `s`.`id` AS `student_id`, count(`e`.`id`) AS `total_courses`, coalesce(sum(`epp`.`total_fee`),0) AS `total_course_fees`, coalesce(sum(`epp`.`total_paid`),0) AS `total_paid`, coalesce(sum(`epp`.`total_fee` - `epp`.`total_paid`),0) AS `total_balance`, CASE WHEN sum(`epp`.`total_fee` - `epp`.`total_paid`) > 0 THEN 'Outstanding' ELSE 'Clear' END AS `overall_status` FROM (((`users` `u` join `students` `s` on(`u`.`id` = `s`.`user_id`)) left join `enrollments` `e` on(`s`.`id` = `e`.`student_id`)) left join `enrollment_payment_plans` `epp` on(`e`.`id` = `epp`.`enrollment_id`)) GROUP BY `u`.`id`, `u`.`username`, `u`.`first_name`, `u`.`last_name`, `u`.`email`, `s`.`id` ;
-
 --
 -- Indexes for dumped tables
 --
@@ -4090,7 +4159,12 @@ ALTER TABLE `certificates`
   ADD KEY `idx_cert_user` (`user_id`),
   ADD KEY `idx_cert_course` (`course_id`),
   ADD KEY `fk_cert_enroll` (`enrollment_id`),
-  ADD KEY `idx_certificates_issued` (`issued_date`);
+  ADD KEY `idx_certificates_issued` (`issued_date`),
+  ADD KEY `certificates_verification_code_index` (`verification_code`),
+  ADD KEY `certificates_user_course_index` (`user_id`,`course_id`),
+  ADD KEY `certificates_enrollment_idx` (`enrollment_id`),
+  ADD KEY `certificates_number_idx` (`certificate_number`),
+  ADD KEY `certificates_verify_idx` (`verification_code`);
 
 --
 -- Indexes for table `contacts`
@@ -4108,7 +4182,8 @@ ALTER TABLE `courses`
   ADD KEY `idx_courses_cat` (`category_id`),
   ADD KEY `idx_courses_inst` (`instructor_id`),
   ADD KEY `idx_courses_status` (`status`),
-  ADD KEY `idx_courses_status_featured` (`status`,`is_featured`);
+  ADD KEY `idx_courses_status_featured` (`status`,`is_featured`),
+  ADD KEY `courses_template_source_id_foreign` (`template_source_id`);
 
 --
 -- Indexes for table `course_categories`
@@ -4175,7 +4250,10 @@ ALTER TABLE `enrollments`
   ADD KEY `idx_enroll_student` (`student_id`),
   ADD KEY `idx_enrollments_status` (`enrollment_status`),
   ADD KEY `idx_enrollments_user_status` (`user_id`,`enrollment_status`),
-  ADD KEY `idx_enrollments_course_user` (`course_id`,`user_id`);
+  ADD KEY `idx_enrollments_course_user` (`course_id`,`user_id`),
+  ADD KEY `enrollments_intake_id_index` (`intake_id`),
+  ADD KEY `enrollments_user_course_idx` (`user_id`,`course_id`),
+  ADD KEY `enrollments_status_idx` (`enrollment_status`,`payment_status`);
 
 --
 -- Indexes for table `enrollment_payment_plans`
@@ -4232,6 +4310,14 @@ ALTER TABLE `instructors`
   ADD KEY `idx_inst_user` (`user_id`);
 
 --
+-- Indexes for table `intakes`
+--
+ALTER TABLE `intakes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `intakes_course_id_status_index` (`course_id`,`status`),
+  ADD KEY `intakes_is_default_index` (`is_default`);
+
+--
 -- Indexes for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -4263,7 +4349,9 @@ ALTER TABLE `lenco_transactions`
   ADD KEY `idx_course_id` (`course_id`),
   ADD KEY `idx_status` (`status`),
   ADD KEY `idx_virtual_account` (`virtual_account_number`),
-  ADD KEY `idx_expires_at` (`expires_at`);
+  ADD KEY `idx_expires_at` (`expires_at`),
+  ADD KEY `lenco_tx_reference_idx` (`reference`),
+  ADD KEY `lenco_tx_enrollment_status_idx` (`enrollment_id`,`status`);
 
 --
 -- Indexes for table `lenco_webhook_logs`
@@ -4322,7 +4410,8 @@ ALTER TABLE `lesson_versions`
 ALTER TABLE `live_sessions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_ls_lesson` (`lesson_id`),
-  ADD KEY `fk_ls_instructor` (`instructor_id`);
+  ADD KEY `fk_ls_instructor` (`instructor_id`),
+  ADD KEY `live_sessions_intake_id_index` (`intake_id`);
 
 --
 -- Indexes for table `live_session_attendance`
@@ -4388,7 +4477,9 @@ ALTER TABLE `payments`
   ADD KEY `fk_pay_method` (`payment_method_id`),
   ADD KEY `idx_pay_plan` (`payment_plan_id`),
   ADD KEY `idx_pay_status` (`payment_status`),
-  ADD KEY `payments_promotion_id_foreign` (`promotion_id`);
+  ADD KEY `payments_promotion_id_foreign` (`promotion_id`),
+  ADD KEY `payments_enrollment_status_idx` (`enrollment_id`,`payment_status`),
+  ADD KEY `payments_transaction_idx` (`transaction_id`);
 
 --
 -- Indexes for table `payment_methods`
@@ -4641,7 +4732,7 @@ ALTER TABLE `certificates`
 -- AUTO_INCREMENT for table `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `courses`
@@ -4665,7 +4756,7 @@ ALTER TABLE `course_instructors`
 -- AUTO_INCREMENT for table `course_reviews`
 --
 ALTER TABLE `course_reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `discussions`
@@ -4677,7 +4768,7 @@ ALTER TABLE `discussions`
 -- AUTO_INCREMENT for table `email_queue`
 --
 ALTER TABLE `email_queue`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `email_templates`
@@ -4728,6 +4819,12 @@ ALTER TABLE `instructors`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
+-- AUTO_INCREMENT for table `intakes`
+--
+ALTER TABLE `intakes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+
+--
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
@@ -4749,7 +4846,7 @@ ALTER TABLE `lenco_transactions`
 -- AUTO_INCREMENT for table `lenco_webhook_logs`
 --
 ALTER TABLE `lenco_webhook_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `lessons`
@@ -4788,6 +4885,12 @@ ALTER TABLE `live_sessions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `live_session_attendance`
+--
+ALTER TABLE `live_session_attendance`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
@@ -4797,7 +4900,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- AUTO_INCREMENT for table `migrations_log`
@@ -4845,7 +4948,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `promotions`
 --
 ALTER TABLE `promotions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `questions`
@@ -4911,7 +5014,7 @@ ALTER TABLE `remember_tokens`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `settings`
@@ -4987,8 +5090,8 @@ ALTER TABLE `assignments`
 -- Constraints for table `assignment_submissions`
 --
 ALTER TABLE `assignment_submissions`
-  ADD CONSTRAINT `fk_sub_assign` FOREIGN KEY (`assignment_id`) REFERENCES `assignments` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_sub_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `assignment_submissions_student_id_foreign` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_sub_assign` FOREIGN KEY (`assignment_id`) REFERENCES `assignments` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `certificates`
@@ -5002,6 +5105,7 @@ ALTER TABLE `certificates`
 -- Constraints for table `courses`
 --
 ALTER TABLE `courses`
+  ADD CONSTRAINT `courses_template_source_id_foreign` FOREIGN KEY (`template_source_id`) REFERENCES `courses` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `fk_courses_category` FOREIGN KEY (`category_id`) REFERENCES `course_categories` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_courses_instructor` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON UPDATE CASCADE;
 
@@ -5071,6 +5175,12 @@ ALTER TABLE `institution_photos`
 --
 ALTER TABLE `instructors`
   ADD CONSTRAINT `fk_inst_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `intakes`
+--
+ALTER TABLE `intakes`
+  ADD CONSTRAINT `intakes_course_id_foreign` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `lenco_transactions`
@@ -5172,7 +5282,7 @@ ALTER TABLE `quiz_answers`
 --
 ALTER TABLE `quiz_attempts`
   ADD CONSTRAINT `fk_att_quiz` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_att_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `quiz_attempts_student_id_foreign` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `quiz_questions`
@@ -5233,19 +5343,6 @@ ALTER TABLE `user_profiles`
 ALTER TABLE `user_roles`
   ADD CONSTRAINT `fk_ur_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_ur_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
-DELIMITER $$
---
--- Events
---
-CREATE DEFINER=`u605780771_root`@`127.0.0.1` EVENT `cleanup_expired_lenco_transactions` ON SCHEDULE EVERY 1 HOUR STARTS '2025-12-28 18:58:28' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
-    UPDATE `lenco_transactions`
-    SET `status` = 'expired', `updated_at` = NOW()
-    WHERE `status` = 'pending'
-    AND `expires_at` < NOW();
-END$$
-
-DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
