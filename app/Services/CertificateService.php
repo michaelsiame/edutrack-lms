@@ -220,18 +220,49 @@ class CertificateService
         $pdf->SetTextColor(...self::NAVY);
         $this->certFont($pdf, 'serif-bold', 10.5);
         $pdf->setFontSpacing(0.25);
-        $pdf->Rotate(14, self::CENTER_X, self::PAGE_H / 2);
 
         $text = 'EDUTRACK COMPUTER TRAINING COLLEGE';
-        $stepX = 92;
+        $stepX = $pdf->GetStringWidth($text) + 16;
         $stepY = 13;
-        $row = 0;
-        for ($y = -90; $y < self::PAGE_H + 110; $y += $stepY) {
-            $offset = ($row % 2) * ($stepX / 2);
-            for ($x = -140 + $offset; $x < self::PAGE_W + 120; $x += $stepX) {
-                $pdf->Text($x, $y, $text);
+
+        // TCPDF clamps cell coordinates to the page box, so the tile grid
+        // cannot simply be drawn under one global rotation. Instead, each
+        // tile anchor is computed on the rotated lattice and the tile is
+        // rotated about its own anchor — geometrically identical. Tiles
+        // whose anchor falls off-page are trimmed character by character
+        // (advancing along the tilted baseline) until they enter the page.
+        $angle = 14;
+        $cos = cos(deg2rad($angle));
+        $sin = sin(deg2rad($angle));
+        $cx = self::PAGE_W / 2;
+        $cy = self::PAGE_H / 2;
+
+        for ($j = -16; $j <= 16; $j++) {
+            $gy = $j * $stepY;
+            $phase = (abs($j) % 2) * ($stepX / 2);
+            for ($i = -3; $i <= 3; $i++) {
+                $gx = $i * $stepX + $phase - $stepX / 2;
+                // Lattice point rotated about the page center (y-down coords)
+                $x = $cx + $gx * $cos + $gy * $sin;
+                $y = $cy - $gx * $sin + $gy * $cos;
+
+                // Trim leading characters until the anchor is on the page
+                $tile = $text;
+                while ($tile !== '' && ($x < 1 || $y < 2 || $y > self::PAGE_H - 2)) {
+                    $w = $pdf->GetStringWidth($tile[0]);
+                    $x += $w * $cos;
+                    $y -= $w * $sin;
+                    $tile = substr($tile, 1);
+                }
+                if ($tile === '' || $x > self::PAGE_W - 2 || $y < 2 || $y > self::PAGE_H - 2) {
+                    continue;
+                }
+
+                $pdf->StartTransform();
+                $pdf->Rotate($angle, $x, $y);
+                $pdf->Text($x, $y, $tile);
+                $pdf->StopTransform();
             }
-            $row++;
         }
 
         $pdf->setFontSpacing(0);
