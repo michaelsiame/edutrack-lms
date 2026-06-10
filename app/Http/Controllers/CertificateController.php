@@ -45,9 +45,11 @@ class CertificateController extends Controller
             'graduation_suffix' => 'th',
             'graduation_month' => 'March',
             'graduation_year' => '2026',
-            'student_number' => 'ECTC26001',
-            'certificate_number' => 'NRC 249580/11/1',
+            'student_number' => '26Edu249580',
+            'certificate_number' => 'NRC 2495807/1/1',
             'verification_code' => 'EDU-ABC123XYZ',
+            'verify_url' => route('certificates.verify', 'EDU-ABC123XYZ'),
+            'national_id' => 'NRC 249580/11/3',
             'final_score' => 87,
         ];
 
@@ -69,7 +71,7 @@ class CertificateController extends Controller
         // Verify ownership — only the student or super-admin/finance can download
         $user = auth()->user();
         $isOwner = $certificate->user_id === $user->id;
-        $isAdmin = $user->roles()->whereIn('role_id', [1, 2, 3, 6])->exists(); // Super Admin, Admin, Instructor, Finance
+        $isAdmin = $user->roles()->whereIn('role_id', [1, 2])->exists(); // Super Admin, Admin only
 
         if (!$isOwner && !$isAdmin) {
             abort(403, 'You do not have permission to download this certificate.');
@@ -80,7 +82,19 @@ class CertificateController extends Controller
             abort(403, 'Certificate is blocked until full payment is received.');
         }
 
-        // Shared hosting: use browser auto-print for pixel-perfect output
-        return redirect()->route('certificates.preview', ['certificate' => $certificate, 'download' => 1]);
+        $pdf = $this->generatePdf($certificate);
+
+        $filename = 'certificate-' . preg_replace('/[^A-Za-z0-9\-]+/', '-', $certificate->certificate_number) . '.pdf';
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    protected function generatePdf(Certificate $certificate): string
+    {
+        $service = new CertificateService();
+        return $service->generatePdf($certificate);
     }
 }
