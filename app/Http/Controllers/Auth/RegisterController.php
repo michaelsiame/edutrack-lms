@@ -64,17 +64,9 @@ class RegisterController extends Controller
         $emailService->sendNotification($user->id, 'Welcome to Edutrack!', 'Your account has been created successfully.', 'welcome');
 
         // Verification email
-        $verificationUrl = route('verification.verify', ['token' => $verificationToken]);
-        $templated = $emailService->sendTemplated($user->email, 'password_reset', [
-            'name' => $user->full_name,
-            'verification_url' => $verificationUrl,
-        ]);
-
-        if (!$templated) {
-            $subject = 'Verify your email address';
-            $body = view('emails.verify-email', ['user' => $user, 'token' => $verificationToken])->render();
-            $emailService->queue($user->email, $subject, $body);
-        }
+        $subject = 'Verify your email address';
+        $body = view('emails.verify-email', ['user' => $user, 'token' => $verificationToken])->render();
+        $emailService->queue($user->email, $subject, $body);
 
         return redirect()->route('verification.notice')
             ->with('email', $user->email);

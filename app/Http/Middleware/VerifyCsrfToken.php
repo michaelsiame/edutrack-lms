@@ -15,6 +15,5 @@ class VerifyCsrfToken extends Middleware
         'api/*',
         'lenco/webhook',
         'newsletter/subscribe',
-        'logout',
     ];
 }

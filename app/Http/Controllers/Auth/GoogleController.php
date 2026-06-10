@@ -53,6 +53,11 @@ class GoogleController extends Controller
             ]);
         }
 
+        if ($user->status !== 'active') {
+            return redirect()->route('login')
+                ->with('error', 'Your account has been suspended. Please contact support.');
+        }
+
         Auth::login($user);
 
         return redirect()->route('dashboard');

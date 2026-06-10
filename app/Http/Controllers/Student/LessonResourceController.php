@@ -26,6 +26,10 @@ class LessonResourceController extends Controller
             abort(403, 'Please complete at least a 30% deposit to download resources.');
         }
 
+        if (!$lesson->module || $lesson->module->course_id !== $course->id) {
+            abort(404);
+        }
+
         if ($resource->lesson_id !== $lesson->id) {
             abort(404);
         }

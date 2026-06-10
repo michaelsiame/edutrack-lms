@@ -43,7 +43,7 @@ Route::get('/certificates/verify/{code}', [CertificateController::class, 'verify
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'show'])->name('login');
-    Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+    Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->middleware('throttle:login');
     Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'show'])->name('register');
     Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
     Route::get('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'show'])->name('password.request');
@@ -386,5 +386,5 @@ Route::prefix('finance')->middleware(['auth', 'finance'])->name('finance.')->gro
 Route::post('/lenco/webhook', [App\Http\Controllers\Payment\LencoWebhookController::class, 'handle'])->name('lenco.webhook');
 
 // Public Newsletter Subscription
-Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe')->middleware('throttle:newsletter');
+Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe')->middleware('throttle:newsletter-subscribe');
 Route::get('/newsletter/unsubscribe', [App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
