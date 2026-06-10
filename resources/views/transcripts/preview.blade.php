@@ -447,7 +447,7 @@
     </div>
     <div class="summary-item">
       <div class="num">{{ $total_credits ?? '32' }}</div>
-      <div class="lbl">Credit Hours</div>
+      <div class="lbl">Duration (Weeks)</div>
     </div>
   </div>
 
@@ -500,7 +500,7 @@ $demo_enrollments = $enrollments ?? [
     <div class="course-header">
       <div class="title">{{ $enrollment['course_code'] }} — {{ $enrollment['course_title'] }}</div>
       <div class="meta">
-        Level: {{ $enrollment['level'] }} | Credits: {{ $enrollment['credits'] }}
+        Level: {{ $enrollment['level'] }} | Duration: {{ $enrollment['credits'] }} weeks
       </div>
     </div>
     <div class="course-meta-bar">
@@ -522,7 +522,7 @@ $demo_enrollments = $enrollments ?? [
           <th style="width: 10%" class="text-center">Max</th>
           <th style="width: 10%" class="text-center">%</th>
           <th style="width: 10%" class="text-center">Grade</th>
-          <th style="width: 8%" class="text-center">Credits</th>
+          <th style="width: 8%" class="text-center">Duration</th>
         </tr>
       </thead>
       <tbody>

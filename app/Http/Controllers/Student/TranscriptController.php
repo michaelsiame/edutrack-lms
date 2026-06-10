@@ -359,7 +359,7 @@ class TranscriptController extends Controller
         $summaryItems = [
             'Total Courses: ' . $data['total_courses'],
             'Completed: ' . $data['completed_courses'],
-            'Credits: ' . $data['total_credits'],
+            'Duration: ' . $data['total_credits'] . ' weeks',
         ];
         $cellW = 176 / count($summaryItems);
         foreach ($summaryItems as $item) {
@@ -375,7 +375,7 @@ class TranscriptController extends Controller
             $pdf->SetTextColor(255, 255, 255);
             $pdf->SetFont('helvetica', 'B', 10);
             $pdf->Cell(140, 7, $enrollment['course_code'] . ' — ' . $enrollment['course_title'], 0, 0, 'L', true);
-            $pdf->Cell(36, 7, 'Level: ' . $enrollment['level'] . ' | Credits: ' . $enrollment['credits'], 0, 1, 'R', true);
+            $pdf->Cell(36, 7, 'Level: ' . $enrollment['level'] . ' | ' . $enrollment['credits'] . ' weeks', 0, 1, 'R', true);
 
             // Meta bar
             $pdf->SetFillColor(237, 242, 247);
