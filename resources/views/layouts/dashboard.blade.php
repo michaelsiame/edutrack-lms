@@ -6,6 +6,10 @@
  <meta name="csrf-token" content="{{ csrf_token() }}">
  <title>@yield('title', config('app.name','Edutrack LMS'))</title>
 
+ <!-- Favicon -->
+ <link rel="icon" type="image/png" href="{{ asset('assets/images/logo.png') }}">
+ <link rel="apple-touch-icon" href="{{ asset('assets/images/logo.png') }}">
+
  <!-- Fonts & Icons -->
  <!-- Self-hosted Inter font (no external CDN dependency) -->
  <link rel="stylesheet" href="{{ asset('assets/css/inter-font.css') }}">
