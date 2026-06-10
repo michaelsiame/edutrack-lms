@@ -9,6 +9,8 @@ class Notification extends Model
 {
     use HasFactory;
 
+    const UPDATED_AT = null;
+
     protected $primaryKey = 'notification_id';
     public $incrementing = true;
 

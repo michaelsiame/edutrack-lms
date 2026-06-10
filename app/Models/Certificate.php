@@ -9,6 +9,8 @@ class Certificate extends Model
 {
     use HasFactory;
 
+    const UPDATED_AT = null;
+
     protected $primaryKey = 'certificate_id';
     public $incrementing = true;
 

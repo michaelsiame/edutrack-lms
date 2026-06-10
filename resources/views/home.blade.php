@@ -19,26 +19,10 @@
 
 <!-- Hero Section -->
 <section class="od-hero relative overflow-hidden" style="color: var(--od-surface); background: var(--od-fg);">
-  <!-- Desktop -->
-  <div class="hidden lg:block relative w-full" style="min-height: 620px;">
-    <!-- Background image, right-dominant (~75%) -->
-    <div class="absolute top-0 right-0 h-full" style="width: 78%;">
-      <img
-        src="{{ asset('assets/images/hero/campus-students.jpg') }}"
-        alt="Edutrack Campus"
-        class="w-full h-full object-cover"
-        style="object-position: center 30%;"
-        loading="eager"
-        fetchpriority="high"
-        srcset="{{ asset('assets/images/hero/campus-students-480.jpg') }} 480w, {{ asset('assets/images/hero/campus-students.jpg') }} 809w"
-        sizes="(min-width:1024px) 78vw, 100vw"
-      >
-    </div>
-    <!-- Smooth panel-to-photo blend across the whole hero -->
-    <div class="absolute inset-0" style="background: linear-gradient(90deg, var(--od-fg) 0%, var(--od-fg) 24%, color-mix(in oklch, var(--od-fg), transparent 18%) 36%, color-mix(in oklch, var(--od-fg), transparent 55%) 46%, transparent 58%);"></div>
-
-    <!-- Text content over the solid-to-faded zone -->
-    <div class="relative z-10 flex items-center" style="min-height: 620px;">
+  <!-- Desktop: hard split, panel left / photo right -->
+  <div class="hidden lg:flex relative w-full" style="min-height: 620px;">
+    <!-- Left panel -->
+    <div class="flex items-center" style="width: 47%; background: #0E1A2B;">
       <div class="px-8 xl:px-14 py-12 max-w-xl">
         <div class="mb-6 animate-fade-in">
           <span class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold shadow-lg border-2" style="background: var(--od-accent); color: var(--od-fg); border-color: color-mix(in oklch, var(--od-accent), black 10%);">
@@ -46,10 +30,10 @@
             TEVETA Registered Institution
           </span>
         </div>
-        <h1 class="od-h1 animate-fade-in" style="color: var(--od-accent); text-shadow: 0 2px 12px rgba(0,0,0,.45);">
+        <h1 class="od-h1 animate-fade-in" style="color: #F5832B;">
           Edutrack Computer Training College
         </h1>
-        <p class="text-2xl xl:text-3xl font-medium mt-2 mb-4" style="color: var(--od-surface);">Transform Your Future</p>
+        <p class="text-2xl xl:text-3xl font-medium mt-2 mb-4" style="color: #FFFFFF;">Transform Your Future</p>
         <div class="mb-6" style="width: 64px; height: 2px; background: color-mix(in oklch, var(--od-surface), transparent 55%);"></div>
         <p class="text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl leading-relaxed" style="color: color-mix(in oklch, var(--od-surface), transparent 12%); text-shadow: 0 1px 8px rgba(0,0,0,.35);">
           Practical computer training in Kalomo. No theory overload. Just real skills — web design, digital marketing, graphic design, and office packages — taught by instructors who've done the work.
@@ -78,34 +62,46 @@
         </p>
       </div>
     </div>
+
+    <!-- Right photo -->
+    <div style="width: 53%;">
+      <img
+        src="{{ asset('assets/images/hero/campus-students.jpg') }}"
+        alt="Edutrack Campus"
+        class="w-full h-full object-cover"
+        style="object-position: center 30%;"
+        loading="eager"
+        fetchpriority="high"
+        srcset="{{ asset('assets/images/hero/campus-students-480.jpg') }} 480w, {{ asset('assets/images/hero/campus-students.jpg') }} 809w"
+        sizes="(min-width:1024px) 53vw, 100vw"
+      >
+    </div>
   </div>
 
-  <!-- Mobile/Tablet -->
-  <div class="lg:hidden relative" style="min-height: 72vh;">
+  <!-- Mobile/Tablet: photo on top, solid panel below -->
+  <div class="lg:hidden">
     <img
       src="{{ asset('assets/images/hero/campus-students.jpg') }}"
       alt="Edutrack Campus"
-      class="absolute inset-0 w-full h-full object-cover"
-      style="object-position: center 25%;"
+      class="w-full object-cover"
+      style="height: 46vh; object-position: center 25%;"
       loading="eager"
       fetchpriority="high"
       srcset="{{ asset('assets/images/hero/campus-students-480.jpg') }} 480w, {{ asset('assets/images/hero/campus-students.jpg') }} 809w"
-      sizes="(min-width:1024px) 45vw, 100vw"
+      sizes="100vw"
     >
-    <!-- Bottom-up gradient -->
-    <div class="absolute inset-0" style="background: linear-gradient(to top, var(--od-fg) 22%, color-mix(in oklch, var(--od-fg), transparent 30%) 52%, transparent 82%);"></div>
 
-    <div class="relative z-10 flex flex-col justify-end px-4 sm:px-6 py-10 text-center" style="min-height: 78vh;">
+    <div class="flex flex-col px-4 sm:px-6 py-10 text-center" style="background: #0E1A2B;">
       <div class="mb-4 animate-fade-in">
         <span class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold shadow-lg border-2" style="background: var(--od-accent); color: var(--od-fg); border-color: color-mix(in oklch, var(--od-accent), black 10%);">
           <i class="fas fa-certificate mr-2"></i>
           TEVETA Registered Institution
         </span>
       </div>
-      <h1 class="od-h1 animate-fade-in" style="color: var(--od-accent); text-shadow: 0 2px 12px rgba(0,0,0,.45);">
+      <h1 class="od-h1 animate-fade-in" style="color: #F5832B;">
         Edutrack Computer Training College
       </h1>
-      <p class="text-xl font-medium mt-1 mb-4" style="color: var(--od-surface); text-shadow: 0 2px 12px rgba(0,0,0,.45);">Transform Your Future</p>
+      <p class="text-xl font-medium mt-1 mb-4" style="color: #FFFFFF;">Transform Your Future</p>
       <p class="text-base md:text-xl lg:text-2xl mb-6 max-w-3xl mx-auto leading-relaxed" style="color: color-mix(in oklch, var(--od-surface), transparent 12%);">
         Practical computer training in Kalomo. No theory overload. Just real skills — web design, digital marketing, graphic design, and office packages — taught by instructors who've done the work.
       </p>

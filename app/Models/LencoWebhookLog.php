@@ -9,6 +9,8 @@ class LencoWebhookLog extends Model
 {
     use HasFactory;
 
+    const UPDATED_AT = null;
+
     protected $table = 'lenco_webhook_logs';
 
     protected $fillable = [

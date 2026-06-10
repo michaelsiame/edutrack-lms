@@ -9,6 +9,8 @@ class QuizAttempt extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'quiz_id',
         'student_id',

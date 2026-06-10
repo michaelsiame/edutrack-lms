@@ -78,8 +78,8 @@ class CertificateController extends Controller
             abort(403, 'You do not have permission to download this certificate.');
         }
 
-        // Check if certificate is blocked
-        if ($certificate->enrollment && $certificate->enrollment->certificate_blocked) {
+        // Payment block applies to students only; admins can always download
+        if (!$isAdmin && $certificate->enrollment && $certificate->enrollment->certificate_blocked) {
             abort(403, 'Certificate is blocked until full payment is received.');
         }
 
