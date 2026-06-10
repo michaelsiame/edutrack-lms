@@ -284,7 +284,6 @@ class TranscriptController extends Controller
         $pdf->SetTitle('Academic Transcript - ' . $data['student_name']);
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
-        $pdf->tcpdflink = false;
         $pdf->SetMargins(12, 12, 12);
         $pdf->SetAutoPageBreak(true, 12);
         $pdf->AddPage();
