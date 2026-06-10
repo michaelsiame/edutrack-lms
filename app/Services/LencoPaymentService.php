@@ -481,6 +481,10 @@ class LencoPaymentService
 
         // Generate invoice and send receipt when payment first completes
         if ($status === 'completed' && !$wasCompleted) {
+            if ($payment->promotion_id) {
+                \App\Models\Promotion::where('id', $payment->promotion_id)->increment('used_count');
+            }
+
             try {
                 $invoiceService = app(InvoiceService::class);
                 $invoiceService->generateInvoice($payment);
@@ -582,15 +586,19 @@ class LencoPaymentService
             ->where('payment_status', 'Completed')
             ->sum('amount');
 
-        $percentagePaid = $coursePrice > 0 ? ($totalPaid / $coursePrice) * 100 : 100;
+        $totalDiscount = Payment::where('enrollment_id', $enrollment->id)
+            ->where('payment_status', 'Completed')
+            ->sum('discount_amount');
+
+        $percentagePaid = $coursePrice > 0 ? (($totalPaid + $totalDiscount) / $coursePrice) * 100 : 100;
 
         $enrollmentStatus = $enrollment->enrollment_status;
         if ($percentagePaid >= 30 && $enrollmentStatus === 'Enrolled') {
             $enrollmentStatus = 'In Progress';
         }
 
-        $certificateBlocked = $totalPaid < $coursePrice;
-        $paymentStatus = $totalPaid >= $coursePrice ? 'completed' : 'pending';
+        $certificateBlocked = ($totalPaid + $totalDiscount) < $coursePrice;
+        $paymentStatus = ($totalPaid + $totalDiscount) >= $coursePrice ? 'completed' : 'pending';
 
         $enrollment->update([
             'amount_paid' => $totalPaid,
@@ -613,8 +621,18 @@ class LencoPaymentService
      */
     public function validateWebhookSignature(string $payload, string $signature): bool
     {
-        $expected = hash_hmac('sha256', $payload, $this->secretKey);
-        return hash_equals($expected, $signature);
+        $secrets = array_filter([
+            config('services.lenco.webhook_secret'),
+            $this->secretKey,
+        ]);
+
+        foreach ($secrets as $secret) {
+            if (hash_equals(hash_hmac('sha256', $payload, $secret), $signature)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

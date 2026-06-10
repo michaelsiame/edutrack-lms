@@ -214,7 +214,8 @@ class QuizController extends Controller
             ->firstOrFail();
 
         $timeSpent = round($attempt->started_at->diffInMinutes(now()));
-        if ($quiz->time_limit_minutes && $timeSpent > $quiz->time_limit_minutes) {
+        $elapsedSeconds = $attempt->started_at->diffInSeconds(now());
+        if ($quiz->time_limit_minutes && $elapsedSeconds > ($quiz->time_limit_minutes * 60) + 60) {
             $attempt->update(['status' => 'Abandoned', 'score' => 0]);
             return redirect()->route('student.quizzes.attempts', $quiz)
                 ->with('error', 'Time limit exceeded. Your attempt has been abandoned.');

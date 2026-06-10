@@ -7,7 +7,9 @@ use App\Models\Payment;
 use App\Models\RegistrationFee;
 use App\Services\LencoPaymentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class RegistrationFeeController extends Controller
 {
@@ -88,33 +90,6 @@ class RegistrationFeeController extends Controller
             'phone_number' => 'nullable|string|max:20',
         ]);
 
-        $reference = 'REG-' . $user->id . '-' . time();
-
-        // Create pending payment record
-        $payment = Payment::create([
-            'student_id' => $user->student?->id,
-            'course_id' => null,
-            'enrollment_id' => null,
-            'amount' => $feeAmount,
-            'currency' => $currency,
-            'payment_type' => 'registration',
-            'payment_status' => 'Pending',
-            'transaction_id' => $reference,
-            'phone_number' => $validated['phone_number'] ?? $user->phone,
-        ]);
-
-        // Create pending registration fee record
-        $fee = RegistrationFee::create([
-            'user_id' => $user->id,
-            'amount' => $feeAmount,
-            'currency' => $currency,
-            'payment_status' => 'pending',
-            'payment_method' => $paymentMethod,
-            'reference' => $reference,
-            'phone_number' => $validated['phone_number'] ?? $user->phone,
-        ]);
-
-        // Initiate Lenco v2 collection
         // Prevent duplicate pending payments within the last 30 minutes
         $existingPendingTx = LencoTransaction::where('user_id', $user->id)
             ->where('status', 'pending')
@@ -126,63 +101,104 @@ class RegistrationFeeController extends Controller
                 ->with('info', 'You already have a pending payment. Please check your phone to authorize the transaction, or wait a few minutes before trying again.');
         }
 
-        $service = app(LencoPaymentService::class);
+        $reference = 'REG-' . $user->id . '-' . time() . '-' . strtoupper(Str::random(6));
 
-        if ($paymentMethod === 'mobile_money') {
-            $result = $service->initializeMobileMoneyCollection([
+        $result = DB::transaction(function () use ($user, $feeAmount, $currency, $paymentMethod, $validated, $reference) {
+            // Create pending payment record
+            $payment = Payment::create([
+                'student_id' => $user->student?->id,
+                'course_id' => null,
+                'enrollment_id' => null,
                 'amount' => $feeAmount,
                 'currency' => $currency,
-                'reference' => $reference,
+                'payment_type' => 'registration',
+                'payment_status' => 'Pending',
+                'transaction_id' => $reference,
                 'phone_number' => $validated['phone_number'] ?? $user->phone,
-                'callback_url' => route('lenco.webhook'),
             ]);
-        } else {
-            $result = $service->initializeBankTransferCollection([
+
+            // Create pending registration fee record
+            $fee = RegistrationFee::create([
+                'user_id' => $user->id,
                 'amount' => $feeAmount,
                 'currency' => $currency,
+                'payment_status' => 'pending',
+                'payment_method' => $paymentMethod,
                 'reference' => $reference,
-                'email' => $user->email,
                 'phone_number' => $validated['phone_number'] ?? $user->phone,
-                'customer_name' => $user->full_name ?? $user->name,
-                'customer_first_name' => $user->first_name,
-                'customer_last_name' => $user->last_name,
-                'callback_url' => route('lenco.webhook'),
-                'redirect_url' => route('registration-fee.show'),
             ]);
-        }
 
-        if (!$result['success']) {
-            $fee->update(['payment_status' => 'failed']);
-            $payment->update(['payment_status' => 'Failed']);
+            $service = app(LencoPaymentService::class);
 
+            if ($paymentMethod === 'mobile_money') {
+                $lencoResult = $service->initializeMobileMoneyCollection([
+                    'amount' => $feeAmount,
+                    'currency' => $currency,
+                    'reference' => $reference,
+                    'phone_number' => $validated['phone_number'] ?? $user->phone,
+                    'callback_url' => route('lenco.webhook'),
+                ]);
+            } else {
+                $lencoResult = $service->initializeBankTransferCollection([
+                    'amount' => $feeAmount,
+                    'currency' => $currency,
+                    'reference' => $reference,
+                    'email' => $user->email,
+                    'phone_number' => $validated['phone_number'] ?? $user->phone,
+                    'customer_name' => $user->full_name ?? $user->name,
+                    'customer_first_name' => $user->first_name,
+                    'customer_last_name' => $user->last_name,
+                    'callback_url' => route('lenco.webhook'),
+                    'redirect_url' => route('registration-fee.show'),
+                ]);
+            }
+
+            if (!$lencoResult['success']) {
+                $fee->update(['payment_status' => 'failed']);
+                $payment->update(['payment_status' => 'Failed']);
+
+                return [
+                    'type' => 'lenco_failed',
+                    'error' => $lencoResult['error'] ?? 'Unable to initiate payment. Please try again.',
+                ];
+            }
+
+            // Store Lenco transaction record
+            $lencoId = $lencoResult['lenco_id'] ?? $reference;
+            LencoTransaction::create([
+                'reference' => $reference,
+                'user_id' => $user->id,
+                'payment_id' => $payment->payment_id,
+                'amount' => $feeAmount,
+                'currency' => $currency,
+                'lenco_transaction_id' => $lencoId,
+                'status' => 'pending',
+                'payment_method' => $paymentMethod,
+                'phone_number' => $validated['phone_number'] ?? $user->phone,
+            ]);
+
+            $fee->update(['lenco_transaction_id' => $lencoId]);
+
+            return [
+                'type' => 'lenco_success',
+                'payment_method' => $paymentMethod,
+                'auth_url' => $lencoResult['authorization_url'] ?? null,
+            ];
+        });
+
+        if ($result['type'] === 'lenco_failed') {
             return redirect()->route('registration-fee.show')
-                ->with('error', $result['error'] ?? 'Unable to initiate payment. Please try again.');
+                ->with('error', $result['error']);
         }
-
-        // Store Lenco transaction record
-        $lencoId = $result['lenco_id'] ?? $reference;
-        LencoTransaction::create([
-            'reference' => $reference,
-            'user_id' => $user->id,
-            'payment_id' => $payment->payment_id,
-            'amount' => $feeAmount,
-            'currency' => $currency,
-            'lenco_transaction_id' => $lencoId,
-            'status' => 'pending',
-            'payment_method' => $paymentMethod,
-            'phone_number' => $validated['phone_number'] ?? $user->phone,
-        ]);
-
-        $fee->update(['lenco_transaction_id' => $lencoId]);
 
         // For bank transfer/card, redirect to authorization URL if provided
-        $authUrl = $result['authorization_url'] ?? null;
+        $authUrl = $result['auth_url'] ?? null;
         if ($authUrl) {
             return redirect()->away($authUrl);
         }
 
         // For mobile money, show pending message
-        if ($paymentMethod === 'mobile_money') {
+        if ($result['payment_method'] === 'mobile_money') {
             return redirect()->route('registration-fee.show')
                 ->with('warning', 'Payment initiated! Please check your phone and authorize the mobile money transaction. You will receive confirmation once the payment is complete.');
         }
@@ -206,7 +222,7 @@ class RegistrationFeeController extends Controller
             'notes' => 'nullable|string|max:500',
         ]);
 
-        $reference = 'REG-MANUAL-' . $user->id . '-' . time();
+        $reference = 'REG-MANUAL-' . $user->id . '-' . time() . '-' . strtoupper(Str::random(6));
 
         Payment::create([
             'student_id' => $user->student?->id,

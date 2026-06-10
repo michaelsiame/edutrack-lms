@@ -97,11 +97,14 @@ class Enrollment extends Model
         return $this->intake?->effective_price ?? $this->course?->discount_price ?? $this->course?->price ?? 0;
     }
 
+    public function totalDiscounts(): float
+    {
+        return (float) $this->payments()->where('payment_status', 'Completed')->sum('discount_amount');
+    }
+
     public function isFullyPaid(): bool
     {
-        $coursePrice = $this->effectivePrice();
-
-        return $this->payment_status === 'completed' && $this->amount_paid >= $coursePrice;
+        return $this->payment_status === 'completed' || ($this->amount_paid + $this->totalDiscounts()) >= $this->effectivePrice();
     }
 
     /**
