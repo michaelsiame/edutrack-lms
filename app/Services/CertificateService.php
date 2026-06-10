@@ -155,20 +155,18 @@ class CertificateService
         return $this->renderPdf($this->getCertificateData($certificate));
     }
 
-    /** Certificate palette. */
-    private const GOLD = [212, 149, 42];
-    private const GOLD_LIGHT = [232, 184, 74];
-    private const NAVY = [27, 58, 107];
-    private const NAVY_DARK = [15, 43, 82];
-    private const DARK = [10, 22, 40];
+    /** Certificate colors (RGB). */
+    private const ORANGE = [237, 119, 47];
+    private const BLUE_BORDER = [21, 56, 145];
+    private const BG_LIGHT_BLUE = [163, 220, 246];
+    private const NAVY_TITLE = [15, 43, 112];
+    private const BLACK = [0, 0, 0];
+    private const WATERMARK_TEXT = [110, 162, 196];
 
     /** Page geometry (mm). */
     private const PAGE_W = 210;
     private const PAGE_H = 297;
     private const CENTER_X = 105;
-    private const GOLD_FRAME = 5.3;   // outer gold frame thickness
-    private const CORNER_INSET = 6.3; // corner triangles inset
-    private const CORNER_LEG = 21.2;  // corner triangle leg length
 
     /**
      * Render the certificate PDF natively with TCPDF (no writeHTML) so the
@@ -176,12 +174,13 @@ class CertificateService
      */
     public function renderPdf(array $data): string
     {
-        $pdf = new TCPDF('P', 'mm', 'A4');
+        $pdf = new \App\Pdf\EdutrackPdf('P', 'mm', 'A4');
         $pdf->SetCreator('Edutrack LMS');
         $pdf->SetAuthor('Edutrack Computer Training College');
         $pdf->SetTitle('Certificate - ' . ($data['certificate_number'] ?? ''));
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
+        $pdf->setFooterMargin(0);
         $pdf->SetMargins(0, 0, 0);
         $pdf->SetAutoPageBreak(false, 0);
         $pdf->SetCellPadding(0);
@@ -190,241 +189,203 @@ class CertificateService
 
         $this->drawFrame($pdf);
         $this->drawWatermark($pdf);
-        $this->drawBorders($pdf);
         $this->drawContent($pdf, $data);
 
         return $pdf->Output('', 'S');
     }
 
     /**
-     * Gold outer frame and white sheet.
+     * Border frame (full page edge, draw as filled rectangles, outermost first).
      */
     protected function drawFrame(TCPDF $pdf): void
     {
-        $pdf->Rect(0, 0, self::PAGE_W, self::PAGE_H, 'F', [], self::GOLD);
-        $t = self::GOLD_FRAME;
-        $pdf->Rect($t, $t, self::PAGE_W - 2 * $t, self::PAGE_H - 2 * $t, 'F', [], [255, 255, 255]);
+        // 1. Black filled rect: full page
+        $pdf->Rect(0, 0, self::PAGE_W, self::PAGE_H, 'F', [], self::BLACK);
+        // 2. Orange filled rect inset 1.4mm
+        $pdf->Rect(1.4, 1.4, 207.2, 294.2, 'F', [], self::ORANGE);
+        // 3. Black filled rect inset 6.0mm
+        $pdf->Rect(6.0, 6.0, 198.0, 285.0, 'F', [], self::BLACK);
+        // 4. Blue filled rect inset 6.9mm
+        $pdf->Rect(6.9, 6.9, 196.2, 283.2, 'F', [], self::BLUE_BORDER);
+        // 5. Background BG_LIGHT_BLUE filled rect inset 9.9mm
+        $pdf->Rect(9.9, 9.9, 190.2, 277.2, 'F', [], self::BG_LIGHT_BLUE);
     }
 
     /**
-     * Tiled, rotated institution-name watermark across the sheet.
+     * Horizontal rows of repeating microtext inside the background area only.
      */
     protected function drawWatermark(TCPDF $pdf): void
     {
-        $inset = self::CORNER_INSET;
-
+        $phrase = 'Edutrack Computer Training College ';
         $pdf->StartTransform();
-        // Clip the tiles to the area inside the gold frame
-        $pdf->Rect($inset, $inset, self::PAGE_W - 2 * $inset, self::PAGE_H - 2 * $inset, 'CNZ');
-        $pdf->SetAlpha(0.055);
-        $pdf->SetTextColor(...self::NAVY);
-        $this->certFont($pdf, 'serif-bold', 10.5);
-        $pdf->setFontSpacing(0.25);
+        // Clip to inner background area (9.9mm inset)
+        $pdf->Rect(9.9, 9.9, 190.2, 277.2, 'CNZ');
 
-        $text = 'EDUTRACK COMPUTER TRAINING COLLEGE';
-        $stepX = $pdf->GetStringWidth($text) + 16;
-        $stepY = 13;
+        $pdf->SetTextColor(...self::WATERMARK_TEXT);
+        $pdf->SetFont('helvetica', '', 5.5);
 
-        // TCPDF clamps cell coordinates to the page box, so the tile grid
-        // cannot simply be drawn under one global rotation. Instead, each
-        // tile anchor is computed on the rotated lattice and the tile is
-        // rotated about its own anchor — geometrically identical. Tiles
-        // whose anchor falls off-page are trimmed character by character
-        // (advancing along the tilted baseline) until they enter the page.
-        $angle = 14;
-        $cos = cos(deg2rad($angle));
-        $sin = sin(deg2rad($angle));
-        $cx = self::PAGE_W / 2;
-        $cy = self::PAGE_H / 2;
+        $phraseWidth = $pdf->GetStringWidth($phrase);
+        $rowPitch = 2.4;
+        $startY = 9.9;
+        $endY = self::PAGE_H - 9.9;
 
-        for ($j = -16; $j <= 16; $j++) {
-            $gy = $j * $stepY;
-            $phase = (abs($j) % 2) * ($stepX / 2);
-            for ($i = -3; $i <= 3; $i++) {
-                $gx = $i * $stepX + $phase - $stepX / 2;
-                // Lattice point rotated about the page center (y-down coords)
-                $x = $cx + $gx * $cos + $gy * $sin;
-                $y = $cy - $gx * $sin + $gy * $cos;
-
-                // Trim leading characters until the anchor is on the page
-                $tile = $text;
-                while ($tile !== '' && ($x < 1 || $y < 2 || $y > self::PAGE_H - 2)) {
-                    $w = $pdf->GetStringWidth($tile[0]);
-                    $x += $w * $cos;
-                    $y -= $w * $sin;
-                    $tile = substr($tile, 1);
-                }
-                if ($tile === '' || $x > self::PAGE_W - 2 || $y < 2 || $y > self::PAGE_H - 2) {
-                    continue;
-                }
-
-                $pdf->StartTransform();
-                $pdf->Rotate($angle, $x, $y);
-                $pdf->Text($x, $y, $tile);
-                $pdf->StopTransform();
+        $row = 0;
+        for ($y = $startY; $y < $endY; $y += $rowPitch) {
+            $offsetX = ($row % 2) * ($phraseWidth / 2);
+            $x = 9.9 + $offsetX;
+            while ($x < self::PAGE_W - 9.9) {
+                $pdf->Text($x, $y, $phrase);
+                $x += $phraseWidth;
             }
+            $row++;
         }
 
-        $pdf->setFontSpacing(0);
         $pdf->StopTransform();
-        $pdf->SetAlpha(1);
     }
 
     /**
-     * Navy inner border and corner triangles (drawn above the watermark).
+     * Small orange ribbon/award glyph between the college name and subtitle.
      */
-    protected function drawBorders(TCPDF $pdf): void
+    protected function drawRibbon(TCPDF $pdf): void
     {
-        // Navy ring: band from 9.0mm to 11.6mm inset, stroked on its centerline
-        $pdf->SetLineStyle(['width' => 2.6, 'color' => self::NAVY]);
-        $pdf->Rect(10.3, 10.3, self::PAGE_W - 20.6, self::PAGE_H - 20.6, 'D');
+        // Filled orange circle
+        $pdf->SetFillColor(...self::ORANGE);
+        $pdf->Circle(105, 49, 1.8, 0, 360, 'F');
 
-        $c = self::CORNER_INSET;
-        $l = self::CORNER_LEG;
-        $w = self::PAGE_W;
-        $h = self::PAGE_H;
-        $pdf->Polygon([$c, $c, $c + $l, $c, $c, $c + $l], 'F', [], self::NAVY);                          // top-left
-        $pdf->Polygon([$w - $c, $c, $w - $c - $l, $c, $w - $c, $c + $l], 'F', [], self::NAVY);           // top-right
-        $pdf->Polygon([$c, $h - $c, $c + $l, $h - $c, $c, $h - $c - $l], 'F', [], self::NAVY);           // bottom-left
-        $pdf->Polygon([$w - $c, $h - $c, $w - $c - $l, $h - $c, $w - $c, $h - $c - $l], 'F', [], self::NAVY); // bottom-right
+        // Two filled-triangle ribbon tails hanging below
+        $pdf->Polygon([104.5, 50.8, 103.3, 53.8, 104.9, 53.8], 'F', [], self::ORANGE);
+        $pdf->Polygon([105.5, 50.8, 105.1, 53.8, 106.7, 53.8], 'F', [], self::ORANGE);
+
+        // Thin white inner circle outline
+        $pdf->SetDrawColor(255, 255, 255);
+        $pdf->SetLineWidth(0.2);
+        $pdf->Circle(105, 49, 1.1, 0, 360, 'D');
+
+        // Reset draw state
+        $pdf->SetDrawColor(...self::BLACK);
+        $pdf->SetLineWidth(0.3);
     }
 
     /**
-     * All certificate text, logos, QR code and decorations.
+     * All certificate text, logos, signatures and decorations.
      */
     protected function drawContent(TCPDF $pdf, array $data): void
     {
         $cx = self::CENTER_X;
 
         // --- Logos row ---
-        $logo = public_path('assets/images/logo.png');
+        $logo = public_path('assets/images/certificate/edutrack-logo.png');
         if (is_file($logo)) {
-            $pdf->Image($logo, 27, 16, 0, 28);
+            $pdf->Image($logo, 19, 16, 21, 0);
         }
-        $teveta = public_path('assets/images/teveta-logo.png');
+        $teveta = public_path('assets/images/certificate/teveta-logo.png');
         if (is_file($teveta)) {
-            [$iw, $ih] = getimagesize($teveta);
-            $h = 16;
-            $w = $ih > 0 ? $h * $iw / $ih : $h;
-            $pdf->Image($teveta, 183 - $w, 22, $w, $h);
+            $pdf->Image($teveta, 163, 19, 29, 0);
         }
 
-        // --- Institution name ---
-        $pdf->SetTextColor(...self::NAVY_DARK);
-        $this->certFont($pdf, 'serif-bold', 20);
-        $pdf->setFontSpacing(0.66);
-        $this->centeredLine($pdf, 47, 'EDUTRACK COMPUTER');
-        $this->centeredLine($pdf, 56, 'TRAINING COLLEGE');
-        $pdf->setFontSpacing(0);
+        // Element 1: "EDUTRACK COMPUTER"
+        $pdf->SetTextColor(...self::BLACK);
+        $this->certFont($pdf, 'caps', 23.3);
+        $this->centeredAtBaseline($pdf, 32.7, 'EDUTRACK COMPUTER');
 
-        $pdf->SetTextColor(...self::DARK);
-        $this->certFont($pdf, 'serif-italic', 13);
-        $this->centeredLine($pdf, 65, 'A skill training college');
+        // Element 2: "TRAINING COLLEGE"
+        $this->centeredAtBaseline($pdf, 42.8, 'TRAINING COLLEGE');
 
-        // --- Certify banner between decorative rules ---
-        $this->decoRule($pdf, 75);
+        $this->drawRibbon($pdf);
 
-        $this->certFont($pdf, 'serif-bold', 17);
-        $pdf->setFontSpacing(0.9);
-        $pdf->SetTextColor(...self::NAVY);
-        $certify = 'THIS IS TO CERTIFY THAT';
-        $textW = $pdf->GetStringWidth($certify) + 0.9 * strlen($certify);
-        $this->centeredLine($pdf, 80, $certify);
-        $pdf->setFontSpacing(0);
-        $this->certifyFlanks($pdf, 83.7, $textW / 2 + 5);
+        // Element 3: "A skill training college"
+        $this->certFont($pdf, 'serif', 14.6);
+        $this->centeredAtBaseline($pdf, 58.6, 'A skill training college');
 
-        $this->decoRule($pdf, 90);
+        // Element 4: "THIS IS TO CERTIFY THAT" with flanking rules
+        $this->certFont($pdf, 'serif-bold', 21.3);
+        $certifyText = 'THIS IS TO CERTIFY THAT';
+        $certifyWidth = $pdf->GetStringWidth($certifyText);
+        $ruleLength = 14;
+        $ruleGap = 4;
+        $totalWidth = $ruleLength + $ruleGap + $certifyWidth + $ruleGap + $ruleLength;
+        $startX = $cx - $totalWidth / 2;
 
-        // --- Recipient name ---
-        $pdf->SetTextColor(...self::DARK);
+        $pdf->SetLineStyle(['width' => 0.5, 'color' => self::BLACK]);
+        $pdf->Line($startX, 83.8, $startX + $ruleLength, 83.8);
+        $pdf->Line($startX + $totalWidth - $ruleLength, 83.8, $startX + $totalWidth, 83.8);
+        $this->centeredAtBaseline($pdf, 83.8, $certifyText);
+
+        // Element 5: student_name
+        $this->certFont($pdf, 'script', 34);
         $name = $data['student_name'] ?? '';
-        $this->fitFont($pdf, 'script', 50, $name, 165);
-        $this->centeredLine($pdf, 94, $name, 22);
+        $this->fitFont($pdf, 'script', 34, $name, 134);
+        $this->centeredAtBaseline($pdf, 102.2, $name);
 
-        // --- Body text ---
-        $this->certFont($pdf, 'serif-italic', 13);
-        $this->centeredLine($pdf, 119, 'having satisfied the requirements for the award of the certificate of');
+        // Underline for name
+        $pdf->SetLineStyle(['width' => 0.3, 'color' => self::BLACK]);
+        $pdf->Line(38, 106.5, 172, 106.5);
 
-        // --- Course title ---
-        $pdf->SetTextColor(...self::NAVY);
+        // Element 6: "having satisfied the requirements for the"
+        $this->certFont($pdf, 'serif', 15);
+        $this->centeredAtBaseline($pdf, 120.8, 'having satisfied the requirements for the');
+
+        // Element 7: "award of the certificate of"
+        $this->centeredAtBaseline($pdf, 127.3, 'award of the certificate of');
+
+        // Element 8: course_title (UPPERCASE)
+        $pdf->SetTextColor(...self::NAVY_TITLE);
         $this->drawCourseTitle($pdf, mb_strtoupper($data['course_title'] ?? ''));
+        $pdf->SetTextColor(...self::BLACK);
 
-        // --- Classification ---
+        // Element 9: "With {classification}"
         $classification = $data['classification'] ?? null;
-        if ($classification && strcasecmp($classification, 'Pass') !== 0) {
-            $pdf->SetTextColor(...self::DARK);
-            $this->certFont($pdf, 'script', 38);
-            $this->centeredLine($pdf, 143, 'With ' . $classification, 18);
+        if ($classification && trim($classification) !== '' && strcasecmp($classification, 'Pass') !== 0) {
+            $this->certFont($pdf, 'script', 28.5);
+            $this->centeredAtBaseline($pdf, 169.7, 'With ' . $classification);
         }
 
-        $this->decoRule($pdf, 165);
+        // Element 10: "Was admitted to the certificate at a Graduation"
+        $this->certFont($pdf, 'serif', 16.6);
+        $this->centeredAtBaseline($pdf, 187.0, 'Was admitted to the certificate at a Graduation');
 
-        // --- Graduation date ---
-        $pdf->SetTextColor(...self::DARK);
-        $this->certFont($pdf, 'serif-italic', 13);
-        $this->centeredLine($pdf, 170, 'Was admitted to the certificate at a Graduation');
-        $this->centeredSegments($pdf, 177, [
-            ['Ceremony held on the ', 'serif-italic', 13, 0],
-            [($data['graduation_day'] ?? '') , 'serif-italic', 13, 0],
-            [($data['graduation_suffix'] ?? ''), 'serif', 8, 1.2],
-            [' day of ' . ($data['graduation_month'] ?? ''), 'serif-italic', 13, 0],
-        ]);
-        $this->centeredSegments($pdf, 184, [
-            ['in the year ', 'serif-italic', 13, 0],
-            [($data['graduation_year'] ?? ''), 'serif-bold', 13, 0],
+        // Element 11: mixed line
+        $this->centeredSegments($pdf, 195.3, [
+            ['Ceremony held on the ', 'serif', 16.6, 0],
+            [($data['graduation_day'] ?? ''), 'script', 19.8, 0],
+            [($data['graduation_suffix'] ?? ''), 'script', 9.9, 3.5],
+            [' day of ', 'serif', 16.6, 0],
+            [($data['graduation_month'] ?? ''), 'script', 19.8, 0],
         ]);
 
-        // --- QR verification code ---
-        if (!empty($data['verify_url'])) {
-            $pdf->write2DBarcode(
-                $data['verify_url'],
-                'QRCODE,M',
-                $cx - 10, 212, 20, 20,
-                ['border' => 0, 'padding' => 0, 'fgcolor' => self::NAVY_DARK, 'bgcolor' => false],
-                'N'
-            );
-            $this->certFont($pdf, 'serif', 6.5);
-            $pdf->SetTextColor(...self::NAVY);
-            $pdf->setFontSpacing(0.3);
-            $this->centeredLine($pdf, 233, 'SCAN TO VERIFY');
-            $pdf->setFontSpacing(0);
-        }
+        // Element 12: mixed line
+        $this->centeredSegments($pdf, 204.6, [
+            ['in the year ', 'serif', 16.6, 0],
+            [($data['graduation_year'] ?? ''), 'script', 19.8, 0],
+        ]);
 
-        // --- Signature lines ---
-        $pdf->SetLineStyle(['width' => 0.4, 'color' => self::DARK]);
-        $pdf->Line(31, 243, 81, 243);
-        $pdf->Line(129, 243, 179, 243);
-        $this->certFont($pdf, 'serif-bold', 10.5);
-        $pdf->SetTextColor(...self::DARK);
-        $pdf->SetXY(31, 244.5);
-        $pdf->Cell(50, 5, 'Principal', 0, 0, 'C');
-        $pdf->SetXY(129, 244.5);
-        $pdf->Cell(50, 5, 'Director', 0, 0, 'C');
+        // --- Signature block ---
+        $pdf->SetLineStyle(['width' => 0.4, 'color' => self::BLACK]);
 
-        // --- Bottom row: NRC and student number ---
-        $this->certFont($pdf, 'serif-bold', 10);
-        $pdf->SetXY(28, 256);
-        $pdf->Cell(70, 5, "Graduate's Signature", 0, 0, 'L');
-        $pdf->SetXY(112, 256);
-        $pdf->Cell(70, 5, "Graduate's ID No.", 0, 0, 'R');
+        // Top row rules
+        $pdf->Line(26, 230.5, 75, 230.5);
+        $pdf->Line(135, 230.5, 184, 230.5);
 
-        $pdf->SetFont('courier', 'B', 13);
-        $pdf->SetXY(28, 261.5);
-        $pdf->Cell(70, 6, $data['national_id'] ?? '', 0, 0, 'L');
-        $pdf->SetXY(112, 261.5);
-        $pdf->Cell(70, 6, $data['student_number'] ?? '', 0, 0, 'R');
+        $this->certFont($pdf, 'serif', 11);
+        $this->centeredLabel($pdf, 26, 75, 234.4, 'Principal');
+        $this->centeredLabel($pdf, 135, 184, 234.4, 'Director');
 
-        // --- Verification footer ---
-        if (!empty($data['verification_code'])) {
-            $this->certFont($pdf, 'serif-italic', 7.5);
-            $pdf->SetTextColor(90, 100, 115);
-            $this->centeredLine(
-                $pdf,
-                271.5,
-                'Certificate No. ' . ($data['certificate_number'] ?? '')
-                    . '  ·  Verify at ' . preg_replace('#^https?://#', '', $data['verify_url'] ?? '')
-            );
-        }
+        // Bottom row rules
+        $pdf->Line(26, 248.8, 75, 248.8);
+        $pdf->Line(135, 248.8, 184, 248.8);
+
+        $this->centeredLabel($pdf, 26, 75, 252.6, "Graduate's Signature");
+        $this->centeredLabel($pdf, 135, 184, 252.6, "Graduate's ID No.");
+
+        // --- Bottom row ---
+        $this->certFont($pdf, 'serif', 14.8);
+        $this->leftAtBaseline($pdf, 29, 270.2, $data['national_id'] ?? '');
+        $this->rightAtBaseline($pdf, 184, 270.2, $data['certificate_number'] ?? '');
+
+        // Bottom underlines
+        $pdf->SetLineStyle(['width' => 0.3, 'color' => self::BLACK]);
+        $pdf->Line(26, 271.8, 78, 271.8);
+        $pdf->Line(132, 271.8, 184, 271.8);
     }
 
     /**
@@ -433,11 +394,11 @@ class CertificateService
     protected function certFont(TCPDF $pdf, string $key, float $size): void
     {
         $map = [
-            'script' => 'greatvibes',
-            'serif' => 'playfairdisplay',
-            'serif-bold' => 'playfairdisplayb',
-            'serif-black' => 'playfairdisplayblack',
-            'serif-italic' => 'playfairdisplayi',
+            'script' => 'mistral',
+            'serif' => 'centuryschoolbook',
+            'serif-bold' => 'centuryschoolbookb',
+            'condensed' => 'impact',
+            'caps' => 'bodoni72smallcapsbook',
         ];
         $name = $map[$key] ?? $key;
         $file = resource_path('fonts/tcpdf/' . $name . '.php');
@@ -449,63 +410,32 @@ class CertificateService
         }
 
         // Fallback to TCPDF built-ins if the font files are missing
-        $fallback = ['script' => ['times', 'I'], 'serif-italic' => ['times', 'I'], 'serif-bold' => ['times', 'B'], 'serif-black' => ['times', 'B']];
+        $fallback = [
+            'script' => ['times', 'I'],
+            'serif' => ['times', ''],
+            'serif-bold' => ['times', 'B'],
+            'condensed' => ['helvetica', 'B'],
+            'caps' => ['times', ''],
+        ];
         [$family, $style] = $fallback[$key] ?? ['times', ''];
         $pdf->SetFont($family, $style, $size);
     }
 
     /**
-     * Draw the course title, shrinking to fit and wrapping onto two
-     * balanced lines when a single line cannot hold it.
+     * Draw the course title in impact, shrinking to fit 170mm width.
      */
     protected function drawCourseTitle(TCPDF $pdf, string $course): void
     {
-        $spacing = 0.7;
-        $maxWidth = 162;
-        $pdf->setFontSpacing($spacing);
-        $lineWidth = function (string $text) use ($pdf, $spacing): float {
-            return $pdf->GetStringWidth($text) + $spacing * mb_strlen($text);
-        };
-
-        $size = 32;
-        $this->certFont($pdf, 'serif-black', $size);
-        while ($size > 22 && $lineWidth($course) > $maxWidth) {
+        $size = 36.5;
+        $maxWidth = 170;
+        $this->certFont($pdf, 'condensed', $size);
+        $pdf->setFontStretching(88);
+        while ($size > 20 && $pdf->GetStringWidth($course) > $maxWidth) {
             $size -= 1;
-            $this->certFont($pdf, 'serif-black', $size);
+            $this->certFont($pdf, 'condensed', $size);
         }
-
-        if ($lineWidth($course) <= $maxWidth) {
-            $this->centeredLine($pdf, 128, $course, 14);
-            $pdf->setFontSpacing(0);
-            return;
-        }
-
-        // Split into two lines at the word boundary closest to the middle
-        $words = explode(' ', $course);
-        $bestSplit = 1;
-        $bestDiff = PHP_INT_MAX;
-        for ($i = 1; $i < count($words); $i++) {
-            $left = implode(' ', array_slice($words, 0, $i));
-            $right = implode(' ', array_slice($words, $i));
-            $diff = abs(mb_strlen($left) - mb_strlen($right));
-            if ($diff < $bestDiff) {
-                $bestDiff = $diff;
-                $bestSplit = $i;
-            }
-        }
-        $line1 = implode(' ', array_slice($words, 0, $bestSplit));
-        $line2 = implode(' ', array_slice($words, $bestSplit));
-
-        $size = 24;
-        $this->certFont($pdf, 'serif-black', $size);
-        while ($size > 13 && max($lineWidth($line1), $lineWidth($line2)) > $maxWidth) {
-            $size -= 1;
-            $this->certFont($pdf, 'serif-black', $size);
-        }
-
-        $this->centeredLine($pdf, 124, $line1, 9);
-        $this->centeredLine($pdf, 133, $line2, 9);
-        $pdf->setFontSpacing(0);
+        $this->centeredAtBaseline($pdf, 151.7, $course);
+        $pdf->setFontStretching(100);
     }
 
     /**
@@ -521,19 +451,70 @@ class CertificateService
     }
 
     /**
-     * Draw a horizontally centered line of text at the given y.
+     * Draw a horizontally centered line of text at the given baseline y.
      */
-    protected function centeredLine(TCPDF $pdf, float $y, string $text, float $height = 7): void
+    protected function centeredAtBaseline(TCPDF $pdf, float $baselineY, string $text): void
     {
-        $pdf->SetXY(self::GOLD_FRAME, $y);
-        $pdf->Cell(self::PAGE_W - 2 * self::GOLD_FRAME, $height, $text, 0, 0, 'C');
+        $w = $pdf->GetStringWidth($text);
+        $this->textAtBaseline($pdf, self::CENTER_X - $w / 2, $baselineY, $text);
+    }
+
+    /**
+     * Draw text left-aligned at the given baseline y.
+     */
+    protected function leftAtBaseline(TCPDF $pdf, float $x, float $baselineY, string $text): void
+    {
+        $this->textAtBaseline($pdf, $x, $baselineY, $text);
+    }
+
+    /**
+     * Draw text right-aligned at the given baseline y.
+     */
+    protected function rightAtBaseline(TCPDF $pdf, float $x, float $baselineY, string $text): void
+    {
+        $w = $pdf->GetStringWidth($text);
+        $this->textAtBaseline($pdf, $x - $w, $baselineY, $text);
+    }
+
+    /**
+     * Draw text with its baseline at the specified y.
+     */
+    protected function textAtBaseline(TCPDF $pdf, float $x, float $baselineY, string $text): void
+    {
+        $pdf->Text($x, $baselineY - $this->currentAscent($pdf), $text);
+    }
+
+    /**
+     * Ascent of the current font in mm. Mistral's embedded ascent metric
+     * under-reports the visual baseline by ~12.5% of the point size
+     * (measured against the reference certificate), so correct for it.
+     */
+    protected function currentAscent(TCPDF $pdf): float
+    {
+        $ascent = $pdf->getFontAscent($pdf->getFontFamily(), $pdf->getFontStyle(), $pdf->getFontSizePt());
+
+        if ($pdf->getFontFamily() === 'mistral') {
+            $ascent += $pdf->getFontSizePt() * 0.125 * 0.3528;
+        }
+
+        return $ascent;
+    }
+
+    /**
+     * Draw a centered label between two x coordinates at the given baseline.
+     */
+    protected function centeredLabel(TCPDF $pdf, float $x1, float $x2, float $baselineY, string $text): void
+    {
+        $center = ($x1 + $x2) / 2;
+        $w = $pdf->GetStringWidth($text);
+        $this->textAtBaseline($pdf, $center - $w / 2, $baselineY, $text);
     }
 
     /**
      * Draw a centered line built from segments with mixed fonts/sizes.
      * Each segment: [text, fontKey, size, verticalRise].
      */
-    protected function centeredSegments(TCPDF $pdf, float $y, array $segments): void
+    protected function centeredSegments(TCPDF $pdf, float $baselineY, array $segments): void
     {
         $widths = [];
         $total = 0;
@@ -546,47 +527,10 @@ class CertificateService
         $x = self::CENTER_X - $total / 2;
         foreach ($segments as $i => $s) {
             $this->certFont($pdf, $s[1], $s[2]);
-            $pdf->SetXY($x, $y - ($s[3] ?? 0));
-            $pdf->Cell($widths[$i] + 0.5, 6, $s[0], 0, 0, 'L');
+            $rise = $s[3] ?? 0;
+            $pdf->Text($x, $baselineY - $this->currentAscent($pdf) - $rise, $s[0]);
             $x += $widths[$i];
         }
-    }
-
-    /**
-     * Decorative rule: line — small diamond — diamond — small diamond — line.
-     */
-    protected function decoRule(TCPDF $pdf, float $cy): void
-    {
-        $cx = self::CENTER_X;
-        $pdf->SetLineStyle(['width' => 0.55, 'color' => self::GOLD]);
-        $pdf->Line($cx - 52, $cy, $cx - 7, $cy);
-        $pdf->Line($cx + 7, $cy, $cx + 52, $cy);
-        $this->diamond($pdf, $cx - 4.4, $cy, 0.9, self::GOLD_LIGHT);
-        $this->diamond($pdf, $cx, $cy, 1.4, self::GOLD);
-        $this->diamond($pdf, $cx + 4.4, $cy, 0.9, self::GOLD_LIGHT);
-    }
-
-    /**
-     * Flanking decorations either side of the certify banner.
-     */
-    protected function certifyFlanks(TCPDF $pdf, float $cy, float $halfGap): void
-    {
-        $cx = self::CENTER_X;
-        $pdf->SetLineStyle(['width' => 0.55, 'color' => self::GOLD]);
-        foreach ([-1, 1] as $side) {
-            $edge = $cx + $side * $halfGap;
-            $this->diamond($pdf, $edge, $cy, 1.0, self::GOLD);
-            $this->diamond($pdf, $edge + $side * 3, $cy, 0.7, self::GOLD_LIGHT);
-            $pdf->Line($edge + $side * 5.5, $cy, $edge + $side * 18.5, $cy);
-        }
-    }
-
-    /**
-     * Filled diamond (rotated square) centered at (cx, cy).
-     */
-    protected function diamond(TCPDF $pdf, float $cx, float $cy, float $r, array $color): void
-    {
-        $pdf->Polygon([$cx, $cy - $r, $cx + $r, $cy, $cx, $cy + $r, $cx - $r, $cy], 'F', [], $color);
     }
 
     /**
