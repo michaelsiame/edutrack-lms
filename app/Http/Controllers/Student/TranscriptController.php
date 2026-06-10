@@ -146,6 +146,12 @@ class TranscriptController extends Controller
                     $completedLessons = $lessonProgress->where('status', 'Completed')->unique('lesson_id')->count();
                     $totalLessons = $module->lessons->count();
                     $progress = $totalLessons > 0 ? min(100, round(($completedLessons / $totalLessons) * 100, 1)) : 0;
+
+                    // For in-progress courses, show '-' instead of 'D' for unstarted modules
+                    $grade = ($progress == 0 && !$isCompleted)
+                        ? '-'
+                        : $this->scoreToGrade($progress);
+
                     $assessments[] = [
                         'code' => $modCode,
                         'title' => $module->title,
@@ -153,7 +159,7 @@ class TranscriptController extends Controller
                         'score' => $progress,
                         'max' => 100,
                         'percentage' => $progress . '%',
-                        'grade' => $this->scoreToGrade($progress),
+                        'grade' => $grade,
                         'credits' => $moduleCredits,
                     ];
                 }

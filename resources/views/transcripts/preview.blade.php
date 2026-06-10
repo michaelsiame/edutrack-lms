@@ -534,7 +534,7 @@ $demo_enrollments = $enrollments ?? [
           <td class="text-center font-bold">{{ $item['score'] ?? '85' }}</td>
           <td class="text-center">{{ $item['max'] ?? '100' }}</td>
           <td class="text-center">{{ $item['percentage'] ?? '85%' }}</td>
-          <td class="text-center grade-{{ $item['grade'][0] ?? 'B' }}">{{ $item['grade'] ?? 'B+' }}</td>
+          <td class="text-center {{ $item['grade'] === '-' ? '' : 'grade-' . ($item['grade'][0] ?? 'B') }}">{{ $item['grade'] ?? 'B+' }}</td>
           <td class="text-center">{{ $item['credits'] ?? '-' }}</td>
         </tr>
         @endforeach
