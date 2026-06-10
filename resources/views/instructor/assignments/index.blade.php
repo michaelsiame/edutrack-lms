@@ -123,7 +123,7 @@
  @endif
 
  @if($submission->file_url)
- <a href="{{ $submission->file_url }}" target="_blank" class="text-sm text-primary-600 hover:underline mb-2 inline-block">
+ <a href="{{ route('instructor.courses.assignments.submissions.download', [$course, $assignment, $submission]) }}" class="text-sm text-primary-600 hover:underline mb-2 inline-block">
  <i class="fas fa-file mr-1"></i>View Attachment
  </a>
  @endif

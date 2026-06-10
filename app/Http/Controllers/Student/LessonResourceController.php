@@ -34,12 +34,20 @@ class LessonResourceController extends Controller
             abort(404);
         }
 
-        if (!$resource->file_url || !Storage::disk('public')->exists($resource->file_url)) {
+        if (empty($resource->file_url)) {
             abort(404, 'File not found.');
         }
 
-        $resource->increment('download_count');
+        if (Storage::disk('local')->exists($resource->file_url)) {
+            $resource->increment('download_count');
+            return Storage::disk('local')->download($resource->file_url, $resource->title . '.' . $resource->resource_type);
+        }
 
-        return Storage::disk('public')->download($resource->file_url, $resource->title . '.' . $resource->resource_type);
+        if (Storage::disk('public')->exists($resource->file_url)) {
+            $resource->increment('download_count');
+            return Storage::disk('public')->download($resource->file_url, $resource->title . '.' . $resource->resource_type);
+        }
+
+        abort(404, 'File not found.');
     }
 }

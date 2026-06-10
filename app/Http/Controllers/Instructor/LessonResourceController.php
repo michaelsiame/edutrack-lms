@@ -35,7 +35,7 @@ class LessonResourceController extends Controller
             return back()->with('error', 'File type not allowed. Allowed: ' . implode(', ', $allowedExtensions));
         }
 
-        $path = $file->store('lesson-resources/' . $course->id, 'public');
+        $path = $file->store('lesson-resources/' . $course->id, 'local');
         $fileSizeKb = round($file->getSize() / 1024);
 
         LessonResource::create([
@@ -59,8 +59,12 @@ class LessonResourceController extends Controller
             abort(403);
         }
 
-        if ($resource->file_url && Storage::disk('public')->exists($resource->file_url)) {
-            Storage::disk('public')->delete($resource->file_url);
+        if ($resource->file_url) {
+            if (Storage::disk('local')->exists($resource->file_url)) {
+                Storage::disk('local')->delete($resource->file_url);
+            } elseif (Storage::disk('public')->exists($resource->file_url)) {
+                Storage::disk('public')->delete($resource->file_url);
+            }
         }
 
         $resource->delete();

@@ -74,7 +74,7 @@
 
                     @if($submission->file_url)
                         <div>
-                            <a href="{{ $submission->file_url }}" target="_blank" class="od-btn od-btn-secondary od-btn-sm">
+                            <a href="{{ route('student.assignments.submissions.download', [$course, $assignment, $submission]) }}" class="od-btn od-btn-secondary od-btn-sm">
                                 <i class="fas fa-file-download"></i> Download Submission
                             </a>
                         </div>
