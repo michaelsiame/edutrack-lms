@@ -192,6 +192,11 @@ class User extends Authenticatable
         return $this->profile?->nrc_number;
     }
 
+    public function getDateOfBirthAttribute(): ?string
+    {
+        return $this->profile?->date_of_birth?->format('F d, Y');
+    }
+
     public function getPasswordAttribute(): string
     {
         return $this->password_hash;

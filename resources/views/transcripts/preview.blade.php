@@ -123,8 +123,8 @@
     gap: 6px;
   }
   .info-row .label {
-    font-weight: 600;
-    color: var(--navy);
+    font-weight: 700 !important;
+    color: var(--navy) !important;
     min-width: 110px;
     font-size: 8.5pt;
   }
