@@ -278,13 +278,13 @@ class TranscriptController extends Controller
      */
     protected function generateTcpdf(array $data): string
     {
-        $pdf = new class('P', 'mm', 'A4') extends \TCPDF {
-            public function Header() {}
-            public function Footer() {}
-        };
+        $pdf = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetCreator('Edutrack LMS');
         $pdf->SetAuthor($data['institution_name']);
         $pdf->SetTitle('Academic Transcript - ' . $data['student_name']);
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+        $pdf->tcpdflink = false;
         $pdf->SetMargins(12, 12, 12);
         $pdf->SetAutoPageBreak(true, 12);
         $pdf->AddPage();

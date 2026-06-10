@@ -187,6 +187,11 @@ class User extends Authenticatable
         return "{$this->first_name} {$this->last_name}";
     }
 
+    public function getNationalIdAttribute(): ?string
+    {
+        return $this->profile?->nrc_number;
+    }
+
     public function getPasswordAttribute(): string
     {
         return $this->password_hash;
