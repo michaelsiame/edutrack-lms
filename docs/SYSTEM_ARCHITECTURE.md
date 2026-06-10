@@ -495,7 +495,7 @@ Route::prefix('finance')->middleware(['auth', 'finance'])->name('finance.')->gro
 - Generates student numbers: `YYEdu######`
 - Generates 32-char verification codes
 - Issues certificates for enrollments (blocks if `certificate_blocked`)
-- Generates PDFs via TCPDF using `certificates.pdf` view
+- Generates PDFs natively with TCPDF (`renderPdf()`): gold/navy frame, tiled watermark, embedded Great Vibes/Playfair Display fonts (`resources/fonts/tcpdf/`), college logo and QR verification code
 - Computes graduation date with ordinal suffixes
 
 ### `EmailQueueService`

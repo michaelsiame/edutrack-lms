@@ -1,754 +1,508 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificate - {{ $certificate_number ?? 'Preview' }} - EduTrack Computer Training College</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <style>
-        @page {
-            size: A4 portrait;
-            margin: 0;
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Certificate - {{ $certificate_number ?? 'Preview' }} - EduTrack Computer Training College</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4 portrait; margin: 0; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 
-        body {
-            width: 210mm;
-            min-height: 297mm;
-            margin: 0 auto;
-            background: #f5f5f5;
-            font-family: 'Open Sans', sans-serif;
-            position: relative;
-            overflow-x: hidden;
-            padding: 20px;
-        }
+  :root {
+    --gold: #D4952A;
+    --gold-light: #E8B84A;
+    --navy: #1B3A6B;
+    --navy-dark: #0F2B52;
+    --dark: #0A1628;
+    --bg: #FFFFFF;
+  }
 
-        @media print {
-            body {
-                background: #fff;
-                padding: 0;
-                width: 210mm;
-                height: 297mm;
-            }
-            .cert-page {
-                box-shadow: none !important;
-                margin: 0 !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-        }
+  html, body {
+    width: 100%;
+    min-height: 100vh;
+    background: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 24px 0;
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  }
 
-        .cert-page {
-            width: 210mm;
-            height: 297mm;
-            background: #fff;
-            position: relative;
-            margin: 0 auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-            overflow: hidden;
-        }
+  .cert-sheet {
+    width: 210mm;
+    height: 297mm;
+    background: var(--bg);
+    position: relative;
+    box-shadow: 0 6px 32px rgba(0,0,0,0.22);
+    overflow: hidden;
+    border: 20px solid var(--gold);
+  }
 
-        /* Outer orange border */
-        .outer-border {
-            position: absolute;
-            top: 8mm;
-            left: 8mm;
-            right: 8mm;
-            bottom: 8mm;
-            border: 3px solid #f26522;
-        }
+  .cert-sheet::before {
+    content: "";
+    position: absolute;
+    top: 14px; left: 14px; right: 14px; bottom: 14px;
+    border: 10px solid var(--navy);
+    pointer-events: none;
+    z-index: 10;
+  }
 
-        /* Inner blue border */
-        .inner-border {
-            position: absolute;
-            top: 10mm;
-            left: 10mm;
-            right: 10mm;
-            bottom: 10mm;
-            border: 4px solid #1e3a8a;
-        }
+  .corner {
+    position: absolute;
+    width: 0; height: 0;
+    z-index: 11;
+    pointer-events: none;
+  }
+  .corner-tl {
+    top: 24px; left: 24px;
+    border-top: 80px solid var(--navy);
+    border-right: 80px solid transparent;
+  }
+  .corner-tr {
+    top: 24px; right: 24px;
+    border-top: 80px solid var(--navy);
+    border-left: 80px solid transparent;
+  }
+  .corner-bl {
+    bottom: 24px; left: 24px;
+    border-bottom: 80px solid var(--navy);
+    border-right: 80px solid transparent;
+  }
+  .corner-br {
+    bottom: 24px; right: 24px;
+    border-bottom: 80px solid var(--navy);
+    border-left: 80px solid transparent;
+  }
 
-        /* Corner decorations */
-        .corner {
-            position: absolute;
-            width: 35mm;
-            height: 35mm;
-            z-index: 5;
-        }
+  .watermark-bg {
+    position: absolute;
+    inset: 24px;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.055;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='48'%3E%3Ctext x='0' y='32' font-family='Georgia,serif' font-size='14' font-weight='700' fill='%231B3A6B' letter-spacing='1' text-transform='uppercase'%3EEdutrack Computer Training College%3C/text%3E%3C/svg%3E");
+    background-repeat: repeat;
+    transform: rotate(-14deg) scale(1.15);
+    transform-origin: center center;
+  }
 
-        .corner-tl {
-            top: 10mm;
-            left: 10mm;
-            border-top: 3px solid #f26522;
-            border-left: 3px solid #f26522;
-            background: linear-gradient(135deg, rgba(242,101,34,0.15) 0%, transparent 60%);
-        }
-        .corner-tl::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            border-left: 25mm solid #f26522;
-            border-bottom: 25mm solid transparent;
-        }
+  .content {
+    position: relative;
+    z-index: 5;
+    padding: 50px 72px 44px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
 
-        .corner-tr {
-            top: 10mm;
-            right: 10mm;
-            border-top: 3px solid #f26522;
-            border-right: 3px solid #f26522;
-            background: linear-gradient(-135deg, rgba(242,101,34,0.15) 0%, transparent 60%);
-        }
-        .corner-tr::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            border-right: 25mm solid #f26522;
-            border-bottom: 25mm solid transparent;
-        }
+  .logos-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 6px;
+    padding: 0 16px;
+  }
+  .logo-edutrack { height: 118px; width: auto; }
+  .logo-teveta { height: 58px; width: auto; }
+  .logo-spacer { width: 80px; }
 
-        .corner-bl {
-            bottom: 10mm;
-            left: 10mm;
-            border-bottom: 3px solid #f26522;
-            border-left: 3px solid #f26522;
-            background: linear-gradient(45deg, rgba(242,101,34,0.15) 0%, transparent 60%);
-        }
-        .corner-bl::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            border-left: 25mm solid #f26522;
-            border-top: 25mm solid transparent;
-        }
+  .institution-name {
+    font-size: 27px;
+    font-weight: 700;
+    color: var(--navy-dark);
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    line-height: 1.25;
+    margin-bottom: 3px;
+  }
 
-        .corner-br {
-            bottom: 10mm;
-            right: 10mm;
-            border-bottom: 3px solid #f26522;
-            border-right: 3px solid #f26522;
-            background: linear-gradient(-45deg, rgba(242,101,34,0.15) 0%, transparent 60%);
-        }
-        .corner-br::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            border-right: 25mm solid #f26522;
-            border-top: 25mm solid transparent;
-        }
+  .institution-sub {
+    font-size: 17px;
+    font-style: italic;
+    color: var(--dark);
+    margin-bottom: 14px;
+  }
 
-        /* Main content area */
-        .content {
-            position: absolute;
-            top: 18mm;
-            left: 22mm;
-            right: 22mm;
-            bottom: 18mm;
-            text-align: center;
-            z-index: 10;
-        }
+  .deco-rule {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin: 12px 0;
+  }
+  .deco-rule .line {
+    flex: 1;
+    max-width: 170px;
+    height: 0;
+    border-top: 2px solid var(--gold);
+  }
+  .deco-rule .diamond {
+    width: 10px; height: 10px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .deco-rule .diamond-sm {
+    width: 6px; height: 6px;
+    background: var(--gold-light);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
 
-        /* Header logos area */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4mm;
-            position: relative;
-        }
+  .flanked {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+    margin: 16px 0 8px;
+  }
+  .flanked .flank {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .flanked .flank .f-line {
+    width: 50px;
+    height: 0;
+    border-top: 2px solid var(--gold);
+  }
+  .flanked .flank .f-diamond {
+    width: 7px; height: 7px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .flanked .flank .f-diamond-sm {
+    width: 5px; height: 5px;
+    background: var(--gold-light);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
 
-        .logo-left, .logo-right {
-            width: 28mm;
-            height: 28mm;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  .certify-text {
+    font-size: 23px;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 3.5px;
+    white-space: nowrap;
+  }
 
-        /* EduTrack Logo (left) */
-        .logo-left .shield {
-            width: 22mm;
-            height: 26mm;
-            background: #1e3a8a;
-            border-radius: 0 0 11mm 11mm;
-            position: relative;
-            border: 2px solid #f26522;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .logo-left .shield::before {
-            content: '';
-            position: absolute;
-            top: -6mm;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 18mm;
-            height: 8mm;
-            background: #f26522;
-            border-radius: 9mm 9mm 0 0;
-        }
-        .logo-left .shield-text {
-            color: white;
-            font-size: 7pt;
-            font-weight: 700;
-            line-height: 1.1;
-            margin-top: 2mm;
-            z-index: 2;
-        }
-        .logo-left .shield-sub {
-            color: #f26522;
-            font-size: 5pt;
-            margin-top: 1mm;
-            z-index: 2;
-        }
-        .logo-left .tagline {
-            position: absolute;
-            bottom: -4mm;
-            font-size: 5pt;
-            color: #1e3a8a;
-            font-weight: 600;
-            width: 100%;
-            text-align: center;
-        }
+  .recipient {
+    font-family: "Great Vibes", "Brush Script MT", cursive;
+    font-size: 68px;
+    color: var(--dark);
+    line-height: 1.05;
+    margin: 6px 0 14px;
+  }
 
-        /* TEVETA Logo (right) */
-        .logo-right .teveta {
-            text-align: center;
-        }
-        .logo-right .teveta-icon {
-            width: 12mm;
-            height: 12mm;
-            background: #1e3a8a;
-            border-radius: 50%;
-            margin: 0 auto 1mm;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14pt;
-            font-weight: 800;
-            position: relative;
-        }
-        .logo-right .teveta-icon::after {
-            content: '';
-            position: absolute;
-            top: -2mm;
-            right: -2mm;
-            width: 4mm;
-            height: 4mm;
-            background: #f26522;
-            border-radius: 50%;
-        }
-        .logo-right .teveta-name {
-            font-size: 8pt;
-            font-weight: 800;
-            color: #1e3a8a;
-            letter-spacing: 0.5px;
-            line-height: 1;
-        }
-        .logo-right .teveta-sub {
-            font-size: 5pt;
-            color: #1e3a8a;
-            font-weight: 600;
-        }
+  .body-text {
+    font-size: 17.5px;
+    font-style: italic;
+    color: var(--dark);
+    line-height: 1.5;
+    max-width: 540px;
+    margin: 4px 0;
+  }
 
-        /* College Title */
-        .college-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 22pt;
-            font-weight: 700;
-            color: #1a1a1a;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            line-height: 1.2;
-            margin-top: 2mm;
-        }
-        .college-subtitle {
-            font-family: 'Playfair Display', serif;
-            font-size: 12pt;
-            color: #444;
-            font-style: italic;
-            margin-top: 2mm;
-        }
+  .course-title {
+    font-size: 46px;
+    font-weight: 900;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    line-height: 1.15;
+    margin: 22px 0 8px;
+  }
 
-        /* Decorative divider */
-        .divider {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 4mm 0;
-            gap: 3mm;
-        }
-        .divider-line {
-            width: 40mm;
-            height: 1px;
-            background: #1e3a8a;
-        }
-        .divider-diamond {
-            width: 3mm;
-            height: 3mm;
-            background: #f26522;
-            transform: rotate(45deg);
-        }
+  .merit {
+    font-family: "Great Vibes", "Brush Script MT", cursive;
+    font-size: 54px;
+    color: var(--dark);
+    line-height: 1.05;
+    margin: 4px 0 14px;
+  }
 
-        /* Certify text */
-        .certify-text {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 16pt;
-            font-weight: 700;
-            color: #1e3a8a;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 6mm 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4mm;
-        }
-        .certify-text .side-decor {
-            display: flex;
-            align-items: center;
-            gap: 2mm;
-        }
-        .certify-text .dot {
-            width: 1.5mm;
-            height: 1.5mm;
-            background: #f26522;
-            transform: rotate(45deg);
-        }
+  .date-text {
+    font-size: 17.5px;
+    font-style: italic;
+    color: var(--dark);
+    line-height: 1.5;
+    max-width: 520px;
+    margin: 8px 0 12px;
+  }
+  .date-text .ordinal {
+    font-size: 12px;
+    vertical-align: super;
+    font-style: normal;
+  }
+  .date-text .year {
+    font-weight: 700;
+    font-style: normal;
+  }
 
-        /* Recipient Name */
-        .recipient-name {
-            font-family: 'Great Vibes', cursive;
-            font-size: 42pt;
-            color: #1a1a1a;
-            margin: 4mm 0;
-            line-height: 1.2;
-        }
-        .name-underline {
-            width: 80mm;
-            height: 1px;
-            background: #f26522;
-            margin: 2mm auto;
-        }
+  .qr-block {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .qr-block svg, .qr-block img {
+    width: 76px;
+    height: 76px;
+    display: block;
+  }
+  .qr-caption {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--navy);
+    text-transform: uppercase;
+  }
 
-        /* Body text */
-        .body-text {
-            font-size: 12pt;
-            color: #333;
-            line-height: 1.6;
-            margin: 4mm 0;
-        }
-        .body-text .highlight {
-            font-weight: 600;
-        }
+  .signatures {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 560px;
+    padding-bottom: 4px;
+  }
+  .sig-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 190px;
+  }
+  .sig-line {
+    width: 100%;
+    border-top: 1.5px solid var(--dark);
+    margin-bottom: 5px;
+  }
+  .sig-label {
+    font-size: 14px;
+    color: var(--dark);
+    font-weight: 700;
+  }
 
-        /* Course Title */
-        .course-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 26pt;
-            font-weight: 800;
-            color: #1e3a8a;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 5mm 0;
-            line-height: 1.2;
-        }
+  .bottom-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 620px;
+    margin-top: 26px;
+    padding: 0 8px;
+  }
+  .bottom-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .bottom-block.right {
+    align-items: flex-end;
+  }
+  .bottom-label {
+    font-size: 13px;
+    color: var(--dark);
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  .bottom-value {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 18px;
+    color: var(--dark);
+    font-weight: 700;
+  }
 
-        /* Merit text */
-        .merit-text {
-            font-family: 'Great Vibes', cursive;
-            font-size: 28pt;
-            color: #1a1a1a;
-            margin: 3mm 0;
-        }
-        .merit-underline {
-            width: 50mm;
-            height: 1px;
-            background: #f26522;
-            margin: 2mm auto;
-        }
+  .verify-footer {
+    margin-top: 14px;
+    font-size: 10.5px;
+    font-style: italic;
+    color: #5A6473;
+  }
 
-        /* Date section */
-        .date-section {
-            font-size: 12pt;
-            color: #333;
-            line-height: 1.8;
-            margin: 5mm 0;
-        }
-        .date-section .date-day {
-            font-family: 'Great Vibes', cursive;
-            font-size: 18pt;
-            color: #1a1a1a;
-        }
-        .date-section .date-month {
-            font-family: 'Great Vibes', cursive;
-            font-size: 18pt;
-            color: #1a1a1a;
-        }
-        .date-section .date-year {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 18pt;
-            font-weight: 700;
-            color: #1a1a1a;
-        }
+  .action-bar {
+    text-align: center;
+    padding-bottom: 18px;
+  }
+  .action-bar a, .action-bar button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--navy);
+    background: #fff;
+    color: var(--navy);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    margin: 0 4px;
+  }
+  .action-bar .primary {
+    background: var(--navy);
+    color: #fff;
+  }
 
-        /* Signatures area */
-        .signatures {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin: 8mm 10mm 0;
-            position: relative;
-        }
-        .signature-block {
-            text-align: center;
-            width: 45mm;
-        }
-        .signature-line {
-            width: 100%;
-            height: 1px;
-            background: #333;
-            margin-bottom: 2mm;
-        }
-        .signature-label {
-            font-size: 9pt;
-            color: #333;
-            font-weight: 600;
-        }
-
-        /* Center seal */
-        .seal-container {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 5mm;
-            width: 35mm;
-            height: 45mm;
-        }
-        .seal {
-            width: 30mm;
-            height: 30mm;
-            background: #1e3a8a;
-            border-radius: 50%;
-            border: 2px solid #d4af37;
-            position: relative;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .seal::before {
-            content: '';
-            position: absolute;
-            inset: 2mm;
-            border: 1px solid #d4af37;
-            border-radius: 50%;
-        }
-        .seal-star {
-            color: #d4af37;
-            font-size: 16pt;
-        }
-        .seal-ribbon {
-            position: absolute;
-            bottom: -8mm;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 8mm solid transparent;
-            border-right: 8mm solid transparent;
-            border-top: 12mm solid #f26522;
-        }
-        .seal-ribbon::after {
-            content: '';
-            position: absolute;
-            top: -12mm;
-            left: -4mm;
-            width: 0;
-            height: 0;
-            border-left: 4mm solid transparent;
-            border-right: 4mm solid transparent;
-            border-top: 8mm solid #d35400;
-        }
-
-        /* Bottom info box */
-        .info-box {
-            position: absolute;
-            bottom: 22mm;
-            left: 22mm;
-            right: 22mm;
-            border: 2px solid #f26522;
-            border-radius: 8px;
-            padding: 4mm 6mm;
-            display: grid;
-            grid-template-columns: 1fr 1px 1fr;
-            gap: 4mm;
-            background: rgba(255,255,255,0.9);
-        }
-        .info-divider {
-            width: 1px;
-            background: #f26522;
-            height: 100%;
-        }
-        .info-col {
-            display: flex;
-            flex-direction: column;
-            gap: 3mm;
-        }
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 3mm;
-        }
-        .info-icon {
-            width: 8mm;
-            height: 8mm;
-            min-width: 8mm;
-            border: 1.5px solid #1e3a8a;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1e3a8a;
-            font-size: 10pt;
-        }
-        .info-text {
-            text-align: left;
-        }
-        .info-label {
-            font-size: 7pt;
-            color: #1e3a8a;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .info-value {
-            font-size: 10pt;
-            color: #1a1a1a;
-            font-weight: 700;
-        }
-
-        /* Bottom center decoration */
-        .bottom-decor {
-            position: absolute;
-            bottom: 14mm;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 2mm;
-        }
-        .bottom-decor .dot {
-            width: 1.5mm;
-            height: 1.5mm;
-            background: #f26522;
-            transform: rotate(45deg);
-        }
-        .bottom-decor .line {
-            width: 15mm;
-            height: 1px;
-            background: #1e3a8a;
-        }
-
-        /* Action bar */
-        .action-bar {
-            text-align: center;
-            padding: 16px;
-            margin-top: 20px;
-        }
-    </style>
-    <base target="_blank">
+  @media print {
+    html, body {
+      background: #fff;
+      padding: 0;
+      margin: 0;
+      display: block;
+    }
+    .cert-sheet {
+      box-shadow: none;
+      margin: 0;
+      page-break-inside: avoid;
+    }
+    .no-print { display: none !important; }
+  }
+</style>
 </head>
 <body>
 
-    <!-- Action Bar -->
-    <div class="action-bar no-print">
-        <a href="{{ route('student.certificates') }}" class="od-btn od-btn-secondary od-btn-sm" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--od-border);color:var(--od-fg);text-decoration:none;font-size:13px;font-weight:500;">
-            <i class="fas fa-arrow-left"></i> Back to Certificates
-        </a>
-        @if(isset($certificate) && $certificate)
-        <a href="{{ route('certificates.download', $certificate) }}" class="od-btn od-btn-primary od-btn-sm" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--od-accent);background:var(--od-accent);color:var(--od-surface);text-decoration:none;font-size:13px;font-weight:500;margin-left:8px;">
-            <i class="fas fa-download"></i> Download PDF
-        </a>
-        @endif
-        <button onclick="window.print()" class="od-btn od-btn-ghost od-btn-sm" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--od-muted);text-decoration:none;font-size:13px;font-weight:500;margin-left:8px;cursor:pointer;">
-            <i class="fas fa-print"></i> Print
-        </button>
+<div class="action-bar no-print">
+    @auth
+    <a href="{{ route('student.certificates') }}">&larr; Back to Certificates</a>
+    @endauth
+    @if(isset($certificate) && $certificate)
+    <a class="primary" href="{{ route('certificates.download', $certificate) }}">Download PDF</a>
+    @endif
+    <button onclick="window.print()">Print Certificate</button>
+</div>
+
+<div class="cert-sheet">
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <div class="watermark-bg"></div>
+
+  <div class="content">
+    <div class="logos-row">
+      <img src="{{ asset('assets/images/logo.png') }}" alt="EduTrack Logo" class="logo-edutrack">
+      @if(file_exists(public_path('assets/images/teveta-logo.png')))
+      <img src="{{ asset('assets/images/teveta-logo.png') }}" alt="TEVETA Logo" class="logo-teveta">
+      @else
+      <div class="logo-spacer"></div>
+      @endif
     </div>
 
-    <div class="cert-page">
-        <div class="outer-border"></div>
-        <div class="inner-border"></div>
-
-        <div class="corner corner-tl"></div>
-        <div class="corner corner-tr"></div>
-        <div class="corner corner-bl"></div>
-        <div class="corner corner-br"></div>
-
-        <div class="content">
-            <!-- Header with Logos -->
-            <div class="header">
-                <div class="logo-left">
-                    <div style="position: relative;">
-                        <div class="shield">
-                            <div class="shield-text">EduTrack</div>
-                            <div class="shield-sub">Excel Through<br>Education</div>
-                        </div>
-                        <div class="tagline">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
-                    </div>
-                </div>
-
-                <div style="flex: 1;">
-                    <div class="college-title">EDUTRACK COMPUTER<br>TRAINING COLLEGE</div>
-                    <div class="divider">
-                        <div class="divider-line"></div>
-                        <div class="divider-diamond"></div>
-                        <div class="divider-line"></div>
-                    </div>
-                    <div class="college-subtitle">A skill training college</div>
-                </div>
-
-                <div class="logo-right">
-                    <div class="teveta">
-                        <div class="teveta-icon">T</div>
-                        <div class="teveta-name">TEVETA</div>
-                        <div class="teveta-sub">ACCREDITED</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Certify Statement -->
-            <div class="certify-text">
-                <div class="side-decor">
-                    <div class="dot"></div>
-                    <div class="dot" style="width: 1mm; height: 1mm;"></div>
-                    <div class="dot"></div>
-                </div>
-                THIS IS TO CERTIFY THAT
-                <div class="side-decor">
-                    <div class="dot"></div>
-                    <div class="dot" style="width: 1mm; height: 1mm;"></div>
-                    <div class="dot"></div>
-                </div>
-            </div>
-
-            <!-- Recipient -->
-            <div class="recipient-name">{{ $student_name ?? 'Student Name' }}</div>
-            <div class="name-underline"></div>
-
-            <!-- Body -->
-            <div class="body-text">
-                having satisfied the requirements for the<br>
-                award of the certificate of
-            </div>
-
-            <!-- Course -->
-            <div class="course-title">{{ strtoupper($course_title ?? 'Course Title') }}</div>
-
-            <!-- Merit -->
-            @if(isset($classification) && $classification && $classification !== 'Pass')
-            <div class="merit-text">With {{ $classification }}</div>
-            <div class="merit-underline"></div>
-            @endif
-
-            <!-- Date -->
-            <div class="date-section">
-                was admitted to the certificate at a Graduation<br>
-                Ceremony held on the <span class="date-day">{{ $graduation_day ?? '1' }}<sup>{{ $graduation_suffix ?? 'st' }}</sup></span> day of <span class="date-month">{{ $graduation_month ?? 'January' }}</span><br>
-                in the year <span class="date-year">{{ $graduation_year ?? date('Y') }}</span>
-            </div>
-
-            <!-- Signatures -->
-            <div class="signatures">
-                <div class="signature-block">
-                    <div class="signature-line"></div>
-                    <div class="signature-label">Principal</div>
-                    <div style="margin-top: 6mm;">
-                        <div class="signature-line"></div>
-                        <div class="signature-label">Graduate's Signature</div>
-                    </div>
-                </div>
-
-                <div class="seal-container">
-                    <div class="seal">
-                        <div style="color: #d4af37; font-size: 8pt; text-align: center; line-height: 1.2;">
-                            &#9733;<br>
-                            <span style="font-size: 6pt;">EXCELLENCE</span>
-                        </div>
-                    </div>
-                    <div class="seal-ribbon"></div>
-                </div>
-
-                <div class="signature-block">
-                    <div class="signature-line"></div>
-                    <div class="signature-label">Director</div>
-                    <div style="margin-top: 6mm;">
-                        <div class="signature-line"></div>
-                        <div class="signature-label">Graduate's I.D. No.</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom Info Box -->
-        <div class="info-box">
-            <div class="info-col">
-                <div class="info-row">
-                    <div class="info-icon">&#127891;</div>
-                    <div class="info-text">
-                        <div class="info-label">Student Number</div>
-                        <div class="info-value">{{ $student_number ?? 'N/A' }}</div>
-                    </div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">&#128196;</div>
-                    <div class="info-text">
-                        <div class="info-label">Certificate Number</div>
-                        <div class="info-value">{{ $certificate_number ?? 'N/A' }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="info-divider"></div>
-
-            <div class="info-col">
-                <div class="info-row">
-                    <div class="info-icon">&#128197;</div>
-                    <div class="info-text">
-                        <div class="info-label">Date of Graduation</div>
-                        <div class="info-value">{{ ($graduation_day ?? '1') . ($graduation_suffix ?? 'st') . ' ' . ($graduation_month ?? 'January') . ' ' . ($graduation_year ?? date('Y')) }}</div>
-                    </div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">&#127942;</div>
-                    <div class="info-text">
-                        <div class="info-label">Course</div>
-                        <div class="info-value">{{ $course_title ?? 'N/A' }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bottom-decor">
-            <div class="line"></div>
-            <div class="dot"></div>
-            <div class="dot" style="width: 2mm; height: 2mm;"></div>
-            <div class="dot"></div>
-            <div class="line"></div>
-        </div>
+    <div class="institution-name">
+      EduTrack Computer<br>Training College
     </div>
+    <div class="institution-sub">A skill training college</div>
+
+    <div class="deco-rule">
+      <div class="line"></div>
+      <div class="diamond-sm"></div>
+      <div class="diamond"></div>
+      <div class="diamond-sm"></div>
+      <div class="line"></div>
+    </div>
+
+    <div class="flanked">
+      <div class="flank">
+        <div class="f-line"></div>
+        <div class="f-diamond-sm"></div>
+        <div class="f-diamond"></div>
+      </div>
+      <div class="certify-text">This is to Certify That</div>
+      <div class="flank">
+        <div class="f-diamond"></div>
+        <div class="f-diamond-sm"></div>
+        <div class="f-line"></div>
+      </div>
+    </div>
+
+    <div class="deco-rule">
+      <div class="line"></div>
+      <div class="diamond-sm"></div>
+      <div class="diamond"></div>
+      <div class="diamond-sm"></div>
+      <div class="line"></div>
+    </div>
+
+    <div class="recipient">{{ $student_name ?? 'Student Name' }}</div>
+
+    <p class="body-text">
+      having satisfied the requirements for the award of the certificate of
+    </p>
+
+    <div class="course-title">{{ strtoupper($course_title ?? 'Course Title') }}</div>
+
+    @if(isset($classification) && $classification && strcasecmp($classification, 'Pass') !== 0)
+    <div class="merit">With {{ $classification }}</div>
+    @endif
+
+    <div class="deco-rule">
+      <div class="line"></div>
+      <div class="diamond-sm"></div>
+      <div class="diamond"></div>
+      <div class="diamond-sm"></div>
+      <div class="line"></div>
+    </div>
+
+    <p class="date-text">
+      Was admitted to the certificate at a Graduation Ceremony held on the
+      {{ $graduation_day ?? '1' }}<span class="ordinal">{{ $graduation_suffix ?? 'st' }}</span> day of {{ $graduation_month ?? 'January' }}<br>in the year <span class="year">{{ $graduation_year ?? date('Y') }}</span>
+    </p>
+
+    <div class="qr-block">
+      @if(!empty($verify_url))
+        {!! SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(76)->color(15, 43, 82)->margin(0)->generate($verify_url) !!}
+        <div class="qr-caption">Scan to Verify</div>
+      @endif
+    </div>
+
+    <div class="signatures">
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-label">Principal</div>
+      </div>
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        <div class="sig-label">Director</div>
+      </div>
+    </div>
+
+    <div class="bottom-row">
+      <div class="bottom-block">
+        <div class="bottom-label">Graduate's Signature</div>
+        <div class="bottom-value">{{ $national_id ?? '' }}</div>
+      </div>
+      <div class="bottom-block right">
+        <div class="bottom-label">Graduate's ID No.</div>
+        <div class="bottom-value">{{ $student_number ?? '' }}</div>
+      </div>
+    </div>
+
+    @if(!empty($verification_code))
+    <div class="verify-footer">
+      Certificate No. {{ $certificate_number ?? '' }} &middot; Verify at {{ preg_replace('#^https?://#', '', $verify_url ?? '') }}
+    </div>
+    @endif
+  </div>
+</div>
+
 </body>
 </html>

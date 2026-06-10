@@ -48,6 +48,8 @@ class CertificateController extends Controller
             'student_number' => '26Edu249580',
             'certificate_number' => 'NRC 2495807/1/1',
             'verification_code' => 'EDU-ABC123XYZ',
+            'verify_url' => route('certificates.verify', 'EDU-ABC123XYZ'),
+            'national_id' => 'NRC 249580/11/3',
             'final_score' => 87,
         ];
 
@@ -82,9 +84,11 @@ class CertificateController extends Controller
 
         $pdf = $this->generatePdf($certificate);
 
+        $filename = 'certificate-' . preg_replace('/[^A-Za-z0-9\-]+/', '-', $certificate->certificate_number) . '.pdf';
+
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="certificate-' . $certificate->certificate_number . '.pdf"',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
 
