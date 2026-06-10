@@ -70,10 +70,13 @@ class TranscriptController extends Controller
             }
 
             $finalScore = $enrollment->final_grade ?? $enrollment->progress ?? 0;
-            $grade = $this->scoreToGrade($finalScore);
-            $points = $this->scoreToPoints($finalScore);
             if ($isCompleted) {
+                $grade = $this->scoreToGrade($finalScore);
+                $points = $this->scoreToPoints($finalScore);
                 $gpaSum += $points;
+            } else {
+                $grade = 'In Progress';
+                $points = 0;
             }
 
             $modules = [];
@@ -142,9 +145,10 @@ class TranscriptController extends Controller
                             ->whereIn('lesson_id', $module->lessons->pluck('id'))
                             ->get()
                         : collect();
-                    $completedLessons = $lessonProgress->where('status', 'Completed')->count();
+                    // De-duplicate in case multiple progress records exist for the same lesson
+                    $completedLessons = $lessonProgress->where('status', 'Completed')->unique('lesson_id')->count();
                     $totalLessons = $module->lessons->count();
-                    $progress = $totalLessons > 0 ? round(($completedLessons / $totalLessons) * 100, 1) : 0;
+                    $progress = $totalLessons > 0 ? min(100, round(($completedLessons / $totalLessons) * 100, 1)) : 0;
                     $assessments[] = [
                         'code' => $modCode,
                         'title' => $module->title,
@@ -184,8 +188,8 @@ class TranscriptController extends Controller
             'user' => $user,
             'student_name' => $user->full_name,
             'student_number' => $this->generateStudentNumber($user),
-            'national_id' => $user->student?->national_id ?? $user->national_id ?? 'N/A',
-            'date_of_birth' => $user->student?->date_of_birth?->format('F d, Y') ?? 'N/A',
+            'national_id' => $user->student?->national_id ?? $user->national_id ?? 'Not on record',
+            'date_of_birth' => $user->student?->date_of_birth?->format('F d, Y') ?? 'Not on record',
             'email' => $user->email,
             'phone' => $user->phone ?? 'N/A',
             'issue_date' => Carbon::now()->format('F d, Y'),
@@ -276,12 +280,13 @@ class TranscriptController extends Controller
      */
     protected function generateTcpdf(array $data): string
     {
-        $pdf = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf = new class('P', 'mm', 'A4') extends \TCPDF {
+            public function Header() {}
+            public function Footer() {}
+        };
         $pdf->SetCreator('Edutrack LMS');
         $pdf->SetAuthor($data['institution_name']);
         $pdf->SetTitle('Academic Transcript - ' . $data['student_name']);
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
         $pdf->SetMargins(12, 12, 12);
         $pdf->SetAutoPageBreak(true, 12);
         $pdf->AddPage();
@@ -423,8 +428,11 @@ class TranscriptController extends Controller
             // Course footer
             $pdf->SetFillColor(...$lightGray);
             $pdf->SetFont('helvetica', 'B', 9);
-            $pdf->Cell(120, 6, 'Final Grade: ' . $enrollment['final_grade'] . ' (' . $enrollment['final_score'] . ')', 1, 0, 'L', true);
-            if ($enrollment['classification']) {
+            $footerText = $enrollment['status'] === 'Completed'
+                ? 'Final Grade: ' . $enrollment['final_grade'] . ' (' . $enrollment['final_score'] . ')'
+                : 'Status: ' . $enrollment['status'] . ' (' . $enrollment['final_score'] . ')';
+            $pdf->Cell(120, 6, $footerText, 1, 0, 'L', true);
+            if ($enrollment['classification'] && $enrollment['status'] === 'Completed') {
                 $pdf->SetFillColor(212, 149, 42);
                 $pdf->SetTextColor(255, 255, 255);
                 $pdf->Cell(56, 6, $enrollment['classification'], 1, 0, 'C', true);

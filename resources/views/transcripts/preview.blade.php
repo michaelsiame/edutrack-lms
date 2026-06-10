@@ -551,10 +551,15 @@ $demo_enrollments = $enrollments ?? [
 
     <div class="course-footer">
       <div>
+        @if($enrollment['status'] === 'Completed')
         <strong>Final Grade:</strong>
         <span class="final">{{ $enrollment['final_grade'] }} ({{ $enrollment['final_score'] }})</span>
+        @else
+        <strong>Status:</strong>
+        <span class="final" style="color: var(--gray);">{{ $enrollment['status'] }} ({{ $enrollment['final_score'] }})</span>
+        @endif
       </div>
-      @if(!empty($enrollment['classification']) && strcasecmp($enrollment['classification'], 'Pass') !== 0)
+      @if(!empty($enrollment['classification']) && $enrollment['status'] === 'Completed' && strcasecmp($enrollment['classification'], 'Pass') !== 0)
       <div class="classification">{{ $enrollment['classification'] }}</div>
       @endif
     </div>
