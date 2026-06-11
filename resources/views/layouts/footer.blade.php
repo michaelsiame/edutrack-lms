@@ -18,11 +18,11 @@
                     Quality education, industry-recognized certification.
                 </p>
                 <div class="flex items-center space-x-3">
-                    <a href="#" class="transition" style="color: var(--od-muted);" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='var(--od-muted)'"><i class="fab fa-facebook text-xl"></i></a>
-                    <a href="#" class="transition" style="color: var(--od-muted);" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='var(--od-muted)'"><i class="fab fa-twitter text-xl"></i></a>
-                    <a href="#" class="transition" style="color: var(--od-muted);" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='var(--od-muted)'"><i class="fab fa-linkedin text-xl"></i></a>
-                    <a href="#" class="transition" style="color: var(--od-muted);" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='var(--od-muted)'"><i class="fab fa-instagram text-xl"></i></a>
-                    <a href="#" class="transition" style="color: var(--od-muted);" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='var(--od-muted)'"><i class="fab fa-youtube text-xl"></i></a>
+                    <a href="#" aria-label="Facebook" class="transition inline-flex items-center justify-center" style="color: var(--od-muted); width: 40px; height: 40px;" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='var(--od-muted)'"><i class="fab fa-facebook text-xl"></i></a>
+                    <a href="#" aria-label="Twitter" class="transition inline-flex items-center justify-center" style="color: var(--od-muted); width: 40px; height: 40px;" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='var(--od-muted)'"><i class="fab fa-twitter text-xl"></i></a>
+                    <a href="#" aria-label="LinkedIn" class="transition inline-flex items-center justify-center" style="color: var(--od-muted); width: 40px; height: 40px;" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='var(--od-muted)'"><i class="fab fa-linkedin text-xl"></i></a>
+                    <a href="#" aria-label="Instagram" class="transition inline-flex items-center justify-center" style="color: var(--od-muted); width: 40px; height: 40px;" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='var(--od-muted)'"><i class="fab fa-instagram text-xl"></i></a>
+                    <a href="#" aria-label="YouTube" class="transition inline-flex items-center justify-center" style="color: var(--od-muted); width: 40px; height: 40px;" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='var(--od-muted)'"><i class="fab fa-youtube text-xl"></i></a>
                 </div>
             </div>
 

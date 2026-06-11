@@ -161,10 +161,10 @@
                         {{ $topBarEmail }}
                     </span>
                     @endif
-                    <div class="flex items-center space-x-2">
-                        <a href="#" class="transition" style="color: white;" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='white'"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="transition" style="color: white;" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='white'"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="transition" style="color: white;" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='white'"><i class="fab fa-linkedin"></i></a>
+                    <div class="flex items-center">
+                        <a href="#" aria-label="Facebook" class="transition inline-flex items-center justify-center" style="color: white; width: 36px; height: 36px;" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='white'"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Twitter" class="transition inline-flex items-center justify-center" style="color: white; width: 36px; height: 36px;" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='white'"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="LinkedIn" class="transition inline-flex items-center justify-center" style="color: white; width: 36px; height: 36px;" onmouseover="this.style.color='var(--od-accent)'" onmouseout="this.style.color='white'"><i class="fab fa-linkedin"></i></a>
                     </div>
                 </div>
             </div>

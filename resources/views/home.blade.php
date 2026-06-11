@@ -30,7 +30,7 @@
             TEVETA Registered Institution
           </span>
         </div>
-        <h1 class="od-h1 animate-fade-in" style="color: #F5832B;">
+        <h1 class="od-h1 animate-fade-in" style="color: #F5832B; font-weight: 800; font-size: clamp(34px, 3.8vw, 54px); line-height: 1.08;">
           Edutrack Computer Training College
         </h1>
         <p class="text-2xl xl:text-3xl font-medium mt-2 mb-4" style="color: #FFFFFF;">Transform Your Future</p>
@@ -56,9 +56,9 @@
           </a>
         </div>
         <p class="text-sm" style="color: color-mix(in oklch, var(--od-surface), transparent 35%);">
-          <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> No prior experience needed &nbsp;|&nbsp;
-          <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> Flexible payment plans &nbsp;|&nbsp;
-          <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> Certificate on completion
+          <i class="fas fa-check-circle mr-1"></i> No prior experience needed &nbsp;|&nbsp;
+          <i class="fas fa-check-circle mr-1"></i> Flexible payment plans &nbsp;|&nbsp;
+          <i class="fas fa-check-circle mr-1"></i> Certificate on completion
         </p>
       </div>
     </div>
@@ -98,7 +98,7 @@
           TEVETA Registered Institution
         </span>
       </div>
-      <h1 class="od-h1 animate-fade-in" style="color: #F5832B;">
+      <h1 class="od-h1 animate-fade-in" style="color: #F5832B; font-weight: 800; font-size: clamp(34px, 3.8vw, 54px); line-height: 1.08;">
         Edutrack Computer Training College
       </h1>
       <p class="text-xl font-medium mt-1 mb-4" style="color: #FFFFFF;">Transform Your Future</p>
@@ -123,9 +123,9 @@
         </a>
       </div>
       <p class="text-sm hidden sm:block" style="color: color-mix(in oklch, var(--od-surface), transparent 35%);">
-        <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> No prior experience needed &nbsp;|&nbsp;
-        <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> Flexible payment plans &nbsp;|&nbsp;
-        <i class="fas fa-check-circle mr-1" style="color: var(--od-accent);"></i> Certificate on completion
+        <i class="fas fa-check-circle mr-1"></i> No prior experience needed &nbsp;|&nbsp;
+        <i class="fas fa-check-circle mr-1"></i> Flexible payment plans &nbsp;|&nbsp;
+        <i class="fas fa-check-circle mr-1"></i> Certificate on completion
       </p>
     </div>
   </div>

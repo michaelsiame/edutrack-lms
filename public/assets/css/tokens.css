@@ -174,3 +174,9 @@
     transform: none;
   }
 }
+
+/* Visible keyboard focus everywhere (links/buttons had no focus style) */
+:focus-visible {
+  outline: 2px solid var(--od-accent, #c9a44a);
+  outline-offset: 2px;
+}
