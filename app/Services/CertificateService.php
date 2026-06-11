@@ -25,23 +25,20 @@ class CertificateService
     }
 
     /**
-     * Generate a unique certificate number in the format: NRC-{userId}-{random}
+     * Generate a sequential certificate number like "ECTC26001"
+     * (ECTC + two-digit year + zero-padded sequence). Must be called inside
+     * a transaction (issueCertificate) so the MAX+1 sequence is race-safe.
      */
     public function generateCertificateNumber($user = null, ?int $courseId = null): string
     {
-        $nrcSuffix = '2495807';
+        $prefix = 'ECTC' . date('y');
 
-        if ($user && $user->national_id) {
-            $nrcSuffix = preg_replace('/[^0-9\/]/', '', $user->national_id);
-            if (empty($nrcSuffix)) $nrcSuffix = '2495807/1/1';
-        } elseif ($user && $user->id) {
-            $nrcSuffix = $user->id . '/1/1';
-        }
+        $last = Certificate::where('certificate_number', 'like', $prefix . '%')
+            ->lockForUpdate()
+            ->selectRaw('MAX(CAST(SUBSTRING(certificate_number, ' . (strlen($prefix) + 1) . ') AS UNSIGNED)) as seq')
+            ->value('seq');
 
-        // Append course ID and random suffix to guarantee uniqueness per certificate
-        $uniqueSuffix = ($courseId ?? '') . '-' . Str::random(6);
-
-        return 'NRC ' . $nrcSuffix . '/' . $uniqueSuffix;
+        return $prefix . str_pad((string) (($last ?? 0) + 1), 3, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -266,6 +263,13 @@ class CertificateService
             ['in the year ', 'serif', 16.6, 0],
             [($data['graduation_year'] ?? ''), 'script', 19.8, 0],
         ]);
+
+        // Graduate's ID No. — filled with the student number, like the old
+        // template did (the signature line stays blank for handwriting)
+        if (!empty($data['student_number'])) {
+            $this->certFont($pdf, 'script', 14);
+            $this->centeredLabel($pdf, 135, 184, 247.3, $data['student_number']);
+        }
 
         // Bottom row
         $this->certFont($pdf, 'serif', 14.8);
@@ -514,6 +518,13 @@ class CertificateService
 
         $this->centeredLabel($pdf, 26, 75, 252.6, "Graduate's Signature");
         $this->centeredLabel($pdf, 135, 184, 252.6, "Graduate's ID No.");
+
+        // Graduate's ID No. — filled with the student number, like the old
+        // template did (the signature line stays blank for handwriting)
+        if (!empty($data['student_number'])) {
+            $this->certFont($pdf, 'script', 14);
+            $this->centeredLabel($pdf, 135, 184, 247.3, $data['student_number']);
+        }
 
         // --- Bottom row ---
         $this->certFont($pdf, 'serif', 14.8);

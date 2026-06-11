@@ -33,12 +33,11 @@ class CertificateController extends Controller
 
             if ($isOwner || $isStaff) {
                 $data = $service->getCertificateData($certificate);
-                return view('certificates.preview', $data);
             }
         }
 
         // Demo data for public / unauthorized access
-        $data = [
+        $data ??= [
             'student_name' => 'Catherine Namakanda',
             'course_title' => 'General Basic Computing',
             'classification' => 'Merit',
@@ -47,14 +46,19 @@ class CertificateController extends Controller
             'graduation_month' => 'March',
             'graduation_year' => '2026',
             'student_number' => '26Edu249580',
-            'certificate_number' => 'NRC 2495807/1/1',
+            'certificate_number' => 'ECTC26001',
             'verification_code' => 'EDU-ABC123XYZ',
             'verify_url' => route('certificates.verify', 'EDU-ABC123XYZ'),
-            'national_id' => 'NRC 249580/11/3',
+            'national_id' => 'NRC 249580/11/1',
             'final_score' => 87,
         ];
 
-        return view('certificates.preview', $data);
+        // Stream the real certificate PDF inline so the preview is identical
+        // to the downloaded document.
+        return response($service->renderPdf($data), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="certificate-preview.pdf"',
+        ]);
     }
 
     public function verify(string $code)
