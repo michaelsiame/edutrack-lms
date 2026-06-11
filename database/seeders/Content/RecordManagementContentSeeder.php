@@ -1140,3 +1140,430 @@ HTML,
             ],
         ];
     }
+
+    private function module4Lessons(): array
+    {
+        return [
+            [
+                'title' => '4.1 Retention and Disposal Schedules',
+                'duration_minutes' => 75,
+                'content' => <<<'HTML'
+<h2>What You Will Learn</h2>
+<p>By the end of this lesson you will be able to explain what a retention schedule is, calculate how long different record types should be kept under Zambian practice, and describe safe disposal methods that protect confidentiality and comply with organisational policy.</p>
+
+<h2>What Is a Retention Schedule?</h2>
+<p>A retention schedule is a written table that tells you how long each type of record must be kept and what happens to it at the end of that period. Without a schedule, offices drown in paper because nobody dares throw anything away. Alternatively, they discard too early and destroy evidence needed for an audit or court case.</p>
+<p>Every Zambian organisation—government, private company, school or NGO—should have a retention schedule approved by management and known to all staff who handle records.</p>
+
+<h2>Typical Retention Periods</h2>
+<p>These periods reflect common Zambian and international practice. Your organisation may adjust them based on legal advice or sector rules:</p>
+<table>
+<tr><th>Record Type</th><th>Minimum Retention</th><th>Reason</th></tr>
+<tr><td>Tax returns and supporting documents</td><td>5 years</td><td>ZRA audit requirements</td></tr>
+<tr><td>Payroll records</td><td>7 years</td><td>PAYE and pension disputes</td></tr>
+<tr><td>Employment contracts</td><td>7 years after termination</td><td>Labour dispute evidence</td></tr>
+<tr><td>Meeting minutes</td><td>Permanent</td><td>Corporate memory and governance</td></tr>
+<tr><td>Patient medical records</td><td>7–10 years</td><td>Clinical negligence claims</td></tr>
+<tr><td>Student academic records</td><td>Permanent</td><td>Qualification verification</td></tr>
+<tr><td>Bank statements</td><td>5 years</td><td>Audit and fraud investigation</td></tr>
+<tr><td>Utility bills (ZESCO, water)</td><td>2 years</td><td>Dispute resolution</td></tr>
+<tr><td>Daily operational notes</td><td>1–2 years</td><td>Short-term reference only</td></tr>
+</table>
+
+<h2>Stages of the Record Life Cycle</h2>
+<p>Records move through four stages:</p>
+<ol>
+<li><strong>Creation or receipt</strong> — the document is produced or arrives.</li>
+<li><strong>Active use</strong> — the document is consulted frequently and stays near the desk.</li>
+<li><strong>Inactive storage</strong> — the document is needed only occasionally and moves to a store room or archive.</li>
+<li><strong>Disposal</strong> — the document is destroyed or permanently preserved according to the retention schedule.</li>
+</ol>
+
+<h2>Safe Disposal Methods</h2>
+<p>Throwing confidential papers into a public rubbish bin risks identity theft, fraud and legal breach. Safe methods include:</p>
+<ul>
+<li><strong>Shredding</strong> — cross-cut shredders turn paper into small particles. Strip shredders are better than nothing but can be reassembled.</li>
+<li><strong>Burning</strong> — common in rural areas with no shredder; ensure complete combustion in a safe container.</li>
+<li><strong>Pulping</strong> — soaking paper in water until it disintegrates; useful for large volumes.</li>
+<li><strong>Secure disposal services</strong> — some companies in Lusaka offer locked bins and certified destruction for banks and government offices.</li>
+</ul>
+<p>Electronic records need secure deletion too. Simply dragging a file to the Recycle Bin does not erase it. Use secure deletion software or full-disk encryption so that discarded computers do not leak data.</p>
+
+<h2>Worked Example: A School Retention Schedule</h2>
+<p>Kalomo Secondary School drafts a simple retention schedule:</p>
+<ul>
+<li>Student report cards — kept permanently in the school archive for qualification verification.</li>
+<li>Attendance registers — kept for 3 years after the academic year ends.</li>
+<li>PTA meeting minutes — kept permanently in the school safe.</li>
+<li>Utility bills — kept for 2 years, then shredded.</li>
+<li>Staff leave applications — kept for 5 years after employment ends, then shredded.</li>
+</ul>
+<p>The bursar labels every box with the destruction year. Each January, the school secretary checks for boxes whose time has expired and arranges shredding with a local waste company.</p>
+
+<h2>Try It Yourself</h2>
+<ol>
+<li>List five record types you create or receive at work or home.</li>
+<li>Assign a realistic retention period to each, with a reason.</li>
+<li>Decide the disposal method for each type when the period ends.</li>
+<li>Write a simple one-page retention schedule and show it to a colleague or family member for feedback.</li>
+</ol>
+
+<h2>Key Terms</h2>
+<ul>
+<li><strong>Retention schedule</strong> — a table that specifies how long each record type is kept.</li>
+<li><strong>Disposal</strong> — the destruction or permanent preservation of a record at the end of its life.</li>
+<li><strong>Active record</strong> — a record consulted frequently in current work.</li>
+<li><strong>Inactive record</strong> — a record needed only occasionally, usually moved to storage.</li>
+<li><strong>Archive</strong> — long-term storage for records of permanent historical value.</li>
+</ul>
+
+<h2>Summary</h2>
+<p>Retention schedules bring discipline to record management by answering two questions: how long must we keep this, and how do we destroy it safely? Different record types have different legal and operational requirements. The life cycle—active, inactive, disposal—applies to paper and electronic records alike. Safe disposal protects confidentiality, reduces clutter and keeps the organisation on the right side of the law.</p>
+
+<h2>Free Resources</h2>
+<ul>
+<li><a href="https://www.zra.org.zm">Zambia Revenue Authority — Record Keeping Guidelines</a></li>
+<li><a href="https://www.libreoffice.org/get-help/">LibreOffice — Free Office Suite Help</a></li>
+<li><a href="https://learn.microsoft.com/en-us/training/">Microsoft Learn — Office Skills</a></li>
+</ul>
+HTML,
+            ],
+            [
+                'title' => '4.2 Confidentiality and the Data Protection Act',
+                'duration_minutes' => 60,
+                'content' => <<<'HTML'
+<h2>What You Will Learn</h2>
+<p>After this lesson you will be able to define confidentiality in a record-management context, identify common breaches in Zambian workplaces, explain the basic rights and duties created by the Data Protection Act, and apply practical safeguards to protect sensitive personal information.</p>
+
+<h2>What Is Confidentiality?</h2>
+<p>Confidentiality means keeping information secret from people who have no right to see it. In record management, this applies especially to personnel files, medical records, financial details, NRC numbers, TPINs, exam results and mobile money PINs. If you would not paste the information on the notice board at Soweto Market, it is confidential.</p>
+
+<h2>Common Confidentiality Breaches</h2>
+<p> breaches happen more often through carelessness than malice:</p>
+<ul>
+<li>Leaving a personnel file open on a desk where visitors can read it.</li>
+<li>Discussing a colleague’s medical condition in the canteen.</li>
+<li>Sending an email to multiple recipients without using the BCC field, exposing everyone’s address.</li>
+<li>Selling or giving away old computers without wiping the hard drive.</li>
+<li>Writing passwords and PINs on sticky notes attached to monitors.</li>
+<li>Leaving patient registers on a clinic counter unattended.</li>
+</ul>
+
+<h2>The Data Protection Act of Zambia</h2>
+<p>Zambia’s Data Protection Act creates legal duties for any person or organisation that collects, uses or stores personal data. The core ideas are:</p>
+<ul>
+<li><strong>Lawful processing</strong> — you must have a valid reason to collect personal data, such as employment, healthcare or legal compliance.</li>
+<li><strong>Consent</strong> — where consent is the basis, it must be informed, specific and freely given.</li>
+<li><strong>Purpose limitation</strong> — you may use data only for the purpose you collected it. A school may not sell parent contact details to a marketing company.</li>
+<li><strong>Data minimisation</strong> — collect only what you actually need. Do not photocopy an entire NRC if you only need the name and number.</li>
+<li><strong>Accuracy</strong> — keep personal data up to date and correct errors promptly.</li>
+<li><strong>Storage limitation</strong> — do not keep personal data longer than necessary.</li>
+<li><strong>Security</strong> — protect data from unauthorised access, loss and damage.</li>
+<li><strong>Individual rights</strong> — people have the right to know what data you hold about them, to correct it, and in some cases to have it deleted.</li>
+</ul>
+
+<h2>Practical Safeguards</h2>
+<p>Every clerk, secretary and manager can apply these safeguards immediately:</p>
+<ol>
+<li><strong>Physical security</strong> — lock filing cabinets; do not leave confidential papers on desks overnight.</li>
+<li><strong>Access control</strong> — only staff who need the data for their job may access it.</li>
+<li><strong>Passwords</strong> — use strong passwords on computers and change them every three months.</li>
+<li><strong>Encryption</strong> — password-protect sensitive Excel and PDF files before emailing them.</li>
+<li><strong>Disposal</strong> — shred confidential papers; wipe hard drives before discarding computers.</li>
+<li><strong>Training</strong> — remind colleagues regularly about confidentiality rules.</li>
+</ol>
+
+<h2>Worked Example: The Exposed Payroll</h2>
+<p>An NGO in Lusaka emails the monthly payslip spreadsheet to all staff using the To field instead of BCC. Every employee can see every other employee’s salary, NRC number and bank account details. One worker photographs the spreadsheet and shares it on WhatsApp. The organisation faces embarrassment, staff resignations and a complaint to the Data Protection Commissioner.</p>
+<p>The breach could have been prevented by using BCC, password-protecting the file, or better still, distributing payslips through a secure portal or individual sealed envelopes.</p>
+
+<h2>Try It Yourself</h2>
+<ol>
+<li>Walk through your workplace and count how many confidential documents are visible on desks, counters or printers.</li>
+<li>Check whether your computer has a screen lock and how long it takes to activate.</li>
+<li>Review your email sent folder. Did you ever use To or CC when BCC would have protected privacy?</li>
+<li>Write three workplace confidentiality rules on a card and keep it by your desk.</li>
+</ol>
+
+<h2>Key Terms</h2>
+<ul>
+<li><strong>Confidentiality</strong> — keeping information secret from unauthorised people.</li>
+<li><strong>Data Protection Act</strong> — Zambian law that governs how personal data is collected, used and stored.</li>
+<li><strong>Personal data</strong> — any information that identifies a living individual, such as name, NRC number or phone number.</li>
+<li><strong>BCC</strong> — blind carbon copy; hides recipient addresses from each other in an email.</li>
+<li><strong>Breach</strong> — an incident where confidential information is exposed to unauthorised people.</li>
+</ul>
+
+<h2>Summary</h2>
+<p>Confidentiality is a professional duty and a legal requirement under Zambia’s Data Protection Act. Most breaches are caused by carelessness, not criminal intent. Simple habits—locking cabinets, using BCC, password-protecting files and shredding old papers—protect individuals and organisations from harm. Every person who handles records is a guardian of confidentiality.</p>
+
+<h2>Free Resources</h2>
+<ul>
+<li><a href="https://www.zicta.zm">ZICTA — Zambia Information and Communications Technology Authority</a></li>
+<li><a href="https://www.cisco.com/c/en/us/training-events/networking-academy.html">Cisco Networking Academy — Skills for All</a></li>
+<li><a href="https://www.khanacademy.org">Khan Academy — General Learning</a></li>
+</ul>
+HTML,
+            ],
+            [
+                'title' => '4.3 Disaster Preparedness and Business Continuity',
+                'duration_minutes' => 60,
+                'content' => <<<'HTML'
+<h2>What You Will Learn</h2>
+<p>By the end of this lesson you will be able to identify the main threats to records in Zambia, create a simple disaster preparedness plan for a small office, and explain how business continuity ensures that essential work can resume quickly after fire, flood or equipment failure.</p>
+
+<h2>Threats to Records in Zambia</h2>
+<p>Zambian organisations face a distinct set of risks. Understanding them is the first step to preparation:</p>
+<ul>
+<li><strong>Fire</strong> — dry season heat, electrical faults and candles during load-shedding can destroy paper records and computers in minutes.</li>
+<li><strong>Flooding</strong> — heavy rains, especially in low-lying areas, can soak paper files and damage electronics.</li>
+<li><strong>Power surges</strong> — when electricity returns after load-shedding, voltage spikes can burn hard drives and motherboards.</li>
+<li><strong>Theft and burglary</strong> — computers, servers and even filing cabinets are targets.</li>
+<li><strong>Pests and mould</strong> — termites eat paper; damp storerooms grow mould that destroys documents.</li>
+<li><strong>Human error</strong> — accidental deletion, spilled liquids and misfiled papers cause more loss than most people admit.</li>
+</ul>
+
+<h2>Disaster Preparedness Plan</h2>
+<p>A preparedness plan does not have to be a hundred-page document. For a small office, one or two pages covering these points is enough:</p>
+<ol>
+<li><strong>Identify vital records</strong> — which ten files or databases would stop the business if lost? Examples: customer list, tax records, employee contracts, active project files.</li>
+<li><strong>Protect originals</strong> — store vital paper records in a fire-resistant cabinet or metal box. Keep electronic originals on two separate devices.</li>
+<li><strong>Backup off-site</strong> — maintain a current copy of vital records in a different location, such as Google Drive or a flash drive kept at a manager’s home.</li>
+<li><strong>Assign responsibilities</strong> — name who will grab the backup drive, who will call the insurer, and who will contact clients if the office is unusable.</li>
+<li><strong>Practice</strong> — test your backup at least twice a year. Can you actually restore a file from the cloud? Does the flash drive still work?</li>
+</ol>
+
+<h2>Business Continuity</h2>
+<p>Business continuity means keeping the organisation running during and after a disaster. For record management, this means:</p>
+<ul>
+<li>Having a phone list of customers and suppliers stored online so you can contact them even if the office computer is stolen.</li>
+<li>Keeping scanned copies of insurance policies and PACRA registration in cloud storage.</li>
+<li>Training two people to do every critical record-keeping task, so illness or resignation does not create a single point of failure.</li>
+<li>Maintaining a small emergency budget for replacing a burned computer or renting temporary office space.</li>
+</ul>
+
+<h2>Worked Example: The Flood in Mongu</h2>
+<p>A community-based organisation in Mongu stores all its project files in a ground-floor storeroom. During the rainy season, floodwater rises two feet and soaks every box. Years of donor reports, beneficiary lists and financial records are destroyed.</p>
+<p>If the organisation had followed basic preparedness, the damage would have been limited:</p>
+<ul>
+<li>Vital records stored in waterproof boxes on shelves, not the floor.</li>
+<li>Scanned copies uploaded to Google Drive every month.</li>
+<li>A simple contact list kept on the director’s phone, not only on the office computer.</li>
+</ul>
+<p>The lesson is that disasters are predictable in general, even if the exact date is not. Preparation costs far less than recovery.</p>
+
+<h2>Try It Yourself</h2>
+<ol>
+<li>List the three most likely disasters for your workplace or home area.</li>
+<li>Identify your five most vital records and write where each is currently stored.</li>
+<li>Create one additional backup for your most vital record today (cloud upload, photocopy, or photo on your phone).</li>
+<li>Write a half-page disaster plan with two named responsibilities and one off-site backup location.</li>
+</ol>
+
+<h2>Key Terms</h2>
+<ul>
+<li><strong>Disaster preparedness</strong> — planning and actions taken before a disaster to reduce damage.</li>
+<li><strong>Business continuity</strong> — maintaining essential operations during and after a disruption.</li>
+<li><strong>Vital records</strong> — records so important that their loss would stop or severely damage the organisation.</li>
+<li><strong>Off-site backup</strong> — a copy of data stored in a different physical location.</li>
+<li><strong>Single point of failure</strong> — one person, device or process whose failure causes total breakdown.</li>
+</ul>
+
+<h2>Summary</h2>
+<p>Fire, flood, power surges and theft are real threats to Zambian records. A simple preparedness plan—identifying vital records, protecting originals, backing up off-site and assigning responsibilities—can mean the difference between a minor disruption and a catastrophic loss. Business continuity is not about perfect prediction; it is about sensible habits that keep the organisation alive no matter what happens.</p>
+
+<h2>Free Resources</h2>
+<ul>
+<li><a href="https://www.redcross.org">Red Cross — Disaster Preparedness Guides</a></li>
+<li><a href="https://support.google.com/drive/answer/2424384">Google Drive Help — Backup and Sync</a></li>
+<li><a href="https://www.khanacademy.org">Khan Academy — General Learning Resources</a></li>
+</ul>
+HTML,
+            ],
+            [
+                'title' => 'Module 4 Quiz: Retention, Confidentiality and Disaster Preparedness',
+                'duration_minutes' => 20,
+                'type' => 'Quiz',
+                'content' => '<p>Complete the quiz to show your understanding of retention schedules, confidentiality, the Data Protection Act and disaster preparedness.</p>',
+            ],
+        ];
+    }
+
+    private function module4Quiz(): array
+    {
+        return [
+            'title' => 'Module 4 Quiz: Retention, Confidentiality and Disaster Preparedness',
+            'description' => 'Test your knowledge of retention schedules, data protection, confidentiality and disaster planning.',
+            'time_limit_minutes' => 20,
+            'questions' => [
+                [
+                    'type' => 'Multiple Choice',
+                    'text' => 'What is the main purpose of a retention schedule?',
+                    'explanation' => 'A retention schedule tells staff how long to keep each record type and how to dispose of it.',
+                    'options' => [
+                        ['text' => 'To increase the number of records kept', 'is_correct' => false],
+                        ['text' => 'To specify how long records are kept and how they are destroyed', 'is_correct' => true],
+                        ['text' => 'To replace the need for filing cabinets', 'is_correct' => false],
+                        ['text' => 'To assign staff salaries', 'is_correct' => false],
+                    ],
+                ],
+                [
+                    'type' => 'Multiple Choice',
+                    'text' => 'Under common Zambian practice, how long should tax returns and supporting documents be kept?',
+                    'explanation' => 'ZRA may audit past returns, so five years is the standard minimum.',
+                    'options' => [
+                        ['text' => '1 year', 'is_correct' => false],
+                        ['text' => '3 years', 'is_correct' => false],
+                        ['text' => '5 years', 'is_correct' => true],
+                        ['text' => 'Permanent', 'is_correct' => false],
+                    ],
+                ],
+                [
+                    'type' => 'Multiple Choice',
+                    'text' => 'Which of the following is a common confidentiality breach?',
+                    'explanation' => 'Leaving confidential papers visible to visitors is a frequent and avoidable breach.',
+                    'options' => [
+                        ['text' => 'Storing files in a locked cabinet', 'is_correct' => false],
+                        ['text' => 'Leaving a personnel file open on a desk', 'is_correct' => true],
+                        ['text' => 'Shredding old payslips', 'is_correct' => false],
+                        ['text' => 'Using BCC in group emails', 'is_correct' => false],
+                    ],
+                ],
+                [
+                    'type' => 'Multiple Choice',
+                    'text' => 'Under the Data Protection Act, what does "purpose limitation" mean?',
+                    'explanation' => 'Purpose limitation means data collected for one reason may not be used for unrelated purposes.',
+                    'options' => [
+                        ['text' => 'Data can be used for any purpose the organisation chooses', 'is_correct' => false],
+                        ['text' => 'Data must be used only for the purpose it was collected', 'is_correct' => true],
+                        ['text' => 'Data must be limited to one page', 'is_correct' => false],
+                        ['text' => 'Data can be sold to marketing companies', 'is_correct' => false],
+                    ],
+                ],
+                [
+                    'type' => 'Multiple Choice',
+                    'text' => 'Which method is recommended for disposing of confidential paper records?',
+                    'explanation' => 'Shredding is the standard safe method for destroying confidential paper.',
+                    'options' => [
+                        ['text' => 'Throwing them in a public bin', 'is_correct' => false],
+                        ['text' => 'Shredding', 'is_correct' => true],
+                        ['text' => 'Leaving them in a storeroom', 'is_correct' => false],
+                        ['text' => 'Recycling without inspection', 'is_correct' => false],
+                    ],
+                ],
+                [
+                    'type' => 'Multiple Choice',
+                    'text' => 'What is a "single point of failure" in business continuity?',
+                    'explanation' => 'A single point of failure is one person or process whose loss causes total breakdown.',
+                    'options' => [
+                        ['text' => 'A backup server in another town', 'is_correct' => false],
+                        ['text' => 'One person who is the only one who knows how to do a critical task', 'is_correct' => true],
+                        ['text' => 'A fire-resistant safe', 'is_correct' => false],
+                        ['text' => 'A team of three trained clerks', 'is_correct' => false],
+                    ],
+                ],
+                [
+                    'type' => 'True/False',
+                    'text' => 'Student academic records should generally be kept permanently.',
+                    'explanation' => 'Academic records are needed for qualification verification throughout a person\'s life.',
+                    'correct_answer' => 'True',
+                ],
+                [
+                    'type' => 'True/False',
+                    'text' => 'Dragging a file to the Recycle Bin permanently erases it from the computer.',
+                    'explanation' => 'The Recycle Bin is easily recovered; secure deletion or encryption is needed for true erasure.',
+                    'correct_answer' => 'False',
+                ],
+                [
+                    'type' => 'Short Answer',
+                    'text' => 'What one word describes keeping information secret from unauthorised people?',
+                    'explanation' => 'Confidentiality is the duty to protect sensitive information from improper disclosure.',
+                    'correct_answer' => 'Confidentiality',
+                ],
+                [
+                    'type' => 'Short Answer',
+                    'text' => 'What is the recommended minimum number of backup copies for important records?',
+                    'explanation' => 'The 3-2-1 rule recommends three copies total, including the original.',
+                    'correct_answer' => 'Three',
+                ],
+            ],
+        ];
+    }
+
+    private function createAssignments(): void
+    {
+        // Assignment 1 — mid-course (after Module 2)
+        Assignment::create([
+            'course_id' => $this->courseId,
+            'lesson_id' => null,
+            'title' => 'Assignment 1: Design a Paper Filing System for a Small Office',
+            'description' => 'Apply the paper filing principles from Module 2 to design a complete filing system for a real or imagined small Zambian business.',
+            'instructions' => <<<'TEXT'
+1. Choose a small Zambian business (for example, a hardware shop in Kalomo, a clinic, or a transport company).
+2. List at least six record types the business creates or receives.
+3. Choose a filing method (alphabetical, numerical, subject, chronological, geographical or hybrid) for each record type and justify your choice in one sentence.
+4. Draw or describe the physical storage layout: cabinet locations, folder labels and colour-coding if used.
+5. Design a one-page file movement register with all necessary columns.
+6. Write three rules for staff who borrow files.
+7. Submit your work as a typed document (Word, PDF or scanned handwritten pages). Include diagrams if possible.
+TEXT,
+            'max_points' => 100,
+            'passing_points' => 50,
+            'due_date' => null,
+            'allow_late_submission' => 1,
+            'late_penalty_percent' => 0.00,
+            'max_file_size_mb' => 10,
+            'allowed_file_types' => 'pdf,doc,docx,jpg,png',
+        ]);
+
+        // Assignment 2 — end-of-course (after Module 4)
+        Assignment::create([
+            'course_id' => $this->courseId,
+            'lesson_id' => null,
+            'title' => 'Assignment 2: Create a Records Retention Schedule',
+            'description' => 'Build a practical retention schedule that covers paper and electronic records, disposal methods and legal compliance for a Zambian organisation.',
+            'instructions' => <<<'TEXT'
+1. Choose a Zambian organisation (school, clinic, NGO, government office or private business).
+2. List at least eight record types the organisation handles.
+3. For each record type, specify:
+   a) Format (paper, electronic or both)
+   b) Minimum retention period with a reason (reference ZRA, labour law or organisational need)
+   c) Stage of life cycle (active, inactive, archive)
+   d) Disposal method at end of life (shred, delete, transfer to national archives, etc.)
+4. Add a one-page confidentiality policy covering access control, passwords and breach reporting.
+5. Add a half-page disaster preparedness plan naming three likely risks and two off-site backup methods.
+6. Submit as a typed document (PDF or Word). Use tables for the retention schedule.
+TEXT,
+            'max_points' => 100,
+            'passing_points' => 50,
+            'due_date' => null,
+            'allow_late_submission' => 1,
+            'late_penalty_percent' => 0.00,
+            'max_file_size_mb' => 10,
+            'allowed_file_types' => 'pdf,doc,docx,jpg,png',
+        ]);
+    }
+
+    private function printSummary(): void
+    {
+        $modules = Module::where('course_id', $this->courseId)->count();
+        $lessons = Lesson::whereHas('module', function ($q) {
+            $q->where('course_id', $this->courseId);
+        })->count();
+        $quizzes = Quiz::where('course_id', $this->courseId)->count();
+        $questions = DB::table('quiz_questions')
+            ->join('quizzes', 'quiz_questions.quiz_id', '=', 'quizzes.id')
+            ->where('quizzes.course_id', $this->courseId)
+            ->count();
+        $assignments = Assignment::where('course_id', $this->courseId)->count();
+
+        $this->command->newLine();
+        $this->command->info('=== Record Management Content Seeder Summary ===');
+        $this->command->info("Modules created:      {$modules}");
+        $this->command->info("Lessons created:      {$lessons}");
+        $this->command->info("Quizzes created:      {$quizzes}");
+        $this->command->info("Questions created:    {$questions}");
+        $this->command->info("Assignments created:  {$assignments}");
+        $this->command->newLine();
+    }
+}
