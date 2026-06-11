@@ -187,6 +187,17 @@ class CyberSecurityContentSeeder extends Seeder
 <p>Cyber security is the practice of protecting computers, phones, networks and data from theft, damage or misuse. It is not only for banks or big companies in Lusaka. A market trader in Soweto Market who accepts Airtel Money, a poultry farmer in Kalomo who keeps customer records on a smartphone, and a civil servant who files ZRA returns online all need cyber security.</p>
 <p>Think of cyber security like locking your shop. You do not leave your cash box open overnight. In the same way, you should not leave your phone, laptop or online accounts open to attackers.</p>
 
+<h2>Worked Example: A Civil Servant’s ZRA Login</h2>
+<p>Mr Mumba works in accounts at a ministry office in Lusaka. Every month he logs into the ZRA e-filing portal using a shared office computer. He saves his password in the browser because it is convenient, and he rarely locks the computer when he steps out for tea.</p>
+<p>One afternoon a visitor uses the unlocked computer to open the browser, sees the saved password, and submits a fake tax return that changes the company’s TPIN contact details. The ministry only discovers the fraud when genuine ZRA notices stop arriving. From that day, Mr Mumba:</p>
+<ul>
+<li>locks the computer every time he leaves the desk,</li>
+<li>removes saved passwords from the browser and uses a password manager,</li>
+<li>turns on two-factor authentication for the ZRA portal, and</li>
+<li>logs out of e-filing at the end of each session.</li>
+</ul>
+<p>This example shows that cyber security is about habits as much as technology.</p>
+
 <h2>Worked Example: A Small Shop Goes Digital</h2>
 <p>Mrs Banda runs a grocery shop in Kalomo. She started selling on WhatsApp and now receives payments through MTN Mobile Money. Her phone stores:</p>
 <ul>
@@ -211,6 +222,8 @@ class CyberSecurityContentSeeder extends Seeder
 <li>For each one, write down what would happen if a stranger gained access to it.</li>
 <li>Decide which of the three CIA goals matters most for each item.</li>
 <li>Put a screen lock on your phone today if you have not already done so.</li>
+<li>Check whether any computer you use saves passwords in the browser and remove any that are not yours.</li>
+<li>Ask a colleague or family member to name one digital asset they would hate to lose.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -220,6 +233,8 @@ class CyberSecurityContentSeeder extends Seeder
 <li><strong>Integrity</strong> — keeping information accurate and unaltered.</li>
 <li><strong>Availability</strong> — ensuring systems and data can be used when needed.</li>
 <li><strong>Threat</strong> — any possible danger to your information or systems.</li>
+<li><strong>Asset</strong> — anything of value that needs protection, such as data, devices or accounts.</li>
+<li><strong>Vulnerability</strong> — a weakness that an attacker could exploit.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -249,6 +264,10 @@ HTML,
 <h2>Network Attacks</h2>
 <p>When you connect to public Wi-Fi at a shopping mall, bus station or college, attackers on the same network can sometimes intercept your traffic. This is called a man-in-the-middle attack. They may capture passwords or redirect you to fake login pages that look like your bank or mobile money app.</p>
 
+<h2>Worked Example: The Infected USB Drive at the Internet Café</h2>
+<p>Chikondi runs a typing and printing bureau in Mongu. A customer leaves a USB drive behind and asks Chikondi to print a CV from it. Without thinking, Chikondi plugs the drive into the shop computer. The drive contains malware that spreads across the network and encrypts all customer files, including exam result templates and wedding invitations.</p>
+<p>The attackers demand ZMW 4,500 in Bitcoin to unlock the files. Chikondi refuses to pay because he has a weekly backup on an external drive stored at home. He wipes the computer, reinstalls Windows, restores the backup and loses only two days of work. From then on, he scans every USB drive with Windows Security before opening files and disables autorun on all shop computers.</p>
+
 <h2>Worked Example: The “Free Data” App</h2>
 <p>John sees a WhatsApp message promising free unlimited internet. He downloads an APK file from the link and installs it. The app asks for permission to access contacts, SMS and phone calls. Within hours:</p>
 <ul>
@@ -262,9 +281,11 @@ HTML,
 <ul>
 <li>Install apps only from the official Google Play Store or Apple App Store.</li>
 <li>Keep your phone and laptop operating systems updated.</li>
-<li>Do not plug unknown USB drives into your computer.</li>
+<li>Do not plug unknown USB drives into your computer; scan any drive you must use.</li>
 <li>Use mobile data or a trusted home Wi-Fi password instead of open public Wi-Fi for banking.</li>
 <li>Back up important files to a separate drive or trusted cloud service.</li>
+<li>Review app permissions regularly and remove access that is not needed.</li>
+<li>Disable USB autorun on Windows computers used for business.</li>
 </ul>
 
 <h2>Try It Yourself</h2>
@@ -272,6 +293,8 @@ HTML,
 <li>Open your Android phone’s Settings &gt; Apps &gt; Permissions. Review which apps can access SMS, contacts and microphone.</li>
 <li>Check whether your Windows PC has Windows Security turned on and is up to date.</li>
 <li>List any apps you installed through a link shared on WhatsApp or Facebook. Consider uninstalling those that are not from an official store.</li>
+<li>Find the backup settings on your phone or computer and run a backup today.</li>
+<li>Ask three friends whether they have ever received a “free data” or “free airtime” link.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -281,6 +304,8 @@ HTML,
 <li><strong>Phishing</strong> — fake messages that trick you into giving away information.</li>
 <li><strong>Man-in-the-middle attack</strong> — intercepting communication between two parties.</li>
 <li><strong>Botnet</strong> — a network of infected devices controlled by an attacker.</li>
+<li><strong>Autorun</strong> — a Windows feature that automatically runs software from removable drives.</li>
+<li><strong>APK</strong> — an Android application package file, often used to install apps outside official stores.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -316,6 +341,10 @@ HTML,
 <p><strong>Opportunistic attacks</strong> are sent to many people at once. A WhatsApp message saying “You have won ZMW 5,000 from Zambezi FM” is opportunistic. The attacker does not know you personally; they are hoping someone will believe it.</p>
 <p><strong>Targeted attacks</strong> focus on one person or organisation. An attacker may research a business owner on Facebook, learn the names of suppliers, then send a fake invoice that looks real. These attacks take more effort but often succeed because they feel personal.</p>
 
+<h2>Worked Example: The Fake School Fees Message</h2>
+<p>A parent in Ndola receives a WhatsApp message that appears to come from her child’s secondary school. The message says fees must be paid into a new Ecobank account by midday because the school’s usual account is “under audit.” The sender uses the head teacher’s name and a similar profile picture.</p>
+<p>The parent becomes suspicious because the school always sends printed notices and never requests fee changes by WhatsApp. She calls the school office on the number printed on her child’s report card. The school confirms the message is fake. The attacker had copied photos and names from the school’s public Facebook page. The defence is to verify unusual payment requests through a trusted, separate channel.</p>
+
 <h2>Worked Example: The Supplier Invoice Trick</h2>
 <p>Mr Tembo runs a building-supplies shop in Lusaka. He receives an email that appears to come from his cement supplier. The email uses the supplier’s real logo and asks him to pay an invoice of ZMW 18,500 into a new account because of a “bank system upgrade.” The email address is one letter different from the real supplier’s address. Mr Tembo nearly pays, but he calls the supplier first and discovers the email is fake.</p>
 <p>This is a targeted business-email compromise attack. The defence is simple: verify payment changes by phone using a number you already have, not one in the suspicious email.</p>
@@ -325,6 +354,8 @@ HTML,
 <li>Search your email or SMS inbox for messages that ask urgently for money, a password or an OTP.</li>
 <li>For each message, ask: did the sender use my name? Does the tone create panic? Can I verify it another way?</li>
 <li>Write down one habit you will start, such as always calling back a known number before sending money.</li>
+<li>Look at your social media profiles and remove any information an attacker could use to pretend they know you.</li>
+<li>Discuss one example of a targeted or opportunistic scam with a family member this week.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -334,6 +365,8 @@ HTML,
 <li><strong>Business-email compromise</strong> — tricking a business into sending money or data through fake emails.</li>
 <li><strong>Social engineering</strong> — manipulating people into breaking security rules.</li>
 <li><strong>OTP</strong> — one-time password, usually a short code sent by SMS or app.</li>
+<li><strong>Impersonation</strong> — pretending to be someone else to gain trust or access.</li>
+<li><strong>Verification</strong> — checking a request through a trusted, separate channel.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -479,6 +512,10 @@ HTML,
 <li>It is reused on many accounts.</li>
 </ul>
 
+<h2>Worked Example: The Market Trader’s Mobile Money PIN</h2>
+<p>Amai runs a vegetable stall at Soweto Market in Lusaka. She uses MTN Mobile Money to receive payments from suppliers and to send money to her sister in Kitwe. Her PIN is 1990, the year she was born. An attacker who steals her phone guesses the PIN in three tries because the birth year is visible on her Facebook profile.</p>
+<p>Amai now uses a six-digit PIN that is not related to her birthday, phone number or NRC. She also turns on app lock so the mobile money app requires a fingerprint. She saves her mobile money and supplier passwords in a password manager so she does not have to reuse simple ones. Her new habits protect the money she needs to restock her stall every morning.</p>
+
 <h2>Worked Example: From Weak to Strong</h2>
 <p>Consider these passwords for a fictional student named Grace, born in 2001:</p>
 <table>
@@ -508,6 +545,8 @@ HTML,
 <li>Check each one against the weaknesses listed above.</li>
 <li>Create one new passphrase of at least 16 characters that you can remember.</li>
 <li>Change the password on one important account today, such as your email or mobile money app.</li>
+<li>Ask a friend what their mobile money PIN is based on and encourage them to change it if it uses a birth year or phone number.</li>
+<li>Make a list of your five most important accounts and plan to give each a unique passphrase.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -517,6 +556,8 @@ HTML,
 <li><strong>Brute-force attack</strong> — trying many passwords quickly until one works.</li>
 <li><strong>Credential stuffing</strong> — using leaked username and password pairs on other websites.</li>
 <li><strong>Reuse</strong> — using the same password on more than one account.</li>
+<li><strong>PIN</strong> — a short numeric code, often used for phones and mobile money.</li>
+<li><strong>App lock</strong> — a feature that protects individual apps with a PIN, pattern or fingerprint.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -553,6 +594,10 @@ HTML,
 <h2>Free and Trusted Password Managers</h2>
 <p>For personal use, Bitwarden and KeePassXC are well-known free options. Bitwarden stores passwords in the cloud so they sync between your phone and laptop. KeePassXC stores them locally in a single file. Both are open source and have been reviewed by security experts. Choose the one that suits your needs and learn how to back up your vault.</p>
 
+<h2>Worked Example: A Poultry Farmer’s Many Accounts</h2>
+<p>Mr Ngoma keeps layers on a small farm outside Kalomo. He sells eggs to shops in town and uses Facebook, WhatsApp Business, Airtel Money, a bank app and a ZRA TPIN portal. He used the same password, “Kalomo2022”, for every account because it was easy to remember.</p>
+<p>When an online shop he once bought feed from is breached, his password is leaked. Attackers try “Kalomo2022” on his email, mobile money and Facebook. They take over his Facebook page and post fake egg orders. After recovering the page, Mr Ngoma installs Bitwarden, creates a strong master passphrase, and gives every account a unique password. He also turns on 2FA wherever it is supported. Six months later he receives another breach alert, but this time only one unused account is affected.</p>
+
 <h2>Worked Example: Setting Up Bitwarden</h2>
 <p>Here is a safe way to start with Bitwarden:</p>
 <ol>
@@ -561,6 +606,7 @@ HTML,
 <li>Store the master passphrase somewhere safe, such as a locked drawer, in case you forget it.</li>
 <li>Save your most important accounts first: email, mobile money and banking.</li>
 <li>Turn on two-factor authentication for Bitwarden itself.</li>
+<li>Export an encrypted backup of your vault once a month and store it somewhere safe.</li>
 </ol>
 
 <h2>Try It Yourself</h2>
@@ -569,6 +615,8 @@ HTML,
 <li>Create a master passphrase of at least 16 characters.</li>
 <li>Save three of your most important accounts into the password manager.</li>
 <li>Use the password generator to create a new strong password for one of those accounts and update the account.</li>
+<li>Check whether any of your saved passwords have appeared in known data breaches.</li>
+<li>Write down the master passphrase backup location and tell one trusted person where it is kept.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -578,6 +626,8 @@ HTML,
 <li><strong>Encryption</strong> — scrambling data so it can only be read with the right key.</li>
 <li><strong>Data breach</strong> — an incident where private information is stolen from an organisation.</li>
 <li><strong>Vault</strong> — the encrypted storage area inside a password manager.</li>
+<li><strong>Sync</strong> — keeping the same data up to date across multiple devices.</li>
+<li><strong>Backup code</strong> — a code used to recover access if you lose your master password or device.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -599,7 +649,7 @@ HTML,
 <p>By the end of this lesson you will be able to explain what two-factor authentication is, compare SMS codes with authenticator apps, and enable 2FA on your most important accounts such as email and mobile money.</p>
 
 <h2>What Is Two-Factor Authentication?</h2>
-<p>Two-factor authentication, or 2FA, means proving your identity in two different ways. The first factor is something you know, usually your password. The second factor is something you have, such as your phone. Even if an attacker steals your password, they still need your phone to get in.</p>
+<p>Two-factor authentication, or 2FA, means proving your identity in two different ways. The first factor is something you know, usually your password. The second factor is something you have, such as your phone. Even if an attacker steals your password, they still need your phone to get in. This extra step is especially important for Zambians who rely on mobile money and email to manage daily life.</p>
 
 <h2>Common Second Factors</h2>
 <ul>
@@ -608,6 +658,10 @@ HTML,
 <li><strong>Hardware key</strong> — a small USB device such as YubiKey. Very secure but less common in Zambia.</li>
 <li><strong>Biometric</strong> — your fingerprint or face scan. Convenient, but best used together with another factor.</li>
 </ul>
+
+<h2>Worked Example: A Student’s Stolen Password</h2>
+<p>Naomi is a first-year student at a college in Livingstone. She uses the same password for her college email and a gaming forum. When the forum is hacked, her password is published online. An attacker tries it on her Gmail account and gets the password right.</p>
+<p>Fortunately, Naomi turned on 2FA using Google Authenticator six months earlier. The attacker sees a prompt asking for a six-digit code. Because Naomi’s phone is in her bag, the attacker cannot continue. She later receives a security alert, changes her password, and updates every other account that reused the old one. The 2FA layer turned a likely disaster into a close call.</p>
 
 <h2>Worked Example: Protecting an Email Account</h2>
 <p>Imagine Grace’s email password is leaked in a data breach. Without 2FA, an attacker logs in immediately and resets her Facebook and mobile money passwords. With 2FA turned on, the attacker sees a prompt asking for a six-digit code from her authenticator app. Because the attacker does not have her phone, the account stays safe.</p>
@@ -628,6 +682,7 @@ HTML,
 <li>Scan the QR code with Google Authenticator, Authy or a similar app.</li>
 <li>Save the backup codes somewhere safe, not on the same phone.</li>
 <li>Repeat the process for your mobile money or banking app if it supports 2FA.</li>
+<li>Review your email account’s recent activity and sign out any devices you do not recognise.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -637,6 +692,8 @@ HTML,
 <li><strong>Authenticator app</strong> — an app that generates time-based login codes.</li>
 <li><strong>SIM swap</strong> — an attack where someone takes over your mobile number.</li>
 <li><strong>Backup code</strong> — a one-time code used if you lose your second factor.</li>
+<li><strong>Time-based code</strong> — a login code that changes every 30 seconds in an authenticator app.</li>
+<li><strong>Security alert</strong> — a notification that someone may have tried to access your account.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -790,8 +847,14 @@ HTML,
 <li>On a computer, hover your mouse over the link without clicking. The real address appears at the bottom of the browser.</li>
 <li>On a phone, press and hold the link to see a preview of the address.</li>
 <li>Look for misspellings, extra words or strange domain endings such as <code>.xyz</code>, <code>.tk</code> or <code>.top</code>.</li>
+<li>Compare the link with the official domain you know, such as <code>zra.org.zm</code> or <code>mtn.zm</code>.</li>
 <li>When in doubt, open the website by typing the official address manually.</li>
+<li>Report suspicious messages to your provider or forward them to a known fraud-reporting address.</li>
 </ol>
+
+<h2>Worked Example: The Compromised Friend’s WhatsApp</h2>
+<p>James receives a WhatsApp message from his cousin: “Bro, please help me buy these ZESCO tokens quickly, my power is about to go off. Send ZMW 200 to this MoMo number and I will pay you back tomorrow.” The message feels urgent and the number is new.</p>
+<p>James calls his cousin on the old family number. The cousin says his WhatsApp was hacked an hour ago and several relatives received the same message. James reports the number to MTN and warns other family members. The key defence was verifying through a different channel instead of replying to the compromised account.</p>
 
 <h2>Try It Yourself</h2>
 <ol>
@@ -799,6 +862,8 @@ HTML,
 <li>Check the sender’s address carefully. Is it exactly the company’s real domain?</li>
 <li>Hover over or long-press any link to see the real destination.</li>
 <li>Delete any message that looks suspicious. Do not reply.</li>
+<li>Forward one phishing example to a friend and explain why it is suspicious.</li>
+<li>Save your bank and mobile money provider’s official customer-care numbers in your phone.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -808,6 +873,8 @@ HTML,
 <li><strong>Attachment</strong> — a file sent with a message, such as a PDF or invoice.</li>
 <li><strong>Domain</strong> — the address of a website, such as zra.org.zm.</li>
 <li><strong>OTP</strong> — one-time password, a short code used for login or payment confirmation.</li>
+<li><strong>Compromised account</strong> — an account that an attacker has taken control of.</li>
+<li><strong>Verification channel</strong> — a separate, trusted way to confirm a request.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -843,6 +910,10 @@ HTML,
 <h2>Worked Example: The “Wrong Send” Trick</h2>
 <p>Mr Zulu receives an SMS that appears to show a ZMW 500 deposit into his MTN MoMo wallet. A minute later a caller says, “I sent money to the wrong number, please send it back.” Mr Zulu checks his actual MoMo balance and sees no deposit. He tells the caller to contact MTN directly and blocks the number. The SMS was fake; the caller hoped Mr Zulu would send real money before checking.</p>
 
+<h2>Worked Example: The Fake Airtel Money Promotion</h2>
+<p>Mercy sees a Facebook post claiming Airtel Money is giving ZMW 1,000 to “the first 50 customers who register today.” The post includes a link to a website that looks like Airtel Zambia’s official page. It asks for her phone number, PIN and OTP to “activate the reward.”</p>
+<p>Mercy stops. She knows Airtel never asks for a PIN or OTP over the internet. She opens the My Airtel app from her home screen instead and sees no promotion. She reports the fake page to Airtel’s social media team and warns her church WhatsApp group. The scammer’s website is taken down a few days later. The defence is simple: never enter your PIN or OTP on a website or form that arrives through a link.</p>
+
 <h2>Golden Rules for Mobile Money Safety</h2>
 <ol>
 <li>Never share your PIN or OTP with anyone, including people who say they work for MTN or Airtel.</li>
@@ -850,6 +921,8 @@ HTML,
 <li>If someone sends money by mistake, tell them to contact their mobile money provider, not you.</li>
 <li>Do not pay for goods advertised on social media until you verify the seller is real.</li>
 <li>Use a strong PIN that is not your birth year or phone number.</li>
+<li>Enable app lock or biometric protection on your mobile money app if it is available.</li>
+<li>Keep the official customer-care numbers saved in your phone for quick reporting.</li>
 </ol>
 
 <h2>Try It Yourself</h2>
@@ -858,6 +931,8 @@ HTML,
 <li>Check your transaction history for any payment you do not recognise.</li>
 <li>Change your mobile money PIN to a number that is not related to your birth date or phone number.</li>
 <li>Delete any SMS or WhatsApp message asking for your PIN or OTP.</li>
+<li>Review your app permissions and remove access to SMS from apps that do not need it.</li>
+<li>Ask a family member to recite the three most important mobile money safety rules.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -867,6 +942,8 @@ HTML,
 <li><strong>PIN</strong> — personal identification number used to access your mobile wallet.</li>
 <li><strong>USSD</strong> — a code such as *303# that runs services on any phone.</li>
 <li><strong>Reverse transaction</strong> — sending money back after a mistaken or fraudulent transfer.</li>
+<li><strong>Customer care</strong> — the official support channel of a mobile money or telecom provider.</li>
+<li><strong>Biometric lock</strong> — using a fingerprint or face scan to open an app.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -888,7 +965,7 @@ HTML,
 <p>By the end of this lesson you will be able to describe common social-engineering tactics, recognise manipulation techniques such as authority, urgency and familiarity, and apply a simple verification habit to resist pressure.</p>
 
 <h2>What Is Social Engineering?</h2>
-<p>Social engineering is the art of manipulating people into breaking security rules. Instead of hacking computers, attackers hack human trust. They may pretend to be your boss, a friend, a bank official or a technician. Their goal is to make you reveal information, send money or install harmful software.</p>
+<p>Social engineering is the art of manipulating people into breaking security rules. Instead of hacking computers, attackers hack human trust. They may pretend to be your boss, a friend, a bank official or a technician. Their goal is to make you reveal information, send money or install harmful software. These attacks are common in Zambia because mobile money and WhatsApp make it easy for criminals to reach many people quickly.</p>
 
 <h2>Six Common Manipulation Tricks</h2>
 <ul>
@@ -902,6 +979,10 @@ HTML,
 
 <h2>Worked Example: The Fake Technician</h2>
 <p>A small college in Livingstone receives a call from a person claiming to be from the internet provider. The caller says the college router has a problem and asks the receptionist to install “remote support software.” The receptionist becomes suspicious and says, “I will call our usual technician first.” The caller becomes angry and insists. The receptionist hangs up and reports the call. It was a social-engineering attempt to gain remote access to the college network.</p>
+
+<h2>Worked Example: The PTA WhatsApp Group Urgency</h2>
+<p>Mrs Chileshe is the treasurer of a PTA WhatsApp group for a school in Kitwe. Late one evening she receives a message from the “chairperson” asking her to send ZMW 3,000 to a new MoMo number urgently so the school can pay a transport deposit for a trip the next day. The profile picture matches the chairperson and the tone sounds exactly like her.</p>
+<p>Mrs Chileshe remembers the STOP method. She slows down, thinks that the chairperson would never ask for money at night, and calls the chairperson on the number saved in her phone. The chairperson says her WhatsApp was cloned. Mrs Chileshe warns the group, deletes the message and reports the number. The manipulation tricks were authority, urgency and familiarity.</p>
 
 <h2>The STOP Method</h2>
 <p>Use this four-step pause when someone asks for sensitive information or urgent action:</p>
@@ -918,6 +999,8 @@ HTML,
 <li>Which manipulation trick did it use: authority, urgency, fear, familiarity, reciprocity or curiosity?</li>
 <li>Write down how you could verify the request using a known phone number or in-person contact.</li>
 <li>Discuss one example with a friend or family member to help them recognise the tactic.</li>
+<li>Practise saying, “I will call you back on the number I have,” the next time someone asks for money or data.</li>
+<li>Create a short note in your phone with the STOP steps for quick reference.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -927,6 +1010,8 @@ HTML,
 <li><strong>Baiting</strong> — offering something attractive to make you click or download.</li>
 <li><strong>Tailgating</strong> — following someone into a secure area without permission.</li>
 <li><strong>Verification</strong> — checking a request through a trusted, separate channel.</li>
+<li><strong>Cloned account</strong> — a fake profile that copies a real person’s identity.</li>
+<li><strong>STOP method</strong> — a four-step pause: Slow down, Think, Verify, Protect.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -1061,7 +1146,7 @@ HTML,
 <p>By the end of this lesson you will be able to secure a smartphone using screen locks, biometrics, app permissions, find-my-device features and safe-update habits.</p>
 
 <h2>Why Phone Security Matters</h2>
-<p>For many Zambians, the smartphone is the main computer. It holds mobile money apps, WhatsApp business chats, family photos, NRC photos, ZRA login details and more. If your phone is lost, stolen or infected, the damage can be immediate and serious. Good phone security is therefore one of the most valuable skills in this course.</p>
+<p>For many Zambians, the smartphone is the main computer. It holds mobile money apps, WhatsApp business chats, family photos, NRC photos, ZRA login details and more. If your phone is lost, stolen or infected, the damage can be immediate and serious. Good phone security is therefore one of the most valuable skills in this course. It is also important when charging at public places or borrowing cables, because infected charging stations can sometimes transfer malware to your device. A few minutes spent checking settings today can prevent weeks of recovery later.</p>
 
 <h2>Essential Phone Security Steps</h2>
 <ol>
@@ -1071,7 +1156,20 @@ HTML,
 <li><strong>Review app permissions</strong> — a torch app should not need access to contacts or SMS.</li>
 <li><strong>Enable Find My Device or Find My iPhone</strong> — this lets you locate, lock or erase a lost phone.</li>
 <li><strong>Avoid “rooting” or “jailbreaking”</strong> — these remove built-in security protections.</li>
+<li><strong>Turn on automatic app updates</strong> — this ensures security patches are installed quickly.</li>
+<li><strong>Back up photos and contacts regularly</strong> — use cloud storage or an SD card so you do not lose memories and numbers if the phone is damaged.</li>
 </ol>
+
+<h2>Worked Example: The Lost Phone at the Bus Station</h2>
+<p>Patricia boards a minibus in Lusaka and realises her Android phone is missing when she reaches her stop. Because she prepared in advance, she can use a friend’s phone to:</p>
+<ol>
+<li>call her number in case it fell under a seat,</li>
+<li>log into Find My Device from a browser,</li>
+<li>lock the phone remotely with a message showing her husband’s number,</li>
+<li>check the last known location, and</li>
+<li>erase the device when it becomes clear it will not be returned.</li>
+</ol>
+<p>Patricia loses the handset but not her mobile money, WhatsApp Business contacts or family photos because she had cloud backups and a strong screen lock.</p>
 
 <h2>Worked Example: Permission Check</h2>
 <p>A farmer installs a “weather forecast” app. During installation it asks for permission to access contacts, microphone, camera and SMS. A weather app only needs location and internet. The farmer denies the unnecessary permissions. Two weeks later he reads online that the same app was stealing contacts. Because he denied the permissions, his contacts stayed safe.</p>
@@ -1082,6 +1180,8 @@ HTML,
 <li>Confirm that a screen lock is active and that Find My Device/Find My iPhone is turned on.</li>
 <li>Go to Apps &gt; Permissions and remove unnecessary permissions from apps that do not need them.</li>
 <li>Check for pending system updates and install them if possible.</li>
+<li>Turn on automatic backups for your photos and contacts.</li>
+<li>Write down the web address for Find My Device or Find My iPhone and practise logging in from a computer.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -1091,6 +1191,8 @@ HTML,
 <li><strong>Permissions</strong> — what an app is allowed to access on your device.</li>
 <li><strong>Find My Device</strong> — Google’s service to locate, ring or erase a lost Android phone.</li>
 <li><strong>Rooting / jailbreaking</strong> — removing manufacturer security restrictions.</li>
+<li><strong>Remote wipe</strong> — erasing a lost device from another location.</li>
+<li><strong>Biometric lock</strong> — unlocking with a fingerprint or face scan.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -1126,7 +1228,20 @@ HTML,
 <li>Be careful of “free” versions of paid software—these often contain malware.</li>
 <li>During installation, choose “Custom” or “Advanced” and decline extra toolbars or antivirus bundles.</li>
 <li>Uninstall programs you no longer use.</li>
+<li>Keep commonly attacked programs such as browsers, PDF readers and office suites updated.</li>
 </ul>
+
+<h2>Worked Example: The Shared Office Computer</h2>
+<p>A small NGO in Ndola has one Windows computer that three staff members share. Everyone logs in with the same administrator account and the password is written on a sticky note on the monitor. One staff member installs a “free PDF converter” from a pop-up advert. The installer adds a toolbar, changes the browser homepage, and quietly installs spyware that records keystrokes.</p>
+<p>The IT volunteer cleans the computer and then improves security by:</p>
+<ol>
+<li>creating a standard user account for daily work and a separate admin account for installations,</li>
+<li>removing the sticky note and storing the admin password in a password manager,</li>
+<li>running a full scan with Windows Security,</li>
+<li>uninstalling the fake PDF converter and toolbar,</li>
+<li>educating staff to download only from official sites, and</li>
+<li>setting Windows Update to install security patches automatically.</li>
+</ol>
 
 <h2>Worked Example: Cleaning Up a PC</h2>
 <p>A college lab computer had become slow and was showing pop-up adverts. The technician:</p>
@@ -1145,6 +1260,8 @@ HTML,
 <li>Open Windows Security and confirm that Virus &amp; threat protection is active.</li>
 <li>Review installed programs in Settings &gt; Apps and remove anything you do not recognise.</li>
 <li>Check the Windows Firewall is turned on for all network types.</li>
+<li>Create a standard user account for daily use if you currently use an administrator account.</li>
+<li>Run a full scan with Windows Security and review the results.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -1154,6 +1271,8 @@ HTML,
 <li><strong>Virus definitions</strong> — the database of known malware used by antivirus software.</li>
 <li><strong>Malware bundle</strong> — unwanted software installed alongside a requested program.</li>
 <li><strong>Admin account</strong> — an account with full control over the computer.</li>
+<li><strong>Standard user account</strong> — an account with limited permissions, safer for daily use.</li>
+<li><strong>Keystroke logger</strong> — malware that records everything you type.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -1175,7 +1294,7 @@ HTML,
 <p>By the end of this lesson you will be able to secure a small-office or home Wi-Fi network, explain why router admin passwords matter, and set up a separate guest network where appropriate.</p>
 
 <h2>The Router Is the Front Door</h2>
-<p>Your router connects your computers, phones and printers to the internet. If the router is poorly secured, attackers can enter your network, intercept traffic, or use your internet connection for illegal activity. Securing the router is one of the most important steps for any small office.</p>
+<p>Your router connects your computers, phones and printers to the internet. If the router is poorly secured, attackers can enter your network, intercept traffic, or use your internet connection for illegal activity. Securing the router is one of the most important steps for any small office. In Zambia, where load-shedding sometimes resets devices, it is also wise to check router settings after a long power outage.</p>
 
 <h2>Router Security Checklist</h2>
 <ul>
@@ -1185,6 +1304,7 @@ HTML,
 <li><strong>Set a strong Wi-Fi password</strong> — at least 12 characters.</li>
 <li><strong>Change the default network name (SSID)</strong> — avoid revealing the router brand.</li>
 <li><strong>Disable remote management</strong> — unless you have a specific need, do not allow configuration from the internet.</li>
+<li><strong>Turn off WPS</strong> — the Wi-Fi Protected Setup button can be exploited by attackers close to the building.</li>
 </ul>
 
 <h2>Guest Networks</h2>
@@ -1193,6 +1313,18 @@ HTML,
 <h2>Worked Example: The Open Shop Wi-Fi</h2>
 <p>Mr Lungu runs a phone-accessory shop in Chipata. He left his Wi-Fi open so customers could use it. One day his printer started printing strange documents and his point-of-sale tablet became slow. An attacker had connected to the open Wi-Fi and reached his business devices. Mr Lungu changed the router admin password, enabled WPA2, set a strong Wi-Fi password and created a separate guest network. The problems stopped.</p>
 
+<h2>Worked Example: Setting Up a Rural Training Centre Network</h2>
+<p>A community training centre in Mpika offers free computer lessons to youth. The centre has one router, three office computers, a printer and many student phones connecting every day. The coordinator takes these steps:</p>
+<ol>
+<li>logs into the router using the address on the label and changes the default admin password to a long passphrase,</li>
+<li>checks for a firmware update and installs it,</li>
+<li>sets the main Wi-Fi to WPA3 with a 14-character password known only to staff,</li>
+<li>creates a guest network called “CTC-Students” with a simpler password that changes every term,</li>
+<li>disables remote management and WPS, and</li>
+<li>writes the new settings in a notebook stored in the locked office.</li>
+</ol>
+<p>Students can access the internet for research, but they cannot reach the office printer or finance computer. At the end of each term the coordinator reviews the list of connected devices and changes the guest password, keeping the network clean and secure.</p>
+
 <h2>Try It Yourself</h2>
 <ol>
 <li>Find your router and locate the label showing the default admin address and password.</li>
@@ -1200,6 +1332,7 @@ HTML,
 <li>Check that the Wi-Fi security is set to WPA2 or WPA3.</li>
 <li>If your router supports it, enable a guest network for visitors.</li>
 <li>Look for a firmware update option and install any available update.</li>
+<li>Disable WPS and remote management if you do not need them.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -1209,6 +1342,8 @@ HTML,
 <li><strong>WPA2 / WPA3</strong> — encryption standards that protect Wi-Fi traffic.</li>
 <li><strong>SSID</strong> — the name of your Wi-Fi network.</li>
 <li><strong>Guest network</strong> — a separate Wi-Fi network for visitors.</li>
+<li><strong>Remote management</strong> — the ability to configure a router from outside the local network.</li>
+<li><strong>WPS</strong> — a button-based connection feature that can weaken Wi-Fi security.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -1363,8 +1498,12 @@ HTML,
 <li>Every Friday she copies important folders to an external hard drive stored at home.</li>
 <li>Every day, key documents sync automatically to a free Google Drive account.</li>
 <li>Once a month she checks that she can open files from both backups.</li>
+<li>She keeps the external drive disconnected from the laptop except during backups to protect it from ransomware.</li>
 </ol>
 <p>When ransomware locks the laptop one Monday, she wipes it, reinstalls Windows and restores her files from the external drive. She loses only the work from Friday evening to Monday morning.</p>
+
+<h2>Worked Example: A Farmer’s Phone Backup</h2>
+<p>Mrs Lungu, a poultry farmer in Kalomo, stores customer orders, delivery photos and supplier contacts on her Android phone. One rainy season her phone falls into water and stops working. Because she turned on Google Photos backup and contact sync, she buys a new phone, signs in with her Google account, and recovers all her photos and numbers within an hour. She loses only a few SMS messages. The lesson is that automatic cloud backup can save a small business from a single accident.</p>
 
 <h2>Try It Yourself</h2>
 <ol>
@@ -1372,6 +1511,8 @@ HTML,
 <li>Copy them to a second location today: a USB drive, an SD card or a cloud storage account.</li>
 <li>Set a weekly reminder to repeat the backup.</li>
 <li>Test restoring one file to make sure the backup works.</li>
+<li>Check whether your phone automatically backs up photos and contacts to the cloud.</li>
+<li>Store one backup copy in a different physical location from your main device.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -1381,6 +1522,8 @@ HTML,
 <li><strong>Cloud storage</strong> — storing files on a provider’s servers over the internet.</li>
 <li><strong>External drive</strong> — a portable storage device connected by USB.</li>
 <li><strong>Off-site backup</strong> — a backup stored in a different physical location.</li>
+<li><strong>Sync</strong> — automatically keeping files the same across devices.</li>
+<li><strong>Restore</strong> — copying backup data back to its original location.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -1407,7 +1550,7 @@ HTML,
 <h2>Key Areas Covered</h2>
 <p>The Act addresses many issues, including:</p>
 <ul>
-<li><strong>Unauthorized access</strong> — hacking into someone’s computer, phone or account without permission.</li>
+<li><strong>Unauthorised access</strong> — hacking into someone’s computer, phone or account without permission.</li>
 <li><strong>Computer misuse</strong> — damaging, deleting or altering data belonging to others.</li>
 <li><strong>Cyber fraud</strong> — online scams, phishing and mobile money fraud.</li>
 <li><strong>Identity-related crimes</strong> — stealing or using someone’s NRC number, TPIN or personal details.</li>
@@ -1427,12 +1570,26 @@ HTML,
 <h2>Worked Example: The Unprotected PTA List</h2>
 <p>A PTA WhatsApp group admin saved a spreadsheet containing parents’ names, phone numbers and children’s names on a shared college computer without a password. A student found the file and shared it as a prank. The parents received unwanted calls. The admin now stores the file on a password-protected account and shares it only with the PTA chairperson and treasurer.</p>
 
+<h2>Worked Example: A Shop’s Customer Database</h2>
+<p>Mr Chanda owns an electronics shop in Livingstone. He collects customer names, phone numbers and NRC copies for warranty records. He stores them on a laptop in the back office that has no password and is shared by all staff. One day a former employee copies the list and starts his own business, calling the same customers with lower prices.</p>
+<p>Mr Chanda responds by:</p>
+<ol>
+<li>password-protecting the laptop and the customer spreadsheet,</li>
+<li>limiting access to the shop manager and himself,</li>
+<li>collecting only name and phone number for most sales,</li>
+<li>deleting NRC copies once the warranty period ends, and</li>
+<li>training staff that customer data is confidential.</li>
+</ol>
+<p>These steps reduce the risk of identity-related crimes and build customer trust.</p>
+
 <h2>Try It Yourself</h2>
 <ol>
 <li>Look at any lists, forms or spreadsheets where you store other people’s information.</li>
 <li>Ask: do I still need all this data? Who can access it? Is it protected by a password?</li>
 <li>Delete data you no longer need.</li>
 <li>Add a password to any spreadsheet or document containing personal details.</li>
+<li>Write a short privacy notice for your group or business explaining what data you collect and why.</li>
+<li>Check whether you have old photos or copies of NRCs that should be deleted.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -1440,8 +1597,10 @@ HTML,
 <li><strong>Cyber Security and Cyber Crimes Act</strong> — Zambian law covering online security and criminal behaviour.</li>
 <li><strong>Personal data</strong> — information that identifies a person, such as name, NRC number or phone number.</li>
 <li><strong>Consent</strong> — permission given by a person for their data to be used.</li>
-<li><strong>Unauthorized access</strong> — entering a system or account without permission.</li>
+<li><strong>Unauthorised access</strong> — entering a system or account without permission.</li>
 <li><strong>Data minimisation</strong> — collecting only the data you actually need.</li>
+<li><strong>Identity-related crime</strong> — using someone’s personal details without permission to commit fraud or harm.</li>
+<li><strong>Retention</strong> — how long data is kept before it is deleted.</li>
 </ul>
 
 <h2>Summary</h2>
@@ -1474,6 +1633,7 @@ HTML,
 <li><strong>Scan for malware</strong> — run a full antivirus scan on affected computers.</li>
 <li><strong>Restore from backup</strong> — if files are lost or encrypted, use a clean backup.</li>
 <li><strong>Report</strong> — contact your bank, mobile money provider and the police if money was stolen.</li>
+<li><strong>Warn contacts</strong> — tell friends, customers or colleagues that your account may send suspicious messages.</li>
 </ol>
 
 <h2>Reporting Cyber Crime in Zambia</h2>
@@ -1495,6 +1655,17 @@ HTML,
 <li>contact details of anyone involved.</li>
 </ul>
 
+<h2>Worked Example: The Stolen Mobile Money Phone</h2>
+<p>Mrs Mutale’s phone is snatched while she is shopping in Lusaka. Within ten minutes she:</p>
+<ol>
+<li>borrows a friend’s phone to call MTN customer care and report the SIM stolen,</li>
+<li>uses a computer to change her email and mobile money passwords,</li>
+<li>checks her bank app for unauthorised transactions,</li>
+<li>asks her son to sign her out of WhatsApp Web so the thief cannot message her contacts, and</li>
+<li>visits an MTN shop the next day to get a replacement SIM.</li>
+</ol>
+<p>Because she acted quickly, the thief cannot use her mobile money and her contacts are warned before any scam messages are sent.</p>
+
 <h2>Worked Example: The Hacked Email Account</h2>
 <p>Mr Banda notices emails in his Sent folder that he did not write. He immediately:</p>
 <ol>
@@ -1512,6 +1683,8 @@ HTML,
 <li>Review the list of devices and locations. If you see anything unfamiliar, sign out and change your password.</li>
 <li>Write down the phone number for your mobile money provider’s customer care.</li>
 <li>Save ZICTA’s contact details on your phone.</li>
+<li>Practise taking a screenshot on your phone so you can capture evidence quickly.</li>
+<li>Create a simple incident checklist in your notes app for future reference.</li>
 </ol>
 
 <h2>Key Terms</h2>
@@ -1521,6 +1694,8 @@ HTML,
 <li><strong>Isolation</strong> — disconnecting a device from networks to stop further damage.</li>
 <li><strong>Evidence</strong> — information such as screenshots or messages that supports a report.</li>
 <li><strong>Recovery</strong> — restoring normal operations after an incident.</li>
+<li><strong>Customer care</strong> — the official support channel for your bank or mobile money provider.</li>
+<li><strong>Transaction ID</strong> — a unique reference number for a payment or transfer.</li>
 </ul>
 
 <h2>Summary</h2>
