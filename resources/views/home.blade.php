@@ -20,10 +20,10 @@
 <!-- Hero Section -->
 <section class="od-hero relative overflow-hidden" style="color: var(--od-surface); background: var(--od-fg);">
   <!-- Desktop: hard split, panel left / photo right -->
-  <div class="hidden lg:flex relative w-full" style="min-height: 620px;">
+  <div class="hidden lg:flex relative w-full items-stretch">
     <!-- Left panel -->
     <div class="flex items-center" style="width: 47%; background: #0E1A2B;">
-      <div class="px-8 xl:px-14 py-12 max-w-xl">
+      <div class="px-8 xl:px-14 py-14 xl:py-16 max-w-xl">
         <div class="mb-6 animate-fade-in">
           <span class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold shadow-lg border-2" style="background: var(--od-accent); color: var(--od-fg); border-color: color-mix(in oklch, var(--od-accent), black 10%);">
             <i class="fas fa-certificate mr-2"></i>
@@ -63,8 +63,8 @@
       </div>
     </div>
 
-    <!-- Right photo -->
-    <div style="width: 53%;">
+    <!-- Right photo (absolute so the text panel defines the hero height) -->
+    <div class="absolute top-0 right-0 h-full" style="width: 53%;">
       <img
         src="{{ asset('assets/images/hero/campus-students.jpg') }}"
         alt="Edutrack Campus"
