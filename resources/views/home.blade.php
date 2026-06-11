@@ -34,9 +34,8 @@
           Edutrack Computer Training College
         </h1>
         <p class="text-2xl xl:text-3xl font-medium mt-2 mb-4" style="color: #FFFFFF;">Transform Your Future</p>
-        <div class="mb-6" style="width: 64px; height: 2px; background: color-mix(in oklch, var(--od-surface), transparent 55%);"></div>
-        <p class="text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl leading-relaxed" style="color: color-mix(in oklch, var(--od-surface), transparent 12%); text-shadow: 0 1px 8px rgba(0,0,0,.35);">
-          Practical computer training in Kalomo. No theory overload. Just real skills — web design, digital marketing, graphic design, and office packages — taught by instructors who've done the work.
+        <p class="text-lg xl:text-xl mt-6 mb-10 max-w-md leading-relaxed" style="color: color-mix(in oklch, var(--od-surface), transparent 22%);">
+          Hands-on computer training in Kalomo. Learn web design, digital marketing, graphic design, and office packages in practical classes led by instructors with real industry experience.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-start items-center max-w-2xl pb-6">
           @auth
@@ -102,8 +101,8 @@
         Edutrack Computer Training College
       </h1>
       <p class="text-xl font-medium mt-1 mb-4" style="color: #FFFFFF;">Transform Your Future</p>
-      <p class="text-base md:text-xl lg:text-2xl mb-6 max-w-3xl mx-auto leading-relaxed" style="color: color-mix(in oklch, var(--od-surface), transparent 12%);">
-        Practical computer training in Kalomo. No theory overload. Just real skills — web design, digital marketing, graphic design, and office packages — taught by instructors who've done the work.
+      <p class="text-base md:text-lg mt-2 mb-6 max-w-md mx-auto leading-relaxed" style="color: color-mix(in oklch, var(--od-surface), transparent 22%);">
+        Hands-on computer training in Kalomo. Learn web design, digital marketing, graphic design, and office packages in practical classes led by instructors with real industry experience.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto pb-4">
         @auth
