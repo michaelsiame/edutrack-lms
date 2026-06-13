@@ -97,7 +97,12 @@
  <x-dashboard-nav-item route="admin.promotions.index" icon="fa-tags" label="Promotions" />
  @endif
  <x-dashboard-nav-item route="admin.certificates.index" icon="fa-certificate" label="Certificates" />
- <x-dashboard-nav-item route="admin.reports" icon="fa-chart-bar" label="Reports" />
+ {{-- Teaching tools — admins can grade / record marks / mark complete on any course --}}
+                <p class="px-3 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Teaching</p>
+                <x-dashboard-nav-item route="instructor.assignments.index" icon="fa-tasks" label="Grade Assignments" />
+                <x-dashboard-nav-item route="instructor.quizzes.index" icon="fa-question-circle" label="Quizzes" />
+                <x-dashboard-nav-item route="instructor.progress" icon="fa-user-graduate" label="Class Progress" />
+                <x-dashboard-nav-item route="admin.reports" icon="fa-chart-bar" label="Reports" />
  <x-dashboard-nav-item route="admin.settings" icon="fa-cog" label="Settings" />
  @elseif($user->isInstructor())
  <x-dashboard-nav-item route="instructor.dashboard" icon="fa-tachometer-alt" label="Dashboard" />
@@ -130,6 +135,7 @@
  @endif
  <x-dashboard-nav-item route="student.progress" icon="fa-chart-pie" label="Progress" />
  <x-dashboard-nav-item route="student.certificates" icon="fa-certificate" label="Certificates" />
+                <x-dashboard-nav-item route="transcript.preview" icon="fa-file-alt" label="Transcript" />
  <x-dashboard-nav-item route="student.payments" icon="fa-credit-card" label="Payments" />
  @if(Route::has('student.achievements.index'))
  <x-dashboard-nav-item route="student.achievements.index" icon="fa-medal" label="Achievements" />

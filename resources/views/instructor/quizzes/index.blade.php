@@ -44,6 +44,9 @@
  <a href="{{ route('instructor.quizzes.edit', $quiz) }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-secondary-600 hover:text-secondary-700 hover:bg-secondary-50 dark:hover:bg-secondary-900/20 rounded-lg" aria-label="Edit quiz">
  <i class="fas fa-edit" aria-hidden="true"></i>
  </a>
+ <a href="{{ route('instructor.quizzes.attempts', $quiz) }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-lg" title="Attempts / record offline score" aria-label="Attempts and record offline score">
+ 	<i class="fas fa-clipboard-check" aria-hidden="true"></i>
+ </a>
  </td>
  </tr>
  @empty
