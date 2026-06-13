@@ -152,7 +152,25 @@ class QuizController extends Controller
             abort(403, 'Please complete at least a 30% deposit to view quiz attempts.');
         }
 
-        return view('student.quiz-attempts.show', compact('attempt'));
+        // Correct answers are only revealed once the student has finished with
+        // this quiz - i.e. they have passed it, or used up all their attempts.
+        // While retries remain, the review shows the score and which questions
+        // were right/wrong, but not the correct options (so retries are real).
+        $quiz = $attempt->quiz;
+        $completedCount = QuizAttempt::where('quiz_id', $quiz->id)
+            ->where('student_id', $this->studentId())
+            ->whereIn('status', ['Graded', 'Submitted'])
+            ->count();
+        $bestScore = QuizAttempt::where('quiz_id', $quiz->id)
+            ->where('student_id', $this->studentId())
+            ->max('score');
+        $hasPassed = $bestScore !== null && $bestScore >= ($quiz->passing_score ?? 60);
+        $attemptsExhausted = $quiz->max_attempts && $completedCount >= $quiz->max_attempts;
+
+        $revealAnswers = ($quiz->show_correct_answers ?? true) && ($hasPassed || $attemptsExhausted);
+        $attemptsLeft = $quiz->max_attempts ? max(0, $quiz->max_attempts - $completedCount) : null;
+
+        return view('student.quiz-attempts.show', compact('attempt', 'revealAnswers', 'attemptsLeft', 'hasPassed'));
     }
 
     public function take(Quiz $quiz)
