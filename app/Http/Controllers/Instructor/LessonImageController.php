@@ -15,8 +15,8 @@ class LessonImageController extends Controller
     {
         $user = Auth::user();
 
-        // Must be an instructor
-        if (!$user || !$user->isInstructor()) {
+        // Must be an instructor or admin
+        if (!$user || (!$user->isInstructor() && !$user->isAdmin())) {
             return response()->json(['error' => 'Unauthorized. Instructor access required.'], 403);
         }
 
@@ -25,10 +25,10 @@ class LessonImageController extends Controller
             'course_id' => 'nullable|integer|exists:courses,id',
         ]);
 
-        // If course_id is provided, verify the instructor owns the course
+        // If course_id is provided, verify the instructor owns the course (admins bypass)
         if (!empty($validated['course_id'])) {
             $course = Course::find($validated['course_id']);
-            if (!$course || $course->instructor_id !== $user->instructor?->id) {
+            if (!$user->isAdmin() && (!$course || $course->instructor_id !== $user->instructor?->id)) {
                 return response()->json(['error' => 'Unauthorized. You do not own this course.'], 403);
             }
         }

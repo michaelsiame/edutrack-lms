@@ -15,7 +15,7 @@ class InstructorMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || !auth()->user()->isInstructor()) {
+        if (!auth()->check() || (!auth()->user()->isInstructor() && !auth()->user()->isAdmin())) {
             abort(403, 'Instructor access required.');
         }
 

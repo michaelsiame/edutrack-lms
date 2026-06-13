@@ -35,12 +35,15 @@ class DashboardController extends Controller
 
     public function submissions()
     {
-        $instructor = auth()->user()->instructor;
-        if (!$instructor) {
+        $user = auth()->user();
+        $instructor = $user->instructor;
+        if (!$user->isAdmin() && !$instructor) {
             abort(403, 'Instructor profile not found.');
         }
 
-        $courseIds = $instructor->courses()->pluck('id');
+        $courseIds = $user->isAdmin()
+            ? Course::pluck('id')
+            : $instructor->courses()->pluck('id');
 
         $assignmentSubmissions = AssignmentSubmission::whereHas('assignment', function ($q) use ($courseIds) {
                 $q->whereIn('course_id', $courseIds);
@@ -60,15 +63,18 @@ class DashboardController extends Controller
 
     public function progress()
     {
-        $instructor = auth()->user()->instructor;
-        if (!$instructor) {
+        $user = auth()->user();
+        $instructor = $user->instructor;
+        if (!$user->isAdmin() && !$instructor) {
             abort(403, 'Instructor profile not found.');
         }
 
-        $courses = $instructor->courses()
-            ->with(['enrollments.student.user', 'modules.lessons'])
-            ->latest()
-            ->get();
+        $courses = $user->isAdmin()
+            ? Course::with(['enrollments.student.user', 'modules.lessons'])->latest()->get()
+            : $instructor->courses()
+                ->with(['enrollments.student.user', 'modules.lessons'])
+                ->latest()
+                ->get();
 
         $courseIds = $courses->pluck('id');
 
@@ -92,7 +98,7 @@ class DashboardController extends Controller
     public function issueCertificate(Course $course, Enrollment $enrollment)
     {
         $instructor = auth()->user()->instructor;
-        if (!$instructor || $course->instructor_id !== $instructor->id) {
+        if (!auth()->user()->isAdmin() && (!$instructor || $course->instructor_id !== $instructor->id)) {
             abort(403, 'You do not own this course.');
         }
 
@@ -123,7 +129,7 @@ class DashboardController extends Controller
     public function markComplete(Course $course, Enrollment $enrollment)
     {
         $instructor = auth()->user()->instructor;
-        if (!$instructor || $course->instructor_id !== $instructor->id) {
+        if (!auth()->user()->isAdmin() && (!$instructor || $course->instructor_id !== $instructor->id)) {
             abort(403, 'You do not own this course.');
         }
 

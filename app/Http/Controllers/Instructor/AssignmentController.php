@@ -23,18 +23,26 @@ class AssignmentController extends Controller
      */
     public function index()
     {
-        $instructor = auth()->user()->instructor;
-        if (!$instructor) {
+        $user = auth()->user();
+        $instructor = $user->instructor;
+        if (!$user->isAdmin() && !$instructor) {
             abort(403, 'Instructor profile not found.');
         }
 
-        $courses = $instructor->courses()
-            ->with([
+        $courses = $user->isAdmin()
+            ? Course::with([
                 'enrollments' => fn ($query) => $query->where('enrollment_status', '!=', 'Dropped')->with('user'),
                 'assignments.submissions.student.user',
             ])
-            ->latest()
-            ->get();
+                ->latest()
+                ->get()
+            : $instructor->courses()
+                ->with([
+                    'enrollments' => fn ($query) => $query->where('enrollment_status', '!=', 'Dropped')->with('user'),
+                    'assignments.submissions.student.user',
+                ])
+                ->latest()
+                ->get();
 
         return view('instructor.assignments.index', compact('courses'));
     }
@@ -350,6 +358,10 @@ class AssignmentController extends Controller
 
     protected function authorizeInstructor(Course $course): void
     {
+        if (auth()->user()?->isAdmin()) {
+            return;
+        }
+
         $instructor = auth()->user()->instructor;
         if (!$instructor || $course->instructor_id !== $instructor->id) {
             abort(403, 'You do not own this course.');

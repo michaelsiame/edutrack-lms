@@ -134,6 +134,10 @@ class IntakeController extends Controller
     private function authorizeInstructor(Course $course)
     {
         $user = Auth::user();
+        if ($user?->isAdmin()) {
+            return;
+        }
+
         $isInstructor = $user->isInstructor();
         $ownsCourse = $course->instructor_id == $user->instructor?->id;
         if (!$isInstructor || !$ownsCourse) {

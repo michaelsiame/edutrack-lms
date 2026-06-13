@@ -110,6 +110,10 @@ class ModuleController extends Controller
 
     protected function authorizeInstructor(Course $course): void
     {
+        if (auth()->user()?->isAdmin()) {
+            return;
+        }
+
         $instructor = auth()->user()->instructor;
         if (!$instructor || $course->instructor_id !== $instructor->id) {
             abort(403, 'You do not own this course.');
