@@ -43,7 +43,7 @@ Route::get('/certificates/verify/{code}', [CertificateController::class, 'verify
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'show'])->name('login');
-    Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+    Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->middleware('throttle:login');
     Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'show'])->name('register');
     Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
     Route::get('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'show'])->name('password.request');
@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/courses/{course}/checkout', [App\Http\Controllers\CheckoutController::class, 'process'])->name('checkout.process')->middleware('throttle:payment');
     Route::get('/payment/success', [App\Http\Controllers\CheckoutController::class, 'success'])->name('payment.success');
     Route::get('/payment/failed', [App\Http\Controllers\CheckoutController::class, 'failed'])->name('payment.failed');
+    Route::get('/payment/status', [App\Http\Controllers\CheckoutController::class, 'status'])->name('payment.status')->middleware('throttle:30,1');
 
     // Registration Fee
     Route::get('/registration-fee', [App\Http\Controllers\RegistrationFeeController::class, 'show'])->name('registration-fee.show');
@@ -236,6 +237,7 @@ Route::prefix('instructor')->middleware(['auth', 'instructor'])->name('instructo
     Route::put('/courses/{course}/assignments/{assignment}', [App\Http\Controllers\Instructor\AssignmentController::class, 'update'])->name('courses.assignments.update');
     Route::delete('/courses/{course}/assignments/{assignment}', [App\Http\Controllers\Instructor\AssignmentController::class, 'destroy'])->name('courses.assignments.destroy');
     Route::post('/courses/{course}/assignments/{assignment}/submissions/{submission}/grade', [App\Http\Controllers\Instructor\AssignmentController::class, 'grade'])->name('courses.assignments.grade');
+    Route::get('/courses/{course}/assignments/{assignment}/submissions/{submission}/download', [App\Http\Controllers\Instructor\AssignmentController::class, 'downloadSubmission'])->name('courses.assignments.submissions.download');
 
     Route::get('/submissions', [InstructorDashboardController::class, 'submissions'])->name('submissions');
     Route::get('/progress', [InstructorDashboardController::class, 'progress'])->name('progress');
@@ -313,6 +315,7 @@ Route::prefix('student')->middleware(['auth', 'student'])->name('student.')->gro
     Route::get('/assignments', [App\Http\Controllers\Student\AssignmentController::class, 'index'])->name('assignments.index');
     Route::get('/courses/{course}/assignments/{assignment}', [App\Http\Controllers\Student\AssignmentController::class, 'show'])->name('assignments.show');
     Route::post('/courses/{course}/assignments/{assignment}/submit', [App\Http\Controllers\Student\AssignmentController::class, 'submit'])->name('assignments.submit');
+    Route::get('/courses/{course}/assignments/{assignment}/submissions/{submission}/download', [App\Http\Controllers\Student\AssignmentController::class, 'downloadSubmission'])->name('assignments.submissions.download');
 
     // Notes
     Route::get('/notes', [App\Http\Controllers\Student\NoteController::class, 'index'])->name('notes.index');
@@ -386,5 +389,5 @@ Route::prefix('finance')->middleware(['auth', 'finance'])->name('finance.')->gro
 Route::post('/lenco/webhook', [App\Http\Controllers\Payment\LencoWebhookController::class, 'handle'])->name('lenco.webhook');
 
 // Public Newsletter Subscription
-Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe')->middleware('throttle:newsletter');
+Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe')->middleware('throttle:newsletter-subscribe');
 Route::get('/newsletter/unsubscribe', [App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');

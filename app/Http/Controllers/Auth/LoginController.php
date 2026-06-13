@@ -31,6 +31,16 @@ class LoginController extends Controller
 
             $user = Auth::user();
 
+            if ($user->status !== 'active') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                throw ValidationException::withMessages([
+                    'email' => ['Your account has been suspended. Please contact support.'],
+                ]);
+            }
+
             // Check if email is verified
             if (!$user->email_verified && !$user->google_id) {
                 Auth::logout();

@@ -11,6 +11,8 @@ class AssignmentSubmission extends Model
     use HasFactory;
     use SoftDeletes;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'assignment_id',
         'student_id',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Certificate;
+use App\Models\Role;
 use App\Services\CertificateService;
 use Illuminate\Http\Request;
 
@@ -28,16 +29,15 @@ class CertificateController extends Controller
             // Authenticated users can preview their own certificates
             $user = auth()->user();
             $isOwner = $certificate->user_id === $user->id;
-            $isStaff = $user->roles()->whereIn('role_id', [1, 2, 3, 6])->exists();
+            $isStaff = $user->roles()->whereIn('role_id', [Role::SUPER_ADMIN, Role::ADMIN, Role::INSTRUCTOR, Role::FINANCE])->exists();
 
             if ($isOwner || $isStaff) {
                 $data = $service->getCertificateData($certificate);
-                return view('certificates.preview', $data);
             }
         }
 
         // Demo data for public / unauthorized access
-        $data = [
+        $data ??= [
             'student_name' => 'Catherine Namakanda',
             'course_title' => 'General Basic Computing',
             'classification' => 'Merit',
@@ -46,14 +46,19 @@ class CertificateController extends Controller
             'graduation_month' => 'March',
             'graduation_year' => '2026',
             'student_number' => '26Edu249580',
-            'certificate_number' => 'NRC 2495807/1/1',
+            'certificate_number' => 'ECTC26001',
             'verification_code' => 'EDU-ABC123XYZ',
             'verify_url' => route('certificates.verify', 'EDU-ABC123XYZ'),
-            'national_id' => 'NRC 249580/11/3',
+            'national_id' => 'NRC 249580/11/1',
             'final_score' => 87,
         ];
 
-        return view('certificates.preview', $data);
+        // Stream the real certificate PDF inline so the preview is identical
+        // to the downloaded document.
+        return response($service->renderPdf($data), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="certificate-preview.pdf"',
+        ]);
     }
 
     public function verify(string $code)
@@ -71,14 +76,14 @@ class CertificateController extends Controller
         // Verify ownership — only the student or super-admin/finance can download
         $user = auth()->user();
         $isOwner = $certificate->user_id === $user->id;
-        $isAdmin = $user->roles()->whereIn('role_id', [1, 2])->exists(); // Super Admin, Admin only
+        $isAdmin = $user->roles()->whereIn('role_id', [Role::SUPER_ADMIN, Role::ADMIN])->exists(); // Super Admin, Admin only
 
         if (!$isOwner && !$isAdmin) {
             abort(403, 'You do not have permission to download this certificate.');
         }
 
-        // Check if certificate is blocked
-        if ($certificate->enrollment && $certificate->enrollment->certificate_blocked) {
+        // Payment block applies to students only; admins can always download
+        if (!$isAdmin && $certificate->enrollment && $certificate->enrollment->certificate_blocked) {
             abort(403, 'Certificate is blocked until full payment is received.');
         }
 

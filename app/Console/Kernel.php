@@ -23,6 +23,9 @@ class Kernel extends ConsoleKernel
 
         // Poll Lenco for pending payments every 10 minutes (webhook fallback)
         $schedule->command('lenco:poll-payments --hours=48 --limit=50')->everyTenMinutes();
+
+        // Advance intake statuses daily (close enrolment past deadline, complete past end date)
+        $schedule->command('intakes:advance-lifecycle')->dailyAt('00:30');
     }
 
     /**

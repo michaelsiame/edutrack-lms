@@ -9,6 +9,8 @@ class Transaction extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $primaryKey = 'transaction_id';
     public $incrementing = true;
 

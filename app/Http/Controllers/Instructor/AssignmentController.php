@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\Lesson;
 use App\Services\EmailQueueService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AssignmentController extends Controller
 {
@@ -208,6 +209,39 @@ class AssignmentController extends Controller
         }
 
         return back()->with('success', 'Submission graded successfully.');
+    }
+
+    /**
+     * Download a submission for instructor review.
+     */
+    public function downloadSubmission(Course $course, Assignment $assignment, AssignmentSubmission $submission)
+    {
+        $this->authorizeInstructor($course);
+
+        if ($assignment->course_id !== $course->id) {
+            abort(404);
+        }
+
+        if ($submission->assignment_id !== $assignment->id) {
+            abort(404);
+        }
+
+        if (empty($submission->file_url)) {
+            abort(404);
+        }
+
+        if (Storage::disk('local')->exists($submission->file_url)) {
+            return Storage::disk('local')->download($submission->file_url);
+        }
+
+        if (str_starts_with($submission->file_url, '/storage/')) {
+            $legacyPath = str_replace('/storage/', '', $submission->file_url);
+            if (Storage::disk('public')->exists($legacyPath)) {
+                return Storage::disk('public')->download($legacyPath);
+            }
+        }
+
+        abort(404);
     }
 
     protected function authorizeInstructor(Course $course): void

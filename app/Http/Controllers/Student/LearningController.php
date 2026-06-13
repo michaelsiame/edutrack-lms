@@ -76,7 +76,78 @@ class LearningController extends Controller
             ]);
         }
 
-        return view('student.learning.show', compact('lesson', 'course', 'modules', 'progress', 'enrollment'));
+        // Module quiz call-to-action — surfaced when finishing a module.
+        [$moduleQuiz, $moduleQuizState] = $this->resolveModuleQuiz(
+            $lesson->module, $enrollment, $progressRecords
+        );
+
+        // Upcoming/live sessions for this course, keyed by the module they belong to
+        // (session -> lesson -> module), so the sidebar can flag a module's live class.
+        $moduleSessions = $course->liveSessions()
+            ->whereIn('status', ['scheduled', 'live'])
+            ->where('scheduled_end_time', '>=', now())
+            ->with('lesson:id,module_id')
+            ->orderBy('scheduled_start_time')
+            ->get()
+            ->groupBy(fn ($s) => $s->lesson?->module_id)
+            ->map(fn ($group) => $group->first());
+
+        return view('student.learning.show', compact(
+            'lesson', 'course', 'modules', 'progress', 'enrollment',
+            'moduleQuiz', 'moduleQuizState', 'moduleSessions'
+        ));
+    }
+
+    /**
+     * Find the published quiz for a module and the current student's standing
+     * on it, so the lesson view can offer a "Take the Module Quiz" prompt
+     * once the module's reading lessons are done.
+     *
+     * @return array{0: ?\App\Models\Quiz, 1: array}
+     */
+    protected function resolveModuleQuiz($module, $enrollment, $progressRecords): array
+    {
+        if (!$module) {
+            return [null, []];
+        }
+
+        $module->loadMissing('lessons');
+
+        $readingLessons = $module->lessons->where('lesson_type', '!=', 'Quiz');
+        $lessonIds = $module->lessons->pluck('id');
+
+        $quiz = \App\Models\Quiz::whereIn('lesson_id', $lessonIds)
+            ->where('is_published', true)
+            ->first();
+
+        if (!$quiz) {
+            return [null, []];
+        }
+
+        $studentId = auth()->user()->student?->id;
+        $attempts = $studentId
+            ? \App\Models\QuizAttempt::where('quiz_id', $quiz->id)
+                ->where('student_id', $studentId)
+                ->get()
+            : collect();
+        $completed = $attempts->whereIn('status', ['Graded', 'Submitted']);
+        $bestScore = $attempts->max('score');
+
+        // Locked until every reading lesson is complete (unless already attempted).
+        $remaining = $readingLessons
+            ->reject(fn ($l) => optional($progressRecords->get($l->id))->isCompleted())
+            ->count();
+
+        $state = [
+            'locked' => $remaining > 0 && $completed->isEmpty(),
+            'remaining_lessons' => $remaining,
+            'attempts_count' => $attempts->count(),
+            'best_score' => $bestScore,
+            'passed' => $bestScore !== null && $bestScore >= ($quiz->passing_score ?? 60),
+            'can_retake' => !$quiz->max_attempts || $completed->count() < $quiz->max_attempts,
+        ];
+
+        return [$quiz, $state];
     }
 
     public function complete(Course $course, Lesson $lesson)

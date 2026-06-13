@@ -26,6 +26,16 @@ class HtmlSanitizer
             $config->set('Core.Encoding', 'UTF-8');
             $config->set('Cache.SerializerPath', storage_path('app/htmlpurifier'));
 
+            // figure/figcaption are HTML5 and absent from the 4.01 doctype, so
+            // they must be registered as custom elements or purification throws
+            $config->set('HTML.DefinitionID', 'edutrack-lesson-html');
+            $config->set('HTML.DefinitionRev', 2);
+            if ($def = $config->maybeGetRawHTMLDefinition()) {
+                $def->addElement('figure', 'Block', 'Flow', 'Common');
+                $def->addElement('figcaption', 'Block', 'Flow', 'Common');
+                $def->addAttribute('iframe', 'allowfullscreen', 'Bool');
+            }
+
             self::$purifier = new HTMLPurifier($config);
         }
 

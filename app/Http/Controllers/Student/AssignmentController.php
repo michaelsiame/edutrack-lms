@@ -124,8 +124,7 @@ class AssignmentController extends Controller
         $fileUrl = null;
         if ($request->hasFile('submission_file')) {
             $file = $request->file('submission_file');
-            $path = $file->store('assignment-submissions/' . $assignment->id, 'public');
-            $fileUrl = Storage::url($path);
+            $fileUrl = $file->store('assignment-submissions/' . $assignment->id, 'local');
         }
 
         $studentId = $user->student?->id;
@@ -153,5 +152,40 @@ class AssignmentController extends Controller
 
         return redirect()->route('student.assignments.show', [$course, $assignment])
             ->with('success', 'Assignment submitted successfully.');
+    }
+
+    /**
+     * Download a student's own submission.
+     */
+    public function downloadSubmission(Course $course, Assignment $assignment, AssignmentSubmission $submission)
+    {
+        if ($assignment->course_id !== $course->id) {
+            abort(404);
+        }
+
+        if ($submission->assignment_id !== $assignment->id) {
+            abort(404);
+        }
+
+        if ($submission->student_id !== auth()->user()->student?->id) {
+            abort(403);
+        }
+
+        if (empty($submission->file_url)) {
+            abort(404);
+        }
+
+        if (Storage::disk('local')->exists($submission->file_url)) {
+            return Storage::disk('local')->download($submission->file_url);
+        }
+
+        if (str_starts_with($submission->file_url, '/storage/')) {
+            $legacyPath = str_replace('/storage/', '', $submission->file_url);
+            if (Storage::disk('public')->exists($legacyPath)) {
+                return Storage::disk('public')->download($legacyPath);
+            }
+        }
+
+        abort(404);
     }
 }

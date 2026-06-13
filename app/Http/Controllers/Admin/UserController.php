@@ -80,6 +80,14 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8',
         ]);
 
+        // Prevent self-demotion
+        if ($user->id === auth()->id()) {
+            $currentRoleId = $user->roles->first()?->role_id;
+            if ($currentRoleId != $validated['role_id']) {
+                return redirect()->back()->with('error', 'You cannot change your own role.');
+            }
+        }
+
         $data = [
             'username' => $validated['username'],
             'email' => $validated['email'],
@@ -111,6 +119,10 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        if ($user->id === auth()->id()) {
+            return redirect()->back()->with('error', 'You cannot delete your own account.');
+        }
+
         $user->delete();
 
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');

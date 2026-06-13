@@ -9,6 +9,8 @@ class QuestionOption extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $primaryKey = 'id';
     public $incrementing = true;
 

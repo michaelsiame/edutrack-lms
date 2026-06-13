@@ -19,11 +19,19 @@ class ForgotPasswordController extends Controller
     public function send(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email',
         ]);
 
         $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->with('success', 'If an account with that email exists, a password reset link has been sent.');
+        }
+
         $token = Str::random(64);
+
+        // Invalidate any existing reset tokens for this user
+        \DB::table('remember_tokens')->where('user_id', $user->id)->delete();
 
         // Store token in remember_tokens table
         \DB::table('remember_tokens')->insert([
@@ -45,7 +53,7 @@ class ForgotPasswordController extends Controller
             10
         );
 
-        return back()->with('success', 'Password reset link has been sent to your email.');
+        return back()->with('success', 'If an account with that email exists, a password reset link has been sent.');
     }
 
     public function resetForm(string $token)

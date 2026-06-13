@@ -41,7 +41,7 @@ class CheckoutController extends Controller
 
         $price = $enrollment->effectivePrice();
         $totalPaid = $enrollment->amount_paid;
-        $balance = $price - $totalPaid;
+        $balance = max(0, $price - $totalPaid - $enrollment->totalDiscounts());
         $minDeposit = $price * 0.30;
 
         $paymentMethods = PaymentMethod::where('is_active', true)->get();
@@ -63,7 +63,7 @@ class CheckoutController extends Controller
 
         $price = $enrollment->effectivePrice();
         $totalPaid = $enrollment->amount_paid;
-        $balance = $price - $totalPaid;
+        $balance = max(0, $price - $totalPaid - $enrollment->totalDiscounts());
 
         // Pre-check promotion to calculate effective balance for validation
         $promotion = null;
@@ -88,7 +88,7 @@ class CheckoutController extends Controller
 
         $amount = (float) $validated['amount'];
         $paymentMethod = $validated['payment_method'];
-        $reference = 'EDU-' . $user->id . '-' . $course->id . '-' . time();
+        $reference = 'EDU-' . $user->id . '-' . $course->id . '-' . time() . '-' . strtoupper(Str::random(6));
 
         // Map payment method string to payment_method_id
         $methodMap = [
@@ -134,11 +134,6 @@ class CheckoutController extends Controller
                 'promotion_id' => $promotion?->id,
                 'discount_amount' => $discount,
             ]);
-
-            // Increment promotion used_count only inside transaction
-            if ($promotion && $amount >= ($enrollment->effectivePrice() - $enrollment->amount_paid - $discount)) {
-                $promotion->increment('used_count');
-            }
 
             // Lenco v2 collections
             if (in_array($paymentMethod, ['lenco', 'mobile_money'])) {
@@ -246,6 +241,38 @@ class CheckoutController extends Controller
         $course = $courseSlug ? Course::where('slug', $courseSlug)->first() : null;
 
         return view('payment.success', compact('course'));
+    }
+
+    /**
+     * Payment status JSON endpoint for polling.
+     */
+    public function status(Request $request)
+    {
+        $query = LencoTransaction::where('user_id', auth()->id());
+
+        if ($request->has('course')) {
+            $course = Course::where('slug', $request->query('course'))->first();
+            if ($course) {
+                $query->where('course_id', $course->id);
+            }
+        }
+
+        $tx = $query->latest()->first();
+
+        if (!$tx) {
+            return response()->json(['status' => 'none']);
+        }
+
+        if ($tx->status === 'pending' && $tx->updated_at->diffInSeconds(now()) > 10) {
+            try {
+                app(LencoPaymentService::class)->pollTransaction($tx);
+                $tx->refresh();
+            } catch (\Exception $e) {
+                // ignore failures
+            }
+        }
+
+        return response()->json(['status' => $tx->status]);
     }
 
     /**

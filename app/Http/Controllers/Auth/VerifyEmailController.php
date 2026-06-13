@@ -19,15 +19,8 @@ class VerifyEmailController extends Controller
     /**
      * Verify email with token.
      */
-    public function verify(Request $request)
+    public function verify(Request $request, string $token)
     {
-        $token = $request->query('token');
-
-        if (!$token) {
-            return redirect()->route('login')
-                ->with('error', 'Invalid verification link.');
-        }
-
         $user = User::where('email_verification_token', $token)
             ->where('email_verification_expires', '>', now())
             ->first();

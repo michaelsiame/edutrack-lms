@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Role;
 use App\Models\UserRole;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -48,7 +49,7 @@ class RegisterController extends Controller
         // Assign student role by default
         UserRole::create([
             'user_id' => $user->id,
-            'role_id' => 4, // Student
+            'role_id' => Role::STUDENT, // Student
         ]);
 
         event(new Registered($user));
@@ -64,17 +65,9 @@ class RegisterController extends Controller
         $emailService->sendNotification($user->id, 'Welcome to Edutrack!', 'Your account has been created successfully.', 'welcome');
 
         // Verification email
-        $verificationUrl = route('verification.verify', ['token' => $verificationToken]);
-        $templated = $emailService->sendTemplated($user->email, 'password_reset', [
-            'name' => $user->full_name,
-            'verification_url' => $verificationUrl,
-        ]);
-
-        if (!$templated) {
-            $subject = 'Verify your email address';
-            $body = view('emails.verify-email', ['user' => $user, 'token' => $verificationToken])->render();
-            $emailService->queue($user->email, $subject, $body);
-        }
+        $subject = 'Verify your email address';
+        $body = view('emails.verify-email', ['user' => $user, 'token' => $verificationToken])->render();
+        $emailService->queue($user->email, $subject, $body);
 
         return redirect()->route('verification.notice')
             ->with('email', $user->email);

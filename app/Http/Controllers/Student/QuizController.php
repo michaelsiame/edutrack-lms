@@ -24,7 +24,7 @@ class QuizController extends Controller
     {
         $enrollments = auth()->user()->enrollments()
             ->where('enrollment_status', '!=', 'Dropped')
-            ->with('course.quizzes')
+            ->with(['course.quizzes.lesson.module', 'course.modules'])
             ->get();
 
         $studentId = $this->studentId();
@@ -45,25 +45,75 @@ class QuizController extends Controller
             ->get()
             ->groupBy('quiz_id');
 
-        $quizData = [];
+        // Which lessons has this student completed? (used to unlock module quizzes)
+        $completedLessonIds = \App\Models\LessonProgress::whereIn(
+                'enrollment_id', $enrollments->pluck('id')
+            )
+            ->where('status', 'Completed')
+            ->pluck('lesson_id')
+            ->flip();
+
+        // Build a course -> [quizzes] structure, ordered by module sequence.
+        $courses = [];
         foreach ($enrollments as $enrollment) {
-            foreach ($enrollment->course->quizzes as $quiz) {
+            $course = $enrollment->course;
+            $items = [];
+
+            foreach ($course->quizzes as $quiz) {
                 if (!$quiz->is_published) continue;
+
                 $attempts = $allAttempts->get($quiz->id, collect());
                 $completedAttempts = $attempts->whereIn('status', ['Graded', 'Submitted']);
+                $module = $quiz->lesson?->module;
 
-                $quizData[] = [
+                // A module quiz unlocks once the module's reading lessons are done.
+                // Quizzes with no module (standalone) are always available.
+                $locked = false;
+                if ($module) {
+                    $readingLessons = $module->lessons
+                        ->where('lesson_type', '!=', 'Quiz');
+                    $remaining = $readingLessons
+                        ->reject(fn ($l) => $completedLessonIds->has($l->id))
+                        ->count();
+                    $locked = $remaining > 0 && $completedAttempts->isEmpty();
+                }
+
+                $items[] = [
                     'quiz' => $quiz,
-                    'course' => $enrollment->course,
+                    'module_title' => $module?->title,
+                    'module_order' => $module?->display_order ?? 999,
                     'attempts' => $attempts,
                     'best_score' => $attempts->max('score'),
                     'attempts_count' => $attempts->count(),
+                    'passed' => $attempts->max('score') !== null
+                        && $attempts->max('score') >= ($quiz->passing_score ?? 60),
                     'can_retake' => !$quiz->max_attempts || $completedAttempts->count() < $quiz->max_attempts,
+                    'locked' => $locked,
                 ];
             }
+
+            if (empty($items)) continue;
+
+            // Order quizzes by their module sequence, then title.
+            usort($items, function ($a, $b) {
+                return [$a['module_order'], $a['quiz']->title]
+                   <=> [$b['module_order'], $b['quiz']->title];
+            });
+
+            $courses[] = [
+                'course' => $course,
+                'quizzes' => $items,
+                'total' => count($items),
+                'passed' => collect($items)->where('passed', true)->count(),
+            ];
         }
 
-        return view('student.quizzes.index', compact('quizData'));
+        // Courses with quizzes first, alphabetical.
+        usort($courses, fn ($a, $b) => $a['course']->title <=> $b['course']->title);
+
+        $totalQuizzes = collect($courses)->sum('total');
+
+        return view('student.quizzes.index', compact('courses', 'totalQuizzes'));
     }
 
     public function attempts(Quiz $quiz)
@@ -214,7 +264,8 @@ class QuizController extends Controller
             ->firstOrFail();
 
         $timeSpent = round($attempt->started_at->diffInMinutes(now()));
-        if ($quiz->time_limit_minutes && $timeSpent > $quiz->time_limit_minutes) {
+        $elapsedSeconds = $attempt->started_at->diffInSeconds(now());
+        if ($quiz->time_limit_minutes && $elapsedSeconds > ($quiz->time_limit_minutes * 60) + 60) {
             $attempt->update(['status' => 'Abandoned', 'score' => 0]);
             return redirect()->route('student.quizzes.attempts', $quiz)
                 ->with('error', 'Time limit exceeded. Your attempt has been abandoned.');

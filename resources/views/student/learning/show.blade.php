@@ -13,6 +13,24 @@
         grid-template-columns: 280px 1fr;
         gap: 24px;
         padding: 24px 0 48px;
+        align-items: start; /* let the sticky sidebar size to its own content, not the grid row */
+    }
+    /* Desktop: module nav stays put while notes scroll, and scrolls on its own when long */
+    @media (min-width: 1025px) {
+        .od-learn-sidebar {
+            position: sticky;
+            top: 64px; /* clears the sticky topnav */
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+            overscroll-behavior: contain; /* scrolling the nav doesn't bleed into the page */
+            padding-right: 6px;
+            scrollbar-width: thin;
+        }
+        .od-learn-sidebar::-webkit-scrollbar { width: 8px; }
+        .od-learn-sidebar::-webkit-scrollbar-thumb {
+            background: var(--od-border);
+            border-radius: 4px;
+        }
     }
     @media (max-width: 1024px) {
         .od-learn-layout { grid-template-columns: 1fr; }
@@ -100,11 +118,29 @@
                     $totalInMod = $modLessons->count();
                     $isActiveModule = $mod->id === $module->id;
                 @endphp
+                @php $modSession = ($moduleSessions ?? collect())->get($mod->id); @endphp
                 <div class="od-module">
                     <div class="od-module-header" style="{{ $isActiveModule ? 'background: var(--od-navy-soft); color: var(--od-navy);' : '' }}">
                         <span>{{ $mod->title }}</span>
                         <span class="module-num">{{ $completedInMod }}/{{ $totalInMod }}</span>
                     </div>
+                    @if($modSession)
+                        <a href="{{ $modSession->isLive() ? route('student.live-sessions.join', $modSession) : route('student.live-sessions.index', $course) }}"
+                           @if($modSession->isLive()) target="_blank" @endif
+                           class="od-module-live"
+                           style="display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:12px;text-decoration:none;{{ $modSession->isLive() ? 'color:var(--od-danger);font-weight:600;' : 'color:var(--od-navy);' }}">
+                            @if($modSession->isLive())
+                                <span class="relative flex h-2 w-2">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style="background: var(--od-danger);"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2" style="background: var(--od-danger);"></span>
+                                </span>
+                                Live class — Join now
+                            @else
+                                <i class="fas fa-video"></i>
+                                Live class · {{ $modSession->scheduled_start_time->format('M j, g:i A') }}
+                            @endif
+                        </a>
+                    @endif
                     <ul class="od-lesson-list">
                         @foreach($modLessons as $l)
                             <li class="{{ $l->is_completed ? 'completed' : '' }} {{ $l->id === $lesson->id ? 'active' : '' }}">
@@ -268,6 +304,56 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Module Quiz call-to-action -->
+            @if($moduleQuiz)
+                @php
+                    $mqAccent = $moduleQuizState['passed'] ? 'var(--od-green)' : ($moduleQuizState['locked'] ? 'var(--od-muted)' : 'var(--od-accent)');
+                @endphp
+                <div class="od-card mt-5" style="border-left: 4px solid {{ $mqAccent }};">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-start gap-3">
+                            <span class="inline-flex items-center justify-center rounded-lg shrink-0"
+                                  style="width:42px;height:42px;background:var(--od-navy-soft);color:var(--od-navy);">
+                                <i class="fas fa-clipboard-question"></i>
+                            </span>
+                            <div>
+                                <p class="od-eyebrow" style="margin:0 0 2px;">{{ $lesson->module->title }}</p>
+                                <h3 class="od-h3" style="margin:0;">{{ $moduleQuiz->title }}</h3>
+                                <p class="od-meta" style="margin-top:2px;">
+                                    Pass {{ $moduleQuiz->passing_score ?? 60 }}%
+                                    @if($moduleQuiz->time_limit_minutes) · {{ $moduleQuiz->time_limit_minutes }} min @endif
+                                    @if($moduleQuizState['best_score'] !== null)
+                                        · Best: <strong style="color: {{ $moduleQuizState['passed'] ? 'var(--od-green)' : 'var(--od-fg)' }};">{{ $moduleQuizState['best_score'] }}%</strong>
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                        <div class="shrink-0">
+                            @if($moduleQuizState['locked'])
+                                <span class="od-btn od-btn-secondary od-btn-sm" style="pointer-events:none;opacity:.7;">
+                                    <i class="fas fa-lock"></i> Finish {{ $moduleQuizState['remaining_lessons'] }} more lesson{{ $moduleQuizState['remaining_lessons'] !== 1 ? 's' : '' }}
+                                </span>
+                            @elseif($moduleQuizState['passed'])
+                                <div class="flex items-center gap-2">
+                                    <span class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium" style="background: var(--od-green-soft); color: var(--od-green);">
+                                        <i class="fas fa-circle-check"></i> Passed
+                                    </span>
+                                    @if($moduleQuizState['can_retake'])
+                                        <a href="{{ route('student.quizzes.take', $moduleQuiz) }}" class="od-btn od-btn-ghost od-btn-sm">Retake</a>
+                                    @endif
+                                </div>
+                            @elseif($moduleQuizState['can_retake'])
+                                <a href="{{ route('student.quizzes.take', $moduleQuiz) }}" class="od-btn od-btn-navy od-btn-sm">
+                                    <i class="fas fa-play"></i> {{ $moduleQuizState['attempts_count'] > 0 ? 'Retake Quiz' : 'Take the Quiz' }}
+                                </a>
+                            @else
+                                <a href="{{ route('student.quizzes.attempts', $moduleQuiz) }}" class="od-btn od-btn-ghost od-btn-sm">View Attempts</a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <!-- Lesson Navigation -->
             <div class="od-lesson-nav">

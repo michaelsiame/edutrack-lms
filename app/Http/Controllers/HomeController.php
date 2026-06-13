@@ -12,6 +12,7 @@ use App\Models\Testimonial;
 use App\Models\Event;
 use App\Models\HeroSlide;
 use App\Models\Contact;
+use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -22,7 +23,7 @@ class HomeController extends Controller
         // Stats
         $totalStudents = DB::table('users')
             ->join('user_roles', 'users.id', '=', 'user_roles.user_id')
-            ->where('user_roles.role_id', 4)
+            ->where('user_roles.role_id', Role::STUDENT)
             ->where('users.status', 'active')
             ->count();
 
@@ -81,7 +82,7 @@ class HomeController extends Controller
     public function about()
     {
         $stats = [
-            'total_students' => User::whereHas('roles', fn($q) => $q->where('role_id', 4))->where('status', 'active')->count(),
+            'total_students' => User::whereHas('roles', fn($q) => $q->where('role_id', Role::STUDENT))->where('status', 'active')->count(),
             'total_courses' => Course::published()->count(),
             'total_enrollments' => Enrollment::count(),
             'avg_rating' => CourseReview::avg('rating') ?? 0,
@@ -120,7 +121,7 @@ class HomeController extends Controller
     public function campus()
     {
         $stats = [
-            'total_students' => User::whereHas('roles', fn($q) => $q->where('role_id', 4))->count(),
+            'total_students' => User::whereHas('roles', fn($q) => $q->where('role_id', Role::STUDENT))->count(),
             'total_courses' => Course::published()->count(),
             'total_enrollments' => Enrollment::count(),
         ];
@@ -177,7 +178,7 @@ class HomeController extends Controller
             ->pluck('course_taken');
 
         $stats = [
-            'total_students' => User::whereHas('roles', fn($q) => $q->where('role_id', 4))->where('status', 'active')->count(),
+            'total_students' => User::whereHas('roles', fn($q) => $q->where('role_id', Role::STUDENT))->where('status', 'active')->count(),
             'total_courses' => Course::published()->count(),
             'total_enrollments' => Enrollment::count(),
             'avg_rating' => CourseReview::avg('rating') ?? 0,
