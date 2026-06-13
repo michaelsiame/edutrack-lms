@@ -19,6 +19,38 @@
     </div>
     @endif
 
+    <!-- Record Offline Score -->
+    <div class="od-card p-4" x-data="{ open: false }">
+        <button type="button" @click="open = !open" class="text-sm text-secondary-600 hover:text-secondary-700 font-medium">
+            <i class="fas fa-pen mr-1"></i>Record offline score
+        </button>
+        <div x-show="open" x-cloak class="mt-3">
+            <form action="{{ route('instructor.quizzes.record-score', $quiz) }}" method="POST" class="space-y-3">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="od-form-label">Student</label>
+                        <select name="user_id" required class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">-- Select student --</option>
+                            @foreach($enrolledStudents as $enrollment)
+                            <option value="{{ $enrollment->user_id }}">{{ $enrollment->user->full_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="od-form-label">Score (%)</label>
+                        <input type="number" name="score" min="0" max="100" step="0.01" required
+                            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="px-3 py-2 bg-secondary-600 text-white text-sm rounded-lg hover:bg-secondary-700">Record Score</button>
+                    <button type="button" @click="open = false" class="px-3 py-2 bg-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-300">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="od-card" style="padding: 0; overflow: hidden;">
         <div class="overflow-x-auto">
             <table class="od-table min-w-[640px]">
@@ -41,7 +73,12 @@
                                 <div class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 text-xs font-bold">
                                     {{ substr($attempt->student->user->first_name ?? 'S', 0, 1) }}{{ substr($attempt->student->user->last_name ?? '', 0, 1) }}
                                 </div>
-                                <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $attempt->student->user->full_name ?? 'Unknown' }}</span>
+                                <div>
+                                    <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $attempt->student->user->full_name ?? 'Unknown' }}</span>
+                                    @if($attempt->source === 'offline')
+                                    <span class="ml-2 text-xs text-secondary-600 bg-secondary-50 px-1.5 py-0.5 rounded">Offline</span>
+                                    @endif
+                                </div>
                             </div>
                         </td>
                         <td class="text-sm text-gray-600 dark:text-gray-400">#{{ $attempt->attempt_number }}</td>

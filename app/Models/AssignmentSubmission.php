@@ -26,6 +26,7 @@ class AssignmentSubmission extends Model
         'graded_at',
         'attempt_number',
         'is_late',
+        'source',
     ];
 
     protected $casts = [

@@ -243,6 +243,7 @@ Route::prefix('instructor')->middleware(['auth', 'instructor'])->name('instructo
     Route::put('/courses/{course}/assignments/{assignment}', [App\Http\Controllers\Instructor\AssignmentController::class, 'update'])->name('courses.assignments.update');
     Route::delete('/courses/{course}/assignments/{assignment}', [App\Http\Controllers\Instructor\AssignmentController::class, 'destroy'])->name('courses.assignments.destroy');
     Route::post('/courses/{course}/assignments/{assignment}/submissions/{submission}/grade', [App\Http\Controllers\Instructor\AssignmentController::class, 'grade'])->name('courses.assignments.grade');
+    Route::post('/courses/{course}/assignments/{assignment}/record-mark', [App\Http\Controllers\Instructor\AssignmentController::class, 'recordMark'])->name('courses.assignments.record-mark');
     Route::get('/courses/{course}/assignments/{assignment}/submissions/{submission}/download', [App\Http\Controllers\Instructor\AssignmentController::class, 'downloadSubmission'])->name('courses.assignments.submissions.download');
 
     Route::get('/submissions', [InstructorDashboardController::class, 'submissions'])->name('submissions');
@@ -280,6 +281,7 @@ Route::prefix('instructor')->middleware(['auth', 'instructor'])->name('instructo
 
     // Quiz Attempts & Grading
     Route::get('/quizzes/{quiz}/attempts', [App\Http\Controllers\Instructor\QuizController::class, 'attempts'])->name('quizzes.attempts');
+    Route::post('/quizzes/{quiz}/record-score', [App\Http\Controllers\Instructor\QuizController::class, 'recordScore'])->name('quizzes.record-score');
     Route::get('/quizzes/{quiz}/attempts/{attempt}/grade', [App\Http\Controllers\Instructor\QuizController::class, 'grade'])->name('quizzes.attempts.grade');
     Route::post('/quizzes/{quiz}/attempts/{attempt}/grade', [App\Http\Controllers\Instructor\QuizController::class, 'saveGrades'])->name('quizzes.attempts.grade.save');
 

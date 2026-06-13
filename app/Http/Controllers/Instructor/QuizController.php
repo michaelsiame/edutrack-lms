@@ -4,10 +4,15 @@ namespace App\Http\Controllers\Instructor;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\QuizAnswer;
+use App\Models\Student;
+use App\Models\User;
+use App\Services\StudentNumberService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
@@ -137,7 +142,70 @@ class QuizController extends Controller
             ->with(['student.user', 'answers.question'])
             ->orderBy('submitted_at', 'desc')
             ->paginate(20);
-        return view('instructor.quizzes.attempts', compact('quiz', 'attempts'));
+
+        $enrolledStudents = $quiz->course->enrollments()
+            ->where('enrollment_status', '!=', 'Dropped')
+            ->with('user')
+            ->get();
+
+        return view('instructor.quizzes.attempts', compact('quiz', 'attempts', 'enrolledStudents'));
+    }
+
+    /**
+     * Record an offline quiz score for an enrolled student.
+     */
+    public function recordScore(Request $request, Quiz $quiz)
+    {
+        $this->authorizeInstructor($quiz);
+
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'score' => 'required|numeric|min:0|max:100',
+        ]);
+
+        $user = User::findOrFail($validated['user_id']);
+
+        $enrollment = Enrollment::where('user_id', $user->id)
+            ->where('course_id', $quiz->course_id)
+            ->where('enrollment_status', '!=', 'Dropped')
+            ->first();
+
+        if (!$enrollment) {
+            return back()->with('error', 'Selected user is not enrolled in this course.');
+        }
+
+        $student = $user->student;
+        if (!$student) {
+            $student = Student::create([
+                'user_id' => $user->id,
+                'student_number' => StudentNumberService::generate((int) now()->year),
+                'enrollment_date' => now(),
+            ]);
+        }
+
+        $attempt = DB::transaction(function () use ($quiz, $student, $validated) {
+            $nextAttemptNumber = QuizAttempt::where('quiz_id', $quiz->id)
+                ->where('student_id', $student->id)
+                ->lockForUpdate()
+                ->max('attempt_number') + 1;
+
+            return QuizAttempt::create([
+                'quiz_id' => $quiz->id,
+                'student_id' => $student->id,
+                'attempt_number' => $nextAttemptNumber,
+                'started_at' => now(),
+                'submitted_at' => now(),
+                'completed_at' => now(),
+                'score' => $validated['score'],
+                'status' => 'Graded',
+                'time_spent_minutes' => 0,
+                'source' => 'offline',
+            ]);
+        });
+
+        app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
+
+        return back()->with('success', "Offline score recorded for {$user->full_name}.");
     }
 
     public function grade(Quiz $quiz, QuizAttempt $attempt)

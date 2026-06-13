@@ -22,6 +22,7 @@ class QuizAttempt extends Model
         'status',
         'time_spent_minutes',
         'ip_address',
+        'source',
     ];
 
     protected $casts = [
