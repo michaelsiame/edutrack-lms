@@ -271,6 +271,10 @@ class CertificateService
             $this->centeredLabel($pdf, 135, 184, 247.3, $data['student_number']);
         }
 
+        // Official signatures above the Principal / Director rules.
+        $this->placeSignature($pdf, 'principal', 50.5, 228.5);
+        $this->placeSignature($pdf, 'director', 159.5, 228.5);
+
         // Bottom row
         $this->certFont($pdf, 'serif', 14.8);
         $this->leftAtBaseline($pdf, 29, 270.2, $data['national_id'] ?? '');
@@ -502,6 +506,10 @@ class CertificateService
         ]);
 
         // --- Signature block ---
+        // Official signature images sit just above each rule, if present.
+        $this->placeSignature($pdf, 'principal', 50.5, 228.5);
+        $this->placeSignature($pdf, 'director', 159.5, 228.5);
+
         $pdf->SetLineStyle(['width' => 0.4, 'color' => self::ORANGE]);
 
         // Top row rules
@@ -683,16 +691,37 @@ class CertificateService
     }
 
     /**
+     * Draw an official signature image centred on $centerX with its baseline
+     * resting just above the signature rule. Silently skips if the file is
+     * absent, so a missing signature simply leaves the rule blank.
+     */
+    protected function placeSignature(TCPDF $pdf, string $role, float $centerX, float $bottomY): void
+    {
+        $path = public_path("assets/images/cert-signatures/{$role}-signature.png");
+        if (!is_file($path)) {
+            return;
+        }
+
+        // Fixed width, auto height (h=0) preserves the signature's aspect ratio.
+        $w = 36; // mm
+        $pdf->Image($path, $centerX - $w / 2, $bottomY - 13, $w, 0, 'PNG', '', '', true, 300);
+    }
+
+    /**
      * Get certificate data for PDF generation.
      */
     public function getCertificateData(Certificate $certificate): array
     {
-        $certificate->load(['user', 'course', 'enrollment']);
+        $certificate->load(['user.student', 'course', 'enrollment']);
 
         $issuedDate = $certificate->issued_date ?? now();
         $graduationDate = $certificate->graduation_ceremony_date ?? $issuedDate;
 
         $nationalId = $certificate->user?->national_id;
+        // The student number is the student's permanent ID, minted at first
+        // enrolment. Fall back to lazy generation only for legacy rows.
+        $studentNumber = $certificate->user?->student?->student_number
+            ?: $this->generateStudentNumber($certificate);
 
         return [
             'certificate' => $certificate,
@@ -708,7 +737,7 @@ class CertificateService
             'graduation_suffix' => $this->getDaySuffix((int) $graduationDate->format('j')),
             'graduation_month' => $graduationDate->format('F'),
             'graduation_year' => $graduationDate->format('Y'),
-            'student_number' => $this->generateStudentNumber($certificate),
+            'student_number' => $studentNumber,
             'national_id' => $nationalId ? 'NRC ' . ltrim(preg_replace('/^\s*NRC\s*/i', '', $nationalId)) : '',
         ];
     }

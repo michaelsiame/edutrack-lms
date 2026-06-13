@@ -187,7 +187,7 @@ class TranscriptController extends Controller
         return [
             'user' => $user,
             'student_name' => $user->full_name,
-            'student_number' => $this->generateStudentNumber($user),
+            'student_number' => $user->student?->student_number ?: $this->generateStudentNumber($user),
             'national_id' => $user->national_id ?? 'Not on record',
             'date_of_birth' => $user->date_of_birth ?? 'Not on record',
             'email' => $user->email,

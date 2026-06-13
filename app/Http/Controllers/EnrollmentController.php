@@ -86,6 +86,7 @@ class EnrollmentController extends Controller
             if (!$student) {
                 $student = \App\Models\Student::create([
                     'user_id' => $user->id,
+                    'student_number' => \App\Services\StudentNumberService::generate((int) now()->year),
                     'enrollment_date' => now(),
                 ]);
             }
