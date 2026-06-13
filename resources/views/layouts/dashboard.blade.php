@@ -32,7 +32,7 @@
  <div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition.opacity.duration.300ms class="fixed inset-0 z-40 bg-black/50 md:hidden" style="display: none;"></div>
 
  <!-- Sidebar -->
- <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'" class="fixed md:relative z-50 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-transform duration-300 ease-in-out flex flex-col w-[260px] flex-shrink-0">
+ <aside :class="sidebarOpen ? 'translate-x-0 w-[260px]' : '-translate-x-full w-[260px] md:translate-x-0 md:w-0 md:border-0 md:overflow-hidden'" class="fixed md:relative z-50 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out flex flex-col flex-shrink-0">
  <!-- Logo -->
  <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
  <a href="{{ url('/') }}" class="flex items-center gap-3">

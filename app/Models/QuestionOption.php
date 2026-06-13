@@ -11,8 +11,17 @@ class QuestionOption extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'option_id';
     public $incrementing = true;
+
+    /**
+     * Backwards-compat: the DB column is option_id, but a lot of older code
+     * and views reference $option->id. Expose it so both work.
+     */
+    public function getIdAttribute()
+    {
+        return $this->attributes['option_id'] ?? null;
+    }
 
     protected $fillable = [
         'question_id',
