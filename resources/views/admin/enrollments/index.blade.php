@@ -8,6 +8,15 @@
  @if(session('success'))
  <div class="mb-4 p-4 od-toast-success">{{ session('success') }}</div>
  @endif
+ @if(session('error'))
+ <div class="mb-4 p-4 od-toast-danger">{{ session('error') }}</div>
+ @endif
+
+ <div class="flex justify-end mb-4">
+ <a href="{{ route('admin.enrollments.create') }}" class="od-btn od-btn-primary od-btn-sm">
+ <i class="fas fa-user-plus mr-1"></i> Enrol a Student
+ </a>
+ </div>
 
  <!-- Filters -->
  <div class="od-card p-4 mb-6">

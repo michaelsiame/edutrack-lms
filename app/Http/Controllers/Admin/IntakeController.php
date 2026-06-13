@@ -57,8 +57,6 @@ class IntakeController extends Controller
         $enrollment->update(['intake_id' => $targetIntake->id]);
 
         // Update counts
-        Intake::find($oldIntakeId)?->decrementEnrollmentCount();
-        $targetIntake->incrementEnrollmentCount();
 
         return back()->with('success', 'Student transferred to ' . $targetIntake->name . ' successfully.');
     }

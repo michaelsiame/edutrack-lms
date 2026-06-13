@@ -70,7 +70,6 @@ class EnrollmentController extends Controller
                     'enrollment_status' => 'Enrolled',
                     'enrolled_at' => now(),
                 ]);
-                $intake->increment('enrollment_count');
                 $existing->was_reactivated = true;
 
                 return $existing;
@@ -115,10 +114,6 @@ class EnrollmentController extends Controller
                 'currency' => 'ZMW',
                 'payment_status' => $isFree ? 'completed' : 'pending',
             ]);
-
-            // Increment counts
-            $intake->increment('enrollment_count');
-            $course->increment('enrollment_count');
 
             return $enrollment;
         });

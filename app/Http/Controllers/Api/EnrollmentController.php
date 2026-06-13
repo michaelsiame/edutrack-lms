@@ -99,7 +99,6 @@ class EnrollmentController extends Controller
             'payment_status' => $isFree ? 'completed' : 'pending',
         ]);
 
-        $course->increment('enrollment_count');
 
         $emailService = app(\App\Services\EmailQueueService::class);
         $emailService->sendTemplated($user->email, 'Enrollment', [
