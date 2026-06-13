@@ -52,12 +52,36 @@
     }
     .od-lesson-content p { margin-bottom: 1em; line-height: 1.7; }
     .od-lesson-content ul, .od-lesson-content ol { margin-bottom: 1em; padding-left: 1.5em; }
-    .od-lesson-content img { max-width: 100%; border-radius: 10px; margin: 1em 0; }
+    .od-lesson-content img { max-width: 100%; height: auto; border-radius: 10px; margin: 1em 0; }
     .od-lesson-content blockquote {
         border-left: 3px solid var(--od-accent);
         padding-left: 1em;
         margin: 1em 0;
         color: var(--od-muted);
+    }
+    /* Prevent horizontal overflow on mobile from code, tables and long links */
+    .od-learn-layout > * { min-width: 0; }
+    .od-lesson-content { overflow-wrap: anywhere; word-break: break-word; }
+    .od-lesson-content pre {
+        overflow-x: auto;
+        max-width: 100%;
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: var(--od-fg-soft, #f3f4f6);
+        padding: 12px;
+        border-radius: 8px;
+    }
+    .od-lesson-content code { overflow-wrap: anywhere; }
+    .od-lesson-content a { overflow-wrap: anywhere; }
+    .od-lesson-content table {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+        border-collapse: collapse;
+    }
+    .od-lesson-content table td, .od-lesson-content table th {
+        border: 1px solid var(--od-border);
+        padding: 6px 10px;
     }
 </style>
 @endpush
