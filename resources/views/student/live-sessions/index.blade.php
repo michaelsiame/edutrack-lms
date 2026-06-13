@@ -52,6 +52,9 @@
                                 @endif
                                 <span class="od-meta">{{ $session->scheduled_start_time->format('M j, Y g:i A') }}</span>
                             </div>
+                            @if($session->lesson?->module)
+                                <p class="od-eyebrow" style="margin:0 0 4px;">{{ $session->lesson->module->title }}</p>
+                            @endif
                             <p class="text-sm leading-relaxed" style="color: var(--od-fg);">{{ $session->description ?: 'Live class session' }}</p>
                             <div class="flex items-center gap-4 mt-2 text-xs" style="color: var(--od-muted);">
                                 <span class="flex items-center gap-1"><i class="fas fa-clock"></i>{{ $session->scheduled_start_time->diffInMinutes($session->scheduled_end_time) }} min</span>

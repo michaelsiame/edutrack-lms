@@ -118,11 +118,29 @@
                     $totalInMod = $modLessons->count();
                     $isActiveModule = $mod->id === $module->id;
                 @endphp
+                @php $modSession = ($moduleSessions ?? collect())->get($mod->id); @endphp
                 <div class="od-module">
                     <div class="od-module-header" style="{{ $isActiveModule ? 'background: var(--od-navy-soft); color: var(--od-navy);' : '' }}">
                         <span>{{ $mod->title }}</span>
                         <span class="module-num">{{ $completedInMod }}/{{ $totalInMod }}</span>
                     </div>
+                    @if($modSession)
+                        <a href="{{ $modSession->isLive() ? route('student.live-sessions.join', $modSession) : route('student.live-sessions.index', $course) }}"
+                           @if($modSession->isLive()) target="_blank" @endif
+                           class="od-module-live"
+                           style="display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:12px;text-decoration:none;{{ $modSession->isLive() ? 'color:var(--od-danger);font-weight:600;' : 'color:var(--od-navy);' }}">
+                            @if($modSession->isLive())
+                                <span class="relative flex h-2 w-2">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style="background: var(--od-danger);"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2" style="background: var(--od-danger);"></span>
+                                </span>
+                                Live class — Join now
+                            @else
+                                <i class="fas fa-video"></i>
+                                Live class · {{ $modSession->scheduled_start_time->format('M j, g:i A') }}
+                            @endif
+                        </a>
+                    @endif
                     <ul class="od-lesson-list">
                         @foreach($modLessons as $l)
                             <li class="{{ $l->is_completed ? 'completed' : '' }} {{ $l->id === $lesson->id ? 'active' : '' }}">

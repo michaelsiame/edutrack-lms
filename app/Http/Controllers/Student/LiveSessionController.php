@@ -22,7 +22,7 @@ class LiveSessionController extends Controller
     public function index(Course $course)
     {
         $this->authorizeAccess($course);
-        $sessions = $course->liveSessions()->orderBy('scheduled_start_time', 'desc')->get();
+        $sessions = $course->liveSessions()->with('lesson.module')->orderBy('scheduled_start_time', 'desc')->get();
         return view('student.live-sessions.index', compact('course', 'sessions'));
     }
 

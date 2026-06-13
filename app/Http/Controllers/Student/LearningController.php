@@ -81,9 +81,20 @@ class LearningController extends Controller
             $lesson->module, $enrollment, $progressRecords
         );
 
+        // Upcoming/live sessions for this course, keyed by the module they belong to
+        // (session -> lesson -> module), so the sidebar can flag a module's live class.
+        $moduleSessions = $course->liveSessions()
+            ->whereIn('status', ['scheduled', 'live'])
+            ->where('scheduled_end_time', '>=', now())
+            ->with('lesson:id,module_id')
+            ->orderBy('scheduled_start_time')
+            ->get()
+            ->groupBy(fn ($s) => $s->lesson?->module_id)
+            ->map(fn ($group) => $group->first());
+
         return view('student.learning.show', compact(
             'lesson', 'course', 'modules', 'progress', 'enrollment',
-            'moduleQuiz', 'moduleQuizState'
+            'moduleQuiz', 'moduleQuizState', 'moduleSessions'
         ));
     }
 
