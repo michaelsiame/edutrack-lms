@@ -19,7 +19,7 @@
         <p class="od-meta mb-4">{{ $totalQuizzes }} quiz{{ $totalQuizzes !== 1 ? 'zes' : '' }} across {{ count($courses) }} course{{ count($courses) !== 1 ? 's' : '' }}</p>
 
         @foreach($courses as $group)
-            <div class="od-card mb-5" x-data="{ open: true }">
+            <div class="od-card mb-5" x-data="{ open: false }">
                 {{-- Course header --}}
                 <button type="button" @click="open = !open"
                     class="w-full flex items-center justify-between text-left">
