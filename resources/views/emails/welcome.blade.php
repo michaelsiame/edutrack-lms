@@ -19,5 +19,5 @@
     <li>Earn certificates upon completion</li>
 </ul>
 
-<p class="small" style="margin-top: 20px;">If you have any questions, reply to this email or contact us at edutrackzambia@gmail.com.</p>
+<p class="small" style="margin-top: 20px;">If you have any questions, reply to this email or contact us at {{ config('edutrack.email') }}.</p>
 @endsection

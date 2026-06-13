@@ -28,5 +28,5 @@
 </div>
 @endif
 
-<p class="small">Please join a few minutes early to test your audio and video. If you have any issues, contact us at edutrackzambia@gmail.com or +260 770 666 937.</p>
+<p class="small">Please join a few minutes early to test your audio and video. If you have any issues, contact us at {{ config('edutrack.email') }} or {{ config('edutrack.phone') }}.</p>
 @endsection

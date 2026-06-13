@@ -16,5 +16,5 @@
     <a href="{{ $course_url ?? url('/student/dashboard') }}" class="btn btn-success">Start Learning</a>
 </div>
 
-<p class="small">Need help getting started? Contact our support team at edutrackzambia@gmail.com or +260 770 666 937.</p>
+<p class="small">Need help getting started? Contact our support team at {{ config('edutrack.email') }} or {{ config('edutrack.phone') }}.</p>
 @endsection

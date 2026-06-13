@@ -29,9 +29,11 @@ class SendPaymentReceipt implements ShouldQueue
 
         $subject = "Payment Receipt - {$course->title}";
         $body = view('emails.payment-receipt', [
-            'student' => $student,
-            'course' => $course,
-            'payment' => $this->payment,
+            'name' => $student->user?->full_name ?? $student->user?->first_name ?? 'there',
+            'course' => $course->title,
+            'amount' => number_format((float) $this->payment->amount, 2),
+            'date' => ($this->payment->payment_date ?? $this->payment->created_at)?->format('F d, Y'),
+            'status' => $this->payment->payment_status ?? 'Completed',
         ])->render();
 
         $emailService->queue($student->email, $subject, $body, [], 5);

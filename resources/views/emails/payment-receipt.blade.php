@@ -20,9 +20,10 @@
         <td>Date</td>
         <td>{{ $date ?? now()->format('F d, Y') }}</td>
     </tr>
+    @php $st = $status ?? 'Completed'; $stColor = strtolower($st) === 'completed' ? '#059669' : (strtolower($st) === 'pending' ? '#d97706' : '#dc2626'); @endphp
     <tr>
         <td>Status</td>
-        <td style="color: #059669;">Completed</td>
+        <td style="color: {{ $stColor }};">{{ $st }}</td>
     </tr>
 </table>
 

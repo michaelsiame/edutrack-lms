@@ -35,16 +35,16 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Edutrack LMS</h1>
-            <p>@yield('subtitle', 'Computer Training College')</p>
+            <h1>{{ config('edutrack.short_name') }}</h1>
+            <p>@yield('subtitle', config('edutrack.tagline'))</p>
         </div>
         <div class="body">
             @yield('content')
         </div>
         <div class="footer">
-            <p><strong>Edutrack Computer Training College</strong><br>Kalomo, Zambia</p>
-            <p>edutrackzambia@gmail.com &bull; +260 770 666 937</p>
-            <p style="margin-top: 10px;">&copy; {{ date('Y') }} Edutrack LMS. All rights reserved.</p>
+            <p><strong>{{ config('edutrack.name') }}</strong><br>{{ config('edutrack.location') }}</p>
+            <p>{{ config('edutrack.email') }} &bull; {{ config('edutrack.phone') }}</p>
+            <p style="margin-top: 10px;">&copy; {{ date('Y') }} {{ config('edutrack.short_name') }}. All rights reserved.</p>
             @yield('footer_extra')
         </div>
     </div>
