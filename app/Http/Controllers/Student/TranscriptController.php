@@ -48,7 +48,7 @@ class TranscriptController extends Controller
 
         $enrollments = Enrollment::where('user_id', $user->id)
             ->whereIn('enrollment_status', ['Completed', 'In Progress'])
-            ->with(['course', 'certificate', 'course.modules', 'course.modules.lessons', 'course.modules.lessons.assignments', 'course.modules.lessons.quizzes'])
+            ->with(['course', 'certificate', 'course.modules.lessons', 'course.assignments.lesson', 'course.quizzes.lesson'])
             ->orderByRaw("FIELD(enrollment_status, 'Completed', 'In Progress')")
             ->orderBy('enrolled_at', 'desc')
             ->get();
@@ -76,96 +76,115 @@ class TranscriptController extends Controller
                 $grade = 'In Progress';
             }
 
-            $modules = [];
-            $courseModules = $course->modules->sortBy('display_order');
+            $courseModules = $course->modules->sortBy('display_order')->values();
             $moduleCount = $courseModules->count();
             $moduleCredits = $moduleCount > 0 ? round($credits / $moduleCount, 1) : $credits;
-            $modIndex = 1;
 
+            // Map each module id to a display code (M01, M02, …) in order.
+            $moduleCodeById = [];
+            foreach ($courseModules as $i => $module) {
+                $moduleCodeById[$module->id] = 'M' . str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT);
+            }
+
+            // Build assessment rows from EVERY assignment and quiz in the course
+            // (not only lesson-linked ones), using the BEST score per item so the
+            // breakdown reconciles with the weighted final grade.
+            $rowsByCode = [];          // code => [rows]
+            $assessedModuleIds = [];   // module ids that have at least one assessment
+
+            $codeFor = function ($lesson) use ($moduleCodeById) {
+                $modId = $lesson?->module_id;
+                return ($modId && isset($moduleCodeById[$modId])) ? $moduleCodeById[$modId] : 'GEN';
+            };
+
+            foreach ($course->assignments as $assignment) {
+                $submission = $studentId
+                    ? $assignment->submissions()
+                        ->where('student_id', $studentId)
+                        ->whereNotNull('points_earned')
+                        ->orderByDesc('points_earned')
+                        ->first()
+                    : null;
+                $has = $submission !== null;
+                $max = $assignment->max_points ?: 100;
+                $pct = $has && $max > 0 ? round(($submission->points_earned / $max) * 100, 1) : 0;
+                $code = $codeFor($assignment->lesson);
+                if ($code !== 'GEN') { $assessedModuleIds[$assignment->lesson->module_id] = true; }
+                $prefix = $assignment->lesson?->title ? $assignment->lesson->title . ' — ' : '';
+                $rowsByCode[$code][] = [
+                    'code' => $code,
+                    'title' => $prefix . $assignment->title,
+                    'type' => 'Assignment',
+                    'score' => $has ? round($submission->points_earned, 1) : '-',
+                    'max' => $max,
+                    'percentage' => $has ? $pct . '%' : '-',
+                    'grade' => $has ? $this->scoreToGrade($pct) : '-',
+                    'credits' => '-',
+                ];
+            }
+
+            foreach ($course->quizzes as $quiz) {
+                $attempt = $studentId
+                    ? $quiz->attempts()
+                        ->where('student_id', $studentId)
+                        ->whereIn('status', ['Graded', 'Submitted'])
+                        ->orderByDesc('score')
+                        ->first()
+                    : null;
+                $has = $attempt !== null;
+                $pct = $has ? round($attempt->score, 1) : 0;
+                $code = $codeFor($quiz->lesson);
+                if ($code !== 'GEN') { $assessedModuleIds[$quiz->lesson->module_id] = true; }
+                $prefix = $quiz->lesson?->title ? $quiz->lesson->title . ' — ' : '';
+                $rowsByCode[$code][] = [
+                    'code' => $code,
+                    'title' => $prefix . $quiz->title,
+                    'type' => $quiz->quiz_type ?? 'Quiz',
+                    'score' => $has ? round($attempt->score, 1) : '-',
+                    'max' => 100,
+                    'percentage' => $has ? $pct . '%' : '-',
+                    'grade' => $has ? $this->scoreToGrade($pct) : '-',
+                    'credits' => '-',
+                ];
+            }
+
+            // Modules with no assessments at all: show a completion/progress row.
             foreach ($courseModules as $module) {
-                $modCode = 'M' . str_pad((string) $modIndex, 2, '0', STR_PAD_LEFT);
-                $assessments = [];
-
-                foreach ($module->lessons->sortBy('display_order') as $lesson) {
-                    // Assignments
-                    foreach ($lesson->assignments as $assignment) {
-                        $submission = $studentId
-                            ? $assignment->submissions()
-                                ->where('student_id', $studentId)
-                                ->orderBy('graded_at', 'desc')
-                                ->first()
-                            : null;
-                        $score = $submission?->points_earned ?? 0;
-                        $max = $assignment->max_points;
-                        $pct = $max > 0 ? round(($score / $max) * 100, 1) : 0;
-                        $assessments[] = [
-                            'code' => $modCode,
-                            'title' => $lesson->title . ' — ' . $assignment->title,
-                            'type' => 'Assignment',
-                            'score' => round($score, 1),
-                            'max' => $max,
-                            'percentage' => $pct . '%',
-                            'grade' => $this->scoreToGrade($pct),
-                            'credits' => '-',
-                        ];
-                    }
-
-                    // Quizzes
-                    foreach ($lesson->quizzes as $quiz) {
-                        $attempt = $studentId
-                            ? $quiz->attempts()
-                                ->where('student_id', $studentId)
-                                ->whereIn('status', ['Graded', 'Submitted'])
-                                ->orderBy('score', 'desc')
-                                ->first()
-                            : null;
-                        $score = $attempt?->score ?? 0;
-                        $max = 100; // quizzes store percentage
-                        $pct = $score;
-                        $assessments[] = [
-                            'code' => $modCode,
-                            'title' => $lesson->title . ' — ' . $quiz->title,
-                            'type' => $quiz->quiz_type,
-                            'score' => round($score, 1),
-                            'max' => $max,
-                            'percentage' => round($pct, 1) . '%',
-                            'grade' => $this->scoreToGrade($pct),
-                            'credits' => '-',
-                        ];
-                    }
+                if (isset($assessedModuleIds[$module->id])) {
+                    continue;
                 }
+                $lessonProgress = $studentId
+                    ? \App\Models\LessonProgress::where('enrollment_id', $enrollment->id)
+                        ->whereIn('lesson_id', $module->lessons->pluck('id'))
+                        ->get()
+                    : collect();
+                $completedLessons = $lessonProgress->where('status', 'Completed')->unique('lesson_id')->count();
+                $totalLessons = $module->lessons->count();
+                $progress = $totalLessons > 0 ? min(100, round(($completedLessons / $totalLessons) * 100, 1)) : 0;
+                $grade = ($progress == 0 && !$isCompleted) ? '-' : $this->scoreToGrade($progress);
 
-                // If no assessments, show module as completed/in progress based on lesson progress
-                if (empty($assessments)) {
-                    $lessonProgress = $studentId
-                        ? \App\Models\LessonProgress::where('enrollment_id', $enrollment->id)
-                            ->whereIn('lesson_id', $module->lessons->pluck('id'))
-                            ->get()
-                        : collect();
-                    // De-duplicate in case multiple progress records exist for the same lesson
-                    $completedLessons = $lessonProgress->where('status', 'Completed')->unique('lesson_id')->count();
-                    $totalLessons = $module->lessons->count();
-                    $progress = $totalLessons > 0 ? min(100, round(($completedLessons / $totalLessons) * 100, 1)) : 0;
+                $rowsByCode[$moduleCodeById[$module->id]][] = [
+                    'code' => $moduleCodeById[$module->id],
+                    'title' => $module->title,
+                    'type' => 'Module',
+                    'score' => $progress,
+                    'max' => 100,
+                    'percentage' => $progress . '%',
+                    'grade' => $grade,
+                    'credits' => $moduleCredits,
+                ];
+            }
 
-                    // For in-progress courses, show '-' instead of 'D' for unstarted modules
-                    $grade = ($progress == 0 && !$isCompleted)
-                        ? '-'
-                        : $this->scoreToGrade($progress);
-
-                    $assessments[] = [
-                        'code' => $modCode,
-                        'title' => $module->title,
-                        'type' => 'Module',
-                        'score' => $progress,
-                        'max' => 100,
-                        'percentage' => $progress . '%',
-                        'grade' => $grade,
-                        'credits' => $moduleCredits,
-                    ];
+            // Flatten in module order, with non-module (GEN) assessments last.
+            $modules = [];
+            foreach ($courseModules as $module) {
+                $code = $moduleCodeById[$module->id];
+                if (!empty($rowsByCode[$code])) {
+                    $modules = array_merge($modules, $rowsByCode[$code]);
                 }
-
-                $modules = array_merge($modules, $assessments);
-                $modIndex++;
+            }
+            if (!empty($rowsByCode['GEN'])) {
+                $modules = array_merge($modules, $rowsByCode['GEN']);
             }
 
             $enrollmentData[] = [
