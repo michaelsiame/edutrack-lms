@@ -13,6 +13,24 @@
         grid-template-columns: 280px 1fr;
         gap: 24px;
         padding: 24px 0 48px;
+        align-items: start; /* let the sticky sidebar size to its own content, not the grid row */
+    }
+    /* Desktop: module nav stays put while notes scroll, and scrolls on its own when long */
+    @media (min-width: 1025px) {
+        .od-learn-sidebar {
+            position: sticky;
+            top: 64px; /* clears the sticky topnav */
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+            overscroll-behavior: contain; /* scrolling the nav doesn't bleed into the page */
+            padding-right: 6px;
+            scrollbar-width: thin;
+        }
+        .od-learn-sidebar::-webkit-scrollbar { width: 8px; }
+        .od-learn-sidebar::-webkit-scrollbar-thumb {
+            background: var(--od-border);
+            border-radius: 4px;
+        }
     }
     @media (max-width: 1024px) {
         .od-learn-layout { grid-template-columns: 1fr; }
