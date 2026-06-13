@@ -15,7 +15,7 @@
     function sendHeartbeat() {
         if (!isUserActive()) return;
 
-        fetch('/api/session/heartbeat', {
+        fetch('/session/heartbeat', {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',

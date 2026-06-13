@@ -77,6 +77,12 @@ Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController:
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Session heartbeat — keeps the web session alive during long study
+    // sessions (must be a web route so StartSession reads the session cookie).
+    Route::get('/session/heartbeat', function () {
+        return response()->json(['status' => 'ok', 'time' => now()->toIso8601String()]);
+    })->name('session.heartbeat');
+
     // Profile
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');

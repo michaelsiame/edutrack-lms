@@ -49,7 +49,5 @@ Route::get('/certificates/verify/{code}', [App\Http\Controllers\Api\CertificateC
 // Public promotion validation (no auth required for checking codes)
 Route::post('/promotions/validate', [App\Http\Controllers\Api\PromotionController::class, 'validateCode'])->name('api.promotions.validate');
 
-// Session heartbeat — keeps session alive during long study sessions
-Route::get('/session/heartbeat', function () {
-    return response()->json(['status' => 'ok', 'time' => now()->toIso8601String()]);
-})->middleware('auth');
+// Session heartbeat moved to a web route (routes/web.php) so the session
+// cookie is actually read; the api middleware group has no StartSession.
