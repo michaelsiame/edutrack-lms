@@ -16,4 +16,16 @@ return [
     'email' => env('EDUTRACK_EMAIL', env('MAIL_FROM_ADDRESS', 'edutrackzambia@gmail.com')),
     'phone' => env('EDUTRACK_PHONE', '+260 770 666 937'),
     'location' => env('EDUTRACK_LOCATION', 'Kalomo, Zambia'),
+
+    /*
+    | Final-grade weighting. The course total is the best score per quiz
+    | averaged into a quiz component, the best per assignment averaged into an
+    | assignment component, then combined by these weights (auto-normalised).
+    | If a course has only quizzes or only assignments, that component is the
+    | whole grade.
+    */
+    'grade' => [
+        'quiz_weight' => (float) env('GRADE_QUIZ_WEIGHT', 40),
+        'assignment_weight' => (float) env('GRADE_ASSIGNMENT_WEIGHT', 60),
+    ],
 ];
