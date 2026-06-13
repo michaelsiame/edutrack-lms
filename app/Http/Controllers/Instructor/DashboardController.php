@@ -10,6 +10,7 @@ use App\Models\LessonProgress;
 use App\Models\QuizAttempt;
 use App\Services\CertificateService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -117,6 +118,55 @@ class DashboardController extends Controller
         $service->sendCertificateNotification($certificate);
 
         return back()->with('success', 'Certificate issued successfully: ' . $certificate->certificate_number);
+    }
+
+    public function markComplete(Course $course, Enrollment $enrollment)
+    {
+        $instructor = auth()->user()->instructor;
+        if (!$instructor || $course->instructor_id !== $instructor->id) {
+            abort(403, 'You do not own this course.');
+        }
+
+        if ($enrollment->course_id !== $course->id) {
+            abort(404, 'Enrollment not found for this course.');
+        }
+
+        $certificate = null;
+        $wasAlreadyIssued = $enrollment->certificate_issued;
+
+        DB::transaction(function () use ($enrollment, &$certificate) {
+            $enrollment->update([
+                'progress' => 100,
+                'enrollment_status' => 'Completed',
+                'completion_date' => $enrollment->completion_date ?? now(),
+            ]);
+
+            if ($enrollment->certificate_blocked) {
+                return;
+            }
+
+            if (!$enrollment->certificate_issued) {
+                $service = new CertificateService();
+                $certificate = $service->issueCertificate($enrollment);
+            }
+        });
+
+        if ($enrollment->certificate_blocked) {
+            return back()->with('warning', 'Student marked as complete, but the certificate is blocked until full payment is received.');
+        }
+
+        if ($wasAlreadyIssued) {
+            return back()->with('success', 'Student marked as complete. Certificate was already issued.');
+        }
+
+        if ($certificate) {
+            $service = new CertificateService();
+            $service->sendCertificateNotification($certificate);
+
+            return back()->with('success', 'Student marked as complete and certificate issued: ' . $certificate->certificate_number);
+        }
+
+        return back()->with('success', 'Student marked as complete.');
     }
 
     public function analytics()

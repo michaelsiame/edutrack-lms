@@ -66,7 +66,19 @@
                                        'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400') }}">
                                     {{ ucfirst($status) }}
                                 </span>
-                                @if(!$enrollment->certificate_issued && $progressPercent >= 80 && !$enrollment->certificate_blocked)
+                                @if($enrollment->mode !== 'online')
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400">
+                                    {{ $enrollment->modeLabel() }}
+                                </span>
+                                @endif
+                                @if($enrollment->isInPerson() && !$enrollment->certificate_issued && !$enrollment->certificate_blocked)
+                                <form action="{{ route('instructor.courses.enrollments.complete', [$course, $enrollment]) }}" method="POST" class="inline" data-confirm="Mark this in-person student complete and issue their certificate?">
+                                    @csrf
+                                    <button type="submit" class="inline-flex items-center px-2 py-1 bg-success-600 hover:bg-success-700 text-white text-xs font-medium rounded transition-colors">
+                                        <i class="fas fa-check-circle mr-1"></i>Mark Complete &amp; Issue Cert
+                                    </button>
+                                </form>
+                                @elseif(!$enrollment->isInPerson() && !$enrollment->certificate_issued && $progressPercent >= 80 && !$enrollment->certificate_blocked)
                                 <form action="{{ route('instructor.courses.enrollments.issue-certificate', [$course, $enrollment]) }}" method="POST" class="inline" data-confirm="Issue certificate for this student?">
                                     @csrf
                                     <button type="submit" class="inline-flex items-center px-2 py-1 bg-secondary-600 hover:bg-secondary-700 text-white text-xs font-medium rounded transition-colors">

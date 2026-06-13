@@ -109,6 +109,12 @@
                             <span class="od-badge od-badge-info">{{ ucfirst($enrollment->enrollment_status) }}</span>
                         @endif
                     </div>
+                    @if($enrollment->isInPerson())
+                    <div class="flex justify-between">
+                        <span style="color: var(--od-muted);">Delivery Mode</span>
+                        <span class="od-badge od-badge-info">{{ $enrollment->modeLabel() }}</span>
+                    </div>
+                    @endif
                     <div class="flex justify-between">
                         <span style="color: var(--od-muted);">Enrolled On</span>
                         <span class="font-medium">{{ $enrollment->enrolled_at?->format('M d, Y') }}</span>

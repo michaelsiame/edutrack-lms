@@ -27,6 +27,7 @@ class Enrollment extends Model
         'last_accessed',
         'total_time_spent',
         'intake_id',
+        'mode',
     ];
 
     protected $casts = [
@@ -90,6 +91,20 @@ class Enrollment extends Model
     public function scopeCompleted($query)
     {
         return $query->where('enrollment_status', 'Completed');
+    }
+
+    public function modeLabel(): string
+    {
+        return match ($this->mode) {
+            'in_person' => 'In-Person',
+            'hybrid' => 'Hybrid',
+            default => 'Online',
+        };
+    }
+
+    public function isInPerson(): bool
+    {
+        return in_array($this->mode, ['in_person', 'hybrid'], true);
     }
 
     public function effectivePrice(): float

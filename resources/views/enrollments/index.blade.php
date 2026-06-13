@@ -58,6 +58,9 @@
                                 @else
                                     <span class="od-badge od-badge-warn">Payment Pending</span>
                                 @endif
+                                @if($enrollment->isInPerson())
+                                    <span class="od-badge od-badge-info">{{ $enrollment->modeLabel() }}</span>
+                                @endif
                             </div>
                         </div>
                         <div class="od-course-progress">

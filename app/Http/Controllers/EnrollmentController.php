@@ -102,6 +102,7 @@ class EnrollmentController extends Controller
                 'payment_status' => $isFree ? 'completed' : 'pending',
                 'amount_paid' => 0,
                 'certificate_blocked' => !$isFree,
+                'mode' => 'online',
             ]);
 
             // Create payment plan

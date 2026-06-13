@@ -287,6 +287,7 @@ Route::prefix('instructor')->middleware(['auth', 'instructor'])->name('instructo
 
     // Certificates
     Route::post('/courses/{course}/enrollments/{enrollment}/issue-certificate', [InstructorDashboardController::class, 'issueCertificate'])->name('courses.enrollments.issue-certificate');
+    Route::post('/courses/{course}/enrollments/{enrollment}/complete', [InstructorDashboardController::class, 'markComplete'])->name('courses.enrollments.complete');
 });
 
 /*

@@ -85,10 +85,20 @@
  'Dropped' => 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400',
  default => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
  };
+ $modeClass = match($enrollment->mode) {
+ 'in_person' => 'bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400',
+ 'hybrid' => 'bg-info-100 text-info-800 dark:bg-info-900/30 dark:text-info-400',
+ default => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+ };
  @endphp
  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $statusClass }}">
  {{ $enrollment->enrollment_status }}
  </span>
+ @if($enrollment->mode !== 'online')
+ <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $modeClass }} ml-1">
+ {{ $enrollment->modeLabel() }}
+ </span>
+ @endif
  </td>
  <td class="px-4 py-3">
  <div class="w-24 bg-gray-200 rounded-full h-1.5">
@@ -135,6 +145,14 @@
  <option value="Completed" {{ $enrollment->enrollment_status ==='Completed' ?'selected' :'' }}>Completed</option>
  <option value="Dropped" {{ $enrollment->enrollment_status ==='Dropped' ?'selected' :'' }}>Dropped</option>
  <option value="Expired" {{ $enrollment->enrollment_status ==='Expired' ?'selected' :'' }}>Expired</option>
+ </select>
+ </div>
+ <div>
+ <label class="od-form-label">Mode</label>
+ <select name="mode" required class="od-input">
+ <option value="online" {{ $enrollment->mode ==='online' ?'selected' :'' }}>Online</option>
+ <option value="in_person" {{ $enrollment->mode ==='in_person' ?'selected' :'' }}>In-Person</option>
+ <option value="hybrid" {{ $enrollment->mode ==='hybrid' ?'selected' :'' }}>Hybrid</option>
  </select>
  </div>
  <div>

@@ -52,6 +52,7 @@ class EnrollmentController extends Controller
             'progress' => 'nullable|numeric|min:0|max:100',
             'final_grade' => 'nullable|numeric|min:0|max:100',
             'certificate_blocked' => 'nullable|boolean',
+            'mode' => 'required|in:online,in_person,hybrid',
         ]);
 
         $enrollment->update([
@@ -59,6 +60,7 @@ class EnrollmentController extends Controller
             'progress' => $validated['progress'] ?? $enrollment->progress,
             'final_grade' => $validated['final_grade'] ?? $enrollment->final_grade,
             'certificate_blocked' => $request->boolean('certificate_blocked'),
+            'mode' => $validated['mode'],
         ]);
 
         return back()->with('success', 'Enrollment updated successfully.');
