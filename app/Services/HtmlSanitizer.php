@@ -24,7 +24,14 @@ class HtmlSanitizer
             $config->set('Attr.AllowedFrameTargets', '_blank,_self,_top,_parent');
             $config->set('Attr.AllowedRel', 'nofollow,noopener,noreferrer');
             $config->set('Core.Encoding', 'UTF-8');
-            $config->set('Cache.SerializerPath', storage_path('app/htmlpurifier'));
+
+            // HTMLPurifier needs a writable cache dir; create it if missing so
+            // a fresh checkout/deploy never 500s on the first sanitise call.
+            $cachePath = storage_path('app/htmlpurifier');
+            if (!is_dir($cachePath)) {
+                @mkdir($cachePath, 0775, true);
+            }
+            $config->set('Cache.SerializerPath', $cachePath);
 
             // figure/figcaption are HTML5 and absent from the 4.01 doctype, so
             // they must be registered as custom elements or purification throws
