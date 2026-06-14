@@ -27,7 +27,11 @@ class QuizController extends Controller
         $quizzes = Quiz::when(!$user->isAdmin(), function ($query) use ($instructor) {
                 $query->whereHas('course', fn ($q) => $q->where('instructor_id', $instructor->id));
             })
-            ->with('course')->withCount('questions')->latest()->paginate(15);
+            ->join('courses', 'courses.id', '=', 'quizzes.course_id')
+            ->orderBy('courses.title')
+            ->orderBy('quizzes.id')
+            ->select('quizzes.*')
+            ->with('course')->withCount('questions')->paginate(15);
 
         return view('instructor.quizzes.index', compact('quizzes'));
     }
