@@ -233,7 +233,7 @@ class AssignmentController extends Controller
                 'Assignment Graded',
                 "Your submission for {$assignment->title} has been graded.",
                 'grade',
-                route('assignments.show', [$course, $assignment])
+                route('student.assignments.show', [$course, $assignment])
             );
 
             if ($user->email) {
@@ -299,7 +299,7 @@ class AssignmentController extends Controller
         try {
             $emailService = app(EmailQueueService::class);
             if ($studentUserId) {
-                $emailService->sendNotification($studentUserId, 'Assignment Graded', "Your submission for {$assignment->title} has been graded.", 'grade', route('assignments.show', [$course, $assignment]));
+                $emailService->sendNotification($studentUserId, 'Assignment Graded', "Your submission for {$assignment->title} has been graded.", 'grade', route('student.assignments.show', [$course, $assignment]));
             }
 
             $studentEmail = $submission->student?->user?->email;
