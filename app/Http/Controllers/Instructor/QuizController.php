@@ -211,6 +211,34 @@ class QuizController extends Controller
 
         app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
 
+        // Notify the student their result was recorded (in-app + email, matching assignment marks).
+        try {
+            $emailService = app(\App\Services\EmailQueueService::class);
+            $passed = $validated['score'] >= ($quiz->passing_score ?? 60);
+
+            $emailService->sendNotification(
+                $user->id,
+                'Quiz Result Recorded',
+                "Your result for \"{$quiz->title}\" has been recorded: {$validated['score']}% (" . ($passed ? 'Passed' : 'Not passed') . ').',
+                'grade',
+                route('student.quizzes.attempts', $quiz)
+            );
+
+            if ($user->email) {
+                $body = view('emails.quiz-result', [
+                    'studentName' => $user->first_name ?? $user->full_name,
+                    'quizTitle' => $quiz->title,
+                    'courseTitle' => $quiz->course->title ?? 'your course',
+                    'score' => $validated['score'],
+                    'passingScore' => $quiz->passing_score ?? 60,
+                    'passed' => $passed,
+                ])->render();
+                $emailService->queue($user->email, "Quiz Result: {$quiz->title}", $body);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Quiz offline-score notification failed: ' . $e->getMessage());
+        }
+
         return back()->with('success', "Offline score recorded for {$user->full_name}.");
     }
 
