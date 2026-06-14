@@ -138,7 +138,6 @@ class EnrollmentController extends Controller
         $validated = $request->validate([
             'enrollment_status' => 'required|in:Enrolled,In Progress,Completed,Dropped,Expired',
             'progress' => 'nullable|numeric|min:0|max:100',
-            'final_grade' => 'nullable|numeric|min:0|max:100',
             'certificate_blocked' => 'nullable|boolean',
             'mode' => 'required|in:online,in_person,hybrid',
         ]);
@@ -146,10 +145,13 @@ class EnrollmentController extends Controller
         $enrollment->update([
             'enrollment_status' => $validated['enrollment_status'],
             'progress' => $validated['progress'] ?? $enrollment->progress,
-            'final_grade' => $validated['final_grade'] ?? $enrollment->final_grade,
             'certificate_blocked' => $request->boolean('certificate_blocked'),
             'mode' => $validated['mode'],
         ]);
+
+        // final_grade is computed from recorded assessments, never hand-set,
+        // so it can't silently revert the next time a mark is recorded.
+        app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
 
         return back()->with('success', 'Enrollment updated successfully.');
     }

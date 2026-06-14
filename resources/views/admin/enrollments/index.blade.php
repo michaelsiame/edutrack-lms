@@ -167,11 +167,11 @@
  <div>
  <label class="od-form-label">Progress %</label>
  <input type="number" name="progress" value="{{ $enrollment->progress }}" min="0" max="100" step="0.01"
- class="od-input w-24">
+ class="od-input w-24 bg-gray-100 dark:bg-gray-800 cursor-not-allowed">
  </div>
  <div>
  <label class="od-form-label">Grade</label>
- <input type="number" name="final_grade" value="{{ $enrollment->final_grade }}" min="0" max="100" step="0.01"
+ <input type="text" value="{{ $enrollment->final_grade !== null ? $enrollment->final_grade.'%' : '—' }}" readonly title="Computed from recorded assessments"
  class="od-input w-24">
  </div>
  <label class="flex items-center text-sm text-gray-700 dark:text-gray-300 pb-2">
