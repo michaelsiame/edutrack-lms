@@ -14,11 +14,14 @@ class CourseController extends Controller
 {
     public function index()
     {
-        $instructor = auth()->user()->instructor;
-        if (!$instructor) {
+        $user = auth()->user();
+        $instructor = $user->instructor;
+        if (!$user->isAdmin() && !$instructor) {
             abort(403, 'Instructor profile not found.');
         }
-        $courses = $instructor->courses()->withCount('enrollments')->latest()->get();
+        $courses = $user->isAdmin()
+            ? Course::withCount('enrollments')->latest()->get()
+            : $instructor->courses()->withCount('enrollments')->latest()->get();
         return view('instructor.courses.index', compact('courses'));
     }
 

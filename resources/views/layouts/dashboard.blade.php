@@ -99,6 +99,7 @@
  <x-dashboard-nav-item route="admin.certificates.index" icon="fa-certificate" label="Certificates" />
  {{-- Teaching tools — admins can grade / record marks / mark complete on any course --}}
                 <p class="px-3 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Teaching</p>
+                <x-dashboard-nav-item route="instructor.courses.index" icon="fa-book-open" label="Course Builder" />
                 <x-dashboard-nav-item route="instructor.assignments.index" icon="fa-tasks" label="Grade Assignments" />
                 <x-dashboard-nav-item route="instructor.quizzes.index" icon="fa-question-circle" label="Quizzes" />
                 <x-dashboard-nav-item route="instructor.progress" icon="fa-user-graduate" label="Class Progress" />
