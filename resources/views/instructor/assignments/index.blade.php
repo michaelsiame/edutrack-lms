@@ -176,7 +176,7 @@
  @php
  $alreadyGraded = $assignment->submissions->contains(fn ($s) => $s->student?->user_id === $enrollment->user_id && $s->status === 'Graded');
  @endphp
- <option value="{{ $enrollment->user_id }}">{{ $enrollment->user->full_name }} {{ $alreadyGraded ? '✓' : '' }}</option>
+ <option value="{{ $enrollment->user_id }}">{{ $enrollment->user?->full_name }} {{ $alreadyGraded ? '✓' : '' }}</option>
  @endforeach
  </select>
  </div>

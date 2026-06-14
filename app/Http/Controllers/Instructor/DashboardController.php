@@ -70,9 +70,9 @@ class DashboardController extends Controller
         }
 
         $courses = $user->isAdmin()
-            ? Course::with(['enrollments.student.user', 'modules.lessons'])->latest()->get()
+            ? Course::with(['enrollments' => fn ($q) => $q->whereHas('user')->with('student.user'), 'modules.lessons'])->latest()->get()
             : $instructor->courses()
-                ->with(['enrollments.student.user', 'modules.lessons'])
+                ->with(['enrollments' => fn ($q) => $q->whereHas('user')->with('student.user'), 'modules.lessons'])
                 ->latest()
                 ->get();
 

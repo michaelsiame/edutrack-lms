@@ -31,14 +31,14 @@ class AssignmentController extends Controller
 
         $courses = $user->isAdmin()
             ? Course::with([
-                'enrollments' => fn ($query) => $query->where('enrollment_status', '!=', 'Dropped')->with('user'),
+                'enrollments' => fn ($query) => $query->where('enrollment_status', '!=', 'Dropped')->whereHas('user')->with('user'),
                 'assignments.submissions.student.user',
             ])
                 ->latest()
                 ->get()
             : $instructor->courses()
                 ->with([
-                    'enrollments' => fn ($query) => $query->where('enrollment_status', '!=', 'Dropped')->with('user'),
+                    'enrollments' => fn ($query) => $query->where('enrollment_status', '!=', 'Dropped')->whereHas('user')->with('user'),
                     'assignments.submissions.student.user',
                 ])
                 ->latest()

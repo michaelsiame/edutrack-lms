@@ -18,14 +18,16 @@ class QuizController extends Controller
 {
     public function index()
     {
-        $instructor = auth()->user()->instructor;
-        if (!$instructor) {
+        $user = auth()->user();
+        $instructor = $user->instructor;
+        if (!$user->isAdmin() && !$instructor) {
             abort(403, 'Instructor profile not found.');
         }
 
-        $quizzes = Quiz::whereHas('course', function ($q) use ($instructor) {
-            $q->where('instructor_id', $instructor->id);
-        })->with('course')->withCount('questions')->latest()->paginate(15);
+        $quizzes = Quiz::when(!$user->isAdmin(), function ($query) use ($instructor) {
+                $query->whereHas('course', fn ($q) => $q->where('instructor_id', $instructor->id));
+            })
+            ->with('course')->withCount('questions')->latest()->paginate(15);
 
         return view('instructor.quizzes.index', compact('quizzes'));
     }
