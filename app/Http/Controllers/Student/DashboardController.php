@@ -44,8 +44,16 @@ class DashboardController extends Controller
             ->selectRaw('SUM(GREATEST(0, COALESCE(courses.price, 0) - COALESCE(enrollments.amount_paid, 0))) as balance')
             ->value('balance') ?? 0;
 
+        // Onboarding state — drives the "getting started" strip for new students.
+        $hasRegistrationFee = \App\Models\RegistrationFee::where('user_id', auth()->id())
+            ->where('payment_status', 'completed')
+            ->exists();
+        $hasEnrolment = auth()->user()->enrollments()->exists();
+        $firstCourse = $enrollments->first()?->course;
+
         return view('student.dashboard', compact(
-            'enrollments', 'certificates', 'payments', 'totalPaid', 'balanceDue'
+            'enrollments', 'certificates', 'payments', 'totalPaid', 'balanceDue',
+            'hasRegistrationFee', 'hasEnrolment', 'firstCourse'
         ));
     }
 

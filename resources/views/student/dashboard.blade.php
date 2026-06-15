@@ -24,6 +24,57 @@
         </div>
     </div>
 
+    {{-- Getting-started strip — shown until the student has paid the registration fee and enrolled --}}
+    @if(!$hasRegistrationFee || !$hasEnrolment)
+        <div class="od-card mb-8" style="border-left: 4px solid var(--od-accent);">
+            <p class="od-eyebrow" style="margin:0 0 10px;">Getting started</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {{-- Step 1: registration fee --}}
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center justify-center rounded-full shrink-0" style="width:30px;height:30px;background:{{ $hasRegistrationFee ? 'var(--od-green-soft)' : 'var(--od-navy-soft)' }};color:{{ $hasRegistrationFee ? 'var(--od-green)' : 'var(--od-navy)' }};">
+                        <i class="fas {{ $hasRegistrationFee ? 'fa-check' : 'fa-1' }}"></i>
+                    </span>
+                    <div class="text-sm">
+                        <div class="font-medium" style="color:var(--od-fg);">Pay registration fee</div>
+                        @if(!$hasRegistrationFee)
+                            <a href="{{ route('registration-fee.show') }}" style="color:var(--od-navy);font-size:12px;">Pay K150 now →</a>
+                        @else
+                            <span class="od-meta" style="font-size:12px;">Done</span>
+                        @endif
+                    </div>
+                </div>
+                {{-- Step 2: enrol --}}
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center justify-center rounded-full shrink-0" style="width:30px;height:30px;background:{{ $hasEnrolment ? 'var(--od-green-soft)' : 'var(--od-navy-soft)' }};color:{{ $hasEnrolment ? 'var(--od-green)' : 'var(--od-navy)' }};">
+                        <i class="fas {{ $hasEnrolment ? 'fa-check' : 'fa-2' }}"></i>
+                    </span>
+                    <div class="text-sm">
+                        <div class="font-medium" style="color:var(--od-fg);">Enrol in a course</div>
+                        @if(!$hasEnrolment)
+                            <a href="{{ route('courses.index') }}" style="color:var(--od-navy);font-size:12px;">Browse courses →</a>
+                        @else
+                            <span class="od-meta" style="font-size:12px;">Done</span>
+                        @endif
+                    </div>
+                </div>
+                {{-- Step 3: start learning --}}
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center justify-center rounded-full shrink-0" style="width:30px;height:30px;background:var(--od-navy-soft);color:var(--od-navy);">
+                        <i class="fas fa-3"></i>
+                    </span>
+                    <div class="text-sm">
+                        <div class="font-medium" style="color:var(--od-fg);">Start learning</div>
+                        @if($hasEnrolment && $firstCourse)
+                            <a href="{{ route('enrollments.show', $firstCourse) }}" style="color:var(--od-navy);font-size:12px;">Open {{ \Illuminate\Support\Str::limit($firstCourse->title, 22) }} →</a>
+                        @else
+                            <span class="od-meta" style="font-size:12px;">After you enrol</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Stats -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 stagger-children">
         <div class="od-stat-card">

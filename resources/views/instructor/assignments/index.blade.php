@@ -168,6 +168,7 @@
  <div x-show="open" x-cloak class="mt-2 p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
  <form action="{{ route('instructor.courses.assignments.record-mark', [$course, $assignment]) }}" method="POST" class="space-y-3">
  @csrf
+ <p class="text-xs text-gray-500 dark:text-gray-400">Use this for work done on paper or in class. The mark counts toward the student's grade and notifies them, just like an online submission.</p>
  <div>
  <label class="od-form-label">Student</label>
  <select name="user_id" required class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
