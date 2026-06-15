@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Comparison of local on-premise IT and cloud services: who owns the server, where data lives, and who manages updates.">
+  <title>Local IT vs Cloud Services</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Local IT vs Cloud Services</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">The same business needs can be met in two different places</text>
+
+  <!-- Local / On-premise card -->
+  <g>
+    <rect x="30" y="75" width="290" height="200" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <circle cx="80" cy="115" r="22" fill="#6b6f78"/>
+    <!-- server tower icon -->
+    <rect x="71" y="102" width="18" height="26" rx="2" fill="#ffffff"/>
+    <circle cx="80" cy="110" r="2" fill="#6b6f78"/>
+    <circle cx="80" cy="116" r="2" fill="#6b6f78"/>
+    <circle cx="80" cy="122" r="2" fill="#6b6f78"/>
+    <text x="175" y="108" text-anchor="middle" font-size="17" font-weight="700" fill="#0a1628">Local / On-Premise</text>
+    <text x="175" y="128" text-anchor="middle" font-size="13" fill="#6b6f78">Server and files stay in your office</text>
+    <rect x="55" y="146" width="240" height="32" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="175" y="167" text-anchor="middle" font-size="12" font-weight="700" fill="#6b6f78">You buy and maintain the hardware</text>
+    <rect x="55" y="184" width="240" height="32" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="175" y="205" text-anchor="middle" font-size="12" font-weight="700" fill="#6b6f78">Access mainly from the office LAN</text>
+    <text x="175" y="240" text-anchor="middle" font-size="12" fill="#6b6f78">Best when you need full control</text>
+  </g>
+
+  <!-- VS badge -->
+  <circle cx="330" cy="175" r="18" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <text x="330" y="180" text-anchor="middle" font-size="12" font-weight="700" fill="#0b4f8c">VS</text>
+
+  <!-- Cloud card -->
+  <g>
+    <rect x="340" y="75" width="290" height="200" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="390" cy="115" r="22" fill="#0b4f8c"/>
+    <!-- cloud icon -->
+    <path d="M379 120 C376 120 374 117 374 114 C374 110 377 107 381 107 C382 103 386 100 390 100 C395 100 399 103 400 107 C403 107 406 110 406 114 C406 117 404 120 401 120 Z" fill="#ffffff"/>
+    <text x="485" y="108" text-anchor="middle" font-size="17" font-weight="700" fill="#0a1628">Cloud Services</text>
+    <text x="485" y="128" text-anchor="middle" font-size="13" fill="#6b6f78">Data and apps live on remote servers</text>
+    <rect x="365" y="146" width="240" height="32" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="485" y="167" text-anchor="middle" font-size="12" font-weight="700" fill="#0b4f8c">Provider manages updates and uptime</text>
+    <rect x="365" y="184" width="240" height="32" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="485" y="205" text-anchor="middle" font-size="12" font-weight="700" fill="#0b4f8c">Access from anywhere with internet</text>
+    <text x="485" y="240" text-anchor="middle" font-size="12" fill="#6b6f78">Best for flexibility and remote teams</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="291" text-anchor="middle" font-size="11.5" fill="#9aa3af">Many Zambian businesses use a hybrid: local files plus cloud backups.</text>
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="AI input-process-output flow: prompt or data goes into a model, which produces a prediction or content.">
+  <title>How AI Turns Input into Output</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">How AI Turns Input into Output</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">A prompt or data goes in, the model processes it, and a reply comes out</text>
+
+  <!-- Input -->
+  <g>
+    <rect x="50" y="90" width="170" height="160" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="135" cy="130" r="24" fill="#0b4f8c"/>
+    <!-- speech / prompt bubble -->
+    <rect x="122" y="120" width="26" height="18" rx="5" fill="#ffffff"/>
+    <polygon points="129,138 135,146 141,138" fill="#ffffff"/>
+    <text x="135" y="182" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Input</text>
+    <text x="135" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">Your prompt</text>
+    <text x="135" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">or data</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="225" y1="170" x2="260" y2="170"/>
+    <polygon points="260,163 273,170 260,177"/>
+  </g>
+
+  <!-- Process / Model -->
+  <g>
+    <rect x="280" y="82" width="170" height="176" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="2"/>
+    <circle cx="365" cy="130" r="24" fill="#f59e0b"/>
+    <!-- brain / network -->
+    <circle cx="365" cy="130" r="8" fill="#ffffff"/>
+    <circle cx="355" cy="120" r="4" fill="#ffffff"/>
+    <circle cx="375" cy="120" r="4" fill="#ffffff"/>
+    <circle cx="355" cy="140" r="4" fill="#ffffff"/>
+    <circle cx="375" cy="140" r="4" fill="#ffffff"/>
+    <line x1="360" y1="123" x2="365" y2="127" stroke="#f59e0b" stroke-width="1.5"/>
+    <line x1="370" y1="123" x2="365" y2="127" stroke="#f59e0b" stroke-width="1.5"/>
+    <line x1="360" y1="137" x2="365" y2="133" stroke="#f59e0b" stroke-width="1.5"/>
+    <line x1="370" y1="137" x2="365" y2="133" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="365" y="182" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">AI Model</text>
+    <text x="365" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">Processes patterns</text>
+    <text x="365" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">and predicts</text>
+    <text x="365" y="240" text-anchor="middle" font-size="12" fill="#6b6f78">next best output</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="455" y1="170" x2="490" y2="170"/>
+    <polygon points="490,163 503,170 490,177"/>
+  </g>
+
+  <!-- Output -->
+  <g>
+    <rect x="520" y="90" width="170" height="160" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <circle cx="605" cy="130" r="24" fill="#1f9d57"/>
+    <!-- document / content -->
+    <rect x="595" y="118" width="20" height="26" rx="2" fill="#ffffff"/>
+    <line x1="599" y1="125" x2="611" y2="125" stroke="#1f9d57" stroke-width="2"/>
+    <line x1="599" y1="131" x2="611" y2="131" stroke="#1f9d57" stroke-width="2"/>
+    <line x1="599" y1="137" x2="607" y2="137" stroke="#1f9d57" stroke-width="2"/>
+    <text x="605" y="182" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Output</text>
+    <text x="605" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">Answer, text,</text>
+    <text x="605" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">image or code</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="282" text-anchor="middle" font-size="11.5" fill="#9aa3af">Better input usually gives better output — this is why prompting matters.</text>
+</svg>

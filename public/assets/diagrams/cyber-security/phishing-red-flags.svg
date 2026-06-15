@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Four phishing red flags: urgent tone, suspicious sender, odd links, and unexpected attachments.">
+  <title>Phishing Red Flags</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Phishing Red Flags</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Stop and check before you click or reply</text>
+
+  <!-- Flag 1: Urgent tone -->
+  <g>
+    <rect x="40" y="82" width="140" height="160" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <circle cx="110" cy="124" r="22" fill="#dc2626"/>
+    <!-- exclamation clock -->
+    <circle cx="110" cy="124" r="10" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+    <line x1="110" y1="118" x2="110" y2="124" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="110" y1="128" x2="110" y2="129" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="110" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Urgent tone</text>
+    <text x="110" y="192" text-anchor="middle" font-size="12" fill="#6b6f78">"Act now!"</text>
+    <text x="110" y="210" text-anchor="middle" font-size="12" fill="#6b6f78">Threats or fear</text>
+    <text x="110" y="228" text-anchor="middle" font-size="12" fill="#6b6f78">Countdown timer</text>
+  </g>
+
+  <!-- Flag 2: Suspicious sender -->
+  <g>
+    <rect x="190" y="82" width="140" height="160" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <circle cx="260" cy="124" r="22" fill="#dc2626"/>
+    <!-- email with question -->
+    <rect x="250" y="116" width="20" height="14" rx="2" fill="#ffffff"/>
+    <path d="M250 118 l10 6 10 -6" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="274" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">?</text>
+    <text x="260" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Suspicious sender</text>
+    <text x="260" y="192" text-anchor="middle" font-size="12" fill="#6b6f78">Odd email address</text>
+    <text x="260" y="210" text-anchor="middle" font-size="12" fill="#6b6f78">Generic greeting</text>
+    <text x="260" y="228" text-anchor="middle" font-size="12" fill="#6b6f78">Spelling mistakes</text>
+  </g>
+
+  <!-- Flag 3: Odd links -->
+  <g>
+    <rect x="340" y="82" width="140" height="160" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <circle cx="410" cy="124" r="22" fill="#dc2626"/>
+    <!-- broken link -->
+    <path d="M400 120 h8 a4 4 0 0 1 0 8 h-3" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <path d="M418 128 h-8 a4 4 0 0 1 0 -8 h3" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <text x="410" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Odd links</text>
+    <text x="410" y="192" text-anchor="middle" font-size="12" fill="#6b6f78">Long strange URL</text>
+    <text x="410" y="210" text-anchor="middle" font-size="12" fill="#6b6f78">Hover shows differ</text>
+    <text x="410" y="228" text-anchor="middle" font-size="12" fill="#6b6f78">Bitly or misspell</text>
+  </g>
+
+  <!-- Flag 4: Unexpected attachments -->
+  <g>
+    <rect x="490" y="82" width="140" height="160" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <circle cx="560" cy="124" r="22" fill="#dc2626"/>
+    <!-- paperclip -->
+    <path d="M553 130 c0 5 4 8 7 8 s7 -3 7 -8 v-14 a5 5 0 0 0 -10 0 v12 a3 3 0 0 0 6 0 v-10" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <text x="560" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Attachments</text>
+    <text x="560" y="192" text-anchor="middle" font-size="12" fill="#6b6f78">Unexpected file</text>
+    <text x="560" y="210" text-anchor="middle" font-size="12" fill="#6b6f78">.exe .zip .docm</text>
+    <text x="560" y="228" text-anchor="middle" font-size="12" fill="#6b6f78">Enable macros?</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="270" text-anchor="middle" font-size="11.5" fill="#9aa3af">If you see one or more flags, verify the message another way before acting.</text>
+</svg>

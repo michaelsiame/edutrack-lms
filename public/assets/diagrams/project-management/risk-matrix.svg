@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Project risk matrix showing probability against impact, with green monitor, amber plan, and red act-now zones.">
+  <title>Project Risk Matrix</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Project Risk Matrix</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Score risks by probability and impact to decide your response</text>
+
+  <!-- Y-axis label -->
+  <text x="38" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#6b6f78" transform="rotate(-90 38 170)">Probability</text>
+
+  <!-- X-axis label -->
+  <text x="375" y="278" text-anchor="middle" font-size="13" font-weight="700" fill="#6b6f78">Impact</text>
+
+  <!-- Grid -->
+  <!-- Low impact column -->
+  <rect x="180" y="90" width="90" height="50" rx="4" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+  <text x="225" y="121" text-anchor="middle" font-size="13" font-weight="700" fill="#1f9d57">Monitor</text>
+
+  <rect x="180" y="140" width="90" height="50" rx="4" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+  <text x="225" y="171" text-anchor="middle" font-size="13" font-weight="700" fill="#1f9d57">Watch</text>
+
+  <rect x="180" y="190" width="90" height="50" rx="4" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="225" y="221" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">Plan</text>
+
+  <!-- Medium impact column -->
+  <rect x="270" y="90" width="90" height="50" rx="4" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+  <text x="315" y="121" text-anchor="middle" font-size="13" font-weight="700" fill="#1f9d57">Watch</text>
+
+  <rect x="270" y="140" width="90" height="50" rx="4" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="315" y="171" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">Plan</text>
+
+  <rect x="270" y="190" width="90" height="50" rx="4" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="315" y="221" text-anchor="middle" font-size="13" font-weight="700" fill="#dc2626">Act now</text>
+
+  <!-- High impact column -->
+  <rect x="360" y="90" width="90" height="50" rx="4" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="405" y="121" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">Plan</text>
+
+  <rect x="360" y="140" width="90" height="50" rx="4" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="405" y="171" text-anchor="middle" font-size="13" font-weight="700" fill="#dc2626">Act now</text>
+
+  <rect x="360" y="190" width="90" height="50" rx="4" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="405" y="221" text-anchor="middle" font-size="13" font-weight="700" fill="#dc2626">Escalate</text>
+
+  <!-- Y-axis ticks -->
+  <text x="165" y="121" text-anchor="end" font-size="12" fill="#6b6f78">Low</text>
+  <text x="165" y="171" text-anchor="end" font-size="12" fill="#6b6f78">Medium</text>
+  <text x="165" y="221" text-anchor="end" font-size="12" fill="#6b6f78">High</text>
+
+  <!-- X-axis ticks -->
+  <text x="225" y="258" text-anchor="middle" font-size="12" fill="#6b6f78">Low</text>
+  <text x="315" y="258" text-anchor="middle" font-size="12" fill="#6b6f78">Medium</text>
+  <text x="405" y="258" text-anchor="middle" font-size="12" fill="#6b6f78">High</text>
+
+  <!-- Examples -->
+  <g>
+    <rect x="480" y="90" width="160" height="150" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="560" y="115" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Example Risks</text>
+    <text x="490" y="140" text-anchor="start" font-size="12" fill="#6b6f78">- Supplier delay (Medium)</text>
+    <text x="490" y="160" text-anchor="start" font-size="12" fill="#6b6f78">- Budget cut (High)</text>
+    <text x="490" y="180" text-anchor="start" font-size="12" fill="#6b6f78">- Load shedding (High)</text>
+    <text x="490" y="200" text-anchor="start" font-size="12" fill="#6b6f78">- Staff illness (Low)</text>
+    <text x="490" y="220" text-anchor="start" font-size="12" fill="#6b6f78">- Scope creep (Medium)</text>
+  </g>
+</svg>

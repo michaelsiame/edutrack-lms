@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Web request-response cycle: browser asks DNS for the server address, sends a request, the server replies, and the browser renders the page.">
+  <title>The Web Request and Response Cycle</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Web Request and Response Cycle</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">What happens when you type a web address and press Enter</text>
+
+  <!-- Stage 1: Browser -->
+  <g>
+    <rect x="18" y="90" width="120" height="154" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <rect x="48" y="116" width="60" height="48" rx="4" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <line x1="56" y1="130" x2="100" y2="130" stroke="#0b4f8c" stroke-width="2"/>
+    <line x1="56" y1="140" x2="92" y2="140" stroke="#0b4f8c" stroke-width="2"/>
+    <line x1="56" y1="150" x2="84" y2="150" stroke="#0b4f8c" stroke-width="2"/>
+    <text x="78" y="184" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Browser</text>
+    <text x="78" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">types URL</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="142" y1="142" x2="166" y2="142"/>
+    <polygon points="166,135 179,142 166,149"/>
+  </g>
+  <text x="160" y="132" text-anchor="middle" font-size="10" fill="#9aa3af">IP?</text>
+
+  <!-- Stage 2: DNS -->
+  <g>
+    <rect x="184" y="90" width="120" height="154" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="244" y="142" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">DNS</text>
+    <text x="244" y="162" text-anchor="middle" font-size="12" fill="#6b6f78">looks up</text>
+    <text x="244" y="180" text-anchor="middle" font-size="12" fill="#6b6f78">edutrack</text>
+    <text x="244" y="198" text-anchor="middle" font-size="12" fill="#6b6f78">.com</text>
+    <text x="244" y="216" text-anchor="middle" font-size="12" fill="#9aa3af">address book</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="308" y1="142" x2="332" y2="142"/>
+    <polygon points="332,135 345,142 332,149"/>
+  </g>
+
+  <!-- Stage 3: Server -->
+  <g>
+    <rect x="350" y="90" width="120" height="154" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="380" y="116" width="60" height="48" rx="4" fill="#ffffff" stroke="#f59e0b" stroke-width="1.5"/>
+    <line x1="388" y1="130" x2="432" y2="130" stroke="#f59e0b" stroke-width="2"/>
+    <line x1="388" y1="140" x2="420" y2="140" stroke="#f59e0b" stroke-width="2"/>
+    <circle cx="435" cy="150" r="3" fill="#f59e0b"/>
+    <text x="410" y="184" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Server</text>
+    <text x="410" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">prepares</text>
+    <text x="410" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">response</text>
+  </g>
+
+  <!-- arrow 3 (response back) -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <path d="M410 244 v18 a8 8 0 0 1 -8 8 h-318 a8 8 0 0 1 -8 -8 v-18" fill="none" stroke="#9aa3af" stroke-width="2.5"/>
+    <polygon points="84,244 84,234 76,239"/>
+  </g>
+  <text x="280" y="282" text-anchor="middle" font-size="10" fill="#9aa3af">HTML, CSS, JS files</text>
+
+  <!-- Stage 4: Rendered Page -->
+  <g>
+    <rect x="522" y="90" width="120" height="154" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <rect x="552" y="116" width="60" height="48" rx="4" fill="#ffffff" stroke="#1f9d57" stroke-width="1.5"/>
+    <rect x="556" y="122" width="52" height="14" fill="#1f9d57"/>
+    <rect x="556" y="140" width="36" height="6" fill="#9aa3af"/>
+    <rect x="556" y="150" width="48" height="6" fill="#9aa3af"/>
+    <text x="582" y="184" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Render</text>
+    <text x="582" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">browser builds</text>
+    <text x="582" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">the page</text>
+  </g>
+
+  <!-- arrow 4 from browser to render -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="142" y1="190" x2="518" y2="190"/>
+    <polygon points="518,183 531,190 518,197"/>
+  </g>
+</svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Security controls protecting the CIA triad: preventive, detective, and corrective controls around confidentiality, integrity, and availability.">
+  <title>Security Controls Around the CIA Triad</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Security Controls Around the CIA Triad</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Controls stop, spot, and fix problems for every security goal</text>
+
+  <!-- CIA triad center -->
+  <g>
+    <polygon points="330,85 380,170 280,170" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="330" y="128" text-anchor="middle" font-size="13" font-weight="700" fill="#0b4f8c">CIA</text>
+    <text x="330" y="142" text-anchor="middle" font-size="10" fill="#6b6f78">Confidentiality</text>
+    <text x="330" y="153" text-anchor="middle" font-size="10" fill="#6b6f78">Integrity</text>
+    <text x="330" y="164" text-anchor="middle" font-size="10" fill="#6b6f78">Availability</text>
+  </g>
+
+  <!-- Preventive controls (top) -->
+  <g>
+    <rect x="230" y="70" width="200" height="44" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="330" y="88" text-anchor="middle" font-size="13" font-weight="700" fill="#1f9d57">Preventive</text>
+    <text x="330" y="105" text-anchor="middle" font-size="11" fill="#6b6f78">Firewalls, passwords, MFA</text>
+  </g>
+
+  <!-- Detective controls (right) -->
+  <g>
+    <rect x="430" y="140" width="180" height="50" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="520" y="162" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">Detective</text>
+    <text x="520" y="179" text-anchor="middle" font-size="11" fill="#6b6f78">Logs, SIEM, IDS alerts</text>
+  </g>
+
+  <!-- Corrective controls (bottom) -->
+  <g>
+    <rect x="230" y="230" width="200" height="44" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="330" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#dc2626">Corrective</text>
+    <text x="330" y="265" text-anchor="middle" font-size="11" fill="#6b6f78">Backups, patches, isolation</text>
+  </g>
+
+  <!-- connector lines -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="330" y1="114" x2="330" y2="123"/>
+    <line x1="380" y1="165" x2="427" y2="165"/>
+    <polygon points="420,161 427,165 420,169"/>
+    <line x1="330" y1="170" x2="330" y2="226"/>
+    <polygon points="326,219 330,226 334,219"/>
+  </g>
+
+  <!-- Access control callout (left) -->
+  <g>
+    <rect x="50" y="130" width="160" height="70" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="130" y="153" text-anchor="middle" font-size="12" font-weight="700" fill="#0a1628">Access Control</text>
+    <text x="130" y="172" text-anchor="middle" font-size="11" fill="#6b6f78">Least privilege, role</text>
+    <text x="130" y="187" text-anchor="middle" font-size="11" fill="#6b6f78">based access, strong auth</text>
+  </g>
+
+  <!-- arrow from access control to CIA -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="210" y1="165" x2="276" y2="150"/>
+    <polygon points="269,146 276,150 272,157"/>
+  </g>
+</svg>

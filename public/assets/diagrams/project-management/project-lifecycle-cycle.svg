@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Project lifecycle cycle with four stages: Initiate, Plan, Execute, and Monitor and Close, connected by curved arrows.">
+  <title>The Project Lifecycle</title>
+
+  <!-- title -->
+  <text x="330" y="28" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Project Lifecycle</text>
+  <text x="330" y="50" text-anchor="middle" font-size="13" fill="#6b6f78">Four repeating stages that keep a project under control</text>
+
+  <!-- Plan (top) -->
+  <g>
+    <rect x="265" y="62" width="130" height="100" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="330" cy="92" r="18" fill="#f59e0b"/>
+    <text x="330" y="97" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">2</text>
+    <text x="330" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Plan</text>
+    <text x="330" y="148" text-anchor="middle" font-size="12" fill="#6b6f78">Scope, schedule,</text>
+    <text x="330" y="163" text-anchor="middle" font-size="12" fill="#6b6f78">budget, risks</text>
+  </g>
+
+  <!-- Execute (right) -->
+  <g>
+    <rect x="470" y="135" width="130" height="100" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <circle cx="535" cy="165" r="18" fill="#1f9d57"/>
+    <text x="535" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">3</text>
+    <text x="535" y="201" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Execute</text>
+    <text x="535" y="221" text-anchor="middle" font-size="12" fill="#6b6f78">Build, manage,</text>
+    <text x="535" y="236" text-anchor="middle" font-size="12" fill="#6b6f78">communicate</text>
+  </g>
+
+  <!-- Monitor and Close (bottom) -->
+  <g>
+    <rect x="245" y="205" width="170" height="70" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <circle cx="295" cy="235" r="16" fill="#6b6f78"/>
+    <text x="295" y="240" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">4</text>
+    <text x="400" y="230" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Monitor and Close</text>
+    <text x="400" y="252" text-anchor="middle" font-size="12" fill="#6b6f78">Track progress, report, hand over</text>
+  </g>
+
+  <!-- Initiate (left) -->
+  <g>
+    <rect x="60" y="135" width="130" height="100" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="125" cy="165" r="18" fill="#0b4f8c"/>
+    <text x="125" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">1</text>
+    <text x="125" y="201" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Initiate</text>
+    <text x="125" y="221" text-anchor="middle" font-size="12" fill="#6b6f78">Define goal,</text>
+    <text x="125" y="236" text-anchor="middle" font-size="12" fill="#6b6f78">get approval</text>
+  </g>
+
+  <!-- arrows: Initiate -> Plan -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <path d="M185 155 C215 135, 245 115, 265 105" fill="none"/>
+    <polygon points="270,100 278,112 262,112"/>
+  </g>
+
+  <!-- arrows: Plan -> Execute -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <path d="M395 105 C415 115, 445 135, 470 155" fill="none"/>
+    <polygon points="478,158 465,170 460,154"/>
+  </g>
+
+  <!-- arrows: Execute -> Monitor/Close -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <path d="M500 235 C470 240, 440 240, 415 240" fill="none"/>
+    <polygon points="415,233 400,240 415,247"/>
+  </g>
+
+  <!-- arrows: Monitor/Close -> Initiate -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <path d="M245 235 C215 235, 185 215, 160 190" fill="none"/>
+    <polygon points="155,196 150,180 165,184"/>
+  </g>
+</svg>

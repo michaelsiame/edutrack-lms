@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Data analysis pipeline: Collect raw data, Clean it, Analyse with formulas, Visualise with charts, then Decide and act.">
+  <title>Data Analysis Pipeline</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Data Analysis Pipeline</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Turn messy data into a clear decision</text>
+
+  <!-- Collect -->
+  <g>
+    <rect x="20" y="95" width="112" height="100" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <circle cx="76" cy="130" r="18" fill="#6b6f78"/>
+    <rect x="67" y="122" width="18" height="14" rx="2" fill="#ffffff"/>
+    <path d="M73 128 h4 v4 h-4 z" fill="#6b6f78"/>
+    <text x="76" y="168" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Collect</text>
+    <text x="76" y="185" text-anchor="middle" font-size="11" fill="#6b6f78">Raw data</text>
+  </g>
+
+  <!-- Clean -->
+  <g>
+    <rect x="150" y="95" width="112" height="100" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="206" cy="130" r="18" fill="#f59e0b"/>
+    <path d="M199 128 l5 5 10 -10" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="206" y="168" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Clean</text>
+    <text x="206" y="185" text-anchor="middle" font-size="11" fill="#6b6f78">Remove errors</text>
+  </g>
+
+  <!-- Analyse -->
+  <g>
+    <rect x="280" y="95" width="112" height="100" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="336" cy="130" r="18" fill="#0b4f8c"/>
+    <text x="336" y="135" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">f(x)</text>
+    <text x="336" y="168" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Analyse</text>
+    <text x="336" y="185" text-anchor="middle" font-size="11" fill="#6b6f78">SUM, AVERAGE, IF</text>
+  </g>
+
+  <!-- Visualise -->
+  <g>
+    <rect x="410" y="95" width="112" height="100" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <circle cx="466" cy="130" r="18" fill="#1f9d57"/>
+    <rect x="457" y="134" width="6" height="12" fill="#ffffff"/>
+    <rect x="465" y="126" width="6" height="20" fill="#ffffff"/>
+    <rect x="473" y="130" width="6" height="16" fill="#ffffff"/>
+    <text x="466" y="168" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Visualise</text>
+    <text x="466" y="185" text-anchor="middle" font-size="11" fill="#6b6f78">Charts, tables</text>
+  </g>
+
+  <!-- Decide -->
+  <g>
+    <rect x="540" y="95" width="112" height="100" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <circle cx="596" cy="130" r="18" fill="#dc2626"/>
+    <path d="M590 130 l6 6 12 -12" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="596" y="168" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Decide</text>
+    <text x="596" y="185" text-anchor="middle" font-size="11" fill="#6b6f78">Act on insight</text>
+  </g>
+
+  <!-- arrows -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="132" y1="145" x2="147" y2="145"/>
+    <polygon points="147,138 160,145 147,152"/>
+    <line x1="262" y1="145" x2="277" y2="145"/>
+    <polygon points="277,138 290,145 277,152"/>
+    <line x1="392" y1="145" x2="407" y2="145"/>
+    <polygon points="407,138 420,145 407,152"/>
+    <line x1="522" y1="145" x2="537" y2="145"/>
+    <polygon points="537,138 550,145 537,152"/>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="230" text-anchor="middle" font-size="11.5" fill="#9aa3af">Most time is spent cleaning, but analysis only works on clean data.</text>
+</svg>

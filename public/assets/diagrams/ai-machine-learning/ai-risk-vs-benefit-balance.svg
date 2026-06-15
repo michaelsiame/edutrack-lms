@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="AI benefits versus risks: time savings and business help balanced against scams, deepfakes, wrong answers, and data leaks.">
+  <title>AI Benefits vs Risks</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">AI Benefits vs Risks</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Use the power, but watch out for the dangers</text>
+
+  <!-- Benefits -->
+  <g>
+    <rect x="50" y="78" width="280" height="190" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <circle cx="190" cy="110" r="20" fill="#1f9d57"/>
+    <!-- thumbs up -->
+    <path d="M184 116 v-8 a3 3 0 0 1 6 0 v4 h6 a2 2 0 0 1 2 2 l-1 6 a2 2 0 0 1 -2 2 h-11 z" fill="#ffffff"/>
+    <text x="190" y="152" text-anchor="middle" font-size="16" font-weight="700" fill="#0a1628">Benefits</text>
+    <text x="70" y="182" font-size="13" fill="#6b6f78">Saves time on drafts and research</text>
+    <text x="70" y="204" font-size="13" fill="#6b6f78">Helps small businesses compete</text>
+    <text x="70" y="226" font-size="13" fill="#6b6f78">Available any time, any day</text>
+    <text x="70" y="248" font-size="13" fill="#6b6f78">Explains hard topics simply</text>
+  </g>
+
+  <!-- Risks -->
+  <g>
+    <rect x="350" y="78" width="280" height="190" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <circle cx="490" cy="110" r="20" fill="#dc2626"/>
+    <!-- warning triangle -->
+    <path d="M490 96 l12 22 h-24 z" fill="#ffffff"/>
+    <text x="490" y="114" text-anchor="middle" font-size="14" font-weight="700" fill="#dc2626">!</text>
+    <text x="490" y="152" text-anchor="middle" font-size="16" font-weight="700" fill="#0a1628">Risks</text>
+    <text x="370" y="182" font-size="13" fill="#6b6f78">Scams and phishing messages</text>
+    <text x="370" y="204" font-size="13" fill="#6b6f78">Deepfakes that look real</text>
+    <text x="370" y="226" font-size="13" fill="#6b6f78">Confident but wrong answers</text>
+    <text x="370" y="248" font-size="13" fill="#6b6f78">Private data may leak</text>
+  </g>
+
+  <!-- balance hint -->
+  <text x="330" y="286" text-anchor="middle" font-size="11.5" fill="#9aa3af">Check facts, protect personal data, and never trust AI blindly.</text>
+</svg>

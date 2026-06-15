@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="The four principles of good design: alignment, contrast, repetition, and proximity.">
+  <title>The Four Design Principles</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Four Design Principles</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Use all four to make posters, logos and flyers look professional</text>
+
+  <!-- Alignment -->
+  <g>
+    <rect x="48" y="78" width="270" height="90" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="156" y="104" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Alignment</text>
+    <line x1="75" y1="122" x2="75" y2="148" stroke="#0b4f8c" stroke-width="2"/>
+    <rect x="82" y="123" width="70" height="6" rx="3" fill="#0b4f8c"/>
+    <rect x="82" y="134" width="110" height="6" rx="3" fill="#9aa3af"/>
+    <rect x="82" y="145" width="90" height="6" rx="3" fill="#9aa3af"/>
+    <text x="175" y="129" font-size="12" fill="#6b6f78">Line elements up to a</text>
+    <text x="175" y="144" font-size="12" fill="#6b6f78">common edge or centre.</text>
+  </g>
+
+  <!-- Contrast -->
+  <g>
+    <rect x="342" y="78" width="270" height="90" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="450" y="104" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Contrast</text>
+    <rect x="370" y="123" width="34" height="34" rx="4" fill="#0a1628"/>
+    <circle cx="440" cy="140" r="12" fill="#f59e0b"/>
+    <text x="470" y="129" font-size="12" fill="#6b6f78">Make important parts</text>
+    <text x="470" y="144" font-size="12" fill="#6b6f78">bigger, bolder or darker.</text>
+  </g>
+
+  <!-- Repetition -->
+  <g>
+    <rect x="48" y="182" width="270" height="90" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="156" y="208" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Repetition</text>
+    <rect x="82" y="222" width="22" height="22" rx="4" fill="#1f9d57"/>
+    <rect x="108" y="222" width="22" height="22" rx="4" fill="#1f9d57"/>
+    <rect x="134" y="222" width="22" height="22" rx="4" fill="#1f9d57"/>
+    <text x="175" y="230" font-size="12" fill="#6b6f78">Repeat colours, fonts and</text>
+    <text x="175" y="245" font-size="12" fill="#6b6f78">shapes so the design feels</text>
+    <text x="175" y="260" font-size="12" fill="#6b6f78">like one family.</text>
+  </g>
+
+  <!-- Proximity -->
+  <g>
+    <rect x="342" y="182" width="270" height="90" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="450" y="208" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Proximity</text>
+    <g>
+      <rect x="370" y="225" width="28" height="18" rx="3" fill="#d8dee6"/>
+      <rect x="402" y="225" width="28" height="18" rx="3" fill="#d8dee6"/>
+    </g>
+    <g>
+      <rect x="460" y="225" width="28" height="18" rx="3" fill="#9aa3af"/>
+      <rect x="492" y="225" width="28" height="18" rx="3" fill="#9aa3af"/>
+    </g>
+    <text x="470" y="230" font-size="12" fill="#6b6f78">Group related items</text>
+    <text x="470" y="245" font-size="12" fill="#6b6f78">together; separate ideas</text>
+    <text x="470" y="260" font-size="12" fill="#6b6f78">with white space.</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="292" text-anchor="middle" font-size="11.5" fill="#9aa3af">Check your design against each principle before you export.</text>
+</svg>

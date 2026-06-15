@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Blockchain chain of three linked blocks, each containing data, a hash, and the previous block's hash, showing how tampering breaks the chain.">
+  <title>How Blockchain Links Blocks</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">How Blockchain Links Blocks</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Each block carries the fingerprint of the block before it, making tampering visible</text>
+
+  <!-- Block 1 -->
+  <g>
+    <rect x="35" y="80" width="170" height="150" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="120" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Block 1</text>
+    <rect x="50" y="115" width="140" height="24" rx="6" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="120" y="131" text-anchor="middle" font-size="11" fill="#6b6f78">Data: Muliko sends K50</text>
+    <rect x="50" y="148" width="140" height="24" rx="6" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="120" y="164" text-anchor="middle" font-size="11" fill="#6b6f78">Hash: 3a7f...9e2d</text>
+    <rect x="50" y="181" width="140" height="24" rx="6" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="120" y="197" text-anchor="middle" font-size="11" fill="#6b6f78">Prev: 0000...0000</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="205" y1="155" x2="230" y2="155"/>
+    <polygon points="230,148 243,155 230,162"/>
+  </g>
+
+  <!-- Block 2 -->
+  <g>
+    <rect x="245" y="80" width="170" height="150" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="330" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Block 2</text>
+    <rect x="260" y="115" width="140" height="24" rx="6" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="330" y="131" text-anchor="middle" font-size="11" fill="#6b6f78">Data: Grace pays vendor</text>
+    <rect x="260" y="148" width="140" height="24" rx="6" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="330" y="164" text-anchor="middle" font-size="11" fill="#6b6f78">Hash: 8c2b...4f1a</text>
+    <rect x="260" y="181" width="140" height="24" rx="6" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="330" y="197" text-anchor="middle" font-size="11" fill="#6b6f78">Prev: 3a7f...9e2d</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="415" y1="155" x2="440" y2="155"/>
+    <polygon points="440,148 453,155 440,162"/>
+  </g>
+
+  <!-- Block 3 (tampered example) -->
+  <g>
+    <rect x="455" y="80" width="170" height="150" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="2"/>
+    <text x="540" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Block 3</text>
+    <rect x="470" y="115" width="140" height="24" rx="6" fill="#ffffff" stroke="#dc2626" stroke-width="1"/>
+    <text x="540" y="131" text-anchor="middle" font-size="11" fill="#dc2626">Data: CHANGED!</text>
+    <rect x="470" y="148" width="140" height="24" rx="6" fill="#ffffff" stroke="#dc2626" stroke-width="1"/>
+    <text x="540" y="164" text-anchor="middle" font-size="11" fill="#dc2626">Hash: ???</text>
+    <rect x="470" y="181" width="140" height="24" rx="6" fill="#ffffff" stroke="#dc2626" stroke-width="1"/>
+    <text x="540" y="197" text-anchor="middle" font-size="11" fill="#6b6f78">Prev: 8c2b...4f1a</text>
+  </g>
+
+  <!-- broken link symbol -->
+  <g stroke="#dc2626" stroke-width="3" fill="none" stroke-linecap="round">
+    <line x1="500" y1="250" x2="520" y2="270"/>
+    <line x1="520" y1="250" x2="500" y2="270"/>
+  </g>
+  <text x="540" y="265" text-anchor="start" font-size="12" font-weight="700" fill="#dc2626">Chain breaks</text>
+
+  <!-- footer note -->
+  <text x="330" y="286" text-anchor="middle" font-size="11.5" fill="#9aa3af">Changing one block changes its hash, so the next block no longer recognises it.</text>
+</svg>

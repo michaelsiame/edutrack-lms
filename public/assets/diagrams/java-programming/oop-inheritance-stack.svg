@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Object-oriented inheritance stack: a superclass defines shared fields, a subclass adds specific fields, and an object holds the actual values.">
+  <title>The OOP Inheritance Stack</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The OOP Inheritance Stack</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">A subclass reuses a superclass and creates objects with real data</text>
+
+  <!-- Shared label -->
+  <text x="90" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#9aa3af">Shared blueprint</text>
+
+  <!-- Superclass layer -->
+  <g>
+    <rect x="150" y="72" width="360" height="58" rx="12" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="330" y="95" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">class Vehicle</text>
+    <text x="330" y="113" text-anchor="middle" font-size="12" fill="#6b6f78">String brand; int year;</text>
+  </g>
+
+  <!-- down arrow -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="330" y1="134" x2="330" y2="152"/>
+    <polygon points="323,152 330,165 337,152"/>
+  </g>
+
+  <!-- extends label -->
+  <text x="360" y="150" text-anchor="start" font-size="11" fill="#9aa3af">extends</text>
+
+  <!-- Subclass layer -->
+  <g>
+    <rect x="150" y="170" width="360" height="58" rx="12" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="330" y="193" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">class Car extends Vehicle</text>
+    <text x="330" y="211" text-anchor="middle" font-size="12" fill="#6b6f78">int bootCapacity; boolean isSedan;</text>
+  </g>
+
+  <!-- Object box -->
+  <g>
+    <rect x="220" y="248" width="220" height="40" rx="10" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="330" y="273" text-anchor="middle" font-size="14" font-weight="700" fill="#1f9d57">Car myCar = new Car()</text>
+  </g>
+
+  <!-- dotted connector -->
+  <g stroke="#1f9d57" stroke-width="2" stroke-dasharray="4,4">
+    <line x1="330" y1="230" x2="330" y2="244"/>
+  </g>
+
+  <!-- Specific label -->
+  <text x="540" y="200" text-anchor="start" font-size="12" font-weight="700" fill="#9aa3af">Specific fields</text>
+
+  <!-- footer note -->
+  <text x="330" y="294" text-anchor="middle" font-size="11.5" fill="#9aa3af">Inheritance lets a subclass keep everything from the superclass and add its own behaviour.</text>
+</svg>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="The 3-2-1 backup rule: three copies of your data, on two different media types, with one copy kept off-site or in the cloud.">
+  <title>The 3-2-1 backup rule</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The 3-2-1 Backup Rule</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">A simple safety net for electronic records</text>
+
+  <!-- 3 copies -->
+  <g>
+    <circle cx="120" cy="118" r="36" fill="#0b4f8c"/>
+    <text x="120" y="110" text-anchor="middle" font-size="28" font-weight="700" fill="#ffffff">3</text>
+    <text x="120" y="130" text-anchor="middle" font-size="12" fill="#eef4fb">copies</text>
+    <text x="120" y="178" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Three copies</text>
+    <text x="120" y="196" text-anchor="middle" font-size="12" fill="#6b6f78">Original + 2 backups</text>
+  </g>
+
+  <!-- plus -->
+  <text x="210" y="130" text-anchor="middle" font-size="26" font-weight="700" fill="#9aa3af">+</text>
+
+  <!-- 2 media types -->
+  <g>
+    <circle cx="300" cy="118" r="36" fill="#1f9d57"/>
+    <text x="300" y="110" text-anchor="middle" font-size="28" font-weight="700" fill="#ffffff">2</text>
+    <text x="300" y="130" text-anchor="middle" font-size="12" fill="#ecfaf2">media</text>
+    <text x="300" y="178" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Two media types</text>
+    <text x="300" y="196" text-anchor="middle" font-size="12" fill="#6b6f78">e.g. drive + cloud</text>
+  </g>
+
+  <!-- plus -->
+  <text x="390" y="130" text-anchor="middle" font-size="26" font-weight="700" fill="#9aa3af">+</text>
+
+  <!-- 1 off-site -->
+  <g>
+    <circle cx="480" cy="118" r="36" fill="#f59e0b"/>
+    <text x="480" y="110" text-anchor="middle" font-size="28" font-weight="700" fill="#ffffff">1</text>
+    <text x="480" y="130" text-anchor="middle" font-size="12" fill="#fef6e7">off-site</text>
+    <text x="480" y="178" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">One off-site</text>
+    <text x="480" y="196" text-anchor="middle" font-size="12" fill="#6b6f78">Away from the office</text>
+  </g>
+
+  <!-- equals -->
+  <text x="570" y="130" text-anchor="middle" font-size="26" font-weight="700" fill="#9aa3af">=</text>
+
+  <!-- Result -->
+  <g>
+    <rect x="250" y="224" width="160" height="52" rx="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="2"/>
+    <text x="330" y="248" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Safe records</text>
+    <text x="330" y="266" text-anchor="middle" font-size="12" fill="#6b6f78">Even if one copy fails</text>
+  </g>
+
+  <!-- arrows down from circles to result -->
+  <g stroke="#9aa3af" stroke-width="2" stroke-dasharray="5 3" fill="none">
+    <line x1="120" y1="214" x2="290" y2="224"/>
+    <line x1="300" y1="214" x2="320" y2="224"/>
+    <line x1="480" y1="214" x2="370" y2="224"/>
+  </g>
+</svg>

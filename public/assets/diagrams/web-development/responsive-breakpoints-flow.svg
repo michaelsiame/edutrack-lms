@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Responsive design breakpoints flow: one codebase adapts from mobile, to tablet, to desktop using media queries.">
+  <title>Responsive Breakpoints Flow</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Responsive Breakpoints Flow</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">One design adapts as the screen gets wider</text>
+
+  <!-- Mobile -->
+  <g>
+    <rect x="30" y="90" width="170" height="154" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <!-- phone -->
+    <rect x="90" y="116" width="50" height="90" rx="6" fill="#ffffff" stroke="#1f9d57" stroke-width="1.5"/>
+    <rect x="96" y="124" width="38" height="68" rx="2" fill="#ecfaf2"/>
+    <line x1="104" y1="140" x2="126" y2="140" stroke="#1f9d57" stroke-width="2"/>
+    <line x1="104" y1="152" x2="120" y2="152" stroke="#9aa3af" stroke-width="2"/>
+    <line x1="104" y1="164" x2="124" y2="164" stroke="#9aa3af" stroke-width="2"/>
+    <circle cx="115" cy="200" r="2.5" fill="#1f9d57"/>
+    <text x="115" y="224" text-anchor="middle" font-size="13" font-weight="700" fill="#1f9d57">Mobile</text>
+    <text x="115" y="242" text-anchor="middle" font-size="11" fill="#6b6f78">&lt; 576 px</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="204" y1="167" x2="234" y2="167"/>
+    <polygon points="234,160 247,167 234,174"/>
+  </g>
+  <text x="225" y="156" text-anchor="middle" font-size="10" fill="#9aa3af">wider</text>
+
+  <!-- Tablet -->
+  <g>
+    <rect x="245" y="90" width="170" height="154" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- tablet -->
+    <rect x="290" y="122" width="80" height="60" rx="5" fill="#ffffff" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="298" y="130" width="64" height="44" rx="2" fill="#fef6e7"/>
+    <line x1="310" y1="142" x2="350" y2="142" stroke="#f59e0b" stroke-width="2"/>
+    <line x1="310" y1="154" x2="338" y2="154" stroke="#9aa3af" stroke-width="2"/>
+    <line x1="310" y1="166" x2="346" y2="166" stroke="#9aa3af" stroke-width="2"/>
+    <text x="330" y="206" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">Tablet</text>
+    <text x="330" y="224" text-anchor="middle" font-size="11" fill="#6b6f78">576 - 992 px</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="419" y1="167" x2="449" y2="167"/>
+    <polygon points="449,160 462,167 449,174"/>
+  </g>
+  <text x="440" y="156" text-anchor="middle" font-size="10" fill="#9aa3af">wider</text>
+
+  <!-- Desktop -->
+  <g>
+    <rect x="460" y="90" width="170" height="154" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <!-- monitor -->
+    <rect x="490" y="118" width="110" height="70" rx="5" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <rect x="498" y="126" width="94" height="54" rx="2" fill="#eef4fb"/>
+    <line x1="510" y1="142" x2="580" y2="142" stroke="#0b4f8c" stroke-width="2"/>
+    <line x1="510" y1="154" x2="560" y2="154" stroke="#9aa3af" stroke-width="2"/>
+    <line x1="510" y1="166" x2="570" y2="166" stroke="#9aa3af" stroke-width="2"/>
+    <rect x="535" y="188" width="20" height="14" fill="#0b4f8c"/>
+    <text x="545" y="224" text-anchor="middle" font-size="13" font-weight="700" fill="#0b4f8c">Desktop</text>
+    <text x="545" y="242" text-anchor="middle" font-size="11" fill="#6b6f78">&gt; 992 px</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="284" text-anchor="middle" font-size="11.5" fill="#9aa3af">Media queries change the layout at each breakpoint so content stays readable.</text>
+</svg>

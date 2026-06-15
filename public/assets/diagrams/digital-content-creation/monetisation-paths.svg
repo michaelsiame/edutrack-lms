@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Four monetisation paths for creators: brand deals, selling products, offering services, and fan support.">
+  <title>Turning Views into Income</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Turning Views into Income</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Once you have attention, choose one or more ways to earn from it</text>
+
+  <!-- Brand Deals -->
+  <g>
+    <rect x="40" y="80" width="135" height="160" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="78" y="110" width="30" height="22" rx="3" fill="#f59e0b"/>
+    <circle cx="93" cy="117" r="5" fill="#ffffff"/>
+    <text x="93" y="126" text-anchor="middle" font-size="8" font-weight="700" fill="#f59e0b">AD</text>
+    <text x="107" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Brand Deals</text>
+    <text x="107" y="177" text-anchor="middle" font-size="11" fill="#6b6f78">Partner with a</text>
+    <text x="107" y="191" text-anchor="middle" font-size="11" fill="#6b6f78">local business</text>
+    <text x="107" y="205" text-anchor="middle" font-size="11" fill="#6b6f78">for a paid post</text>
+  </g>
+
+  <!-- Sell Products -->
+  <g>
+    <rect x="190" y="80" width="135" height="160" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <rect x="232" y="108" width="34" height="28" rx="3" fill="#1f9d57"/>
+    <path d="M238 108 v-5 h22 v5" fill="none" stroke="#1f9d57" stroke-width="2"/>
+    <text x="249" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Sell Products</text>
+    <text x="249" y="177" text-anchor="middle" font-size="11" fill="#6b6f78">Share a WhatsApp</text>
+    <text x="249" y="191" text-anchor="middle" font-size="11" fill="#6b6f78">catalog link and</text>
+    <text x="249" y="205" text-anchor="middle" font-size="11" fill="#6b6f78">take orders</text>
+  </g>
+
+  <!-- Offer Services -->
+  <g>
+    <rect x="340" y="80" width="135" height="160" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <rect x="382" y="112" width="28" height="22" rx="3" fill="#0b4f8c"/>
+    <rect x="386" y="116" width="20" height="14" rx="2" fill="#ffffff"/>
+    <line x1="390" y1="120" x2="406" y2="120" stroke="#0b4f8c" stroke-width="2"/>
+    <line x1="390" y1="126" x2="402" y2="126" stroke="#0b4f8c" stroke-width="2"/>
+    <text x="407" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Services</text>
+    <text x="407" y="177" text-anchor="middle" font-size="11" fill="#6b6f78">Book clients for</text>
+    <text x="407" y="191" text-anchor="middle" font-size="11" fill="#6b6f78">makeup, events,</text>
+    <text x="407" y="205" text-anchor="middle" font-size="11" fill="#6b6f78">consulting, etc.</text>
+  </g>
+
+  <!-- Fan Support -->
+  <g>
+    <rect x="490" y="80" width="135" height="160" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <path d="M549 112 a10 9 0 0 1 14 0 a10 9 0 0 1 14 0 q0 8 -14 18 q-14 -10 -14 -18" fill="#dc2626"/>
+    <text x="563" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Fan Support</text>
+    <text x="563" y="177" text-anchor="middle" font-size="11" fill="#6b6f78">Tips, donations</text>
+    <text x="563" y="191" text-anchor="middle" font-size="11" fill="#6b6f78">and paid</text>
+    <text x="563" y="205" text-anchor="middle" font-size="11" fill="#6b6f78">memberships</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="270" text-anchor="middle" font-size="11.5" fill="#9aa3af">Start with one income stream and add others as your audience grows.</text>
+</svg>

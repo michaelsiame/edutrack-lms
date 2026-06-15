@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Pointer memory diagram: an int variable holds a value, while an int pointer holds the address of that variable.">
+  <title>Pointer Memory Diagram</title>
+
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Pointers Store Addresses, Not Values</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Think of a pointer as a label that tells you where data lives in memory</text>
+
+  <!-- Variable: age -->
+  <g>
+    <rect x="80" y="100" width="180" height="130" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="170" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">int age</text>
+    <rect x="110" y="145" width="120" height="52" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="170" y="168" text-anchor="middle" font-size="12" fill="#6b6f78">Type: int</text>
+    <text x="170" y="188" text-anchor="middle" font-size="18" font-weight="700" fill="#0a1628">25</text>
+    <text x="170" y="226" text-anchor="middle" font-size="12" fill="#9aa3af">Address: 0x64</text>
+  </g>
+
+  <!-- Pointer: p -->
+  <g>
+    <rect x="400" y="100" width="180" height="130" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="490" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">int* p</text>
+    <rect x="430" y="145" width="120" height="52" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="490" y="168" text-anchor="middle" font-size="12" fill="#6b6f78">Type: int*</text>
+    <text x="490" y="188" text-anchor="middle" font-size="18" font-weight="700" fill="#1f9d57">0x64</text>
+    <text x="490" y="226" text-anchor="middle" font-size="12" fill="#9aa3af">Address: 0x70</text>
+  </g>
+
+  <!-- pointer arrow -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="430" y1="171" x2="270" y2="171"/>
+    <polygon points="270,164 257,171 270,178"/>
+  </g>
+  <text x="350" y="162" text-anchor="middle" font-size="12" fill="#6b6f78">points to</text>
+
+  <!-- code hint -->
+  <rect x="200" y="252" width="260" height="30" rx="8" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+  <text x="330" y="271" text-anchor="middle" font-size="12" fill="#6b6f78">int age = 25;   int* p = &amp;age;</text>
+</svg>

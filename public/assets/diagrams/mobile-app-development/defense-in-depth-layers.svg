@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Defense in depth layers: People at the top, then Endpoint, Network, Application, and Data at the secure base.">
+  <title>Defense in Depth Layers</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Defense in Depth Layers</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Multiple barriers protect what matters most: your data</text>
+
+  <!-- Data (base, smallest, green) -->
+  <rect x="230" y="244" width="200" height="34" rx="8" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+  <text x="330" y="266" text-anchor="middle" font-size="13" font-weight="700" fill="#1f9d57">Data</text>
+
+  <!-- Application -->
+  <rect x="190" y="202" width="280" height="38" rx="10" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="330" y="227" text-anchor="middle" font-size="14" font-weight="700" fill="#f59e0b">Application</text>
+
+  <!-- Network -->
+  <rect x="150" y="156" width="360" height="40" rx="12" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <text x="330" y="182" text-anchor="middle" font-size="15" font-weight="700" fill="#0b4f8c">Network</text>
+
+  <!-- Endpoint -->
+  <rect x="110" y="108" width="440" height="42" rx="14" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+  <text x="330" y="135" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Endpoint</text>
+
+  <!-- People -->
+  <rect x="70" y="60" width="520" height="42" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="330" y="87" text-anchor="middle" font-size="15" font-weight="700" fill="#dc2626">People</text>
+
+  <!-- left labels -->
+  <text x="58" y="84" text-anchor="end" font-size="12" fill="#6b6f78">Training</text>
+  <text x="98" y="132" text-anchor="end" font-size="12" fill="#6b6f78">Antivirus</text>
+  <text x="138" y="179" text-anchor="end" font-size="12" fill="#6b6f78">Firewalls</text>
+  <text x="178" y="224" text-anchor="end" font-size="12" fill="#6b6f78">Secure code</text>
+  <text x="218" y="265" text-anchor="end" font-size="12" fill="#6b6f78">Encryption</text>
+
+  <!-- right labels -->
+  <text x="602" y="84" text-anchor="start" font-size="12" fill="#6b6f78">Awareness</text>
+  <text x="602" y="132" text-anchor="start" font-size="12" fill="#6b6f78">Updates</text>
+  <text x="602" y="179" text-anchor="start" font-size="12" fill="#6b6f78">IDS/IPS</text>
+  <text x="602" y="224" text-anchor="start" font-size="12" fill="#6b6f78">Input validation</text>
+  <text x="602" y="265" text-anchor="start" font-size="12" fill="#6b6f78">Backups</text>
+
+  <!-- footer note -->
+  <text x="330" y="292" text-anchor="middle" font-size="11.5" fill="#9aa3af">If one layer fails, the next layer is still standing.</text>
+</svg>

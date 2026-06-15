@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="The seven-layer OSI model stacked from Application at the top down to Physical at the bottom, with data moving down and back up.">
+  <title>The Seven-Layer OSI Model</title>
+
+  <text x="330" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Seven-Layer OSI Model</text>
+  <text x="330" y="54" text-anchor="middle" font-size="13" fill="#6b6f78">Data is wrapped on the way down and unwrapped on the way back up</text>
+
+  <!-- Layer 7 -->
+  <rect x="140" y="68" width="380" height="24" rx="6" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <text x="160" y="85" font-size="13" font-weight="700" fill="#0b4f8c">7</text>
+  <text x="330" y="85" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Application</text>
+
+  <!-- Layer 6 -->
+  <rect x="140" y="94" width="380" height="24" rx="6" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+  <text x="160" y="111" font-size="13" font-weight="700" fill="#6b6f78">6</text>
+  <text x="330" y="111" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Presentation</text>
+
+  <!-- Layer 5 -->
+  <rect x="140" y="120" width="380" height="24" rx="6" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <text x="160" y="137" font-size="13" font-weight="700" fill="#0b4f8c">5</text>
+  <text x="330" y="137" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Session</text>
+
+  <!-- Layer 4 -->
+  <rect x="140" y="146" width="380" height="24" rx="6" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+  <text x="160" y="163" font-size="13" font-weight="700" fill="#6b6f78">4</text>
+  <text x="330" y="163" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Transport</text>
+
+  <!-- Layer 3 -->
+  <rect x="140" y="172" width="380" height="24" rx="6" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <text x="160" y="189" font-size="13" font-weight="700" fill="#0b4f8c">3</text>
+  <text x="330" y="189" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Network</text>
+
+  <!-- Layer 2 -->
+  <rect x="140" y="198" width="380" height="24" rx="6" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+  <text x="160" y="215" font-size="13" font-weight="700" fill="#6b6f78">2</text>
+  <text x="330" y="215" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Data Link</text>
+
+  <!-- Layer 1 -->
+  <rect x="140" y="224" width="380" height="24" rx="6" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <text x="160" y="241" font-size="13" font-weight="700" fill="#0b4f8c">1</text>
+  <text x="330" y="241" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Physical</text>
+
+  <!-- Down arrow (encapsulation) -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="540" y1="80" x2="540" y2="224"/>
+    <polygon points="540,231 533,218 547,218"/>
+  </g>
+  <text x="535" y="152" text-anchor="end" font-size="11" fill="#6b6f78">send</text>
+
+  <!-- Up arrow (de-encapsulation) -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="560" y1="224" x2="560" y2="80"/>
+    <polygon points="560,73 553,86 567,86"/>
+  </g>
+  <text x="570" y="152" text-anchor="start" font-size="11" fill="#6b6f78">receive</text>
+
+  <!-- footer -->
+  <text x="330" y="282" text-anchor="middle" font-size="11.5" fill="#9aa3af">Top layers are closest to the user; bottom layers move bits across the wire.</text>
+</svg>

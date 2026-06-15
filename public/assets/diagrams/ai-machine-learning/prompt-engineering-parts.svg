@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Four parts of a good AI prompt: context, task, constraints, and output format.">
+  <title>Parts of a Good AI Prompt</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Parts of a Good AI Prompt</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Give the model clear instructions and it gives you better results</text>
+
+  <!-- Context -->
+  <g>
+    <rect x="45" y="85" width="135" height="150" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="112" cy="120" r="20" fill="#0b4f8c"/>
+    <!-- person / scene -->
+    <circle cx="112" cy="115" r="5" fill="#ffffff"/>
+    <path d="M105 130 a8 7 0 0 1 14 0 z" fill="#ffffff"/>
+    <text x="112" y="162" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Context</text>
+    <text x="112" y="184" text-anchor="middle" font-size="12" fill="#6b6f78">Who you are</text>
+    <text x="112" y="202" text-anchor="middle" font-size="12" fill="#6b6f78">What the goal is</text>
+    <text x="112" y="220" text-anchor="middle" font-size="12" fill="#6b6f78">Background facts</text>
+  </g>
+
+  <!-- Task -->
+  <g>
+    <rect x="195" y="85" width="135" height="150" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="262" cy="120" r="20" fill="#f59e0b"/>
+    <!-- checklist -->
+    <rect x="254" y="113" width="16" height="16" rx="2" fill="#ffffff"/>
+    <path d="M256 120 l4 4 8 -10" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="262" y="162" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Task</text>
+    <text x="262" y="184" text-anchor="middle" font-size="12" fill="#6b6f78">What to do</text>
+    <text x="262" y="202" text-anchor="middle" font-size="12" fill="#6b6f78">Action verb first</text>
+    <text x="262" y="220" text-anchor="middle" font-size="12" fill="#6b6f78">Be specific</text>
+  </g>
+
+  <!-- Constraints -->
+  <g>
+    <rect x="345" y="85" width="135" height="150" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <circle cx="412" cy="120" r="20" fill="#dc2626"/>
+    <!-- boundaries -->
+    <rect x="404" y="112" width="16" height="16" rx="2" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <line x1="408" y1="118" x2="416" y2="118" stroke="#ffffff" stroke-width="2"/>
+    <line x1="408" y1="122" x2="414" y2="122" stroke="#ffffff" stroke-width="2"/>
+    <text x="412" y="162" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Constraints</text>
+    <text x="412" y="184" text-anchor="middle" font-size="12" fill="#6b6f78">Word limit</text>
+    <text x="412" y="202" text-anchor="middle" font-size="12" fill="#6b6f78">Tone or style</text>
+    <text x="412" y="220" text-anchor="middle" font-size="12" fill="#6b6f78">What to avoid</text>
+  </g>
+
+  <!-- Output Format -->
+  <g>
+    <rect x="495" y="85" width="135" height="150" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <circle cx="562" cy="120" r="20" fill="#1f9d57"/>
+    <!-- document layout -->
+    <rect x="554" y="112" width="16" height="22" rx="2" fill="#ffffff"/>
+    <line x1="557" y1="117" x2="567" y2="117" stroke="#1f9d57" stroke-width="2"/>
+    <line x1="557" y1="122" x2="567" y2="122" stroke="#1f9d57" stroke-width="2"/>
+    <line x1="557" y1="127" x2="564" y2="127" stroke="#1f9d57" stroke-width="2"/>
+    <text x="562" y="162" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Output Format</text>
+    <text x="562" y="184" text-anchor="middle" font-size="12" fill="#6b6f78">Bullet list</text>
+    <text x="562" y="202" text-anchor="middle" font-size="12" fill="#6b6f78">Table or letter</text>
+    <text x="562" y="220" text-anchor="middle" font-size="12" fill="#6b6f78">JSON or code</text>
+  </g>
+
+  <!-- arrows -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="182" y1="160" x2="191" y2="160"/><polygon points="191,153 201,160 191,167"/>
+    <line x1="332" y1="160" x2="341" y2="160"/><polygon points="341,153 351,160 341,167"/>
+    <line x1="482" y1="160" x2="491" y2="160"/><polygon points="491,153 501,160 491,167"/>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="264" text-anchor="middle" font-size="11.5" fill="#9aa3af">Use all four parts for business prompts that need reliable, usable replies.</text>
+</svg>
