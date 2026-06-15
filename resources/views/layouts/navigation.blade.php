@@ -6,7 +6,7 @@ $activeRole = null;
 
 if (auth()->check()) {
     $user = auth()->user();
-    $userRoles = $user->roles->pluck('name')->toArray();
+    $userRoles = $user->roles->pluck('role_name')->filter()->unique()->values()->toArray();
     $hasMultipleRoles = count($userRoles) > 1;
     $activeRole = session('active_role', $userRoles[0] ?? null);
 }
@@ -90,54 +90,53 @@ if (auth()->check()) {
                             <div class="mt-1 space-y-0.5">
                                 @foreach($userRoles as $role)
                                 @php
-                                $roleIcon = match($role) {
-                                    'admin' => 'fa-shield-alt',
-                                    'instructor' => 'fa-chalkboard-teacher',
-                                    'student' => 'fa-user-graduate',
-                                    'finance' => 'fa-money-bill-wave',
-                                    default => 'fa-user'
-                                };
-                                $roleColor = match($role) {
-                                    'admin' => 'color: var(--od-danger);',
-                                    'instructor' => 'color: var(--od-navy);',
-                                    'student' => 'color: var(--od-green);',
-                                    'finance' => 'color: var(--od-accent);',
-                                    default => 'color: var(--od-muted);'
-                                };
+                                $r = strtolower($role);
+                                $roleIcon = str_contains($r, 'admin') ? 'fa-shield-alt'
+                                    : (str_contains($r, 'instructor') ? 'fa-chalkboard-teacher'
+                                    : (str_contains($r, 'finance') ? 'fa-money-bill-wave'
+                                    : (str_contains($r, 'student') ? 'fa-user-graduate' : 'fa-user')));
+                                $roleColor = str_contains($r, 'admin') ? 'color: var(--od-danger);'
+                                    : (str_contains($r, 'instructor') ? 'color: var(--od-navy);'
+                                    : (str_contains($r, 'finance') ? 'color: var(--od-accent);'
+                                    : (str_contains($r, 'student') ? 'color: var(--od-green);' : 'color: var(--od-muted);')));
                                 @endphp
-                                <div class="flex items-center px-2 py-1 text-sm" style="color: var(--od-muted);">
+                                <div class="flex items-center px-2 py-1 text-sm" style="color: var(--od-fg);">
                                     <i class="fas {{ $roleIcon }} w-5" style="{{ $roleColor }}"></i>
-                                    <span class="ml-2">{{ ucfirst($role) }}</span>
+                                    <span class="ml-2">{{ $role }}</span>
                                 </div>
                                 @endforeach
                             </div>
                         </div>
                         @endif
 
-                        @if(auth()->user()->isAdmin())
+                        @php $u = auth()->user(); @endphp
+                        @if($u->isAdmin())
+                        {{-- Admins get one clear destination; teaching tools live inside the admin panel --}}
                         <a href="{{ route('admin.dashboard') }}" class="od-nav-dropdown-link">
-                            <i class="fas fa-tachometer-alt w-4 text-center mr-2" style="color: var(--od-muted);"></i> Admin Panel
+                            <i class="fas fa-shield-alt w-4 text-center mr-2" style="color: var(--od-muted);"></i> Admin Panel
                         </a>
-                        @endif
-                        @if(auth()->user()->isInstructor())
+                        @elseif($u->isInstructor())
                         <a href="{{ route('instructor.dashboard') }}" class="od-nav-dropdown-link">
                             <i class="fas fa-chalkboard-teacher w-4 text-center mr-2" style="color: var(--od-muted);"></i> Instructor Panel
                         </a>
-                        @endif
-                        @if(auth()->user()->isFinance())
+                        @elseif($u->isFinance())
                         <a href="{{ route('finance.dashboard') }}" class="od-nav-dropdown-link">
                             <i class="fas fa-money-bill-wave w-4 text-center mr-2" style="color: var(--od-muted);"></i> Finance Panel
                         </a>
-                        @endif
-
-                        <a href="{{ route('dashboard') }}" class="od-nav-dropdown-link">
-                            <i class="fas fa-th-large w-4 text-center mr-2" style="color: var(--od-muted);"></i> Dashboard
+                        @else
+                        {{-- Student --}}
+                        <a href="{{ route('student.dashboard') }}" class="od-nav-dropdown-link">
+                            <i class="fas fa-th-large w-4 text-center mr-2" style="color: var(--od-muted);"></i> My Dashboard
                         </a>
                         <a href="{{ route('enrollments.index') }}" class="od-nav-dropdown-link">
                             <i class="fas fa-book w-4 text-center mr-2" style="color: var(--od-muted);"></i> My Courses
                         </a>
                         <a href="{{ route('certificates.index') }}" class="od-nav-dropdown-link">
                             <i class="fas fa-certificate w-4 text-center mr-2" style="color: var(--od-muted);"></i> Certificates
+                        </a>
+                        @endif
+                        <a href="{{ route('profile.show') }}" class="od-nav-dropdown-link">
+                            <i class="fas fa-user w-4 text-center mr-2" style="color: var(--od-muted);"></i> My Profile
                         </a>
                         <hr class="my-1 od-nav-divider">
                         <form method="POST" action="{{ route('logout') }}" class="m-0">
@@ -234,22 +233,30 @@ if (auth()->check()) {
                     </div>
                 </div>
 
-                <a href="{{ route('dashboard') }}" @click="mobileMenuOpen = false" class="od-nav-mobile-link">
-                    <i class="fas fa-th-large mr-2 w-5 text-center" style="color: var(--od-muted);"></i> Dashboard
+                @php $u = auth()->user(); @endphp
+                @if($u->isAdmin())
+                <a href="{{ route('admin.dashboard') }}" @click="mobileMenuOpen = false" class="od-nav-mobile-link">
+                    <i class="fas fa-shield-alt mr-2 w-5 text-center" style="color: var(--od-muted);"></i> Admin Panel
+                </a>
+                @elseif($u->isInstructor())
+                <a href="{{ route('instructor.dashboard') }}" @click="mobileMenuOpen = false" class="od-nav-mobile-link">
+                    <i class="fas fa-chalkboard-teacher mr-2 w-5 text-center" style="color: var(--od-muted);"></i> Instructor Panel
+                </a>
+                @elseif($u->isFinance())
+                <a href="{{ route('finance.dashboard') }}" @click="mobileMenuOpen = false" class="od-nav-mobile-link">
+                    <i class="fas fa-money-bill-wave mr-2 w-5 text-center" style="color: var(--od-muted);"></i> Finance Panel
+                </a>
+                @else
+                <a href="{{ route('student.dashboard') }}" @click="mobileMenuOpen = false" class="od-nav-mobile-link">
+                    <i class="fas fa-th-large mr-2 w-5 text-center" style="color: var(--od-muted);"></i> My Dashboard
                 </a>
                 <a href="{{ route('enrollments.index') }}" @click="mobileMenuOpen = false" class="od-nav-mobile-link">
                     <i class="fas fa-book mr-2 w-5 text-center" style="color: var(--od-muted);"></i> My Courses
                 </a>
-                @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.dashboard') }}" @click="mobileMenuOpen = false" class="od-nav-mobile-link">
-                    <i class="fas fa-tachometer-alt mr-2 w-5 text-center" style="color: var(--od-muted);"></i> Admin Panel
-                </a>
                 @endif
-                @if(auth()->user()->isInstructor())
-                <a href="{{ route('instructor.dashboard') }}" @click="mobileMenuOpen = false" class="od-nav-mobile-link">
-                    <i class="fas fa-chalkboard-teacher mr-2 w-5 text-center" style="color: var(--od-muted);"></i> Instructor Panel
+                <a href="{{ route('profile.show') }}" @click="mobileMenuOpen = false" class="od-nav-mobile-link">
+                    <i class="fas fa-user mr-2 w-5 text-center" style="color: var(--od-muted);"></i> My Profile
                 </a>
-                @endif
                 <form method="POST" action="{{ route('logout') }}" class="m-0">
                     @csrf
                     <button type="submit" class="od-nav-mobile-link w-full text-left" style="color: var(--od-danger);">

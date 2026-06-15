@@ -17,9 +17,15 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $instructor = auth()->user()->instructor;
+        $user = auth()->user();
+        $instructor = $user->instructor;
 
+        // Admins have teaching access but no instructor profile — send them to
+        // their own panel rather than 403'ing.
         if (!$instructor) {
+            if ($user->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            }
             abort(403, 'Instructor profile not found.');
         }
 

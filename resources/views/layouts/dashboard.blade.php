@@ -53,59 +53,61 @@
  @endphp
 
  @if($user->isAdmin())
- <x-dashboard-nav-item route="admin.dashboard" icon="fa-tachometer-alt" label="Dashboard" />
- @if(Route::has('admin.users.index'))
- <x-dashboard-nav-item route="admin.users.index" icon="fa-users" label="Users" />
- @endif
- @if(Route::has('admin.courses.index'))
- <x-dashboard-nav-item route="admin.courses.index" icon="fa-book" label="Courses" />
- @endif
- @if(Route::has('admin.intakes.index'))
- <x-dashboard-nav-item route="admin.intakes.index" icon="fa-calendar-alt" label="Intakes" />
- @endif
- @if(Route::has('admin.enrollments.index'))
- <x-dashboard-nav-item route="admin.enrollments.index" icon="fa-user-graduate" label="Enrollments" />
- @endif
- @if(Route::has('admin.payments.index'))
- <x-dashboard-nav-item route="admin.payments.index" icon="fa-money-bill-wave" label="Payments" />
- @endif
- @if(Route::has('admin.announcements.index'))
- <x-dashboard-nav-item route="admin.announcements.index" icon="fa-bullhorn" label="Announcements" />
- @endif
- @if(Route::has('admin.events.index'))
- <x-dashboard-nav-item route="admin.events.index" icon="fa-calendar-alt" label="Events" />
- @endif
- @if(Route::has('admin.photos.index'))
- <x-dashboard-nav-item route="admin.photos.index" icon="fa-images" label="Photos" />
- @endif
- @if(Route::has('admin.team.index'))
- <x-dashboard-nav-item route="admin.team.index" icon="fa-users" label="Team" />
- @endif
- @if(Route::has('admin.testimonials.index'))
- <x-dashboard-nav-item route="admin.testimonials.index" icon="fa-comment-alt" label="Testimonials" />
- @endif
- @if(Route::has('admin.templates.index'))
- <x-dashboard-nav-item route="admin.templates.index" icon="fa-envelope" label="Email Templates" />
- @endif
- @if(Route::has('admin.badges.index'))
- <x-dashboard-nav-item route="admin.badges.index" icon="fa-medal" label="Badges" />
- @endif
- @if(Route::has('admin.newsletter.index'))
- <x-dashboard-nav-item route="admin.newsletter.index" icon="fa-newspaper" label="Newsletter" />
- @endif
- @if(Route::has('admin.promotions.index'))
- <x-dashboard-nav-item route="admin.promotions.index" icon="fa-tags" label="Promotions" />
- @endif
- <x-dashboard-nav-item route="admin.certificates.index" icon="fa-certificate" label="Certificates" />
- {{-- Teaching tools — admins can grade / record marks / mark complete on any course --}}
-                <p class="px-3 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Teaching</p>
-                <x-dashboard-nav-item route="instructor.courses.index" icon="fa-book-open" label="Course Builder" />
-                <x-dashboard-nav-item route="instructor.assignments.index" icon="fa-tasks" label="Grade Assignments" />
-                <x-dashboard-nav-item route="instructor.quizzes.index" icon="fa-question-circle" label="Quizzes" />
-                <x-dashboard-nav-item route="instructor.progress" icon="fa-user-graduate" label="Class Progress" />
-                <x-dashboard-nav-item route="admin.reports" icon="fa-chart-bar" label="Reports" />
- <x-dashboard-nav-item route="admin.settings" icon="fa-cog" label="Settings" />
- @elseif($user->isInstructor())
+				<x-dashboard-nav-item route="admin.dashboard" icon="fa-gauge-high" label="Dashboard" />
+				<p class="px-3 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">People</p>
+				@if(Route::has('admin.users.index'))
+				<x-dashboard-nav-item route="admin.users.index" icon="fa-users" label="Users" />
+				@endif
+				@if(Route::has('admin.enrollments.index'))
+				<x-dashboard-nav-item route="admin.enrollments.index" icon="fa-user-graduate" label="Enrolments" />
+				@endif
+				<p class="px-3 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Academics</p>
+				@if(Route::has('admin.courses.index'))
+				<x-dashboard-nav-item route="admin.courses.index" icon="fa-book" label="Courses" />
+				@endif
+				@if(Route::has('admin.intakes.index'))
+				<x-dashboard-nav-item route="admin.intakes.index" icon="fa-calendar-alt" label="Intakes" />
+				@endif
+				<x-dashboard-nav-item route="instructor.progress" icon="fa-chart-line" label="Class Progress" />
+				<x-dashboard-nav-item route="instructor.quizzes.index" icon="fa-question-circle" label="Quizzes" />
+				<x-dashboard-nav-item route="instructor.assignments.index" icon="fa-tasks" label="Assignments" />
+				<x-dashboard-nav-item route="admin.certificates.index" icon="fa-certificate" label="Certificates" />
+				<p class="px-3 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Finance</p>
+				@if(Route::has('admin.payments.index'))
+				<x-dashboard-nav-item route="admin.payments.index" icon="fa-money-bill-wave" label="Payments" />
+				@endif
+				<p class="px-3 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Website</p>
+				@if(Route::has('admin.announcements.index'))
+				<x-dashboard-nav-item route="admin.announcements.index" icon="fa-bullhorn" label="Announcements" />
+				@endif
+				@if(Route::has('admin.events.index'))
+				<x-dashboard-nav-item route="admin.events.index" icon="fa-calendar-day" label="Events" />
+				@endif
+				@if(Route::has('admin.promotions.index'))
+				<x-dashboard-nav-item route="admin.promotions.index" icon="fa-tags" label="Promotions" />
+				@endif
+				@if(Route::has('admin.photos.index'))
+				<x-dashboard-nav-item route="admin.photos.index" icon="fa-images" label="Photos" />
+				@endif
+				@if(Route::has('admin.team.index'))
+				<x-dashboard-nav-item route="admin.team.index" icon="fa-user-tie" label="Team" />
+				@endif
+				@if(Route::has('admin.testimonials.index'))
+				<x-dashboard-nav-item route="admin.testimonials.index" icon="fa-comment-alt" label="Testimonials" />
+				@endif
+				@if(Route::has('admin.newsletter.index'))
+				<x-dashboard-nav-item route="admin.newsletter.index" icon="fa-newspaper" label="Newsletter" />
+				@endif
+				<p class="px-3 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">System</p>
+				@if(Route::has('admin.templates.index'))
+				<x-dashboard-nav-item route="admin.templates.index" icon="fa-envelope" label="Email Templates" />
+				@endif
+				@if(Route::has('admin.badges.index'))
+				<x-dashboard-nav-item route="admin.badges.index" icon="fa-medal" label="Badges" />
+				@endif
+				<x-dashboard-nav-item route="admin.reports" icon="fa-chart-bar" label="Reports" />
+				<x-dashboard-nav-item route="admin.settings" icon="fa-cog" label="Settings" />
+			@elseif($user->isInstructor())
  <x-dashboard-nav-item route="instructor.dashboard" icon="fa-tachometer-alt" label="Dashboard" />
  @if(Route::has('instructor.courses.index'))
  <x-dashboard-nav-item route="instructor.courses.index" icon="fa-book" label="My Courses" />
