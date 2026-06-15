@@ -45,12 +45,10 @@ class ForgotPasswordController extends Controller
         $resetUrl = route('password.reset', $token);
         $emailService = app(EmailQueueService::class);
 
-        $emailService->queue(
+        $emailService->sendUrgent(
             $user->email,
             'Password Reset - Edutrack LMS',
-            view('emails.password-reset', ['user' => $user, 'resetUrl' => $resetUrl])->render(),
-            [],
-            10
+            view('emails.password-reset', ['user' => $user, 'resetUrl' => $resetUrl])->render()
         );
 
         return back()->with('success', 'If an account with that email exists, a password reset link has been sent.');

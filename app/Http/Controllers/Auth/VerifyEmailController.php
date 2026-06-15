@@ -68,7 +68,7 @@ class VerifyEmailController extends Controller
         $verificationUrl = route('verification.verify', ['token' => $token]);
         $subject = 'Verify your email address';
         $body = view('emails.verify-email', ['user' => $user, 'token' => $token])->render();
-        $emailService->queue($user->email, $subject, $body);
+        $emailService->sendUrgent($user->email, $subject, $body);
 
         return back()->with('success', 'A new verification link has been sent to your email.');
     }

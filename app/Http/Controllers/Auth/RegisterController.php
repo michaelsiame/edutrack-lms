@@ -67,7 +67,7 @@ class RegisterController extends Controller
         // Verification email
         $subject = 'Verify your email address';
         $body = view('emails.verify-email', ['user' => $user, 'token' => $verificationToken])->render();
-        $emailService->queue($user->email, $subject, $body);
+        $emailService->sendUrgent($user->email, $subject, $body);
 
         return redirect()->route('verification.notice')
             ->with('email', $user->email);

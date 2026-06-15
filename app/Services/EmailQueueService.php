@@ -229,4 +229,17 @@ class EmailQueueService
             return false;
         }
     }
+
+    /**
+     * Send a time-sensitive email NOW (verification links, password resets,
+     * etc.) so the recipient isn't waiting on the 5-minute queue. If immediate
+     * SMTP delivery fails, fall back to the queue (which the cron retries and
+     * which has its own mail() fallback) so the message is never lost.
+     */
+    public function sendUrgent(string $recipient, string $subject, string $body): void
+    {
+        if (!$this->sendImmediate($recipient, $subject, $body)) {
+            $this->queue($recipient, $subject, $body, [], 10);
+        }
+    }
 }
