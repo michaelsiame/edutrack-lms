@@ -22,6 +22,7 @@
  <!-- Dashboard Custom CSS -->
  <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
  <link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
+ <link rel="stylesheet" href="{{ asset('assets/css/polish.css') }}">
 
  @stack('styles')
 </head>

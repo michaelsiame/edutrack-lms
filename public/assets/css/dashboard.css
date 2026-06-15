@@ -32,7 +32,7 @@ main::-webkit-scrollbar-thumb {
 
 /* Stat cards */
 .stat-card {
-    transition: all 0.3s ease;
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: 0.3s; transition-timing-function: ease;
 }
 .stat-card:hover {
     transform: translateY(-4px);

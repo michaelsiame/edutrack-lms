@@ -1,0 +1,101 @@
+/* ==========================================================================
+   polish.css — global design-engineering details.
+   Loaded LAST in dashboard/app layouts so it can refine without restructuring.
+   Additive only: smoothing, numerals, wrapping, depth, tactile states, a11y.
+   ========================================================================== */
+
+/* macOS font smoothing + legibility ------------------------------------- */
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Tabular numerals for any updating/aligned numbers --------------------- */
+.od-num,
+.od-stat-value,
+.stat-value,
+.stat-card .value,
+table td,
+table th,
+[class*="-count"],
+.tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+/* Headings: balanced wrapping so titles don't drop a lonely last word --- */
+h1, h2, h3,
+.od-h1, .od-h2, .od-h3 {
+    text-wrap: balance;
+}
+
+/* Short/medium text: pretty wrapping (avoid orphans). Not on long prose. */
+.od-meta, .od-eyebrow, figcaption,
+.od-card p, .stat-card p,
+label, .text-sm, .text-xs {
+    text-wrap: pretty;
+}
+
+/* Images get a subtle neutral inset outline so edges don't blur in ------ */
+img:not([src*=".svg"]):not(.no-outline):not([class*="rounded-full"]) {
+    outline: 1px solid rgba(0, 0, 0, 0.08);
+    outline-offset: -1px;
+}
+
+/* Tactile, interruptible interactive states ---------------------------- */
+button, .btn, .od-btn, [role="button"], a.od-btn {
+    transition-property: transform, background-color, box-shadow, border-color, color;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+}
+button:active, .btn:active, .od-btn:active,
+[role="button"]:active, a.od-btn:active {
+    transform: scale(0.97);
+}
+
+/* Card depth + hover lift on interactive cards ------------------------- */
+.od-card {
+    transition-property: box-shadow, transform, border-color;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+}
+a.od-card:hover,
+.od-card-hover:hover {
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 6px 16px -6px rgba(16, 24, 40, 0.12);
+    transform: translateY(-1px);
+}
+
+/* Quick-action tiles (admin course hub etc.): coherent hover ----------- */
+a[class*="rounded-xl"][class*="border"]:hover {
+    box-shadow: 0 4px 12px -4px rgba(16, 24, 40, 0.12);
+}
+
+/* Keep small icon-only controls at a usable hit area ------------------- */
+.od-icon-btn, button.icon, a.icon-only {
+    min-width: 40px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Respect reduced-motion ---------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    button:active, .btn:active, .od-btn:active { transform: none; }
+}
+
+/* Dark-mode image outline --------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+    img:not([src*=".svg"]):not(.no-outline):not([class*="rounded-full"]) {
+        outline-color: rgba(255, 255, 255, 0.10);
+    }
+}
+.dark img:not([src*=".svg"]):not(.no-outline):not([class*="rounded-full"]) {
+    outline-color: rgba(255, 255, 255, 0.10);
+}

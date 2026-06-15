@@ -130,7 +130,7 @@ body {
     font-weight: 500;
     border-radius: var(--radius-lg);
     color: var(--gray-300);
-    transition: all var(--transition-fast);
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: var(--transition-fast);
     border-left: 4px solid transparent;
     margin: 0.125rem 0;
 }
@@ -160,7 +160,7 @@ body {
     z-index: 40;
     opacity: 0;
     visibility: hidden;
-    transition: all var(--transition-normal);
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: var(--transition-normal);
 }
 
 .sidebar-overlay.active {
@@ -181,7 +181,7 @@ body {
     font-size: 0.875rem;
     font-weight: 500;
     border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: var(--transition-fast);
     cursor: pointer;
     border: 1px solid transparent;
     text-decoration: none;
@@ -821,7 +821,7 @@ body {
     padding: 1rem;
     opacity: 0;
     visibility: hidden;
-    transition: all var(--transition-normal);
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: var(--transition-normal);
 }
 
 .modal-overlay.active {
@@ -906,7 +906,7 @@ body {
     opacity: 0;
     visibility: hidden;
     transform: translateY(-0.5rem);
-    transition: all var(--transition-fast);
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: var(--transition-fast);
 }
 
 .dropdown.active .dropdown-menu,
@@ -1039,7 +1039,7 @@ body {
     background-color: white;
     border: 1px solid var(--gray-300);
     border-radius: var(--radius);
-    transition: all var(--transition-fast);
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: var(--transition-fast);
 }
 
 .pagination-btn:hover:not(:disabled) {
@@ -1386,4 +1386,4 @@ body {
 .shadow { box-shadow: var(--shadow) !important; }
 .shadow-md { box-shadow: var(--shadow-md) !important; }
 .shadow-lg { box-shadow: var(--shadow-lg) !important; }
-.transition { transition: all var(--transition-normal) !important; }
+.transition { transition-property: transform, background-color, box-shadow, border-color, color, opacity !important; transition-duration: var(--transition-normal) !important; }
