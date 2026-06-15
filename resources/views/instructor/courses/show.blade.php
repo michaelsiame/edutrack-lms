@@ -30,6 +30,9 @@
  <a href="{{ route('instructor.live-sessions.index', $course) }}" class="text-sm text-danger-600 hover:text-danger-700 font-medium">
  <i class="fas fa-video mr-1"></i>Live Sessions
  </a>
+ <a href="{{ route('staff.courses.read', $course) }}" class="text-sm text-gray-600 hover:text-gray-800 dark:text-gray-300 font-medium">
+ <i class="fas fa-book-open mr-1"></i>Read content
+ </a>
  <a href="{{ route('instructor.courses.edit', $course) }}" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
  <i class="fas fa-edit mr-1"></i>Edit Details
  </a>

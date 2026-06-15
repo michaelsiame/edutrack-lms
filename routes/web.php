@@ -399,6 +399,17 @@ Route::prefix('finance')->middleware(['auth', 'finance'])->name('finance.')->gro
 
 Route::post('/lenco/webhook', [App\Http\Controllers\Payment\LencoWebhookController::class, 'handle'])->name('lenco.webhook');
 
+/*
+|--------------------------------------------------------------------------
+| Staff read-only course preview (admins + owning instructors)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('staff')->middleware('auth')->name('staff.')->group(function () {
+    Route::get('/courses/{course}/read', [App\Http\Controllers\Staff\CourseReadController::class, 'read'])->name('courses.read');
+    Route::get('/courses/{course}/lessons/{lesson}/read', [App\Http\Controllers\Staff\CourseReadController::class, 'lesson'])->name('courses.lesson');
+    Route::get('/courses/{course}/lessons/{lesson}/resources/{resource}/download', [App\Http\Controllers\Staff\CourseReadController::class, 'resource'])->name('courses.resource');
+});
+
 // Public Newsletter Subscription
 Route::post('/newsletter/subscribe', [App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe')->middleware('throttle:newsletter-subscribe');
 Route::get('/newsletter/unsubscribe', [App\Http\Controllers\NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
