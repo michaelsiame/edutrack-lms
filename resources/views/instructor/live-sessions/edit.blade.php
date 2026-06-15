@@ -34,6 +34,12 @@
                     <input type="text" name="meeting_room_id" value="{{ $session->meeting_room_id }}" required
                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">External meeting link (optional)</label>
+                    <input type="url" name="meeting_url" value="{{ $session->meeting_url }}" placeholder="https://meet.google.com/..."
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                    <p class="text-xs text-gray-400 mt-1">If set, students join this link instead of the built-in room.</p>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

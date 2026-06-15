@@ -13,6 +13,7 @@ class LiveSession extends Model
         'lesson_id',
         'instructor_id',
         'meeting_room_id',
+        'meeting_url',
         'scheduled_start_time',
         'scheduled_end_time',
         'duration_minutes',

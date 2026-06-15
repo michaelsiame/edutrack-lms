@@ -17,12 +17,13 @@ return [
     'phone' => env('EDUTRACK_PHONE', '+260 770 666 937'),
     'location' => env('EDUTRACK_LOCATION', 'Kalomo, Zambia'),
 
+    // Video-conference domain for the built-in room. Point JITSI_DOMAIN at a
+    // self-hosted Jitsi (e.g. meet.edutrackzambia.com) to escape the public
+    // instance's limits; defaults to the free public server.
+    'jitsi_domain' => env('JITSI_DOMAIN', 'meet.jit.si'),
+
     /*
-    | Final-grade weighting. The course total is the best score per quiz
-    | averaged into a quiz component, the best per assignment averaged into an
-    | assignment component, then combined by these weights (auto-normalised).
-    | If a course has only quizzes or only assignments, that component is the
-    | whole grade.
+    | Final-grade weighting (best attempt per item, combined by these weights).
     */
     'grade' => [
         'quiz_weight' => (float) env('GRADE_QUIZ_WEIGHT', 40),

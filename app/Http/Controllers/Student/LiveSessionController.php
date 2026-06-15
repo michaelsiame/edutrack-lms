@@ -79,6 +79,13 @@ class LiveSessionController extends Controller
             $attendance->save();
         }
 
+        // If the instructor set an external meeting link (Google Meet, a
+        // self-hosted Jitsi, etc.), send the student there; attendance is
+        // already recorded above. Otherwise use the built-in embedded room.
+        if (!empty($session->meeting_url)) {
+            return redirect()->away($session->meeting_url);
+        }
+
         return view('student.live-sessions.join', compact('session', 'attendance', 'course'));
     }
 

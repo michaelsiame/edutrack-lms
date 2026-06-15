@@ -74,13 +74,13 @@
 @endsection
 
 @push('scripts')
-<script src="https://meet.jit.si/external_api.js"></script>
+<script src="https://{{ config('edutrack.jitsi_domain') }}/external_api.js"></script>
 <script>
     let api = null;
     let hasLeft = false;
 
     function initJitsi() {
-        const domain = 'meet.jit.si';
+        const domain = '{{ config('edutrack.jitsi_domain') }}';
         const options = {
             roomName: '{{ $session->meeting_room_id }}',
             parentNode: document.querySelector('#jitsi-container'),

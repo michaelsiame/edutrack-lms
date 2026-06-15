@@ -48,6 +48,12 @@
  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
  </div>
  </div>
+ <div class="mb-4">
+ <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">External meeting link (optional)</label>
+ <input type="url" name="meeting_url" placeholder="https://meet.google.com/... (leave blank to use the built-in video room)"
+ class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+ <p class="text-xs text-gray-400 mt-1">Paste a Google Meet/Zoom link for reliability. If set, students join there; otherwise the built-in room is used.</p>
+ </div>
  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
  <div>
  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Time</label>
