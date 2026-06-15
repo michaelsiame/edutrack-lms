@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="How mobile money works: deposit cash with an agent, hold e-money in your wallet, then send or pay anyone.">
+  <title>How mobile money moves</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">How Mobile Money Moves</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Cash becomes e-money on your phone — then travels anywhere in seconds</text>
+
+  <!-- Stage 1: You / deposit -->
+  <g>
+    <rect x="30" y="92" width="170" height="150" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="115" cy="138" r="26" fill="#0b4f8c"/>
+    <!-- person icon -->
+    <circle cx="115" cy="130" r="8" fill="#ffffff"/>
+    <path d="M99 152 a16 13 0 0 1 32 0 z" fill="#ffffff"/>
+    <text x="115" y="194" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">You</text>
+    <text x="115" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Deposit cash at an</text>
+    <text x="115" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">Airtel / MTN agent</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="205" y1="167" x2="240" y2="167"/>
+    <polygon points="240,160 254,167 240,174"/>
+  </g>
+
+  <!-- Stage 2: Wallet (emphasised) -->
+  <g>
+    <rect x="258" y="84" width="170" height="166" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="2"/>
+    <!-- phone icon -->
+    <rect x="328" y="116" width="30" height="54" rx="5" fill="#1f9d57"/>
+    <rect x="332" y="122" width="22" height="36" rx="2" fill="#ecfaf2"/>
+    <circle cx="343" cy="164" r="2.5" fill="#ecfaf2"/>
+    <text x="343" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Mobile Wallet</text>
+    <text x="343" y="217" text-anchor="middle" font-size="12" fill="#6b6f78">Your money, now e-money</text>
+    <text x="343" y="232" text-anchor="middle" font-size="12" fill="#6b6f78">held safely on the SIM</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="433" y1="167" x2="468" y2="167"/>
+    <polygon points="468,160 482,167 468,174"/>
+  </g>
+
+  <!-- Stage 3: Anyone / shop -->
+  <g>
+    <rect x="486" y="92" width="170" height="150" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="571" cy="138" r="26" fill="#f59e0b"/>
+    <!-- shop icon -->
+    <path d="M556 128 h30 l-3 9 h-24 z" fill="#ffffff"/>
+    <rect x="558" y="137" width="26" height="16" rx="1.5" fill="#ffffff"/>
+    <rect x="567" y="143" width="8" height="10" fill="#f59e0b"/>
+    <text x="571" y="194" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Anyone</text>
+    <text x="571" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Send to family, pay a</text>
+    <text x="571" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">shop, or buy talktime</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="284" text-anchor="middle" font-size="11.5" fill="#9aa3af">Dial the USSD code (e.g. *115#) or use the app — no bank account needed.</text>
+</svg>
