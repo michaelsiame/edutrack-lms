@@ -3,6 +3,14 @@
 @section('title', 'Gradebook — ' . $course->title)
 @section('page_title', 'Gradebook — ' . $course->title)
 
+@section('breadcrumbs')
+    <span class="opacity-50">/</span>
+    <a href="{{ auth()->user()->isAdmin() ? route('admin.courses.index') : route('instructor.courses.index') }}" class="hover:underline">Courses</a>
+    <span class="opacity-50">/</span>
+    <span style="color: var(--od-fg);" class="font-medium">{{ $course->title }} — Gradebook</span>
+@endsection
+
+
 @section('content')
 @php
 $scoreBadgeClass = function ($score) {

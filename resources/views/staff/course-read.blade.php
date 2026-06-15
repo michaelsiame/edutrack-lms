@@ -3,6 +3,14 @@
 @section('title', $lesson->title . ' — ' . $course->title)
 @section('page_title', 'Course Preview')
 
+@section('breadcrumbs')
+    <span class="opacity-50">/</span>
+    <a href="{{ auth()->user()->isAdmin() ? route('admin.courses.index') : route('instructor.courses.index') }}" class="hover:underline">Courses</a>
+    <span class="opacity-50">/</span>
+    <span style="color: var(--od-fg);" class="font-medium">{{ $course->title }} — Read</span>
+@endsection
+
+
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/lesson-content.css') }}">

@@ -3,6 +3,14 @@
 @section('title', $course->title .' - Edutrack LMS')
 @section('page_title', $course->title)
 
+@section('breadcrumbs')
+    <span class="opacity-50">/</span>
+    <a href="{{ auth()->user()->isAdmin() ? route('admin.courses.index') : route('instructor.courses.index') }}" class="hover:underline">Courses</a>
+    <span class="opacity-50">/</span>
+    <span style="color: var(--od-fg);" class="font-medium">{{ $course->title }} — Builder</span>
+@endsection
+
+
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6" x-data="{}">
  <!-- Course Header -->

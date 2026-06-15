@@ -269,6 +269,18 @@
 
  <!-- Page Content -->
  <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+ {{-- Breadcrumbs: pages can supply a richer trail via @section('breadcrumbs'); otherwise a sensible Home / {page} default. --}}
+ <nav aria-label="Breadcrumb" class="mb-4 flex items-center flex-wrap gap-1 text-sm" style="color: var(--od-muted);">
+ <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1 hover:underline">
+ <i class="fas fa-home text-xs"></i> Home
+ </a>
+ @hasSection('breadcrumbs')
+ @yield('breadcrumbs')
+ @else
+ <span class="opacity-50">/</span>
+ <span style="color: var(--od-fg);" class="font-medium">@yield('page_title','Dashboard')</span>
+ @endif
+ </nav>
  @yield('content')
  </main>
  </div>
