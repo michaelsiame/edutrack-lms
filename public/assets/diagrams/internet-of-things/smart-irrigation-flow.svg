@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Smart irrigation flow for a Zambian farm: soil sensors send data through a solar-powered gateway to the cloud, then the farmer receives an alert and can turn the pump on or off.">
+  <title>Smart irrigation system flow</title>
+
+  <!-- title -->
+  <text x="380" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Smart Irrigation System Flow</text>
+  <text x="380" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">A solar-powered loop that keeps maize and vegetables watered, even during load-shedding</text>
+
+  <!-- Stage 1: Soil sensor -->
+  <g>
+    <rect x="20" y="92" width="130" height="150" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <!-- probe icon -->
+    <rect x="80" y="116" width="10" height="42" rx="2" fill="#0b4f8c"/>
+    <rect x="78" y="112" width="14" height="10" rx="2" fill="#0b4f8c"/>
+    <line x1="85" y1="158" x2="85" y2="168" stroke="#0b4f8c" stroke-width="2"/>
+    <circle cx="85" cy="172" r="3" fill="#0b4f8c"/>
+    <text x="85" y="194" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Soil Sensor</text>
+    <text x="85" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">Checks moisture</text>
+    <text x="85" y="229" text-anchor="middle" font-size="12" fill="#6b6f78">in the maize field</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="155" y1="167" x2="178" y2="167"/>
+    <polygon points="178,160 190,167 178,174"/>
+  </g>
+
+  <!-- Stage 2: Gateway -->
+  <g>
+    <rect x="196" y="92" width="130" height="150" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <!-- gateway icon -->
+    <rect x="243" y="120" width="36" height="48" rx="4" fill="#6b6f78"/>
+    <rect x="247" y="126" width="28" height="30" rx="2" fill="#f7f8fa"/>
+    <circle cx="261" cy="154" r="2.5" fill="#6b6f78"/>
+    <path d="M256 136 a5 5 0 0 1 10 0" stroke="#6b6f78" stroke-width="2" fill="none"/>
+    <path d="M252 130 a10 10 0 0 1 18 0" stroke="#6b6f78" stroke-width="2" fill="none"/>
+    <text x="261" y="194" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Gateway</text>
+    <text x="261" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">Solar-powered</text>
+    <text x="261" y="229" text-anchor="middle" font-size="12" fill="#6b6f78">MTN/Airtel link</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="331" y1="167" x2="354" y2="167"/>
+    <polygon points="354,160 366,167 354,174"/>
+  </g>
+
+  <!-- Stage 3: Cloud platform -->
+  <g>
+    <rect x="372" y="84" width="130" height="166" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="2"/>
+    <!-- cloud icon -->
+    <path d="M411 148 a12 12 0 0 1 22 0 a12 12 0 0 1 18 2 a10 10 0 0 1 -4 19 h-44 a10 10 0 0 1 -2 -19 a12 12 0 0 1 10 -2 z" fill="#1f9d57"/>
+    <text x="437" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Cloud Platform</text>
+    <text x="437" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Stores readings</text>
+    <text x="437" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">&amp; decides when</text>
+    <text x="437" y="246" text-anchor="middle" font-size="12" fill="#6b6f78">to irrigate</text>
+  </g>
+
+  <!-- arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="507" y1="167" x2="530" y2="167"/>
+    <polygon points="530,160 542,167 530,174"/>
+  </g>
+
+  <!-- Stage 4: Farmer's phone -->
+  <g>
+    <rect x="548" y="92" width="130" height="150" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- phone icon -->
+    <rect x="592" y="118" width="34" height="58" rx="5" fill="#f59e0b"/>
+    <rect x="596" y="124" width="26" height="42" rx="2" fill="#fef6e7"/>
+    <circle cx="609" cy="164" r="2.5" fill="#f59e0b"/>
+    <text x="613" y="194" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Farmer's Phone</text>
+    <text x="613" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">WhatsApp/SMS</text>
+    <text x="613" y="229" text-anchor="middle" font-size="12" fill="#6b6f78">alert received</text>
+  </g>
+
+  <!-- arrow 4 (curved back to action) -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <path d="M613 242 v22 q0 14 14 14 h38" fill="none"/>
+    <polygon points="665,272 678,278 665,284"/>
+  </g>
+
+  <!-- Stage 5: Valve/pump action -->
+  <g>
+    <rect x="686" y="92" width="130" height="150" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <!-- valve icon -->
+    <circle cx="751" cy="142" r="20" fill="#dc2626"/>
+    <rect x="747" y="118" width="8" height="48" fill="#ffffff"/>
+    <rect x="735" y="138" width="32" height="8" fill="#ffffff"/>
+    <text x="751" y="194" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Pump / Valve</text>
+    <text x="751" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">Water flows to</text>
+    <text x="751" y="229" text-anchor="middle" font-size="12" fill="#6b6f78">the crop beds</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="380" y="284" text-anchor="middle" font-size="11.5" fill="#9aa3af">Solar panel and battery keep the gateway online during ZESCO load-shedding hours.</text>
+</svg>

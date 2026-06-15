@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 360" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Comparison of social commerce and a dedicated website store for Zambian online sellers.">
+  <title>Social commerce versus website store</title>
+
+  <!-- title -->
+  <text x="350" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Social Commerce vs Website Store</text>
+  <text x="350" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Choose the right online sales channel for your budget and goals</text>
+
+  <!-- Left card: Social Commerce -->
+  <g>
+    <rect x="50" y="85" width="280" height="225" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="190" y="116" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Social Commerce</text>
+    <text x="190" y="134" text-anchor="middle" font-size="12" fill="#6b6f78">WhatsApp Business + Facebook + Instagram</text>
+
+    <rect x="75" y="152" width="230" height="34" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="190" y="174" text-anchor="middle" font-size="12" fill="#1f9d57" font-weight="600">Free or very low cost to start</text>
+
+    <rect x="75" y="192" width="230" height="34" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="190" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">Best for personal selling &amp; repeat customers</text>
+
+    <rect x="75" y="232" width="230" height="34" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="190" y="254" text-anchor="middle" font-size="12" fill="#6b6f78">Payment via MTN MoMo / Airtel Money</text>
+
+    <rect x="75" y="272" width="230" height="28" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="190" y="291" text-anchor="middle" font-size="12" fill="#dc2626">Harder to find on Google search</text>
+  </g>
+
+  <!-- VS circle -->
+  <circle cx="350" cy="197" r="20" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+  <text x="350" y="203" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">VS</text>
+
+  <!-- Right card: Website Store -->
+  <g>
+    <rect x="370" y="85" width="280" height="225" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="510" y="116" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Your Own Website</text>
+    <text x="510" y="134" text-anchor="middle" font-size="12" fill="#6b6f78">Domain name + e-commerce store</text>
+
+    <rect x="395" y="152" width="230" height="34" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="510" y="174" text-anchor="middle" font-size="12" fill="#6b6f78" font-weight="600">Higher setup cost (hosting + domain)</text>
+
+    <rect x="395" y="192" width="230" height="34" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="510" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">Professional look, better for search</text>
+
+    <rect x="395" y="232" width="230" height="34" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="510" y="254" text-anchor="middle" font-size="12" fill="#6b6f78">Can integrate Lenco / card payments</text>
+
+    <rect x="395" y="272" width="230" height="28" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="510" y="291" text-anchor="middle" font-size="12" fill="#1f9d57">Ideal once you have steady orders</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="350" y="340" text-anchor="middle" font-size="11.5" fill="#9aa3af">Many Zambian sellers begin with social commerce and add a website as they grow.</text>
+</svg>

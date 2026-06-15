@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Results framework logic model showing inputs, activities, outputs, outcomes and impact for a Zambian school feeding programme.">
+  <title>Logic model for a school feeding programme</title>
+
+  <!-- title -->
+  <text x="380" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Logic Model: School Feeding Programme</text>
+  <text x="380" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">If we have these resources and do these activities, what changes should we see?</text>
+
+  <!-- Stage 1: Inputs -->
+  <g>
+    <rect x="30" y="92" width="124" height="150" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="92" y="120" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Inputs</text>
+    <text x="92" y="144" text-anchor="middle" font-size="12" fill="#6b6f78">Maize, beans,</text>
+    <text x="92" y="159" text-anchor="middle" font-size="12" fill="#6b6f78">cooking oil</text>
+    <text x="92" y="174" text-anchor="middle" font-size="12" fill="#6b6f78">Volunteer cooks</text>
+    <text x="92" y="189" text-anchor="middle" font-size="12" fill="#6b6f78">Stoves + pots</text>
+    <text x="92" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">District grant</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="158" y1="167" x2="188" y2="167"/>
+    <polygon points="188,160 202,167 188,174"/>
+  </g>
+
+  <!-- Stage 2: Activities -->
+  <g>
+    <rect x="206" y="92" width="124" height="150" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="268" y="120" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Activities</text>
+    <text x="268" y="144" text-anchor="middle" font-size="12" fill="#6b6f78">Cook meals</text>
+    <text x="268" y="159" text-anchor="middle" font-size="12" fill="#6b6f78">Serve pupils</text>
+    <text x="268" y="174" text-anchor="middle" font-size="12" fill="#6b6f78">Train cooks</text>
+    <text x="268" y="189" text-anchor="middle" font-size="12" fill="#6b6f78">Store food</text>
+    <text x="268" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">Monitor stocks</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="334" y1="167" x2="364" y2="167"/>
+    <polygon points="364,160 378,167 364,174"/>
+  </g>
+
+  <!-- Stage 3: Outputs -->
+  <g>
+    <rect x="382" y="92" width="124" height="150" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="444" y="120" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Outputs</text>
+    <text x="444" y="144" text-anchor="middle" font-size="12" fill="#6b6f78">450 pupils fed</text>
+    <text x="444" y="159" text-anchor="middle" font-size="12" fill="#6b6f78">225 school days</text>
+    <text x="444" y="174" text-anchor="middle" font-size="12" fill="#6b6f78">12 cooks trained</text>
+    <text x="444" y="189" text-anchor="middle" font-size="12" fill="#6b6f78">Weekly menus</text>
+    <text x="444" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">Stock reports</text>
+  </g>
+
+  <!-- arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="510" y1="167" x2="540" y2="167"/>
+    <polygon points="540,160 554,167 540,174"/>
+  </g>
+
+  <!-- Stage 4: Outcomes -->
+  <g>
+    <rect x="558" y="92" width="82" height="150" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="599" y="120" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Outcomes</text>
+    <text x="599" y="144" text-anchor="middle" font-size="12" fill="#6b6f78">Better</text>
+    <text x="599" y="159" text-anchor="middle" font-size="12" fill="#6b6f78">attendance</text>
+    <text x="599" y="174" text-anchor="middle" font-size="12" fill="#6b6f78">Improved</text>
+    <text x="599" y="189" text-anchor="middle" font-size="12" fill="#6b6f78">concentration</text>
+    <text x="599" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">Retention up</text>
+  </g>
+
+  <!-- arrow 4 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="644" y1="167" x2="674" y2="167"/>
+    <polygon points="674,160 688,167 674,174"/>
+  </g>
+
+  <!-- Stage 5: Impact -->
+  <g>
+    <rect x="696" y="92" width="64" height="150" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="2"/>
+    <text x="728" y="120" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Impact</text>
+    <text x="728" y="144" text-anchor="middle" font-size="12" fill="#6b6f78">Higher</text>
+    <text x="728" y="159" text-anchor="middle" font-size="12" fill="#6b6f78">literacy</text>
+    <text x="728" y="174" text-anchor="middle" font-size="12" fill="#6b6f78">Better</text>
+    <text x="728" y="189" text-anchor="middle" font-size="12" fill="#6b6f78">health</text>
+    <text x="728" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">Long-term</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="380" y="272" text-anchor="middle" font-size="11.5" fill="#9aa3af">Each level is measured with indicators, baselines and targets — the heart of an M&amp;E plan.</text>
+</svg>

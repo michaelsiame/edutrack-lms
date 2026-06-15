@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 330" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Online order flow in Zambia: customer browses a social catalogue, places an order, pays with mobile money, seller packs and ships via bus parcel or courier, then delivery is confirmed.">
+  <title>How an online order travels in Zambia</title>
+
+  <!-- title -->
+  <text x="350" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">How an Online Order Travels in Zambia</text>
+  <text x="350" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">From social post to mobile-money payment to doorstep delivery</text>
+
+  <!-- Stage 1: Browse -->
+  <g>
+    <rect x="25" y="90" width="110" height="150" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <!-- phone icon -->
+    <rect x="68" y="118" width="30" height="48" rx="5" fill="#0b4f8c"/>
+    <rect x="72" y="124" width="22" height="32" rx="2" fill="#ffffff"/>
+    <circle cx="83" cy="156" r="2" fill="#0b4f8c"/>
+    <text x="80" y="188" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Browse</text>
+    <text x="80" y="208" text-anchor="middle" font-size="12" fill="#6b6f78">WhatsApp,</text>
+    <text x="80" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">Facebook, IG</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="135" y1="165" x2="155" y2="165"/>
+    <polygon points="155,158 169,165 155,172"/>
+  </g>
+
+  <!-- Stage 2: Order -->
+  <g>
+    <rect x="160" y="90" width="110" height="150" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <!-- chat icon -->
+    <rect x="195" y="120" width="46" height="34" rx="8" fill="#6b6f78"/>
+    <path d="M205 154 l8 10 l-2 -10 z" fill="#6b6f78"/>
+    <line x1="205" y1="133" x2="231" y2="133" stroke="#ffffff" stroke-width="2.5"/>
+    <line x1="205" y1="143" x2="225" y2="143" stroke="#ffffff" stroke-width="2.5"/>
+    <text x="215" y="188" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Order</text>
+    <text x="215" y="208" text-anchor="middle" font-size="12" fill="#6b6f78">Customer sends</text>
+    <text x="215" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">product + address</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="270" y1="165" x2="290" y2="165"/>
+    <polygon points="290,158 304,165 290,172"/>
+  </g>
+
+  <!-- Stage 3: Pay (emphasised) -->
+  <g>
+    <rect x="295" y="82" width="110" height="166" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="2"/>
+    <!-- wallet icon -->
+    <rect x="325" y="122" width="48" height="32" rx="4" fill="#1f9d57"/>
+    <circle cx="360" cy="138" r="5" fill="#ecfaf2"/>
+    <path d="M325 126 l-6 -8 h54" stroke="#1f9d57" stroke-width="3" fill="none"/>
+    <text x="350" y="188" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Pay</text>
+    <text x="350" y="208" text-anchor="middle" font-size="12" fill="#6b6f78">MTN MoMo,</text>
+    <text x="350" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">Airtel, Lenco link</text>
+  </g>
+
+  <!-- arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="405" y1="165" x2="425" y2="165"/>
+    <polygon points="425,158 439,165 425,172"/>
+  </g>
+
+  <!-- Stage 4: Pack & Ship -->
+  <g>
+    <rect x="430" y="90" width="110" height="150" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- box icon -->
+    <rect x="465" y="122" width="42" height="36" rx="3" fill="#f59e0b"/>
+    <line x1="486" y1="122" x2="486" y2="158" stroke="#ffffff" stroke-width="2"/>
+    <line x1="465" y1="140" x2="507" y2="140" stroke="#ffffff" stroke-width="2"/>
+    <text x="485" y="188" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Pack &amp; Ship</text>
+    <text x="485" y="208" text-anchor="middle" font-size="12" fill="#6b6f78">Invoice, box,</text>
+    <text x="485" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">bus or courier</text>
+  </g>
+
+  <!-- arrow 4 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="540" y1="165" x2="560" y2="165"/>
+    <polygon points="560,158 574,165 560,172"/>
+  </g>
+
+  <!-- Stage 5: Deliver -->
+  <g>
+    <rect x="565" y="90" width="110" height="150" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <!-- location pin icon -->
+    <path d="M620 120 a16 16 0 0 0 -16 16 c0 12 16 28 16 28 s16 -16 16 -28 a16 16 0 0 0 -16 -16 z" fill="#1f9d57"/>
+    <circle cx="620" cy="136" r="6" fill="#ffffff"/>
+    <text x="620" y="188" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Deliver</text>
+    <text x="620" y="208" text-anchor="middle" font-size="12" fill="#6b6f78">Lusaka, Ndola,</text>
+    <text x="620" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">Kitwe, Kalomo</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="350" y="288" text-anchor="middle" font-size="11.5" fill="#9aa3af">Great North Road bus parcels and local couriers connect sellers to buyers nationwide.</text>
+</svg>

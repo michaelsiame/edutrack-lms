@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="The monitoring and evaluation cycle: plan, collect, analyse, report, use, and repeat.">
+  <title>The M&amp;E cycle</title>
+
+  <!-- title -->
+  <text x="380" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The M&amp;E Cycle for Zambian Projects</text>
+  <text x="380" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Plan, collect, analyse, report and use data — then start again</text>
+
+  <!-- Stage 1: Plan -->
+  <g>
+    <rect x="30" y="92" width="124" height="120" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="92" cy="132" r="20" fill="#0b4f8c"/>
+    <text x="92" y="138" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">1</text>
+    <text x="92" y="170" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Plan</text>
+    <text x="92" y="188" text-anchor="middle" font-size="12" fill="#6b6f78">Define indicators</text>
+    <text x="92" y="203" text-anchor="middle" font-size="12" fill="#6b6f78">and tools</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="158" y1="152" x2="188" y2="152"/>
+    <polygon points="188,145 202,152 188,159"/>
+  </g>
+
+  <!-- Stage 2: Collect -->
+  <g>
+    <rect x="206" y="92" width="124" height="120" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="268" cy="132" r="20" fill="#f59e0b"/>
+    <text x="268" y="138" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">2</text>
+    <text x="268" y="170" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Collect</text>
+    <text x="268" y="188" text-anchor="middle" font-size="12" fill="#6b6f78">KoBo/ODK,</text>
+    <text x="268" y="203" text-anchor="middle" font-size="12" fill="#6b6f78">clinic registers</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="334" y1="152" x2="364" y2="152"/>
+    <polygon points="364,145 378,152 364,159"/>
+  </g>
+
+  <!-- Stage 3: Analyse -->
+  <g>
+    <rect x="382" y="92" width="124" height="120" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <circle cx="444" cy="132" r="20" fill="#1f9d57"/>
+    <text x="444" y="138" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">3</text>
+    <text x="444" y="170" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Analyse</text>
+    <text x="444" y="188" text-anchor="middle" font-size="12" fill="#6b6f78">Spreadsheets,</text>
+    <text x="444" y="203" text-anchor="middle" font-size="12" fill="#6b6f78">compare targets</text>
+  </g>
+
+  <!-- arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="510" y1="152" x2="540" y2="152"/>
+    <polygon points="540,145 554,152 540,159"/>
+  </g>
+
+  <!-- Stage 4: Report -->
+  <g>
+    <rect x="558" y="92" width="124" height="120" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="620" cy="132" r="20" fill="#f59e0b"/>
+    <text x="620" y="138" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">4</text>
+    <text x="620" y="170" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Report</text>
+    <text x="620" y="188" text-anchor="middle" font-size="12" fill="#6b6f78">Donor reports,</text>
+    <text x="620" y="203" text-anchor="middle" font-size="12" fill="#6b6f78">district briefs</text>
+  </g>
+
+  <!-- Stage 5: Use -->
+  <g>
+    <rect x="318" y="186" width="124" height="82" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="2"/>
+    <circle cx="380" cy="215" r="16" fill="#1f9d57"/>
+    <text x="380" y="220" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">5</text>
+    <text x="380" y="250" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Use</text>
+  </g>
+
+  <!-- arrow 4: Report down to Use -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="620" y1="216" x2="620" y2="236"/>
+    <line x1="620" y1="236" x2="446" y2="236"/>
+    <polygon points="446,229 432,236 446,243"/>
+  </g>
+
+  <!-- arrow 5: Use back to Plan -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="none">
+    <path d="M318 260 C 160 290, 90 260, 92 216" stroke="#9aa3af" fill="none"/>
+    <polygon points="92,223 78,216 92,209" fill="#9aa3af"/>
+  </g>
+
+  <!-- footer note -->
+  <text x="380" y="290" text-anchor="middle" font-size="11.5" fill="#9aa3af">Used by NGOs, Ministry of Health and district offices across Zambia to track project performance.</text>
+</svg>

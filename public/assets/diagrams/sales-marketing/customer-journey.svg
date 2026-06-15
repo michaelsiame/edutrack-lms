@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Customer journey from awareness to advocacy for a Zambian small business.">
+  <title>Customer journey from awareness to advocacy</title>
+
+  <!-- title -->
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Customer Journey: Awareness to Advocacy</text>
+  <text x="410" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">How a stranger becomes a loyal customer who recommends you</text>
+
+  <!-- Stage 1: Awareness -->
+  <g>
+    <rect x="40" y="92" width="150" height="150" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="115" cy="138" r="26" fill="#0b4f8c"/>
+    <!-- eye icon -->
+    <path d="M100 138 q15 -16 30 0 q-15 16 -30 0 z" fill="#ffffff"/>
+    <circle cx="115" cy="138" r="5" fill="#0b4f8c"/>
+    <text x="115" y="194" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Awareness</text>
+    <text x="115" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Customer sees your</text>
+    <text x="115" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">WhatsApp status or flyer</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="195" y1="167" x2="230" y2="167"/>
+    <polygon points="230,160 244,167 230,174"/>
+  </g>
+
+  <!-- Stage 2: Interest -->
+  <g>
+    <rect x="248" y="92" width="150" height="150" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <circle cx="323" cy="138" r="26" fill="#6b6f78"/>
+    <!-- message bubble icon -->
+    <rect x="310" y="128" width="26" height="20" rx="4" fill="#ffffff"/>
+    <path d="M323 148 l-5 7 v-7 z" fill="#ffffff"/>
+    <text x="323" y="194" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Interest</text>
+    <text x="323" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">They message you</text>
+    <text x="323" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">or visit your stall</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="403" y1="167" x2="438" y2="167"/>
+    <polygon points="438,160 452,167 438,174"/>
+  </g>
+
+  <!-- Stage 3: Purchase -->
+  <g>
+    <rect x="456" y="92" width="150" height="150" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="2"/>
+    <circle cx="531" cy="138" r="26" fill="#1f9d57"/>
+    <!-- phone + check icon -->
+    <rect x="520" y="124" width="22" height="34" rx="3" fill="#ffffff"/>
+    <rect x="523" y="128" width="16" height="22" rx="1" fill="#ecfaf2"/>
+    <path d="M525 146 l4 4 l8 -9" fill="none" stroke="#1f9d57" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="531" y="194" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Purchase</text>
+    <text x="531" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">They pay by MTN MoMo</text>
+    <text x="531" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">or Airtel Money and buy</text>
+  </g>
+
+  <!-- arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="611" y1="167" x2="646" y2="167"/>
+    <polygon points="646,160 660,167 646,174"/>
+  </g>
+
+  <!-- Stage 4: Advocacy -->
+  <g>
+    <rect x="664" y="92" width="150" height="150" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="739" cy="138" r="26" fill="#f59e0b"/>
+    <!-- heart + share icon -->
+    <path d="M739 128 c-7 -7 -18 -2 -18 6 c0 9 18 20 18 20 s18 -11 18 -20 c0 -8 -11 -13 -18 -6 z" fill="#ffffff"/>
+    <text x="739" y="194" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Advocacy</text>
+    <text x="739" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">They buy again and</text>
+    <text x="739" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">tell friends on WhatsApp</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="410" y="284" text-anchor="middle" font-size="11.5" fill="#9aa3af">Example: A customer at Kalomo Central Market sees your maize post, asks the price, pays via MoMo, and refers a neighbour.</text>
+</svg>
