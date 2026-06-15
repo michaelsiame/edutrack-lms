@@ -33,23 +33,29 @@
     </div>
 
     <div class="od-read-layout">
-        {{-- Sidebar: modules & lessons --}}
-        <aside class="od-read-sidebar od-card" style="padding:14px;">
-            <p class="od-eyebrow" style="margin:0 0 8px;">Course content</p>
-            @foreach($modules as $mod)
-                <div class="mb-3">
-                    <div class="text-sm font-semibold mb-1" style="color:var(--od-fg);">{{ $mod->title }}</div>
-                    @forelse($mod->lessons as $l)
-                        <a href="{{ route('staff.courses.lesson', [$course, $l]) }}"
-                           class="od-read-lessonlink {{ $l->id === $lesson->id ? 'active' : '' }}">
-                            <i class="fas {{ $l->lesson_type === 'Quiz' ? 'fa-clipboard-question' : ($l->lesson_type === 'Video' ? 'fa-play-circle' : ($l->lesson_type === 'Assignment' ? 'fa-file-pen' : 'fa-file-lines')) }} mr-1" style="opacity:.6;"></i>
-                            {{ $l->title }}
-                        </a>
-                    @empty
-                        <p class="od-meta" style="padding:4px 12px;">No lessons.</p>
-                    @endforelse
-                </div>
-            @endforeach
+        {{-- Sidebar: modules & lessons (collapsible on mobile so content shows first) --}}
+        <aside class="od-read-sidebar od-card" style="padding:14px;" x-data="{ nav: false }">
+            <button type="button" @click="nav = !nav" class="lg:hidden w-full flex items-center justify-between">
+                <span class="od-eyebrow" style="margin:0;">Course content</span>
+                <i class="fas fa-chevron-down transition-transform" :class="nav ? 'rotate-180' : ''" style="color:var(--od-muted);"></i>
+            </button>
+            <p class="od-eyebrow hidden lg:block" style="margin:0 0 8px;">Course content</p>
+            <div :class="nav ? 'block' : 'hidden'" class="lg:block mt-3 lg:mt-0">
+                @foreach($modules as $mod)
+                    <div class="mb-3">
+                        <div class="text-sm font-semibold mb-1" style="color:var(--od-fg);">{{ $mod->title }}</div>
+                        @forelse($mod->lessons as $l)
+                            <a href="{{ route('staff.courses.lesson', [$course, $l]) }}"
+                               class="od-read-lessonlink {{ $l->id === $lesson->id ? 'active' : '' }}">
+                                <i class="fas {{ $l->lesson_type === 'Quiz' ? 'fa-clipboard-question' : ($l->lesson_type === 'Video' ? 'fa-play-circle' : ($l->lesson_type === 'Assignment' ? 'fa-file-pen' : 'fa-file-lines')) }} mr-1" style="opacity:.6;"></i>
+                                {{ $l->title }}
+                            </a>
+                        @empty
+                            <p class="od-meta" style="padding:4px 12px;">No lessons.</p>
+                        @endforelse
+                    </div>
+                @endforeach
+            </div>
         </aside>
 
         {{-- Main: lesson content --}}
