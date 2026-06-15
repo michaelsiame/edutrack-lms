@@ -15,12 +15,12 @@
 <div class="max-w-5xl mx-auto space-y-6" x-data="{}">
  <!-- Course Header -->
  <div class="od-card p-6">
- <div class="flex items-center justify-between mb-4">
+ <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-4">
  <div>
  <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ $course->title }}</h2>
  <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $course->enrollments?->count() ?? 0 }} students enrolled</p>
  </div>
- <div class="flex items-center space-x-3">
+ <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $course->status ==='published' ?'bg-success-100 text-success-800' :'bg-gray-100 text-gray-800' }}">
  {{ ucfirst($course->status) }}
  </span>
