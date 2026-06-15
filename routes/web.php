@@ -37,6 +37,27 @@ Route::get('/certificates/verify/{code}', [CertificateController::class, 'verify
 
 /*
 |--------------------------------------------------------------------------
+| Local-only dev login (NEVER active in production)
+|--------------------------------------------------------------------------
+| Lets local tooling (Chrome DevTools, etc.) reach authenticated pages
+| without typing credentials. Guarded by APP_ENV=local so it 404s anywhere
+| else. Logs in admin@local.test by default, or ?email=<user> if supplied.
+*/
+if (app()->environment('local')) {
+    Route::get('/dev-login', function (\Illuminate\Http\Request $request) {
+        $email = $request->query('email', 'admin@local.test');
+        $user = \App\Models\User::where('email', $email)->first();
+        if (!$user) {
+            abort(404, "No local user: {$email}");
+        }
+        \Illuminate\Support\Facades\Auth::login($user);
+        $request->session()->regenerate();
+        return redirect($request->query('to', route('dashboard')));
+    })->name('dev.login');
+}
+
+/*
+|--------------------------------------------------------------------------
 | Authentication Routes
 |--------------------------------------------------------------------------
 */
