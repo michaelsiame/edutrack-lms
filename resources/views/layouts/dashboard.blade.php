@@ -309,6 +309,8 @@
  <script defer src="{{ asset('assets/js/alpine/alpine.min.js') }}"></script>
  <!-- Session Heartbeat (prevents 419 CSRF expiry during long study sessions) -->
  <script src="{{ asset('assets/js/session-heartbeat.js') }}"></script>
+ <!-- Responsive tables: label cells so od-tables stack into cards on phones -->
+ <script defer src="{{ asset('assets/js/responsive-tables.js') }}"></script>
  <script>
  // Global confirm modal
  window.confirmModal = function(message, onConfirm) {

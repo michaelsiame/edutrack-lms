@@ -90,6 +90,49 @@ a[class*="rounded-xl"][class*="border"]:hover {
     button:active, .btn:active, .od-btn:active { transform: none; }
 }
 
+/* Responsive tables: stack od-table rows into cards on phones ----------
+   Pairs with responsive-tables.js, which copies each column header into a
+   data-label on the matching cell so nothing is hidden on small screens. */
+@media (max-width: 768px) {
+    .od-table { min-width: 0 !important; }
+    /* visually hide the header row but keep it for the label-copy script */
+    .od-table thead {
+        position: absolute; width: 1px; height: 1px;
+        padding: 0; margin: -1px; overflow: hidden;
+        clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+    .od-table, .od-table tbody { display: block; width: 100%; }
+    .od-table tr {
+        display: block;
+        border: 1px solid var(--od-border);
+        border-radius: 12px;
+        background: var(--od-surface);
+        margin-bottom: 10px;
+        padding: 2px 14px;
+    }
+    .od-table tbody tr:hover { background: var(--od-surface); }
+    .od-table td {
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 14px; text-align: right; white-space: normal;
+        padding: 9px 0; border: 0;
+        border-bottom: 1px solid var(--od-border);
+    }
+    .od-table tr td:last-child { border-bottom: 0; }
+    .od-table td::before {
+        content: attr(data-label);
+        flex: 0 0 38%; text-align: left;
+        font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+        text-transform: uppercase; color: var(--od-muted);
+    }
+    /* cells with no header (blank label) or the empty-state row span full width */
+    .od-table td[data-label=""]::before,
+    .od-table td:not([data-label])::before { content: ""; }
+    .od-table td[colspan] { display: block; text-align: center; }
+    .od-table td[colspan]::before { display: none; }
+    /* action button clusters wrap nicely instead of overflowing */
+    .od-table td .od-btn, .od-table td .btn { flex: 0 0 auto; }
+}
+
 /* Dark-mode image outline --------------------------------------------- */
 @media (prefers-color-scheme: dark) {
     img:not([src*=".svg"]):not(.no-outline):not([class*="rounded-full"]) {
