@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Marketing funnel with four narrowing stages: Awareness at the top, then Interest, Decision, and Action at the bottom.">
+  <title>The Marketing Funnel</title>
+
+  <!-- title -->
+  <text x="330" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Marketing Funnel</text>
+  <text x="330" y="54" text-anchor="middle" font-size="13" fill="#6b6f78">Turn strangers into customers, one stage at a time</text>
+
+  <!-- Awareness -->
+  <polygon points="80,70 580,70 540,120 120,120" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <text x="330" y="98" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Awareness</text>
+  <text x="330" y="113" text-anchor="middle" font-size="12" fill="#6b6f78">People notice you exist</text>
+
+  <!-- Interest -->
+  <polygon points="120,126 540,126 510,176 150,176" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+  <text x="330" y="153" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Interest</text>
+  <text x="330" y="168" text-anchor="middle" font-size="12" fill="#6b6f78">They want to learn more</text>
+
+  <!-- Decision -->
+  <polygon points="150,182 510,182 460,232 200,232" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="330" y="208" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Decision</text>
+  <text x="330" y="223" text-anchor="middle" font-size="12" fill="#6b6f78">They compare and choose</text>
+
+  <!-- Action -->
+  <polygon points="200,238 460,238 400,288 260,288" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+  <text x="330" y="263" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Action</text>
+  <text x="330" y="278" text-anchor="middle" font-size="12" fill="#6b6f78">They buy, call, or sign up</text>
+
+  <!-- stage-size labels left -->
+  <text x="70" y="100" text-anchor="end" font-size="12" font-weight="700" fill="#0b4f8c">Many</text>
+  <text x="110" y="156" text-anchor="end" font-size="12" font-weight="700" fill="#6b6f78">Some</text>
+  <text x="140" y="211" text-anchor="end" font-size="12" font-weight="700" fill="#f59e0b">Few</text>
+  <text x="190" y="266" text-anchor="end" font-size="12" font-weight="700" fill="#1f9d57">One</text>
+</svg>
