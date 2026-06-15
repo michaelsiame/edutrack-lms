@@ -251,6 +251,7 @@ Route::prefix('instructor')->middleware(['auth', 'instructor'])->name('instructo
     Route::get('/submissions', [InstructorDashboardController::class, 'submissions'])->name('submissions');
     Route::get('/progress', [InstructorDashboardController::class, 'progress'])->name('progress');
     Route::get('/analytics', [InstructorDashboardController::class, 'analytics'])->name('analytics');
+    Route::get('/courses/{course}/gradebook', [InstructorDashboardController::class, 'gradebook'])->name('courses.gradebook');
 
     // Intakes
     Route::get('/courses/{course}/intakes', [App\Http\Controllers\Instructor\IntakeController::class, 'index'])->name('courses.intakes.index');

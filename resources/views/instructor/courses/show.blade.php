@@ -33,6 +33,9 @@
  <a href="{{ route('staff.courses.read', $course) }}" class="text-sm text-gray-600 hover:text-gray-800 dark:text-gray-300 font-medium">
  <i class="fas fa-book-open mr-1"></i>Read content
  </a>
+ <a href="{{ route('instructor.courses.gradebook', $course) }}" class="text-sm text-secondary-600 hover:text-secondary-700 font-medium">
+ <i class="fas fa-table mr-1"></i>Gradebook
+ </a>
  <a href="{{ route('instructor.courses.edit', $course) }}" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
  <i class="fas fa-edit mr-1"></i>Edit Details
  </a>

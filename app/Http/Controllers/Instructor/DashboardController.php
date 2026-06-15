@@ -10,6 +10,7 @@ use App\Models\LessonProgress;
 use App\Models\QuizAttempt;
 use App\Services\CertificateService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -175,6 +176,84 @@ class DashboardController extends Controller
         return back()->with('success', 'Student marked as complete.');
     }
 
+    /**
+     * Show a per-course gradebook: students down the rows, assessments across columns.
+     */
+    public function gradebook(Course $course)
+    {
+        $this->authorizeInstructor($course);
+
+        $quizzes = $course->quizzes()
+            ->where('is_published', true)
+            ->orderBy('id')
+            ->get();
+
+        $assignments = $course->assignments()
+            ->orderBy('id')
+            ->get();
+
+        $enrollments = $course->enrollments()
+            ->where('enrollment_status', '!=', 'Dropped')
+            ->whereHas('user')
+            ->with(['user', 'student'])
+            ->get();
+
+        $quizIds = $quizzes->pluck('id');
+        $assignmentIds = $assignments->pluck('id');
+        $studentIds = $enrollments->pluck('student_id');
+
+        // Best attempt per quiz per student.
+        $quizAttempts = QuizAttempt::whereIn('quiz_id', $quizIds)
+            ->whereIn('student_id', $studentIds)
+            ->whereIn('status', ['Graded', 'Submitted'])
+            ->selectRaw('quiz_id, student_id, MAX(score) as score')
+            ->groupBy('quiz_id', 'student_id')
+            ->get();
+
+        $quizBest = $quizAttempts->keyBy(fn ($attempt) => $attempt->quiz_id . ':' . $attempt->student_id);
+
+        // Best submission per assignment per student, expressed as a percentage.
+        $assignmentSubmissions = AssignmentSubmission::whereIn('assignment_id', $assignmentIds)
+            ->whereIn('student_id', $studentIds)
+            ->whereNotNull('points_earned')
+            ->with('assignment:id,max_points')
+            ->get();
+
+        $assignmentBest = $assignmentSubmissions
+            ->groupBy(fn ($submission) => $submission->assignment_id . ':' . $submission->student_id)
+            ->map(fn ($group) => round($group->max(function ($submission) {
+                $max = $submission->assignment->max_points ?? 100;
+                return $max > 0 ? ($submission->points_earned / $max) * 100 : 0;
+            }), 2));
+
+        $rows = $enrollments->map(function ($enrollment) use ($quizzes, $assignments, $quizBest, $assignmentBest) {
+            $studentId = $enrollment->student_id;
+
+            $quizScores = [];
+            foreach ($quizzes as $quiz) {
+                $quizScores[$quiz->id] = $quizBest->get($quiz->id . ':' . $studentId)?->score;
+            }
+
+            $assignmentScores = [];
+            foreach ($assignments as $assignment) {
+                $assignmentScores[$assignment->id] = $assignmentBest->get($assignment->id . ':' . $studentId);
+            }
+
+            return [
+                'enrollment' => $enrollment,
+                'user' => $enrollment->user,
+                'student' => $enrollment->student,
+                'name' => $enrollment->user?->full_name ?? 'Unknown',
+                'mode' => $enrollment->modeLabel(),
+                'quiz_scores' => $quizScores,
+                'assignment_scores' => $assignmentScores,
+                'final_grade' => $enrollment->final_grade,
+            ];
+        });
+
+        return view('instructor.gradebook', compact('course', 'quizzes', 'assignments', 'rows'));
+    }
+
     public function analytics()
     {
         $instructor = auth()->user()->instructor;
@@ -210,5 +289,23 @@ class DashboardController extends Controller
             'courses', 'totalStudents', 'totalEnrollments',
             'completedEnrollments', 'completionRate', 'avgQuizScore', 'monthlyEnrollments'
         ));
+    }
+
+    /**
+     * Ensure the current user owns the course or is an admin.
+     */
+    private function authorizeInstructor(Course $course): void
+    {
+        $user = Auth::user();
+
+        if ($user?->isAdmin()) {
+            return;
+        }
+
+        $instructor = $user?->instructor;
+
+        if (!$instructor || $course->instructor_id !== $instructor->id) {
+            abort(403, 'You do not have access to this course.');
+        }
     }
 }
