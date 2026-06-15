@@ -133,6 +133,16 @@ a[class*="rounded-xl"][class*="border"]:hover {
     .od-table td .od-btn, .od-table td .btn { flex: 0 0 auto; }
 }
 
+/* Desktop: keep action-icon clusters on one line (they wrapped in the
+   narrow Actions column because the delete control is a block <form>).
+   Mobile stacking is handled above. */
+@media (min-width: 769px) {
+    .od-table td:last-child { white-space: nowrap; }
+    .od-table td:last-child form { display: inline-block; vertical-align: middle; }
+    .od-table td:last-child > a,
+    .od-table td:last-child > button { vertical-align: middle; }
+}
+
 /* Dark-mode image outline --------------------------------------------- */
 @media (prefers-color-scheme: dark) {
     img:not([src*=".svg"]):not(.no-outline):not([class*="rounded-full"]) {
