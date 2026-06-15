@@ -389,7 +389,12 @@
                     <span></span>
                 @endif
 
-                @if(!$lesson->is_completed && !in_array($lesson->lesson_type, ['Quiz', 'Assignment']))
+                @if($enrollment->isInPerson())
+                    {{-- In-person learners are assessed and progressed by their instructor in class. --}}
+                    <div class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium" style="background: var(--od-navy-soft); color: var(--od-navy);">
+                        <i class="fas fa-chalkboard-teacher"></i> In-person class — your instructor records your progress
+                    </div>
+                @elseif(!$lesson->is_completed && !in_array($lesson->lesson_type, ['Quiz', 'Assignment']))
                     <form action="{{ route('student.learning.complete', ['course' => $course, 'lesson' => $lesson]) }}" method="POST" id="completeForm">
                         @csrf
                         <button type="submit" class="od-btn od-btn-success od-btn-sm">
