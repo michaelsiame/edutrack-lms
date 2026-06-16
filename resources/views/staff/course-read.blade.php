@@ -24,6 +24,16 @@
     .od-read-lessonlink:hover { background: var(--od-bg); }
     .od-read-lessonlink.active { background: var(--od-navy-soft); color: var(--od-navy); font-weight:600; }
     .od-lesson-content img { max-width: 100%; border-radius: 10px; }
+    /* Desktop: always show the content nav + its header (don't rely on Tailwind
+       lg:block beating Alpine's .hidden in the prebuilt CSS). Mobile keeps the
+       Alpine collapse. */
+    @media (min-width: 1025px) {
+        .od-read-navhdr { display: block !important; }
+        .od-read-nav { display: block !important; }
+    }
+    @media (max-width: 1024px) {
+        .od-read-navhdr { display: none !important; }
+    }
 </style>
 @endpush
 
@@ -47,8 +57,8 @@
                 <span class="od-eyebrow" style="margin:0;">Course content</span>
                 <i class="fas fa-chevron-down transition-transform" :class="nav ? 'rotate-180' : ''" style="color:var(--od-muted);"></i>
             </button>
-            <p class="od-eyebrow hidden lg:block" style="margin:0 0 8px;">Course content</p>
-            <div :class="nav ? 'block' : 'hidden'" class="lg:block mt-3 lg:mt-0">
+            <p class="od-eyebrow od-read-navhdr hidden lg:block" style="margin:0 0 8px;">Course content</p>
+            <div :class="nav ? 'block' : 'hidden'" class="od-read-nav lg:block mt-3 lg:mt-0">
                 @foreach($modules as $mod)
                     <div class="mb-3">
                         <div class="text-sm font-semibold mb-1" style="color:var(--od-fg);">{{ $mod->title }}</div>
