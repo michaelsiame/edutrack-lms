@@ -25,7 +25,7 @@
  @forelse($courses as $course)
  <tr>
  <td>
- <span class="font-medium" style="color: var(--od-fg);">{{ $course->title }}</span>
+ <a href="{{ route('admin.courses.show', $course) }}" class="font-medium hover:underline" style="color: var(--od-fg);" title="Open course — manage, preview, gradebook">{{ $course->title }}</a>
  </td>
  <td class="od-meta">{{ $course->category?->name ??'N/A' }}</td>
  <td class="od-meta">{{ $course->instructor?->user?->name ??'N/A' }}</td>
@@ -60,17 +60,8 @@
  </button>
  </form>
  @endif
- <a href="{{ route('admin.courses.show', $course) }}" class="od-btn od-btn-ghost od-btn-sm" aria-label="View course">
- <i class="fas fa-eye text-sm"></i>
- </a>
- <a href="{{ route('instructor.courses.show', $course) }}" class="od-btn od-btn-ghost od-btn-sm" title="Manage content (modules, lessons, gradebook)" aria-label="Manage content">
- <i class="fas fa-layer-group text-sm"></i>
- </a>
- <a href="{{ route('staff.courses.read', $course) }}" class="od-btn od-btn-ghost od-btn-sm" title="Read content" aria-label="Read content">
- <i class="fas fa-book-open text-sm"></i>
- </a>
- <a href="{{ route('admin.courses.edit', $course) }}" class="od-btn od-btn-ghost od-btn-sm" aria-label="Edit course">
- <i class="fas fa-edit text-sm"></i>
+ <a href="{{ route('admin.courses.show', $course) }}" class="od-btn od-btn-ghost od-btn-sm" title="Open course — manage, preview, gradebook, edit" aria-label="Open course">
+ <i class="fas fa-arrow-right text-sm"></i>
  </a>
  <form action="{{ route('admin.courses.destroy', $course) }}" method="POST" class="inline" data-confirm="Delete this course">
  @csrf
