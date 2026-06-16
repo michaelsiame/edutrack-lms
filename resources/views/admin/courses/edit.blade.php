@@ -40,7 +40,7 @@
  <div>
  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
  <textarea name="description" rows="3"
- class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primary-500 focus:ring-primary-500 text-sm">{{ old('description', $course->description) }}</textarea>
+ class="rich-editor w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primary-500 focus:ring-primary-500 text-sm">{{ old('description', $course->description) }}</textarea>
  </div>
 
  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -131,3 +131,7 @@
  </div>
 </div>
 @endsection
+
+@push('scripts')
+    @include('partials.rich-editor')
+@endpush
