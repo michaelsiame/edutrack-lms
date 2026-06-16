@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 485" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="IoT layers from physical sensors and devices at the bottom, through network connectivity, cloud processing, up to the mobile phone application that the farmer or shop owner uses.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 485" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="IoT layers from physical sensors and devices at the bottom, through network connectivity, cloud processing, up to the mobile phone application that the farmer or shop owner uses.">
   <title>IoT layers from sensor to phone</title>
 
   <!-- title -->
-  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">IoT Layers: From Sensor to Phone</text>
-  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">How data travels from a field in Kalomo to a decision in your hand</text>
+  <text x="430" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">IoT Layers: From Sensor to Phone</text>
+  <text x="430" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">How data travels from a field in Kalomo to a decision in your hand</text>
 
   <!-- Layer 4: Application -->
   <g>
-    <rect x="70" y="80" width="520" height="64" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="70" y="80" width="720" height="64" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
     <!-- phone icon -->
     <rect x="110" y="96" width="22" height="36" rx="4" fill="#f59e0b"/>
     <rect x="113" y="100" width="16" height="24" rx="2" fill="#fef6e7"/>
@@ -19,13 +19,13 @@
 
   <!-- arrow down -->
   <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
-    <line x1="330" y1="148" x2="330" y2="162"/>
-    <polygon points="323,162 330,174 337,162"/>
+    <line x1="430" y1="148" x2="430" y2="162"/>
+    <polygon points="423,162 430,174 437,162"/>
   </g>
 
   <!-- Layer 3: Cloud/Platform -->
   <g>
-    <rect x="70" y="178" width="520" height="64" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <rect x="70" y="178" width="720" height="64" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
     <!-- cloud icon -->
     <path d="M103 212 a10 10 0 0 1 18 0 a10 10 0 0 1 14 2 a8 8 0 0 1 -3 15 h-34 a8 8 0 0 1 -2 -15 a10 10 0 0 1 7 -2 z" fill="#1f9d57"/>
     <text x="150" y="206" font-size="15" font-weight="700" fill="#0a1628">3. Cloud / Data Platform</text>
@@ -35,13 +35,13 @@
 
   <!-- arrow down -->
   <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
-    <line x1="330" y1="246" x2="330" y2="260"/>
-    <polygon points="323,260 330,272 337,260"/>
+    <line x1="430" y1="246" x2="430" y2="260"/>
+    <polygon points="423,260 430,272 437,260"/>
   </g>
 
   <!-- Layer 2: Connectivity -->
   <g>
-    <rect x="70" y="276" width="520" height="64" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <rect x="70" y="276" width="720" height="64" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
     <!-- signal icon -->
     <path d="M108 288 l12 22" stroke="#0b4f8c" stroke-width="3" stroke-linecap="round"/>
     <path d="M120 288 l12 22" stroke="#0b4f8c" stroke-width="3" stroke-linecap="round"/>
@@ -53,13 +53,13 @@
 
   <!-- arrow down -->
   <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
-    <line x1="330" y1="344" x2="330" y2="358"/>
-    <polygon points="323,358 330,370 337,358"/>
+    <line x1="430" y1="344" x2="430" y2="358"/>
+    <polygon points="423,358 430,370 437,358"/>
   </g>
 
   <!-- Layer 1: Devices/Sensors -->
   <g>
-    <rect x="70" y="374" width="520" height="64" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <rect x="70" y="374" width="720" height="64" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
     <!-- sensor icon -->
     <rect x="104" y="390" width="10" height="32" rx="2" fill="#6b6f78"/>
     <rect x="102" y="386" width="14" height="8" rx="2" fill="#6b6f78"/>
@@ -70,5 +70,5 @@
   </g>
 
   <!-- footer note -->
-  <text x="330" y="466" text-anchor="middle" font-size="11.5" fill="#9aa3af">Data moves upward; commands move back down. Local storage can buffer readings when the network is down.</text>
+  <text x="430" y="466" text-anchor="middle" font-size="11.5" fill="#9aa3af">Data moves upward; commands move back down. Local storage can buffer readings when the network is down.</text>
 </svg>

@@ -9,10 +9,10 @@
   <g>
     <rect x="40" y="86" width="170" height="160" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
     <!-- phone icon -->
-    <rect x="100" y="110" width="50" height="86" rx="7" fill="#0b4f8c"/>
-    <rect x="105" y="120" width="40" height="58" rx="2" fill="#ffffff"/>
+    <rect x="83" y="110" width="84" height="86" rx="7" fill="#0b4f8c"/>
+    <rect x="88" y="120" width="74" height="58" rx="2" fill="#ffffff"/>
     <!-- search bar -->
-    <rect x="110" y="130" width="30" height="8" rx="2" fill="#eef4fb"/>
+    <rect x="100" y="130" width="50" height="8" rx="2" fill="#eef4fb"/>
     <text x="125" y="156" text-anchor="middle" font-size="9" fill="#0b4f8c">"baker near me"</text>
     <circle cx="125" cy="185" r="16" fill="#0b4f8c"/>
     <path d="M120 185 h10 M125 180 v10" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
@@ -29,10 +29,10 @@
   <g>
     <rect x="258" y="78" width="170" height="176" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="2"/>
     <!-- profile card -->
-    <rect x="283" y="104" width="120" height="96" rx="8" fill="#ffffff" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="258" y="104" width="170" height="96" rx="8" fill="#ffffff" stroke="#f59e0b" stroke-width="1.5"/>
     <!-- map pin -->
-    <circle cx="313" cy="124" r="8" fill="#dc2626"/>
-    <path d="M305 130 l8 14 8 -14 z" fill="#dc2626"/>
+    <circle cx="288" cy="124" r="8" fill="#dc2626"/>
+    <path d="M280 130 l8 14 8 -14 z" fill="#dc2626"/>
     <text x="343" y="122" text-anchor="middle" font-size="12" font-weight="700" fill="#0a1628">Kalomo Bakery</text>
     <text x="343" y="138" text-anchor="middle" font-size="11" fill="#6b6f78">Open today · 08:00-18:00</text>
     <text x="343" y="154" text-anchor="middle" font-size="11" fill="#6b6f78">12 five-star reviews</text>
@@ -60,11 +60,12 @@
     <path d="M555 132 l6 -12 6 12 h-4 v8 h-4 v-8 z" fill="#ffffff"/>
     <text x="561" y="162" text-anchor="middle" font-size="12" font-weight="700" fill="#0a1628">Directions</text>
     <!-- visit icon -->
-    <circle cx="602" cy="126" r="18" fill="#1f9d57"/>
-    <path d="M594 134 v-12 l8 -6 8 6 v12 h-6 v-8 h-4 v8 z" fill="#ffffff"/>
-    <text x="602" y="162" text-anchor="middle" font-size="12" font-weight="700" fill="#0a1628">Visit</text>
-    <text x="561" y="200" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Customer Acts</text>
-    <text x="561" y="218" text-anchor="middle" font-size="12" fill="#6b6f78">Right from the search result</text>
+    <circle cx="623" cy="126" r="18" fill="#1f9d57"/>
+    <path d="M615 134 v-12 l8 -6 8 6 v12 h-6 v-8 h-4 v8 z" fill="#ffffff"/>
+    <text x="623" y="162" text-anchor="middle" font-size="12" font-weight="700" fill="#0a1628">Visit</text>
+    <text x="561" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Customer Acts</text>
+    <text x="561" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">Right from the</text>
+    <text x="561" y="228" text-anchor="middle" font-size="12" fill="#6b6f78">search result</text>
   </g>
 
   <!-- footer note -->

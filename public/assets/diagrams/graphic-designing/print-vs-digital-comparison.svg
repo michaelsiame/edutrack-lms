@@ -14,26 +14,28 @@
     <rect x="100" y="158" width="20" height="8" fill="#0b4f8c"/>
     <rect x="90" y="166" width="40" height="5" rx="2" fill="#0b4f8c"/>
     <text x="185" y="120" font-size="15" font-weight="700" fill="#0a1628">For Screens</text>
-    <text x="185" y="140" font-size="12" fill="#6b6f78">Mode: RGB</text>
-    <text x="185" y="158" font-size="12" fill="#6b6f78">Made of: pixels</text>
-    <text x="185" y="176" font-size="12" fill="#6b6f78">Resolution: 72 PPI</text>
-    <text x="185" y="194" font-size="12" fill="#6b6f78">Use: phones, web, social</text>
-    <text x="177" y="222" text-anchor="middle" font-size="11.5" fill="#9aa3af">Export as JPG or PNG</text>
+    <text x="185" y="136" font-size="12" fill="#6b6f78">Mode: RGB</text>
+    <text x="185" y="154" font-size="12" fill="#6b6f78">Made of: pixels</text>
+    <text x="185" y="172" font-size="12" fill="#6b6f78">Resolution: 72 PPI</text>
+    <text x="185" y="190" font-size="12" fill="#6b6f78">Use: phones, web,</text>
+    <text x="185" y="204" font-size="12" fill="#6b6f78">social media</text>
+    <text x="177" y="228" text-anchor="middle" font-size="11.5" fill="#9aa3af">Export as JPG or PNG</text>
   </g>
 
   <!-- Print card -->
   <g>
-    <rect x="340" y="80" width="285" height="175" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="340" y="80" width="315" height="175" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
     <!-- printer icon -->
     <rect x="380" y="118" width="70" height="34" rx="4" fill="#f59e0b"/>
     <rect x="388" y="126" width="54" height="18" rx="2" fill="#ffffff"/>
     <rect x="395" y="152" width="40" height="24" rx="2" fill="#ffffff" stroke="#f59e0b" stroke-width="1.5"/>
-    <text x="490" y="120" font-size="15" font-weight="700" fill="#0a1628">For Print</text>
-    <text x="490" y="140" font-size="12" fill="#6b6f78">Mode: CMYK</text>
-    <text x="490" y="158" font-size="12" fill="#6b6f78">Made of: vectors + bleed</text>
-    <text x="490" y="176" font-size="12" fill="#6b6f78">Resolution: 300 DPI</text>
-    <text x="490" y="194" font-size="12" fill="#6b6f78">Use: posters, flyers, banners</text>
-    <text x="482" y="222" text-anchor="middle" font-size="11.5" fill="#9aa3af">Export as PDF with bleed</text>
+    <text x="470" y="120" font-size="15" font-weight="700" fill="#0a1628">For Print</text>
+    <text x="470" y="142" font-size="12" fill="#6b6f78">Mode: CMYK</text>
+    <text x="470" y="160" font-size="12" fill="#6b6f78">Made of: vectors + bleed</text>
+    <text x="470" y="178" font-size="12" fill="#6b6f78">Resolution: 300 DPI</text>
+    <text x="470" y="196" font-size="12" fill="#6b6f78">Use: posters, flyers,</text>
+    <text x="470" y="210" font-size="12" fill="#6b6f78">banners</text>
+    <text x="497" y="232" text-anchor="middle" font-size="11.5" fill="#9aa3af">Export as PDF with bleed</text>
   </g>
 
   <!-- footer note -->

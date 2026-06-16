@@ -11,8 +11,8 @@
     <circle cx="330" cy="92" r="18" fill="#f59e0b"/>
     <text x="330" y="97" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">2</text>
     <text x="330" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Plan</text>
-    <text x="330" y="148" text-anchor="middle" font-size="12" fill="#6b6f78">Scope, schedule,</text>
-    <text x="330" y="163" text-anchor="middle" font-size="12" fill="#6b6f78">budget, risks</text>
+    <text x="330" y="143" text-anchor="middle" font-size="12" fill="#6b6f78">Scope, schedule,</text>
+    <text x="330" y="158" text-anchor="middle" font-size="12" fill="#6b6f78">budget, risks</text>
   </g>
 
   <!-- Execute (right) -->
@@ -21,17 +21,19 @@
     <circle cx="535" cy="165" r="18" fill="#1f9d57"/>
     <text x="535" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">3</text>
     <text x="535" y="201" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Execute</text>
-    <text x="535" y="221" text-anchor="middle" font-size="12" fill="#6b6f78">Build, manage,</text>
-    <text x="535" y="236" text-anchor="middle" font-size="12" fill="#6b6f78">communicate</text>
+    <text x="535" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Build, manage,</text>
+    <text x="535" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">communicate</text>
   </g>
 
   <!-- Monitor and Close (bottom) -->
   <g>
-    <rect x="245" y="205" width="170" height="70" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <rect x="245" y="205" width="220" height="80" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
     <circle cx="295" cy="235" r="16" fill="#6b6f78"/>
     <text x="295" y="240" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">4</text>
     <text x="400" y="230" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Monitor and Close</text>
-    <text x="400" y="252" text-anchor="middle" font-size="12" fill="#6b6f78">Track progress, report, hand over</text>
+    <text x="400" y="245" text-anchor="middle" font-size="12" fill="#6b6f78">Track progress,</text>
+    <text x="400" y="260" text-anchor="middle" font-size="12" fill="#6b6f78">report,</text>
+    <text x="400" y="275" text-anchor="middle" font-size="12" fill="#6b6f78">hand over</text>
   </g>
 
   <!-- Initiate (left) -->
@@ -40,8 +42,8 @@
     <circle cx="125" cy="165" r="18" fill="#0b4f8c"/>
     <text x="125" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">1</text>
     <text x="125" y="201" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Initiate</text>
-    <text x="125" y="221" text-anchor="middle" font-size="12" fill="#6b6f78">Define goal,</text>
-    <text x="125" y="236" text-anchor="middle" font-size="12" fill="#6b6f78">get approval</text>
+    <text x="125" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Define goal,</text>
+    <text x="125" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">get approval</text>
   </g>
 
   <!-- arrows: Initiate -> Plan -->
@@ -58,8 +60,8 @@
 
   <!-- arrows: Execute -> Monitor/Close -->
   <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
-    <path d="M500 235 C470 240, 440 240, 415 240" fill="none"/>
-    <polygon points="415,233 400,240 415,247"/>
+    <path d="M500 235 C470 240, 440 240, 465 240" fill="none"/>
+    <polygon points="465,233 450,240 465,247"/>
   </g>
 
   <!-- arrows: Monitor/Close -> Initiate -->

@@ -15,7 +15,8 @@
     <text x="190" y="174" text-anchor="middle" font-size="12" fill="#1f9d57" font-weight="600">Free or very low cost to start</text>
 
     <rect x="75" y="192" width="230" height="34" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
-    <text x="190" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">Best for personal selling &amp; repeat customers</text>
+    <text x="190" y="208" text-anchor="middle" font-size="12" fill="#6b6f78">Best for personal selling</text>
+    <text x="190" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">&amp; repeat customers</text>
 
     <rect x="75" y="232" width="230" height="34" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
     <text x="190" y="254" text-anchor="middle" font-size="12" fill="#6b6f78">Payment via MTN MoMo / Airtel Money</text>

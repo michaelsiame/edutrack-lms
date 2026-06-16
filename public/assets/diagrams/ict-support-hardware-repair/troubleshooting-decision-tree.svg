@@ -26,7 +26,7 @@
 
   <!-- Branch 2: No display -->
   <g>
-    <rect x="255" y="140" width="150" height="40" rx="12" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="240" y="140" width="180" height="40" rx="12" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
     <text x="330" y="165" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">Power light on, no display</text>
   </g>
 

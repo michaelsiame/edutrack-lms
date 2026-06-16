@@ -40,9 +40,10 @@
 
   <!-- Retain / Dispose -->
   <g>
-    <rect x="250" y="206" width="188" height="58" rx="14" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
-    <text x="344" y="232" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Retain or Dispose</text>
-    <text x="344" y="252" text-anchor="middle" font-size="12" fill="#6b6f78">Keep for legal time, then shred or archive</text>
+    <rect x="250" y="198" width="188" height="70" rx="14" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="344" y="228" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Retain or Dispose</text>
+    <text x="344" y="246" text-anchor="middle" font-size="12" fill="#6b6f78">Keep for legal time, then</text>
+    <text x="344" y="262" text-anchor="middle" font-size="12" fill="#6b6f78">shred or archive</text>
   </g>
 
   <!-- Curved arrows -->
@@ -61,7 +62,7 @@
 
     <!-- Use -> Retain/Dispose -->
     <path d="M560 194 q-20 22 -56 34"/>
-    <polygon points="508 225 500 230 506 221" fill="#9aa3af" stroke="none"/>
+    <polygon points="500 230 492 235 498 226" fill="#9aa3af" stroke="none"/>
 
     <!-- Retain/Dispose -> Create -->
     <path d="M250 220 q-70 -10 -110 -46"/>

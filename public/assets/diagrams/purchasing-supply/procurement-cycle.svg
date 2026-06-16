@@ -27,7 +27,7 @@
     <rect x="92" y="124" width="5" height="8" transform="translate(170 0)" fill="#f7f8fa"/>
     <text x="229" y="184" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Select Supplier</text>
     <text x="229" y="205" text-anchor="middle" font-size="12" fill="#6b6f78">Compare quotes,</text>
-    <text x="229" y="220" text-anchor="middle" font-size="12" fill="#6b6f78">ZPPA rules if public</text>
+    <text x="229" y="220" text-anchor="middle" font-size="12" fill="#6b6f78">ZPPA rules apply</text>
   </g>
 
   <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
@@ -57,7 +57,7 @@
     <rect x="450" y="92" width="118" height="150" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
     <rect x="80" y="116" width="24" height="20" rx="2" transform="translate(450 0)" fill="none" stroke="#f59e0b" stroke-width="2"/>
     <polyline points="456,135 464,142 474,130" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="509" y="184" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Receive &amp; Inspect</text>
+    <text x="509" y="184" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Receive &amp; Check</text>
     <text x="509" y="205" text-anchor="middle" font-size="12" fill="#6b6f78">Check quantity,</text>
     <text x="509" y="220" text-anchor="middle" font-size="12" fill="#6b6f78">quality and GRN</text>
   </g>

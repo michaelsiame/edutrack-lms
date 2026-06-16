@@ -33,11 +33,11 @@
   <text x="218" y="265" text-anchor="end" font-size="12" fill="#6b6f78">Encryption</text>
 
   <!-- right labels -->
-  <text x="602" y="84" text-anchor="start" font-size="12" fill="#6b6f78">Awareness</text>
-  <text x="602" y="132" text-anchor="start" font-size="12" fill="#6b6f78">Updates</text>
-  <text x="602" y="179" text-anchor="start" font-size="12" fill="#6b6f78">IDS/IPS</text>
-  <text x="602" y="224" text-anchor="start" font-size="12" fill="#6b6f78">Input validation</text>
-  <text x="602" y="265" text-anchor="start" font-size="12" fill="#6b6f78">Backups</text>
+  <text x="600" y="84" text-anchor="start" font-size="12" fill="#6b6f78">Awareness</text>
+  <text x="560" y="132" text-anchor="start" font-size="12" fill="#6b6f78">Updates</text>
+  <text x="520" y="179" text-anchor="start" font-size="12" fill="#6b6f78">IDS/IPS</text>
+  <text x="480" y="224" text-anchor="start" font-size="12" fill="#6b6f78">Input validation</text>
+  <text x="440" y="265" text-anchor="start" font-size="12" fill="#6b6f78">Backups</text>
 
   <!-- footer note -->
   <text x="330" y="292" text-anchor="middle" font-size="11.5" fill="#9aa3af">If one layer fails, the next layer is still standing.</text>

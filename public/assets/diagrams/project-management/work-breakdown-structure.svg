@@ -7,7 +7,7 @@
 
   <!-- Root: Project -->
   <g>
-    <rect x="265" y="62" width="130" height="42" rx="12" fill="#eef4fb" stroke="#0b4f8c" stroke-width="2"/>
+    <rect x="220" y="62" width="220" height="42" rx="12" fill="#eef4fb" stroke="#0b4f8c" stroke-width="2"/>
     <text x="330" y="89" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">School IT Lab Project</text>
   </g>
 

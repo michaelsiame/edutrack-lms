@@ -19,7 +19,7 @@
     <text x="86" y="180" font-size="12" fill="#6b6f78">Pay in ZMW, no forex risk</text>
 
     <circle cx="70" cy="198" r="3" fill="#0b4f8c"/>
-    <text x="86" y="202" font-size="12" fill="#6b6f78">Easier returns and dispute resolution</text>
+    <text x="86" y="202" font-size="12" fill="#6b6f78">Easier returns, dispute resolution</text>
 
     <circle cx="70" cy="220" r="3" fill="#0b4f8c"/>
     <text x="86" y="224" font-size="12" fill="#6b6f78">Supports local jobs and SMEs</text>
@@ -47,7 +47,7 @@
     <text x="406" y="180" font-size="12" fill="#6b6f78">USD/ZMW exchange-rate risk</text>
 
     <circle cx="390" cy="198" r="3" fill="#f59e0b"/>
-    <text x="406" y="202" font-size="12" fill="#6b6f78">Long lead time via Dar / Beira port</text>
+    <text x="406" y="202" font-size="12" fill="#6b6f78">Long lead time via Dar/Beira port</text>
 
     <circle cx="390" cy="220" r="3" fill="#f59e0b"/>
     <text x="406" y="224" font-size="12" fill="#6b6f78">Customs clearance and duties</text>

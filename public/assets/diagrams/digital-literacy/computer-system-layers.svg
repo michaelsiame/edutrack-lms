@@ -31,7 +31,8 @@
     <circle cx="160" cy="206" r="14" fill="#0b4f8c"/>
     <circle cx="160" cy="206" r="6" fill="#eef4fb"/>
     <path d="M160 189 v6 M160 217 v6 M143 206 h6 M171 206 h6 M149 195 l4 4 M167 213 l4 4 M149 217 l4 -4 M167 199 l4 -4" stroke="#ffffff" stroke-width="2"/>
-    <text x="330" y="213" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Operating System — Windows / Android / iOS manages everything</text>
+    <text x="330" y="208" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Operating System</text>
+    <text x="330" y="228" text-anchor="middle" font-size="13" fill="#6b6f78">Windows / Android / iOS manages everything</text>
   </g>
 
   <!-- Hardware layer -->

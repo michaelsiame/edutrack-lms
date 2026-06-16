@@ -54,12 +54,12 @@
 
   <!-- Examples -->
   <g>
-    <rect x="480" y="90" width="160" height="150" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <rect x="470" y="90" width="180" height="150" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
     <text x="560" y="115" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Example Risks</text>
-    <text x="490" y="140" text-anchor="start" font-size="12" fill="#6b6f78">- Supplier delay (Medium)</text>
-    <text x="490" y="160" text-anchor="start" font-size="12" fill="#6b6f78">- Budget cut (High)</text>
-    <text x="490" y="180" text-anchor="start" font-size="12" fill="#6b6f78">- Load shedding (High)</text>
-    <text x="490" y="200" text-anchor="start" font-size="12" fill="#6b6f78">- Staff illness (Low)</text>
-    <text x="490" y="220" text-anchor="start" font-size="12" fill="#6b6f78">- Scope creep (Medium)</text>
+    <text x="480" y="140" text-anchor="start" font-size="12" fill="#6b6f78">- Supplier delay (Medium)</text>
+    <text x="480" y="160" text-anchor="start" font-size="12" fill="#6b6f78">- Budget cut (High)</text>
+    <text x="480" y="180" text-anchor="start" font-size="12" fill="#6b6f78">- Load shedding (High)</text>
+    <text x="480" y="200" text-anchor="start" font-size="12" fill="#6b6f78">- Staff illness (Low)</text>
+    <text x="480" y="220" text-anchor="start" font-size="12" fill="#6b6f78">- Scope creep (Medium)</text>
   </g>
 </svg>

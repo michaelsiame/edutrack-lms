@@ -7,8 +7,8 @@
 
   <!-- Input -->
   <g>
-    <rect x="50" y="90" width="170" height="160" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
-    <circle cx="135" cy="130" r="24" fill="#0b4f8c"/>
+    <rect x="50" y="90" width="150" height="160" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="125" cy="130" r="24" fill="#0b4f8c"/>
     <!-- speech / prompt bubble -->
     <rect x="122" y="120" width="26" height="18" rx="5" fill="#ffffff"/>
     <polygon points="129,138 135,146 141,138" fill="#ffffff"/>
@@ -19,48 +19,48 @@
 
   <!-- arrow 1 -->
   <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
-    <line x1="225" y1="170" x2="260" y2="170"/>
-    <polygon points="260,163 273,170 260,177"/>
+    <line x1="205" y1="170" x2="240" y2="170"/>
+    <polygon points="240,163 253,170 240,177"/>
   </g>
 
   <!-- Process / Model -->
   <g>
-    <rect x="280" y="82" width="170" height="176" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="2"/>
-    <circle cx="365" cy="130" r="24" fill="#f59e0b"/>
+    <rect x="260" y="82" width="150" height="176" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="2"/>
+    <circle cx="335" cy="130" r="24" fill="#f59e0b"/>
     <!-- brain / network -->
-    <circle cx="365" cy="130" r="8" fill="#ffffff"/>
-    <circle cx="355" cy="120" r="4" fill="#ffffff"/>
-    <circle cx="375" cy="120" r="4" fill="#ffffff"/>
-    <circle cx="355" cy="140" r="4" fill="#ffffff"/>
-    <circle cx="375" cy="140" r="4" fill="#ffffff"/>
-    <line x1="360" y1="123" x2="365" y2="127" stroke="#f59e0b" stroke-width="1.5"/>
-    <line x1="370" y1="123" x2="365" y2="127" stroke="#f59e0b" stroke-width="1.5"/>
-    <line x1="360" y1="137" x2="365" y2="133" stroke="#f59e0b" stroke-width="1.5"/>
-    <line x1="370" y1="137" x2="365" y2="133" stroke="#f59e0b" stroke-width="1.5"/>
-    <text x="365" y="182" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">AI Model</text>
-    <text x="365" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">Processes patterns</text>
-    <text x="365" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">and predicts</text>
-    <text x="365" y="240" text-anchor="middle" font-size="12" fill="#6b6f78">next best output</text>
+    <circle cx="335" cy="130" r="8" fill="#ffffff"/>
+    <circle cx="325" cy="120" r="4" fill="#ffffff"/>
+    <circle cx="345" cy="120" r="4" fill="#ffffff"/>
+    <circle cx="325" cy="140" r="4" fill="#ffffff"/>
+    <circle cx="345" cy="140" r="4" fill="#ffffff"/>
+    <line x1="330" y1="123" x2="335" y2="127" stroke="#f59e0b" stroke-width="1.5"/>
+    <line x1="340" y1="123" x2="335" y2="127" stroke="#f59e0b" stroke-width="1.5"/>
+    <line x1="330" y1="137" x2="335" y2="133" stroke="#f59e0b" stroke-width="1.5"/>
+    <line x1="340" y1="137" x2="335" y2="133" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="335" y="182" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">AI Model</text>
+    <text x="335" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">Processes patterns</text>
+    <text x="335" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">and predicts</text>
+    <text x="335" y="240" text-anchor="middle" font-size="12" fill="#6b6f78">next best output</text>
   </g>
 
   <!-- arrow 2 -->
   <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
-    <line x1="455" y1="170" x2="490" y2="170"/>
-    <polygon points="490,163 503,170 490,177"/>
+    <line x1="415" y1="170" x2="450" y2="170"/>
+    <polygon points="450,163 463,170 450,177"/>
   </g>
 
   <!-- Output -->
   <g>
-    <rect x="520" y="90" width="170" height="160" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
-    <circle cx="605" cy="130" r="24" fill="#1f9d57"/>
+    <rect x="470" y="90" width="150" height="160" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <circle cx="545" cy="130" r="24" fill="#1f9d57"/>
     <!-- document / content -->
-    <rect x="595" y="118" width="20" height="26" rx="2" fill="#ffffff"/>
-    <line x1="599" y1="125" x2="611" y2="125" stroke="#1f9d57" stroke-width="2"/>
-    <line x1="599" y1="131" x2="611" y2="131" stroke="#1f9d57" stroke-width="2"/>
-    <line x1="599" y1="137" x2="607" y2="137" stroke="#1f9d57" stroke-width="2"/>
-    <text x="605" y="182" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Output</text>
-    <text x="605" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">Answer, text,</text>
-    <text x="605" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">image or code</text>
+    <rect x="535" y="118" width="20" height="26" rx="2" fill="#ffffff"/>
+    <line x1="539" y1="125" x2="551" y2="125" stroke="#1f9d57" stroke-width="2"/>
+    <line x1="539" y1="131" x2="551" y2="131" stroke="#1f9d57" stroke-width="2"/>
+    <line x1="539" y1="137" x2="547" y2="137" stroke="#1f9d57" stroke-width="2"/>
+    <text x="545" y="182" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Output</text>
+    <text x="545" y="204" text-anchor="middle" font-size="12" fill="#6b6f78">Answer, text,</text>
+    <text x="545" y="222" text-anchor="middle" font-size="12" fill="#6b6f78">image or code</text>
   </g>
 
   <!-- footer note -->

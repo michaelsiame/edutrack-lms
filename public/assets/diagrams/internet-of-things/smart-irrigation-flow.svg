@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Smart irrigation flow for a Zambian farm: soil sensors send data through a solar-powered gateway to the cloud, then the farmer receives an alert and can turn the pump on or off.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Smart irrigation flow for a Zambian farm: soil sensors send data through a solar-powered gateway to the cloud, then the farmer receives an alert and can turn the pump on or off.">
   <title>Smart irrigation system flow</title>
 
   <!-- title -->
-  <text x="380" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Smart Irrigation System Flow</text>
-  <text x="380" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">A solar-powered loop that keeps maize and vegetables watered, even during load-shedding</text>
+  <text x="420" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Smart Irrigation System Flow</text>
+  <text x="420" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">A solar-powered loop that keeps maize and vegetables watered, even during load-shedding</text>
 
   <!-- Stage 1: Soil sensor -->
   <g>
@@ -92,5 +92,5 @@
   </g>
 
   <!-- footer note -->
-  <text x="380" y="284" text-anchor="middle" font-size="11.5" fill="#9aa3af">Solar panel and battery keep the gateway online during ZESCO load-shedding hours.</text>
+  <text x="420" y="284" text-anchor="middle" font-size="11.5" fill="#9aa3af">Solar panel and battery keep the gateway online during ZESCO load-shedding hours.</text>
 </svg>

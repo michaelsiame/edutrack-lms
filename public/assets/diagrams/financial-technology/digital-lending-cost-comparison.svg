@@ -38,7 +38,7 @@
     <rect x="345" y="255" width="166" height="22" rx="8" fill="#1f9d57"/>
     <rect x="505" y="255" width="56" height="22" rx="8" fill="#f59e0b"/>
     <rect x="555" y="255" width="30" height="22" rx="8" fill="#dc2626"/>
-    <text x="465" y="270" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">K500 + K150 + K75</text>
+    <text x="465" y="252" text-anchor="middle" font-size="12" font-weight="700" fill="#6b6f78">K500 + K150 + K75</text>
   </g>
 
   <!-- warning -->

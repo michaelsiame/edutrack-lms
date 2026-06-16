@@ -55,8 +55,9 @@
     <text x="557" y="176" text-anchor="middle" font-size="11" fill="#6b6f78">Best for: proven</text>
     <text x="557" y="190" text-anchor="middle" font-size="11" fill="#6b6f78">sales and records</text>
     <text x="557" y="204" text-anchor="middle" font-size="11" fill="#6b6f78">Speed: slow</text>
-    <text x="557" y="218" text-anchor="middle" font-size="11" fill="#6b6f78">Cost: interest + collateral</text>
-    <text x="557" y="235" text-anchor="middle" font-size="11" font-weight="700" fill="#dc2626">High risk</text>
+    <text x="557" y="216" text-anchor="middle" font-size="11" fill="#6b6f78">Cost: interest +</text>
+    <text x="557" y="230" text-anchor="middle" font-size="11" fill="#6b6f78">collateral</text>
+    <text x="557" y="246" text-anchor="middle" font-size="11" font-weight="700" fill="#dc2626">High risk</text>
   </g>
 
   <!-- footer note -->
