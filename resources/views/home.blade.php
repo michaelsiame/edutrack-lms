@@ -137,7 +137,7 @@
           <i class="fas fa-certificate text-2xl" style="color: var(--od-accent);"></i>
         </div>
         <h3 class="text-base md:text-lg font-bold" style="color: var(--od-surface);">TEVETA Registered</h3>
-        <p class="text-xs mt-1" style="color: color-mix(in oklch, var(--od-surface), transparent 30%);">Government Certified (TVA/2064)</p>
+        <p class="text-xs mt-1" style="color: color-mix(in oklch, var(--od-surface), transparent 30%);">Government Certified</p>
       </div>
       <div class="animate-slide-up animation-delay-200 rounded-2xl p-5 md:p-6 text-center border transition-all duration-300 hover:bg-white/15" style="background: color-mix(in oklch, var(--od-surface), transparent 90%); backdrop-filter: blur(8px); border-color: color-mix(in oklch, var(--od-surface), transparent 70%);">
         <div class="w-14 h-14 mx-auto mb-3 rounded-xl flex items-center justify-center" style="background: color-mix(in oklch, var(--od-navy), transparent 80%);">
