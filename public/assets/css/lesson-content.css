@@ -99,6 +99,40 @@
     margin: 1em 0;
 }
 
+/* Lesson diagrams — SVGs authored on our own server, referenced via <img> */
+.lesson-content figure {
+    margin: 1.75em 0;
+    text-align: center;
+}
+.lesson-content .lesson-diagram,
+.lesson-content figure > img {
+    display: block;
+    width: 100%;
+    max-width: 660px;
+    height: auto;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 0.85rem;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 20px -12px rgba(16, 24, 40, 0.10);
+}
+.dark .lesson-content .lesson-diagram,
+.dark .lesson-content figure > img {
+    /* keep diagrams on a light surface so their baked-in colours stay legible */
+    background: #f8fafc;
+    border-color: #374151;
+}
+.lesson-content figcaption {
+    margin-top: 0.65em;
+    font-size: 0.8125rem;
+    color: #6b7280;
+    font-style: italic;
+}
+.dark .lesson-content figcaption {
+    color: #9ca3af;
+}
+
 .lesson-content table {
     width: 100%;
     border-collapse: collapse;

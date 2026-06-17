@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Safe mobile money checklist: check the recipient, hide your PIN, confirm the amount, and keep the SMS receipt.">
+  <title>Safe mobile money checklist</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Safe Mobile Money Checklist</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Four checks before you press Send or Pay</text>
+
+  <!-- Step 1 -->
+  <g>
+    <circle cx="70" cy="103" r="20" fill="#0b4f8c"/>
+    <text x="70" y="109" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">1</text>
+    <rect x="105" y="74" width="240" height="58" rx="10" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="118" y="94" font-size="14" font-weight="700" fill="#0a1628">Check the recipient</text>
+    <text x="118" y="112" font-size="12" fill="#6b6f78">Read the phone number back</text>
+    <text x="118" y="128" font-size="12" fill="#6b6f78">before confirming.</text>
+  </g>
+
+  <!-- Step 2 -->
+  <g>
+    <circle cx="70" cy="161" r="20" fill="#1f9d57"/>
+    <text x="70" y="167" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">2</text>
+    <rect x="105" y="132" width="240" height="58" rx="10" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="118" y="152" font-size="14" font-weight="700" fill="#0a1628">Hide your PIN</text>
+    <text x="118" y="170" font-size="12" fill="#6b6f78">Shield the keypad; never share</text>
+    <text x="118" y="186" font-size="12" fill="#6b6f78">the PIN aloud.</text>
+  </g>
+
+  <!-- Step 3 -->
+  <g>
+    <circle cx="70" cy="219" r="20" fill="#f59e0b"/>
+    <text x="70" y="225" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">3</text>
+    <rect x="105" y="190" width="240" height="58" rx="10" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="118" y="210" font-size="14" font-weight="700" fill="#0a1628">Confirm the amount</text>
+    <text x="118" y="228" font-size="12" fill="#6b6f78">Make sure the Kwacha amount</text>
+    <text x="118" y="244" font-size="12" fill="#6b6f78">is correct.</text>
+  </g>
+
+  <!-- Step 4 -->
+  <g>
+    <circle cx="365" cy="135" r="20" fill="#0b4f8c"/>
+    <text x="365" y="141" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">4</text>
+    <rect x="400" y="106" width="260" height="58" rx="10" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="413" y="128" font-size="14" font-weight="700" fill="#0a1628">Keep the SMS receipt</text>
+    <text x="413" y="146" font-size="12" fill="#6b6f78">It is your proof if something</text>
+    <text x="413" y="162" font-size="12" fill="#6b6f78">goes wrong.</text>
+  </g>
+
+  <!-- Warning box -->
+  <g>
+    <rect x="400" y="166" width="260" height="70" rx="10" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <circle cx="435" cy="201" r="14" fill="#dc2626"/>
+    <text x="435" y="207" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">!</text>
+    <text x="460" y="184" font-size="14" font-weight="700" fill="#0a1628">Stop if asked to</text>
+    <text x="460" y="202" font-size="12" fill="#6b6f78">send money to "win" a prize.</text>
+    <text x="460" y="218" font-size="12" fill="#6b6f78">That is almost always a scam.</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="282" text-anchor="middle" font-size="11.5" fill="#9aa3af">When in doubt, call the official customer care number on the back of your SIM pack.</text>
+</svg>

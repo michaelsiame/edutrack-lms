@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Java compile-run cycle: source .java file is compiled to .class bytecode, then the JVM runs it and produces output.">
+  <title>The Java Compile and Run Cycle</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Java Compile and Run Cycle</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Write once, compile to bytecode, then run anywhere with a JVM</text>
+
+  <!-- Stage 1: Source .java -->
+  <g>
+    <rect x="18" y="90" width="130" height="154" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <rect x="58" y="116" width="50" height="62" rx="5" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="83" y="146" text-anchor="middle" font-size="12" font-weight="700" fill="#0b4f8c">.java</text>
+    <line x1="66" y1="156" x2="100" y2="156" stroke="#0b4f8c" stroke-width="1.5"/>
+    <line x1="66" y1="164" x2="92" y2="164" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="83" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Source</text>
+    <text x="83" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Hello.java</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="152" y1="167" x2="176" y2="167"/>
+    <polygon points="176,160 189,167 176,174"/>
+  </g>
+
+  <!-- Stage 2: Compiler -->
+  <g>
+    <rect x="194" y="90" width="130" height="154" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <!-- gear icon -->
+    <circle cx="259" cy="142" r="10" fill="none" stroke="#6b6f78" stroke-width="3"/>
+    <circle cx="259" cy="142" r="4" fill="#6b6f78"/>
+    <rect x="254" y="128" width="10" height="6" rx="2" fill="#6b6f78"/>
+    <rect x="254" y="150" width="10" height="6" rx="2" fill="#6b6f78"/>
+    <rect x="240" y="137" width="6" height="10" rx="2" fill="#6b6f78"/>
+    <rect x="272" y="137" width="6" height="10" rx="2" fill="#6b6f78"/>
+    <text x="259" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Compiler</text>
+    <text x="259" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">javac</text>
+    <text x="259" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">checks syntax</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="328" y1="167" x2="352" y2="167"/>
+    <polygon points="352,160 365,167 352,174"/>
+  </g>
+
+  <!-- Stage 3: Bytecode .class -->
+  <g>
+    <rect x="370" y="90" width="130" height="154" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="410" y="116" width="50" height="62" rx="5" fill="#ffffff" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="435" y="146" text-anchor="middle" font-size="12" font-weight="700" fill="#f59e0b">.class</text>
+    <line x1="418" y1="156" x2="452" y2="156" stroke="#f59e0b" stroke-width="1.5"/>
+    <line x1="418" y1="164" x2="444" y2="164" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="435" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Bytecode</text>
+    <text x="435" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Hello.class</text>
+    <text x="435" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">portable</text>
+  </g>
+
+  <!-- arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="504" y1="167" x2="528" y2="167"/>
+    <polygon points="528,160 541,167 528,174"/>
+  </g>
+
+  <!-- Stage 4: JVM + Output -->
+  <g>
+    <rect x="546" y="90" width="100" height="154" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <rect x="566" y="116" width="60" height="44" rx="4" fill="#ffffff" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="596" y="142" text-anchor="middle" font-size="11" font-weight="700" fill="#1f9d57">JVM</text>
+    <line x1="574" y1="150" x2="618" y2="150" stroke="#1f9d57" stroke-width="1.5"/>
+    <line x1="574" y1="158" x2="604" y2="158" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="596" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Run</text>
+    <text x="596" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">java Hello</text>
+    <text x="596" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">output</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="284" text-anchor="middle" font-size="11.5" fill="#9aa3af">Compile with javac, run with java. The JVM makes the same bytecode work everywhere.</text>
+</svg>

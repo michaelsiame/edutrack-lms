@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Content creation pipeline with six stages: idea, script, shoot, edit, post, and review.">
+  <title>The Content Creation Pipeline</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Content Creation Pipeline</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Move from a raw idea to a published post that grows your audience</text>
+
+  <!-- Idea -->
+  <g>
+    <rect x="25" y="80" width="85" height="155" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="67" cy="115" r="18" fill="#0b4f8c"/>
+    <circle cx="67" cy="110" r="7" fill="#ffffff"/>
+    <rect x="63" y="118" width="8" height="9" rx="2" fill="#ffffff"/>
+    <text x="67" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Idea</text>
+    <text x="67" y="176" text-anchor="middle" font-size="11" fill="#6b6f78">Trend or</text>
+    <text x="67" y="190" text-anchor="middle" font-size="11" fill="#6b6f78">audience</text>
+    <text x="67" y="204" text-anchor="middle" font-size="11" fill="#6b6f78">need</text>
+  </g>
+
+  <!-- Script -->
+  <g>
+    <rect x="120" y="80" width="85" height="155" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <rect x="143" y="102" width="40" height="28" rx="3" fill="#9aa3af"/>
+    <rect x="146" y="106" width="34" height="20" rx="2" fill="#ffffff"/>
+    <line x1="150" y1="112" x2="176" y2="112" stroke="#9aa3af" stroke-width="2"/>
+    <line x1="150" y1="118" x2="170" y2="118" stroke="#9aa3af" stroke-width="2"/>
+    <text x="162" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Script</text>
+    <text x="162" y="176" text-anchor="middle" font-size="11" fill="#6b6f78">Hook +</text>
+    <text x="162" y="190" text-anchor="middle" font-size="11" fill="#6b6f78">key points</text>
+    <text x="162" y="204" text-anchor="middle" font-size="11" fill="#6b6f78">to cover</text>
+  </g>
+
+  <!-- Shoot -->
+  <g>
+    <rect x="215" y="80" width="85" height="155" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="238" y="104" width="40" height="28" rx="4" fill="#f59e0b"/>
+    <circle cx="258" cy="118" r="7" fill="#ffffff"/>
+    <circle cx="270" cy="112" r="2" fill="#ffffff"/>
+    <text x="257" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Shoot</text>
+    <text x="257" y="176" text-anchor="middle" font-size="11" fill="#6b6f78">Good light</text>
+    <text x="257" y="190" text-anchor="middle" font-size="11" fill="#6b6f78">and clear</text>
+    <text x="257" y="204" text-anchor="middle" font-size="11" fill="#6b6f78">audio</text>
+  </g>
+
+  <!-- Edit -->
+  <g>
+    <rect x="310" y="80" width="85" height="155" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <path d="M335 130 l15 -15 v8 h20 v14 h-20 v8 z" fill="#1f9d57"/>
+    <text x="352" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Edit</text>
+    <text x="352" y="176" text-anchor="middle" font-size="11" fill="#6b6f78">CapCut or</text>
+    <text x="352" y="190" text-anchor="middle" font-size="11" fill="#6b6f78">Canva for</text>
+    <text x="352" y="204" text-anchor="middle" font-size="11" fill="#6b6f78">cuts + text</text>
+  </g>
+
+  <!-- Post -->
+  <g>
+    <rect x="405" y="80" width="85" height="155" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <rect x="428" y="105" width="30" height="44" rx="4" fill="#dc2626"/>
+    <rect x="432" y="111" width="22" height="28" rx="2" fill="#ffffff"/>
+    <path d="M438 128 l6 -6 l6 6 M438 128 v10 h12 v-10" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="447" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Post</text>
+    <text x="447" y="176" text-anchor="middle" font-size="11" fill="#6b6f78">Best time</text>
+    <text x="447" y="190" text-anchor="middle" font-size="11" fill="#6b6f78">+ caption</text>
+    <text x="447" y="204" text-anchor="middle" font-size="11" fill="#6b6f78">+ hashtags</text>
+  </g>
+
+  <!-- Review -->
+  <g>
+    <rect x="500" y="80" width="85" height="155" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <rect x="523" y="108" width="40" height="24" rx="3" fill="#0b4f8c"/>
+    <polyline points="528,120 536,126 548,114" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="542" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Review</text>
+    <text x="542" y="176" text-anchor="middle" font-size="11" fill="#6b6f78">Check views</text>
+    <text x="542" y="190" text-anchor="middle" font-size="11" fill="#6b6f78">saves and</text>
+    <text x="542" y="204" text-anchor="middle" font-size="11" fill="#6b6f78">sales</text>
+  </g>
+
+  <!-- arrows between cards -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="110" y1="157" x2="116" y2="157"/>
+    <polygon points="116,150 128,157 116,164"/>
+    <line x1="205" y1="157" x2="211" y2="157"/>
+    <polygon points="211,150 223,157 211,164"/>
+    <line x1="300" y1="157" x2="306" y2="157"/>
+    <polygon points="306,150 318,157 306,164"/>
+    <line x1="395" y1="157" x2="401" y2="157"/>
+    <polygon points="401,150 413,157 401,164"/>
+    <line x1="490" y1="157" x2="496" y2="157"/>
+    <polygon points="496,150 508,157 496,164"/>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="278" text-anchor="middle" font-size="11.5" fill="#9aa3af">Repeat the loop and double down on what gets the best response.</text>
+</svg>

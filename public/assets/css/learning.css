@@ -107,7 +107,7 @@
 /* Lesson Item Hover */
 .module-lessons a {
     border-left: 4px solid transparent;
-    transition: all 0.2s ease;
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: 0.2s; transition-timing-function: ease;
 }
 
 .module-lessons a:hover {
@@ -214,7 +214,7 @@
     background-color: #1f2937;
     border-radius: 0.5rem;
     padding: 1rem;
-    transition: all 0.2s ease;
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: 0.2s; transition-timing-function: ease;
 }
 
 .attachment-card:hover {
@@ -310,7 +310,7 @@
     align-items: center;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
-    transition: all 0.2s ease;
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: 0.2s; transition-timing-function: ease;
     color: #9ca3af;
 }
 

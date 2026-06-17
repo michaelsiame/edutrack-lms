@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Comparison of system software and application software: system software manages the computer, application software helps users do tasks.">
+  <title>System Software vs Application Software</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">System Software vs Application Software</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Every program fits into one of these two categories</text>
+
+  <!-- System Software card -->
+  <g>
+    <rect x="30" y="75" width="290" height="200" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="80" cy="115" r="22" fill="#0b4f8c"/>
+    <!-- gear icon -->
+    <circle cx="80" cy="115" r="9" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <line x1="80" y1="100" x2="80" y2="104" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="80" y1="126" x2="80" y2="130" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="65" y1="115" x2="69" y2="115" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="91" y1="115" x2="95" y2="115" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="69.4" y1="104.4" x2="72.2" y2="107.2" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="87.8" y1="122.8" x2="90.6" y2="125.6" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="69.4" y1="125.6" x2="72.2" y2="122.8" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="87.8" y1="107.2" x2="90.6" y2="104.4" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <text x="175" y="108" text-anchor="middle" font-size="17" font-weight="700" fill="#0a1628">System Software</text>
+    <text x="175" y="128" text-anchor="middle" font-size="13" fill="#6b6f78">Manages hardware and runs the computer</text>
+    <rect x="55" y="150" width="240" height="36" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="175" y="173" text-anchor="middle" font-size="13" font-weight="700" fill="#0b4f8c">Operating Systems</text>
+    <rect x="55" y="192" width="240" height="36" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="175" y="215" text-anchor="middle" font-size="13" font-weight="700" fill="#0b4f8c">Device Drivers &amp; Utilities</text>
+    <text x="175" y="248" text-anchor="middle" font-size="12" fill="#6b6f78">Works behind the scenes; user rarely</text>
+    <text x="175" y="263" text-anchor="middle" font-size="12" fill="#6b6f78">interacts with it directly</text>
+  </g>
+
+  <!-- VS badge -->
+  <circle cx="330" cy="175" r="18" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+  <text x="330" y="180" text-anchor="middle" font-size="12" font-weight="700" fill="#6b6f78">VS</text>
+
+  <!-- Application Software card -->
+  <g>
+    <rect x="340" y="75" width="290" height="200" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="390" cy="115" r="22" fill="#f59e0b"/>
+    <!-- app window icon -->
+    <rect x="378" y="105" width="24" height="20" rx="2" fill="#ffffff"/>
+    <circle cx="384" cy="110" r="1.5" fill="#f59e0b"/>
+    <circle cx="389" cy="110" r="1.5" fill="#f59e0b"/>
+    <circle cx="394" cy="110" r="1.5" fill="#f59e0b"/>
+    <line x1="380" y1="116" x2="400" y2="116" stroke="#f59e0b" stroke-width="1.5"/>
+    <line x1="380" y1="120" x2="395" y2="120" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="485" y="108" text-anchor="middle" font-size="17" font-weight="700" fill="#0a1628">Application Software</text>
+    <text x="485" y="128" text-anchor="middle" font-size="13" fill="#6b6f78">Helps the user perform a specific task</text>
+    <rect x="365" y="150" width="240" height="36" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="485" y="173" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">Word, Excel, PowerPoint</text>
+    <rect x="365" y="192" width="240" height="36" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="485" y="215" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">Browsers, Games, Email</text>
+    <text x="485" y="248" text-anchor="middle" font-size="12" fill="#6b6f78">Installed on top of the operating</text>
+    <text x="485" y="263" text-anchor="middle" font-size="12" fill="#6b6f78">system; user interacts directly</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="291" text-anchor="middle" font-size="11.5" fill="#9aa3af">Both are needed: system software powers the machine; applications power the work.</text>
+</svg>

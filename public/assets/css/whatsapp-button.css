@@ -23,7 +23,7 @@
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: 0.3s; transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
     position: relative;
     text-decoration: none;
     border: none;
@@ -103,7 +103,7 @@
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: 0.3s; transition-timing-function: ease;
     font-size: 14px;
     font-weight: 500;
     pointer-events: none;

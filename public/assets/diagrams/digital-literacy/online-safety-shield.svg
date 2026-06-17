@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Online safety shield: common threats on one side and protective habits on the other, guarded by a central shield.">
+  <title>Online safety shield</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Online Safety Shield</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Recognise threats, then block them with smart habits</text>
+
+  <!-- Threats column -->
+  <text x="127" y="92" text-anchor="middle" font-size="15" font-weight="700" fill="#dc2626">Common Threats</text>
+
+  <g>
+    <rect x="10" y="108" width="235" height="46" rx="10" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="25" y="130" font-size="13" font-weight="700" fill="#0a1628">Phishing messages</text>
+    <text x="25" y="146" font-size="12" fill="#6b6f78">Fake SMS / email asking for PIN</text>
+  </g>
+
+  <g>
+    <rect x="10" y="162" width="235" height="46" rx="10" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="25" y="184" font-size="13" font-weight="700" fill="#0a1628">Fake news and links</text>
+    <text x="25" y="200" font-size="12" fill="#6b6f78">Shocking headlines that spread lies</text>
+  </g>
+
+  <g>
+    <rect x="10" y="216" width="235" height="46" rx="10" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="25" y="238" font-size="13" font-weight="700" fill="#0a1628">Prize and job scams</text>
+    <text x="25" y="254" font-size="12" fill="#6b6f78">"You won! Send money first"</text>
+  </g>
+
+  <!-- Shield -->
+  <g>
+    <path d="M330 86 c-30 0 -58 10 -58 10 v56 c0 44 58 88 58 88 s58 -44 58 -88 v-56 s-28 -10 -58 -10 z" fill="#eef4fb" stroke="#0b4f8c" stroke-width="2.5"/>
+    <path d="M330 104 c-18 0 -36 6 -36 6 v42 c0 32 36 62 36 62 s36 -30 36 -62 v-42 s-18 -6 -36 -6 z" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <path d="M315 142 l12 12 24 -24" fill="none" stroke="#1f9d57" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Protections column -->
+  <text x="537" y="92" text-anchor="middle" font-size="15" font-weight="700" fill="#1f9d57">Smart Habits</text>
+
+  <g>
+    <rect x="415" y="108" width="235" height="46" rx="10" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="430" y="130" font-size="13" font-weight="700" fill="#0a1628">Use strong passwords</text>
+    <text x="430" y="146" font-size="12" fill="#6b6f78">Mix letters, numbers, symbols</text>
+  </g>
+
+  <g>
+    <rect x="415" y="162" width="235" height="46" rx="10" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="430" y="184" font-size="13" font-weight="700" fill="#0a1628">Verify before clicking</text>
+    <text x="430" y="200" font-size="12" fill="#6b6f78">Hover to see the real web address</text>
+  </g>
+
+  <g>
+    <rect x="415" y="216" width="235" height="46" rx="10" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="430" y="238" font-size="13" font-weight="700" fill="#0a1628">Think before sharing</text>
+    <text x="430" y="254" font-size="12" fill="#6b6f78">If it sounds too good, pause</text>
+  </g>
+
+  <!-- arrows from threats to shield -->
+  <g stroke="#9aa3af" stroke-width="2" fill="#9aa3af">
+    <line x1="250" y1="130" x2="260" y2="130"/>
+    <polygon points="260,124 272,130 260,136"/>
+    <line x1="250" y1="184" x2="260" y2="155"/>
+    <polygon points="260,149 272,155 260,161"/>
+    <line x1="250" y1="238" x2="260" y2="180"/>
+    <polygon points="260,174 272,180 260,186"/>
+  </g>
+
+  <!-- arrows from shield to protections -->
+  <g stroke="#9aa3af" stroke-width="2" fill="#9aa3af">
+    <line x1="400" y1="130" x2="415" y2="130"/>
+    <polygon points="415,124 427,130 415,136"/>
+    <line x1="400" y1="155" x2="415" y2="184"/>
+    <polygon points="415,178 427,184 415,190"/>
+    <line x1="400" y1="180" x2="415" y2="238"/>
+    <polygon points="415,232 427,238 415,244"/>
+  </g>
+</svg>

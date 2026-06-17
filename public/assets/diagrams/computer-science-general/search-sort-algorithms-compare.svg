@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Comparison of search and sort algorithms: linear versus binary search, and bubble versus merge sort.">
+  <title>Search and Sort Algorithms Compared</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Search and Sort Algorithms Compared</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Picking the right algorithm saves time as data grows</text>
+
+  <!-- Searching label -->
+  <rect x="40" y="70" width="280" height="24" rx="8" fill="#eef4fb"/>
+  <text x="180" y="86" text-anchor="middle" font-size="13" font-weight="700" fill="#0b4f8c">SEARCHING</text>
+
+  <!-- Linear Search -->
+  <g>
+    <rect x="40" y="100" width="280" height="80" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <circle cx="75" cy="140" r="20" fill="#6b6f78"/>
+    <!-- magnifying glass icon -->
+    <circle cx="75" cy="135" r="8" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <line x1="81" y1="141" x2="88" y2="148" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <text x="175" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Linear Search</text>
+    <text x="175" y="147" text-anchor="middle" font-size="12" fill="#6b6f78">Check every item in order until found</text>
+    <text x="175" y="166" text-anchor="middle" font-size="12" fill="#9aa3af">Best for small or unsorted lists</text>
+  </g>
+
+  <!-- Binary Search -->
+  <g>
+    <rect x="40" y="190" width="280" height="80" rx="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <circle cx="75" cy="230" r="20" fill="#1f9d57"/>
+    <!-- split icon -->
+    <line x1="67" y1="230" x2="83" y2="230" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="75" y1="222" x2="75" y2="238" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <text x="175" y="218" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Binary Search</text>
+    <text x="175" y="237" text-anchor="middle" font-size="12" fill="#6b6f78">Repeatedly split a sorted list in half</text>
+    <text x="175" y="256" text-anchor="middle" font-size="12" fill="#9aa3af">Much faster on large sorted data</text>
+  </g>
+
+  <!-- Sorting label -->
+  <rect x="340" y="70" width="280" height="24" rx="8" fill="#fef6e7"/>
+  <text x="480" y="86" text-anchor="middle" font-size="13" font-weight="700" fill="#f59e0b">SORTING</text>
+
+  <!-- Bubble Sort -->
+  <g>
+    <rect x="340" y="100" width="280" height="80" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <circle cx="375" cy="140" r="20" fill="#6b6f78"/>
+    <!-- swap icon -->
+    <path d="M368 136 h10 l-3 -4 M378 144 h-10 l3 4" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="475" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Bubble Sort</text>
+    <text x="475" y="147" text-anchor="middle" font-size="12" fill="#6b6f78">Swap neighbours until everything is ordered</text>
+    <text x="475" y="166" text-anchor="middle" font-size="12" fill="#9aa3af">Simple to write but slow for big lists</text>
+  </g>
+
+  <!-- Merge Sort -->
+  <g>
+    <rect x="340" y="190" width="280" height="80" rx="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <circle cx="375" cy="230" r="20" fill="#1f9d57"/>
+    <!-- merge icon -->
+    <line x1="367" y1="230" x2="383" y2="230" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="371" y1="224" x2="367" y2="230" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="371" y1="236" x2="367" y2="230" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="379" y1="224" x2="383" y2="230" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="379" y1="236" x2="383" y2="230" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="475" y="218" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Merge Sort</text>
+    <text x="475" y="237" text-anchor="middle" font-size="12" fill="#6b6f78">Split, sort small parts, then merge them</text>
+    <text x="475" y="256" text-anchor="middle" font-size="12" fill="#9aa3af">Fast and reliable for large datasets</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="286" text-anchor="middle" font-size="11.5" fill="#9aa3af">Binary search and merge sort need sorted data; linear and bubble sort do not.</text>
+</svg>

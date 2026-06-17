@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Decision flow for choosing a platform: audience, goal, format, then platform.">
+  <title>Choose the Right Platform</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Choose the Right Platform</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Pick where to post by working backwards from your audience</text>
+
+  <!-- Audience -->
+  <g>
+    <rect x="55" y="85" width="125" height="145" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="95" cy="125" r="14" fill="#0b4f8c"/>
+    <circle cx="95" cy="120" r="5" fill="#ffffff"/>
+    <path d="M85 136 a10 8 0 0 1 20 0 z" fill="#ffffff"/>
+    <circle cx="125" cy="125" r="14" fill="#0b4f8c"/>
+    <circle cx="125" cy="120" r="5" fill="#ffffff"/>
+    <path d="M115 136 a10 8 0 0 1 20 0 z" fill="#ffffff"/>
+    <text x="117" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Audience</text>
+    <text x="117" y="188" text-anchor="middle" font-size="11" fill="#6b6f78">Who are you</text>
+    <text x="117" y="202" text-anchor="middle" font-size="11" fill="#6b6f78">talking to?</text>
+  </g>
+
+  <!-- Goal -->
+  <g>
+    <rect x="205" y="85" width="125" height="145" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="267" cy="125" r="18" fill="#f59e0b"/>
+    <circle cx="267" cy="125" r="12" fill="#fef6e7" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="267" cy="125" r="6" fill="#f59e0b"/>
+    <text x="267" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Goal</text>
+    <text x="267" y="188" text-anchor="middle" font-size="11" fill="#6b6f78">Awareness,</text>
+    <text x="267" y="202" text-anchor="middle" font-size="11" fill="#6b6f78">sales or trust?</text>
+  </g>
+
+  <!-- Format -->
+  <g>
+    <rect x="355" y="85" width="125" height="145" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <rect x="395" y="108" width="28" height="42" rx="4" fill="#1f9d57"/>
+    <rect x="399" y="113" width="20" height="26" rx="2" fill="#ffffff"/>
+    <circle cx="409" cy="145" r="2" fill="#1f9d57"/>
+    <text x="417" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Format</text>
+    <text x="417" y="188" text-anchor="middle" font-size="11" fill="#6b6f78">Short video,</text>
+    <text x="417" y="202" text-anchor="middle" font-size="11" fill="#6b6f78">photo or story?</text>
+  </g>
+
+  <!-- Platform -->
+  <g>
+    <rect x="505" y="85" width="125" height="145" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <rect x="535" y="108" width="24" height="18" rx="3" fill="#dc2626"/>
+    <text x="547" y="120" text-anchor="middle" font-size="8" font-weight="700" fill="#ffffff">TT</text>
+    <rect x="565" y="108" width="24" height="18" rx="3" fill="#0b4f8c"/>
+    <text x="577" y="120" text-anchor="middle" font-size="8" font-weight="700" fill="#ffffff">FB</text>
+    <rect x="550" y="132" width="24" height="18" rx="3" fill="#1f9d57"/>
+    <text x="562" y="144" text-anchor="middle" font-size="8" font-weight="700" fill="#ffffff">WA</text>
+    <text x="567" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Platform</text>
+    <text x="567" y="188" text-anchor="middle" font-size="11" fill="#6b6f78">TikTok, FB</text>
+    <text x="567" y="202" text-anchor="middle" font-size="11" fill="#6b6f78">or Status</text>
+  </g>
+
+  <!-- arrows between cards -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="180" y1="157" x2="196" y2="157"/>
+    <polygon points="196,150 208,157 196,164"/>
+    <line x1="330" y1="157" x2="346" y2="157"/>
+    <polygon points="346,150 358,157 346,164"/>
+    <line x1="480" y1="157" x2="496" y2="157"/>
+    <polygon points="496,150 508,157 496,164"/>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="263" text-anchor="middle" font-size="11.5" fill="#9aa3af">A young audience + short video usually means TikTok; community sales often mean Facebook or WhatsApp.</text>
+</svg>

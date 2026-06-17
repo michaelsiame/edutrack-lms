@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Meeting cycle: notice, agenda, meeting and minutes, action list and follow-up.">
+  <title>Meeting cycle from notice to follow-up</title>
+
+  <text x="320" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Meeting Cycle: Notice to Follow-up</text>
+  <text x="320" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Every formal meeting in a Zambian office follows this repeating loop</text>
+
+  <!-- Step 1 -->
+  <g>
+    <circle cx="60" cy="106" r="17" fill="#0b4f8c"/>
+    <text x="60" y="111" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">1</text>
+    <text x="96" y="102" font-size="15" font-weight="700" fill="#0a1628">Notice</text>
+    <text x="96" y="120" font-size="12" fill="#6b6f78">Set date, time, venue and purpose</text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="60" y1="127" x2="60" y2="145"/>
+    <polygon points="53,145 60,157 67,145"/>
+  </g>
+
+  <!-- Step 2 -->
+  <g>
+    <circle cx="60" cy="172" r="17" fill="#0b4f8c"/>
+    <text x="60" y="177" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">2</text>
+    <text x="96" y="168" font-size="15" font-weight="700" fill="#0a1628">Agenda</text>
+    <text x="96" y="186" font-size="12" fill="#6b6f78">List items, attach reports and minutes</text>
+  </g>
+
+  <!-- Arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="60" y1="193" x2="60" y2="211"/>
+    <polygon points="53,211 60,223 67,211"/>
+  </g>
+
+  <!-- Step 3 -->
+  <g>
+    <circle cx="60" cy="238" r="17" fill="#1f9d57"/>
+    <text x="60" y="243" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">3</text>
+    <text x="96" y="234" font-size="15" font-weight="700" fill="#0a1628">Meeting &amp; Minutes</text>
+    <text x="96" y="252" font-size="12" fill="#6b6f78">Record attendance, decisions and action owners</text>
+  </g>
+
+  <!-- Arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="60" y1="259" x2="60" y2="277"/>
+    <polygon points="53,277 60,289 67,277"/>
+  </g>
+
+  <!-- Step 4 -->
+  <g>
+    <circle cx="60" cy="304" r="17" fill="#0b4f8c"/>
+    <text x="60" y="309" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">4</text>
+    <text x="96" y="300" font-size="15" font-weight="700" fill="#0a1628">Action List</text>
+    <text x="96" y="318" font-size="12" fill="#6b6f78">Who does what, and by when</text>
+  </g>
+
+  <!-- Return loop to Notice -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="none">
+    <path d="M300 304 h40 a12 12 0 0 0 12 -12 v-180 a12 12 0 0 0 -12 -12 h-280"/>
+    <line x1="60" y1="100" x2="60" y2="89"/>
+  </g>
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <polygon points="53,89 60,101 67,89"/>
+  </g>
+
+  <text x="320" y="344" text-anchor="middle" font-size="11.5" fill="#9aa3af">Good minutes close the loop by turning discussion into tracked action.</text>
+</svg>

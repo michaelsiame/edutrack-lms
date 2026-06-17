@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Record lifecycle cycle: create a record, classify it, store it safely, use it when needed, then retain or dispose of it.">
+  <title>Record lifecycle</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Record Lifecycle</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">How a record is managed from birth to archive or disposal</text>
+
+  <!-- Cycle boxes -->
+  <!-- Create -->
+  <g>
+    <rect x="70" y="118" width="116" height="76" rx="14" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="128" y="148" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Create</text>
+    <text x="128" y="166" text-anchor="middle" font-size="12" fill="#6b6f78">Letter, form,</text>
+    <text x="128" y="181" text-anchor="middle" font-size="12" fill="#6b6f78">receipt</text>
+  </g>
+
+  <!-- Classify -->
+  <g>
+    <rect x="214" y="82" width="116" height="76" rx="14" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="272" y="112" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Classify</text>
+    <text x="272" y="130" text-anchor="middle" font-size="12" fill="#6b6f78">Choose type</text>
+    <text x="272" y="145" text-anchor="middle" font-size="12" fill="#6b6f78">and category</text>
+  </g>
+
+  <!-- Store -->
+  <g>
+    <rect x="358" y="82" width="116" height="76" rx="14" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="416" y="112" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Store</text>
+    <text x="416" y="130" text-anchor="middle" font-size="12" fill="#6b6f78">File in folder</text>
+    <text x="416" y="145" text-anchor="middle" font-size="12" fill="#6b6f78">or drive</text>
+  </g>
+
+  <!-- Use -->
+  <g>
+    <rect x="502" y="118" width="116" height="76" rx="14" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="560" y="148" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Use</text>
+    <text x="560" y="166" text-anchor="middle" font-size="12" fill="#6b6f78">Retrieve when</text>
+    <text x="560" y="181" text-anchor="middle" font-size="12" fill="#6b6f78">needed</text>
+  </g>
+
+  <!-- Retain / Dispose -->
+  <g>
+    <rect x="250" y="198" width="188" height="70" rx="14" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="344" y="228" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Retain or Dispose</text>
+    <text x="344" y="246" text-anchor="middle" font-size="12" fill="#6b6f78">Keep for legal time, then</text>
+    <text x="344" y="262" text-anchor="middle" font-size="12" fill="#6b6f78">shred or archive</text>
+  </g>
+
+  <!-- Curved arrows -->
+  <g fill="none" stroke="#9aa3af" stroke-width="2.5" stroke-linecap="round">
+    <!-- Create -> Classify -->
+    <path d="M186 142 q14 -24 28 -30"/>
+    <polygon points="212 110 218 105 214 113" fill="#9aa3af" stroke="none"/>
+
+    <!-- Classify -> Store -->
+    <path d="M330 120 h28"/>
+    <polygon points="358 114 370 120 358 126" fill="#9aa3af" stroke="none"/>
+
+    <!-- Store -> Use -->
+    <path d="M474 120 q14 0 28 18"/>
+    <polygon points="500 135 506 140 498 140" fill="#9aa3af" stroke="none"/>
+
+    <!-- Use -> Retain/Dispose -->
+    <path d="M560 194 q-20 22 -56 34"/>
+    <polygon points="500 230 492 235 498 226" fill="#9aa3af" stroke="none"/>
+
+    <!-- Retain/Dispose -> Create -->
+    <path d="M250 220 q-70 -10 -110 -46"/>
+    <polygon points="144 177 138 182 140 173" fill="#9aa3af" stroke="none"/>
+  </g>
+</svg>

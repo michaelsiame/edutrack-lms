@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Three authentication factors: something you know, something you have, and something you are.">
+  <title>The Three Authentication Factors</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Three Authentication Factors</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Stronger login uses more than one type of proof</text>
+
+  <!-- Something you know -->
+  <g>
+    <rect x="40" y="82" width="180" height="168" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="130" cy="124" r="24" fill="#0b4f8c"/>
+    <!-- keyhole -->
+    <circle cx="130" cy="118" r="6" fill="#ffffff"/>
+    <path d="M126 124 h8 l-2 12 h-4 z" fill="#ffffff"/>
+    <text x="130" y="172" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Something you know</text>
+    <text x="130" y="196" text-anchor="middle" font-size="12" fill="#6b6f78">Password or PIN</text>
+    <text x="130" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">Passphrase pattern</text>
+    <text x="130" y="232" text-anchor="middle" font-size="12" fill="#6b6f78">Security question</text>
+  </g>
+
+  <!-- Something you have -->
+  <g>
+    <rect x="240" y="82" width="180" height="168" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="330" cy="124" r="24" fill="#f59e0b"/>
+    <!-- phone -->
+    <rect x="320" y="110" width="20" height="34" rx="4" fill="#ffffff"/>
+    <rect x="322" y="114" width="16" height="22" rx="2" fill="#fef6e7"/>
+    <circle cx="330" cy="140" r="2" fill="#f59e0b"/>
+    <text x="330" y="172" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Something you have</text>
+    <text x="330" y="196" text-anchor="middle" font-size="12" fill="#6b6f78">Mobile phone</text>
+    <text x="330" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">Authenticator app</text>
+    <text x="330" y="232" text-anchor="middle" font-size="12" fill="#6b6f78">Security token / smart card</text>
+  </g>
+
+  <!-- Something you are -->
+  <g>
+    <rect x="440" y="82" width="180" height="168" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <circle cx="530" cy="124" r="24" fill="#1f9d57"/>
+    <!-- fingerprint -->
+    <path d="M518 124 c0 -10 8 -14 12 -14 s12 4 12 14" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M522 124 c0 -7 5 -10 8 -10 s8 3 8 10" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+    <path d="M526 124 c0 -4 3 -6 4 -6 s4 2 4 6" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="530" y="172" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Something you are</text>
+    <text x="530" y="196" text-anchor="middle" font-size="12" fill="#6b6f78">Fingerprint scan</text>
+    <text x="530" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">Face recognition</text>
+    <text x="530" y="232" text-anchor="middle" font-size="12" fill="#6b6f78">Voice or iris pattern</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="274" text-anchor="middle" font-size="11.5" fill="#9aa3af">Two-factor authentication (2FA) combines two different factors.</text>
+</svg>

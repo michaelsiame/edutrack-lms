@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Git workflow: main branch with commits, a feature branch created, commits added, then merged back into main.">
+  <title>Git Commit and Branch Flow</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Git Commit and Branch Flow</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Create a feature branch, commit work, then merge back safely</text>
+
+  <!-- main branch label -->
+  <text x="70" y="115" text-anchor="start" font-size="12" font-weight="700" fill="#0b4f8c">main</text>
+
+  <!-- main branch line -->
+  <line x1="115" y1="110" x2="620" y2="110" stroke="#0b4f8c" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- main commits -->
+  <circle cx="155" cy="110" r="9" fill="#0b4f8c"/>
+  <text x="155" y="94" text-anchor="middle" font-size="10" fill="#6b6f78">C1</text>
+  <circle cx="235" cy="110" r="9" fill="#0b4f8c"/>
+  <text x="235" y="94" text-anchor="middle" font-size="10" fill="#6b6f78">C2</text>
+  <circle cx="440" cy="110" r="9" fill="#0b4f8c"/>
+  <text x="440" y="94" text-anchor="middle" font-size="10" fill="#6b6f78">C3</text>
+  <circle cx="580" cy="110" r="9" fill="#1f9d57"/>
+  <text x="580" y="94" text-anchor="middle" font-size="10" fill="#6b6f78">C5</text>
+
+  <!-- merge arrow -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="360" y1="190" x2="432" y2="117"/>
+    <polygon points="427,112 438,110 436,121"/>
+  </g>
+
+  <!-- feature branch line -->
+  <line x1="235" y1="150" x2="360" y2="190" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- feature branch label -->
+  <text x="70" y="175" text-anchor="start" font-size="12" font-weight="700" fill="#f59e0b">feature/login</text>
+
+  <!-- branch point -->
+  <circle cx="235" cy="130" r="4" fill="#f59e0b"/>
+  <line x1="235" y1="110" x2="235" y2="130" stroke="#f59e0b" stroke-width="2"/>
+
+  <!-- feature commits -->
+  <circle cx="290" cy="166" r="8" fill="#f59e0b"/>
+  <text x="290" y="190" text-anchor="middle" font-size="10" fill="#6b6f78">C3a</text>
+  <circle cx="335" cy="182" r="8" fill="#f59e0b"/>
+  <text x="335" y="206" text-anchor="middle" font-size="10" fill="#6b6f78">C4</text>
+
+  <!-- PR box -->
+  <g>
+    <rect x="360" y="230" width="140" height="44" rx="12" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="430" y="250" text-anchor="middle" font-size="12" font-weight="700" fill="#0b4f8c">Pull Request</text>
+    <text x="430" y="266" text-anchor="middle" font-size="10" fill="#6b6f78">Review before merge</text>
+  </g>
+
+  <!-- arrow from merge to PR box -->
+  <g stroke="#9aa3af" stroke-width="2" fill="#9aa3af">
+    <line x1="510" y1="110" x2="510" y2="252"/>
+    <line x1="510" y1="252" x2="500" y2="252"/>
+    <polygon points="506,246 500,252 506,258"/>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="292" text-anchor="middle" font-size="11.5" fill="#9aa3af">Branches keep new work separate until it is reviewed and ready.</text>
+</svg>

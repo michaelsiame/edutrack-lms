@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="A cash book spreadsheet with five columns: Date, Details, Income, Expense, and Balance.">
+  <title>A Simple Cash-Book Layout</title>
+
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">A Simple Cash-Book Layout</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Five columns keep every kwacha movement easy to track</text>
+
+  <!-- table frame -->
+  <rect x="80" y="78" width="500" height="178" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1.5"/>
+
+  <!-- header row -->
+  <rect x="80" y="78" width="500" height="34" rx="8" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <text x="120" y="101" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Date</text>
+  <text x="240" y="101" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Details</text>
+  <text x="360" y="101" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Income</text>
+  <text x="440" y="101" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Expense</text>
+  <text x="530" y="101" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Balance</text>
+
+  <!-- vertical column lines -->
+  <line x1="160" y1="78" x2="160" y2="256" stroke="#d8dee6" stroke-width="1.5"/>
+  <line x1="320" y1="78" x2="320" y2="256" stroke="#d8dee6" stroke-width="1.5"/>
+  <line x1="400" y1="78" x2="400" y2="256" stroke="#d8dee6" stroke-width="1.5"/>
+  <line x1="480" y1="78" x2="480" y2="256" stroke="#d8dee6" stroke-width="1.5"/>
+
+  <!-- row lines -->
+  <line x1="80" y1="112" x2="580" y2="112" stroke="#d8dee6" stroke-width="1.5"/>
+  <line x1="80" y1="146" x2="580" y2="146" stroke="#d8dee6" stroke-width="1.5"/>
+  <line x1="80" y1="180" x2="580" y2="180" stroke="#d8dee6" stroke-width="1.5"/>
+  <line x1="80" y1="214" x2="580" y2="214" stroke="#d8dee6" stroke-width="1.5"/>
+
+  <!-- row 1 -->
+  <text x="120" y="133" text-anchor="middle" font-size="12" fill="#6b6f78">01 Jan</text>
+  <text x="240" y="133" text-anchor="middle" font-size="12" fill="#6b6f78">Sold maize</text>
+  <text x="390" y="133" text-anchor="end" font-size="12" fill="#1f9d57">K 500.00</text>
+  <text x="470" y="133" text-anchor="end" font-size="12" fill="#6b6f78">-</text>
+  <text x="570" y="133" text-anchor="end" font-size="12" fill="#0a1628">K 500.00</text>
+
+  <!-- row 2 -->
+  <text x="120" y="167" text-anchor="middle" font-size="12" fill="#6b6f78">05 Jan</text>
+  <text x="240" y="167" text-anchor="middle" font-size="12" fill="#6b6f78">Bought stock</text>
+  <text x="390" y="167" text-anchor="end" font-size="12" fill="#6b6f78">-</text>
+  <text x="470" y="167" text-anchor="end" font-size="12" fill="#dc2626">K 200.00</text>
+  <text x="570" y="167" text-anchor="end" font-size="12" fill="#0a1628">K 300.00</text>
+
+  <!-- row 3 -->
+  <text x="120" y="201" text-anchor="middle" font-size="12" fill="#6b6f78">12 Jan</text>
+  <text x="240" y="201" text-anchor="middle" font-size="12" fill="#6b6f78">Paid shop rent</text>
+  <text x="390" y="201" text-anchor="end" font-size="12" fill="#6b6f78">-</text>
+  <text x="470" y="201" text-anchor="end" font-size="12" fill="#dc2626">K 150.00</text>
+  <text x="570" y="201" text-anchor="end" font-size="12" fill="#0a1628">K 150.00</text>
+
+  <!-- row 4: formula hint -->
+  <text x="330" y="240" text-anchor="middle" font-size="12" fill="#6b6f78">Balance = previous balance + income - expense</text>
+
+  <!-- footer -->
+  <text x="330" y="282" text-anchor="middle" font-size="11.5" fill="#9aa3af">Enter every transaction on one row; the last column shows cash on hand.</text>
+</svg>

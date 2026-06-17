@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="How text is stored: bits group into bytes, bytes map to character codes, and characters combine into readable text.">
+  <title>From Bits to Text</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">From Bits to Text</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Binary digits become the words you see on screen</text>
+
+  <!-- Stage 1: Bits -->
+  <g>
+    <rect x="30" y="80" width="135" height="160" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <rect x="43" y="108" width="22" height="28" rx="4" fill="#0b4f8c"/>
+    <text x="54" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">1</text>
+    <rect x="70" y="108" width="22" height="28" rx="4" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="81" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#0b4f8c">0</text>
+    <rect x="97" y="108" width="22" height="28" rx="4" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="108" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#0b4f8c">0</text>
+    <rect x="124" y="108" width="22" height="28" rx="4" fill="#0b4f8c"/>
+    <text x="135" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">1</text>
+    <text x="97.5" y="174" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Bits</text>
+    <text x="97.5" y="194" text-anchor="middle" font-size="12" fill="#6b6f78">Smallest unit:</text>
+    <text x="97.5" y="209" text-anchor="middle" font-size="12" fill="#6b6f78">0 or 1</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="165" y1="160" x2="175" y2="160"/>
+    <polygon points="181,160 169,153 169,167"/>
+  </g>
+
+  <!-- Stage 2: Byte -->
+  <g>
+    <rect x="185" y="80" width="135" height="160" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="2"/>
+    <rect x="200" y="108" width="105" height="34" rx="6" fill="#ffffff" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="252.5" y="130" text-anchor="middle" font-size="14" font-weight="700" fill="#1f9d57" font-family="monospace">01000001</text>
+    <text x="252.5" y="174" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Byte</text>
+    <text x="252.5" y="194" text-anchor="middle" font-size="12" fill="#6b6f78">8 bits grouped</text>
+    <text x="252.5" y="209" text-anchor="middle" font-size="12" fill="#6b6f78">together</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="320" y1="160" x2="330" y2="160"/>
+    <polygon points="336,160 324,153 324,167"/>
+  </g>
+
+  <!-- Stage 3: Character -->
+  <g>
+    <rect x="340" y="80" width="135" height="160" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="407.5" cy="125" r="26" fill="#f59e0b"/>
+    <text x="407.5" y="133" text-anchor="middle" font-size="22" font-weight="700" fill="#ffffff">A</text>
+    <text x="407.5" y="174" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Character</text>
+    <text x="407.5" y="194" text-anchor="middle" font-size="12" fill="#6b6f78">Byte 65 maps</text>
+    <text x="407.5" y="209" text-anchor="middle" font-size="12" fill="#6b6f78">to letter A</text>
+  </g>
+
+  <!-- arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="475" y1="160" x2="485" y2="160"/>
+    <polygon points="491,160 479,153 479,167"/>
+  </g>
+
+  <!-- Stage 4: Text -->
+  <g>
+    <rect x="495" y="80" width="135" height="160" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="562.5" y="128" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Hello</text>
+    <text x="562.5" y="174" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Text</text>
+    <text x="562.5" y="194" text-anchor="middle" font-size="12" fill="#6b6f78">Characters</text>
+    <text x="562.5" y="209" text-anchor="middle" font-size="12" fill="#6b6f78">in a row</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="284" text-anchor="middle" font-size="11.5" fill="#9aa3af">ASCII and Unicode are the maps that turn byte numbers into letters.</text>
+</svg>

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 360" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Supply chain flow into Zambia from overseas source through port, distribution hub and end user.">
+  <title>Supply chain flow in Zambia</title>
+
+  <text x="330" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Supply Chain into Zambia</text>
+  <text x="330" y="52" text-anchor="middle" font-size="13" fill="#6b6f78">From source to school, clinic, farm or shop</text>
+
+  <!-- Source -->
+  <g>
+    <rect x="80" y="76" width="500" height="50" rx="12" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="330" y="97" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Source / Overseas Factory</text>
+    <text x="330" y="115" text-anchor="middle" font-size="12" fill="#6b6f78">South Africa, China, India or regional manufacturers</text>
+  </g>
+
+  <!-- arrow down -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="330" y1="126" x2="330" y2="140"/>
+    <polygon points="322,140 338,140 330,152"/>
+  </g>
+
+  <!-- Port -->
+  <g>
+    <rect x="80" y="152" width="500" height="50" rx="12" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="330" y="173" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Port of Entry</text>
+    <text x="330" y="191" text-anchor="middle" font-size="12" fill="#6b6f78">Dar es Salaam or Beira, then road haulage to Zambia</text>
+  </g>
+
+  <!-- arrow down -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="330" y1="202" x2="330" y2="216"/>
+    <polygon points="322,216 338,216 330,228"/>
+  </g>
+
+  <!-- Distribution hub -->
+  <g>
+    <rect x="80" y="228" width="500" height="50" rx="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="330" y="249" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">National Distribution Hub</text>
+    <text x="330" y="267" text-anchor="middle" font-size="12" fill="#6b6f78">Lusaka, Kitwe, Ndola warehouses and wholesalers</text>
+  </g>
+
+  <!-- arrow down -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="330" y1="278" x2="330" y2="292"/>
+    <polygon points="322,292 338,292 330,304"/>
+  </g>
+
+  <!-- End user -->
+  <g>
+    <rect x="80" y="304" width="500" height="50" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="330" y="325" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">End User</text>
+    <text x="330" y="343" text-anchor="middle" font-size="12" fill="#6b6f78">School, clinic, farm or retailer receives goods</text>
+  </g>
+</svg>

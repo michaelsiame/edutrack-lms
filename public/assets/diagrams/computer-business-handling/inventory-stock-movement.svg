@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Inventory stock movement: goods received increase stock, sales reduce stock, and the balance is checked against a reorder point.">
+  <title>Inventory Stock Movement</title>
+
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Inventory Stock Movement</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Track what comes in, what goes out, and when to restock</text>
+
+  <!-- Stage 1: Received -->
+  <g>
+    <rect x="60" y="90" width="150" height="150" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <!-- boxes icon -->
+    <rect x="90" y="118" width="32" height="24" rx="3" fill="#1f9d57"/>
+    <rect x="128" y="118" width="32" height="24" rx="3" fill="#1f9d57"/>
+    <rect x="109" y="146" width="32" height="24" rx="3" fill="#1f9d57"/>
+    <text x="135" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Received</text>
+    <text x="135" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">+50 units</text>
+    <text x="135" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">from supplier</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="210" y1="165" x2="235" y2="165"/>
+    <polygon points="235,158 247,165 235,172"/>
+  </g>
+
+  <!-- Stage 2: Sold -->
+  <g>
+    <rect x="250" y="90" width="150" height="150" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- basket icon -->
+    <rect x="290" y="126" width="70" height="40" rx="5" fill="#f59e0b"/>
+    <path d="M300 126 l25 -18 l25 18" fill="none" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="325" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Sold</text>
+    <text x="325" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">-30 units</text>
+    <text x="325" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">to customers</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="400" y1="165" x2="425" y2="165"/>
+    <polygon points="425,158 437,165 425,172"/>
+  </g>
+
+  <!-- Stage 3: Balance -->
+  <g>
+    <rect x="440" y="90" width="160" height="150" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <!-- warehouse icon -->
+    <path d="M520 118 l-30 22 h60 z" fill="#0b4f8c"/>
+    <rect x="497" y="140" width="46" height="34" rx="2" fill="#0b4f8c"/>
+    <rect x="515" y="155" width="10" height="19" fill="#eef4fb"/>
+    <text x="520" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Balance</text>
+    <text x="520" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">20 units on hand</text>
+    <text x="520" y="231" text-anchor="middle" font-size="12" fill="#dc2626">reorder point = 5</text>
+  </g>
+
+  <!-- footer -->
+  <text x="330" y="282" text-anchor="middle" font-size="11.5" fill="#9aa3af">When balance drops to the reorder point, place a new order before you run out.</text>
+</svg>

@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="The cyber kill chain: seven stages an attacker moves through from reconnaissance to final action.">
+  <title>The Cyber Kill Chain</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Cyber Kill Chain</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">How an attack moves from first research to final harm</text>
+
+  <!-- Stage 1: Recon -->
+  <g>
+    <rect x="20" y="82" width="78" height="140" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <circle cx="59" cy="120" r="18" fill="#0b4f8c"/>
+    <!-- magnifying glass -->
+    <circle cx="59" cy="115" r="7" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <line x1="64" y1="120" x2="69" y2="127" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <text x="59" y="166" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Recon</text>
+    <text x="59" y="184" text-anchor="middle" font-size="11" fill="#6b6f78">Research</text>
+    <text x="59" y="198" text-anchor="middle" font-size="11" fill="#6b6f78">the target</text>
+  </g>
+
+  <!-- Stage 2: Weaponise -->
+  <g>
+    <rect x="108" y="82" width="78" height="140" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <circle cx="147" cy="120" r="18" fill="#0b4f8c"/>
+    <!-- gear -->
+    <circle cx="147" cy="120" r="7" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <path d="M147 109 h3 v4 h-6 v-4 z M147 131 h3 v4 h-6 v-4 z M136 120 h4 v3 h-4 z M158 120 h4 v3 h-4 z" fill="#ffffff"/>
+    <text x="147" y="166" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Weaponise</text>
+    <text x="147" y="184" text-anchor="middle" font-size="11" fill="#6b6f78">Build a</text>
+    <text x="147" y="198" text-anchor="middle" font-size="11" fill="#6b6f78">malicious tool</text>
+  </g>
+
+  <!-- Stage 3: Deliver -->
+  <g>
+    <rect x="196" y="82" width="78" height="140" rx="12" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="235" cy="120" r="18" fill="#f59e0b"/>
+    <!-- envelope -->
+    <rect x="226" y="113" width="18" height="14" rx="2" fill="#ffffff"/>
+    <path d="M226 115 l9 7 9 -7" fill="none" stroke="#f59e0b" stroke-width="2"/>
+    <text x="235" y="166" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Deliver</text>
+    <text x="235" y="184" text-anchor="middle" font-size="11" fill="#6b6f78">Email, link,</text>
+    <text x="235" y="198" text-anchor="middle" font-size="11" fill="#6b6f78">or USB</text>
+  </g>
+
+  <!-- Stage 4: Exploit -->
+  <g>
+    <rect x="284" y="82" width="78" height="140" rx="12" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="323" cy="120" r="18" fill="#f59e0b"/>
+    <!-- unlock -->
+    <rect x="315" y="118" width="16" height="12" rx="2" fill="#ffffff"/>
+    <path d="M318 118 v-5 a5 5 0 0 1 10 0" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+    <text x="323" y="166" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Exploit</text>
+    <text x="323" y="184" text-anchor="middle" font-size="11" fill="#6b6f78">Trigger a</text>
+    <text x="323" y="198" text-anchor="middle" font-size="11" fill="#6b6f78">weakness</text>
+  </g>
+
+  <!-- Stage 5: Install -->
+  <g>
+    <rect x="372" y="82" width="78" height="140" rx="12" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <circle cx="411" cy="120" r="18" fill="#dc2626"/>
+    <!-- download arrow -->
+    <path d="M405 116 h5 v-7 h4 v7 h5 l-7 8 z" fill="#ffffff"/>
+    <text x="411" y="166" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Install</text>
+    <text x="411" y="184" text-anchor="middle" font-size="11" fill="#6b6f78">Drop malware</text>
+    <text x="411" y="198" text-anchor="middle" font-size="11" fill="#6b6f78">on device</text>
+  </g>
+
+  <!-- Stage 6: Control -->
+  <g>
+    <rect x="460" y="82" width="78" height="140" rx="12" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <circle cx="499" cy="120" r="18" fill="#dc2626"/>
+    <!-- remote hand / cursor -->
+    <path d="M493 114 l4 -2 v10 l6 -2 v-6 l4 -2 v14 l-10 4 z" fill="#ffffff"/>
+    <text x="499" y="166" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Control</text>
+    <text x="499" y="184" text-anchor="middle" font-size="11" fill="#6b6f78">Remote</text>
+    <text x="499" y="198" text-anchor="middle" font-size="11" fill="#6b6f78">access</text>
+  </g>
+
+  <!-- Stage 7: Action -->
+  <g>
+    <rect x="548" y="82" width="78" height="140" rx="12" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <circle cx="587" cy="120" r="18" fill="#dc2626"/>
+    <!-- target -->
+    <circle cx="587" cy="120" r="8" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+    <circle cx="587" cy="120" r="3" fill="#ffffff"/>
+    <text x="587" y="166" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Action</text>
+    <text x="587" y="184" text-anchor="middle" font-size="11" fill="#6b6f78">Steal, lock,</text>
+    <text x="587" y="198" text-anchor="middle" font-size="11" fill="#6b6f78">or destroy</text>
+  </g>
+
+  <!-- arrows -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="98" y1="152" x2="106" y2="152"/><polygon points="106,145 116,152 106,159"/>
+    <line x1="186" y1="152" x2="194" y2="152"/><polygon points="194,145 204,152 194,159"/>
+    <line x1="274" y1="152" x2="282" y2="152"/><polygon points="282,145 292,152 282,159"/>
+    <line x1="362" y1="152" x2="370" y2="152"/><polygon points="370,145 380,152 370,159"/>
+    <line x1="450" y1="152" x2="458" y2="152"/><polygon points="458,145 468,152 458,159"/>
+    <line x1="538" y1="152" x2="546" y2="152"/><polygon points="546,145 556,152 546,159"/>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="254" text-anchor="middle" font-size="11.5" fill="#9aa3af">Breaking any link in the chain can stop the whole attack.</text>
+</svg>

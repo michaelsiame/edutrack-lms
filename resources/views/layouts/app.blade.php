@@ -38,6 +38,7 @@
 
     <link rel="stylesheet" href="{{ asset('assets/css/whatsapp-button.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/ui-fixes.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/polish.css') }}">
 
     <!-- Custom Styles -->
     <style>

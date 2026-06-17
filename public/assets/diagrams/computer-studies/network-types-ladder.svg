@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Network size ladder from smallest to largest: PAN around one person, LAN across a building, WAN across cities or countries.">
+  <title>Network Types by Size</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Network Types by Size</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Coverage grows from personal devices up to the whole internet</text>
+
+  <!-- PAN -->
+  <g>
+    <rect x="255" y="78" width="150" height="52" rx="12" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="330" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">PAN</text>
+    <text x="330" y="118" text-anchor="middle" font-size="11" fill="#6b6f78">Personal Area Network</text>
+  </g>
+  <text x="240" y="109" text-anchor="end" font-size="12" font-weight="700" fill="#0b4f8c">~10 m</text>
+
+  <!-- arrow down -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="330" y1="135" x2="330" y2="145"/>
+    <polygon points="330,152 323,139 337,139"/>
+  </g>
+
+  <!-- LAN -->
+  <g>
+    <rect x="155" y="152" width="350" height="52" rx="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="330" y="174" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">LAN</text>
+    <text x="330" y="192" text-anchor="middle" font-size="11" fill="#6b6f78">Local Area Network — home, school, or office</text>
+  </g>
+  <text x="140" y="183" text-anchor="end" font-size="12" font-weight="700" fill="#1f9d57">~1 km</text>
+
+  <!-- arrow down -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="330" y1="209" x2="330" y2="219"/>
+    <polygon points="330,226 323,213 337,213"/>
+  </g>
+
+  <!-- WAN -->
+  <g>
+    <rect x="75" y="226" width="510" height="52" rx="12" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="330" y="248" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">WAN</text>
+    <text x="330" y="266" text-anchor="middle" font-size="11" fill="#6b6f78">Wide Area Network — cities, countries, or the entire internet</text>
+  </g>
+  <text x="60" y="257" text-anchor="end" font-size="12" font-weight="700" fill="#f59e0b">unlimited</text>
+
+  <!-- device examples -->
+  <text x="330" y="289" text-anchor="middle" font-size="11.5" fill="#9aa3af">PAN: Bluetooth headphones • LAN: office Wi-Fi • WAN: fibre links across Zambia</text>
+</svg>

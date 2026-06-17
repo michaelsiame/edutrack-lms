@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Anatomy of a pivot table with filters at the top, rows of categories, columns of periods, and values summarised by SUM or AVERAGE.">
+  <title>Pivot Table Anatomy</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Anatomy of a Pivot Table</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Drag fields to rows, columns, values, and filters</text>
+
+  <!-- Filters area -->
+  <rect x="30" y="75" width="600" height="34" rx="8" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <text x="45" y="96" font-size="12" font-weight="700" fill="#0b4f8c">Filters</text>
+  <rect x="105" y="82" width="90" height="20" rx="5" fill="#ffffff" stroke="#0b4f8c" stroke-width="1"/>
+  <text x="150" y="96" text-anchor="middle" font-size="10" fill="#0a1628">Region = South</text>
+  <rect x="205" y="82" width="80" height="20" rx="5" fill="#ffffff" stroke="#0b4f8c" stroke-width="1"/>
+  <text x="245" y="96" text-anchor="middle" font-size="10" fill="#0a1628">Year = 2025</text>
+
+  <!-- Pivot table grid -->
+  <rect x="30" y="118" width="420" height="145" rx="10" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+
+  <!-- column headers -->
+  <rect x="30" y="118" width="130" height="36" rx="10" fill="#fef6e7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="95" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#f59e0b">Rows</text>
+  <rect x="160" y="118" width="130" height="36" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1"/>
+  <text x="225" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#1f9d57">Q1</text>
+  <rect x="290" y="118" width="160" height="36" rx="10" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1"/>
+  <text x="370" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#1f9d57">Q2</text>
+
+  <!-- row labels -->
+  <rect x="30" y="154" width="130" height="35" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+  <text x="95" y="175" text-anchor="middle" font-size="11" fill="#0a1628">Maize</text>
+  <rect x="30" y="189" width="130" height="35" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+  <text x="95" y="210" text-anchor="middle" font-size="11" fill="#0a1628">Groundnuts</text>
+  <rect x="30" y="224" width="130" height="39" rx="10" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+  <text x="95" y="246" text-anchor="middle" font-size="11" fill="#0a1628">Soybeans</text>
+
+  <!-- values cells -->
+  <rect x="160" y="154" width="130" height="35" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+  <text x="225" y="175" text-anchor="middle" font-size="11" fill="#6b6f78">120</text>
+  <rect x="160" y="189" width="130" height="35" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+  <text x="225" y="210" text-anchor="middle" font-size="11" fill="#6b6f78">85</text>
+  <rect x="160" y="224" width="130" height="39" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+  <text x="225" y="246" text-anchor="middle" font-size="11" fill="#6b6f78">60</text>
+
+  <rect x="290" y="154" width="160" height="35" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+  <text x="370" y="175" text-anchor="middle" font-size="11" fill="#6b6f78">145</text>
+  <rect x="290" y="189" width="160" height="35" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+  <text x="370" y="210" text-anchor="middle" font-size="11" fill="#6b6f78">92</text>
+  <rect x="290" y="224" width="160" height="39" rx="10" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+  <text x="370" y="246" text-anchor="middle" font-size="11" fill="#6b6f78">78</text>
+
+  <!-- Values callout -->
+  <g>
+    <rect x="470" y="120" width="160" height="75" rx="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="550" y="142" text-anchor="middle" font-size="12" font-weight="700" fill="#1f9d57">Values</text>
+    <text x="550" y="162" text-anchor="middle" font-size="11" fill="#0a1628">Sales</text>
+    <text x="550" y="180" text-anchor="middle" font-size="11" fill="#6b6f78">Aggregation = SUM</text>
+  </g>
+
+  <!-- arrow from values to grid -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="470" y1="157" x2="450" y2="157"/>
+    <polygon points="450,150 437,157 450,164"/>
+  </g>
+
+  <!-- Field list callout -->
+  <g>
+    <rect x="470" y="210" width="160" height="52" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="550" y="230" text-anchor="middle" font-size="11" font-weight="700" fill="#0a1628">Field List</text>
+    <text x="550" y="248" text-anchor="middle" font-size="10" fill="#6b6f78">Crop, Quarter, Region, Sales</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="290" text-anchor="middle" font-size="11.5" fill="#9aa3af">Changing rows or columns instantly reshapes the summary.</text>
+</svg>

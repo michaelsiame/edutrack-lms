@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="A class is a blueprint that defines attributes and methods; objects are individual students created from that blueprint.">
+  <title>Class as Blueprint, Objects as Students</title>
+
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Class as Blueprint, Objects as Students</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">One class definition can create many real student records</text>
+
+  <!-- Blueprint class card -->
+  <g>
+    <rect x="40" y="80" width="240" height="200" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="2"/>
+    <text x="160" y="108" text-anchor="middle" font-size="16" font-weight="700" fill="#0a1628">class Student</text>
+    <rect x="60" y="120" width="200" height="68" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="70" y="138" font-size="12" font-weight="700" fill="#0b4f8c">Attributes</text>
+    <text x="70" y="153" font-size="12" fill="#6b6f78">string name;</text>
+    <text x="70" y="168" font-size="12" fill="#6b6f78">int grade;</text>
+    <text x="70" y="183" font-size="12" fill="#6b6f78">int age;</text>
+    <rect x="60" y="196" width="200" height="60" rx="8" fill="#ffffff" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="70" y="214" font-size="12" font-weight="700" fill="#0b4f8c">Methods</text>
+    <text x="70" y="232" font-size="12" fill="#6b6f78">setGrade(int g)</text>
+    <text x="70" y="248" font-size="12" fill="#6b6f78">display()</text>
+  </g>
+
+  <!-- Object 1 -->
+  <g>
+    <rect x="380" y="85" width="240" height="55" rx="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="395" y="107" font-size="13" font-weight="700" fill="#0a1628">student1</text>
+    <text x="395" y="126" font-size="12" fill="#6b6f78">Chileshe • grade 85 • age 17</text>
+  </g>
+
+  <!-- Object 2 -->
+  <g>
+    <rect x="380" y="155" width="240" height="55" rx="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="395" y="177" font-size="13" font-weight="700" fill="#0a1628">student2</text>
+    <text x="395" y="196" font-size="12" fill="#6b6f78">Mutinta • grade 78 • age 16</text>
+  </g>
+
+  <!-- Object 3 -->
+  <g>
+    <rect x="380" y="225" width="240" height="55" rx="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="395" y="247" font-size="13" font-weight="700" fill="#0a1628">student3</text>
+    <text x="395" y="266" font-size="12" fill="#6b6f78">Bwalya • grade 92 • age 18</text>
+  </g>
+
+  <!-- arrows from blueprint to objects -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="280" y1="112" x2="380" y2="112"/>
+    <polygon points="380,105 393,112 380,119"/>
+    <line x1="280" y1="182" x2="380" y2="182"/>
+    <polygon points="380,175 393,182 380,189"/>
+    <line x1="280" y1="252" x2="380" y2="252"/>
+    <polygon points="380,245 393,252 380,259"/>
+  </g>
+
+  <!-- footer -->
+  <text x="330" y="294" text-anchor="middle" font-size="11.5" fill="#9aa3af">The class defines the plan; each object stores its own real values.</text>
+</svg>

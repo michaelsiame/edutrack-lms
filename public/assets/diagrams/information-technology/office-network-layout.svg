@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="A small office network layout: internet enters a router, which connects to a switch for wired devices and a wireless access point for laptops.">
+  <title>A Small Office Network Layout</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">A Small Office Network Layout</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">How routers, switches, and Wi-Fi share one internet connection</text>
+
+  <!-- Internet cloud -->
+  <g>
+    <ellipse cx="330" cy="85" rx="42" ry="20" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="330" y="89" text-anchor="middle" font-size="12" font-weight="700" fill="#0b4f8c">Internet</text>
+  </g>
+
+  <!-- line internet to router -->
+  <line x1="330" y1="105" x2="330" y2="122" stroke="#9aa3af" stroke-width="2.5"/>
+  <polygon points="330,129 323,117 337,117" fill="#9aa3af"/>
+
+  <!-- Router -->
+  <g>
+    <rect x="285" y="125" width="90" height="38" rx="8" fill="#ecfaf2" stroke="#1f9d57" stroke-width="2"/>
+    <circle cx="305" cy="144" r="6" fill="#1f9d57"/>
+    <circle cx="330" cy="144" r="6" fill="#1f9d57"/>
+    <circle cx="355" cy="144" r="6" fill="#1f9d57"/>
+    <text x="330" y="183" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Router</text>
+  </g>
+
+  <!-- line router to switch -->
+  <line x1="305" y1="163" x2="230" y2="200" stroke="#9aa3af" stroke-width="2.5"/>
+  <polygon points="226,203 230,190 237,201" fill="#9aa3af"/>
+
+  <!-- line router to AP -->
+  <line x1="355" y1="163" x2="430" y2="200" stroke="#9aa3af" stroke-width="2.5"/>
+  <polygon points="433,203 426,190 437,197" fill="#9aa3af"/>
+
+  <!-- Switch -->
+  <g>
+    <rect x="170" y="198" width="80" height="34" rx="6" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="180" y="208" width="8" height="14" rx="1" fill="#f59e0b"/>
+    <rect x="192" y="208" width="8" height="14" rx="1" fill="#f59e0b"/>
+    <rect x="204" y="208" width="8" height="14" rx="1" fill="#f59e0b"/>
+    <rect x="216" y="208" width="8" height="14" rx="1" fill="#f59e0b"/>
+    <rect x="228" y="208" width="8" height="14" rx="1" fill="#f59e0b"/>
+    <text x="210" y="250" text-anchor="middle" font-size="12" font-weight="700" fill="#0a1628">Switch</text>
+  </g>
+
+  <!-- Wi-Fi AP -->
+  <g>
+    <rect x="420" y="198" width="80" height="34" rx="6" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <path d="M450 208 C450 202 470 202 470 208" fill="none" stroke="#0b4f8c" stroke-width="2"/>
+    <path d="M445 212 C445 203 475 203 475 212" fill="none" stroke="#0b4f8c" stroke-width="2"/>
+    <circle cx="460" cy="220" r="3" fill="#0b4f8c"/>
+    <text x="460" y="250" text-anchor="middle" font-size="12" font-weight="700" fill="#0a1628">Wi-Fi AP</text>
+  </g>
+
+  <!-- Wired Computer 1 -->
+  <g>
+    <line x1="170" y1="215" x2="120" y2="250" stroke="#9aa3af" stroke-width="2.5"/>
+    <polygon points="116,253 122,241 126,252" fill="#9aa3af"/>
+    <rect x="95" y="250" width="50" height="34" rx="4" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <rect x="103" y="256" width="34" height="18" rx="2" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <rect x="103" y="256" width="34" height="4" rx="1" fill="#d8dee6"/>
+    <text x="120" y="298" text-anchor="middle" font-size="11" fill="#6b6f78">PC 1</text>
+  </g>
+
+  <!-- Wired Computer 2 -->
+  <g>
+    <line x1="210" y1="232" x2="210" y2="250" stroke="#9aa3af" stroke-width="2.5"/>
+    <polygon points="210,257 203,245 217,245" fill="#9aa3af"/>
+    <rect x="185" y="250" width="50" height="34" rx="4" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <rect x="193" y="256" width="34" height="18" rx="2" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <rect x="193" y="256" width="34" height="4" rx="1" fill="#d8dee6"/>
+    <text x="210" y="298" text-anchor="middle" font-size="11" fill="#6b6f78">PC 2</text>
+  </g>
+
+  <!-- Printer -->
+  <g>
+    <line x1="250" y1="215" x2="290" y2="250" stroke="#9aa3af" stroke-width="2.5"/>
+    <polygon points="293,253 282,244 291,239" fill="#9aa3af"/>
+    <rect x="275" y="250" width="50" height="34" rx="4" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <rect x="283" y="258" width="34" height="18" rx="2" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <circle cx="292" cy="267" r="3" fill="#6b6f78"/>
+    <circle cx="308" cy="267" r="3" fill="#6b6f78"/>
+    <text x="300" y="298" text-anchor="middle" font-size="11" fill="#6b6f78">Printer</text>
+  </g>
+
+  <!-- Wireless Laptop -->
+  <g>
+    <path d="M500 208 C520 190 540 180 560 200" fill="none" stroke="#9aa3af" stroke-width="2.5" stroke-dasharray="4,3"/>
+    <polygon points="557,205 552,192 565,198" fill="#9aa3af"/>
+    <rect x="550" y="205" width="44" height="28" rx="3" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <rect x="556" y="210" width="32" height="18" rx="1" fill="#ffffff" stroke="#d8dee6" stroke-width="1"/>
+    <text x="572" y="249" text-anchor="middle" font-size="11" fill="#6b6f78">Laptop</text>
+  </g>
+
+  <!-- legend -->
+  <text x="330" y="280" text-anchor="middle" font-size="11.5" fill="#9aa3af">Solid lines are Ethernet cables; dashed lines are wireless connections.</text>
+</svg>

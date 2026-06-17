@@ -1,0 +1,154 @@
+/* ==========================================================================
+   polish.css — global design-engineering details.
+   Loaded LAST in dashboard/app layouts so it can refine without restructuring.
+   Additive only: smoothing, numerals, wrapping, depth, tactile states, a11y.
+   ========================================================================== */
+
+/* macOS font smoothing + legibility ------------------------------------- */
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Tabular numerals for any updating/aligned numbers --------------------- */
+.od-num,
+.od-stat-value,
+.stat-value,
+.stat-card .value,
+table td,
+table th,
+[class*="-count"],
+.tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+/* Headings: balanced wrapping so titles don't drop a lonely last word --- */
+h1, h2, h3,
+.od-h1, .od-h2, .od-h3 {
+    text-wrap: balance;
+}
+
+/* Short/medium text: pretty wrapping (avoid orphans). Not on long prose. */
+.od-meta, .od-eyebrow, figcaption,
+.od-card p, .stat-card p,
+label, .text-sm, .text-xs {
+    text-wrap: pretty;
+}
+
+/* Images get a subtle neutral inset outline so edges don't blur in ------ */
+img:not([src*=".svg"]):not(.no-outline):not([class*="rounded-full"]) {
+    outline: 1px solid rgba(0, 0, 0, 0.08);
+    outline-offset: -1px;
+}
+
+/* Tactile, interruptible interactive states ---------------------------- */
+button, .btn, .od-btn, [role="button"], a.od-btn {
+    transition-property: transform, background-color, box-shadow, border-color, color;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+}
+button:active, .btn:active, .od-btn:active,
+[role="button"]:active, a.od-btn:active {
+    transform: scale(0.97);
+}
+
+/* Card depth + hover lift on interactive cards ------------------------- */
+.od-card {
+    transition-property: box-shadow, transform, border-color;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+}
+a.od-card:hover,
+.od-card-hover:hover {
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 6px 16px -6px rgba(16, 24, 40, 0.12);
+    transform: translateY(-1px);
+}
+
+/* Quick-action tiles (admin course hub etc.): coherent hover ----------- */
+a[class*="rounded-xl"][class*="border"]:hover {
+    box-shadow: 0 4px 12px -4px rgba(16, 24, 40, 0.12);
+}
+
+/* Keep small icon-only controls at a usable hit area ------------------- */
+.od-icon-btn, button.icon, a.icon-only {
+    min-width: 40px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Respect reduced-motion ---------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    button:active, .btn:active, .od-btn:active { transform: none; }
+}
+
+/* Responsive tables: stack od-table rows into cards on phones ----------
+   Pairs with responsive-tables.js, which copies each column header into a
+   data-label on the matching cell so nothing is hidden on small screens. */
+@media (max-width: 768px) {
+    .od-table { min-width: 0 !important; }
+    /* visually hide the header row but keep it for the label-copy script */
+    .od-table thead {
+        position: absolute; width: 1px; height: 1px;
+        padding: 0; margin: -1px; overflow: hidden;
+        clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+    .od-table, .od-table tbody { display: block; width: 100%; }
+    .od-table tr {
+        display: block;
+        border: 1px solid var(--od-border);
+        border-radius: 12px;
+        background: var(--od-surface);
+        margin-bottom: 10px;
+        padding: 2px 14px;
+    }
+    .od-table tbody tr:hover { background: var(--od-surface); }
+    .od-table td {
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 14px; text-align: right; white-space: normal;
+        padding: 9px 0; border: 0;
+        border-bottom: 1px solid var(--od-border);
+    }
+    .od-table tr td:last-child { border-bottom: 0; }
+    .od-table td::before {
+        content: attr(data-label);
+        flex: 0 0 38%; text-align: left;
+        font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+        text-transform: uppercase; color: var(--od-muted);
+    }
+    /* cells with no header (blank label) or the empty-state row span full width */
+    .od-table td[data-label=""]::before,
+    .od-table td:not([data-label])::before { content: ""; }
+    .od-table td[colspan] { display: block; text-align: center; }
+    .od-table td[colspan]::before { display: none; }
+    /* action button clusters wrap nicely instead of overflowing */
+    .od-table td .od-btn, .od-table td .btn { flex: 0 0 auto; }
+}
+
+/* Desktop: keep action-icon clusters on one line (they wrapped in the
+   narrow Actions column because the delete control is a block <form>).
+   Mobile stacking is handled above. */
+@media (min-width: 769px) {
+    .od-table td:last-child { white-space: nowrap; }
+    .od-table td:last-child form { display: inline-block; vertical-align: middle; }
+    .od-table td:last-child > a,
+    .od-table td:last-child > button { vertical-align: middle; }
+}
+
+/* Dark-mode image outline --------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+    img:not([src*=".svg"]):not(.no-outline):not([class*="rounded-full"]) {
+        outline-color: rgba(255, 255, 255, 0.10);
+    }
+}
+.dark img:not([src*=".svg"]):not(.no-outline):not([class*="rounded-full"]) {
+    outline-color: rgba(255, 255, 255, 0.10);
+}

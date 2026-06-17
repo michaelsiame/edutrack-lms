@@ -20,7 +20,7 @@
  <div class="mb-4">
  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Content</label>
  <textarea name="content" rows="5" required
- class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"></textarea>
+ class="rich-editor w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"></textarea>
  </div>
 
  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -85,3 +85,7 @@
  </div>
 </div>
 @endsection
+
+@push('scripts')
+    @include('partials.rich-editor')
+@endpush

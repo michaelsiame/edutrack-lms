@@ -5,7 +5,7 @@
 
 /* Course Card Hover Effects */
 .course-card {
-    transition: all 0.3s ease;
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: 0.3s; transition-timing-function: ease;
 }
 
 .course-card:hover {
@@ -93,7 +93,7 @@
 /* Tab System */
 .tab-link {
     position: relative;
-    transition: all 0.2s ease;
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: 0.2s; transition-timing-function: ease;
 }
 
 .tab-link::after {
@@ -218,7 +218,7 @@
 
 /* Pagination */
 .pagination-button {
-    transition: all 0.2s ease;
+    transition-property: transform, background-color, box-shadow, border-color, color, opacity; transition-duration: 0.2s; transition-timing-function: ease;
 }
 
 .pagination-button:hover:not(.active) {

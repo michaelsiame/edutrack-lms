@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Computer system layers: hardware at the bottom, operating system above it, applications next, and the user at the top.">
+  <title>Computer system layers</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Computer System Layers</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">How you, the software, and the hardware work together</text>
+
+  <!-- User layer -->
+  <g>
+    <rect x="180" y="74" width="300" height="44" rx="12" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="210" cy="96" r="12" fill="#f59e0b"/>
+    <circle cx="210" cy="93" r="4" fill="#ffffff"/>
+    <path d="M202 104 a7 5 0 0 1 16 0 z" fill="#ffffff"/>
+    <text x="330" y="101" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">You — type, tap, click</text>
+  </g>
+
+  <!-- Apps layer -->
+  <g>
+    <rect x="150" y="126" width="360" height="48" rx="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <!-- app window icons -->
+    <rect x="178" y="140" width="20" height="16" rx="2" fill="#1f9d57"/>
+    <rect x="204" y="140" width="20" height="16" rx="2" fill="#1f9d57"/>
+    <rect x="230" y="140" width="20" height="16" rx="2" fill="#1f9d57"/>
+    <text x="330" y="157" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Applications — Word, browser, WhatsApp, games</text>
+  </g>
+
+  <!-- OS layer -->
+  <g>
+    <rect x="120" y="182" width="420" height="48" rx="12" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <!-- gear icon -->
+    <circle cx="160" cy="206" r="14" fill="#0b4f8c"/>
+    <circle cx="160" cy="206" r="6" fill="#eef4fb"/>
+    <path d="M160 189 v6 M160 217 v6 M143 206 h6 M171 206 h6 M149 195 l4 4 M167 213 l4 4 M149 217 l4 -4 M167 199 l4 -4" stroke="#ffffff" stroke-width="2"/>
+    <text x="330" y="208" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Operating System</text>
+    <text x="330" y="228" text-anchor="middle" font-size="13" fill="#6b6f78">Windows / Android / iOS manages everything</text>
+  </g>
+
+  <!-- Hardware layer -->
+  <g>
+    <rect x="90" y="238" width="480" height="48" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <!-- hardware icons -->
+    <rect x="122" y="252" width="26" height="20" rx="2" fill="#9aa3af"/>
+    <rect x="124" y="254" width="22" height="14" rx="1" fill="#f7f8fa"/>
+    <rect x="158" y="252" width="14" height="20" rx="2" fill="#9aa3af"/>
+    <rect x="160" y="254" width="10" height="14" rx="1" fill="#f7f8fa"/>
+    <circle cx="184" cy="262" r="10" fill="#9aa3af"/>
+    <circle cx="184" cy="262" r="4" fill="#f7f8fa"/>
+    <text x="330" y="269" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Hardware — screen, CPU, memory, keyboard, battery, storage</text>
+  </g>
+
+  <!-- arrows between layers -->
+  <g stroke="#9aa3af" stroke-width="2" stroke-dasharray="6 4" fill="none">
+    <line x1="330" y1="122" x2="330" y2="126"/>
+    <line x1="330" y1="178" x2="330" y2="182"/>
+    <line x1="330" y1="234" x2="330" y2="238"/>
+  </g>
+</svg>

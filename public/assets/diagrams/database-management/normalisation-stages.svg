@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Database normalisation stages from unnormalised data to third normal form.">
+  <title>Database Normalisation Stages</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Database Normalisation Stages</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Cleaning a table step by step removes duplication and errors</text>
+
+  <!-- Unnormalised -->
+  <g>
+    <rect x="30" y="82" width="600" height="44" rx="10" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="50" y="110" font-size="15" font-weight="700" fill="#dc2626">Unnormalised</text>
+    <text x="190" y="110" font-size="12" fill="#6b6f78">One big table with repeating groups and mixed facts</text>
+  </g>
+
+  <!-- 1NF -->
+  <g>
+    <rect x="30" y="136" width="600" height="44" rx="10" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="50" y="164" font-size="15" font-weight="700" fill="#f59e0b">1NF</text>
+    <text x="190" y="164" font-size="12" fill="#6b6f78">Each cell holds one value; no repeating groups</text>
+  </g>
+
+  <!-- 2NF -->
+  <g>
+    <rect x="30" y="190" width="600" height="44" rx="10" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="50" y="218" font-size="15" font-weight="700" fill="#6b6f78">2NF</text>
+    <text x="190" y="218" font-size="12" fill="#6b6f78">All non-key columns depend on the whole primary key</text>
+  </g>
+
+  <!-- 3NF -->
+  <g>
+    <rect x="30" y="244" width="600" height="44" rx="10" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="50" y="272" font-size="15" font-weight="700" fill="#1f9d57">3NF</text>
+    <text x="190" y="272" font-size="12" fill="#6b6f78">No transitive dependency: columns depend only on the key</text>
+  </g>
+
+  <!-- arrows between bands -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="330" y1="128" x2="330" y2="132"/><polygon points="323,132 330,142 337,132"/>
+    <line x1="330" y1="182" x2="330" y2="186"/><polygon points="323,186 330,196 337,186"/>
+    <line x1="330" y1="236" x2="330" y2="240"/><polygon points="323,240 330,250 337,240"/>
+  </g>
+</svg>

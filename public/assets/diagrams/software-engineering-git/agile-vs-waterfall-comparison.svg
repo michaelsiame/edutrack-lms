@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Comparison of Agile and Waterfall project management: Agile is iterative and adaptive, Waterfall is sequential and planned upfront.">
+  <title>Agile vs Waterfall Comparison</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Agile vs Waterfall</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Two ways to run a software project</text>
+
+  <!-- Waterfall card -->
+  <g>
+    <rect x="35" y="80" width="280" height="190" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="175" y="108" text-anchor="middle" font-size="17" font-weight="700" fill="#0a1628">Waterfall</text>
+    <text x="175" y="128" text-anchor="middle" font-size="12" fill="#6b6f78">Plan everything first, then build</text>
+
+    <rect x="65" y="145" width="220" height="28" rx="6" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1"/>
+    <text x="175" y="164" text-anchor="middle" font-size="12" fill="#0a1628">1. Requirements</text>
+
+    <rect x="65" y="180" width="220" height="28" rx="6" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1"/>
+    <text x="175" y="199" text-anchor="middle" font-size="12" fill="#0a1628">2. Design</text>
+
+    <rect x="65" y="215" width="220" height="28" rx="6" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1"/>
+    <text x="175" y="234" text-anchor="middle" font-size="12" fill="#0a1628">3. Build &amp; Test</text>
+
+    <!-- down arrows -->
+    <g stroke="#9aa3af" stroke-width="2" fill="#9aa3af">
+      <line x1="175" y1="173" x2="175" y2="180"/>
+      <polygon points="171,175 175,180 179,175"/>
+      <line x1="175" y1="208" x2="175" y2="215"/>
+      <polygon points="171,210 175,215 179,210"/>
+    </g>
+  </g>
+
+  <!-- Agile card -->
+  <g>
+    <rect x="345" y="80" width="280" height="190" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="485" y="108" text-anchor="middle" font-size="17" font-weight="700" fill="#0a1628">Agile</text>
+    <text x="485" y="128" text-anchor="middle" font-size="12" fill="#6b6f78">Build in small cycles and adapt</text>
+
+    <!-- cycle of iterations -->
+    <rect x="375" y="145" width="90" height="28" rx="6" fill="#fef6e7" stroke="#f59e0b" stroke-width="1"/>
+    <text x="420" y="164" text-anchor="middle" font-size="11" fill="#0a1628">Plan</text>
+
+    <rect x="505" y="145" width="90" height="28" rx="6" fill="#fef6e7" stroke="#f59e0b" stroke-width="1"/>
+    <text x="550" y="164" text-anchor="middle" font-size="11" fill="#0a1628">Build</text>
+
+    <rect x="375" y="215" width="90" height="28" rx="6" fill="#fef6e7" stroke="#f59e0b" stroke-width="1"/>
+    <text x="420" y="234" text-anchor="middle" font-size="11" fill="#0a1628">Review</text>
+
+    <rect x="505" y="215" width="90" height="28" rx="6" fill="#fef6e7" stroke="#f59e0b" stroke-width="1"/>
+    <text x="550" y="234" text-anchor="middle" font-size="11" fill="#0a1628">Ship</text>
+
+    <!-- cycle arrows -->
+    <g stroke="#9aa3af" stroke-width="2" fill="#9aa3af">
+      <line x1="465" y1="159" x2="505" y2="159"/>
+      <polygon points="500,155 505,159 500,163"/>
+      <line x1="550" y1="173" x2="550" y2="215"/>
+      <polygon points="546,210 550,215 554,210"/>
+      <line x1="505" y1="229" x2="465" y2="229"/>
+      <polygon points="470,225 465,229 470,233"/>
+      <line x1="420" y1="215" x2="420" y2="173"/>
+      <polygon points="416,178 420,173 424,178"/>
+    </g>
+
+    <text x="485" y="198" text-anchor="middle" font-size="11" fill="#6b6f78">Repeat = sprint</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="284" text-anchor="middle" font-size="11.5" fill="#9aa3af">Agile fits changing needs; Waterfall fits fixed requirements and clear deadlines.</text>
+</svg>

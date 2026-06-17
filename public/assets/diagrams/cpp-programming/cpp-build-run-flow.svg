@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="C++ build and run flow: source code is compiled into an object file, linked into an executable, and then run.">
+  <title>C++ Build and Run Flow</title>
+
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">C++ Build and Run Flow</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">What happens behind the scenes when you press build</text>
+
+  <!-- Stage 1: Source Code -->
+  <g>
+    <rect x="20" y="100" width="110" height="130" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <!-- document icon -->
+    <rect x="55" y="124" width="40" height="50" rx="3" fill="#0b4f8c"/>
+    <rect x="60" y="132" width="30" height="4" rx="1" fill="#ffffff"/>
+    <rect x="60" y="142" width="30" height="4" rx="1" fill="#ffffff"/>
+    <rect x="60" y="152" width="20" height="4" rx="1" fill="#ffffff"/>
+    <text x="75" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Source</text>
+    <text x="75" y="212" text-anchor="middle" font-size="12" fill="#6b6f78">main.cpp</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="130" y1="165" x2="150" y2="165"/>
+    <polygon points="150,158 162,165 150,172"/>
+  </g>
+
+  <!-- Stage 2: Compiler -->
+  <g>
+    <rect x="150" y="100" width="110" height="130" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <!-- gear icon -->
+    <circle cx="205" cy="145" r="18" fill="#6b6f78"/>
+    <circle cx="205" cy="145" r="8" fill="#f7f8fa"/>
+    <rect x="201" y="118" width="8" height="10" rx="2" fill="#6b6f78"/>
+    <rect x="201" y="162" width="8" height="10" rx="2" fill="#6b6f78"/>
+    <rect x="178" y="141" width="10" height="8" rx="2" fill="#6b6f78"/>
+    <rect x="222" y="141" width="10" height="8" rx="2" fill="#6b6f78"/>
+    <text x="205" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Compiler</text>
+    <text x="205" y="212" text-anchor="middle" font-size="12" fill="#6b6f78">g++ checks</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="260" y1="165" x2="280" y2="165"/>
+    <polygon points="280,158 292,165 280,172"/>
+  </g>
+
+  <!-- Stage 3: Object File -->
+  <g>
+    <rect x="280" y="100" width="110" height="130" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- document icon -->
+    <rect x="315" y="124" width="40" height="50" rx="3" fill="#f59e0b"/>
+    <rect x="320" y="132" width="30" height="4" rx="1" fill="#ffffff"/>
+    <rect x="320" y="142" width="30" height="4" rx="1" fill="#ffffff"/>
+    <rect x="320" y="152" width="20" height="4" rx="1" fill="#ffffff"/>
+    <text x="335" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Object</text>
+    <text x="335" y="212" text-anchor="middle" font-size="12" fill="#6b6f78">main.o</text>
+  </g>
+
+  <!-- arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="390" y1="165" x2="410" y2="165"/>
+    <polygon points="410,158 422,165 410,172"/>
+  </g>
+
+  <!-- Stage 4: Linker -->
+  <g>
+    <rect x="410" y="100" width="110" height="130" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <!-- link icon -->
+    <ellipse cx="440" cy="150" rx="12" ry="16" fill="none" stroke="#0b4f8c" stroke-width="5"/>
+    <ellipse cx="480" cy="150" rx="12" ry="16" fill="none" stroke="#0b4f8c" stroke-width="5"/>
+    <text x="465" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Linker</text>
+    <text x="465" y="212" text-anchor="middle" font-size="12" fill="#6b6f78">joins files</text>
+  </g>
+
+  <!-- arrow 4 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="520" y1="165" x2="540" y2="165"/>
+    <polygon points="540,158 552,165 540,172"/>
+  </g>
+
+  <!-- Stage 5: Run -->
+  <g>
+    <rect x="540" y="100" width="100" height="130" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <!-- play icon -->
+    <circle cx="590" cy="145" r="22" fill="#1f9d57"/>
+    <polygon points="584,136 584,154 600,145" fill="#ffffff"/>
+    <text x="590" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Run</text>
+    <text x="590" y="212" text-anchor="middle" font-size="12" fill="#6b6f78">output</text>
+  </g>
+
+  <!-- footer -->
+  <text x="330" y="270" text-anchor="middle" font-size="11.5" fill="#9aa3af">One command like g++ main.cpp -o app runs the compiler and linker together.</text>
+</svg>

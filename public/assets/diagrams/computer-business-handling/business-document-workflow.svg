@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Business document workflow: draft the content, format the layout, proofread for errors, then send or print.">
+  <title>Business Document Workflow</title>
+
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Business Document Workflow</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">From rough draft to a finished letter or invoice</text>
+
+  <!-- Stage 1: Draft -->
+  <g>
+    <rect x="45" y="90" width="120" height="150" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <!-- pencil icon -->
+    <rect x="95" y="118" width="10" height="48" rx="2" transform="rotate(45 100 142)" fill="#0b4f8c"/>
+    <polygon points="100,112 104,120 96,120" transform="rotate(45 100 142)" fill="#0b4f8c"/>
+    <text x="105" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">1. Draft</text>
+    <text x="105" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Write the</text>
+    <text x="105" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">facts first</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="165" y1="165" x2="190" y2="165"/>
+    <polygon points="190,158 202,165 190,172"/>
+  </g>
+
+  <!-- Stage 2: Format -->
+  <g>
+    <rect x="205" y="90" width="120" height="150" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- ruler icon -->
+    <rect x="240" y="120" width="50" height="14" rx="2" fill="#f59e0b"/>
+    <line x1="247" y1="120" x2="247" y2="134" stroke="#ffffff" stroke-width="2"/>
+    <line x1="255" y1="120" x2="255" y2="134" stroke="#ffffff" stroke-width="2"/>
+    <line x1="263" y1="120" x2="263" y2="134" stroke="#ffffff" stroke-width="2"/>
+    <line x1="271" y1="120" x2="271" y2="134" stroke="#ffffff" stroke-width="2"/>
+    <line x1="279" y1="120" x2="279" y2="134" stroke="#ffffff" stroke-width="2"/>
+    <text x="265" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">2. Format</text>
+    <text x="265" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Margins,</text>
+    <text x="265" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">fonts, table</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="325" y1="165" x2="350" y2="165"/>
+    <polygon points="350,158 362,165 350,172"/>
+  </g>
+
+  <!-- Stage 3: Proof -->
+  <g>
+    <rect x="365" y="90" width="120" height="150" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <circle cx="425" cy="140" r="24" fill="#1f9d57"/>
+    <path d="M415 140 l7 8 14 -16" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="425" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">3. Proof</text>
+    <text x="425" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Check spelling</text>
+    <text x="425" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">and numbers</text>
+  </g>
+
+  <!-- arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="485" y1="165" x2="510" y2="165"/>
+    <polygon points="510,158 522,165 510,172"/>
+  </g>
+
+  <!-- Stage 4: Send / Print -->
+  <g>
+    <rect x="525" y="90" width="120" height="150" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <!-- printer icon -->
+    <rect x="570" y="120" width="40" height="28" rx="3" fill="#6b6f78"/>
+    <rect x="575" y="140" width="30" height="16" fill="#ffffff"/>
+    <rect x="578" y="144" width="24" height="8" fill="#d8dee6"/>
+    <text x="585" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">4. Send</text>
+    <text x="585" y="216" text-anchor="middle" font-size="12" fill="#6b6f78">Email, print,</text>
+    <text x="585" y="231" text-anchor="middle" font-size="12" fill="#6b6f78">or hand over</text>
+  </g>
+</svg>

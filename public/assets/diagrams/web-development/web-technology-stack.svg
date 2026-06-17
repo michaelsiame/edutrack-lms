@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Web technology stack: HTML provides structure, CSS provides presentation, and JavaScript adds behaviour to a web page.">
+  <title>The Web Technology Stack</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Web Technology Stack</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Three layers work together to build every web page</text>
+
+  <!-- Browser window frame -->
+  <rect x="60" y="78" width="540" height="170" rx="12" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+  <rect x="60" y="78" width="540" height="28" rx="12" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <circle cx="82" cy="92" r="5" fill="#dc2626"/>
+  <circle cx="98" cy="92" r="5" fill="#f59e0b"/>
+  <circle cx="114" cy="92" r="5" fill="#1f9d57"/>
+
+  <!-- HTML layer -->
+  <g>
+    <rect x="80" y="120" width="152" height="110" rx="12" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="156" y="150" text-anchor="middle" font-size="15" font-weight="700" fill="#0b4f8c">HTML</text>
+    <text x="156" y="172" text-anchor="middle" font-size="12" fill="#0a1628">Structure</text>
+    <text x="156" y="192" text-anchor="middle" font-size="12" fill="#6b6f78">headings</text>
+    <text x="156" y="208" text-anchor="middle" font-size="12" fill="#6b6f78">paragraphs</text>
+    <text x="156" y="224" text-anchor="middle" font-size="12" fill="#6b6f78">forms</text>
+  </g>
+
+  <!-- plus -->
+  <text x="222" y="182" text-anchor="middle" font-size="20" font-weight="700" fill="#9aa3af">+</text>
+
+  <!-- CSS layer -->
+  <g>
+    <rect x="246" y="120" width="152" height="110" rx="12" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="322" y="150" text-anchor="middle" font-size="15" font-weight="700" fill="#f59e0b">CSS</text>
+    <text x="322" y="172" text-anchor="middle" font-size="12" fill="#0a1628">Presentation</text>
+    <text x="322" y="192" text-anchor="middle" font-size="12" fill="#6b6f78">colours</text>
+    <text x="322" y="208" text-anchor="middle" font-size="12" fill="#6b6f78">fonts</text>
+    <text x="322" y="224" text-anchor="middle" font-size="12" fill="#6b6f78">layout</text>
+  </g>
+
+  <!-- plus -->
+  <text x="414" y="182" text-anchor="middle" font-size="20" font-weight="700" fill="#9aa3af">+</text>
+
+  <!-- JS layer -->
+  <g>
+    <rect x="428" y="120" width="152" height="110" rx="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="504" y="150" text-anchor="middle" font-size="15" font-weight="700" fill="#1f9d57">JavaScript</text>
+    <text x="504" y="172" text-anchor="middle" font-size="12" fill="#0a1628">Behaviour</text>
+    <text x="504" y="192" text-anchor="middle" font-size="12" fill="#6b6f78">events</text>
+    <text x="504" y="208" text-anchor="middle" font-size="12" fill="#6b6f78">validation</text>
+    <text x="504" y="224" text-anchor="middle" font-size="12" fill="#6b6f78">fetch data</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="284" text-anchor="middle" font-size="11.5" fill="#9aa3af">HTML is the skeleton, CSS is the styling, and JavaScript is the muscle.</text>
+</svg>
