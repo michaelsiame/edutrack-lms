@@ -30,6 +30,30 @@ class WebDevelopmentScreenshotsSeeder extends Seeder
                 'alt'   => 'A real web page with each semantic region labelled: header, nav, main, article, aside, footer',
                 'cap'   => 'Figure: A real web page with each HTML5 semantic element labelled — header, nav, main (containing an article), aside, and footer.',
             ],
+            [
+                'match' => 'Box Model',
+                'file'  => '/assets/screenshots/web-development/box-model.png',
+                'alt'   => 'A product card from a Zambian tech shop with coloured rings showing content, padding, border, and margin',
+                'cap'   => 'Figure: The CSS box model visualised as coloured rings around a real product card — content, padding, border, and margin.',
+            ],
+            [
+                'match' => 'Flexbox',
+                'file'  => '/assets/screenshots/web-development/flexbox.png',
+                'alt'   => 'A flex container holding four print-shop service cards laid out in a row along the main axis',
+                'cap'   => 'Figure: A CSS flex container with display:flex, showing items arranged in a row along the main axis.',
+            ],
+            [
+                'match' => 'Forms',
+                'file'  => '/assets/screenshots/web-development/forms.png',
+                'alt'   => 'A styled registration form with text input, email input, select dropdown, textarea, and submit button labelled',
+                'cap'   => 'Figure: A real HTML form with labelled controls: text input, email input, select, textarea, and submit button.',
+            ],
+            [
+                'match' => 'Selectors',
+                'file'  => '/assets/screenshots/web-development/css-selectors.png',
+                'alt'   => 'A cafe menu demonstrating element, class, and ID selectors styling different parts of the page',
+                'cap'   => 'Figure: CSS selectors in action — an element selector for headings, a class selector for prices, and an ID selector for the special item.',
+            ],
         ];
 
         foreach ($shots as $s) {
