@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Four steps to a positive digital footprint: think before posting, protect your privacy, verify before sharing, and build a good reputation.">
+  <title>Building a Positive Digital Footprint</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Building a Positive Digital Footprint</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Think, protect, verify and share responsibly online</text>
+
+  <!-- Stage 1: Think -->
+  <g>
+    <rect x="25" y="85" width="135" height="165" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <!-- head icon -->
+    <circle cx="92" cy="130" r="22" fill="#0b4f8c"/>
+    <circle cx="92" cy="122" r="8" fill="#ffffff"/>
+    <path d="M78 140 a13 11 0 0 1 28 0 z" fill="#ffffff"/>
+    <!-- thought bubble -->
+    <ellipse cx="120" cy="112" rx="14" ry="10" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="112" cy="126" r="2.5" fill="#0b4f8c"/>
+    <circle cx="107" cy="132" r="2" fill="#0b4f8c"/>
+    <text x="92" y="180" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Think</text>
+    <text x="92" y="200" text-anchor="middle" font-size="12" fill="#6b6f78">Pause before</text>
+    <text x="92" y="215" text-anchor="middle" font-size="12" fill="#6b6f78">you post</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="165" y1="167" x2="180" y2="167"/>
+    <polygon points="180,160 193,167 180,174"/>
+  </g>
+
+  <!-- Stage 2: Protect -->
+  <g>
+    <rect x="198" y="85" width="135" height="165" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <!-- shield icon -->
+    <path d="M265 110 v40 c0 14 26 22 26 22 s26 -8 26 -22 v-40 h-52 z" fill="#1f9d57"/>
+    <path d="M265 110 h52" stroke="#1f9d57" stroke-width="1.5"/>
+    <path d="M276 138 l7 7 14 -14" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="278" y="180" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Protect</text>
+    <text x="278" y="200" text-anchor="middle" font-size="12" fill="#6b6f78">Use privacy</text>
+    <text x="278" y="215" text-anchor="middle" font-size="12" fill="#6b6f78">settings</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="338" y1="167" x2="353" y2="167"/>
+    <polygon points="353,160 366,167 353,174"/>
+  </g>
+
+  <!-- Stage 3: Verify -->
+  <g>
+    <rect x="371" y="85" width="135" height="165" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- magnifying glass icon -->
+    <circle cx="438" cy="132" r="18" fill="none" stroke="#f59e0b" stroke-width="5"/>
+    <line x1="451" y1="145" x2="464" y2="158" stroke="#f59e0b" stroke-width="5" stroke-linecap="round"/>
+    <text x="438" y="180" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Verify</text>
+    <text x="438" y="200" text-anchor="middle" font-size="12" fill="#6b6f78">Check before</text>
+    <text x="438" y="215" text-anchor="middle" font-size="12" fill="#6b6f78">you share</text>
+  </g>
+
+  <!-- arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="511" y1="167" x2="526" y2="167"/>
+    <polygon points="526,160 539,167 526,174"/>
+  </g>
+
+  <!-- Stage 4: Build reputation -->
+  <g>
+    <rect x="544" y="85" width="100" height="165" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <!-- star person icon -->
+    <circle cx="594" cy="126" r="18" fill="#0b4f8c"/>
+    <circle cx="594" cy="119" r="6" fill="#ffffff"/>
+    <path d="M583 135 a10 8 0 0 1 22 0 z" fill="#ffffff"/>
+    <polygon points="594,150 597,157 605,157 599,162 601,170 594,165 587,170 589,162 583,157 591,157" fill="#f59e0b"/>
+    <text x="594" y="188" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Build</text>
+    <text x="594" y="208" text-anchor="middle" font-size="12" fill="#6b6f78">A good</text>
+    <text x="594" y="223" text-anchor="middle" font-size="12" fill="#6b6f78">reputation</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="280" text-anchor="middle" font-size="11.5" fill="#9aa3af">Your online actions today shape how the world sees you tomorrow.</text>
+</svg>

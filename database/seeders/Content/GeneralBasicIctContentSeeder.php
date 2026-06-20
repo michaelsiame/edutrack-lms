@@ -11,7 +11,7 @@ use App\Models\QuestionOption;
 use App\Models\Quiz;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+
 
 /**
  * Builds "Certificate in General Basic ICT & Computing":
@@ -56,6 +56,7 @@ class GeneralBasicIctContentSeeder extends Seeder
             $this->cloneQuizzes($course, $source, $lessonMap);
             $this->cloneAssignments($course, $source, $lessonMap);
             $this->addExtraModules($course);
+            $this->createCourseAssignments($course);
         });
 
         $course->refresh();
@@ -146,7 +147,7 @@ class GeneralBasicIctContentSeeder extends Seeder
                     'title' => $lessonData['title'],
                     'content' => $lessonData['content'],
                     'lesson_type' => 'Reading',
-                    'duration_minutes' => 20,
+                    'duration_minutes' => 45,
                     'display_order' => $lessonOrder,
                     'is_preview' => 0,
                     'is_mandatory' => 1,
@@ -175,7 +176,7 @@ class GeneralBasicIctContentSeeder extends Seeder
                 $question = Question::create([
                     'question_type' => $qData['type'],
                     'question_text' => $qData['text'],
-                    'points' => 2,
+                    'points' => $qData['type'] === 'Short Answer' ? 3 : 2,
                     'explanation' => $qData['explanation'],
                     'correct_answer' => $qData['correct_answer'] ?? null,
                 ]);
@@ -190,24 +191,51 @@ class GeneralBasicIctContentSeeder extends Seeder
                 $quiz->questions()->attach($question->question_id, ['display_order' => $qOrder]);
             }
 
-            // one practical assignment per new module
-            if (! empty($modData['assignment'])) {
-                Assignment::create([
-                    'course_id' => $course->id,
-                    'lesson_id' => $lessonIds[0],
-                    'title' => $modData['assignment']['title'],
-                    'description' => $modData['assignment']['description'],
-                    'instructions' => $modData['assignment']['instructions'],
-                    'max_points' => 100,
-                    'passing_points' => 50,
-                    'due_date' => now()->addWeeks(2),
-                    'allow_late_submission' => 1,
-                    'late_penalty_percent' => 0,
-                    'max_file_size_mb' => 10,
-                    'allowed_file_types' => 'pdf,doc,docx,jpg,png',
-                ]);
-            }
         }
+    }
+
+    private function createCourseAssignments(Course $course): void
+    {
+        // Find a suitable lesson from the new modules to attach assignments to.
+        $entrepreneurshipModule = Module::where('course_id', $course->id)
+            ->where('title', 'Starting a Small Business with Your Skills')
+            ->first();
+        $scamModule = Module::where('course_id', $course->id)
+            ->where('title', 'Cybersecurity: Scam Awareness')
+            ->first();
+
+        $businessLessonId = $entrepreneurshipModule?->lessons()->orderByDesc('display_order')->value('id');
+        $scamLessonId = $scamModule?->lessons()->orderByDesc('display_order')->value('id');
+
+        Assignment::create([
+            'course_id' => $course->id,
+            'lesson_id' => $businessLessonId,
+            'title' => 'My Small Business One-Pager',
+            'description' => 'Create a one-page business plan for a service you could start with your new computer skills.',
+            'instructions' => "<ol><li>Choose one service you could offer using your ICT skills (for example, CV typing, poster design, data entry or computer lessons).</li><li>Answer these five questions on one page: (1) What will you sell? (2) Who are your customers? (3) How much will you charge? Show your cost + time + profit for one item. (4) What do you need to start? (5) How will customers find and pay you?</li><li>Write one sample WhatsApp or Facebook advert for your service.</li><li>Save your work as a PDF or Word document named BusinessOnePager_YourName and upload it here.</li></ol>",
+            'max_points' => 100,
+            'passing_points' => 50,
+            'due_date' => now()->addWeeks(2),
+            'allow_late_submission' => 1,
+            'late_penalty_percent' => 0,
+            'max_file_size_mb' => 10,
+            'allowed_file_types' => 'pdf,doc,docx,jpg,png',
+        ]);
+
+        Assignment::create([
+            'course_id' => $course->id,
+            'lesson_id' => $scamLessonId,
+            'title' => 'Spot the Scam Worksheet',
+            'description' => 'Apply what you learned to identify scams and teach someone else how to stay safe.',
+            'instructions' => "<ol><li>Find or write down three suspicious messages (SMS, WhatsApp, email, or examples from this module). For each one: (1) identify the type of scam, (2) list the red flags you can see, and (3) describe exactly what you would do.</li><li>Write a short paragraph teaching a family member how to avoid mobile-money scams. Use simple language they will understand.</li><li>Save your worksheet as a PDF or Word document named SpotTheScam_YourName and upload it here.</li></ol>",
+            'max_points' => 100,
+            'passing_points' => 50,
+            'due_date' => now()->addWeeks(2),
+            'allow_late_submission' => 1,
+            'late_penalty_percent' => 0,
+            'max_file_size_mb' => 10,
+            'allowed_file_types' => 'pdf,doc,docx,jpg,png',
+        ]);
     }
 
     private function extraModules(): array

@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="How to spot a scam message: a message arrives, check for red flags such as urgency or requests for a PIN, then stop and verify through a trusted channel.">
+  <title>How to Spot a Scam Message</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">How to Spot a Scam Message</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Pause and check before you act on any unexpected request</text>
+
+  <!-- Stage 1: Message arrives -->
+  <g>
+    <rect x="30" y="90" width="135" height="170" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- phone icon -->
+    <rect x="80" y="118" width="34" height="58" rx="5" fill="#f59e0b"/>
+    <rect x="84" y="124" width="26" height="40" rx="2" fill="#ffffff"/>
+    <circle cx="97" cy="170" r="2.5" fill="#f59e0b"/>
+    <!-- warning triangle -->
+    <polygon points="97,132 106,148 88,148" fill="#dc2626"/>
+    <text x="97" y="142" text-anchor="middle" font-size="10" font-weight="700" fill="#ffffff">!</text>
+    <text x="97" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Message</text>
+    <text x="97" y="214" text-anchor="middle" font-size="12" fill="#6b6f78">SMS, call or</text>
+    <text x="97" y="229" text-anchor="middle" font-size="12" fill="#6b6f78">WhatsApp</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="170" y1="175" x2="190" y2="175"/>
+    <polygon points="190,168 203,175 190,182"/>
+  </g>
+
+  <!-- Stage 2: Red flags checklist -->
+  <g>
+    <rect x="208" y="82" width="280" height="186" rx="16" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="338" y="108" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Check for red flags</text>
+
+    <!-- checklist items with absolute coordinates -->
+    <rect x="228" y="128" width="12" height="12" rx="2" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="248" y="138" font-size="12" fill="#6b6f78">Urgency: "Act now!" or "Today only!"</text>
+
+    <rect x="228" y="152" width="12" height="12" rx="2" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="248" y="162" font-size="12" fill="#6b6f78">Too good to be true prize or job</text>
+
+    <rect x="228" y="176" width="12" height="12" rx="2" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="248" y="186" font-size="12" fill="#6b6f78">Asks for your PIN, OTP or password</text>
+
+    <rect x="228" y="200" width="12" height="12" rx="2" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="248" y="210" font-size="12" fill="#6b6f78">Strange link, number or poor spelling</text>
+
+    <rect x="228" y="224" width="12" height="12" rx="2" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="248" y="234" font-size="12" fill="#6b6f78">Asks you to pay to receive money</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="493" y1="175" x2="513" y2="175"/>
+    <polygon points="513,168 526,175 513,182"/>
+  </g>
+
+  <!-- Stage 3: STOP & Verify -->
+  <g>
+    <rect x="531" y="90" width="115" height="170" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <!-- stop hand / shield -->
+    <circle cx="573" cy="136" r="24" fill="#1f9d57"/>
+    <rect x="563" y="124" width="20" height="24" rx="2" fill="#ffffff"/>
+    <text x="573" y="141" text-anchor="middle" font-size="11" font-weight="700" fill="#1f9d57">STOP</text>
+    <text x="573" y="178" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Verify</text>
+    <text x="573" y="196" text-anchor="middle" font-size="12" fill="#6b6f78">Use a trusted</text>
+    <text x="573" y="211" text-anchor="middle" font-size="12" fill="#6b6f78">number or</text>
+    <text x="573" y="226" text-anchor="middle" font-size="12" fill="#6b6f78">visit a branch</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="284" text-anchor="middle" font-size="11.5" fill="#9aa3af">When in doubt, slow down. No genuine company ever asks for your PIN or OTP.</text>
+</svg>

@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Five steps to turn computer skills into income: start with your ICT skill, find a local need, set a fair price, promote online, and get paid by mobile money.">
+  <title>From Skill to Income</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">From Skill to Income</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Turn your ICT skills into a small business in Zambia</text>
+
+  <!-- Stage 1: Skill -->
+  <g>
+    <rect x="18" y="88" width="105" height="170" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <!-- computer icon -->
+    <rect x="50" y="118" width="42" height="32" rx="3" fill="#0b4f8c"/>
+    <rect x="54" y="122" width="34" height="22" rx="1.5" fill="#ffffff"/>
+    <rect x="64" y="153" width="14" height="8" fill="#0b4f8c"/>
+    <rect x="55" y="161" width="32" height="4" rx="1" fill="#0b4f8c"/>
+    <text x="70" y="186" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Your Skill</text>
+    <text x="70" y="203" text-anchor="middle" font-size="11.5" fill="#6b6f78">Typing,</text>
+    <text x="70" y="217" text-anchor="middle" font-size="11.5" fill="#6b6f78">Excel,</text>
+    <text x="70" y="231" text-anchor="middle" font-size="11.5" fill="#6b6f78">posters</text>
+  </g>
+
+  <!-- arrow 1 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="128" y1="173" x2="138" y2="173"/>
+    <polygon points="138,166 150,173 138,180"/>
+  </g>
+
+  <!-- Stage 2: Find need -->
+  <g>
+    <rect x="155" y="88" width="105" height="170" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <!-- magnifying glass over people -->
+    <circle cx="185" cy="142" r="7" fill="#6b6f78"/>
+    <circle cx="217" cy="142" r="7" fill="#6b6f78"/>
+    <path d="M178 154 a9 7 0 0 1 14 0 z" fill="#6b6f78"/>
+    <path d="M210 154 a9 7 0 0 1 14 0 z" fill="#6b6f78"/>
+    <circle cx="208" cy="128" r="12" fill="none" stroke="#f59e0b" stroke-width="3"/>
+    <line x1="216" y1="137" x2="226" y2="147" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+    <text x="207" y="186" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Find Need</text>
+    <text x="207" y="203" text-anchor="middle" font-size="11.5" fill="#6b6f78">Solve a</text>
+    <text x="207" y="217" text-anchor="middle" font-size="11.5" fill="#6b6f78">local</text>
+    <text x="207" y="231" text-anchor="middle" font-size="11.5" fill="#6b6f78">problem</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="265" y1="173" x2="275" y2="173"/>
+    <polygon points="275,166 287,173 275,180"/>
+  </g>
+
+  <!-- Stage 3: Set price -->
+  <g>
+    <rect x="292" y="88" width="105" height="170" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- price tag icon -->
+    <path d="M325 122 l26 0 l18 18 l-26 34 l-26 -26 z" fill="#f59e0b"/>
+    <circle cx="338" cy="138" r="4" fill="#ffffff"/>
+    <text x="344" y="186" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Set Price</text>
+    <text x="344" y="203" text-anchor="middle" font-size="11.5" fill="#6b6f78">Cost +</text>
+    <text x="344" y="217" text-anchor="middle" font-size="11.5" fill="#6b6f78">time +</text>
+    <text x="344" y="231" text-anchor="middle" font-size="11.5" fill="#6b6f78">profit</text>
+  </g>
+
+  <!-- arrow 3 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="402" y1="173" x2="412" y2="173"/>
+    <polygon points="412,166 424,173 412,180"/>
+  </g>
+
+  <!-- Stage 4: Promote -->
+  <g>
+    <rect x="429" y="88" width="105" height="170" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <!-- phone with social icons -->
+    <rect x="460" y="118" width="30" height="52" rx="5" fill="#1f9d57"/>
+    <rect x="464" y="124" width="22" height="34" rx="2" fill="#ecfaf2"/>
+    <text x="474" y="142" text-anchor="middle" font-size="10" font-weight="700" fill="#1f9d57">W</text>
+    <text x="474" y="152" text-anchor="middle" font-size="10" font-weight="700" fill="#1f9d57">f</text>
+    <circle cx="475" cy="166" r="2" fill="#1f9d57"/>
+    <text x="481" y="186" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Promote</text>
+    <text x="481" y="203" text-anchor="middle" font-size="11.5" fill="#6b6f78">WhatsApp</text>
+    <text x="481" y="217" text-anchor="middle" font-size="11.5" fill="#6b6f78">and</text>
+    <text x="481" y="231" text-anchor="middle" font-size="11.5" fill="#6b6f78">Facebook</text>
+  </g>
+
+  <!-- arrow 4 -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="539" y1="173" x2="549" y2="173"/>
+    <polygon points="549,166 561,173 549,180"/>
+  </g>
+
+  <!-- Stage 5: Get paid -->
+  <g>
+    <rect x="566" y="88" width="82" height="170" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <!-- wallet/phone money -->
+    <rect x="587" y="124" width="36" height="28" rx="3" fill="#0b4f8c"/>
+    <circle cx="615" cy="138" r="5" fill="#ffffff"/>
+    <rect x="592" y="158" width="28" height="18" rx="2" fill="#1f9d57"/>
+    <text x="607" y="188" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Get Paid</text>
+    <text x="607" y="205" text-anchor="middle" font-size="11.5" fill="#6b6f78">Airtel /</text>
+    <text x="607" y="219" text-anchor="middle" font-size="11.5" fill="#6b6f78">MTN</text>
+    <text x="607" y="233" text-anchor="middle" font-size="11.5" fill="#6b6f78">MoMo</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="330" y="282" text-anchor="middle" font-size="11.5" fill="#9aa3af">Start small, deliver quality, and grow one satisfied customer at a time.</text>
+</svg>
