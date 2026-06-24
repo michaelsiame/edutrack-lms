@@ -149,7 +149,7 @@ class AcceptanceLetterService
         $pdf->Ln(2);
 
         $pdf->SetFont('helvetica', '', 11);
-        $pdf->MultiCell(0, 6, 'We are pleased to inform you that your application to study at EDUTRACK COMPUTER TRAINING has been SUCCESSFULLY ACCEPTED.', 0, 'J');
+        $pdf->MultiCell(0, 6, 'We are pleased to inform you that your application to study at EDUTRACK COMPUTER TRAINING has been SUCCESSFULLY ACCEPTED.', 0, 'L');
         $pdf->Ln(2);
 
         $pdf->Cell(0, 6, 'You have been offered admission into the following programme:', 0, 1, 'L');
@@ -341,7 +341,7 @@ class AcceptanceLetterService
         $pdf->SetLineWidth(0.3);
 
         foreach ($conditions as $condition) {
-            $pdf->MultiCell(self::PAGE_W - self::MARGIN * 2 - 4, 6, $condition, 0, 'J');
+            $pdf->MultiCell(self::PAGE_W - self::MARGIN * 2 - 4, 6, $condition, 0, 'L');
         }
 
         $boxH = $pdf->GetY() - $boxY;

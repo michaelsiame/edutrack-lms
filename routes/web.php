@@ -191,6 +191,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::post('/enrollments', [App\Http\Controllers\Admin\EnrollmentController::class, 'store'])->name('enrollments.store');
     Route::put('/enrollments/{enrollment}', [App\Http\Controllers\Admin\EnrollmentController::class, 'update'])->name('enrollments.update');
     Route::delete('/enrollments/{enrollment}', [App\Http\Controllers\Admin\EnrollmentController::class, 'destroy'])->name('enrollments.destroy');
+    Route::get('/enrollments/{enrollment}/acceptance-letter', [App\Http\Controllers\Admin\EnrollmentController::class, 'generateAcceptanceLetter'])->name('enrollments.acceptance-letter');
 
     // Email Templates
     Route::get('/templates', [App\Http\Controllers\Admin\EmailTemplateController::class, 'index'])->name('templates.index');
@@ -200,6 +201,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 
     Route::get('/reports', [AdminDashboardController::class, 'reports'])->name('reports');
     Route::get('/reports/export/{type}', [AdminDashboardController::class, 'exportReport'])->name('reports.export');
+    Route::get('/reports/cdf', [AdminDashboardController::class, 'cdfReport'])->name('reports.cdf');
+    Route::get('/reports/cdf/export', [AdminDashboardController::class, 'exportCdfReport'])->name('reports.cdf.export');
     Route::get('/settings', [AdminDashboardController::class, 'settings'])->name('settings');
     Route::post('/settings', [AdminDashboardController::class, 'updateSettings'])->name('settings.update');
 
