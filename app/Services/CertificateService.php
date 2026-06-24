@@ -231,6 +231,13 @@ class CertificateService
     {
         $pdf->SetTextColor(...self::BLACK);
 
+        // Correct the template artwork's baked-in subtitle ('skill' -> 'skills')
+        // by patching it with white and re-stamping at the same font/baseline.
+        $pdf->Rect(56, 52.7, 98, 8.2, 'F', [], [255, 255, 255]);
+        $this->certFont($pdf, 'serif', 14.6);
+        $this->centeredAtBaseline($pdf, 58.6, 'A skills training college');
+        $pdf->SetTextColor(...self::BLACK);
+
         // Student name
         $name = $data['student_name'] ?? '';
         $this->certFont($pdf, 'script', 34);
@@ -279,6 +286,43 @@ class CertificateService
         $this->certFont($pdf, 'serif', 14.8);
         $this->leftAtBaseline($pdf, 29, 270.2, $data['national_id'] ?? '');
         $this->rightAtBaseline($pdf, 184, 270.2, $data['certificate_number'] ?? '');
+
+        // Verification QR (bottom-centre)
+        $this->drawVerifyQr($pdf, $data);
+    }
+
+    /**
+     * Render a QR code linking to the public certificate-verification page,
+     * centred at the bottom of the certificate with a small caption. Uses
+     * TCPDF's native 2D barcode (no extra dependency). White background so it
+     * scans cleanly over the watermark microtext.
+     */
+    protected function drawVerifyQr(TCPDF $pdf, array $data): void
+    {
+        $url = $data['verify_url'] ?? null;
+        if (empty($url)) {
+            return;
+        }
+
+        $size = 19.0;
+        $x = (self::PAGE_W - $size) / 2;
+        $y = 250.5;
+
+        $style = [
+            'border' => false,
+            'vpadding' => 1,
+            'hpadding' => 1,
+            'fgcolor' => self::NAVY_TITLE,
+            'bgcolor' => [255, 255, 255],
+            'module_width' => 1,
+            'module_height' => 1,
+        ];
+        $pdf->write2DBarcode($url, 'QRCODE,M', $x, $y, $size, $size, $style, 'N');
+
+        $this->certFont($pdf, 'serif', 7.6);
+        $pdf->SetTextColor(...self::BLACK);
+        $pdf->SetXY($x - 8, $y + $size + 0.3);
+        $pdf->Cell($size + 16, 3.5, 'Scan to verify', 0, 0, 'C');
     }
 
     /**
