@@ -111,18 +111,18 @@ class AcceptanceLetterService
         // Centered header text
         $pdf->SetFont('helvetica', 'B', 14);
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->Cell(0, 8, 'EDUTRACK COMPUTER TRAINING', 0, 1, 'C');
+        $pdf->Cell(0, 6.2, 'EDUTRACK COMPUTER TRAINING COLLEGE', 0, 1, 'C');
 
         $pdf->SetFont('helvetica', '', 11);
-        $pdf->Cell(0, 5, 'A Skill Training College', 0, 1, 'C');
-        $pdf->Cell(0, 5, 'Kalomo District, Southern Province', 0, 1, 'C');
-        $pdf->Cell(0, 5, 'Tel: 0965992967 | 0770666937', 0, 1, 'C');
+        $pdf->Cell(0, 3.9, 'A Skills Training College', 0, 1, 'C');
+        $pdf->Cell(0, 3.9, 'Kalomo District, Southern Province', 0, 1, 'C');
+        $pdf->Cell(0, 3.9, 'Tel: 0965992967 | 0770666937', 0, 1, 'C');
 
-        $pdf->Ln(4);
+        $pdf->Ln(2.2);
         $pdf->SetLineWidth(0.3);
         $pdf->SetDrawColor(128, 128, 128);
         $pdf->Line(self::MARGIN, $pdf->GetY(), self::PAGE_W - self::MARGIN, $pdf->GetY());
-        $pdf->Ln(6);
+        $pdf->Ln(3.3);
     }
 
     /**
@@ -133,66 +133,66 @@ class AcceptanceLetterService
         $yStart = $pdf->GetY();
 
         $pdf->SetFont('helvetica', 'B', 14);
-        $pdf->Cell(0, 8, 'LETTER OF ACCEPTANCE', 0, 1, 'C');
-        $pdf->Ln(2);
+        $pdf->Cell(0, 6.2, 'LETTER OF ACCEPTANCE', 0, 1, 'C');
+        $pdf->Ln(1.1);
 
         $pdf->SetFont('helvetica', '', 11);
-        $pdf->Cell(0, 6, 'Date: ' . $letter->issued_date->format('d/m/Y'), 0, 1, 'R');
-        $pdf->Ln(2);
+        $pdf->Cell(0, 4.7, 'Date: ' . $letter->issued_date->format('d/m/Y'), 0, 1, 'R');
+        $pdf->Ln(1.1);
 
         $pdf->SetFont('helvetica', 'B', 11);
-        $pdf->Cell(0, 6, 'RE: OFFER OF ADMISSION', 0, 1, 'L');
-        $pdf->Ln(2);
+        $pdf->Cell(0, 4.7, 'RE: OFFER OF ADMISSION', 0, 1, 'L');
+        $pdf->Ln(1.1);
 
         $pdf->SetFont('helvetica', '', 11);
-        $pdf->Cell(0, 6, 'Dear ' . $letter->student_name . ',', 0, 1, 'L');
-        $pdf->Ln(2);
+        $pdf->Cell(0, 4.7, 'Dear ' . $letter->student_name . ',', 0, 1, 'L');
+        $pdf->Ln(1.1);
 
         $pdf->SetFont('helvetica', '', 11);
-        $pdf->MultiCell(0, 6, 'We are pleased to inform you that your application to study at EDUTRACK COMPUTER TRAINING has been SUCCESSFULLY ACCEPTED.', 0, 'L');
-        $pdf->Ln(2);
+        $pdf->MultiCell(0, 4.7, 'We are pleased to inform you that your application to study at EDUTRACK COMPUTER TRAINING COLLEGE has been SUCCESSFULLY ACCEPTED.', 0, 'L');
+        $pdf->Ln(1.1);
 
-        $pdf->Cell(0, 6, 'You have been offered admission into the following programme:', 0, 1, 'L');
-        $pdf->Ln(1);
+        $pdf->Cell(0, 4.7, 'You have been offered admission into the following programme:', 0, 1, 'L');
+        $pdf->Ln(0.6);
 
         $pdf->SetFont('helvetica', 'B', 11);
-        $pdf->Cell(0, 6, 'Course: ' . $letter->course_title, 0, 1, 'L');
+        $pdf->Cell(0, 4.7, 'Course: ' . $letter->course_title, 0, 1, 'L');
         $pdf->SetFont('helvetica', '', 11);
 
         $isPhysical = in_array($letter->mode, ['Physical', 'Hybrid'], true);
         $isOnline = $letter->mode === 'Online';
-        $pdf->Cell(0, 6, 'Mode of Study: [' . ($isPhysical ? 'X' : ' ') . '] Physical    [' . ($isOnline ? 'X' : ' ') . '] Online', 0, 1, 'L');
-        $pdf->Cell(0, 6, 'Duration: ' . $letter->duration, 0, 1, 'L');
-        $pdf->Cell(0, 6, 'Commencement Date: ' . ($letter->commencement_date?->format('d/m/Y') ?: '______________'), 0, 1, 'L');
-        $pdf->Ln(3);
+        $pdf->Cell(0, 4.7, 'Mode of Study: [' . ($isPhysical ? 'X' : ' ') . '] Physical    [' . ($isOnline ? 'X' : ' ') . '] Online', 0, 1, 'L');
+        $pdf->Cell(0, 4.7, 'Duration: ' . $letter->duration, 0, 1, 'L');
+        $pdf->Cell(0, 4.7, 'Commencement Date: ' . ($letter->commencement_date?->format('d/m/Y') ?: '______________'), 0, 1, 'L');
+        $pdf->Ln(1.7);
 
         $pdf->SetFont('helvetica', 'B', 12);
-        $pdf->Cell(0, 7, 'FEES INFORMATION', 0, 1, 'L');
-        $pdf->Ln(1);
+        $pdf->Cell(0, 5.5, 'FEES INFORMATION', 0, 1, 'L');
+        $pdf->Ln(0.6);
 
         $this->drawFeeTable($pdf, 'DAY SCHOOL', $letter->fee_snapshot['day'] ?? [], false);
-        $pdf->Ln(4);
+        $pdf->Ln(2.2);
         $this->drawFeeTable($pdf, 'BOARDING', $letter->fee_snapshot['boarding'] ?? [], true);
-        $pdf->Ln(5);
+        $pdf->Ln(2.8);
 
         $pdf->SetFont('helvetica', 'B', 11);
-        $pdf->Cell(0, 6, 'Payment can be made in cash or through:', 0, 1, 'L');
+        $pdf->Cell(0, 4.7, 'Payment can be made in cash or through:', 0, 1, 'L');
         $pdf->SetFont('helvetica', '', 11);
-        $pdf->Cell(0, 6, 'Bank: ACCESS BANK', 0, 1, 'L');
-        $pdf->Cell(0, 6, 'Account Name: EDUTRACK COMPUTER TRAINING SCHOOL', 0, 1, 'L');
-        $pdf->Cell(0, 6, 'Account Number: 0106509665016', 0, 1, 'L');
-        $pdf->Ln(6);
+        $pdf->Cell(0, 4.7, 'Bank: ACCESS BANK', 0, 1, 'L');
+        $pdf->Cell(0, 4.7, 'Account Name: EDUTRACK COMPUTER TRAINING SCHOOL', 0, 1, 'L');
+        $pdf->Cell(0, 4.7, 'Account Number: 0106509665016', 0, 1, 'L');
+        $pdf->Ln(3.3);
 
         $pdf->SetFont('helvetica', '', 11);
-        $pdf->Cell(0, 6, 'Yours faithfully,', 0, 1, 'L');
-        $pdf->Ln(8);
+        $pdf->Cell(0, 4.7, 'Yours faithfully,', 0, 1, 'L');
+        $pdf->Ln(4.4);
         $pdf->SetFont('helvetica', 'B', 11);
-        $pdf->Cell(0, 6, 'Admissions Officer', 0, 1, 'L');
+        $pdf->Cell(0, 4.7, 'Admissions Officer', 0, 1, 'L');
         $pdf->SetFont('helvetica', '', 11);
-        $pdf->Cell(0, 6, 'EDUTRACK COMPUTER TRAINING', 0, 1, 'L');
-        $pdf->Ln(2);
-        $pdf->Cell(0, 6, 'NAME: ..............................    SIGN: ..............................', 0, 1, 'L');
-        $pdf->Ln(6);
+        $pdf->Cell(0, 4.7, 'EDUTRACK COMPUTER TRAINING COLLEGE', 0, 1, 'L');
+        $pdf->Ln(1.1);
+        $pdf->Cell(0, 4.7, 'NAME: ..............................    SIGN: ..............................', 0, 1, 'L');
+        $pdf->Ln(3.3);
 
         $this->drawConditionsBox($pdf);
     }
@@ -203,11 +203,11 @@ class AcceptanceLetterService
     protected function drawFeeTable(TCPDF $pdf, string $title, array $fees, bool $isBoarding): void
     {
         $pdf->SetFont('helvetica', 'B', 11);
-        $pdf->Cell(0, 6, $title, 0, 1, 'L');
+        $pdf->Cell(0, 4.7, $title, 0, 1, 'L');
 
         if (empty($fees)) {
             $pdf->SetFont('helvetica', '', 10);
-            $pdf->Cell(0, 6, 'No fee information available.', 0, 1, 'L');
+            $pdf->Cell(0, 4.7, 'No fee information available.', 0, 1, 'L');
             return;
         }
 
@@ -231,18 +231,18 @@ class AcceptanceLetterService
         $colWidth = (self::PAGE_W - self::MARGIN * 2) / 2;
         $pdf->SetFont('helvetica', 'B', 10);
         $pdf->SetFillColor(230, 230, 230);
-        $pdf->Cell($colWidth, 7, 'Item', 1, 0, 'L', true);
-        $pdf->Cell($colWidth, 7, 'Amount (ZMW)', 1, 1, 'R', true);
+        $pdf->Cell($colWidth, 5.4, 'Item', 1, 0, 'L', true);
+        $pdf->Cell($colWidth, 5.4, 'Amount (ZMW)', 1, 1, 'R', true);
 
         $pdf->SetFont('helvetica', '', 10);
         foreach ($lineItems as $item => $amount) {
-            $pdf->Cell($colWidth, 7, $item, 1, 0, 'L');
-            $pdf->Cell($colWidth, 7, number_format((float) $amount, 2), 1, 1, 'R');
+            $pdf->Cell($colWidth, 5.4, $item, 1, 0, 'L');
+            $pdf->Cell($colWidth, 5.4, number_format((float) $amount, 2), 1, 1, 'R');
         }
 
         $pdf->SetFont('helvetica', 'B', 10);
-        $pdf->Cell($colWidth, 7, 'Total', 1, 0, 'L', true);
-        $pdf->Cell($colWidth, 7, number_format((float) ($fees['Total'] ?? 0), 2), 1, 1, 'R', true);
+        $pdf->Cell($colWidth, 5.4, 'Total', 1, 0, 'L', true);
+        $pdf->Cell($colWidth, 5.4, number_format((float) ($fees['Total'] ?? 0), 2), 1, 1, 'R', true);
     }
 
     /**
@@ -257,12 +257,12 @@ class AcceptanceLetterService
 
         $pdf->SetFont('helvetica', 'B', 9);
         $pdf->SetFillColor(230, 230, 230);
-        $pdf->Cell($itemWidth, 7, 'Item', 1, 0, 'L', true);
+        $pdf->Cell($itemWidth, 5.4, 'Item', 1, 0, 'L', true);
         foreach ($terms as $i => $term) {
             $label = $term['term'] ?? ('Term ' . ($i + 1));
-            $pdf->Cell($termWidth, 7, $label, 1, 0, 'C', true);
+            $pdf->Cell($termWidth, 5.4, $label, 1, 0, 'C', true);
         }
-        $pdf->Cell($itemWidth, 7, 'Total (ZMW)', 1, 1, 'R', true);
+        $pdf->Cell($itemWidth, 5.4, 'Total (ZMW)', 1, 1, 'R', true);
 
         $lineItemKeys = $this->collectLineItemKeys($terms);
         $pdf->SetFont('helvetica', '', 9);
@@ -271,26 +271,26 @@ class AcceptanceLetterService
             if ($key === 'Total') {
                 continue;
             }
-            $pdf->Cell($itemWidth, 7, $key, 1, 0, 'L');
+            $pdf->Cell($itemWidth, 5.4, $key, 1, 0, 'L');
             $rowTotal = 0;
             foreach ($terms as $term) {
                 $amount = $term[$key] ?? 0;
                 $rowTotal += (float) $amount;
-                $pdf->Cell($termWidth, 7, $amount ? number_format((float) $amount, 2) : '—', 1, 0, 'R');
+                $pdf->Cell($termWidth, 5.4, $amount ? number_format((float) $amount, 2) : '—', 1, 0, 'R');
             }
-            $pdf->Cell($itemWidth, 7, number_format($rowTotal, 2), 1, 1, 'R');
+            $pdf->Cell($itemWidth, 5.4, number_format($rowTotal, 2), 1, 1, 'R');
         }
 
         // Total row
         $pdf->SetFont('helvetica', 'B', 9);
-        $pdf->Cell($itemWidth, 7, 'Total', 1, 0, 'L', true);
+        $pdf->Cell($itemWidth, 5.4, 'Total', 1, 0, 'L', true);
         $grandTotal = 0;
         foreach ($terms as $term) {
             $termTotal = $term['Total'] ?? array_sum(array_diff_key($term, ['term' => true]));
             $grandTotal += (float) $termTotal;
-            $pdf->Cell($termWidth, 7, number_format((float) $termTotal, 2), 1, 0, 'R', true);
+            $pdf->Cell($termWidth, 5.4, number_format((float) $termTotal, 2), 1, 0, 'R', true);
         }
-        $pdf->Cell($itemWidth, 7, number_format($grandTotal, 2), 1, 1, 'R', true);
+        $pdf->Cell($itemWidth, 5.4, number_format($grandTotal, 2), 1, 1, 'R', true);
     }
 
     /**
@@ -326,7 +326,7 @@ class AcceptanceLetterService
     protected function drawConditionsBox(TCPDF $pdf): void
     {
         $pdf->SetFont('helvetica', 'B', 11);
-        $pdf->Cell(0, 7, 'ADMISSION CONDITIONS', 0, 1, 'L');
+        $pdf->Cell(0, 5.5, 'ADMISSION CONDITIONS', 0, 1, 'L');
 
         $conditions = [
             '1. Pay the required fees before or on the reporting date.',

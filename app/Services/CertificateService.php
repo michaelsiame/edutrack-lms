@@ -405,10 +405,10 @@ class CertificateService
 
         $this->drawRibbon($pdf);
 
-        // Element 3: "A skill training college"
+        // Element 3: "A skills training college"
         $pdf->SetTextColor(...self::BLACK);
         $this->certFont($pdf, 'serif', 14.6);
-        $this->centeredAtBaseline($pdf, 58.6, 'A skill training college');
+        $this->centeredAtBaseline($pdf, 58.6, 'A skills training college');
 
         // Element 4: "THIS IS TO CERTIFY THAT" with flanking ornaments
         $this->certFont($pdf, 'serif-bold', 21.3);

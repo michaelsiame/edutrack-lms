@@ -410,7 +410,7 @@
     <div class="institution-name">
       EduTrack Computer<br>Training College
     </div>
-    <div class="institution-sub">A skill training college</div>
+    <div class="institution-sub">A skills training college</div>
 
     <div class="deco-rule">
       <div class="line"></div>
