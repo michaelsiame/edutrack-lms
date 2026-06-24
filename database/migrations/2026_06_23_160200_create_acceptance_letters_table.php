@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('acceptance_letters', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('enrollment_id');
-            $table->foreign('enrollment_id')->references('id')->on('enrollments')->cascadeOnDelete();
+            $table->unsignedInteger('enrollment_id')->index();
+            // No DB-level FK: enrollments.id type differs across environments and
+            // the relation is enforced at the Eloquent layer (AcceptanceLetter::enrollment).
             $table->string('reference_no')->unique();
             $table->string('student_name');
             $table->string('course_title');
