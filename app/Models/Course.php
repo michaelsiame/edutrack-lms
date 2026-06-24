@@ -37,6 +37,8 @@ class Course extends Model
         'total_reviews',
         'prerequisites',
         'learning_outcomes',
+        'fee_structure',
+        'is_cdf',
     ];
 
     protected $casts = [
@@ -51,6 +53,8 @@ class Course extends Model
         'total_reviews' => 'integer',
         'max_students' => 'integer',
         'duration_weeks' => 'integer',
+        'fee_structure' => 'array',
+        'is_cdf' => 'boolean',
     ];
 
     public function category()

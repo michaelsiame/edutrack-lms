@@ -28,6 +28,9 @@ class Enrollment extends Model
         'total_time_spent',
         'intake_id',
         'mode',
+        'funding_source',
+        'cdf_constituency',
+        'sponsor_reference',
     ];
 
     protected $casts = [
@@ -39,6 +42,7 @@ class Enrollment extends Model
         'amount_paid' => 'decimal:2',
         'certificate_issued' => 'boolean',
         'certificate_blocked' => 'boolean',
+        'funding_source' => 'string',
         'last_accessed' => 'datetime',
         'total_time_spent' => 'integer',
     ];
@@ -81,6 +85,11 @@ class Enrollment extends Model
     public function paymentPlan()
     {
         return $this->hasOne(EnrollmentPaymentPlan::class);
+    }
+
+    public function acceptanceLetter()
+    {
+        return $this->hasOne(AcceptanceLetter::class);
     }
 
     public function scopeActive($query)

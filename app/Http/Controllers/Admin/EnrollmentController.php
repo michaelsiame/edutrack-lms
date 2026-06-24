@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\Intake;
 use App\Models\Student;
 use App\Models\User;
+use App\Services\AcceptanceLetterService;
 use App\Services\StudentNumberService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +43,9 @@ class EnrollmentController extends Controller
             'course_id' => 'required|exists:courses,id',
             'intake_id' => 'nullable|exists:intakes,id',
             'mode' => 'required|in:online,in_person,hybrid',
+            'funding_source' => 'required|in:self,cdf,bursary,employer',
+            'cdf_constituency' => 'nullable|string|max:255',
+            'sponsor_reference' => 'nullable|string|max:255',
         ]);
 
         $course = Course::findOrFail($validated['course_id']);
@@ -63,7 +67,13 @@ class EnrollmentController extends Controller
         $price = $intake->effective_price ?? $course->discount_price ?? $course->price ?? 0;
         $isFree = $price <= 0;
 
-        DB::transaction(function () use ($user, $course, $intake, $validated, $price, $isFree) {
+        $fundingData = [
+            'funding_source' => $validated['funding_source'],
+            'cdf_constituency' => $validated['funding_source'] === 'cdf' ? $validated['cdf_constituency'] : null,
+            'sponsor_reference' => $validated['sponsor_reference'] ?: null,
+        ];
+
+        DB::transaction(function () use ($user, $course, $intake, $validated, $price, $isFree, $fundingData) {
             $student = $user->student ?: Student::create([
                 'user_id' => $user->id,
                 'student_number' => StudentNumberService::generate((int) now()->year),
@@ -81,7 +91,7 @@ class EnrollmentController extends Controller
                 'amount_paid' => 0,
                 'certificate_blocked' => !$isFree,
                 'mode' => $validated['mode'],
-            ]);
+            ] + $fundingData);
 
             EnrollmentPaymentPlan::create([
                 'enrollment_id' => $enrollment->id,
@@ -140,6 +150,9 @@ class EnrollmentController extends Controller
             'progress' => 'nullable|numeric|min:0|max:100',
             'certificate_blocked' => 'nullable|boolean',
             'mode' => 'required|in:online,in_person,hybrid',
+            'funding_source' => 'required|in:self,cdf,bursary,employer',
+            'cdf_constituency' => 'nullable|string|max:255',
+            'sponsor_reference' => 'nullable|string|max:255',
         ]);
 
         $enrollment->update([
@@ -147,6 +160,9 @@ class EnrollmentController extends Controller
             'progress' => $validated['progress'] ?? $enrollment->progress,
             'certificate_blocked' => $request->boolean('certificate_blocked'),
             'mode' => $validated['mode'],
+            'funding_source' => $validated['funding_source'],
+            'cdf_constituency' => $validated['funding_source'] === 'cdf' ? $validated['cdf_constituency'] : null,
+            'sponsor_reference' => $validated['sponsor_reference'] ?: null,
         ]);
 
         // final_grade is computed from recorded assessments, never hand-set,
@@ -160,5 +176,24 @@ class EnrollmentController extends Controller
     {
         $enrollment->delete();
         return back()->with('success', 'Enrollment deleted successfully.');
+    }
+
+    /**
+     * Generate (or reuse) an acceptance letter for the enrollment and stream it
+     * as a PDF download.
+     */
+    public function generateAcceptanceLetter(Enrollment $enrollment)
+    {
+        $service = app(AcceptanceLetterService::class);
+        $letter = $service->generate($enrollment);
+        $pdf = $service->render($letter);
+
+        $filename = 'Acceptance-Letter-' . preg_replace('/[^A-Za-z0-9_-]/', '_', $letter->reference_no) . '.pdf';
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf;
+        }, $filename, [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 }

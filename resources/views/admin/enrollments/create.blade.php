@@ -72,6 +72,26 @@
                 </select>
             </div>
 
+            <div>
+                <label class="od-form-label">Funding source</label>
+                <select name="funding_source" id="funding_source" class="od-input" required onchange="toggleConstituency()">
+                    <option value="self" {{ old('funding_source','self')==='self'?'selected':'' }}>Self</option>
+                    <option value="cdf" {{ old('funding_source')==='cdf'?'selected':'' }}>CDF</option>
+                    <option value="bursary" {{ old('funding_source')==='bursary'?'selected':'' }}>Bursary</option>
+                    <option value="employer" {{ old('funding_source')==='employer'?'selected':'' }}>Employer</option>
+                </select>
+            </div>
+
+            <div id="cdf_constituency_wrapper" class="{{ old('funding_source','self') === 'cdf' ? '' : 'hidden' }}">
+                <label class="od-form-label">Constituency</label>
+                <input type="text" name="cdf_constituency" value="{{ old('cdf_constituency') }}" class="od-input" placeholder="e.g. Kalomo Central">
+            </div>
+
+            <div>
+                <label class="od-form-label">Sponsor reference</label>
+                <input type="text" name="sponsor_reference" value="{{ old('sponsor_reference') }}" class="od-input" placeholder="Optional sponsor/CDF reference number">
+            </div>
+
             <div class="pt-2">
                 <button type="submit" class="od-btn od-btn-primary" {{ $selectedCourse ? '' : 'disabled' }}>
                     <i class="fas fa-user-plus mr-1"></i> Enrol Student
@@ -80,4 +100,16 @@
         </form>
     </div>
 </div>
+
+<script>
+function toggleConstituency() {
+    const funding = document.getElementById('funding_source').value;
+    const wrapper = document.getElementById('cdf_constituency_wrapper');
+    if (funding === 'cdf') {
+        wrapper.classList.remove('hidden');
+    } else {
+        wrapper.classList.add('hidden');
+    }
+}
+</script>
 @endsection

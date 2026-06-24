@@ -33,6 +33,65 @@ class DashboardController extends Controller
         return view('admin.reports');
     }
 
+    /**
+     * CDF funding report: lists CDF-funded enrollments grouped by constituency.
+     */
+    public function cdfReport(Request $request)
+    {
+        $query = Enrollment::with(['user', 'course'])
+            ->where('funding_source', 'cdf')
+            ->when($request->filled('constituency'), function ($q) use ($request) {
+                $q->where('cdf_constituency', 'like', '%' . $request->constituency . '%');
+            })
+            ->when($request->filled('course'), function ($q) use ($request) {
+                $q->where('course_id', $request->course);
+            })
+            ->when($request->filled('status'), function ($q) use ($request) {
+                $q->where('enrollment_status', $request->status);
+            });
+
+        $enrollments = $query->orderBy('cdf_constituency')->orderBy('enrolled_at', 'desc')->get();
+
+        $groups = $enrollments->groupBy(fn($e) => $e->cdf_constituency ?: 'Unspecified');
+        $courses = Course::published()->orderBy('title')->get();
+
+        return view('admin.reports.cdf', compact('groups', 'courses'));
+    }
+
+    /**
+     * Export the CDF funding report to CSV.
+     */
+    public function exportCdfReport(Request $request)
+    {
+        $query = Enrollment::with(['user', 'course'])
+            ->where('funding_source', 'cdf')
+            ->when($request->filled('constituency'), function ($q) use ($request) {
+                $q->where('cdf_constituency', 'like', '%' . $request->constituency . '%');
+            })
+            ->when($request->filled('course'), function ($q) use ($request) {
+                $q->where('course_id', $request->course);
+            })
+            ->when($request->filled('status'), function ($q) use ($request) {
+                $q->where('enrollment_status', $request->status);
+            });
+
+        $enrollments = $query->orderBy('cdf_constituency')->orderBy('enrolled_at', 'desc')->get();
+
+        $headers = ['Constituency', 'Student Name', 'Email', 'Course', 'Amount Paid', 'Status', 'Sponsor Reference', 'Enrolled At'];
+        $rows = $enrollments->map(fn($e) => [
+            $e->cdf_constituency ?: 'Unspecified',
+            $e->user?->full_name ?? 'N/A',
+            $e->user?->email ?? '',
+            $e->course?->title ?? 'N/A',
+            $e->amount_paid,
+            $e->enrollment_status,
+            $e->sponsor_reference ?? '',
+            $e->enrolled_at?->format('Y-m-d') ?? '',
+        ]);
+
+        return $this->streamCsv('cdf-enrollments-' . now()->format('Y-m-d') . '.csv', $headers, $rows);
+    }
+
     public function settings()
     {
         $settings = [

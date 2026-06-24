@@ -127,6 +127,9 @@
  @endif
  </td>
  <td class="px-4 py-3 text-right">
+ <a href="{{ route('admin.enrollments.acceptance-letter', $enrollment) }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-secondary-600 hover:text-secondary-700 hover:bg-secondary-50 dark:hover:bg-secondary-900/20 rounded-lg mr-1" aria-label="Generate acceptance letter" title="Generate acceptance letter">
+ <i class="fas fa-file-pdf" aria-hidden="true"></i>
+ </a>
  <button onclick="toggleEditEnrollment({{ $enrollment->id }})" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit enrollment">
  <i class="fas fa-edit" aria-hidden="true"></i>
  </button>
@@ -163,6 +166,23 @@
  <option value="in_person" {{ $enrollment->mode ==='in_person' ?'selected' :'' }}>In-Person</option>
  <option value="hybrid" {{ $enrollment->mode ==='hybrid' ?'selected' :'' }}>Hybrid</option>
  </select>
+ </div>
+ <div>
+ <label class="od-form-label">Funding</label>
+ <select name="funding_source" required class="od-input funding-source-select" data-enrollment="{{ $enrollment->id }}">
+ <option value="self" {{ $enrollment->funding_source ==='self' ?'selected' :'' }}>Self</option>
+ <option value="cdf" {{ $enrollment->funding_source ==='cdf' ?'selected' :'' }}>CDF</option>
+ <option value="bursary" {{ $enrollment->funding_source ==='bursary' ?'selected' :'' }}>Bursary</option>
+ <option value="employer" {{ $enrollment->funding_source ==='employer' ?'selected' :'' }}>Employer</option>
+ </select>
+ </div>
+ <div id="cdf-constituency-{{ $enrollment->id }}" class="{{ $enrollment->funding_source === 'cdf' ? '' : 'hidden' }}">
+ <label class="od-form-label">Constituency</label>
+ <input type="text" name="cdf_constituency" value="{{ $enrollment->cdf_constituency }}" class="od-input w-40" placeholder="Constituency">
+ </div>
+ <div>
+ <label class="od-form-label">Sponsor ref</label>
+ <input type="text" name="sponsor_reference" value="{{ $enrollment->sponsor_reference }}" class="od-input w-32" placeholder="Reference">
  </div>
  <div>
  <label class="od-form-label">Progress %</label>
@@ -203,5 +223,17 @@
 function toggleEditEnrollment(id) {
  document.getElementById('edit-enrollment-' + id).classList.toggle('hidden');
 }
+
+document.querySelectorAll('.funding-source-select').forEach(function(select) {
+    select.addEventListener('change', function() {
+        const id = this.dataset.enrollment;
+        const wrapper = document.getElementById('cdf-constituency-' + id);
+        if (this.value === 'cdf') {
+            wrapper.classList.remove('hidden');
+        } else {
+            wrapper.classList.add('hidden');
+        }
+    });
+});
 </script>
 @endsection
