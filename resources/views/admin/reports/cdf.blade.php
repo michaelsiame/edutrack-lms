@@ -5,7 +5,12 @@
 
 @section('content')
 <div class="max-w-6xl mx-auto">
-    <a href="{{ route('admin.reports') }}" class="od-btn od-btn-secondary od-btn-sm mb-4">&larr; Back to Reports</a>
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <a href="{{ route('admin.reports') }}" class="od-btn od-btn-secondary od-btn-sm">&larr; Back to Reports</a>
+        <a href="{{ route('admin.cdf-disbursements.create') }}" class="od-btn od-btn-primary od-btn-sm">
+            <i class="fas fa-plus mr-1"></i>Record a Disbursement
+        </a>
+    </div>
 
     <!-- Filters -->
     <div class="od-card p-4 mb-6">
@@ -41,13 +46,54 @@
         </form>
     </div>
 
-    @forelse($groups as $constituency => $enrollments)
+    <!-- Reconciliation Summary -->
+    @if($reconciliation->isNotEmpty())
     <div class="od-card mb-6" style="padding: 0; overflow: hidden;">
         <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-800 dark:text-gray-100">Constituency Reconciliation</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="od-table min-w-[640px]">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-3 text-left" scope="col">Constituency</th>
+                        <th class="px-4 py-3 text-right" scope="col">Students</th>
+                        <th class="px-4 py-3 text-right" scope="col">Expected</th>
+                        <th class="px-4 py-3 text-right" scope="col">Received</th>
+                        <th class="px-4 py-3 text-right" scope="col">Outstanding</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($reconciliation as $summary)
+                    <tr>
+                        <td class="px-4 py-3 font-medium" style="color: var(--od-fg);">{{ $summary['constituency'] }}</td>
+                        <td class="px-4 py-3 text-right">{{ $summary['students'] }}</td>
+                        <td class="px-4 py-3 text-right">{{ setting('currency', 'ZMW') }} {{ number_format($summary['expected'], 2) }}</td>
+                        <td class="px-4 py-3 text-right">{{ setting('currency', 'ZMW') }} {{ number_format($summary['received'], 2) }}</td>
+                        <td class="px-4 py-3 text-right {{ $summary['outstanding'] > 0 ? 'text-danger-600' : 'text-success-600' }}">{{ setting('currency', 'ZMW') }} {{ number_format($summary['outstanding'], 2) }}</td>
+                    </tr>
+                    @endforeach
+                    <tr class="bg-gray-50 dark:bg-gray-700/30 font-semibold">
+                        <td class="px-4 py-3" style="color: var(--od-fg);">Total</td>
+                        <td class="px-4 py-3 text-right">{{ $reconciliationTotals['students'] }}</td>
+                        <td class="px-4 py-3 text-right">{{ setting('currency', 'ZMW') }} {{ number_format($reconciliationTotals['expected'], 2) }}</td>
+                        <td class="px-4 py-3 text-right">{{ setting('currency', 'ZMW') }} {{ number_format($reconciliationTotals['received'], 2) }}</td>
+                        <td class="px-4 py-3 text-right {{ $reconciliationTotals['outstanding'] > 0 ? 'text-danger-600' : 'text-success-600' }}">{{ setting('currency', 'ZMW') }} {{ number_format($reconciliationTotals['outstanding'], 2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @endif
+
+    @forelse($groups as $constituency => $enrollments)
+    <div class="od-card mb-6" style="padding: 0; overflow: hidden;">
+        <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700 flex flex-wrap items-center justify-between gap-3">
             <h3 class="font-semibold text-gray-800 dark:text-gray-100">
                 {{ $constituency }}
                 <span class="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">({{ $enrollments->count() }} enrolments)</span>
             </h3>
+            <a href="{{ route('admin.cdf-disbursements.create', ['constituency' => $constituency]) }}" class="od-btn od-btn-secondary od-btn-sm">Record Disbursement</a>
         </div>
         <div class="overflow-x-auto">
             <table class="od-table min-w-[640px]">

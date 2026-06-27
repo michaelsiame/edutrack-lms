@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CdfDisbursement;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Payment;
@@ -10,6 +11,7 @@ use App\Models\Setting;
 use App\Models\SystemSetting;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -55,7 +57,15 @@ class DashboardController extends Controller
         $groups = $enrollments->groupBy(fn($e) => $e->cdf_constituency ?: 'Unspecified');
         $courses = Course::published()->orderBy('title')->get();
 
-        return view('admin.reports.cdf', compact('groups', 'courses'));
+        $reconciliation = $this->buildCdfReconciliation($groups);
+        $reconciliationTotals = [
+            'students' => $reconciliation->sum('students'),
+            'expected' => $reconciliation->sum('expected'),
+            'received' => $reconciliation->sum('received'),
+            'outstanding' => $reconciliation->sum('outstanding'),
+        ];
+
+        return view('admin.reports.cdf', compact('groups', 'courses', 'reconciliation', 'reconciliationTotals'));
     }
 
     /**
@@ -77,19 +87,62 @@ class DashboardController extends Controller
 
         $enrollments = $query->orderBy('cdf_constituency')->orderBy('enrolled_at', 'desc')->get();
 
-        $headers = ['Constituency', 'Student Name', 'Email', 'Course', 'Amount Paid', 'Status', 'Sponsor Reference', 'Enrolled At'];
-        $rows = $enrollments->map(fn($e) => [
-            $e->cdf_constituency ?: 'Unspecified',
-            $e->user?->full_name ?? 'N/A',
-            $e->user?->email ?? '',
-            $e->course?->title ?? 'N/A',
-            $e->amount_paid,
-            $e->enrollment_status,
-            $e->sponsor_reference ?? '',
-            $e->enrolled_at?->format('Y-m-d') ?? '',
-        ]);
+        $groups = $enrollments->groupBy(fn($e) => $e->cdf_constituency ?: 'Unspecified');
+        $reconciliation = $this->buildCdfReconciliation($groups);
+
+        $headers = ['Constituency', 'Student Name', 'Email', 'Course', 'Amount Paid', 'Status', 'Sponsor Reference', 'Enrolled At', 'Constituency Expected', 'Constituency Received', 'Constituency Outstanding'];
+        $rows = $enrollments->map(function ($e) use ($reconciliation) {
+            $constituency = $e->cdf_constituency ?: 'Unspecified';
+            $summary = $reconciliation->get($constituency);
+
+            return [
+                $constituency,
+                $e->user?->full_name ?? 'N/A',
+                $e->user?->email ?? '',
+                $e->course?->title ?? 'N/A',
+                $e->amount_paid,
+                $e->enrollment_status,
+                $e->sponsor_reference ?? '',
+                $e->enrolled_at?->format('Y-m-d') ?? '',
+                $summary ? $summary['expected'] : 0,
+                $summary ? $summary['received'] : 0,
+                $summary ? $summary['outstanding'] : 0,
+            ];
+        });
 
         return $this->streamCsv('cdf-enrollments-' . now()->format('Y-m-d') . '.csv', $headers, $rows);
+    }
+
+    /**
+     * Build per-constituency reconciliation summary.
+     *
+     * @param  \Illuminate\Support\Collection  $groups
+     * @return \Illuminate\Support\Collection
+     */
+    private function buildCdfReconciliation($groups)
+    {
+        $constituencies = $groups->keys()->filter()->all();
+
+        $receivedByConstituency = $constituencies
+            ? CdfDisbursement::select('constituency', DB::raw('SUM(amount) as total'))
+                ->whereIn('constituency', $constituencies)
+                ->groupBy('constituency')
+                ->pluck('total', 'constituency')
+                ->map(fn($amount) => (float) $amount)
+            : collect();
+
+        return $groups->map(function ($enrollments, $constituency) use ($receivedByConstituency) {
+            $expected = $enrollments->sum(fn($e) => (float) ($e->course?->price ?? 0));
+            $received = $receivedByConstituency->get($constituency, 0);
+
+            return [
+                'constituency' => $constituency,
+                'students' => $enrollments->count(),
+                'expected' => $expected,
+                'received' => $received,
+                'outstanding' => $expected - $received,
+            ];
+        });
     }
 
     public function settings()

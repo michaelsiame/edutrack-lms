@@ -203,6 +203,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::get('/reports/export/{type}', [AdminDashboardController::class, 'exportReport'])->name('reports.export');
     Route::get('/reports/cdf', [AdminDashboardController::class, 'cdfReport'])->name('reports.cdf');
     Route::get('/reports/cdf/export', [AdminDashboardController::class, 'exportCdfReport'])->name('reports.cdf.export');
+
+    // CDF Disbursements
+    Route::get('/cdf-disbursements', [App\Http\Controllers\Admin\CdfDisbursementController::class, 'index'])->name('cdf-disbursements.index');
+    Route::get('/cdf-disbursements/create', [App\Http\Controllers\Admin\CdfDisbursementController::class, 'create'])->name('cdf-disbursements.create');
+    Route::post('/cdf-disbursements', [App\Http\Controllers\Admin\CdfDisbursementController::class, 'store'])->name('cdf-disbursements.store');
+    Route::delete('/cdf-disbursements/{cdfDisbursement}', [App\Http\Controllers\Admin\CdfDisbursementController::class, 'destroy'])->name('cdf-disbursements.destroy');
+
     Route::get('/settings', [AdminDashboardController::class, 'settings'])->name('settings');
     Route::post('/settings', [AdminDashboardController::class, 'updateSettings'])->name('settings.update');
 
