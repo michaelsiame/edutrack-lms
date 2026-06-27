@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 340" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Comparison of LAN and WAN networks: a LAN covers one building with a switch, while a WAN spans cities through routers and the internet.">
+  <title>LAN vs WAN</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">LAN vs WAN</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Two ways to connect computers, differing in size and reach</text>
+
+  <!-- LAN card -->
+  <g>
+    <rect x="40" y="80" width="270" height="220" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="175" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="#0a1628">LAN</text>
+    <text x="175" y="130" text-anchor="middle" font-size="12" fill="#6b6f78">Local Area Network</text>
+
+    <!-- building -->
+    <rect x="135" y="155" width="80" height="70" rx="4" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <rect x="145" y="170" width="18" height="18" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1"/>
+    <rect x="185" y="170" width="18" height="18" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1"/>
+    <rect x="145" y="198" width="18" height="18" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1"/>
+    <rect x="185" y="198" width="18" height="18" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1"/>
+
+    <!-- switch -->
+    <rect x="150" y="240" width="50" height="22" rx="4" fill="#0b4f8c"/>
+    <text x="175" y="255" text-anchor="middle" font-size="10" font-weight="600" fill="#ffffff">Switch</text>
+
+    <!-- lines -->
+    <line x1="154" y1="240" x2="154" y2="225" stroke="#9aa3af" stroke-width="2"/>
+    <line x1="196" y1="240" x2="196" y2="225" stroke="#9aa3af" stroke-width="2"/>
+
+    <text x="175" y="290" text-anchor="middle" font-size="12" fill="#6b6f78">One building or site</text>
+  </g>
+
+  <!-- WAN card -->
+  <g>
+    <rect x="350" y="80" width="270" height="220" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="485" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="#0a1628">WAN</text>
+    <text x="485" y="130" text-anchor="middle" font-size="12" fill="#6b6f78">Wide Area Network</text>
+
+    <!-- building A -->
+    <rect x="380" y="165" width="50" height="45" rx="4" fill="#ffffff" stroke="#1f9d57" stroke-width="1.5"/>
+    <rect x="390" y="178" width="12" height="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1"/>
+    <rect x="408" y="178" width="12" height="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1"/>
+    <text x="405" y="222" text-anchor="middle" font-size="10" fill="#6b6f78">Lusaka</text>
+
+    <!-- building B -->
+    <rect x="540" y="165" width="50" height="45" rx="4" fill="#ffffff" stroke="#1f9d57" stroke-width="1.5"/>
+    <rect x="550" y="178" width="12" height="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1"/>
+    <rect x="568" y="178" width="12" height="12" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1"/>
+    <text x="565" y="222" text-anchor="middle" font-size="10" fill="#6b6f78">Ndola</text>
+
+    <!-- internet cloud -->
+    <ellipse cx="485" cy="195" rx="50" ry="28" fill="#ffffff" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="485" y="200" text-anchor="middle" font-size="12" font-weight="600" fill="#1f9d57">Internet</text>
+
+    <!-- lines -->
+    <line x1="430" y1="188" x2="435" y2="192" stroke="#9aa3af" stroke-width="2"/>
+    <line x1="535" y1="188" x2="540" y2="192" stroke="#9aa3af" stroke-width="2"/>
+
+    <text x="485" y="250" text-anchor="middle" font-size="12" fill="#6b6f78">Spans cities, regions</text>
+    <text x="485" y="266" text-anchor="middle" font-size="12" fill="#6b6f78">or countries</text>
+  </g>
+
+  <!-- footer -->
+  <text x="330" y="325" text-anchor="middle" font-size="11.5" fill="#9aa3af">LANs are fast and private; WANs connect many LANs over long distances.</text>
+</svg>

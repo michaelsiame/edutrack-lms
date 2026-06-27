@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Multimedia production pipeline: capture raw media, edit each element, combine text, image, audio and video, then publish the finished presentation.">
+  <title>Multimedia Production Pipeline</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Multimedia Production Pipeline</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">From raw media to a finished, shareable presentation</text>
+
+  <!-- Capture -->
+  <g>
+    <rect x="30" y="95" width="120" height="160" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="90" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Capture</text>
+    <!-- camera icon -->
+    <rect x="58" y="150" width="64" height="40" rx="4" fill="#ffffff" stroke="#9aa3af" stroke-width="1.5"/>
+    <circle cx="90" cy="170" r="12" fill="#eef4fb" stroke="#9aa3af" stroke-width="1.5"/>
+    <circle cx="90" cy="170" r="6" fill="#9aa3af"/>
+    <text x="90" y="210" text-anchor="middle" font-size="12" fill="#6b6f78">Record or</text>
+    <text x="90" y="226" text-anchor="middle" font-size="12" fill="#6b6f78">import media</text>
+  </g>
+
+  <!-- arrow -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="154" y1="175" x2="176" y2="175"/>
+    <polygon points="176,168 189,175 176,182"/>
+  </g>
+
+  <!-- Edit -->
+  <g>
+    <rect x="195" y="95" width="120" height="160" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="255" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Edit</text>
+    <!-- scissors icon -->
+    <circle cx="245" cy="168" r="8" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <circle cx="265" cy="168" r="8" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <line x1="248" y1="168" x2="262" y2="168" stroke="#0b4f8c" stroke-width="2"/>
+    <line x1="240" y1="185" x2="270" y2="185" stroke="#9aa3af" stroke-width="2"/>
+    <text x="255" y="210" text-anchor="middle" font-size="12" fill="#6b6f78">Trim, crop</text>
+    <text x="255" y="226" text-anchor="middle" font-size="12" fill="#6b6f78">and improve</text>
+  </g>
+
+  <!-- arrow -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="319" y1="175" x2="341" y2="175"/>
+    <polygon points="341,168 354,175 341,182"/>
+  </g>
+
+  <!-- Combine -->
+  <g>
+    <rect x="360" y="95" width="160" height="160" rx="16" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="440" y="124" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Combine</text>
+    <!-- four small media blocks -->
+    <rect x="375" y="142" width="54" height="32" rx="4" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="402" y="162" text-anchor="middle" font-size="11" fill="#0b4f8c">Text</text>
+    <rect x="445" y="142" width="54" height="32" rx="4" fill="#ffffff" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="472" y="162" text-anchor="middle" font-size="11" fill="#1f9d57">Image</text>
+    <rect x="375" y="184" width="54" height="32" rx="4" fill="#ffffff" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="402" y="204" text-anchor="middle" font-size="11" fill="#f59e0b">Audio</text>
+    <rect x="445" y="184" width="54" height="32" rx="4" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="472" y="204" text-anchor="middle" font-size="11" fill="#dc2626">Video</text>
+  </g>
+
+  <!-- arrow -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="524" y1="175" x2="546" y2="175"/>
+    <polygon points="546,168 559,175 546,182"/>
+  </g>
+
+  <!-- Publish -->
+  <g>
+    <rect x="565" y="95" width="90" height="160" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="610" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Publish</text>
+    <!-- upload icon -->
+    <path d="M595 165 l10 -12 10 12 h-7 v20 h-6 v-20 z" fill="#1f9d57"/>
+    <text x="610" y="210" text-anchor="middle" font-size="12" fill="#6b6f78">Export or</text>
+    <text x="610" y="226" text-anchor="middle" font-size="12" fill="#6b6f78">share</text>
+  </g>
+
+  <!-- footer -->
+  <text x="330" y="282" text-anchor="middle" font-size="11.5" fill="#9aa3af">Good multimedia combines each element so the message is clear and engaging.</text>
+</svg>

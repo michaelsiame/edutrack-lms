@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 340" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Desktop publishing page layout showing a flyer with headline, body text, image and caption frames aligned to a grid.">
+  <title>Desktop Publishing Page Layout</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Desktop Publishing Page Layout</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">A flier is built from linked text and graphics frames</text>
+
+  <!-- Page -->
+  <rect x="170" y="78" width="320" height="220" rx="4" fill="#ffffff" stroke="#d8dee6" stroke-width="2"/>
+
+  <!-- Margin guides (dashed) -->
+  <line x1="195" y1="78" x2="195" y2="298" stroke="#9aa3af" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="465" y1="78" x2="465" y2="298" stroke="#9aa3af" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="170" y1="103" x2="490" y2="103" stroke="#9aa3af" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="170" y1="278" x2="490" y2="278" stroke="#9aa3af" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- Headline frame -->
+  <rect x="205" y="112" width="250" height="38" rx="4" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="330" y="136" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">HEADLINE FRAME</text>
+
+  <!-- Body text frame (left column) -->
+  <rect x="205" y="160" width="145" height="100" rx="4" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <text x="277" y="182" text-anchor="middle" font-size="12" font-weight="700" fill="#0a1628">Body Text Frame</text>
+  <line x1="215" y1="194" x2="340" y2="194" stroke="#9aa3af" stroke-width="2"/>
+  <line x1="215" y1="206" x2="330" y2="206" stroke="#9aa3af" stroke-width="2"/>
+  <line x1="215" y1="218" x2="335" y2="218" stroke="#9aa3af" stroke-width="2"/>
+  <line x1="215" y1="230" x2="320" y2="230" stroke="#9aa3af" stroke-width="2"/>
+
+  <!-- Image/graphics frame (right) -->
+  <rect x="360" y="160" width="95" height="70" rx="4" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+  <circle cx="407" cy="185" r="14" fill="#1f9d57"/>
+  <path d="M398 185 l6 7 12 -14" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="407" y="224" text-anchor="middle" font-size="11" fill="#6b6f78">Image frame</text>
+
+  <!-- Caption frame -->
+  <rect x="360" y="240" width="95" height="25" rx="4" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+  <text x="407" y="257" text-anchor="middle" font-size="10" fill="#6b6f78">Caption frame</text>
+
+  <!-- right-side labels -->
+  <text x="520" y="130" font-size="12" font-weight="600" fill="#0a1628">Use frames to</text>
+  <text x="520" y="146" font-size="12" fill="#6b6f78">place text and</text>
+  <text x="520" y="162" font-size="12" fill="#6b6f78">graphics precisely</text>
+  <text x="520" y="190" font-size="12" font-weight="600" fill="#0a1628">Guides and</text>
+  <text x="520" y="206" font-size="12" fill="#6b6f78">margins keep</text>
+  <text x="520" y="222" font-size="12" fill="#6b6f78">the layout tidy</text>
+
+  <!-- left-side labels -->
+  <text x="150" y="130" text-anchor="end" font-size="12" font-weight="600" fill="#0a1628">Page size</text>
+  <text x="150" y="146" text-anchor="end" font-size="12" fill="#6b6f78">and orientation</text>
+  <text x="150" y="175" text-anchor="end" font-size="12" font-weight="600" fill="#0a1628">Text wraps</text>
+  <text x="150" y="191" text-anchor="end" font-size="12" fill="#6b6f78">inside frames</text>
+
+  <!-- footer -->
+  <text x="330" y="325" text-anchor="middle" font-size="11.5" fill="#9aa3af">Consistent margins and alignment make a publication look professional.</text>
+</svg>

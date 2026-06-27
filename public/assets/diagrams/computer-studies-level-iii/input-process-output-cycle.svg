@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 320" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="The input-process-output cycle: data enters through input devices, the CPU and memory process it, and output devices present the result.">
+  <title>Input-Process-Output Cycle</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">The Input-Process-Output Cycle</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">How a computer turns data into useful information</text>
+
+  <!-- Input card -->
+  <g>
+    <rect x="40" y="95" width="150" height="170" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="115" y="125" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Input</text>
+    <!-- keyboard icon -->
+    <rect x="70" y="142" width="90" height="38" rx="4" fill="#ffffff" stroke="#9aa3af" stroke-width="1.5"/>
+    <line x1="78" y1="153" x2="152" y2="153" stroke="#9aa3af" stroke-width="2"/>
+    <line x1="78" y1="164" x2="152" y2="164" stroke="#9aa3af" stroke-width="2"/>
+    <line x1="78" y1="175" x2="132" y2="175" stroke="#9aa3af" stroke-width="2"/>
+    <text x="115" y="202" text-anchor="middle" font-size="12" fill="#6b6f78">Keyboard</text>
+    <text x="115" y="218" text-anchor="middle" font-size="12" fill="#6b6f78">Mouse, scanner</text>
+    <text x="115" y="234" text-anchor="middle" font-size="12" fill="#6b6f78">microphone</text>
+  </g>
+
+  <!-- arrow Input -> Process -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="194" y1="180" x2="224" y2="180"/>
+    <polygon points="224,173 237,180 224,187"/>
+  </g>
+
+  <!-- Process card -->
+  <g>
+    <rect x="240" y="95" width="180" height="170" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="330" y="125" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Process</text>
+    <!-- CPU/RAM chip -->
+    <rect x="285" y="145" width="90" height="54" rx="6" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="330" y="177" text-anchor="middle" font-size="13" font-weight="600" fill="#0b4f8c">CPU + RAM</text>
+    <text x="330" y="218" text-anchor="middle" font-size="12" fill="#6b6f78">The processor calculates</text>
+    <text x="330" y="234" text-anchor="middle" font-size="12" fill="#6b6f78">and memory holds data</text>
+  </g>
+
+  <!-- arrow Process -> Output -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="424" y1="180" x2="454" y2="180"/>
+    <polygon points="454,173 467,180 454,187"/>
+  </g>
+
+  <!-- Output card -->
+  <g>
+    <rect x="470" y="95" width="150" height="170" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="545" y="125" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Output</text>
+    <!-- monitor icon -->
+    <rect x="495" y="145" width="100" height="62" rx="4" fill="#ffffff" stroke="#1f9d57" stroke-width="1.5"/>
+    <rect x="500" y="150" width="90" height="42" rx="2" fill="#ecfaf2" stroke="none"/>
+    <line x1="505" y1="160" x2="585" y2="160" stroke="#1f9d57" stroke-width="2"/>
+    <line x1="505" y1="172" x2="565" y2="172" stroke="#1f9d57" stroke-width="2"/>
+    <line x1="505" y1="184" x2="555" y2="184" stroke="#1f9d57" stroke-width="2"/>
+    <rect x="535" y="207" width="20" height="8" rx="1" fill="#1f9d57"/>
+    <text x="545" y="234" text-anchor="middle" font-size="12" fill="#6b6f78">Monitor, printer</text>
+    <text x="545" y="250" text-anchor="middle" font-size="12" fill="#6b6f78">speaker</text>
+  </g>
+
+  <!-- return arrow Output -> Input (dashed, concept) -->
+  <path d="M545 270 Q545 300 330 300 Q115 300 115 270" fill="none" stroke="#9aa3af" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="115,263 102,270 115,277" fill="#9aa3af"/>
+
+  <!-- footer -->
+  <text x="330" y="308" text-anchor="middle" font-size="11.5" fill="#9aa3af">The cycle repeats: output becomes feedback that drives new input.</text>
+</svg>

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 300" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="How a web browser uses a URL and DNS to send a request to a web server and receive a webpage in response.">
+  <title>How a Browser Reaches a Web Server</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">How a Browser Reaches a Web Server</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">A URL, DNS lookup, request and response bring a webpage to your screen</text>
+
+  <!-- Browser -->
+  <g>
+    <rect x="40" y="110" width="120" height="120" rx="16" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+    <text x="100" y="138" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Browser</text>
+    <rect x="55" y="150" width="90" height="60" rx="4" fill="#ffffff" stroke="#0b4f8c" stroke-width="1.5"/>
+    <rect x="55" y="150" width="90" height="18" rx="2" fill="#0b4f8c"/>
+    <text x="100" y="162" text-anchor="middle" font-size="10" fill="#ffffff">www.edutrack</text>
+    <line x1="62" y1="180" x2="138" y2="180" stroke="#9aa3af" stroke-width="2"/>
+    <line x1="62" y1="192" x2="118" y2="192" stroke="#9aa3af" stroke-width="2"/>
+  </g>
+
+  <!-- arrow Browser -> DNS -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="164" y1="160" x2="194" y2="160"/>
+    <polygon points="194,153 207,160 194,167"/>
+  </g>
+  <text x="185" y="150" text-anchor="middle" font-size="10" fill="#6b6f78">URL</text>
+
+  <!-- DNS -->
+  <g>
+    <rect x="215" y="110" width="100" height="120" rx="16" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+    <text x="265" y="138" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">DNS</text>
+    <circle cx="265" cy="165" r="18" fill="#ffffff" stroke="#9aa3af" stroke-width="1.5"/>
+    <text x="265" y="170" text-anchor="middle" font-size="11" fill="#6b6f78">look</text>
+    <text x="265" y="195" text-anchor="middle" font-size="12" fill="#6b6f78">Finds the</text>
+    <text x="265" y="211" text-anchor="middle" font-size="12" fill="#6b6f78">server address</text>
+  </g>
+
+  <!-- arrow DNS -> Server -->
+  <g stroke="#9aa3af" stroke-width="2.5" fill="#9aa3af">
+    <line x1="319" y1="160" x2="349" y2="160"/>
+    <polygon points="349,153 362,160 349,167"/>
+  </g>
+  <text x="340" y="150" text-anchor="middle" font-size="10" fill="#6b6f78">IP</text>
+
+  <!-- Web Server -->
+  <g>
+    <rect x="370" y="110" width="120" height="120" rx="16" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+    <text x="430" y="138" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Web Server</text>
+    <!-- server stack -->
+    <rect x="400" y="152" width="60" height="16" rx="2" fill="#1f9d57"/>
+    <rect x="405" y="156" width="8" height="8" rx="1" fill="#ffffff"/>
+    <rect x="400" y="172" width="60" height="16" rx="2" fill="#1f9d57"/>
+    <rect x="405" y="176" width="8" height="8" rx="1" fill="#ffffff"/>
+    <rect x="400" y="192" width="60" height="16" rx="2" fill="#1f9d57"/>
+    <rect x="405" y="196" width="8" height="8" rx="1" fill="#ffffff"/>
+  </g>
+
+  <!-- arrow Server -> Browser (response) -->
+  <path d="M430 235 Q330 270 100 235" fill="none" stroke="#1f9d57" stroke-width="2.5"/>
+  <polygon points="100,228 87,235 100,242" fill="#1f9d57"/>
+  <text x="265" y="275" text-anchor="middle" font-size="11" fill="#6b6f78">Response: HTML, images and files</text>
+
+  <!-- footer -->
+  <text x="330" y="298" text-anchor="middle" font-size="11.5" fill="#9aa3af">The browser turns the response into the webpage you see and interact with.</text>
+</svg>

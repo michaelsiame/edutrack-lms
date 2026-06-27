@@ -58,6 +58,7 @@ use Database\Seeders\Content\SecretarialOfficeManagementContentSeeder;
 use Database\Seeders\Content\SoftwareEngineeringContentSeeder;
 use Database\Seeders\Content\SoftwareEngineeringGitDiagramsSeeder;
 use Database\Seeders\Content\TradeCertificateComputerStudiesLevel3ContentSeeder;
+use Database\Seeders\Content\TradeCertificateComputerStudiesLevel3DiagramsSeeder;
 use Database\Seeders\Content\WebDevelopmentContentSeeder;
 use Database\Seeders\Content\WebDevelopmentDiagramsSeeder;
 use Illuminate\Database\Seeder;
@@ -129,6 +130,7 @@ class ContentEnrichmentSeeder extends Seeder
             PythonProgrammingDiagramsSeeder::class,
             RecordManagementDiagramsSeeder::class,
             SoftwareEngineeringGitDiagramsSeeder::class,
+            TradeCertificateComputerStudiesLevel3DiagramsSeeder::class,
             WebDevelopmentDiagramsSeeder::class,
             MobileAppOrphanQuizCleanupSeeder::class,
         ]);

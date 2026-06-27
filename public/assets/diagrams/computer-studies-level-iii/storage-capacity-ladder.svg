@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 380" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" role="img" aria-label="Storage capacity ladder from bit to terabyte, showing how each unit is 1024 times larger than the one below it.">
+  <title>Storage Capacity Ladder</title>
+
+  <!-- title -->
+  <text x="330" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0a1628">Storage Capacity Ladder</text>
+  <text x="330" y="56" text-anchor="middle" font-size="13" fill="#6b6f78">Each step is about 1024 times bigger than the step below it</text>
+
+  <!-- Bit -->
+  <rect x="300" y="75" width="60" height="26" rx="8" fill="#f7f8fa" stroke="#d8dee6" stroke-width="1.5"/>
+  <text x="330" y="92" text-anchor="middle" font-size="13" font-weight="700" fill="#0a1628">Bit</text>
+  <text x="330" y="112" text-anchor="middle" font-size="11" fill="#6b6f78">0 or 1</text>
+
+  <!-- Byte -->
+  <rect x="270" y="130" width="120" height="28" rx="8" fill="#eef4fb" stroke="#0b4f8c" stroke-width="1.5"/>
+  <text x="330" y="148" text-anchor="middle" font-size="14" font-weight="700" fill="#0a1628">Byte</text>
+  <text x="330" y="170" text-anchor="middle" font-size="11" fill="#6b6f78">8 bits, one character</text>
+
+  <!-- KB -->
+  <rect x="230" y="190" width="200" height="32" rx="8" fill="#ecfaf2" stroke="#1f9d57" stroke-width="1.5"/>
+  <text x="330" y="210" text-anchor="middle" font-size="15" font-weight="700" fill="#0a1628">Kilobyte (KB)</text>
+  <text x="330" y="232" text-anchor="middle" font-size="11" fill="#6b6f78">About one page of text</text>
+
+  <!-- MB -->
+  <rect x="170" y="255" width="320" height="36" rx="8" fill="#fef6e7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="330" y="276" text-anchor="middle" font-size="16" font-weight="700" fill="#0a1628">Megabyte (MB)</text>
+  <text x="330" y="298" text-anchor="middle" font-size="11" fill="#6b6f78">A short song or a small photo</text>
+
+  <!-- GB -->
+  <rect x="90" y="325" width="480" height="40" rx="8" fill="#fdecec" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="330" y="347" text-anchor="middle" font-size="17" font-weight="700" fill="#0a1628">Gigabyte (GB)</text>
+  <text x="330" y="362" text-anchor="middle" font-size="11" fill="#6b6f78">A movie or hundreds of photos</text>
+
+  <!-- arrows and x1024 labels -->
+  <text x="410" y="106" text-anchor="start" font-size="11" fill="#9aa3af">x 8</text>
+  <text x="420" y="160" text-anchor="start" font-size="11" fill="#9aa3af">x 1024</text>
+  <text x="460" y="220" text-anchor="start" font-size="11" fill="#9aa3af">x 1024</text>
+  <text x="520" y="285" text-anchor="start" font-size="11" fill="#9aa3af">x 1024</text>
+
+  <line x1="370" y1="88" x2="390" y2="130" stroke="#9aa3af" stroke-width="1.5"/>
+  <line x1="400" y1="145" x2="410" y2="190" stroke="#9aa3af" stroke-width="1.5"/>
+  <line x1="440" y1="205" x2="450" y2="255" stroke="#9aa3af" stroke-width="1.5"/>
+  <line x1="500" y1="270" x2="510" y2="325" stroke="#9aa3af" stroke-width="1.5"/>
+
+  <!-- left side label -->
+  <text x="60" y="205" text-anchor="middle" font-size="12" fill="#6b6f78" transform="rotate(-90 60 205)">Increasing capacity</text>
+</svg>
