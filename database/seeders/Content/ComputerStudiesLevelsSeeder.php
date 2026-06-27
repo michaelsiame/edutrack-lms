@@ -25,7 +25,7 @@ class ComputerStudiesLevelsSeeder extends Seeder
 
         $levels = [
             [
-                'title' => 'Computer Studies – Level III',
+                'title' => 'Trade Certificate in Computer Studies Level III',
                 'slug' => 'computer-studies-level-iii',
                 'duration' => '3 months',
                 'duration_weeks' => 12,
@@ -33,7 +33,7 @@ class ComputerStudiesLevelsSeeder extends Seeder
                 'price' => 3000,
             ],
             [
-                'title' => 'Computer Studies – Level II',
+                'title' => 'Trade Certificate in Computer Studies Level II',
                 'slug' => 'computer-studies-level-ii',
                 'duration' => '6 months',
                 'duration_weeks' => 24,
@@ -41,7 +41,7 @@ class ComputerStudiesLevelsSeeder extends Seeder
                 'price' => 3000,
             ],
             [
-                'title' => 'Computer Studies – Level I',
+                'title' => 'Trade Certificate in Computer Studies Level I',
                 'slug' => 'computer-studies-level-i',
                 'duration' => '1 year (12 months)',
                 'duration_weeks' => 48,
