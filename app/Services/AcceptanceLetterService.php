@@ -90,6 +90,122 @@ class AcceptanceLetterService
     }
 
     /**
+     * Render a BLANK, printable acceptance-letter template for a CDF Computer
+     * Studies level ('i', 'ii' or 'iii'). The course title, duration and the
+     * correct fee table are pre-filled; applicant details are left blank for
+     * hand-completion. Returns PDF bytes.
+     */
+    public function renderBlank(string $level): string
+    {
+        $level = strtolower(trim($level));
+        $config = match ($level) {
+            'i', '1', 'level-i' => [
+                'title' => 'Trade Certificate in Computer Studies Level I',
+                'fees' => $this->oneYearFeeStructure(),
+                'duration' => '1 year (12 months)',
+            ],
+            'ii', '2', 'level-ii' => [
+                'title' => 'Trade Certificate in Computer Studies Level II',
+                'fees' => $this->sixMonthFeeStructure(),
+                'duration' => '6 months',
+            ],
+            default => [
+                'title' => 'Trade Certificate in Computer Studies Level III',
+                'fees' => $this->threeMonthFeeStructure(),
+                'duration' => '3 months',
+            ],
+        };
+
+        $snapshot = $this->buildFeeSnapshot($config['fees']);
+
+        $pdf = new \App\Pdf\EdutrackPdf('P', 'mm', 'A4');
+        $pdf->SetCreator('Edutrack LMS');
+        $pdf->SetAuthor('Edutrack Computer Training College');
+        $pdf->SetTitle('Acceptance Letter Template - ' . $config['title']);
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+        $pdf->SetMargins(self::MARGIN, self::MARGIN, self::MARGIN);
+        $pdf->SetAutoPageBreak(true, self::MARGIN);
+        $pdf->SetCellPadding(0);
+        $pdf->AddPage();
+
+        $this->drawLetterhead($pdf);
+        $this->drawBlankBody($pdf, $config['title'], $config['duration'], $snapshot);
+
+        return $pdf->Output('', 'S');
+    }
+
+    /**
+     * Draw the body of a blank, fill-in acceptance-letter template.
+     */
+    protected function drawBlankBody(TCPDF $pdf, string $courseTitle, string $duration, array $feeSnapshot): void
+    {
+        $pdf->SetFont('helvetica', 'B', 13);
+        $pdf->Cell(0, 5.4, 'LETTER OF ACCEPTANCE', 0, 1, 'C');
+        $pdf->SetFont('helvetica', '', 9.5);
+        $pdf->Cell(0, 3.6, '(CDF-Sponsored Programme)', 0, 1, 'C');
+        $pdf->Ln(0.6);
+
+        $pdf->SetFont('helvetica', '', 10.5);
+        $pdf->Cell(0, 4.2, 'Date: ......................................', 0, 1, 'R');
+        $pdf->Cell(0, 4.2, 'Ref No: EDU-ADM-........................', 0, 1, 'R');
+        $pdf->Ln(0.6);
+
+        // Applicant fill-in block
+        $pdf->SetFont('helvetica', 'B', 10.5);
+        $pdf->Cell(0, 4.2, 'APPLICANT DETAILS', 0, 1, 'L');
+        $pdf->SetFont('helvetica', '', 10.5);
+        $pdf->Cell(0, 5.0, 'Full Name: ...........................................................................................', 0, 1, 'L');
+        $pdf->Cell(0, 5.0, 'NRC No: ..............................................   Phone: ..............................', 0, 1, 'L');
+        $pdf->Cell(0, 5.0, 'Constituency (CDF): ........................................   Ward: ......................', 0, 1, 'L');
+        $pdf->Ln(0.6);
+
+        $pdf->SetFont('helvetica', 'B', 10.5);
+        $pdf->Cell(0, 4.2, 'RE: OFFER OF ADMISSION', 0, 1, 'L');
+        $pdf->Ln(0.4);
+
+        $pdf->SetFont('helvetica', '', 10.5);
+        $pdf->Cell(0, 5.0, 'Dear .......................................................................,', 0, 1, 'L');
+        $pdf->MultiCell(0, 4.2, 'We are pleased to inform you that your application to study at EDUTRACK COMPUTER TRAINING COLLEGE has been SUCCESSFULLY ACCEPTED. You have been offered admission into the following programme:', 0, 'L');
+        $pdf->Ln(0.6);
+
+        $pdf->SetFont('helvetica', 'B', 10.5);
+        $pdf->Cell(0, 4.2, 'Course: ' . $courseTitle, 0, 1, 'L');
+        $pdf->SetFont('helvetica', '', 10.5);
+        $pdf->Cell(0, 4.2, 'Mode of Study: [  ] Physical    [  ] Online        Duration: ' . $duration, 0, 1, 'L');
+        $pdf->Cell(0, 4.2, 'Commencement Date: ......................................', 0, 1, 'L');
+        $pdf->Ln(1.0);
+
+        $pdf->SetFont('helvetica', 'B', 11);
+        $pdf->Cell(0, 5.0, 'FEES INFORMATION', 0, 1, 'L');
+        $pdf->Ln(0.4);
+
+        $this->drawFeeTable($pdf, 'DAY SCHOOL', $feeSnapshot['day'] ?? [], false);
+        $pdf->Ln(1.6);
+        $this->drawFeeTable($pdf, 'BOARDING', $feeSnapshot['boarding'] ?? [], true);
+        $pdf->Ln(1.8);
+
+        $pdf->SetFont('helvetica', 'B', 10.5);
+        $pdf->Cell(0, 4.2, 'Payment can be made in cash or through:', 0, 1, 'L');
+        $pdf->SetFont('helvetica', '', 10.5);
+        $pdf->Cell(0, 4.2, 'Bank: ACCESS BANK   |   Account Name: EDUTRACK COMPUTER TRAINING SCHOOL', 0, 1, 'L');
+        $pdf->Cell(0, 4.2, 'Account Number: 0106509665016', 0, 1, 'L');
+        $pdf->Ln(2.2);
+
+        $pdf->SetFont('helvetica', '', 10.5);
+        $pdf->Cell(0, 4.2, 'Yours faithfully,', 0, 1, 'L');
+        $pdf->Ln(3.2);
+        $pdf->SetFont('helvetica', 'B', 10.5);
+        $pdf->Cell(0, 4.2, 'Admissions Officer', 0, 1, 'L');
+        $pdf->SetFont('helvetica', '', 10.5);
+        $pdf->Cell(0, 4.2, 'EDUTRACK COMPUTER TRAINING COLLEGE', 0, 1, 'L');
+        $pdf->Cell(0, 4.2, 'NAME: ..............................    SIGN: ..............................', 0, 1, 'L');
+        $pdf->Ln(2.2);
+
+        $this->drawConditionsBox($pdf);
+    }
+
+    /**
      * Draw the top letterhead with logos and contact details.
      */
     protected function drawLetterhead(TCPDF $pdf): void
@@ -332,16 +448,16 @@ class AcceptanceLetterService
             '1. Pay the required fees before or on the reporting date.',
             '2. Submit copies of your NRC/Passport and academic certificates.',
             '3. Comply with all rules and regulations of the institution.',
-            '4. Students attending physical classes should report to our campus in Kalomo District, Southern Province. Online students will receive platform access details upon confirmation of payment.',
+            '4. Physical-class students report to our campus in Kalomo District, Southern Province. Online students receive platform access on confirmation of payment.',
         ];
 
         $boxY = $pdf->GetY();
-        $pdf->SetFont('helvetica', '', 10);
+        $pdf->SetFont('helvetica', '', 9.5);
         $pdf->SetDrawColor(0, 0, 0);
         $pdf->SetLineWidth(0.3);
 
         foreach ($conditions as $condition) {
-            $pdf->MultiCell(self::PAGE_W - self::MARGIN * 2 - 4, 6, $condition, 0, 'L');
+            $pdf->MultiCell(self::PAGE_W - self::MARGIN * 2 - 4, 4.9, $condition, 0, 'L');
         }
 
         $boxH = $pdf->GetY() - $boxY;

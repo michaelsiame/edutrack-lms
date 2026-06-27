@@ -196,4 +196,21 @@ class EnrollmentController extends Controller
             'Content-Type' => 'application/pdf',
         ]);
     }
+
+    /**
+     * Download a blank, printable CDF acceptance-letter template for a
+     * Computer Studies level (i | ii | iii), for applicants to fill in by hand.
+     */
+    public function blankAcceptanceLetter(string $level)
+    {
+        $pdf = app(AcceptanceLetterService::class)->renderBlank($level);
+
+        $filename = 'Acceptance-Letter-Template-Computer-Studies-Level-' . strtoupper($level) . '.pdf';
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf;
+        }, $filename, [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
 }
