@@ -56,7 +56,7 @@ class ComputerStudiesLevelsSeeder extends Seeder
                 [
                     'title' => $level['title'],
                     'description' => $this->description($level['title'], $level['duration']),
-                    'short_description' => 'CDF-sponsored ' . $level['duration'] . ' computer studies programme.',
+                    'short_description' => ucfirst($level['duration']) . ' computer studies programme.',
                     'category_id' => $categoryId,
                     'instructor_id' => $instructorId,
                     'level' => 'beginner',
@@ -80,7 +80,7 @@ class ComputerStudiesLevelsSeeder extends Seeder
 
     protected function description(string $title, string $duration): string
     {
-        return "{$title} is a {$duration} CDF-sponsored programme at Edutrack Computer Training. " .
+        return "{$title} is a {$duration} programme at Edutrack Computer Training College. " .
             "Students gain practical computer skills through hands-on lessons, assessments, and projects. " .
             "Day-school and boarding options are available.";
     }

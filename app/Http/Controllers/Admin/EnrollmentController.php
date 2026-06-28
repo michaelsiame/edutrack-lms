@@ -196,4 +196,50 @@ class EnrollmentController extends Controller
             'Content-Type' => 'application/pdf',
         ]);
     }
+
+    /**
+     * Generate a sample acceptance letter PDF for one of the three fee templates.
+     * ?template=3month|6month|1year
+     */
+    public function sampleAcceptanceLetter(Request $request)
+    {
+        $template = $request->query('template', '3month');
+
+        $service = app(AcceptanceLetterService::class);
+
+        $structures = [
+            '3month' => ['structure' => $service->threeMonthFeeStructure(), 'duration' => '3 months', 'title' => 'Trade Certificate in Computer Studies Level III'],
+            '6month' => ['structure' => $service->sixMonthFeeStructure(), 'duration' => '6 months', 'title' => 'Trade Certificate in Computer Studies Level II'],
+            '1year'  => ['structure' => $service->oneYearFeeStructure(),   'duration' => '1 year (12 months)', 'title' => 'Trade Certificate in Computer Studies Level I'],
+        ];
+
+        $cfg = $structures[$template] ?? $structures['3month'];
+        $feeSnapshot = [
+            'type'     => $cfg['structure']['type'],
+            'day'      => $cfg['structure']['day'],
+            'boarding' => $cfg['structure']['boarding'],
+        ];
+
+        $letter = new \App\Models\AcceptanceLetter([
+            'enrollment_id'     => 0,
+            'reference_no'      => 'SAMPLE-' . strtoupper($template),
+            'student_name'      => 'Sample Student',
+            'course_title'      => $cfg['title'],
+            'mode'              => 'Physical',
+            'duration'          => $cfg['duration'],
+            'commencement_date' => now()->toDate(),
+            'fee_snapshot'      => $feeSnapshot,
+            'issued_date'       => now()->toDate(),
+            'signed_by'         => null,
+        ]);
+
+        $pdf = $service->render($letter);
+        $filename = 'Sample-Acceptance-Letter-' . $template . '.pdf';
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf;
+        }, $filename, [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
 }
