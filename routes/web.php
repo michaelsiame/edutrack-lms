@@ -188,6 +188,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     // Enrollments
     Route::get('/enrollments', [App\Http\Controllers\Admin\EnrollmentController::class, 'index'])->name('enrollments.index');
     Route::get('/enrollments/create', [App\Http\Controllers\Admin\EnrollmentController::class, 'create'])->name('enrollments.create');
+    Route::get('/enrollments/sample-acceptance-letter', [App\Http\Controllers\Admin\EnrollmentController::class, 'sampleAcceptanceLetter'])->name('enrollments.sample-acceptance-letter');
     Route::post('/enrollments', [App\Http\Controllers\Admin\EnrollmentController::class, 'store'])->name('enrollments.store');
     Route::put('/enrollments/{enrollment}', [App\Http\Controllers\Admin\EnrollmentController::class, 'update'])->name('enrollments.update');
     Route::delete('/enrollments/{enrollment}', [App\Http\Controllers\Admin\EnrollmentController::class, 'destroy'])->name('enrollments.destroy');
