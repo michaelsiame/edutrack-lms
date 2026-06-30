@@ -3,7 +3,7 @@
 
 ## Project Overview
 
-Edutrack LMS is a **Laravel 10.x web application** for Edutrack Computer Training College, a TEVETA-registered vocational training institution based in Kalomo, Zambia. The system manages online courses, student enrollments, payments, certificates, live virtual classes, assignments, quizzes, discussions, and newsletters.
+Edutrack LMS is a **Laravel 10.x web application** for Edutrack Computer Training College, a TEVETA-registered vocational training institution based in Kalomo, Zambia. The system manages online courses, student enrollments, payments, certificates, live virtual classes, assignments, quizzes, discussions, newsletters, and CDF (Community Development Fund) disbursements.
 
 **Key Facts:**
 - **Type**: Laravel 10.x monolithic web application with server-side rendering (Blade) and a small REST API (Sanctum)
@@ -26,19 +26,21 @@ Edutrack LMS is a **Laravel 10.x web application** for Edutrack Computer Trainin
 | **Package Manager** | Composer, npm |
 | **Auth** | Laravel session + Laravel Sanctum (API) + Google OAuth (Laravel Socialite) |
 | **Email** | PHPMailer with Gmail SMTP; email queue via `email_queue` table |
-| **PDF Generation** | TCPDF |
+| **PDF Generation** | TCPDF, mPDF, FPDI |
 | **QR Codes** | SimpleSoftwareIO Simple QR Code |
 | **Payment Gateway** | Lenco (primary), MTN Mobile Money, Airtel Money, Zamtel Kwacha, Bank Transfer |
 | **Live Video** | Jitsi Meet |
 | **HTML Sanitization** | ezyang/htmlpurifier |
 
 ### Composer Dependencies (`composer.json`)
-Key runtime dependencies include `laravel/framework ^10.0`, `laravel/sanctum ^3.2`, `laravel/socialite ^5.27`, `phpmailer/phpmailer ^6.8`, `tecnickcom/tcpdf ^6.6`, `google/apiclient ^2.18`, `guzzlehttp/guzzle ^7.2`, `simplesoftwareio/simple-qrcode ^4.2`, and `ezyang/htmlpurifier ^4.19`.
+Key runtime dependencies include `laravel/framework ^10.0`, `laravel/sanctum ^3.2`, `laravel/socialite ^5.27`, `phpmailer/phpmailer ^6.8`, `tecnickcom/tcpdf ^6.6`, `mpdf/mpdf ^8.3`, `setasign/fpdi ^2.6`, `google/apiclient ^2.18`, `guzzlehttp/guzzle ^7.2`, `simplesoftwareio/simple-qrcode ^4.2`, and `ezyang/htmlpurifier ^4.19`.
 
 Key dev dependencies include `phpunit/phpunit ^10.0`, `laravel/pint ^1.0`, `laravel/sail ^1.18`, `spatie/laravel-ignition ^2.0`, `nunomaduro/collision ^7.0`, `fakerphp/faker ^1.9.1`, and `mockery/mockery ^1.4.4`.
 
 ### npm Dependencies (`package.json`)
 Dev dependencies include `vite ^5.0.0`, `tailwindcss ^3.4.0`, `alpinejs ^3.15.12`, `laravel-vite-plugin ^1.0.0`, `autoprefixer ^10.4.2`, `postcss ^8.4.31`, `@tailwindcss/forms ^0.5.2`, and `axios ^1.6.4`.
+
+Runtime font dependencies include `@fontsource/inter`, `@fontsource/great-vibes`, `@fontsource/montserrat`, and `@fontsource/playfair-display`.
 
 ### Tailwind Configuration
 `tailwind.config.js` defines a custom theme with:
@@ -57,26 +59,36 @@ The `postcss.config.js` uses `tailwindcss` and `autoprefixer`.
 ```
 edutrack-lms/
 ├── app/                           # Application logic
-│   ├── Console/Commands/          # 7 custom Artisan commands
+│   ├── Console/Commands/          # 9 custom Artisan commands
 │   ├── Exceptions/                # Exception handler
 │   ├── Http/
-│   │   ├── Controllers/           # 64 controllers
-│   │   ├── Middleware/            # 13 middleware (6 role-based + 7 Laravel defaults)
+│   │   ├── Controllers/           # 70 controllers
+│   │   │   ├── Admin/             # Admin dashboard controllers
+│   │   │   ├── Auth/              # Authentication controllers
+│   │   │   ├── Finance/           # Finance dashboard controllers
+│   │   │   ├── Instructor/        # Instructor controllers
+│   │   │   ├── Student/           # Student learning controllers
+│   │   │   ├── Staff/             # Read-only course access
+│   │   │   ├── Payment/           # Payment webhooks
+│   │   │   └── Api/               # API controllers
+│   │   ├── Middleware/            # 15 middleware (6 role-based + 9 standard)
 │   │   └── Kernel.php             # HTTP kernel with custom middleware aliases
 │   ├── Jobs/                      # 3 queued jobs (email sending)
-│   ├── Models/                    # 58 Eloquent models
+│   ├── Models/                    # 61 Eloquent models
+│   ├── Observers/                 # 3 model observers
+│   ├── Pdf/                       # 2 PDF helper classes
 │   ├── Policies/                  # 1 policy (CoursePolicy)
 │   ├── Providers/                 # 4 service providers
-│   ├── Services/                  # 9 business-logic services
+│   ├── Services/                  # 10 business-logic services
 │   └── helpers.php                # Global `setting()` helper
 ├── bootstrap/                     # Laravel bootstrap files
 │   ├── app.php
 │   └── providers.php
 ├── config/                        # 15 Laravel configuration files
 ├── database/
-│   ├── migrations/                # 90 migration files
-│   ├── seeders/                   # 18 seeders + DatabaseSeeder
-│   └── complete_lms_schema.sql    # Full schema dump for fresh installs
+│   ├── migrations/                # 110 migration files
+│   ├── seeders/                   # 19 top-level class seeders + 62 content seeders
+│   └── complete_lms_schema.sql    # Full schema dump (66 tables) for fresh installs
 ├── public/                        # Web document root
 │   ├── assets/                    # Static CSS, JS, images, fonts, Font Awesome
 │   ├── build/                     # Compiled Vite assets (manifest.json)
@@ -84,12 +96,14 @@ edutrack-lms/
 │   ├── .htaccess                  # Apache rewrite + security rules
 │   └── index.php                  # Laravel entry point
 ├── resources/
+│   ├── certificates/              # Certificate templates/assets
 │   ├── css/app.css                # Tailwind CSS entry (@tailwind directives)
 │   ├── js/app.js                  # Alpine.js entry
-│   └── views/                     # 149 Blade templates
+│   ├── fonts/                     # Custom fonts
+│   └── views/                     # 162 Blade templates
 ├── routes/
-│   ├── api.php                    # Sanctum-protected REST API routes (55 lines)
-│   └── web.php                    # Web routes (352 lines)
+│   ├── api.php                    # Sanctum-protected REST API routes (53 lines)
+│   └── web.php                    # Web routes (451 lines)
 ├── storage/                       # Logs, sessions, cache, app uploads
 ├── tests/                         # Empty (Feature/ and Unit/ directories exist but no test files)
 ├── .env / .env.example            # Environment configuration
@@ -108,6 +122,7 @@ edutrack-lms/
 
 ### 1. MVC with Service Layer
 Controllers handle HTTP concerns and delegate business logic to **Services** in `app/Services/`:
+- `AcceptanceLetterService` — Acceptance letter generation
 - `CertificateService` — PDF generation, certificate numbering, verification codes
 - `EmailQueueService` — Queued email dispatch via `email_queue` table
 - `GradeAggregationService` — Student grade/performance aggregation
@@ -116,37 +131,46 @@ Controllers handle HTTP concerns and delegate business logic to **Services** in 
 - `LencoPaymentService` — Payment initialization, webhook handling, polling, status mapping
 - `LessonExportService` — Lesson content export
 - `PaymentVerificationService` — Manual payment verification
+- `StudentNumberService` — Student number generation
 
 ### 2. Eloquent Models
-58 models in `app/Models/` follow standard Laravel conventions. Key models:
+61 models in `app/Models/` follow standard Laravel conventions. Key models:
 - `User` — Authenticatable with roles, soft deletes, `password_hash` field (hashed via bcrypt)
 - `Course` — Soft deletes, scopes `published()` and `featured()`, formatted price accessor
 - `Enrollment` — Tracks student progress, payment status, certificate blocking
 - `Payment` / `LencoTransaction` / `LencoWebhookLog` — Payment pipeline
 - `Certificate` — TEVETA-accredited certificates with verification codes
+- `Student` / `Instructor` — Role-specific profile extensions
+- `Intake` / `CdfDisbursement` — Cohort and CDF disbursement tracking
 - `Setting` / `SystemSetting` — Dual setting systems (new settings table + legacy system_settings)
 
-### 3. Role-Based Middleware
+### 3. Model Observers
+Observers in `app/Observers/` hook into model lifecycle events:
+- `CertificateObserver` — Certificate creation/updates
+- `EnrollmentObserver` — Enrollment state changes
+- `StudentObserver` — Student record changes
+
+### 4. Role-Based Middleware
 Custom middleware aliases registered in `app/Http/Kernel.php`:
 - `admin` — Super Admin or Admin (roles 1 or 2)
 - `instructor` — Instructor role (3)
 - `finance` — Finance role (6)
 - `student` — Student role (4)
-- `enrolled` — Must be enrolled in the specific course
+- `enrolled` — Must be enrolled in the specific course and have paid at least 30% deposit
 
 The `User` model provides convenience methods: `isAdmin()`, `isInstructor()`, `isFinance()`, `isStudent()`, `hasRole(int)`, `isEnrolledIn(int)`.
 
-### 4. Database Pattern
-- **Migrations**: 90 files in `database/migrations/`. The project also provides `database/complete_lms_schema.sql` for fresh installations.
-- **Seeders**: 18 seeders including demo data and a `MigrateLegacyData` seeder for migrating from the old custom PHP schema (`edutrack_legacy` database).
-- **Factories**: None currently exist.
+### 5. Database Pattern
+- **Migrations**: 110 files in `database/migrations/`. The project also provides `database/complete_lms_schema.sql` (66 tables) for fresh installations.
+- **Seeders**: 19 top-level class seeders in `database/seeders/` plus 62 content-specific seeders in `database/seeders/Content/`. Three data-only files exist under `database/seeders/Content/general_ict/`.
+- **Factories**: None currently exist; the `database/factories/` directory does not exist.
 - All queries use Eloquent or Query Builder (prepared statements).
 
-### 5. Route Organization
-- `routes/web.php`: 352 lines. Public pages, auth (session + Google OAuth), role-prefixed dashboards (`/admin`, `/instructor`, `/student`, `/finance`), and the Lenco webhook endpoint.
-- `routes/api.php`: 55 lines. Sanctum-protected API for courses, enrollments, progress, certificates, notifications, quizzes, and assignments. Plus public certificate verification, promotion validation, and session heartbeat.
+### 6. Route Organization
+- `routes/web.php`: 451 lines. Public pages, auth (session + Google OAuth), role-prefixed dashboards (`/admin`, `/instructor`, `/student`, `/finance`), CDF routes, and the Lenco webhook endpoint. Includes a `/dev-login` route gated to `APP_ENV=local` for local tooling.
+- `routes/api.php`: 53 lines. Sanctum-protected API for courses, enrollments, progress, certificates, notifications, quizzes, and assignments. Plus public certificate verification, promotion validation, and a note that session heartbeat lives in web routes.
 
-### 6. Frontend Build
+### 7. Frontend Build
 Vite compiles `resources/css/app.css` and `resources/js/app.js` into `public/build/`. Tailwind CSS is processed via PostCSS. Alpine.js handles lightweight frontend interactivity.
 
 ---
@@ -189,12 +213,16 @@ DB_DATABASE=edutrack_lms
 DB_USERNAME=root
 DB_PASSWORD=
 
+# Queue (email processing uses the database queue driver)
+QUEUE_CONNECTION=database
+
 # Mail (Gmail SMTP)
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USERNAME=edutrackzambia@gmail.com
 MAIL_PASSWORD="app_specific_password"
+MAIL_ENCRYPTION=tls
 
 # Google OAuth
 GOOGLE_CLIENT_ID="..."
@@ -205,10 +233,13 @@ GOOGLE_REDIRECT_URI="..."
 LENCO_API_KEY="..."
 LENCO_SECRET_KEY="..."
 LENCO_WEBHOOK_SECRET="..."
+
+# YouTube API (optional)
+YOUTUBE_API_KEY="..."
 ```
 
 ### Config Files (`config/`)
-- `config/app.php` — Standard Laravel app config with Edutrack additions: `currency` => `ZMW`, feature toggles array.
+- `config/app.php` — Standard Laravel app config with Edutrack additions: `currency` => `ZMW`, feature toggles array (`google_login`, `lenco_payments`, `certificates`, `live_sessions`, `quiz_system`, `assignment_system`).
 - `config/services.php` — Contains `google` and `lenco` service configurations.
 - `config/filesystems.php` — Includes a custom disk `public_uploads` pointing to `public/uploads`.
 - Other configs are standard Laravel 10 defaults.
@@ -218,7 +249,7 @@ LENCO_WEBHOOK_SECRET="..."
 ```php
 function setting(string $key, mixed $default = null): mixed
 ```
-This reads from the `settings` table via `App\Models\Setting`.
+This reads from the `App\Models\Setting` table.
 
 ---
 
@@ -262,6 +293,9 @@ npm run dev
 # Build production frontend assets
 npm run build
 
+# Build a static Tailwind CSS file (alternative, writes to public/assets/css/tailwind.css)
+npm run build:static-css
+
 # Clear all caches
 php artisan optimize:clear
 
@@ -298,6 +332,9 @@ php artisan reminders:send
 
 # End expired live sessions
 php artisan sessions:end-expired
+
+# Advance intake lifecycle (open/close intakes)
+php artisan intakes:advance
 ```
 
 These can be added to the system crontab or triggered via HTTP if CLI cron is unavailable.
@@ -358,7 +395,7 @@ Laravel's CSRF protection is enabled by default for web routes. Use `@csrf` in B
 - There is no `phpunit.xml` or `phpunit.xml.dist` file.
 - There are zero `*.php` test files in `tests/` (the `Feature/` and `Unit/` directories exist but are empty).
 - The `.gitignore` excludes `/phpunit.xml` and `/.phpunit.result.cache`.
-- No model factories exist in `database/factories/`.
+- No model factories exist; the `database/factories/` directory does not exist.
 
 ### Manual Testing Strategy
 Test these user flows manually:
@@ -389,11 +426,15 @@ This enables Laravel's detailed error pages (Ignition) and debug logging.
 - **XSS Protection**: Output escaping with `{{ }}` in Blade; `HtmlPurifier` service for rich content sanitization.
 - **File Uploads**: Allowed extensions whitelist; uploads stored in `public/uploads/` organized by type.
 - **Webhook Security**: Lenco webhooks validate HMAC-SHA256 signatures using `LENCO_WEBHOOK_SECRET`.
-- **Rate Limiting**: Default Laravel API throttle applied to API routes. Additional throttles on password reset, email verification resend, and newsletter subscription.
+- **Rate Limiting**: Configured in `RouteServiceProvider` for API, login, password reset, email verification resend, newsletter subscription, enrollment, and payment routes.
+- **Maintenance Mode**: Standard Laravel maintenance mode middleware.
 - **Apache Hardening** (`public/.htaccess`):
   - Denies access to dotfiles (`.*`)
   - Disables PHP execution in `/storage/` and `/uploads/` directories
   - Handles authorization headers correctly
+
+### Development Convenience (Local Only)
+A `/dev-login` route exists in `routes/web.php` and is only registered when `APP_ENV=local`. It logs in a specified user (`?email=`) without credentials for local development tooling. This route returns 404 in any non-local environment.
 
 ### Important Security Notes
 1. **Protect `.env` file** — contains credentials. Blocked by `.htaccess` and server config, but verify.
@@ -414,6 +455,9 @@ This enables Laravel's detailed error pages (Ignition) and debug logging.
 | `php artisan reminders:send` | Queue email reminders for upcoming live sessions and students with low progress. |
 | `php artisan sessions:end-expired` | End live sessions that have passed their end time. |
 | `php artisan templates:test-email {template} {--to=}` | Send a test email for a given email template. |
+| `php artisan intakes:advance` | Advance intake lifecycle statuses (open/close intakes). |
+| `php artisan content:qa` | Run content quality checks. |
+| `php artisan emails:preview` | Preview queued emails. |
 
 ---
 
@@ -460,23 +504,28 @@ This enables Laravel's detailed error pages (Ignition) and debug logging.
 
 ### Vite / CSS Not Loading
 - Run `npm run build` to generate `public/build/manifest.json`
-- Ensure `VITE_APP_URL` or `APP_URL` in `.env` is correct
+- Ensure `VITE_APP_NAME` or `APP_URL` in `.env` is correct
 - Check that `public/build/` directory exists and contains assets
 
 ---
 
 ## File Statistics (Verified)
-- **Controllers**: 64
-- **Eloquent Models**: 58
-- **Blade Templates**: 149
-- **Database Migrations**: 90
-- **Database Seeders**: 18
-- **Custom Artisan Commands**: 7
-- **Services**: 9
+- **Controllers**: 70
+- **Eloquent Models**: 61
+- **Blade Templates**: 162
+- **Database Migrations**: 110
+- **Database Tables** (in `complete_lms_schema.sql`): 66
+- **Top-Level Class Seeders**: 19
+- **Content Class Seeders**: 62
+- **Data-Only Seeder Files**: 3
+- **Custom Artisan Commands**: 9
+- **Services**: 10
 - **Queued Jobs**: 3
+- **Model Observers**: 3
+- **PDF Helper Classes**: 2
 - **Policies**: 1
+- **Custom Middleware**: 6 role-based + 9 standard aliases
 - **API Endpoints**: 15+ REST endpoints
-- **Custom Middleware**: 6 role-based + 5 standard aliases
 - **Test Files**: 0
 - **Model Factories**: 0
 
@@ -491,5 +540,5 @@ This enables Laravel's detailed error pages (Ignition) and debug logging.
 
 ---
 
-*Last Updated: May 2026*
+*Last Updated: June 2026*
 *For AI Agent Use - Keep this document current with code changes*

@@ -26,3 +26,4 @@ yarn-error.log
 /public/_capture/
 .kimi-*.md
 .kimi-*.log
+/screenshots/
