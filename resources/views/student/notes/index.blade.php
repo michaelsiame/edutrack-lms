@@ -28,10 +28,10 @@
                         <div class="od-course-info">
                             <h4>{{ $note->lesson->title }}</h4>
                             <p class="od-meta">{{ $note->course->title }} &bull; Updated {{ $note->updated_at->diffForHumans() }}</p>
-                            <p class="text-sm mt-1 line-clamp-2 leading-relaxed" style="color: var(--od-muted);">{{ $note->content }}</p>
+                            <p class="od-notes-preview text-sm mt-1 line-clamp-2 leading-relaxed" style="color: var(--od-muted);">{{ $note->content }}</p>
                         </div>
                         <div class="od-course-action">
-                            <a href="{{ route('student.notes.show', [$note->course, $note->lesson]) }}" class="od-btn od-btn-ghost od-btn-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                            <a href="{{ route('student.notes.show', [$note->course, $note->lesson]) }}" class="od-btn od-btn-ghost od-btn-sm opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                 <i class="fas fa-pen"></i> Edit
                             </a>
                         </div>

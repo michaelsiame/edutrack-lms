@@ -210,7 +210,11 @@ class LearningController extends Controller
             }
         });
 
-        return redirect()->route('student.learning.show', ['course' => $course, 'lesson' => $lesson])
+        // Advance to the next incomplete lesson so the learner isn't returned
+        // to the top of the same lesson after every click of "Mark as Complete".
+        $redirectLesson = $enrollment->refresh()->resumeLesson() ?? $lesson;
+
+        return redirect()->route('student.learning.show', ['course' => $course, 'lesson' => $redirectLesson])
             ->with('success', 'Lesson marked as complete!');
     }
 

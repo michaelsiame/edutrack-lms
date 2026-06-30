@@ -887,3 +887,14 @@
   .od-celebrate { transition: none; }
   .od-celebrate-card { transition: none; transform: none; }
 }
+
+/* ─── Notes mobile overflow fixes ───────────────────────────────── */
+.od-notes-preview,
+.od-course-info .od-meta,
+.od-card .od-eyebrow,
+.od-card .od-h2,
+.od-card .od-h3,
+.od-card h4 {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}

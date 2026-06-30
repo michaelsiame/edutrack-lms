@@ -83,6 +83,14 @@
         border: 1px solid var(--od-border);
         padding: 6px 10px;
     }
+    /* Keep embedded media from overflowing on small screens */
+    .od-lesson-content iframe,
+    .od-lesson-content video,
+    .od-lesson-content embed,
+    .od-lesson-content object {
+        max-width: 100%;
+        height: auto;
+    }
 </style>
 @endpush
 
@@ -106,15 +114,15 @@
     <!-- Sticky Topnav -->
     <header class="od-topnav">
         <div class="container od-topnav-inner" style="max-width: 1200px; margin: 0 auto;">
-            <div class="flex items-center gap-4">
-                <a href="{{ route('home') }}" class="logo" style="display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--od-fg);text-decoration:none;">
+            <div class="flex items-center gap-4" style="min-width:0;flex:1;">
+                <a href="{{ route('home') }}" class="logo" style="display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--od-fg);text-decoration:none;flex-shrink:0;">
                     <img src="{{ asset('assets/images/logo-sm.png') }}" alt="EduTrack" style="height:28px;width:auto;">
                 </a>
-                <span class="od-topnav .course-title" style="font-size:14px;font-weight:500;color:var(--od-muted);max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                <span class="course-title" style="font-size:14px;font-weight:500;color:var(--od-muted);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                     {{ $course->title }} · {{ $module->title }}, {{ $lesson->title }}
                 </span>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3" style="flex-shrink:0;">
                 <span class="od-progress-pill">
                     <span class="od-num">{{ $progress }}</span>% complete
                 </span>
@@ -467,5 +475,58 @@ $hasReviewedCourse = $progress >= 100 && auth()->check()
             }
         });
     });
+
+    // Remember and restore scroll position inside a lesson so students continue
+    // reading exactly where they left off when they come back.
+    // The dashboard layout scrolls on <main>, not on window.
+    (function () {
+        const key = 'edutrack-lesson-scroll-' + {{ $course->id }} + '-' + {{ $lesson->id }};
+        const scroller = document.querySelector('main') || window;
+
+        function currentScroll() {
+            return scroller === window
+                ? (window.scrollY || document.documentElement.scrollTop)
+                : scroller.scrollTop;
+        }
+
+        function saveScroll() {
+            try {
+                localStorage.setItem(key, String(currentScroll()));
+            } catch (e) {}
+        }
+
+        function restoreScroll() {
+            try {
+                const saved = localStorage.getItem(key);
+                if (saved !== null) {
+                    const top = parseInt(saved, 10);
+                    if (scroller === window) {
+                        window.scrollTo({ top: top, behavior: 'instant' });
+                    } else {
+                        scroller.scrollTop = top;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(restoreScroll, 150);
+            });
+        } else {
+            setTimeout(restoreScroll, 150);
+        }
+
+        let scrollTimer;
+        scroller.addEventListener('scroll', function () {
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(saveScroll, 250);
+        }, { passive: true });
+
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'hidden') saveScroll();
+        });
+        window.addEventListener('beforeunload', saveScroll);
+    })();
 </script>
 @endpush

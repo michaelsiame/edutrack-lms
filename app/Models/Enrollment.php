@@ -154,4 +154,29 @@ class Enrollment extends Model
         $minDeposit = $coursePrice * 0.30;
         return $this->amount_paid >= $minDeposit;
     }
+
+    /**
+     * Return the lesson a student should resume/start.
+     * Prefers the first incomplete lesson in display order;
+     * falls back to the last lesson when everything is completed.
+     */
+    public function resumeLesson(): ?Lesson
+    {
+        $this->loadMissing('course.modules.lessons');
+
+        $allLessons = $this->course?->modules?->flatMap->lessons->sortBy('display_order');
+
+        if (!$allLessons || $allLessons->isEmpty()) {
+            return null;
+        }
+
+        $completedIds = $this->lessonProgress()
+            ->where('status', 'Completed')
+            ->pluck('lesson_id')
+            ->all();
+
+        $next = $allLessons->first(fn ($lesson) => !in_array($lesson->id, $completedIds, true));
+
+        return $next ?? $allLessons->last();
+    }
 }

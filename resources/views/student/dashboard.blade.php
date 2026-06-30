@@ -126,11 +126,7 @@
                 @forelse($enrollments->where('progress', '<', 100)->where('enrollment_status', '!=', 'Dropped')->take(5) as $enrollment)
                     @php
                         $course = $enrollment->course;
-                        $lastLesson = null;
-                        if ($course && $course->modules) {
-                            $allLessons = $course->modules->flatMap->lessons->sortBy('display_order');
-                            $lastLesson = $allLessons->first();
-                        }
+                        $lastLesson = $enrollment->resumeLesson();
                         $progressColor = $enrollment->progress >= 75 ? 'green' : ($enrollment->progress >= 40 ? 'navy' : 'accent');
                     @endphp
                     <div class="od-course-row">

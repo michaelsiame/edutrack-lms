@@ -31,7 +31,7 @@
         @else
             <div>
                 @foreach($enrollments as $enrollment)
-                    @php $firstLesson = $enrollment->course?->modules?->flatMap->lessons->first(); @endphp
+                    @php $firstLesson = $enrollment->resumeLesson(); @endphp
                     <div class="od-course-row">
                         <div class="od-course-thumb">
                             @if($enrollment->course?->thumbnail_image_url)
