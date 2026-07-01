@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\EnrollmentPaymentPlan;
+use App\Models\Student;
+use App\Services\EmailQueueService;
+use Illuminate\Console\Command;
+
+class SendSuspensionReminders extends Command
+{
+    protected $signature = 'payments:suspension-reminders
+        {--date= : Suspension date shown in the message, e.g. "1 July"}
+        {--enrollment= : Only this enrollment id}
+        {--user= : Only this user id}
+        {--send : Actually queue/send the emails (otherwise dry-run)}';
+
+    protected $description = 'Email payment-plan students that LMS access will be suspended until they pay.';
+
+    public function handle(EmailQueueService $emailService): int
+    {
+        $suspensionDate = $this->option('date') ?: '1 July';
+        $send = (bool) $this->option('send');
+
+        $query = EnrollmentPaymentPlan::with(['user', 'course', 'enrollment'])
+            ->where('balance', '>', 0)
+            ->where('payment_status', '!=', 'paid');
+
+        if ($eid = $this->option('enrollment')) {
+            $query->where('enrollment_id', $eid);
+        }
+        if ($uid = $this->option('user')) {
+            $query->where('user_id', $uid);
+        }
+
+        $plans = $query->get();
+
+        if ($plans->isEmpty()) {
+            $this->warn('No matching payment plans with an outstanding balance.');
+            return self::SUCCESS;
+        }
+
+        $this->info(($send ? 'SENDING' : 'DRY-RUN — would send') . " {$plans->count()} suspension reminder(s). Suspension date: {$suspensionDate}");
+        $this->newLine();
+
+        $sent = 0;
+        $skipped = 0;
+
+        foreach ($plans as $plan) {
+            $user = $plan->user;
+            if (! $user || ! $user->email) {
+                $this->line("  <fg=yellow>skip</> plan#{$plan->id}: no user/email");
+                $skipped++;
+                continue;
+            }
+
+            $studentNumber = Student::where('user_id', $user->id)->value('student_number') ?: '—';
+            $programme = $plan->course?->title ?? 'your programme';
+            $name = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: 'Student';
+
+            $this->line(sprintf(
+                '  %s  %-26s %-16s %s  (bal %s %.2f)',
+                $send ? '<fg=green>send</>' : '<fg=cyan>plan</>',
+                $name,
+                $studentNumber,
+                $user->email,
+                $plan->currency ?: 'ZMW',
+                (float) $plan->balance
+            ));
+
+            if (! $send) {
+                continue;
+            }
+
+            $body = view('emails.payment-suspension-reminder', [
+                'studentName' => $name,
+                'studentNumber' => $studentNumber,
+                'programme' => $programme,
+                'suspensionDate' => $suspensionDate,
+                'outstanding' => $plan->balance,
+                'currency' => $plan->currency ?: 'ZMW',
+            ])->render();
+
+            $emailService->queue(
+                $user->email,
+                'Payment Plan Reminder — LMS Access Suspension',
+                $body,
+                [],
+                4
+            );
+            $sent++;
+        }
+
+        $this->newLine();
+        $this->info($send ? "Queued {$sent} reminder(s), skipped {$skipped}." : "Dry-run complete. Re-run with --send to dispatch.");
+
+        return self::SUCCESS;
+    }
+}
