@@ -63,7 +63,18 @@ class SendSuspensionReminders extends Command
             $studentNumber = Student::where('user_id', $user->id)->value('student_number') ?: '—';
             $programme = $plan->course?->title ?? 'your programme';
             $name = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: 'Student';
-            $outstanding = max(0, (float) ($plan->total_fee ?? 0) - (float) ($plan->total_paid ?? 0));
+
+            // Use the most reliable "paid" figure: the enrollment's amount_paid is the
+            // maintained truth; fall back to the plan's total_paid. This keeps the
+            // outstanding correct even if a plan's total_paid column drifted.
+            $paid = max((float) ($plan->total_paid ?? 0), (float) ($plan->enrollment?->amount_paid ?? 0));
+            $outstanding = max(0, (float) ($plan->total_fee ?? 0) - $paid);
+
+            if ($outstanding <= 0) {
+                $this->line("  <fg=yellow>skip</> {$name}: fully paid, nothing outstanding");
+                $skipped++;
+                continue;
+            }
 
             $this->line(sprintf(
                 '  %s  %-26s %-16s %s  (bal %s %.2f)',
