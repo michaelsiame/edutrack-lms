@@ -5,9 +5,70 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/student-design.css') }}">
+<style>
+    .ot-welcome-overlay {
+        position: fixed; inset: 0; z-index: 200;
+        background: rgba(10, 22, 40, 0.55);
+        display: none; align-items: center; justify-content: center;
+        padding: 16px; overflow-y: auto;
+    }
+    .ot-welcome-card {
+        background: var(--od-surface, #fff); border: 1px solid var(--od-border);
+        border-radius: 16px; max-width: 520px; width: 100%;
+        padding: 28px; position: relative;
+        box-shadow: 0 20px 50px rgba(10,22,40,0.25);
+        animation: otWelcomeIn .22s ease;
+    }
+    @keyframes otWelcomeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .ot-welcome-close {
+        position: absolute; top: 12px; right: 14px; border: none; background: none;
+        font-size: 26px; line-height: 1; color: var(--od-muted); cursor: pointer;
+    }
+    .ot-welcome-steps { display: flex; flex-direction: column; gap: 14px; }
+    .ot-welcome-step { display: flex; align-items: flex-start; gap: 12px; }
+    .ot-welcome-ico {
+        flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: var(--od-navy-soft); color: var(--od-navy); font-size: 15px;
+    }
+    .ot-welcome-step h4 { margin: 0 0 2px; font-size: 14px; font-weight: 600; color: var(--od-fg); }
+    .ot-welcome-step p { margin: 0; font-size: 13px; color: var(--od-muted); line-height: 1.5; }
+</style>
 @endpush
 
 @section('content')
+{{-- First-login welcome modal — shows once per browser, explains how the LMS works --}}
+<div id="welcomeModal" class="ot-welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" onclick="if(event.target===this)closeWelcome()">
+    <div class="ot-welcome-card">
+        <button type="button" class="ot-welcome-close" aria-label="Close" onclick="closeWelcome()">&times;</button>
+        <p class="od-eyebrow" style="margin:0 0 6px;">WELCOME TO EDUTRACK</p>
+        <h2 id="welcomeTitle" class="od-h2" style="margin:0 0 6px;">Hello {{ auth()->user()->first_name ?? 'there' }}!</h2>
+        <p class="od-meta" style="margin:0 0 20px;">Here's how your learning journey works — four simple steps:</p>
+        <div class="ot-welcome-steps">
+            <div class="ot-welcome-step">
+                <span class="ot-welcome-ico"><i class="fas fa-id-card"></i></span>
+                <div><h4>1. Pay your K150 registration fee</h4><p>This activates your student account and gives you a student number.</p></div>
+            </div>
+            <div class="ot-welcome-step">
+                <span class="ot-welcome-ico"><i class="fas fa-book-open"></i></span>
+                <div><h4>2. Enrol &amp; pay a 30% deposit</h4><p>Browse our courses, enrol, and pay at least 30% to unlock all your lessons.</p></div>
+            </div>
+            <div class="ot-welcome-step">
+                <span class="ot-welcome-ico"><i class="fas fa-graduation-cap"></i></span>
+                <div><h4>3. Learn at your own pace</h4><p>Read the notes and diagrams, then take quizzes and submit assignments.</p></div>
+            </div>
+            <div class="ot-welcome-step">
+                <span class="ot-welcome-ico"><i class="fas fa-certificate"></i></span>
+                <div><h4>4. Earn your certificate</h4><p>Complete the course and clear your balance to download your certificate.</p></div>
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;">
+            <a href="{{ route('courses.index') }}" class="od-btn od-btn-primary">Browse courses</a>
+            <button type="button" class="od-btn od-btn-ghost" onclick="closeWelcome()">Got it, thanks</button>
+        </div>
+    </div>
+</div>
+
 <div class="od-page min-h-full">
     <!-- Topbar -->
     <div class="flex items-center justify-between mb-8">
@@ -369,3 +430,21 @@
     @endif
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    function closeWelcome() {
+        try { localStorage.setItem('edutrack-welcomed', '1'); } catch (e) {}
+        var m = document.getElementById('welcomeModal');
+        if (m) m.style.display = 'none';
+    }
+    (function () {
+        try {
+            if (!localStorage.getItem('edutrack-welcomed')) {
+                var m = document.getElementById('welcomeModal');
+                if (m) m.style.display = 'flex';
+            }
+        } catch (e) {}
+    })();
+</script>
+@endpush
