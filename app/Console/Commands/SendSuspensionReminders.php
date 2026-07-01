@@ -13,6 +13,7 @@ class SendSuspensionReminders extends Command
         {--date= : Suspension date shown in the message, e.g. "1 July"}
         {--enrollment= : Only this enrollment id}
         {--user= : Only this user id}
+        {--email= : Only the student with this email address (prod-safe target)}
         {--send : Actually queue/send the emails (otherwise dry-run)}';
 
     protected $description = 'Email payment-plan students that LMS access will be suspended until they pay.';
@@ -31,6 +32,9 @@ class SendSuspensionReminders extends Command
         }
         if ($uid = $this->option('user')) {
             $query->where('user_id', $uid);
+        }
+        if ($email = $this->option('email')) {
+            $query->whereHas('user', fn ($q) => $q->where('email', $email));
         }
 
         $plans = $query->get();
