@@ -23,8 +23,10 @@ class SendSuspensionReminders extends Command
         $suspensionDate = $this->option('date') ?: '1 July';
         $send = (bool) $this->option('send');
 
+        // Outstanding is derived from total_fee - total_paid (the stored `balance`
+        // column can be stale on older records), so reminders always reflect real paid amounts.
         $query = EnrollmentPaymentPlan::with(['user', 'course', 'enrollment'])
-            ->where('balance', '>', 0)
+            ->whereRaw('COALESCE(total_fee,0) - COALESCE(total_paid,0) > 0')
             ->where('payment_status', '!=', 'paid');
 
         if ($eid = $this->option('enrollment')) {
@@ -61,6 +63,7 @@ class SendSuspensionReminders extends Command
             $studentNumber = Student::where('user_id', $user->id)->value('student_number') ?: '—';
             $programme = $plan->course?->title ?? 'your programme';
             $name = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: 'Student';
+            $outstanding = max(0, (float) ($plan->total_fee ?? 0) - (float) ($plan->total_paid ?? 0));
 
             $this->line(sprintf(
                 '  %s  %-26s %-16s %s  (bal %s %.2f)',
@@ -69,7 +72,7 @@ class SendSuspensionReminders extends Command
                 $studentNumber,
                 $user->email,
                 $plan->currency ?: 'ZMW',
-                (float) $plan->balance
+                $outstanding
             ));
 
             if (! $send) {
@@ -81,7 +84,7 @@ class SendSuspensionReminders extends Command
                 'studentNumber' => $studentNumber,
                 'programme' => $programme,
                 'suspensionDate' => $suspensionDate,
-                'outstanding' => $plan->balance,
+                'outstanding' => $outstanding,
                 'currency' => $plan->currency ?: 'ZMW',
             ])->render();
 

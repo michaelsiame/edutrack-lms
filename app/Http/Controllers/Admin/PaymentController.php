@@ -191,8 +191,10 @@ class PaymentController extends Controller
 
         $paymentPlan = $enrollment->paymentPlan;
         if ($paymentPlan) {
+            $totalFee = (float) ($paymentPlan->total_fee ?: $coursePrice);
             $paymentPlan->update([
                 'total_paid' => $totalPaid,
+                'balance' => max(0, $totalFee - $totalPaid),
                 'payment_status' => $isFullyPaid ? 'completed' : ($totalPaid > 0 ? 'partial' : 'pending'),
             ]);
         }
