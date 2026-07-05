@@ -94,14 +94,24 @@ class EmailQueueService
      */
     public function sendNotification(int $userId, string $title, string $message, string $type = 'info', ?string $actionUrl = null): void
     {
-        \App\Models\Notification::create([
-            'user_id' => $userId,
-            'title' => $title,
-            'message' => $message,
-            'notification_type' => $type,
-            'action_url' => $actionUrl,
-            'is_read' => false,
-        ]);
+        // An in-app notification is a non-critical side effect: never let a
+        // failure here (e.g. schema drift) break enrollment or payment flows.
+        try {
+            \App\Models\Notification::create([
+                'user_id' => $userId,
+                'title' => $title,
+                'message' => $message,
+                'notification_type' => $type,
+                'action_url' => $actionUrl,
+                'is_read' => false,
+            ]);
+        } catch (\Throwable $e) {
+            \Log::warning('sendNotification failed (non-fatal)', [
+                'user_id' => $userId,
+                'title' => $title,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
