@@ -435,6 +435,7 @@ Route::prefix('finance')->middleware(['auth', 'finance'])->name('finance.')->gro
 */
 
 Route::post('/lenco/webhook', [App\Http\Controllers\Payment\LencoWebhookController::class, 'handle'])->name('lenco.webhook');
+Route::post('/lipila/webhook', [App\Http\Controllers\Payment\LipilaWebhookController::class, 'handle'])->name('lipila.webhook');
 
 /*
 |--------------------------------------------------------------------------

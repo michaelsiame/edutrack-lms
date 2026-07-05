@@ -58,7 +58,17 @@ class PaymentVerificationService
      */
     protected function updateEnrollmentPaymentStatus(Enrollment $enrollment): void
     {
-        $coursePrice = $enrollment->course->discount_price ?? $enrollment->course->price;
+        $this->recalculateEnrollmentState($enrollment);
+    }
+
+    /**
+     * Recalculate enrollment state from all remaining completed payments.
+     * Syncs amount_paid, payment_status, enrollment_status, certificate_blocked,
+     * and the related payment plan totals/balance.
+     */
+    public function recalculateEnrollmentState(Enrollment $enrollment): void
+    {
+        $coursePrice = $enrollment->course?->discount_price ?? $enrollment->course?->price ?? 0;
 
         $totalPaid = Payment::where('enrollment_id', $enrollment->id)
             ->where('payment_status', 'Completed')
@@ -68,14 +78,14 @@ class PaymentVerificationService
 
         // Determine enrollment status based on payment
         $enrollmentStatus = $enrollment->enrollment_status;
-        if ($percentagePaid >= 30 && $enrollmentStatus === 'Enrolled') {
+        if ($percentagePaid >= 30 && in_array($enrollmentStatus, ['Enrolled'])) {
             $enrollmentStatus = 'In Progress';
         }
 
         // Certificate blocked until fully paid
         $certificateBlocked = $totalPaid < $coursePrice;
 
-        $paymentStatus = $totalPaid >= $coursePrice ? 'completed' : 'pending';
+        $paymentStatus = $totalPaid >= $coursePrice ? 'completed' : ($totalPaid > 0 ? 'partial' : 'pending');
 
         $enrollment->update([
             'amount_paid' => $totalPaid,
@@ -87,8 +97,10 @@ class PaymentVerificationService
         // Update payment plan
         $paymentPlan = $enrollment->paymentPlan;
         if ($paymentPlan) {
+            $totalFee = (float) ($paymentPlan->total_fee ?: $coursePrice);
             $paymentPlan->update([
                 'total_paid' => $totalPaid,
+                'balance' => max(0, $totalFee - $totalPaid),
                 'payment_status' => $paymentStatus,
             ]);
         }

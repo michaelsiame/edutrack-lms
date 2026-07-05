@@ -26,4 +26,10 @@ return [
         'secret_key' => env('LENCO_SECRET_KEY'),
         'webhook_secret' => env('LENCO_WEBHOOK_SECRET'),
     ],
+
+    'lipila' => [
+        'api_key' => env('LIPILA_API_KEY'),
+        'webhook_secret' => env('LIPILA_WEBHOOK_SECRET'),
+        'base_url' => env('LIPILA_BASE_URL', 'https://api.lipila.dev'),
+    ],
 ];

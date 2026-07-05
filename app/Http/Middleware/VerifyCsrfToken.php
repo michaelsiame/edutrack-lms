@@ -14,6 +14,7 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'api/*',
         'lenco/webhook',
+        'lipila/webhook',
         'newsletter/subscribe',
     ];
 }

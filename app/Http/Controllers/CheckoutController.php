@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\Promotion;
 use App\Services\LencoPaymentService;
+use App\Services\LipilaPaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -106,16 +107,16 @@ class CheckoutController extends Controller
 
         $isFullPayment = $amount >= $effectiveBalance;
 
-        // Wrap payment + Lenco transaction creation in DB transaction
+        // Wrap payment + gateway transaction creation in DB transaction
         $result = \DB::transaction(function () use ($user, $course, $enrollment, $amount, $paymentMethod, $paymentMethodId, $reference, $isFullPayment, $promotion, $discount, $validated) {
             // Prevent duplicate pending payments within the last 30 minutes (atomic check)
-            $existingPendingTx = LencoTransaction::where('enrollment_id', $enrollment->id)
-                ->where('status', 'pending')
+            $existingPendingPayment = Payment::where('enrollment_id', $enrollment->id)
+                ->where('payment_status', 'Pending')
                 ->where('created_at', '>=', now()->subMinutes(30))
                 ->lockForUpdate()
                 ->first();
 
-            if ($existingPendingTx) {
+            if ($existingPendingPayment) {
                 return ['type' => 'duplicate', 'message' => 'You already have a pending payment. Please check your phone to authorize the transaction, or wait a few minutes before trying again.'];
             }
 
@@ -135,32 +136,60 @@ class CheckoutController extends Controller
                 'discount_amount' => $discount,
             ]);
 
-            // Lenco v2 collections
-            if (in_array($paymentMethod, ['lenco', 'mobile_money'])) {
+            // Lipila mobile money collection
+            if ($paymentMethod === 'mobile_money') {
+                $service = app(LipilaPaymentService::class);
+
+                $lipilaResult = $service->initiateMobileMoneyCollection([
+                    'amount' => $amount,
+                    'currency' => 'ZMW',
+                    'reference' => $reference,
+                    'phone_number' => $validated['phone_number'] ?? $user->phone,
+                    'email' => $user->email,
+                    'narration' => "Edutrack: {$course->title}",
+                    'callback_url' => route('lipila.webhook'),
+                ]);
+
+                if ($lipilaResult['success']) {
+                    $payment->update([
+                        'lipila_reference' => $lipilaResult['identifier'] ?? null,
+                        'phone_number' => $service->normalizePhoneNumber($validated['phone_number'] ?? $user->phone),
+                    ]);
+
+                    return [
+                        'type' => 'lenco_success',
+                        'payment_method' => $paymentMethod,
+                        'auth_url' => null,
+                        'course_slug' => $course->slug,
+                    ];
+                }
+
+                // Mark payment as failed
+                $payment->update(['payment_status' => 'Failed']);
+
+                return [
+                    'type' => 'lenco_failed',
+                    'error' => $lipilaResult['error'] ?? 'Payment initialization failed. Please try again.',
+                    'course_slug' => $course->slug,
+                ];
+            }
+
+            // Lenco v2 collections (bank transfer only)
+            if ($paymentMethod === 'lenco') {
                 $service = app(LencoPaymentService::class);
 
-                if ($paymentMethod === 'mobile_money') {
-                    $lencoResult = $service->initializeMobileMoneyCollection([
-                        'amount' => $amount,
-                        'currency' => 'ZMW',
-                        'reference' => $reference,
-                        'phone_number' => $validated['phone_number'] ?? $user->phone,
-                        'callback_url' => route('lenco.webhook'),
-                    ]);
-                } else {
-                    $lencoResult = $service->initializeBankTransferCollection([
-                        'amount' => $amount,
-                        'currency' => 'ZMW',
-                        'reference' => $reference,
-                        'email' => $user->email,
-                        'phone_number' => $validated['phone_number'] ?? $user->phone,
-                        'customer_name' => $user->full_name,
-                        'customer_first_name' => $user->first_name,
-                        'customer_last_name' => $user->last_name,
-                        'callback_url' => route('lenco.webhook'),
-                        'redirect_url' => route('payment.success', ['course' => $course->slug]),
-                    ]);
-                }
+                $lencoResult = $service->initializeBankTransferCollection([
+                    'amount' => $amount,
+                    'currency' => 'ZMW',
+                    'reference' => $reference,
+                    'email' => $user->email,
+                    'phone_number' => $validated['phone_number'] ?? $user->phone,
+                    'customer_name' => $user->full_name,
+                    'customer_first_name' => $user->first_name,
+                    'customer_last_name' => $user->last_name,
+                    'callback_url' => route('lenco.webhook'),
+                    'redirect_url' => route('payment.success', ['course' => $course->slug]),
+                ]);
 
                 if ($lencoResult['success']) {
                     // Store Lenco transaction reference

@@ -169,34 +169,7 @@ class PaymentController extends Controller
      */
     protected function recalculateEnrollmentState($enrollment): void
     {
-        $totalPaid = \App\Models\Payment::where('enrollment_id', $enrollment->id)
-            ->where('payment_status', 'Completed')
-            ->sum('amount');
-
-        $coursePrice = $enrollment->course?->discount_price ?? $enrollment->course?->price ?? 0;
-        $isFullyPaid = $totalPaid >= $coursePrice;
-        $percentagePaid = $coursePrice > 0 ? ($totalPaid / $coursePrice) * 100 : 100;
-
-        $enrollmentStatus = $enrollment->enrollment_status;
-        if ($percentagePaid >= 30 && in_array($enrollmentStatus, ['Enrolled'])) {
-            $enrollmentStatus = 'In Progress';
-        }
-
-        $enrollment->update([
-            'amount_paid' => $totalPaid,
-            'payment_status' => $isFullyPaid ? 'completed' : ($totalPaid > 0 ? 'partial' : 'pending'),
-            'enrollment_status' => $enrollmentStatus,
-            'certificate_blocked' => !$isFullyPaid,
-        ]);
-
-        $paymentPlan = $enrollment->paymentPlan;
-        if ($paymentPlan) {
-            $totalFee = (float) ($paymentPlan->total_fee ?: $coursePrice);
-            $paymentPlan->update([
-                'total_paid' => $totalPaid,
-                'balance' => max(0, $totalFee - $totalPaid),
-                'payment_status' => $isFullyPaid ? 'completed' : ($totalPaid > 0 ? 'partial' : 'pending'),
-            ]);
-        }
+        $verificationService = app(\App\Services\PaymentVerificationService::class);
+        $verificationService->recalculateEnrollmentState($enrollment);
     }
 }
