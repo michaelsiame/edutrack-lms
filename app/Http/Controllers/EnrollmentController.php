@@ -172,7 +172,10 @@ class EnrollmentController extends Controller
                 throw new \Exception('This intake is not open for enrollment.');
             }
         } else {
-            $intake = $course->defaultIntake;
+            // Single-intake course: use its default intake, or create one on the
+            // fly so a course that was set up without an intake is still enrollable
+            // instead of hard-failing. firstOrCreate keeps this race-safe.
+            $intake = $course->defaultIntake ?: $this->ensureDefaultIntake($course);
         }
 
         if (!$intake) {
@@ -185,5 +188,22 @@ class EnrollmentController extends Controller
         }
 
         return $intake;
+    }
+
+    /**
+     * Get (or lazily create) the default open intake for a single-intake course.
+     */
+    protected function ensureDefaultIntake(Course $course): Intake
+    {
+        return Intake::firstOrCreate(
+            ['course_id' => $course->id, 'is_default' => true],
+            [
+                'name' => 'Open Enrollment',
+                'status' => 'open',
+                'max_students' => (int) ($course->max_students ?? 0),
+                'enrollment_count' => 0,
+                'display_order' => 0,
+            ]
+        );
     }
 }
