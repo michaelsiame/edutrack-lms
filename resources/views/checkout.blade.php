@@ -91,18 +91,7 @@
                                                 <i class="fas fa-mobile-alt mr-2" style="color: var(--od-green);"></i>
                                                 <span class="font-medium text-sm" style="color: var(--od-fg);">Mobile Money</span>
                                             </div>
-                                            <p class="text-sm mt-1" style="color: var(--od-muted);">MTN or Airtel mobile money — fastest option</p>
-                                        </div>
-                                    </label>
-
-                                    <label class="flex items-center p-4 border rounded-lg cursor-pointer transition-colors" style="border-color: var(--od-border); background: var(--od-surface);" onmouseover="this.style.background='var(--od-fg-soft)'" onmouseout="this.style.background='var(--od-surface)'">
-                                        <input type="radio" name="payment_method" value="lenco" class="w-4 h-4" style="accent-color: var(--od-navy);">
-                                        <div class="ml-3 flex-1">
-                                            <div class="flex items-center">
-                                                <i class="fas fa-credit-card mr-2" style="color: var(--od-navy);"></i>
-                                                <span class="font-medium text-sm" style="color: var(--od-fg);">Lenco (Bank Transfer / Card)</span>
-                                            </div>
-                                            <p class="text-sm mt-1" style="color: var(--od-muted);">Pay securely via bank transfer, debit/credit card</p>
+                                            <p class="text-sm mt-1" style="color: var(--od-muted);">MTN, Airtel or Zamtel mobile money — fastest option</p>
                                         </div>
                                     </label>
 
