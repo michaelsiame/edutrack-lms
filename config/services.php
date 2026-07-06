@@ -30,6 +30,7 @@ return [
     'lipila' => [
         'api_key' => env('LIPILA_API_KEY'),
         'webhook_secret' => env('LIPILA_WEBHOOK_SECRET'),
-        'base_url' => env('LIPILA_BASE_URL', 'https://api.lipila.dev'),
+        // Production: https://blz.lipila.io  |  Sandbox: https://api.lipila.dev
+        'base_url' => env('LIPILA_BASE_URL', 'https://blz.lipila.io'),
     ],
 ];

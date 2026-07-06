@@ -17,7 +17,7 @@ class LipilaPaymentService
     {
         $this->apiKey = config('services.lipila.api_key', env('LIPILA_API_KEY'));
         $this->webhookSecret = config('services.lipila.webhook_secret', env('LIPILA_WEBHOOK_SECRET'));
-        $this->baseUrl = rtrim(config('services.lipila.base_url', 'https://api.lipila.dev'), '/');
+        $this->baseUrl = rtrim(config('services.lipila.base_url', 'https://blz.lipila.io'), '/');
     }
 
     /**
