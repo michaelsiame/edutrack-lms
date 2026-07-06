@@ -273,20 +273,53 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Payment status JSON endpoint for polling.
+     * Payment status JSON endpoint for polling by the "processing" page.
+     * Tracks the Lipila mobile-money Payment first (the active gateway),
+     * then falls back to legacy Lenco transactions.
      */
     public function status(Request $request)
     {
-        $query = LencoTransaction::where('user_id', auth()->id());
+        $userId = auth()->id();
 
+        $course = null;
         if ($request->has('course')) {
             $course = Course::where('slug', $request->query('course'))->first();
-            if ($course) {
-                $query->where('course_id', $course->id);
-            }
         }
 
-        $tx = $query->latest()->first();
+        // Primary: the latest Payment tied to this user's enrolment.
+        $paymentQuery = Payment::whereHas('enrollment', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        });
+
+        if ($course) {
+            $paymentQuery->where('course_id', $course->id);
+        }
+
+        $payment = $paymentQuery->latest()->first();
+
+        if ($payment) {
+            // Re-verify a pending mobile-money payment in case the webhook is
+            // delayed, so the page resolves without waiting on Lipila's callback.
+            if (strcasecmp((string) $payment->payment_status, 'Pending') === 0
+                && (int) $payment->payment_method_id === 2
+                && $payment->updated_at->diffInSeconds(now()) > 8) {
+                try {
+                    app(LipilaPaymentService::class)->pollAndSync($payment);
+                    $payment->refresh();
+                } catch (\Throwable $e) {
+                    // ignore — keep showing pending
+                }
+            }
+
+            return response()->json(['status' => strtolower((string) $payment->payment_status)]);
+        }
+
+        // Legacy fallback: Lenco transactions.
+        $txQuery = LencoTransaction::where('user_id', $userId);
+        if ($course) {
+            $txQuery->where('course_id', $course->id);
+        }
+        $tx = $txQuery->latest()->first();
 
         if (!$tx) {
             return response()->json(['status' => 'none']);

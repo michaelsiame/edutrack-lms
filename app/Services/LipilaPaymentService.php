@@ -187,6 +187,49 @@ class LipilaPaymentService
     }
 
     /**
+     * Actively poll a pending payment and sync its state. Used by the
+     * front-end status endpoint so the "processing" page resolves even if
+     * the webhook is delayed or never arrives. Returns a lowercase status:
+     * 'completed' | 'failed' | 'pending'.
+     */
+    public function pollAndSync(Payment $payment): string
+    {
+        if ($payment->isCompleted()) {
+            return 'completed';
+        }
+
+        if (strcasecmp((string) $payment->payment_status, 'Failed') === 0) {
+            return 'failed';
+        }
+
+        if (!$this->isConfigured() || empty($payment->transaction_id)) {
+            return 'pending';
+        }
+
+        $result = $this->verifyPayment($payment->transaction_id);
+
+        if (!empty($result['success']) && !empty($result['data'])) {
+            $status = $result['data']['status'] ?? null;
+            $type = $result['data']['type'] ?? null;
+
+            if (strcasecmp((string) $status, 'Successful') === 0
+                && strcasecmp((string) $type, 'Collection') === 0) {
+                $this->markPaymentCompleted($payment, $result['data']);
+
+                return 'completed';
+            }
+
+            if (strcasecmp((string) $status, 'Failed') === 0) {
+                $payment->update(['payment_status' => 'Failed']);
+
+                return 'failed';
+            }
+        }
+
+        return 'pending';
+    }
+
+    /**
      * Process a webhook payload from Lipila.
      */
     public function processWebhook(array $payload): bool

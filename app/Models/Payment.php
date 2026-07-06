@@ -25,6 +25,7 @@ class Payment extends Model
         'recorded_by',
         'payment_status',
         'transaction_id',
+        'lipila_reference',
         'phone_number',
         'notes',
         'payment_date',
