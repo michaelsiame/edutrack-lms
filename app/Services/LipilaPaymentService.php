@@ -60,7 +60,11 @@ class LipilaPaymentService
             ];
         }
 
+        $callbackUrl = $data['callback_url'] ?? route('lipila.webhook');
+
+        // Per Lipila docs, callbackUrl is a BODY field (not a header).
         $payload = [
+            'callbackUrl' => $callbackUrl,
             'referenceId' => $data['reference'],
             'amount' => (float) $data['amount'],
             'narration' => $data['narration'] ?? 'Edutrack: course payment',
@@ -68,8 +72,6 @@ class LipilaPaymentService
             'currency' => $data['currency'] ?? 'ZMW',
             'email' => $data['email'] ?? '',
         ];
-
-        $callbackUrl = $data['callback_url'] ?? route('lipila.webhook');
 
         try {
             Log::info('Lipila mobile money collection request', [
@@ -82,7 +84,6 @@ class LipilaPaymentService
                 'x-api-key' => $this->apiKey,
                 'Content-Type' => 'application/json',
                 'accept' => 'application/json',
-                'callbackUrl' => $callbackUrl,
             ])->post("{$this->baseUrl}/api/v1/collections/mobile-money", $payload);
 
             $json = $response->json();
