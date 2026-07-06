@@ -105,7 +105,10 @@ class LipilaPaymentService
 
             Log::error('Lipila mobile money initialization failed', [
                 'response' => $json,
+                'raw_body' => $response->body(),
                 'status' => $response->status(),
+                'api_key_prefix' => substr((string) $this->apiKey, 0, 8),
+                'base_url' => $this->baseUrl,
             ]);
 
             return [

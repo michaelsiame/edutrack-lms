@@ -82,26 +82,21 @@
                             <!-- Mobile Money panel -->
                             <div class="mb-6" x-show="method === 'mobile_money'" x-transition>
                                 <label for="phone_number" class="block text-sm font-medium mb-2" style="color: var(--od-fg);">Mobile Money Number</label>
-                                <div class="relative">
-                                    <input type="tel" name="phone_number" id="phone_number" x-model="phone" @input="onPhoneInput"
-                                        placeholder="e.g. 097 123 4567"
-                                        class="field-input" :class="{ 'is-invalid': phone.length >= 4 && !operator }"
-                                        style="padding-right: 6.5rem;">
-                                    <div class="absolute right-2 top-1/2 -translate-y-1/2" x-show="operator" x-transition>
-                                        <span class="op-pill" :style="`background: ${operator?.soft}; color: ${operator?.color};`">
-                                            <span class="op-dot"></span><span x-text="operator?.name"></span>
-                                        </span>
-                                    </div>
-                                </div>
+                                <input type="tel" name="phone_number" id="phone_number" x-model="phone" @input="onPhoneInput"
+                                    placeholder="e.g. 097 123 4567"
+                                    class="field-input" :class="{ 'is-invalid': phone.length >= 4 && !operator }">
                                 <p class="mt-1.5 text-sm" x-show="!phone || phone.length < 4" style="color: var(--od-muted);">
                                     Enter the number you'll approve the payment on. We detect your network automatically.
                                 </p>
                                 <p class="mt-1.5 text-sm" x-show="phone.length >= 4 && !operator" style="color: var(--od-danger);">
                                     <i class="fas fa-exclamation-circle mr-1"></i>That doesn't look like a valid Zambian mobile number.
                                 </p>
-                                <p class="mt-1.5 text-sm" x-show="operator" style="color: var(--od-green);">
-                                    <i class="fas fa-check-circle mr-1"></i><span x-text="operator?.name"></span> detected — you'll get an approval prompt on this number.
-                                </p>
+                                <div class="mt-2 flex items-center gap-2 text-sm" x-show="operator" x-transition style="color: var(--od-green);">
+                                    <span class="op-pill" :style="`background: ${operator?.soft}; color: ${operator?.color};`">
+                                        <span class="op-dot"></span><span x-text="operator?.name"></span>
+                                    </span>
+                                    <span>detected — you'll get an approval prompt on this number.</span>
+                                </div>
                             </div>
 
                             <!-- Bank Transfer panel -->
@@ -123,10 +118,10 @@
                                 </div>
                                 <div class="mt-2 flex flex-wrap gap-2">
                                     <button type="button" class="od-btn od-btn-secondary" style="padding: .3rem .7rem; font-size: 12px;" @click="amount = Number(minAmount.toFixed(2))">
-                                        30% deposit · K<span x-text="minAmount.toFixed(2)"></span>
+                                        30% deposit · K<span x-text="money(minAmount)"></span>
                                     </button>
                                     <button type="button" class="od-btn od-btn-secondary" style="padding: .3rem .7rem; font-size: 12px;" @click="amount = Number(balanceDue.toFixed(2))">
-                                        Pay in full · K<span x-text="balanceDue.toFixed(2)"></span>
+                                        Pay in full · K<span x-text="money(balanceDue)"></span>
                                     </button>
                                 </div>
                                 <p class="mt-1.5 text-sm" x-show="amountError" style="color: var(--od-danger);" x-text="amountError"></p>
@@ -162,7 +157,7 @@
                                 </template>
                                 <template x-if="!submitting">
                                     <span>
-                                        <span x-show="method === 'mobile_money'">Pay K<span x-text="amount.toFixed(2)"></span> with Mobile Money</span>
+                                        <span x-show="method === 'mobile_money'">Pay K<span x-text="money(amount)"></span> with Mobile Money</span>
                                         <span x-show="method === 'bank_transfer'">Get Bank Transfer Instructions</span>
                                     </span>
                                 </template>
@@ -202,15 +197,15 @@
                             </div>
                             <div class="flex justify-between" x-show="discount > 0" x-transition>
                                 <span style="color: var(--od-green);">Promo Discount</span>
-                                <span class="font-medium od-num" style="color: var(--od-green);" x-text="'-K' + discount.toFixed(2)"></span>
+                                <span class="font-medium od-num" style="color: var(--od-green);" x-text="'-K' + money(discount)"></span>
                             </div>
                             <div class="flex justify-between pt-3" style="border-top: 1px solid var(--od-border);">
                                 <span class="font-semibold" style="color: var(--od-fg);">Balance Due</span>
-                                <span class="font-bold od-num" style="color: var(--od-navy);" x-text="'K' + balanceDue.toFixed(2)"></span>
+                                <span class="font-bold od-num" style="color: var(--od-navy);" x-text="'K' + money(balanceDue)"></span>
                             </div>
                             <div class="flex justify-between pt-2">
                                 <span class="font-semibold" style="color: var(--od-fg);">You pay now</span>
-                                <span class="font-bold od-num od-h3" style="color: var(--od-navy);" x-text="'K' + amount.toFixed(2)"></span>
+                                <span class="font-bold od-num od-h3" style="color: var(--od-navy);" x-text="'K' + money(amount)"></span>
                             </div>
                         </div>
 
@@ -265,14 +260,18 @@ function checkout(originalBalance, originalMinDeposit, initialPhone) {
             this.detectOperator();
         },
 
+        money(v) {
+            return Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        },
+
         get minAmount() {
             return this.balanceDue > 0 ? Math.min(this.minDeposit, this.balanceDue) : 0;
         },
 
         get amountError() {
             const v = Number(this.amount);
-            if (isNaN(v) || v < this.minAmount) return 'Amount must be at least K' + this.minAmount.toFixed(2) + ' (30% deposit).';
-            if (v > this.balanceDue) return 'Amount cannot exceed the balance of K' + this.balanceDue.toFixed(2) + '.';
+            if (isNaN(v) || v < this.minAmount) return 'Amount must be at least K' + this.money(this.minAmount) + ' (30% deposit).';
+            if (v > this.balanceDue) return 'Amount cannot exceed the balance of K' + this.money(this.balanceDue) + '.';
             return '';
         },
 
