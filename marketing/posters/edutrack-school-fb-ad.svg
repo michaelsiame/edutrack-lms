@@ -1,0 +1,51 @@
+<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg" role="img" font-family="Arial, Helvetica, sans-serif">
+  <title>EduTrack School — Management System Facebook ad</title>
+  <desc>All-in-one school management system for schools in Zambia. Book a free demo.</desc>
+
+  <rect x="0" y="0" width="1080" height="1350" fill="#122344"/>
+  <circle cx="1040" cy="40" r="320" fill="#1A336E"/>
+  <circle cx="30" cy="1330" r="240" fill="#1A336E"/>
+
+  <rect x="80" y="66" width="92" height="92" rx="20" fill="#F6B745"/>
+  <polygon points="92,110 126,95 160,110 126,125" fill="#FFFFFF"/>
+  <line x1="160" y1="110" x2="160" y2="132" stroke="#FFFFFF" stroke-width="3"/>
+  <circle cx="160" cy="134" r="4" fill="#FFFFFF"/>
+  <text x="196" y="112" font-size="44" font-weight="800"><tspan fill="#FFFFFF">EduTrack</tspan><tspan fill="#F6B745"> School</tspan></text>
+  <text x="198" y="148" fill="#F6B745" font-size="18" font-weight="700" letter-spacing="4">MANAGEMENT SYSTEM</text>
+
+  <rect x="215" y="185" width="650" height="54" rx="27" fill="#F6B745"/>
+  <text x="540" y="221" text-anchor="middle" fill="#122344" font-size="24" font-weight="800" letter-spacing="1">TRUSTED SCHOOL MANAGEMENT SOFTWARE</text>
+
+  <text x="540" y="355" text-anchor="middle" fill="#FFFFFF" font-size="78" font-weight="800">RUN YOUR ENTIRE</text>
+  <text x="540" y="443" text-anchor="middle" font-size="78" font-weight="800"><tspan fill="#F6B745">SCHOOL</tspan><tspan fill="#FFFFFF"> IN ONE PLACE</tspan></text>
+
+  <text x="540" y="513" text-anchor="middle" fill="#FFFFFF" font-size="30">Admissions, fees, attendance &amp; results —</text>
+  <text x="540" y="554" text-anchor="middle" fill="#AED3FF" font-size="30">all in one simple system.</text>
+
+  <text x="540" y="625" text-anchor="middle" fill="#F6B745" font-size="24" font-weight="700" letter-spacing="5">EVERYTHING YOUR SCHOOL NEEDS</text>
+
+  <g font-size="28" font-weight="700" fill="#FFFFFF">
+    <rect x="90" y="652" width="420" height="68" rx="12" fill="#1B2F5C" stroke="#2E70DA" stroke-width="1.5"/>
+    <circle cx="124" cy="686" r="7" fill="#F6B745"/><text x="150" y="696">Admissions &amp; records</text>
+    <rect x="570" y="652" width="420" height="68" rx="12" fill="#1B2F5C" stroke="#2E70DA" stroke-width="1.5"/>
+    <circle cx="604" cy="686" r="7" fill="#F6B745"/><text x="630" y="696">Attendance tracking</text>
+    <rect x="90" y="740" width="420" height="68" rx="12" fill="#1B2F5C" stroke="#2E70DA" stroke-width="1.5"/>
+    <circle cx="124" cy="774" r="7" fill="#F6B745"/><text x="150" y="784">Fees &amp; invoicing</text>
+    <rect x="570" y="740" width="420" height="68" rx="12" fill="#1B2F5C" stroke="#2E70DA" stroke-width="1.5"/>
+    <circle cx="604" cy="774" r="7" fill="#F6B745"/><text x="630" y="784">Results &amp; report cards</text>
+    <rect x="90" y="828" width="420" height="68" rx="12" fill="#1B2F5C" stroke="#2E70DA" stroke-width="1.5"/>
+    <circle cx="124" cy="862" r="7" fill="#F6B745"/><text x="150" y="872">Class timetables</text>
+    <rect x="570" y="828" width="420" height="68" rx="12" fill="#1B2F5C" stroke="#2E70DA" stroke-width="1.5"/>
+    <circle cx="604" cy="862" r="7" fill="#F6B745"/><text x="630" y="872">Parent SMS portal</text>
+  </g>
+
+  <text x="540" y="958" text-anchor="middle" fill="#FCEBD0" font-size="25" font-weight="700">Works on any phone   •   Mobile money payments   •   Local support</text>
+  <text x="540" y="1004" text-anchor="middle" fill="#7DB8FF" font-size="24">Cut paperwork. Collect fees faster. Keep parents informed.</text>
+
+  <rect x="300" y="1050" width="480" height="90" rx="45" fill="#F6B745"/>
+  <text x="540" y="1108" text-anchor="middle" fill="#122344" font-size="40" font-weight="800" letter-spacing="1">BOOK A FREE DEMO</text>
+
+  <text x="540" y="1206" text-anchor="middle" fill="#FFFFFF" font-size="34" font-weight="800">edutrackzambia.com</text>
+  <text x="540" y="1250" text-anchor="middle" fill="#AED3FF" font-size="25">Call / WhatsApp 0771216339    •    edutrackzambia@gmail.com</text>
+  <text x="540" y="1286" text-anchor="middle" fill="#7DB8FF" font-size="21">Kalomo, Zambia</text>
+</svg>
