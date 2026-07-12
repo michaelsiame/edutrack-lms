@@ -132,6 +132,14 @@ class Enrollment extends Model
     }
 
     /**
+     * Outstanding balance for this enrollment, taking discounts into account.
+     */
+    public function balanceDue(): float
+    {
+        return max(0, $this->effectivePrice() - ($this->amount_paid + $this->totalDiscounts()));
+    }
+
+    /**
      * Determine if the enrolled student can access course content.
      * Free courses: always accessible.
      * Paid courses: requires payment_status='completed' OR at least 30% deposit paid.

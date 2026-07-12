@@ -92,12 +92,9 @@
                         <td class="od-meta">{{ $payment->created_at?->format('M d, Y') }}</td>
                         <td class="text-right">
                             @if($payment->payment_status === 'Pending')
-                            <form action="{{ route('finance.payments.verify', $payment) }}" method="POST" class="inline" data-confirm="Verify this payment?">
-                                @csrf
-                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-success-600 hover:bg-success-700 text-white text-xs font-medium rounded-lg transition-colors">
-                                    <i class="fas fa-check mr-1.5"></i>Verify
-                                </button>
-                            </form>
+                            <a href="{{ route('finance.payments.verify.form', $payment) }}" class="inline-flex items-center px-3 py-1.5 bg-success-600 hover:bg-success-700 text-white text-xs font-medium rounded-lg transition-colors">
+                                <i class="fas fa-check mr-1.5"></i>Verify
+                            </a>
                             @else
                             <span class="text-xs text-gray-400 dark:text-gray-500">—</span>
                             @endif

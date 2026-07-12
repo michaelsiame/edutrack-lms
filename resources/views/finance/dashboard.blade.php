@@ -47,6 +47,16 @@
     </div>
 </div>
 
+<!-- Quick Actions -->
+<div class="mb-8">
+    <p class="od-eyebrow mb-3">QUICK ACTIONS</p>
+    <div class="flex flex-wrap gap-3">
+        <a href="{{ route('finance.payments') }}?status=Pending" class="od-btn od-btn-success od-btn-sm"><i class="fas fa-check mr-1.5"></i> Verify Payments</a>
+        <a href="{{ route('finance.transactions') }}" class="od-btn od-btn-secondary od-btn-sm"><i class="fas fa-list mr-1.5"></i> Transactions</a>
+        <a href="{{ route('finance.invoices') }}" class="od-btn od-btn-ghost od-btn-sm"><i class="fas fa-file-invoice mr-1.5"></i> Invoices</a>
+    </div>
+</div>
+
 <!-- Revenue Chart -->
 <div class="od-card mb-8">
     <h3 class="od-h3 mb-4"><i class="fas fa-chart-line mr-2" style="color: var(--od-navy);"></i>Revenue Trend (Last 6 Months)</h3>

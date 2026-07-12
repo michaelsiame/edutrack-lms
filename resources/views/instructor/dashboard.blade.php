@@ -37,6 +37,66 @@
     </div>
 </div>
 
+<!-- Pending Review -->
+@if($pendingCount > 0)
+<div class="od-card mb-8" style="border-left: 4px solid var(--od-accent);">
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <p class="od-eyebrow" style="margin:0 0 4px;">ACTION REQUIRED</p>
+            <h3 class="od-h3">Submissions pending review ({{ $pendingCount }})</h3>
+        </div>
+        <a href="{{ route('instructor.submissions') }}" class="od-btn od-btn-ghost od-btn-sm">View all</a>
+    </div>
+    <div class="space-y-3">
+        @foreach($pendingAssignments as $submission)
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--od-fg-soft);">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style="background: var(--od-navy-soft); color: var(--od-navy);">
+                        {{ substr($submission->student->user->first_name ?? 'S', 0, 1) }}{{ substr($submission->student->user->last_name ?? '', 0, 1) }}
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-medium text-sm truncate" style="color: var(--od-fg);">{{ $submission->student->user->full_name ?? 'Unknown' }}</p>
+                        <p class="text-xs" style="color: var(--od-muted);">{{ $submission->assignment->title ?? 'Assignment' }} · {{ $submission->assignment->course->title ?? 'Course' }}</p>
+                    </div>
+                </div>
+                <a href="{{ route('instructor.courses.assignments.grade', [$submission->assignment->course, $submission->assignment, $submission]) }}" class="od-btn od-btn-primary od-btn-sm flex-shrink-0">
+                    Grade
+                </a>
+            </div>
+        @endforeach
+        @foreach($pendingQuizzes as $attempt)
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--od-fg-soft);">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style="background: var(--od-accent-soft); color: var(--od-accent);">
+                        {{ substr($attempt->student->user->first_name ?? 'S', 0, 1) }}{{ substr($attempt->student->user->last_name ?? '', 0, 1) }}
+                    </div>
+                    <div class="min-w-0">
+                        <p class="font-medium text-sm truncate" style="color: var(--od-fg);">{{ $attempt->student->user->full_name ?? 'Unknown' }}</p>
+                        <p class="text-xs" style="color: var(--od-muted);">{{ $attempt->quiz->title ?? 'Quiz' }} · {{ $attempt->quiz->course->title ?? 'Course' }}</p>
+                    </div>
+                </div>
+                <a href="{{ route('instructor.quizzes.attempts.grade', [$attempt->quiz, $attempt]) }}" class="od-btn od-btn-primary od-btn-sm flex-shrink-0">
+                    Grade
+                </a>
+            </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
+<!-- Quick Actions -->
+<div class="mb-8">
+    <p class="od-eyebrow mb-3">QUICK ACTIONS</p>
+    <div class="flex flex-wrap gap-3">
+        <a href="{{ route('instructor.courses.create') }}" class="od-btn od-btn-primary od-btn-sm"><i class="fas fa-plus mr-1.5"></i> New Course</a>
+        <a href="{{ route('instructor.submissions') }}" class="od-btn od-btn-success od-btn-sm"><i class="fas fa-clipboard-check mr-1.5"></i> Review Submissions</a>
+        <a href="{{ route('instructor.progress') }}" class="od-btn od-btn-secondary od-btn-sm"><i class="fas fa-chart-line mr-1.5"></i> Student Progress</a>
+        @if($courses->isNotEmpty())
+        <a href="{{ route('instructor.live-sessions.index', $courses->first()) }}" class="od-btn od-btn-ghost od-btn-sm"><i class="fas fa-video mr-1.5"></i> Live Sessions</a>
+        @endif
+    </div>
+</div>
+
 <!-- My Courses -->
 <div class="od-card" style="padding: 0; overflow: hidden;">
     <div class="od-card-header">

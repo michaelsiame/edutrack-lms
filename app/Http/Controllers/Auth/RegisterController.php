@@ -58,7 +58,7 @@ class RegisterController extends Controller
 
         // Welcome email
         $emailService->sendTemplated($user->email, 'Welcome', [
-            'name' => $user->full_name,
+            'first_name' => $user->first_name ?? $user->full_name,
             'email' => $user->email,
             'login_url' => route('login'),
         ]);

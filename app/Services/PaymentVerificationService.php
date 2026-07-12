@@ -72,10 +72,12 @@ class PaymentVerificationService
 
             if ($user && $user->email) {
                 $emailService->sendTemplated($user->email, 'Payment', [
-                    'name' => $user->full_name,
-                    'course' => $freshPayment->course?->title,
+                    'first_name' => $user->first_name ?? $user->full_name,
+                    'course_title' => $freshPayment->course?->title ?? 'your course',
                     'amount' => number_format($freshPayment->amount, 2),
-                    'date' => $freshPayment->payment_date?->format('F d, Y'),
+                    'currency' => $freshPayment->currency ?: setting('currency', 'ZMW'),
+                    'transaction_id' => $freshPayment->transaction_id ?: 'N/A',
+                    'date' => $freshPayment->payment_date?->format('F d, Y') ?? now()->format('F d, Y'),
                 ]);
             }
 

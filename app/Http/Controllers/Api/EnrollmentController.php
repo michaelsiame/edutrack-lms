@@ -102,8 +102,9 @@ class EnrollmentController extends Controller
 
         $emailService = app(\App\Services\EmailQueueService::class);
         $emailService->sendTemplated($user->email, 'Enrollment', [
-            'name' => $user->full_name,
-            'course' => $course->title,
+            'first_name' => $user->first_name ?? $user->full_name,
+            'course_title' => $course->title,
+            'start_date' => $course->start_date?->format('F d, Y') ?? 'soon',
             'course_url' => route('courses.show', $course),
         ]);
         $emailService->sendNotification($user->id, 'Enrollment Confirmed', "You are now enrolled in {$course->title}", 'enrollment', route('enrollments.show', $course));

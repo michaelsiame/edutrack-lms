@@ -147,9 +147,31 @@ class PaymentController extends Controller
 
     public function edit(Payment $payment)
     {
-        $payment->load(['student', 'course']);
+        $payment->load(['student', 'course', 'enrollment.course', 'enrollment.intake']);
         $paymentMethods = \App\Models\PaymentMethod::where('is_active', true)->orderBy('method_name')->get();
-        return view('admin.payments.edit', compact('payment', 'paymentMethods'));
+
+        $enrollment = $payment->enrollment;
+        $enrollmentSummary = null;
+        if ($enrollment) {
+            $totalFee = $enrollment->effectivePrice();
+            $discounts = $enrollment->totalDiscounts();
+            $effectivePaid = (float) $enrollment->amount_paid + (float) $discounts;
+            $enrollmentSummary = [
+                'course_title' => $enrollment->course?->title ?? 'Unknown course',
+                'intake_name' => $enrollment->intake?->name,
+                'total_fee' => $totalFee,
+                'amount_paid' => (float) $enrollment->amount_paid,
+                'discounts' => $discounts,
+                'effective_paid' => $effectivePaid,
+                'outstanding' => max(0, $totalFee - $effectivePaid),
+                'payment_status' => $enrollment->payment_status,
+                'enrollment_status' => $enrollment->enrollment_status,
+                'certificate_blocked' => $enrollment->certificate_blocked,
+                'is_fully_paid' => $enrollment->isFullyPaid(),
+            ];
+        }
+
+        return view('admin.payments.edit', compact('payment', 'paymentMethods', 'enrollmentSummary'));
     }
 
     public function update(Request $request, Payment $payment)

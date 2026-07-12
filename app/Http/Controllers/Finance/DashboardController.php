@@ -75,16 +75,44 @@ class DashboardController extends Controller
         return view('finance.payments', compact('payments'));
     }
 
+    public function verifyForm(Payment $payment)
+    {
+        $payment->load(['student', 'course', 'enrollment.course', 'enrollment.intake']);
+
+        $enrollment = $payment->enrollment;
+        $enrollmentSummary = null;
+        if ($enrollment) {
+            $totalFee = $enrollment->effectivePrice();
+            $discounts = $enrollment->totalDiscounts();
+            $effectivePaid = (float) $enrollment->amount_paid + (float) $discounts;
+            $enrollmentSummary = [
+                'course_title' => $enrollment->course?->title ?? 'Unknown course',
+                'intake_name' => $enrollment->intake?->name,
+                'total_fee' => $totalFee,
+                'amount_paid' => (float) $enrollment->amount_paid,
+                'discounts' => $discounts,
+                'effective_paid' => $effectivePaid,
+                'outstanding' => max(0, $totalFee - $effectivePaid),
+                'payment_status' => $enrollment->payment_status,
+                'enrollment_status' => $enrollment->enrollment_status,
+                'certificate_blocked' => $enrollment->certificate_blocked,
+                'is_fully_paid' => $enrollment->isFullyPaid(),
+            ];
+        }
+
+        return view('finance.verify', compact('payment', 'enrollmentSummary'));
+    }
+
     public function verify(Payment $payment)
     {
         if ($payment->payment_status === 'Completed') {
-            return back()->with('info', 'Payment is already verified.');
+            return redirect()->route('finance.payments')->with('info', 'Payment is already verified.');
         }
 
         $service = app(PaymentVerificationService::class);
         $service->verifyPayment($payment);
 
-        return back()->with('success', 'Payment verified successfully. Enrollment updated.');
+        return redirect()->route('finance.payments')->with('success', 'Payment verified successfully. Enrollment updated.');
     }
 
     public function invoices()

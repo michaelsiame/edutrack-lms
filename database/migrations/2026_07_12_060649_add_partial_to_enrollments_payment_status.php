@@ -16,7 +16,12 @@ return new class extends Migration
     public function up(): void
     {
         if (Schema::hasTable('enrollments')) {
-            DB::statement("ALTER TABLE enrollments MODIFY COLUMN payment_status ENUM('pending', 'partial', 'completed', 'failed', 'refunded') DEFAULT 'pending'");
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+            try {
+                DB::statement("ALTER TABLE enrollments MODIFY COLUMN payment_status ENUM('pending', 'partial', 'completed', 'failed', 'refunded') DEFAULT 'pending'");
+            } finally {
+                DB::statement('SET FOREIGN_KEY_CHECKS=1');
+            }
         }
     }
 
@@ -26,7 +31,12 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasTable('enrollments')) {
-            DB::statement("ALTER TABLE enrollments MODIFY COLUMN payment_status ENUM('pending', 'completed', 'failed', 'refunded') DEFAULT 'pending'");
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+            try {
+                DB::statement("ALTER TABLE enrollments MODIFY COLUMN payment_status ENUM('pending', 'completed', 'failed', 'refunded') DEFAULT 'pending'");
+            } finally {
+                DB::statement('SET FOREIGN_KEY_CHECKS=1');
+            }
         }
     }
 };

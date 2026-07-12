@@ -38,11 +38,20 @@ class DashboardController extends Controller
             ->where('payment_status', 'Completed')
             ->sum('amount');
 
-        $balanceDue = auth()->user()->enrollments()
-            ->whereIn('enrollment_status', ['Enrolled', 'In Progress'])
-            ->leftJoin('courses', 'enrollments.course_id', '=', 'courses.id')
-            ->selectRaw('SUM(GREATEST(0, COALESCE(courses.price, 0) - COALESCE(enrollments.amount_paid, 0))) as balance')
-            ->value('balance') ?? 0;
+        // Accurate balance: effective price (intake/discount aware) minus amount
+        // paid and discounts. Include Completed enrollments that still owe money.
+        $allEnrollments = auth()->user()->enrollments()
+            ->with(['course', 'intake'])
+            ->whereNotIn('enrollment_status', ['Dropped', 'Expired'])
+            ->get();
+
+        $balanceDue = $allEnrollments->sum(fn ($enrollment) => $enrollment->balanceDue());
+
+        // Enrollments that still owe money — used for the "Pay balance" CTA.
+        $enrollmentsWithBalance = $allEnrollments
+            ->filter(fn ($enrollment) => $enrollment->balanceDue() > 0)
+            ->sortByDesc('balanceDue')
+            ->values();
 
         // Onboarding state — drives the "getting started" strip for new students.
         $hasRegistrationFee = \App\Models\RegistrationFee::where('user_id', auth()->id())
@@ -53,7 +62,7 @@ class DashboardController extends Controller
 
         return view('student.dashboard', compact(
             'enrollments', 'certificates', 'payments', 'totalPaid', 'balanceDue',
-            'hasRegistrationFee', 'hasEnrolment', 'firstCourse'
+            'enrollmentsWithBalance', 'hasRegistrationFee', 'hasEnrolment', 'firstCourse'
         ));
     }
 

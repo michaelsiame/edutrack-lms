@@ -62,6 +62,17 @@
     </div>
 </div>
 
+<!-- Quick Actions -->
+<div class="mb-8">
+    <p class="od-eyebrow mb-3">QUICK ACTIONS</p>
+    <div class="flex flex-wrap gap-3">
+        <a href="{{ route('admin.enrollments.create') }}" class="od-btn od-btn-primary od-btn-sm"><i class="fas fa-user-plus mr-1.5"></i> Enrol Student</a>
+        <a href="{{ route('admin.payments.create') }}" class="od-btn od-btn-success od-btn-sm"><i class="fas fa-coins mr-1.5"></i> Record Payment</a>
+        <a href="{{ route('admin.courses.create') }}" class="od-btn od-btn-secondary od-btn-sm"><i class="fas fa-book mr-1.5"></i> Add Course</a>
+        <a href="{{ route('admin.users.create') }}" class="od-btn od-btn-ghost od-btn-sm"><i class="fas fa-user mr-1.5"></i> Add User</a>
+    </div>
+</div>
+
 <!-- Recent Activity Section -->
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
     <!-- Recent Enrollments -->

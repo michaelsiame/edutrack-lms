@@ -125,9 +125,9 @@ class CertificateService
                 return;
             }
 
-            $emailService->sendTemplated($enrollment->user->email, 'certificate', [
-                'name' => $enrollment->user->full_name,
-                'course' => $enrollment->course->title,
+            $emailService->sendTemplated($enrollment->user->email, 'Certificate', [
+                'first_name' => $enrollment->user->first_name ?? $enrollment->user->full_name,
+                'course_title' => $enrollment->course->title,
                 'certificate_number' => $certificate->certificate_number,
                 'download_url' => route('certificates.download', $certificate),
             ]);

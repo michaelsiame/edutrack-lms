@@ -36,8 +36,39 @@ class DashboardController extends Controller
         ];
 
         $courses = $instructor->courses()->withCount('enrollments')->latest()->get();
+        $courseIds = $courses->pluck('id');
 
-        return view('instructor.dashboard', compact('stats', 'courses'));
+        // Pending work requiring instructor attention.
+        $pendingAssignments = AssignmentSubmission::whereHas('assignment', function ($q) use ($courseIds) {
+                $q->whereIn('course_id', $courseIds);
+            })
+            ->where(function ($q) {
+                $q->whereNull('status')
+                  ->orWhere('status', '!=', 'graded');
+            })
+            ->with(['student.user', 'assignment.course'])
+            ->latest('submitted_at')
+            ->take(5)
+            ->get();
+
+        $pendingQuizzes = QuizAttempt::whereHas('quiz', function ($q) use ($courseIds) {
+                $q->whereIn('course_id', $courseIds);
+            })
+            ->where(function ($q) {
+                $q->whereNull('score')
+                  ->orWhere('status', 'Submitted');
+            })
+            ->with(['student.user', 'quiz.course'])
+            ->latest('submitted_at')
+            ->latest('completed_at')
+            ->take(5)
+            ->get();
+
+        $pendingCount = $pendingAssignments->count() + $pendingQuizzes->count();
+
+        return view('instructor.dashboard', compact(
+            'stats', 'courses', 'pendingAssignments', 'pendingQuizzes', 'pendingCount'
+        ));
     }
 
     public function submissions()

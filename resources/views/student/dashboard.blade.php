@@ -136,6 +136,22 @@
         </div>
     @endif
 
+    @if($hasEnrolment)
+    <!-- Quick Actions -->
+    <div class="mb-8">
+        <p class="od-eyebrow mb-3">QUICK ACTIONS</p>
+        <div class="flex flex-wrap gap-3">
+            @if($enrollmentsWithBalance->isNotEmpty() && $enrollmentsWithBalance->first()->course)
+                <a href="{{ route('checkout.show', $enrollmentsWithBalance->first()->course) }}" class="od-btn od-btn-success od-btn-sm"><i class="fas fa-coins mr-1.5"></i> Pay Balance</a>
+            @endif
+            @if($firstCourse)
+                <a href="{{ route('enrollments.show', $firstCourse) }}" class="od-btn od-btn-primary od-btn-sm"><i class="fas fa-book-open mr-1.5"></i> Continue Learning</a>
+            @endif
+            <a href="{{ route('student.payments') }}" class="od-btn od-btn-ghost od-btn-sm"><i class="fas fa-receipt mr-1.5"></i> Payments</a>
+        </div>
+    </div>
+    @endif
+
     <!-- Stats -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 stagger-children">
         <div class="od-stat-card">
@@ -362,6 +378,28 @@
                     <div class="od-num" style="font-size: 20px; font-weight: 600; color: var(--od-fg);">ZMW {{ number_format($balanceDue, 0) }}</div>
                 </div>
             </div>
+            @if($enrollmentsWithBalance->count() > 0)
+                <div class="mb-4">
+                    <p class="od-meta" style="margin: 0 0 8px;">Outstanding balances</p>
+                    <div class="space-y-2">
+                        @foreach($enrollmentsWithBalance->take(3) as $enrollment)
+                            @php $course = $enrollment->course; @endphp
+                            <div class="flex items-center justify-between p-3 rounded-lg" style="background: var(--od-fg-soft);">
+                                <div class="min-w-0 flex-1 mr-3">
+                                    <p class="font-medium text-sm truncate" style="color: var(--od-fg);">{{ $course?->title ?? 'Unknown Course' }}</p>
+                                    <p class="text-xs" style="color: var(--od-muted);">Balance ZMW {{ number_format($enrollment->balanceDue(), 0) }}</p>
+                                </div>
+                                @if($course)
+                                    <a href="{{ route('checkout.show', $course) }}" class="od-btn od-btn-primary od-btn-sm flex-shrink-0">
+                                        Pay balance
+                                    </a>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             @if($payments->count() > 0)
                 <table class="od-table">
                     <thead>

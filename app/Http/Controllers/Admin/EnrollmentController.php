@@ -22,11 +22,18 @@ class EnrollmentController extends Controller
      */
     public function create(Request $request)
     {
-        $courses = Course::orderBy('title')->get(['id', 'title']);
-        $selectedCourse = $request->filled('course')
-            ? Course::with('intakes')->find($request->course)
-            : null;
-        $users = User::orderBy('first_name')->get(['id', 'first_name', 'last_name', 'email']);
+        $courses = Course::with(['intakes' => fn ($q) => $q->orderBy('name')])
+            ->orderBy('title')
+            ->get(['id', 'title']);
+
+        $selectedCourse = $request->filled('course') ? $courses->firstWhere('id', (int) $request->course) : null;
+
+        $users = User::orderBy('first_name')
+            ->get(['id', 'first_name', 'last_name', 'email'])
+            ->map(fn ($u) => [
+                'id' => $u->id,
+                'label' => trim($u->first_name . ' ' . $u->last_name) . ' — ' . $u->email,
+            ]);
 
         return view('admin.enrollments.create', compact('courses', 'selectedCourse', 'users'));
     }

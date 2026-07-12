@@ -423,6 +423,7 @@ Route::prefix('finance')->middleware(['auth', 'finance'])->name('finance.')->gro
     Route::get('/dashboard', [App\Http\Controllers\Finance\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/transactions', [App\Http\Controllers\Finance\DashboardController::class, 'transactions'])->name('transactions');
     Route::get('/payments', [App\Http\Controllers\Finance\DashboardController::class, 'payments'])->name('payments');
+    Route::get('/payments/{payment}/verify', [App\Http\Controllers\Finance\DashboardController::class, 'verifyForm'])->name('payments.verify.form');
     Route::post('/payments/{payment}/verify', [App\Http\Controllers\Finance\DashboardController::class, 'verify'])->name('payments.verify');
     Route::get('/invoices', [App\Http\Controllers\Finance\DashboardController::class, 'invoices'])->name('invoices');
     Route::get('/invoices/{invoice}/download', [App\Http\Controllers\Finance\DashboardController::class, 'downloadInvoice'])->name('invoices.download');
