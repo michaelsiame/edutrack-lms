@@ -132,7 +132,17 @@
 
             {{-- Enrollment balance summary --}}
             <div x-show="selectedCourse && selectedCourse.is_enrolled" x-transition class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-100 dark:border-gray-700">
-                <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Enrollment Summary</h4>
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Enrollment Summary</h4>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                          :class="{
+                              'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400': selectedCourse && selectedCourse.payment_status === 'completed',
+                              'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400': selectedCourse && selectedCourse.payment_status === 'partial',
+                              'bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400': selectedCourse && selectedCourse.payment_status === 'pending'
+                          }"
+                          x-text="selectedCourse ? (selectedCourse.payment_status ? selectedCourse.payment_status.charAt(0).toUpperCase() + selectedCourse.payment_status.slice(1) : 'Pending') : ''">
+                    </span>
+                </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
                         <div class="text-gray-500 dark:text-gray-400">Total Fee</div>
@@ -173,6 +183,13 @@
                         <span x-show="selectedCourse.outstanding > 0"> or </span>
                         <button type="button" @click="amount = formatMoneyRaw(Math.min(selectedCourse.outstanding, selectedCourse.total_fee * 0.30))" class="text-primary-600 hover:underline">30% deposit</button>
                     </p>
+                    <p x-show="selectedCourse && amount" class="mt-1 text-xs">
+                        This will be recorded as
+                        <span class="font-medium"
+                              :class="(parseFloat(amount || 0) >= (selectedCourse ? selectedCourse.outstanding : 0)) ? 'text-success-600 dark:text-success-400' : 'text-warning-600 dark:text-warning-400'"
+                              x-text="(parseFloat(amount || 0) >= (selectedCourse ? selectedCourse.outstanding : 0)) ? 'a full payment (course_fee)' : 'a partial payment'">
+                        </span>.
+                    </p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -188,7 +205,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Status <span class="text-red-500">*</span>
+                        Payment Status <span class="text-red-500">*</span>
                     </label>
                     <select name="payment_status" required
                             class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primary-500 focus:ring-primary-500 text-sm">
