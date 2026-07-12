@@ -138,7 +138,8 @@
                           :class="{
                               'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400': selectedCourse && selectedCourse.payment_status === 'completed',
                               'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400': selectedCourse && selectedCourse.payment_status === 'partial',
-                              'bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400': selectedCourse && selectedCourse.payment_status === 'pending'
+                              'bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400': selectedCourse && selectedCourse.payment_status === 'pending',
+                              'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400': selectedCourse && (selectedCourse.payment_status === 'failed' || selectedCourse.payment_status === 'refunded')
                           }"
                           x-text="selectedCourse ? (selectedCourse.payment_status ? selectedCourse.payment_status.charAt(0).toUpperCase() + selectedCourse.payment_status.slice(1) : 'Pending') : ''">
                     </span>
