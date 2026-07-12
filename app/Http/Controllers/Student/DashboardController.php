@@ -50,7 +50,7 @@ class DashboardController extends Controller
         // Enrollments that still owe money — used for the "Pay balance" CTA.
         $enrollmentsWithBalance = $allEnrollments
             ->filter(fn ($enrollment) => $enrollment->balanceDue() > 0)
-            ->sortByDesc('balanceDue')
+            ->sortByDesc(fn ($enrollment) => $enrollment->balanceDue())
             ->values();
 
         // Onboarding state — drives the "getting started" strip for new students.
