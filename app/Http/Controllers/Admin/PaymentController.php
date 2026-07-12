@@ -31,7 +31,7 @@ class PaymentController extends Controller
 
     public function create()
     {
-        $students = \App\Models\Student::with('user')
+        $students = \App\Models\Student::with(['user', 'enrollments.course', 'enrollments.paymentPlan'])
             ->whereHas('user', function ($q) {
                 $q->whereHas('roles', function ($r) {
                     $r->where('role_id', Role::STUDENT); // Student role
@@ -40,9 +40,38 @@ class PaymentController extends Controller
             ->orWhereDoesntHave('user.roles')
             ->orderBy('id')
             ->get();
-        $courses = \App\Models\Course::orderBy('title')->get(['id', 'title']);
+
+        $studentOptions = $students->map(function ($student) {
+            return [
+                'id' => $student->id,
+                'name' => $student->full_name ?? ('Student #' . $student->id),
+                'email' => $student->email ?? 'no email',
+                'enrollments' => $student->enrollments->map(function ($enrollment) {
+                    $course = $enrollment->course;
+                    $totalFee = $enrollment->effectivePrice();
+                    $discounts = $enrollment->totalDiscounts();
+                    $effectivePaid = (float) $enrollment->amount_paid + (float) $discounts;
+
+                    return [
+                        'course_id' => $enrollment->course_id,
+                        'course_title' => $course?->title ?? 'Unknown course',
+                        'total_fee' => $totalFee,
+                        'amount_paid' => (float) $enrollment->amount_paid,
+                        'discounts' => $discounts,
+                        'effective_paid' => $effectivePaid,
+                        'outstanding' => max(0, $totalFee - $effectivePaid),
+                        'payment_status' => $enrollment->payment_status,
+                        'enrollment_status' => $enrollment->enrollment_status,
+                        'is_fully_paid' => $enrollment->isFullyPaid(),
+                    ];
+                })->values(),
+            ];
+        })->values();
+
+        $courses = \App\Models\Course::orderBy('title')->get(['id', 'title', 'price', 'discount_price']);
         $paymentMethods = \App\Models\PaymentMethod::where('is_active', true)->orderBy('method_name')->get();
-        return view('admin.payments.create', compact('students', 'courses', 'paymentMethods'));
+
+        return view('admin.payments.create', compact('studentOptions', 'courses', 'paymentMethods'));
     }
 
     public function store(Request $request)
@@ -61,7 +90,6 @@ class PaymentController extends Controller
 
         $validated['currency'] = 'ZMW';
         $validated['recorded_by'] = auth()->id();
-        $validated['payment_type'] = $validated['payment_type'] ?? 'course_fee';
 
         // Find or create enrollment for this student and course
         $student = \App\Models\Student::find($validated['student_id']);
@@ -93,6 +121,12 @@ class PaymentController extends Controller
         }
 
         $validated['enrollment_id'] = $enrollment->id;
+
+        // Determine payment type: full payment if amount covers outstanding balance.
+        $totalFee = $enrollment->effectivePrice();
+        $discounts = $enrollment->totalDiscounts();
+        $outstanding = max(0, $totalFee - (float) $enrollment->amount_paid - (float) $discounts);
+        $validated['payment_type'] = ((float) $validated['amount'] >= $outstanding) ? 'course_fee' : 'partial_payment';
 
         $payment = Payment::create($validated);
 
