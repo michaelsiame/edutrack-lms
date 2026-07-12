@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Payment;
-use App\Models\Promotion;
+use App\Services\PaymentVerificationService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -335,44 +335,11 @@ class LipilaPaymentService
             $verificationService->recalculateEnrollmentState($payment->enrollment);
         }
 
+        // Delegate promotion usage, invoice generation and receipt notification
+        // to the shared completion path so Lipila completions behave identically
+        // to Lenco completions and manual/admin verifications.
         if (!$wasCompleted) {
-            if ($payment->promotion_id) {
-                Promotion::where('id', $payment->promotion_id)->increment('used_count');
-            }
-
-            try {
-                $invoiceService = app(InvoiceService::class);
-                $invoiceService->generateInvoice($payment);
-            } catch (\Exception $e) {
-                Log::error('Failed to generate invoice for completed Lipila payment', [
-                    'payment_id' => $payment->payment_id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-
-            try {
-                $emailService = app(\App\Services\EmailQueueService::class);
-                $user = $payment->enrollment?->user ?? $payment->student?->user;
-                $userId = $user?->id ?? $payment->student?->user_id;
-
-                if ($user && $user->email) {
-                    $emailService->sendTemplated($user->email, 'Payment', [
-                        'name' => $user->full_name,
-                        'course' => $payment->course?->title,
-                        'amount' => number_format($payment->amount, 2),
-                        'date' => $payment->payment_date?->format('F d, Y'),
-                    ]);
-                }
-
-                if ($userId) {
-                    $emailService->sendNotification($userId, 'Payment Received', "Your payment of ZMW {$payment->amount} for {$payment->course?->title} has been received.", 'payment');
-                }
-            } catch (\Exception $e) {
-                Log::error('Failed to send payment receipt email for Lipila payment', [
-                    'payment_id' => $payment->payment_id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
+            $verificationService->runCompletionSideEffects($payment);
         }
 
         Log::info('Lipila payment marked completed', [

@@ -39,7 +39,12 @@
 <div class="od-card" style="padding: 0; overflow: hidden;">
  <div class="od-card-header">
  <h3 class="od-h3">All Payments</h3>
+ <div class="flex items-center gap-3">
  <span class="od-meta">{{ $payments->total() }} total</span>
+ <a href="{{ route('admin.payments.create') }}" class="od-btn od-btn-primary od-btn-sm">
+ <i class="fas fa-plus mr-1"></i>Record Payment
+ </a>
+ </div>
  </div>
  <div class="overflow-x-auto">
  <table class="od-table min-w-[640px]">

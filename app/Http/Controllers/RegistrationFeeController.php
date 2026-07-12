@@ -6,6 +6,7 @@ use App\Models\LencoTransaction;
 use App\Models\Payment;
 use App\Models\RegistrationFee;
 use App\Services\LencoPaymentService;
+use App\Services\LipilaPaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -24,20 +25,9 @@ class RegistrationFeeController extends Controller
         // Find latest registration fee record for this user
         $fee = RegistrationFee::where('user_id', $user->id)->latest()->first();
 
-        // If there's a pending fee with a Lenco transaction, sync status
+        // If there's a pending fee, sync status from the relevant gateway.
         if ($fee && $fee->payment_status === 'pending' && $fee->reference) {
-            $lencoTx = LencoTransaction::where('reference', $fee->reference)->first();
-            if ($lencoTx && $lencoTx->status === 'completed' && $fee->payment_status !== 'completed') {
-                $fee->update(['payment_status' => 'completed', 'verified_at' => now()]);
-
-                // Also sync the associated Payment record
-                $payment = Payment::where('transaction_id', $fee->reference)
-                    ->where('payment_type', 'registration')
-                    ->first();
-                if ($payment && !$payment->isCompleted()) {
-                    $payment->update(['payment_status' => 'Completed', 'payment_date' => now()]);
-                }
-            }
+            $this->syncPendingRegistrationFee($fee);
         }
 
         $hasPaid = $fee && $fee->payment_status === 'completed';
@@ -71,8 +61,13 @@ class RegistrationFeeController extends Controller
 
         $paymentMethod = $request->input('payment_method');
 
-        // === AUTOMATED PAYMENT VIA LENCO ===
-        if (in_array($paymentMethod, ['mobile_money', 'bank_transfer'])) {
+        // === AUTOMATED PAYMENTS ===
+        // Lipila is the primary mobile-money gateway; Lenco handles bank transfers.
+        if ($paymentMethod === 'mobile_money') {
+            return $this->initiateLipilaPayment($request, $user, $feeAmount, $currency);
+        }
+
+        if ($paymentMethod === 'bank_transfer') {
             return $this->initiateLencoPayment($request, $user, $feeAmount, $currency, $paymentMethod);
         }
 
@@ -81,29 +76,130 @@ class RegistrationFeeController extends Controller
     }
 
     /**
-     * Initiate a Lenco payment for mobile money or bank transfer.
+     * Initiate a Lipila mobile-money payment for the registration fee.
      */
-    protected function initiateLencoPayment(Request $request, $user, float $feeAmount, string $currency, string $paymentMethod)
+    protected function initiateLipilaPayment(Request $request, $user, float $feeAmount, string $currency)
     {
         $validated = $request->validate([
-            'payment_method' => 'required|string|in:mobile_money,bank_transfer',
-            'phone_number' => 'nullable|string|max:20',
+            'payment_method' => 'required|string|in:mobile_money',
+            'phone_number' => 'required|string|max:20',
         ]);
 
-        // Prevent duplicate pending payments within the last 30 minutes
-        $existingPendingTx = LencoTransaction::where('user_id', $user->id)
-            ->where('status', 'pending')
-            ->where('created_at', '>=', now()->subMinutes(30))
-            ->first();
+        $service = app(LipilaPaymentService::class);
+        $normalizedPhone = $service->normalizePhoneNumber($validated['phone_number'] ?? $user->phone);
 
-        if ($existingPendingTx) {
+        if (empty($normalizedPhone)) {
             return redirect()->route('registration-fee.show')
-                ->with('info', 'You already have a pending payment. Please check your phone to authorize the transaction, or wait a few minutes before trying again.');
+                ->with('error', 'A valid Zambian phone number is required for mobile money payment.');
         }
 
         $reference = 'REG-' . $user->id . '-' . time() . '-' . strtoupper(Str::random(6));
 
+        $result = DB::transaction(function () use ($user, $feeAmount, $currency, $normalizedPhone, $reference, $service) {
+            // Prevent duplicate pending registration fees within the last 30 minutes.
+            $existingPendingFee = RegistrationFee::where('user_id', $user->id)
+                ->where('payment_status', 'pending')
+                ->where('created_at', '>=', now()->subMinutes(30))
+                ->lockForUpdate()
+                ->first();
+
+            if ($existingPendingFee) {
+                return ['type' => 'duplicate'];
+            }
+
+            // Create pending payment record
+            $payment = Payment::create([
+                'student_id' => $user->student?->id,
+                'course_id' => null,
+                'enrollment_id' => null,
+                'amount' => $feeAmount,
+                'currency' => $currency,
+                'payment_type' => 'registration',
+                'payment_status' => 'Pending',
+                'transaction_id' => $reference,
+                'phone_number' => $normalizedPhone,
+            ]);
+
+            // Create pending registration fee record
+            $fee = RegistrationFee::create([
+                'user_id' => $user->id,
+                'amount' => $feeAmount,
+                'currency' => $currency,
+                'payment_status' => 'pending',
+                'payment_method' => 'mobile_money',
+                'reference' => $reference,
+                'phone_number' => $normalizedPhone,
+            ]);
+
+            $lipilaResult = $service->initiateMobileMoneyCollection([
+                'amount' => $feeAmount,
+                'currency' => $currency,
+                'reference' => $reference,
+                'phone_number' => $normalizedPhone,
+                'email' => $user->email,
+                'narration' => 'Edutrack: registration fee',
+                'callback_url' => route('lipila.webhook'),
+            ]);
+
+            if (!$lipilaResult['success']) {
+                $fee->update(['payment_status' => 'failed']);
+                $payment->update(['payment_status' => 'Failed']);
+
+                return [
+                    'type' => 'gateway_failed',
+                    'error' => $lipilaResult['error'] ?? 'Unable to initiate payment. Please try again.',
+                ];
+            }
+
+            $lipilaReference = $lipilaResult['identifier'] ?? null;
+
+            $payment->update(['lipila_reference' => $lipilaReference]);
+            $fee->update(['mobile_reference' => $lipilaReference]);
+
+            return [
+                'type' => 'gateway_success',
+                'payment_method' => 'mobile_money',
+            ];
+        });
+
+        if ($result['type'] === 'duplicate') {
+            return redirect()->route('registration-fee.show')
+                ->with('info', 'You already have a pending payment. Please check your phone to authorize the transaction, or wait a few minutes before trying again.');
+        }
+
+        if ($result['type'] === 'gateway_failed') {
+            return redirect()->route('registration-fee.show')
+                ->with('error', $result['error']);
+        }
+
+        return redirect()->route('registration-fee.show')
+            ->with('warning', 'Payment initiated! Please check your phone and authorize the mobile money transaction. You will receive confirmation once the payment is complete.');
+    }
+
+    /**
+     * Initiate a Lenco bank-transfer payment for the registration fee.
+     */
+    protected function initiateLencoPayment(Request $request, $user, float $feeAmount, string $currency, string $paymentMethod)
+    {
+        $validated = $request->validate([
+            'payment_method' => 'required|string|in:bank_transfer',
+            'phone_number' => 'nullable|string|max:20',
+        ]);
+
+        $reference = 'REG-' . $user->id . '-' . time() . '-' . strtoupper(Str::random(6));
+
         $result = DB::transaction(function () use ($user, $feeAmount, $currency, $paymentMethod, $validated, $reference) {
+            // Prevent duplicate pending registration fees within the last 30 minutes.
+            $existingPendingFee = RegistrationFee::where('user_id', $user->id)
+                ->where('payment_status', 'pending')
+                ->where('created_at', '>=', now()->subMinutes(30))
+                ->lockForUpdate()
+                ->first();
+
+            if ($existingPendingFee) {
+                return ['type' => 'duplicate'];
+            }
+
             // Create pending payment record
             $payment = Payment::create([
                 'student_id' => $user->student?->id,
@@ -130,35 +226,25 @@ class RegistrationFeeController extends Controller
 
             $service = app(LencoPaymentService::class);
 
-            if ($paymentMethod === 'mobile_money') {
-                $lencoResult = $service->initializeMobileMoneyCollection([
-                    'amount' => $feeAmount,
-                    'currency' => $currency,
-                    'reference' => $reference,
-                    'phone_number' => $validated['phone_number'] ?? $user->phone,
-                    'callback_url' => route('lenco.webhook'),
-                ]);
-            } else {
-                $lencoResult = $service->initializeBankTransferCollection([
-                    'amount' => $feeAmount,
-                    'currency' => $currency,
-                    'reference' => $reference,
-                    'email' => $user->email,
-                    'phone_number' => $validated['phone_number'] ?? $user->phone,
-                    'customer_name' => $user->full_name ?? $user->name,
-                    'customer_first_name' => $user->first_name,
-                    'customer_last_name' => $user->last_name,
-                    'callback_url' => route('lenco.webhook'),
-                    'redirect_url' => route('registration-fee.show'),
-                ]);
-            }
+            $lencoResult = $service->initializeBankTransferCollection([
+                'amount' => $feeAmount,
+                'currency' => $currency,
+                'reference' => $reference,
+                'email' => $user->email,
+                'phone_number' => $validated['phone_number'] ?? $user->phone,
+                'customer_name' => $user->full_name ?? $user->name,
+                'customer_first_name' => $user->first_name,
+                'customer_last_name' => $user->last_name,
+                'callback_url' => route('lenco.webhook'),
+                'redirect_url' => route('registration-fee.show'),
+            ]);
 
             if (!$lencoResult['success']) {
                 $fee->update(['payment_status' => 'failed']);
                 $payment->update(['payment_status' => 'Failed']);
 
                 return [
-                    'type' => 'lenco_failed',
+                    'type' => 'gateway_failed',
                     'error' => $lencoResult['error'] ?? 'Unable to initiate payment. Please try again.',
                 ];
             }
@@ -180,13 +266,18 @@ class RegistrationFeeController extends Controller
             $fee->update(['lenco_transaction_id' => $lencoId]);
 
             return [
-                'type' => 'lenco_success',
+                'type' => 'gateway_success',
                 'payment_method' => $paymentMethod,
                 'auth_url' => $lencoResult['authorization_url'] ?? null,
             ];
         });
 
-        if ($result['type'] === 'lenco_failed') {
+        if ($result['type'] === 'duplicate') {
+            return redirect()->route('registration-fee.show')
+                ->with('info', 'You already have a pending payment. Please check your phone to authorize the transaction, or wait a few minutes before trying again.');
+        }
+
+        if ($result['type'] === 'gateway_failed') {
             return redirect()->route('registration-fee.show')
                 ->with('error', $result['error']);
         }
@@ -197,13 +288,6 @@ class RegistrationFeeController extends Controller
             return redirect()->away($authUrl);
         }
 
-        // For mobile money, show pending message
-        if ($result['payment_method'] === 'mobile_money') {
-            return redirect()->route('registration-fee.show')
-                ->with('warning', 'Payment initiated! Please check your phone and authorize the mobile money transaction. You will receive confirmation once the payment is complete.');
-        }
-
-        // If no redirect URL, show pending page
         return redirect()->route('registration-fee.show')
             ->with('warning', 'Payment initiated. Please complete the payment using the instructions sent to your phone or email.');
     }
@@ -256,7 +340,7 @@ class RegistrationFeeController extends Controller
     }
 
     /**
-     * Manually check registration fee status (for users waiting on Lenco).
+     * Manually check registration fee status (for users waiting on a gateway).
      */
     public function checkStatus()
     {
@@ -271,7 +355,27 @@ class RegistrationFeeController extends Controller
             return redirect()->route('registration-fee.show');
         }
 
-        // Try to find and poll the Lenco transaction
+        // Lipila mobile-money fees do not have a Lenco transaction; poll Lipila.
+        if ($fee->payment_method === 'mobile_money' && $fee->reference) {
+            $payment = Payment::where('transaction_id', $fee->reference)
+                ->where('payment_type', 'registration')
+                ->first();
+
+            if ($payment) {
+                app(LipilaPaymentService::class)->pollAndSync($payment);
+                $payment->refresh();
+
+                if ($payment->isCompleted()) {
+                    return redirect()->route('registration-fee.show')
+                        ->with('success', 'Payment confirmed! Your registration fee has been received.');
+                }
+            }
+
+            return redirect()->route('registration-fee.show')
+                ->with('info', 'Payment is still being processed. Please check again in a few minutes.');
+        }
+
+        // Lenco bank-transfer fees have a Lenco transaction.
         $lencoTx = LencoTransaction::where('reference', $fee->reference)
             ->orWhere('lenco_transaction_id', $fee->lenco_transaction_id)
             ->first();
@@ -288,5 +392,42 @@ class RegistrationFeeController extends Controller
 
         return redirect()->route('registration-fee.show')
             ->with('info', 'Payment is still being processed. Please check again in a few minutes.');
+    }
+
+    /**
+     * Sync a pending registration fee with its gateway, if possible.
+     */
+    protected function syncPendingRegistrationFee(RegistrationFee $fee): void
+    {
+        // Lipila mobile money
+        if ($fee->payment_method === 'mobile_money' && $fee->reference) {
+            $payment = Payment::where('transaction_id', $fee->reference)
+                ->where('payment_type', 'registration')
+                ->first();
+
+            if ($payment) {
+                app(LipilaPaymentService::class)->pollAndSync($payment);
+                $payment->refresh();
+
+                if ($payment->isCompleted() && $fee->payment_status !== 'completed') {
+                    $fee->update(['payment_status' => 'completed', 'verified_at' => now()]);
+                }
+            }
+
+            return;
+        }
+
+        // Lenco bank transfer
+        $lencoTx = LencoTransaction::where('reference', $fee->reference)->first();
+        if ($lencoTx && $lencoTx->status === 'completed' && $fee->payment_status !== 'completed') {
+            $fee->update(['payment_status' => 'completed', 'verified_at' => now()]);
+
+            $payment = Payment::where('transaction_id', $fee->reference)
+                ->where('payment_type', 'registration')
+                ->first();
+            if ($payment && !$payment->isCompleted()) {
+                $payment->update(['payment_status' => 'Completed', 'payment_date' => now()]);
+            }
+        }
     }
 }

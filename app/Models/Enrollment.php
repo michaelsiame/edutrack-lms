@@ -150,9 +150,11 @@ class Enrollment extends Model
             return true;
         }
 
-        // Minimum 30% deposit unlocks content access
+        // Minimum 30% deposit unlocks content access.
+        // Discounts are counted toward the deposit so promotions are treated
+        // consistently across recalculation, certificate blocking, and access.
         $minDeposit = $coursePrice * 0.30;
-        return $this->amount_paid >= $minDeposit;
+        return ($this->amount_paid + $this->totalDiscounts()) >= $minDeposit;
     }
 
     /**

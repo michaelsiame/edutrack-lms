@@ -6,6 +6,7 @@ use App\Models\Enrollment;
 use App\Models\LencoTransaction;
 use App\Models\Payment;
 use App\Models\RegistrationFee;
+use App\Services\PaymentVerificationService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use phpseclib3\Crypt\RSA;
@@ -479,45 +480,12 @@ class LencoPaymentService
             $this->updateEnrollmentPaymentStatus($payment->enrollment);
         }
 
-        // Generate invoice and send receipt when payment first completes
+        // Generate invoice and send receipt when payment first completes.
+        // Delegate to the shared completion path so Lenco, Lipila and manual
+        // completions all behave identically.
         if ($status === 'completed' && !$wasCompleted) {
-            if ($payment->promotion_id) {
-                \App\Models\Promotion::where('id', $payment->promotion_id)->increment('used_count');
-            }
-
-            try {
-                $invoiceService = app(InvoiceService::class);
-                $invoiceService->generateInvoice($payment);
-            } catch (\Exception $e) {
-                Log::error('Failed to generate invoice for completed payment', [
-                    'payment_id' => $payment->payment_id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-
-            try {
-                $emailService = app(\App\Services\EmailQueueService::class);
-                $user = $payment->enrollment?->user ?? $payment->student?->user;
-                $userId = $user?->id ?? $payment->student?->user_id;
-
-                if ($user && $user->email) {
-                    $emailService->sendTemplated($user->email, 'Payment', [
-                        'name' => $user->full_name,
-                        'course' => $payment->course?->title,
-                        'amount' => number_format($payment->amount, 2),
-                        'date' => $payment->payment_date?->format('F d, Y'),
-                    ]);
-                }
-
-                if ($userId) {
-                    $emailService->sendNotification($userId, 'Payment Received', "Your payment of ZMW {$payment->amount} for {$payment->course?->title} has been received.", 'payment');
-                }
-            } catch (\Exception $e) {
-                Log::error('Failed to send payment receipt email', [
-                    'payment_id' => $payment->payment_id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
+            $verificationService = app(PaymentVerificationService::class);
+            $verificationService->runCompletionSideEffects($payment);
         }
     }
 
@@ -580,40 +548,10 @@ class LencoPaymentService
      */
     protected function updateEnrollmentPaymentStatus(Enrollment $enrollment): void
     {
-        $coursePrice = $enrollment->effectivePrice();
-
-        $totalPaid = Payment::where('enrollment_id', $enrollment->id)
-            ->where('payment_status', 'Completed')
-            ->sum('amount');
-
-        $totalDiscount = Payment::where('enrollment_id', $enrollment->id)
-            ->where('payment_status', 'Completed')
-            ->sum('discount_amount');
-
-        $percentagePaid = $coursePrice > 0 ? (($totalPaid + $totalDiscount) / $coursePrice) * 100 : 100;
-
-        $enrollmentStatus = $enrollment->enrollment_status;
-        if ($percentagePaid >= 30 && $enrollmentStatus === 'Enrolled') {
-            $enrollmentStatus = 'In Progress';
-        }
-
-        $certificateBlocked = ($totalPaid + $totalDiscount) < $coursePrice;
-        $paymentStatus = ($totalPaid + $totalDiscount) >= $coursePrice ? 'completed' : 'pending';
-
-        $enrollment->update([
-            'amount_paid' => $totalPaid,
-            'payment_status' => $paymentStatus,
-            'enrollment_status' => $enrollmentStatus,
-            'certificate_blocked' => $certificateBlocked,
-        ]);
-
-        $paymentPlan = $enrollment->paymentPlan;
-        if ($paymentPlan) {
-            $paymentPlan->update([
-                'total_paid' => $totalPaid,
-                'payment_status' => $paymentStatus,
-            ]);
-        }
+        // Use the shared enrollment recalculation so Lenco, Lipila and manual
+        // completions all produce the same state.
+        $verificationService = app(PaymentVerificationService::class);
+        $verificationService->updateEnrollmentPaymentStatus($enrollment);
     }
 
     /**

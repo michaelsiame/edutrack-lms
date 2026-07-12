@@ -157,7 +157,7 @@ class CheckoutController extends Controller
                     ]);
 
                     return [
-                        'type' => 'lenco_success',
+                        'type' => 'gateway_success',
                         'payment_method' => $paymentMethod,
                         'auth_url' => null,
                         'course_slug' => $course->slug,
@@ -168,13 +168,14 @@ class CheckoutController extends Controller
                 $payment->update(['payment_status' => 'Failed']);
 
                 return [
-                    'type' => 'lenco_failed',
+                    'type' => 'gateway_failed',
                     'error' => $lipilaResult['error'] ?? 'Payment initialization failed. Please try again.',
                     'course_slug' => $course->slug,
                 ];
             }
 
-            // Lenco v2 collections (bank transfer only)
+            // Lenco bank-transfer collection (Lipila is the primary gateway for
+            // mobile money; Lenco remains the bank-transfer option).
             if ($paymentMethod === 'lenco') {
                 $service = app(LencoPaymentService::class);
 
@@ -208,7 +209,7 @@ class CheckoutController extends Controller
                     ]);
 
                     return [
-                        'type' => 'lenco_success',
+                        'type' => 'gateway_success',
                         'payment_method' => $paymentMethod,
                         'auth_url' => $lencoResult['authorization_url'] ?? null,
                         'course_slug' => $course->slug,
@@ -219,7 +220,7 @@ class CheckoutController extends Controller
                 $payment->update(['payment_status' => 'Failed']);
 
                 return [
-                    'type' => 'lenco_failed',
+                    'type' => 'gateway_failed',
                     'error' => $lencoResult['error'] ?? 'Payment initialization failed. Please try again.',
                     'course_slug' => $course->slug,
                 ];
@@ -235,7 +236,7 @@ class CheckoutController extends Controller
                 ->with('info', $result['message']);
         }
 
-        if ($result['type'] === 'lenco_success') {
+        if ($result['type'] === 'gateway_success') {
             // For bank transfer/card, redirect to authorization URL if provided
             if ($result['auth_url']) {
                 return redirect()->away($result['auth_url']);
@@ -251,7 +252,7 @@ class CheckoutController extends Controller
                 ->with('success', 'Payment initiated successfully. Please complete the payment.');
         }
 
-        if ($result['type'] === 'lenco_failed') {
+        if ($result['type'] === 'gateway_failed') {
             return redirect()->route('payment.failed', ['course' => $course->slug])
                 ->with('error', $result['error']);
         }
