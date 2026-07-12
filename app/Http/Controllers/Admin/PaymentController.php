@@ -31,7 +31,7 @@ class PaymentController extends Controller
 
     public function create()
     {
-        $students = \App\Models\Student::with(['user', 'enrollments.course', 'enrollments.paymentPlan'])
+        $students = \App\Models\Student::with(['user', 'user.enrollments.course', 'user.enrollments.paymentPlan'])
             ->whereHas('user', function ($q) {
                 $q->whereHas('roles', function ($r) {
                     $r->where('role_id', Role::STUDENT); // Student role
@@ -46,7 +46,7 @@ class PaymentController extends Controller
                 'id' => $student->id,
                 'name' => $student->full_name ?? ('Student #' . $student->id),
                 'email' => $student->email ?? 'no email',
-                'enrollments' => $student->enrollments->map(function ($enrollment) {
+                'enrollments' => ($student->user?->enrollments ?? collect())->map(function ($enrollment) {
                     $course = $enrollment->course;
                     $totalFee = $enrollment->effectivePrice();
                     $discounts = $enrollment->totalDiscounts();
