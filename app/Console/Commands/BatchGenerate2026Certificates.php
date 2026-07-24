@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Services\CertificateService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class BatchGenerate2026Certificates extends Command
@@ -116,14 +117,17 @@ class BatchGenerate2026Certificates extends Command
             $last = count($parts) > 1 ? implode(' ', array_slice($parts, 1)) : '';
             $email = Str::slug($name, '.') . '.' . strtolower(Str::random(4)) . '@graduates.edutrackzambia.com';
 
-            $user = User::create([
+            $pwd = bcrypt(Str::random(24));
+            $user = new User();
+            $user->forceFill(array_filter([
                 'first_name' => ucwords(strtolower($first)),
                 'last_name' => ucwords(strtolower($last)),
                 'username' => Str::slug($name) . '-' . strtolower(Str::random(5)),
                 'email' => $email,
-                'password' => bcrypt(Str::random(24)),
                 'email_verified_at' => now(),
-            ]);
+                'password' => Schema::hasColumn('users', 'password') ? $pwd : null,
+                'password_hash' => Schema::hasColumn('users', 'password_hash') ? $pwd : null,
+            ], fn ($v) => $v !== null))->save();
         }
 
         if (!$student) {
