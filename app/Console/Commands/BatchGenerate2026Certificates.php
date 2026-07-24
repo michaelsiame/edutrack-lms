@@ -165,7 +165,7 @@ class BatchGenerate2026Certificates extends Command
         $enrollment->update([
             'enrollment_status' => 'Completed',
             'certificate_blocked' => false,
-            'completed_at' => $enrollment->completed_at ?? $ceremony,
+            'completion_date' => $enrollment->completion_date ?? $ceremony,
         ]);
 
         // --- Certificate (classification straight from the list grade) ---

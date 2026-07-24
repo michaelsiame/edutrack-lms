@@ -12,6 +12,10 @@ class Certificate extends Model
     protected $primaryKey = 'certificate_id';
     public $incrementing = true;
 
+    // The certificates table has only created_at (no updated_at column on the
+    // live schema), so disable Eloquent's updated_at management.
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'user_id',
         'course_id',
