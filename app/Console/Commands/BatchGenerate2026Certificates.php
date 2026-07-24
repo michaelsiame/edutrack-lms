@@ -52,16 +52,15 @@ class BatchGenerate2026Certificates extends Command
                     continue;
                 }
 
-                /** @var Certificate $certificate */
-                $certificate = $result;
+                $data = $result;
 
                 if (!$this->option('no-pdf')) {
-                    $pdf = $certs->generatePdf($certificate);
-                    $file = $dir . '/' . $this->safeName($name, $courseTitle, $certificate->certificate_number) . '.pdf';
+                    $pdf = $certs->renderPdf($data);
+                    $file = $dir . '/' . $this->safeName($name, $courseTitle, $data['certificate_number']) . '.pdf';
                     file_put_contents($file, $pdf);
                 }
 
-                $this->info(sprintf('  OK   %-26s  %-34s  %s  [%s]', $name, $courseTitle, $grade, $certificate->certificate_number));
+                $this->info(sprintf('  OK   %-26s  %-34s  %s  [%s]', $name, $courseTitle, $grade, $data['certificate_number']));
                 $ok++;
             } catch (\Throwable $e) {
                 $this->error(sprintf('  FAIL %-26s  %-34s  %s', $name, $courseTitle, $e->getMessage()));
@@ -75,7 +74,7 @@ class BatchGenerate2026Certificates extends Command
         return $fail === 0 ? self::SUCCESS : self::FAILURE;
     }
 
-    protected function processOne(string $studentId, string $name, string $courseTitle, string $grade, array $durations, \Carbon\Carbon $ceremony, bool $dry): ?Certificate
+    protected function processOne(string $studentId, string $name, string $courseTitle, string $grade, array $durations, \Carbon\Carbon $ceremony, bool $dry): ?array
     {
         // --- Course (match by title, create if missing) ---
         $course = Course::where('title', 'like', '%' . $courseTitle . '%')
@@ -94,14 +93,18 @@ class BatchGenerate2026Certificates extends Command
             ];
             // category_id only exists / is needed on some schemas; and the
             // categories table may be absent entirely. Guard both.
-            if (Schema::hasColumn('courses', 'category_id') && Schema::hasTable('categories')) {
-                $attrs['category_id'] = DB::table('categories')->value('id')
-                    ?? DB::table('categories')->insertGetId([
-                        'name' => 'Short Courses',
-                        'slug' => 'short-courses',
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+            if (Schema::hasColumn('courses', 'category_id')) {
+                $catId = null;
+                if (Schema::hasTable('categories')) {
+                    $catId = DB::table('categories')->value('id');
+                }
+                // No categories table on this schema — borrow a category_id
+                // already used by an existing course so the insert satisfies
+                // the NOT NULL column.
+                $catId = $catId ?? Course::whereNotNull('category_id')->value('category_id');
+                if ($catId) {
+                    $attrs['category_id'] = $catId;
+                }
             }
             $course = Course::create($attrs);
         }
@@ -185,17 +188,40 @@ class BatchGenerate2026Certificates extends Command
             $certificate->verification_code = Str::random(32);
         }
 
-        $certificate->classification = $classification;
-        $certificate->final_score = $score;
+        // Only set columns that actually exist on this (non-standard) schema.
         $certificate->issued_date = $ceremony;
-        $certificate->issued_at = now();
-        $certificate->graduation_ceremony_date = $ceremony;
-        $certificate->is_verified = true;
+        foreach ([
+            'classification' => $classification,
+            'final_score' => $score,
+            'issued_at' => now(),
+            'graduation_ceremony_date' => $ceremony,
+            'is_verified' => true,
+        ] as $col => $val) {
+            if (Schema::hasColumn('certificates', $col)) {
+                $certificate->{$col} = $val;
+            }
+        }
         $certificate->save();
 
         $enrollment->update(['certificate_issued' => true]);
 
-        return $certificate;
+        // Return everything the PDF needs, built from the list (NOT read back
+        // from DB columns that may not exist, e.g. classification).
+        return [
+            'certificate' => $certificate,
+            'student_name' => ucwords(strtolower($name)),
+            'course_title' => $course->title ?? ('Certificate in ' . $courseTitle),
+            'duration' => $this->durationString($courseTitle, $durations, $course),
+            'classification' => $classification,
+            'certificate_number' => $certificate->certificate_number,
+            'verify_url' => route('certificates.verify', $certificate->verification_code),
+            'graduation_day' => $ceremony->format('j'),
+            'graduation_suffix' => $this->daySuffix((int) $ceremony->format('j')),
+            'graduation_month' => $ceremony->format('F'),
+            'graduation_year' => $ceremony->format('Y'),
+            'student_number' => $studentId,
+            'national_id' => '',
+        ];
     }
 
     /** Sequential ECTC number, race-safe within the batch transaction. */
@@ -213,5 +239,26 @@ class BatchGenerate2026Certificates extends Command
     protected function safeName(string $name, string $course, string $certNo): string
     {
         return $certNo . '-' . Str::slug($name) . '-' . Str::slug(Str::limit($course, 20, ''));
+    }
+
+    protected function durationString(string $title, array $durations, ?Course $course): string
+    {
+        $weeks = ($course && $course->duration_weeks) ? (int) $course->duration_weeks : ($durations[$title] ?? 12);
+        if ($weeks % 4 === 0) {
+            $m = intdiv($weeks, 4);
+            return $m . ' Month' . ($m > 1 ? 's' : '');
+        }
+        return $weeks . ' Week' . ($weeks > 1 ? 's' : '');
+    }
+
+    protected function daySuffix(int $day): string
+    {
+        return match (true) {
+            $day >= 11 && $day <= 13 => 'th',
+            $day % 10 === 1 => 'st',
+            $day % 10 === 2 => 'nd',
+            $day % 10 === 3 => 'rd',
+            default => 'th',
+        };
     }
 }
