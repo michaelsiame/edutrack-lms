@@ -83,16 +83,7 @@ class BatchGenerate2026Certificates extends Command
             ->first();
 
         if (!$course && !$dry) {
-            $categoryId = DB::table('categories')->value('id');
-            if (!$categoryId) {
-                $categoryId = DB::table('categories')->insertGetId([
-                    'name' => 'Short Courses',
-                    'slug' => 'short-courses',
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
-            $course = Course::create([
+            $attrs = [
                 'title' => 'Certificate in ' . $courseTitle,
                 'slug' => Str::slug('certificate-in-' . $courseTitle),
                 'description' => 'Certificate in ' . $courseTitle,
@@ -100,8 +91,19 @@ class BatchGenerate2026Certificates extends Command
                 'price' => 0,
                 'status' => 'published',
                 'level' => 'Beginner',
-                'category_id' => $categoryId,
-            ]);
+            ];
+            // category_id only exists / is needed on some schemas; and the
+            // categories table may be absent entirely. Guard both.
+            if (Schema::hasColumn('courses', 'category_id') && Schema::hasTable('categories')) {
+                $attrs['category_id'] = DB::table('categories')->value('id')
+                    ?? DB::table('categories')->insertGetId([
+                        'name' => 'Short Courses',
+                        'slug' => 'short-courses',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+            }
+            $course = Course::create($attrs);
         }
         if ($dry) {
             return null;
@@ -124,7 +126,7 @@ class BatchGenerate2026Certificates extends Command
                 'last_name' => ucwords(strtolower($last)),
                 'username' => Str::slug($name) . '-' . strtolower(Str::random(5)),
                 'email' => $email,
-                'email_verified_at' => now(),
+                'email_verified_at' => Schema::hasColumn('users', 'email_verified_at') ? now() : null,
                 'password' => Schema::hasColumn('users', 'password') ? $pwd : null,
                 'password_hash' => Schema::hasColumn('users', 'password_hash') ? $pwd : null,
             ], fn ($v) => $v !== null))->save();
