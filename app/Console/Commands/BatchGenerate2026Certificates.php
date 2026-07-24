@@ -207,11 +207,15 @@ class BatchGenerate2026Certificates extends Command
 
         // Return everything the PDF needs, built from the list (NOT read back
         // from DB columns that may not exist, e.g. classification).
+        // Display title: drop "Basics of/in" — the 3-month duration implies it.
+        $displayTitle = $course->title ?? ('Certificate in ' . $courseTitle);
+        $displayTitle = preg_replace('/\bBasics\s+(?:of|in)\s+/i', '', $displayTitle);
+
         return [
             'certificate' => $certificate,
             'student_name' => ucwords(strtolower($name)),
-            'course_title' => $course->title ?? ('Certificate in ' . $courseTitle),
-            'duration' => $this->durationString($courseTitle, $durations, $course),
+            'course_title' => $displayTitle,
+            'duration' => '3 Months',
             'classification' => $classification,
             'certificate_number' => $certificate->certificate_number,
             'verify_url' => route('certificates.verify', $certificate->verification_code),
