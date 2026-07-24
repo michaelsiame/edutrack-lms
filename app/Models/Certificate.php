@@ -9,8 +9,6 @@ class Certificate extends Model
 {
     use HasFactory;
 
-    const UPDATED_AT = null;
-
     protected $primaryKey = 'certificate_id';
     public $incrementing = true;
 
@@ -37,9 +35,6 @@ class Certificate extends Model
         'final_score' => 'decimal:2',
         'is_verified' => 'boolean',
     ];
-
-    // Note: certificates can be updated (e.g., corrections to name/course)
-    // Removed UPDATED_AT = null to allow updates
 
     public function user()
     {

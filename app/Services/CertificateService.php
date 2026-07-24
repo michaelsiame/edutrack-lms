@@ -90,6 +90,11 @@ class CertificateService
                 return null;
             }
 
+            // Only completed enrollments can receive a certificate.
+            if ($lockedEnrollment->enrollment_status !== 'Completed') {
+                return null;
+            }
+
             // Recalculate final grade before issuing
             app(GradeAggregationService::class)->recalculateFinalGrade($lockedEnrollment);
             $lockedEnrollment->refresh();
@@ -249,6 +254,9 @@ class CertificateService
         $this->drawCourseTitle($pdf, mb_strtoupper($data['course_title'] ?? ''));
         $pdf->SetTextColor(...self::BLACK);
 
+        // Short-course + duration line
+        $this->drawCourseMeta($pdf, $data);
+
         // "With {classification}"
         $classification = $data['classification'] ?? null;
         if ($classification && trim($classification) !== '' && strcasecmp($classification, 'Pass') !== 0) {
@@ -297,16 +305,45 @@ class CertificateService
      * TCPDF's native 2D barcode (no extra dependency). White background so it
      * scans cleanly over the watermark microtext.
      */
-    protected function drawVerifyQr(TCPDF $pdf, array $data): void
+    /**
+     * Format a course's duration_weeks into a human string for the certificate.
+     */
+    protected function formatDuration(?int $weeks): ?string
+    {
+        if (!$weeks || $weeks < 1) {
+            return null;
+        }
+        if ($weeks % 4 === 0) {
+            $months = intdiv($weeks, 4);
+            return $months . ' Month' . ($months > 1 ? 's' : '');
+        }
+        return $weeks . ' Week' . ($weeks > 1 ? 's' : '');
+    }
+
+    /**
+     * "Short Course • Duration: N" line, drawn just below the course title.
+     */
+    protected function drawCourseMeta(TCPDF $pdf, array $data): void
+    {
+        $duration = $data['duration'] ?? null;
+        $this->certFont($pdf, 'serif', 12.5);
+        $pdf->SetTextColor(...self::BLACK);
+        $label = $duration
+            ? 'Short Course   \u{2022}   Duration: ' . $duration
+            : 'Short Course';
+        // Use a plain bullet the core fonts can render.
+        $label = str_replace('\u{2022}', '•', $label);
+        $this->centeredAtBaseline($pdf, 159.6, $label);
+    }
+
+    protected function drawVerifyQr(TCPDF $pdf, array $data, float $y = 250.5, float $size = 19.0): void
     {
         $url = $data['verify_url'] ?? null;
         if (empty($url)) {
             return;
         }
 
-        $size = 19.0;
         $x = (self::PAGE_W - $size) / 2;
-        $y = 250.5;
 
         $style = [
             'border' => false,
@@ -519,6 +556,9 @@ class CertificateService
         $this->drawCourseTitle($pdf, mb_strtoupper($data['course_title'] ?? ''));
         $pdf->SetTextColor(...self::BLACK);
 
+        // Short-course + duration line
+        $this->drawCourseMeta($pdf, $data);
+
         // Element 9: "With {classification}"
         $classification = $data['classification'] ?? null;
         if ($classification && trim($classification) !== '' && strcasecmp($classification, 'Pass') !== 0) {
@@ -587,6 +627,9 @@ class CertificateService
         $pdf->SetLineStyle(['width' => 0.3, 'color' => self::ORANGE]);
         $pdf->Line(26, 271.8, 78, 271.8);
         $pdf->Line(132, 271.8, 184, 271.8);
+
+        // Verification QR — centred between the two bottom signature lines.
+        $this->drawVerifyQr($pdf, $data, 255.5, 16.0);
     }
 
     /**
@@ -771,6 +814,7 @@ class CertificateService
             'certificate' => $certificate,
             'student_name' => $certificate->user?->full_name ?? 'Unknown',
             'course_title' => $certificate->course?->title ?? 'Unknown Course',
+            'duration' => $this->formatDuration($certificate->course?->duration_weeks),
             'certificate_number' => $certificate->certificate_number,
             'issued_date' => $issuedDate->format('F d, Y'),
             'verification_code' => $certificate->verification_code,
