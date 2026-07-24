@@ -236,13 +236,6 @@ class CertificateService
     {
         $pdf->SetTextColor(...self::BLACK);
 
-        // Correct the template artwork's baked-in subtitle ('skill' -> 'skills')
-        // by patching it with white and re-stamping at the same font/baseline.
-        $pdf->Rect(56, 52.7, 98, 8.2, 'F', [], [255, 255, 255]);
-        $this->certFont($pdf, 'serif', 14.6);
-        $this->centeredAtBaseline($pdf, 58.6, 'A skills training college');
-        $pdf->SetTextColor(...self::BLACK);
-
         // Student name
         $name = $data['student_name'] ?? '';
         $this->certFont($pdf, 'script', 34);
@@ -285,10 +278,6 @@ class CertificateService
             $this->certFont($pdf, 'script', 14);
             $this->centeredLabel($pdf, 135, 184, 247.3, $data['student_number']);
         }
-
-        // Official signatures above the Principal / Director rules.
-        $this->placeSignature($pdf, 'principal', 50.5, 228.5);
-        $this->placeSignature($pdf, 'director', 159.5, 228.5);
 
         // Bottom row
         $this->certFont($pdf, 'serif', 14.8);
@@ -589,11 +578,7 @@ class CertificateService
             [($data['graduation_year'] ?? ''), 'script', 19.8, 0],
         ]);
 
-        // --- Signature block ---
-        // Official signature images sit just above each rule, if present.
-        $this->placeSignature($pdf, 'principal', 50.5, 228.5);
-        $this->placeSignature($pdf, 'director', 159.5, 228.5);
-
+        // --- Signature block (rules + labels only; signatures are handwritten) ---
         $pdf->SetLineStyle(['width' => 0.4, 'color' => self::ORANGE]);
 
         // Top row rules
