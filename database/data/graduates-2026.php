@@ -27,7 +27,7 @@ return [
 
     'graduates' => [
         // [student_id, name, course, grade]
-        ['26EDU438751', 'LUYANDO MUCHIMBA',            'General Basic ICT & Computing', 'DISTINCTION'],
+        ['26EDU438751', 'LUYANDO MUMBE MUCHIMBA',            'General Basic ICT & Computing', 'DISTINCTION'],
         ['26EDU243189', "WANE MARY NG'AMBI",           'General Basic ICT & Computing', 'DISTINCTION'],
         ['26EDU292186', 'MAUREEN CHIPAMPE MUPETA',     'General Basic ICT & Computing', 'DISTINCTION'],
         ['26EDU461507', 'MUZUNI NOOLE',                'General Basic ICT & Computing', 'DISTINCTION'],
