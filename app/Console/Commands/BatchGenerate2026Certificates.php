@@ -36,7 +36,7 @@ class BatchGenerate2026Certificates extends Command
             mkdir($dir, 0775, true);
         }
 
-        $ceremony = \Carbon\Carbon::create(2026, 7, 1);
+        $ceremony = \Carbon\Carbon::create(2026, 8, 7);
         $ok = 0;
         $fail = 0;
 
