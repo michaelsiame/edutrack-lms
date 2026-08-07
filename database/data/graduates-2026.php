@@ -23,6 +23,7 @@ return [
         'Microsoft Suite & Internet'      => 8,
         'Basics of Software Engineering'  => 12,
         'Basics of Information Technology' => 12,
+        'Information Technology' => 12,
     ],
 
     'graduates' => [
@@ -70,5 +71,6 @@ return [
         ['26EDU319680', 'JOSHUA HAMWEENDA',            'Microsoft Suite & Internet',    'MERIT'],
         ['26EDU357873', 'BRIAN PHIRI',                 'Basics of Software Engineering', 'DISTINCTION'],
         ['26EDU391684', 'MARY MASELENI',               'Basics of Information Technology', 'DISTINCTION'],
+        ['26EDU400000', 'CHARLES CHANDA',              'Information Technology','MERIT'],
     ],
 ];
