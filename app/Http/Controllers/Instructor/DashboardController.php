@@ -152,11 +152,15 @@ class DashboardController extends Controller
             return back()->with('warning', 'Certificate is blocked until full payment is received.');
         }
 
+        if ($enrollment->enrollment_status !== 'Completed') {
+            return back()->with('warning', 'Certificate can only be issued after the enrollment is marked as completed.');
+        }
+
         $service = new CertificateService();
         $certificate = $service->issueCertificate($enrollment);
 
         if (!$certificate) {
-            return back()->with('info', 'Certificate has already been issued or is blocked.');
+            return back()->with('info', 'Certificate could not be issued. It may already exist, be blocked, or the enrollment is not complete.');
         }
 
         $service->sendCertificateNotification($certificate);

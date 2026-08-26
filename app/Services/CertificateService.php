@@ -236,6 +236,21 @@ class CertificateService
     {
         $pdf->SetTextColor(...self::BLACK);
 
+        // The template's baked subtitle misspells "skill"; correct it to
+        // "skills". Re-stamp the full subtitle with a white halo (stroke) that
+        // knocks out the baked glyphs hugging the text, so the watermark stays
+        // intact instead of being covered by an opaque box.
+        $this->certFont($pdf, 'serif', 14.6);
+        $subtitle = 'A skills training college';
+        $xSub = self::CENTER_X - $pdf->GetStringWidth($subtitle) / 2;
+        $ySub = 58.6 - $this->currentAscent($pdf);
+        $pdf->SetDrawColor(255, 255, 255);
+        $pdf->SetTextColor(255, 255, 255);
+        $pdf->Text($xSub, $ySub, $subtitle, 2.0, false, true); // fat white halo
+        $pdf->SetTextColor(...self::BLACK);
+        $pdf->Text($xSub, $ySub, $subtitle, 0, false, true);   // crisp black text
+        $pdf->SetDrawColor(0, 0, 0);
+
         // Student name
         $name = $data['student_name'] ?? '';
         $this->certFont($pdf, 'script', 34);

@@ -141,11 +141,26 @@ class Enrollment extends Model
 
     /**
      * Determine if the enrolled student can access course content.
-     * Free courses: always accessible.
-     * Paid courses: requires payment_status='completed' OR at least 30% deposit paid.
+     *
+     * Rules:
+     * - Dropped or expired enrollments cannot access content.
+     * - Access is blocked once the intake's learning deadline has passed.
+     * - Free courses (effective price <= 0) are accessible.
+     * - Paid courses require payment_status='completed' OR at least 30% deposit
+     *   paid (discounts count toward the deposit).
      */
     public function canAccessContent(): bool
     {
+        // Dropped or expired enrollments lose content access regardless of payment.
+        if (in_array($this->enrollment_status, ['Dropped', 'Expired'], true)) {
+            return false;
+        }
+
+        // Intake learning window has closed.
+        if ($this->intake?->learning_deadline && $this->intake->learning_deadline->isPast()) {
+            return false;
+        }
+
         $coursePrice = $this->effectivePrice();
 
         // Free course
