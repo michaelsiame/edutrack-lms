@@ -192,6 +192,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::post('/enrollments', [App\Http\Controllers\Admin\EnrollmentController::class, 'store'])->name('enrollments.store');
     Route::put('/enrollments/{enrollment}', [App\Http\Controllers\Admin\EnrollmentController::class, 'update'])->name('enrollments.update');
     Route::delete('/enrollments/{enrollment}', [App\Http\Controllers\Admin\EnrollmentController::class, 'destroy'])->name('enrollments.destroy');
+    Route::post('/enrollments/{enrollment}/certificate', [App\Http\Controllers\Admin\EnrollmentController::class, 'issueCertificate'])->name('enrollments.issue-certificate');
     Route::get('/enrollments/{enrollment}/acceptance-letter', [App\Http\Controllers\Admin\EnrollmentController::class, 'generateAcceptanceLetter'])->name('enrollments.acceptance-letter');
     // Blank, printable CDF acceptance-letter templates (level = i | ii | iii)
     Route::get('/acceptance-letter/blank/{level}', [App\Http\Controllers\Admin\EnrollmentController::class, 'blankAcceptanceLetter'])

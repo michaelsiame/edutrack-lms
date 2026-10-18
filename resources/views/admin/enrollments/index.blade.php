@@ -27,7 +27,7 @@
  class="od-input">
  <option value="">All Courses</option>
  @foreach($courses as $course)
- <option value="{{ $course->id }}" {{ request('course') == $course->id ?'selected' :'' }}>{{ $course->title }}</option>
+ <option value="{{ $course->id }}" {{ request()->filled('course') && request('course') == $course->id ?'selected' :'' }}>{{ $course->title }}</option>
  @endforeach
  </select>
  </div>
@@ -130,6 +130,22 @@
  <a href="{{ route('admin.enrollments.acceptance-letter', $enrollment) }}" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-secondary-600 hover:text-secondary-700 hover:bg-secondary-50 dark:hover:bg-secondary-900/20 rounded-lg mr-1" aria-label="Generate acceptance letter" title="Generate acceptance letter">
  <i class="fas fa-file-pdf" aria-hidden="true"></i>
  </a>
+ @if($enrollment->certificate)
+ <a href="{{ route('certificates.download', $enrollment->certificate) }}" target="_blank" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-success-600 hover:text-success-700 hover:bg-success-50 dark:hover:bg-success-900/20 rounded-lg mr-1" aria-label="Download certificate {{ $enrollment->certificate->certificate_number }}" title="Download certificate {{ $enrollment->certificate->certificate_number }}">
+ <i class="fas fa-award" aria-hidden="true"></i>
+ </a>
+ @elseif($enrollment->certificate_blocked)
+ <span class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-gray-400 mr-1 cursor-not-allowed" title="Certificate blocked until fees are paid (untick Block Certificate under Edit to override)">
+ <i class="fas fa-award" aria-hidden="true"></i>
+ </span>
+ @elseif($enrollment->enrollment_status !== 'Dropped')
+ <form action="{{ route('admin.enrollments.issue-certificate', $enrollment) }}" method="POST" class="inline" data-confirm-ok="Generate" data-confirm="{{ $enrollment->enrollment_status === 'Completed' ? 'Generate the certificate for '.($enrollment->user?->full_name ?? 'this student') : 'Mark '.($enrollment->user?->full_name ?? 'this student').' as completed and generate the certificate' }}">
+ @csrf
+ <button type="submit" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Generate certificate" title="Generate certificate">
+ <i class="fas fa-certificate" aria-hidden="true"></i>
+ </button>
+ </form>
+ @endif
  <button onclick="toggleEditEnrollment({{ $enrollment->id }})" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg mr-1" aria-label="Edit enrollment">
  <i class="fas fa-edit" aria-hidden="true"></i>
  </button>
@@ -190,9 +206,16 @@
  class="od-input w-24 bg-gray-100 dark:bg-gray-800 cursor-not-allowed">
  </div>
  <div>
+ @if($enrollment->has_recorded_marks)
  <label class="od-form-label">Grade</label>
- <input type="text" value="{{ $enrollment->final_grade !== null ? $enrollment->final_grade.'%' : '—' }}" readonly title="Computed from recorded assessments"
+ <input type="text" value="{{ $enrollment->final_grade !== null ? $enrollment->final_grade.'%' : '—' }}" readonly title="Worked out from the quizzes and assignments marked in EduTrack"
+ class="od-input w-24 bg-gray-100 dark:bg-gray-800 cursor-not-allowed">
+ <span class="block text-xs text-gray-500 mt-1">From marked work</span>
+ @else
+ <label class="od-form-label" for="final-grade-{{ $enrollment->id }}">Grade %</label>
+ <input type="number" id="final-grade-{{ $enrollment->id }}" name="final_grade" value="{{ $enrollment->final_grade }}" min="0" max="100" step="0.01" inputmode="decimal" placeholder="e.g. 75"
  class="od-input w-24">
+ @endif
  </div>
  <label class="flex items-center text-sm text-gray-700 dark:text-gray-300 pb-2">
  <input type="checkbox" name="certificate_blocked" value="1" {{ $enrollment->certificate_blocked ?'checked' :'' }}

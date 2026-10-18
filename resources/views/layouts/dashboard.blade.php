@@ -313,12 +313,15 @@
  <script defer src="{{ asset('assets/js/responsive-tables.js') }}"></script>
  <script>
  // Global confirm modal
- window.confirmModal = function(message, onConfirm) {
+ // okLabel: a non-destructive action names its own button (data-confirm-ok); the default is a red "Delete"
+ window.confirmModal = function(message, onConfirm, okLabel) {
  const modal = document.getElementById('confirmModal');
  const msgEl = document.getElementById('confirmMessage');
  const okBtn = document.getElementById('confirmOk');
  const cancelBtn = document.getElementById('confirmCancel');
  msgEl.textContent = message || 'This action cannot be undone.';
+ okBtn.textContent = okLabel || 'Delete';
+ okBtn.className = okLabel ? 'od-btn od-btn-success flex-1' : 'od-btn od-btn-danger flex-1 bg-danger-600 text-white border-danger-600 hover:bg-danger-700';
  modal.style.display = 'grid';
  requestAnimationFrame(() => modal.classList.add('show'));
 
@@ -351,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
  window.confirmModal(form.dataset.confirm, () => {
  form.dataset.confirmed = 'true';
  form.submit();
- });
+ }, form.dataset.confirmOk);
  });
  });
 

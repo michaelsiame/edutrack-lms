@@ -10,6 +10,7 @@ use App\Models\Intake;
 use App\Models\Student;
 use App\Models\User;
 use App\Services\AcceptanceLetterService;
+use App\Services\CertificateService;
 use App\Services\StudentNumberService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -117,7 +118,7 @@ class EnrollmentController extends Controller
 
     public function index(Request $request)
     {
-        $query = Enrollment::with(['user', 'course', 'paymentPlan']);
+        $query = Enrollment::with(['user', 'course', 'paymentPlan', 'certificate']);
 
         if ($request->filled('course')) {
             $query->where('course_id', $request->course);
@@ -145,6 +146,8 @@ class EnrollmentController extends Controller
         }
 
         $enrollments = $query->latest('enrolled_at')->paginate(20)->withQueryString();
+        $grades = app(\App\Services\GradeAggregationService::class);
+        $enrollments->getCollection()->each(fn ($e) => $e->has_recorded_marks = $grades->hasRecordedMarks($e));
         $courses = Course::published()->orderBy('title')->get();
 
         return view('admin.enrollments.index', compact('enrollments', 'courses'));
@@ -160,7 +163,10 @@ class EnrollmentController extends Controller
             'funding_source' => 'required|in:self,cdf,bursary,employer',
             'cdf_constituency' => 'nullable|string|max:255',
             'sponsor_reference' => 'nullable|string|max:255',
+            'final_grade' => 'nullable|numeric|min:0|max:100',
         ]);
+
+        $grades = app(\App\Services\GradeAggregationService::class);
 
         $enrollment->update([
             'enrollment_status' => $validated['enrollment_status'],
@@ -172,11 +178,65 @@ class EnrollmentController extends Controller
             'sponsor_reference' => $validated['sponsor_reference'] ?: null,
         ]);
 
-        // final_grade is computed from recorded assessments, never hand-set,
-        // so it can't silently revert the next time a mark is recorded.
-        app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
+        // final_grade is computed from recorded assessments, so a hand-set value
+        // would silently revert the next time a mark is recorded. Only a student
+        // with no marks in the system (e.g. marked on paper) gets a typed grade.
+        if ($grades->hasRecordedMarks($enrollment)) {
+            $grades->recalculateFinalGrade($enrollment);
+        } elseif ($request->has('final_grade')) {
+            $enrollment->update(['final_grade' => $validated['final_grade']]);
+        }
+
+        // An issued certificate shows the score on its public check page
+        $enrollment->certificate?->update(['final_score' => $enrollment->final_grade ?? 0]);
 
         return back()->with('success', 'Enrollment updated successfully.');
+    }
+
+    /**
+     * Issue the student's certificate for this enrollment. An enrollment that
+     * is not yet completed is marked completed first (the admin is confirming
+     * the student finished). A fee block is never bypassed here: the admin
+     * clears "Block Certificate" in Edit first if they mean to override it.
+     */
+    public function issueCertificate(Enrollment $enrollment)
+    {
+        $existing = $enrollment->certificate;
+        if ($enrollment->certificate_issued && $existing) {
+            return back()->with('success', "Certificate already issued: {$existing->certificate_number}.");
+        }
+
+        if ($enrollment->certificate_blocked) {
+            return back()->with('error', 'The certificate is blocked until the fees are fully paid. Record the payment, or untick "Block Certificate" under Edit to override, then try again.');
+        }
+
+        if ($enrollment->enrollment_status === 'Dropped') {
+            return back()->with('error', 'This student dropped the course. Change the status under Edit first if they did finish.');
+        }
+
+        $service = new CertificateService();
+
+        $certificate = DB::transaction(function () use ($enrollment, $service) {
+            if ($enrollment->enrollment_status !== 'Completed') {
+                $enrollment->update([
+                    'progress' => 100,
+                    'enrollment_status' => 'Completed',
+                    'completion_date' => $enrollment->completion_date ?? now(),
+                ]);
+            }
+
+            return $service->issueCertificate($enrollment);
+        });
+
+        if (!$certificate) {
+            return back()->with('error', 'The certificate could not be issued. Check the enrollment and try again.');
+        }
+
+        if ($certificate->wasRecentlyCreated) {
+            $service->sendCertificateNotification($certificate);
+        }
+
+        return back()->with('success', "Certificate issued to {$enrollment->user?->full_name}: {$certificate->certificate_number}.");
     }
 
     public function destroy(Enrollment $enrollment)

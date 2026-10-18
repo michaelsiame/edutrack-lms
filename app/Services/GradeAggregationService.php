@@ -16,6 +16,16 @@ class GradeAggregationService
      *                   (quizzes vs assignments). When a course has only one
      *                   kind of assessment, that component is the whole grade.
      */
+    /**
+     * Whether the student has any marked work recorded in the system for this
+     * course. Without any, the final grade is not calculated and an admin may
+     * enter it by hand (e.g. an in-person course marked on paper).
+     */
+    public function hasRecordedMarks(Enrollment $enrollment): bool
+    {
+        return $this->quizComponent($enrollment) !== null || $this->assignmentComponent($enrollment) !== null;
+    }
+
     public function recalculateFinalGrade(Enrollment $enrollment): void
     {
         $quizComponent = $this->quizComponent($enrollment);

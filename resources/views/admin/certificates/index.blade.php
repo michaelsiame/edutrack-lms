@@ -17,7 +17,7 @@
                 <select name="course" class="od-input">
                     <option value="">All Courses</option>
                     @foreach($courses as $course)
-                        <option value="{{ $course->id }}" {{ request('course') == $course->id ? 'selected' : '' }}>{{ $course->title }}</option>
+                        <option value="{{ $course->id }}" {{ request()->filled('course') && request('course') == $course->id ? 'selected' : '' }}>{{ $course->title }}</option>
                     @endforeach
                 </select>
             </div>
