@@ -193,8 +193,7 @@
                             @enderror
                         </div>
 
-                        <button type="submit" id="pay-button" class="od-btn od-btn-primary w-full od-btn-lg"
-                            onclick="this.disabled = true; this.innerHTML = '<i class=\'fas fa-spinner fa-spin mr-2\'></i> Processing...';">
+                        <button type="submit" id="pay-button" class="od-btn od-btn-primary w-full od-btn-lg" data-loading-text="Processing...">
                             <i class="fas fa-lock mr-2"></i> Pay {{ setting('currency', 'ZMW') }} {{ number_format($feeAmount, 2) }}
                         </button>
                     </div>
@@ -261,8 +260,7 @@
                             @enderror
                         </div>
 
-                        <button type="submit" id="submit-button" class="od-btn od-btn-primary w-full od-btn-lg"
-                            onclick="this.disabled = true; this.innerHTML = '<i class=\'fas fa-spinner fa-spin mr-2\'></i> Submitting...';">
+                        <button type="submit" id="submit-button" class="od-btn od-btn-primary w-full od-btn-lg" data-loading-text="Submitting...">
                             <i class="fas fa-paper-plane mr-2"></i> Submit Deposit Details
                         </button>
 
@@ -299,10 +297,37 @@ function updatePaymentForm() {
         document.getElementById('bank_reference').required = false;
         document.getElementById('deposit_date').required = false;
     }
+
+    // Fields in the hidden group are not sent: both groups have a phone_number
+    // input, and the hidden one would otherwise override the visible one.
+    document.querySelectorAll('.payment-field-group input, .payment-field-group textarea').forEach(function (el) {
+        el.disabled = el.closest('.payment-field-group').classList.contains('hidden-group');
+    });
 }
 
 // Run on page load
-document.addEventListener('DOMContentLoaded', updatePaymentForm);
+document.addEventListener('DOMContentLoaded', function () {
+    updatePaymentForm();
+
+    // Show the spinner once the form is really submitting. Disabling the button
+    // in its own click handler stops the browser from submitting the form at all.
+    const form = document.getElementById('registration-fee-form');
+    form.addEventListener('submit', function (e) {
+        const btn = e.submitter;
+        if (!btn) return;
+        btn.dataset.label = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> ' + btn.dataset.loadingText;
+        setTimeout(function () { btn.disabled = true; }, 0);
+    });
+
+    // Coming back with the browser's Back button restores the page as it was left.
+    window.addEventListener('pageshow', function () {
+        form.querySelectorAll('button[type="submit"]').forEach(function (btn) {
+            btn.disabled = false;
+            if (btn.dataset.label) btn.innerHTML = btn.dataset.label;
+        });
+    });
+});
 </script>
 @endpush
 @endsection
