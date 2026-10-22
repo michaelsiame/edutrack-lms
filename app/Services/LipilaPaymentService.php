@@ -127,8 +127,33 @@ class LipilaPaymentService
         }
     }
 
+    /** Lipila statuses that mean the money arrived. */
+    private const SUCCESS_STATUSES = ['successful', 'success', 'completed', 'complete', 'paid'];
+
+    /** Lipila statuses that mean "still in flight". Anything else it reports is final. */
+    private const PENDING_STATUSES = ['pending', 'processing', 'submitted', 'queued', 'inprogress', 'in_progress', 'initiated'];
+
     /**
-     * Verify a Lipila collection by our reference ID.
+     * Map a Lipila status to 'successful', 'pending' or 'failed'. Lipila reports
+     * more statuses than it documents (Cancelled, Declined, Expired, Timeout ...);
+     * all of those are final failures.
+     */
+    public static function normalizeStatus(?string $status): ?string
+    {
+        $s = strtolower(trim((string) $status));
+        if ($s === '') {
+            return null;
+        }
+        if (in_array($s, self::SUCCESS_STATUSES, true)) {
+            return 'successful';
+        }
+
+        return in_array($s, self::PENDING_STATUSES, true) ? 'pending' : 'failed';
+    }
+
+    /**
+     * Ask Lipila for a collection's status by our reference ID.
+     * Endpoint: GET /api/v1/collections/check-status?referenceId=...
      */
     public function verifyPayment(string $referenceId): array
     {
@@ -142,9 +167,10 @@ class LipilaPaymentService
         try {
             $response = Http::withHeaders([
                 'x-api-key' => $this->apiKey,
-                'Content-Type' => 'application/json',
                 'accept' => 'application/json',
-            ])->get("{$this->baseUrl}/api/v1/collections/status/{$referenceId}");
+            ])->timeout(30)->get("{$this->baseUrl}/api/v1/collections/check-status", [
+                'referenceId' => $referenceId,
+            ]);
 
             $json = $response->json();
 
@@ -154,30 +180,19 @@ class LipilaPaymentService
                 'response' => $json,
             ]);
 
-            if ($response->successful()) {
+            if ($response->successful() && is_array($json)) {
                 return [
                     'success' => true,
                     'data' => $json,
-                    'status' => $json['status'] ?? null,
-                ];
-            }
-
-            if ($response->status() === 404) {
-                Log::warning('Lipila collection status endpoint returned 404', [
-                    'reference' => $referenceId,
-                    'response' => $json,
-                ]);
-
-                return [
-                    'success' => false,
-                    'error' => 'Status endpoint not found',
-                    'status_code' => 404,
+                    'status' => self::normalizeStatus($json['status'] ?? null),
+                    'message' => $json['message'] ?? null,
                 ];
             }
 
             return [
                 'success' => false,
                 'error' => 'Unable to verify payment',
+                'status_code' => $response->status(),
                 'raw' => $json,
             ];
         } catch (\Exception $e) {
@@ -202,7 +217,7 @@ class LipilaPaymentService
             return 'completed';
         }
 
-        if (strcasecmp((string) $payment->payment_status, 'Failed') === 0) {
+        if (in_array(strtolower((string) $payment->payment_status), ['failed', 'cancelled'], true)) {
             return 'failed';
         }
 
@@ -212,107 +227,64 @@ class LipilaPaymentService
 
         $result = $this->verifyPayment($payment->transaction_id);
 
-        if (!empty($result['success']) && !empty($result['data'])) {
-            $status = $result['data']['status'] ?? null;
-            $type = $result['data']['type'] ?? null;
+        if (empty($result['success'])) {
+            return 'pending';
+        }
 
-            if (strcasecmp((string) $status, 'Successful') === 0
-                && strcasecmp((string) $type, 'Collection') === 0) {
-                $this->markPaymentCompleted($payment, $result['data']);
+        if ($result['status'] === 'successful') {
+            $this->markPaymentCompleted($payment, $result['data']);
 
-                return 'completed';
-            }
+            return 'completed';
+        }
 
-            if (strcasecmp((string) $status, 'Failed') === 0) {
-                $payment->update(['payment_status' => 'Failed']);
+        if ($result['status'] === 'failed') {
+            $this->markPaymentFailed($payment, $result['message'] ?? null);
 
-                return 'failed';
-            }
+            return 'failed';
         }
 
         return 'pending';
     }
 
     /**
-     * Process a webhook payload from Lipila.
+     * Process a webhook payload from Lipila. The payload is only a hint: the
+     * status is always confirmed with Lipila before a payment is settled.
+     * Returns false when nothing could be settled, so Lipila retries.
      */
     public function processWebhook(array $payload): bool
     {
         $referenceId = $payload['referenceId'] ?? null;
-        $status = $payload['status'] ?? null;
-        $type = $payload['type'] ?? null;
+        $identifier = $payload['identifier'] ?? null;
 
-        if (empty($referenceId) || empty($status) || empty($type)) {
+        if (empty($referenceId) && empty($identifier)) {
             Log::warning('Invalid Lipila webhook payload', $payload);
 
             return false;
         }
 
-        $payment = Payment::where('transaction_id', $referenceId)->first();
+        // Lipila is inconsistent about which field carries our reference and
+        // which its own, so try both.
+        $candidates = array_values(array_filter([$referenceId, $identifier]));
+        $payment = Payment::whereIn('transaction_id', $candidates)
+            ->orWhereIn('lipila_reference', $candidates)
+            ->latest('created_at')
+            ->first();
 
         if (!$payment) {
-            Log::warning('Lipila payment not found for reference', ['reference_id' => $referenceId]);
+            Log::warning('Lipila payment not found for reference', ['reference_id' => $referenceId, 'identifier' => $identifier]);
 
             return false;
         }
 
-        // Defence-in-depth: re-verify the collection status server-side before marking paid.
-        $canTrustWebhook = false;
-        $verificationResult = $this->isConfigured() ? $this->verifyPayment($referenceId) : ['success' => false];
+        $state = $this->pollAndSync($payment);
 
-        if ($verificationResult['success'] && !empty($verificationResult['data'])) {
-            $verifiedStatus = $verificationResult['data']['status'] ?? null;
-            $verifiedType = $verificationResult['data']['type'] ?? null;
-            $isVerifiedSuccessful = strcasecmp($verifiedStatus, 'Successful') === 0
-                && strcasecmp($verifiedType, 'Collection') === 0;
+        Log::info('Lipila webhook processed', [
+            'reference_id' => $payment->transaction_id,
+            'webhook_status' => $payload['status'] ?? null,
+            'settled_as' => $state,
+        ]);
 
-            if ($isVerifiedSuccessful) {
-                $canTrustWebhook = true;
-            } else {
-                Log::warning('Lipila webhook failed server-side verification', [
-                    'reference_id' => $referenceId,
-                    'webhook_status' => $status,
-                    'verified_status' => $verifiedStatus,
-                    'verified_type' => $verifiedType,
-                ]);
-
-                return false;
-            }
-        } elseif (($verificationResult['status_code'] ?? 0) === 404) {
-            Log::warning('Lipila status endpoint 404; falling back to signed webhook', [
-                'reference_id' => $referenceId,
-            ]);
-            $canTrustWebhook = true;
-        } elseif (!$this->isConfigured()) {
-            $canTrustWebhook = true;
-        } else {
-            Log::warning('Lipila status verification unavailable; falling back to signed webhook', [
-                'reference_id' => $referenceId,
-                'error' => $verificationResult['error'] ?? 'Unknown',
-            ]);
-            $canTrustWebhook = true;
-        }
-
-        $isSuccessfulCollection = strcasecmp($status, 'Successful') === 0
-            && strcasecmp($type, 'Collection') === 0;
-
-        if (!$isSuccessfulCollection) {
-            Log::info('Lipila webhook not a successful collection', [
-                'reference_id' => $referenceId,
-                'status' => $status,
-                'type' => $type,
-            ]);
-
-            return true;
-        }
-
-        if (!$canTrustWebhook) {
-            Log::warning('Lipila webhook accepted but not independently verified', [
-                'reference_id' => $referenceId,
-            ]);
-        }
-
-        return $this->markPaymentCompleted($payment, $payload);
+        return $state !== 'pending';
     }
 
     /**
@@ -324,7 +296,7 @@ class LipilaPaymentService
 
         $payment->update([
             'payment_status' => 'Completed',
-            'payment_date' => now(),
+            'payment_date' => $payment->payment_date ?? now(),
             'lipila_reference' => $payload['identifier'] ?? $payment->lipila_reference,
             'phone_number' => $payload['accountNumber'] ?? $payment->phone_number,
         ]);
@@ -334,6 +306,9 @@ class LipilaPaymentService
         if ($payment->enrollment) {
             $verificationService->recalculateEnrollmentState($payment->enrollment);
         }
+
+        // A registration payment unlocks enrollment through its RegistrationFee.
+        $verificationService->syncRegistrationFee($payment);
 
         // Delegate promotion usage, invoice generation and receipt notification
         // to the shared completion path so Lipila completions behave identically
@@ -349,6 +324,24 @@ class LipilaPaymentService
         ]);
 
         return true;
+    }
+
+    /**
+     * Mark a payment as failed (wrong PIN, cancelled, expired ...) so the
+     * student is offered the payment form again.
+     */
+    protected function markPaymentFailed(Payment $payment, ?string $reason = null): void
+    {
+        $payment->update(['payment_status' => 'Failed']);
+
+        app(PaymentVerificationService::class)
+            ->syncRegistrationFee($payment, $reason ? 'Mobile money failed: ' . $reason : null);
+
+        Log::info('Lipila payment marked failed', [
+            'payment_id' => $payment->payment_id,
+            'reference_id' => $payment->transaction_id,
+            'reason' => $reason,
+        ]);
     }
 
     /**

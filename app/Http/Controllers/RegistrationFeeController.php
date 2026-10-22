@@ -7,6 +7,7 @@ use App\Models\Payment;
 use App\Models\RegistrationFee;
 use App\Services\LencoPaymentService;
 use App\Services\LipilaPaymentService;
+use App\Services\PaymentVerificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -57,6 +58,17 @@ class RegistrationFeeController extends Controller
         if ($existing) {
             return redirect()->route('courses.index')
                 ->with('info', 'You have already paid the registration fee.');
+        }
+
+        // payments.student_id is required, but new users only get a student
+        // record when they first enroll, which needs this fee paid first.
+        // Create it here, the same way EnrollmentController does.
+        if (!$user->student) {
+            $user->setRelation('student', \App\Models\Student::create([
+                'user_id' => $user->id,
+                'student_number' => \App\Services\StudentNumberService::generate((int) now()->year),
+                'enrollment_date' => now(),
+            ]));
         }
 
         $paymentMethod = $request->input('payment_method');
@@ -362,12 +374,18 @@ class RegistrationFeeController extends Controller
                 ->first();
 
             if ($payment) {
-                app(LipilaPaymentService::class)->pollAndSync($payment);
-                $payment->refresh();
+                $state = app(LipilaPaymentService::class)->pollAndSync($payment);
+                // Also settles fees whose payment failed before the fee was kept in step.
+                app(PaymentVerificationService::class)->syncRegistrationFee($payment->refresh());
 
-                if ($payment->isCompleted()) {
+                if ($state === 'completed') {
                     return redirect()->route('registration-fee.show')
                         ->with('success', 'Payment confirmed! Your registration fee has been received.');
+                }
+
+                if ($state === 'failed') {
+                    return redirect()->route('registration-fee.show')
+                        ->with('error', 'Your mobile money payment did not go through. You have not been charged. Please try again.');
                 }
             }
 
@@ -407,11 +425,8 @@ class RegistrationFeeController extends Controller
 
             if ($payment) {
                 app(LipilaPaymentService::class)->pollAndSync($payment);
-                $payment->refresh();
-
-                if ($payment->isCompleted() && $fee->payment_status !== 'completed') {
-                    $fee->update(['payment_status' => 'completed', 'verified_at' => now()]);
-                }
+                // Completed or failed, the fee follows its payment.
+                app(PaymentVerificationService::class)->syncRegistrationFee($payment->refresh());
             }
 
             return;

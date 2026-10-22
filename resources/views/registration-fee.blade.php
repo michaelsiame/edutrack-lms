@@ -123,6 +123,12 @@
 
                 {{-- STATE 4: Not Paid -- Show Payment Form --}}
                 @else
+                @if($fee && $fee->payment_status === 'failed' && !session('error'))
+                <div class="mb-4 p-4 rounded-lg" style="background: var(--od-danger-soft, #fdecec); border: 1px solid var(--od-danger);">
+                    <p class="font-medium" style="color: var(--od-danger);"><i class="fas fa-exclamation-circle mr-2"></i>Your last payment did not go through</p>
+                    <p class="text-sm mt-1" style="color: var(--od-fg);">You have not been charged. Check the number and that you have enough balance, then try again.</p>
+                </div>
+                @endif
                 <div class="text-center py-6">
                     <div class="inline-block p-6 rounded-xl mb-6" style="background: var(--od-navy-soft);">
                         <p class="od-eyebrow mb-1">Amount Due</p>

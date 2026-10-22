@@ -202,6 +202,19 @@ class PaymentController extends Controller
             }
         }
 
+        // A registration payment has no enrollment; its RegistrationFee is what
+        // unlocks enrolling, so carry the new status over (and send the receipt
+        // the first time it is marked Completed).
+        if ($payment->payment_type === 'registration') {
+            $verificationService = app(\App\Services\PaymentVerificationService::class);
+
+            if ($validated['payment_status'] === 'Completed' && !$wasCompleted) {
+                $verificationService->verifyPayment($payment);
+            } else {
+                $verificationService->syncRegistrationFee($payment);
+            }
+        }
+
         return redirect()->route('admin.payments.index')->with('success', 'Payment updated successfully.');
     }
 

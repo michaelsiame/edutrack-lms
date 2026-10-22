@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Enrollment;
 use App\Models\Payment;
 use App\Models\Promotion;
+use App\Models\RegistrationFee;
 
 class PaymentVerificationService
 {
@@ -25,7 +26,43 @@ class PaymentVerificationService
             $this->updateEnrollmentPaymentStatus($payment->enrollment);
         }
 
+        $this->syncRegistrationFee($payment);
         $this->runCompletionSideEffects($payment);
+    }
+
+    /**
+     * Carry a registration payment's status over to its RegistrationFee, which
+     * is what enrollment checks. Both records share the reference
+     * (payments.transaction_id = registration_fees.reference).
+     */
+    public function syncRegistrationFee(Payment $payment, ?string $reason = null): ?RegistrationFee
+    {
+        if ($payment->payment_type !== 'registration' || empty($payment->transaction_id)) {
+            return null;
+        }
+
+        $fee = RegistrationFee::where('reference', $payment->transaction_id)->first();
+        if (!$fee) {
+            return null;
+        }
+
+        $status = match (strtolower((string) $payment->payment_status)) {
+            'completed' => 'completed',
+            'failed', 'cancelled' => 'failed',
+            'refunded' => 'refunded',
+            default => 'pending',
+        };
+
+        if ($fee->payment_status !== $status) {
+            $fee->update([
+                'payment_status' => $status,
+                'verified_at' => $status === 'completed' ? ($fee->verified_at ?? now()) : null,
+                'verified_by' => $status === 'completed' ? ($fee->verified_by ?? auth()->id()) : null,
+                'notes' => $reason !== null ? trim(($fee->notes ? $fee->notes . "\n" : '') . $reason) : $fee->notes,
+            ]);
+        }
+
+        return $fee;
     }
 
     /**
@@ -51,8 +88,9 @@ class PaymentVerificationService
                 ->increment('used_count');
         }
 
-        // Generate invoice if none exists.
-        if (!$freshPayment->invoice) {
+        // Generate invoice if none exists. Invoices belong to a course, so a
+        // registration fee (no course) gets the receipt email only.
+        if (!$freshPayment->invoice && $freshPayment->course_id) {
             try {
                 $invoiceService = app(InvoiceService::class);
                 $invoiceService->generateInvoice($freshPayment);
@@ -67,13 +105,18 @@ class PaymentVerificationService
         // Send receipt email and in-app notification.
         try {
             $emailService = app(\App\Services\EmailQueueService::class);
-            $user = $freshPayment->enrollment?->user ?? $freshPayment->student?->user;
+            // A registration fee has no enrollment, and new students often have no
+            // student record yet, so fall back to the user on the fee itself.
+            $isRegistration = $freshPayment->payment_type === 'registration';
+            $user = $freshPayment->enrollment?->user ?? $freshPayment->student?->user
+                ?? ($isRegistration ? RegistrationFee::where('reference', $freshPayment->transaction_id)->first()?->user : null);
             $userId = $user?->id ?? $freshPayment->student?->user_id;
+            $paidFor = $isRegistration ? 'the registration fee' : ($freshPayment->course?->title ?? 'your course');
 
             if ($user && $user->email) {
                 $emailService->sendTemplated($user->email, 'Payment', [
                     'first_name' => $user->first_name ?? $user->full_name,
-                    'course_title' => $freshPayment->course?->title ?? 'your course',
+                    'course_title' => $paidFor,
                     'amount' => number_format($freshPayment->amount, 2),
                     'currency' => $freshPayment->currency ?: setting('currency', 'ZMW'),
                     'transaction_id' => $freshPayment->transaction_id ?: 'N/A',
@@ -85,7 +128,7 @@ class PaymentVerificationService
                 $emailService->sendNotification(
                     $userId,
                     'Payment Received',
-                    "Your payment of ZMW {$freshPayment->amount} for {$freshPayment->course?->title} has been received.",
+                    "Your payment of ZMW {$freshPayment->amount} for {$paidFor} has been received.",
                     'payment'
                 );
             }
