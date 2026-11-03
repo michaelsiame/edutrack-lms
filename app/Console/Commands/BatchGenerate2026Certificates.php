@@ -188,8 +188,9 @@ class BatchGenerate2026Certificates extends Command
             $certificate->verification_code = Str::random(32);
         }
 
-        // Only set columns that actually exist on this (non-standard) schema.
-        $certificate->issued_date = $ceremony;
+        // A certificate is dated the day it is issued, never backdated to the
+        // ceremony; one already issued keeps its date.
+        $certificate->issued_date ??= now();
         foreach ([
             'classification' => $classification,
             'final_score' => $score,
@@ -219,10 +220,10 @@ class BatchGenerate2026Certificates extends Command
             'classification' => $classification,
             'certificate_number' => $certificate->certificate_number,
             'verify_url' => route('certificates.verify', $certificate->verification_code),
-            'graduation_day' => $ceremony->format('j'),
-            'graduation_suffix' => $this->daySuffix((int) $ceremony->format('j')),
-            'graduation_month' => $ceremony->format('F'),
-            'graduation_year' => $ceremony->format('Y'),
+            'graduation_day' => $certificate->issued_date->format('j'),
+            'graduation_suffix' => $this->daySuffix((int) $certificate->issued_date->format('j')),
+            'graduation_month' => $certificate->issued_date->format('F'),
+            'graduation_year' => $certificate->issued_date->format('Y'),
             'student_number' => $studentId,
             'national_id' => '',
         ];

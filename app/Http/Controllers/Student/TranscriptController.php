@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Enrollment;
 use App\Models\SystemSetting;
 use App\Services\CertificateService;
+use App\Support\TevetaGrade;
 use Carbon\Carbon;
 
 class TranscriptController extends Controller
@@ -69,11 +70,15 @@ class TranscriptController extends Controller
                 $completedCount++;
             }
 
-            $finalScore = $enrollment->final_grade ?? $enrollment->progress ?? 0;
-            if ($isCompleted) {
-                $grade = $this->scoreToGrade($finalScore);
-            } else {
+            // Lesson progress is not a mark: without a recorded grade there is no grade.
+            $isGraded = $enrollment->final_grade !== null;
+            $finalScore = (float) ($enrollment->final_grade ?? 0);
+            if (!$isCompleted) {
                 $grade = 'In Progress';
+            } elseif ($isGraded) {
+                $grade = TevetaGrade::for($finalScore);
+            } else {
+                $grade = 'Not graded';
             }
 
             $courseModules = $course->modules->sortBy('display_order')->values();
@@ -118,7 +123,7 @@ class TranscriptController extends Controller
                     'score' => $has ? round($submission->points_earned, 1) : '-',
                     'max' => $max,
                     'percentage' => $has ? $pct . '%' : '-',
-                    'grade' => $has ? $this->scoreToGrade($pct) : '-',
+                    'grade' => $has ? TevetaGrade::for($pct) : '-',
                     'credits' => '-',
                 ];
             }
@@ -143,7 +148,7 @@ class TranscriptController extends Controller
                     'score' => $has ? round($attempt->score, 1) : '-',
                     'max' => 100,
                     'percentage' => $has ? $pct . '%' : '-',
-                    'grade' => $has ? $this->scoreToGrade($pct) : '-',
+                    'grade' => $has ? TevetaGrade::for($pct) : '-',
                     'credits' => '-',
                 ];
             }
@@ -161,7 +166,8 @@ class TranscriptController extends Controller
                 $completedLessons = $lessonProgress->where('status', 'Completed')->unique('lesson_id')->count();
                 $totalLessons = $module->lessons->count();
                 $progress = $totalLessons > 0 ? min(100, round(($completedLessons / $totalLessons) * 100, 1)) : 0;
-                $grade = ($progress == 0 && !$isCompleted) ? '-' : $this->scoreToGrade($progress);
+                // Lessons finished, not a mark, so no grade for these rows.
+                $grade = $progress >= 100 ? 'Done' : '-';
 
                 $rowsByCode[$moduleCodeById[$module->id]][] = [
                     'code' => $moduleCodeById[$module->id],
@@ -196,8 +202,7 @@ class TranscriptController extends Controller
                 'completion_date' => $enrollment->completion_date?->format('F Y') ?? 'In Progress',
                 'status' => $enrollment->enrollment_status,
                 'final_grade' => $grade,
-                'final_score' => round($finalScore, 1) . '%',
-                'classification' => $enrollment->certificate?->classification ?? null,
+                'final_score' => $isGraded ? round($finalScore, 1) . '%' : '-',
                 'certificate_number' => $enrollment->certificate?->certificate_number ?? null,
                 'assessments' => $modules,
             ];
@@ -246,50 +251,6 @@ class TranscriptController extends Controller
             $numberPart = str_pad((string) $user->id, 6, '0', STR_PAD_LEFT);
         }
         return $yearSuffix . 'Edu' . $numberPart;
-    }
-
-    /**
-     * Convert a score (0-100) to a letter grade.
-     */
-    protected function scoreToGrade(float $score): string
-    {
-        return match (true) {
-            $score >= 90 => 'A',
-            $score >= 80 => 'B+',
-            $score >= 70 => 'B',
-            $score >= 60 => 'C+',
-            $score >= 50 => 'C',
-            default => 'D',
-        };
-    }
-
-    /**
-     * Convert a score (0-100) to GPA points.
-     */
-    protected function scoreToPoints(float $score): float
-    {
-        return match (true) {
-            $score >= 90 => 5.0,
-            $score >= 80 => 4.5,
-            $score >= 70 => 4.0,
-            $score >= 60 => 3.5,
-            $score >= 50 => 3.0,
-            default => 2.0,
-        };
-    }
-
-    /**
-     * Convert GPA points to classification.
-     */
-    protected function pointsToClassification(float $points): string
-    {
-        return match (true) {
-            $points >= 4.5 => 'Distinction',
-            $points >= 4.0 => 'Merit',
-            $points >= 3.5 => 'Credit',
-            $points >= 3.0 => 'Pass',
-            default => 'Fail',
-        };
     }
 
     /**
@@ -431,7 +392,7 @@ class TranscriptController extends Controller
             $pdf->SetFillColor(...$navy);
             $pdf->SetTextColor(255, 255, 255);
             $pdf->SetFont('helvetica', 'B', 8);
-            $cols = [18, 70, 22, 18, 18, 16, 14];
+            $cols = [18, 64, 22, 18, 18, 16, 20];
             $headers = ['Code', 'Module / Assessment', 'Type', 'Score', 'Max', '%', 'Grade'];
             foreach ($headers as $i => $h) {
                 $pdf->Cell($cols[$i], 6, $h, 1, 0, 'C', true);
@@ -455,11 +416,12 @@ class TranscriptController extends Controller
                 $pdf->Cell($cols[5], 5.5, $assessment['percentage'], 1, 0, 'C', true);
 
                 $grade = $assessment['grade'];
-                $gradeColor = match ($grade[0] ?? 'D') {
-                    'A' => [39, 103, 73],
-                    'B' => [47, 133, 90],
-                    'C' => [192, 86, 33],
-                    default => [197, 48, 48],
+                $gradeColor = match ($grade) {
+                    'Distinction' => [39, 103, 73],
+                    'Merit' => [47, 133, 90],
+                    'Credit', 'Pass' => [192, 86, 33],
+                    'Fail' => [197, 48, 48],
+                    default => [0, 0, 0],
                 };
                 $pdf->SetTextColor(...$gradeColor);
                 $pdf->SetFont('helvetica', 'B', 8);
@@ -476,14 +438,7 @@ class TranscriptController extends Controller
             $footerText = $enrollment['status'] === 'Completed'
                 ? 'Final Grade: ' . $enrollment['final_grade'] . ' (' . $enrollment['final_score'] . ')'
                 : 'Status: ' . $enrollment['status'] . ' (' . $enrollment['final_score'] . ')';
-            $pdf->Cell(120, 6, $footerText, 1, 0, 'L', true);
-            if ($enrollment['classification'] && $enrollment['status'] === 'Completed') {
-                $pdf->SetFillColor(212, 149, 42);
-                $pdf->SetTextColor(255, 255, 255);
-                $pdf->Cell(56, 6, $enrollment['classification'], 1, 0, 'C', true);
-            } else {
-                $pdf->Cell(56, 6, '', 1, 0, 'C', true);
-            }
+            $pdf->Cell(176, 6, $footerText, 1, 0, 'L', true);
             $pdf->SetTextColor(0, 0, 0);
             $pdf->Ln(10);
         }
@@ -491,21 +446,12 @@ class TranscriptController extends Controller
         // ===== GRADING SCALE =====
         $pdf->SetFont('helvetica', 'B', 9);
         $pdf->SetTextColor(...$navy);
-        $pdf->Cell(0, 6, 'GRADING SCALE', 0, 1, 'L');
+        $pdf->Cell(0, 6, 'GRADING SCALE (TEVETA)', 0, 1, 'L');
         $pdf->SetFont('helvetica', '', 8);
         $pdf->SetTextColor(0, 0, 0);
-        $scale = [
-            ['A', '90-100%', 'Distinction'],
-            ['B+', '80-89%', 'Merit'],
-            ['B', '70-79%', 'Merit'],
-            ['C+', '60-69%', 'Credit'],
-            ['C', '50-59%', 'Pass'],
-            ['D', '<50%', 'Fail'],
-        ];
-        foreach ($scale as $s) {
-            $pdf->Cell(25, 5, $s[0], 1, 0, 'C');
-            $pdf->Cell(45, 5, $s[1], 1, 0, 'C');
-            $pdf->Cell(50, 5, $s[2], 1, 1, 'C');
+        foreach (TevetaGrade::scale() as [$grade, $range]) {
+            $pdf->Cell(45, 5, $grade, 1, 0, 'C');
+            $pdf->Cell(45, 5, $range, 1, 1, 'C');
         }
         $pdf->Ln(6);
 

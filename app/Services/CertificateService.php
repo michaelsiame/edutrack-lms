@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Certificate;
 use App\Models\Enrollment;
+use App\Support\TevetaGrade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use TCPDF;
@@ -46,7 +47,7 @@ class CertificateService
      */
     protected function generateStudentNumber(Certificate $certificate): string
     {
-        $yearSuffix = substr($certificate->graduation_ceremony_date?->format('Y') ?? date('Y'), -2);
+        $yearSuffix = substr($certificate->issued_date?->format('Y') ?? date('Y'), -2);
         $userId = $certificate->user_id;
 
         if ($certificate->user && $certificate->user->national_id) {
@@ -98,6 +99,11 @@ class CertificateService
             // Recalculate final grade before issuing
             app(GradeAggregationService::class)->recalculateFinalGrade($lockedEnrollment);
             $lockedEnrollment->refresh();
+
+            // Below the TEVETA pass mark is a fail: no certificate.
+            if ($lockedEnrollment->final_grade !== null && !TevetaGrade::passed((float) $lockedEnrollment->final_grade)) {
+                return null;
+            }
 
             $certificate = Certificate::create([
                 'user_id' => $lockedEnrollment->user_id,
@@ -265,14 +271,14 @@ class CertificateService
         // Short-course + duration line
         $this->drawCourseMeta($pdf, $data);
 
-        // "With {classification}"
+        // "With {classification}" (TEVETA grade; a plain Pass prints no line)
         $classification = $data['classification'] ?? null;
         if ($classification && trim($classification) !== '' && strcasecmp($classification, 'Pass') !== 0) {
             $this->certFont($pdf, 'script', 28.5);
             $this->centeredAtBaseline($pdf, 169.7, 'With ' . $classification);
         }
 
-        // Graduation date lines (the template's static text was removed with
+        // Date lines: the day the certificate is issued (the template's static text was removed with
         // the fills because the day/month/year sit inline)
         $this->centeredSegments($pdf, 195.3, [
             ['Ceremony held on the ', 'serif', 16.6, 0],
@@ -286,6 +292,9 @@ class CertificateService
             ['in the year ', 'serif', 16.6, 0],
             [($data['graduation_year'] ?? ''), 'script', 19.8, 0],
         ]);
+
+        // The Principal's signature, above the template's Principal rule
+        $this->placeSignature($pdf, 'principal', 50.5, 231.5);
 
         // Graduate's ID No. — filled with the student number, like the old
         // template did (the signature line stays blank for handwriting)
@@ -563,7 +572,7 @@ class CertificateService
         // Short-course + duration line
         $this->drawCourseMeta($pdf, $data);
 
-        // Element 9: "With {classification}"
+        // Element 9: "With {classification}" (TEVETA grade; a plain Pass prints no line)
         $classification = $data['classification'] ?? null;
         if ($classification && trim($classification) !== '' && strcasecmp($classification, 'Pass') !== 0) {
             $this->certFont($pdf, 'script', 28.5);
@@ -593,7 +602,8 @@ class CertificateService
             [($data['graduation_year'] ?? ''), 'script', 19.8, 0],
         ]);
 
-        // --- Signature block (rules + labels only; signatures are handwritten) ---
+        // --- Signature block (the Principal's signature is printed; the Director signs by hand) ---
+        $this->placeSignature($pdf, 'principal', 50.5, 231.5);
         $pdf->SetLineStyle(['width' => 0.4, 'color' => self::ORANGE]);
 
         // Top row rules
@@ -789,9 +799,12 @@ class CertificateService
             return;
         }
 
-        // Fixed width, auto height (h=0) preserves the signature's aspect ratio.
-        $w = 36; // mm
-        $pdf->Image($path, $centerX - $w / 2, $bottomY - 13, $w, 0, 'PNG', '', '', true, 300);
+        // Fit inside the space above the rule (at most 25mm tall, 42mm wide), keeping the aspect ratio.
+        [$pxW, $pxH] = getimagesize($path);
+        $h = min(25, 42 * $pxH / $pxW); // mm
+        $w = $h * $pxW / $pxH;
+        // resize=false: resampling goes through GD, which drops the transparency and leaves a white box
+        $pdf->Image($path, $centerX - $w / 2, $bottomY - $h, $w, $h, 'PNG', '', '', false, 300);
     }
 
     /**
@@ -801,8 +814,9 @@ class CertificateService
     {
         $certificate->load(['user.student', 'course', 'enrollment']);
 
+        // A certificate is dated the day it is issued, never an earlier ceremony date.
         $issuedDate = $certificate->issued_date ?? now();
-        $graduationDate = $certificate->graduation_ceremony_date ?? $issuedDate;
+        $graduationDate = $issuedDate;
 
         $nationalId = $certificate->user?->national_id;
         // The student number is the student's permanent ID, minted at first
@@ -820,7 +834,8 @@ class CertificateService
             'verification_code' => $certificate->verification_code,
             'verify_url' => route('certificates.verify', $certificate->verification_code),
             'final_score' => $certificate->final_score,
-            'classification' => $certificate->classification ?? 'Pass',
+            // There is no stored classification: the grade follows the final score.
+            'classification' => $certificate->final_score > 0 ? TevetaGrade::for((float) $certificate->final_score) : null,
             'graduation_day' => $graduationDate->format('j'),
             'graduation_suffix' => $this->getDaySuffix((int) $graduationDate->format('j')),
             'graduation_month' => $graduationDate->format('F'),

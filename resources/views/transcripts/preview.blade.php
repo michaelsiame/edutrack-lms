@@ -229,11 +229,10 @@
   .font-bold { font-weight: 700; }
   .text-navy { color: var(--navy); }
 
-  .grade-A { color: #276749; font-weight: 700; }
-  .grade-B { color: #2f855a; font-weight: 700; }
-  .grade-C { color: #c05621; font-weight: 700; }
-  .grade-D { color: #c53030; font-weight: 700; }
-  .grade-F { color: #9b2c2c; font-weight: 700; }
+  .grade-distinction { color: #276749; font-weight: 700; }
+  .grade-merit { color: #2f855a; font-weight: 700; }
+  .grade-credit, .grade-pass { color: #c05621; font-weight: 700; }
+  .grade-fail { color: #c53030; font-weight: 700; }
 
   .course-footer {
     display: flex;
@@ -461,16 +460,15 @@ $demo_enrollments = $enrollments ?? [
         'enrolled_at' => 'January 2025',
         'completion_date' => 'April 2025',
         'status' => 'Completed',
-        'final_grade' => 'A',
+        'final_grade' => 'Distinction',
         'final_score' => '92.5%',
-        'classification' => 'Distinction',
         'certificate_number' => 'EDTRK-2026-100039',
         'assessments' => [
-            ['code' => 'M01', 'title' => 'Microsoft Word Mastery — Word Practical Project', 'type' => 'Assignment', 'score' => 95, 'max' => 100, 'percentage' => '95%', 'grade' => 'A', 'credits' => '-'],
-            ['code' => 'M01', 'title' => 'Microsoft Word Mastery — Module Quiz', 'type' => 'Graded', 'score' => 88, 'max' => 100, 'percentage' => '88%', 'grade' => 'B+', 'credits' => '-'],
-            ['code' => 'M02', 'title' => 'Microsoft Excel Mastery — Excel Budget Project', 'type' => 'Assignment', 'score' => 92, 'max' => 100, 'percentage' => '92%', 'grade' => 'A', 'credits' => '-'],
-            ['code' => 'M02', 'title' => 'Microsoft Excel Mastery — Module Quiz', 'type' => 'Graded', 'score' => 85, 'max' => 100, 'percentage' => '85%', 'grade' => 'B+', 'credits' => '-'],
-            ['code' => 'M03', 'title' => 'PowerPoint & Publisher — Final Assessment', 'type' => 'Final Exam', 'score' => 96, 'max' => 100, 'percentage' => '96%', 'grade' => 'A', 'credits' => '-'],
+            ['code' => 'M01', 'title' => 'Microsoft Word Mastery — Word Practical Project', 'type' => 'Assignment', 'score' => 95, 'max' => 100, 'percentage' => '95%', 'grade' => 'Distinction', 'credits' => '-'],
+            ['code' => 'M01', 'title' => 'Microsoft Word Mastery — Module Quiz', 'type' => 'Graded', 'score' => 88, 'max' => 100, 'percentage' => '88%', 'grade' => 'Distinction', 'credits' => '-'],
+            ['code' => 'M02', 'title' => 'Microsoft Excel Mastery — Excel Budget Project', 'type' => 'Assignment', 'score' => 92, 'max' => 100, 'percentage' => '92%', 'grade' => 'Distinction', 'credits' => '-'],
+            ['code' => 'M02', 'title' => 'Microsoft Excel Mastery — Module Quiz', 'type' => 'Graded', 'score' => 85, 'max' => 100, 'percentage' => '85%', 'grade' => 'Distinction', 'credits' => '-'],
+            ['code' => 'M03', 'title' => 'PowerPoint & Publisher — Final Assessment', 'type' => 'Final Exam', 'score' => 96, 'max' => 100, 'percentage' => '96%', 'grade' => 'Distinction', 'credits' => '-'],
         ],
     ],
     [
@@ -481,14 +479,13 @@ $demo_enrollments = $enrollments ?? [
         'enrolled_at' => 'May 2026',
         'completion_date' => 'In Progress',
         'status' => 'In Progress',
-        'final_grade' => 'B',
+        'final_grade' => 'Merit',
         'final_score' => '75.0%',
-        'classification' => null,
         'certificate_number' => null,
         'assessments' => [
-            ['code' => 'M01', 'title' => 'Introduction to Python — Control Flow Quiz', 'type' => 'Graded', 'score' => 78, 'max' => 100, 'percentage' => '78%', 'grade' => 'B', 'credits' => '-'],
-            ['code' => 'M02', 'title' => 'Data Types and Variables — Data Structures Assignment', 'type' => 'Assignment', 'score' => 82, 'max' => 100, 'percentage' => '82%', 'grade' => 'B+', 'credits' => '-'],
-            ['code' => 'M03', 'title' => 'Control Flow — Python Basics Quiz', 'type' => 'Practice', 'score' => 65, 'max' => 100, 'percentage' => '65%', 'grade' => 'C+', 'credits' => '-'],
+            ['code' => 'M01', 'title' => 'Introduction to Python — Control Flow Quiz', 'type' => 'Graded', 'score' => 78, 'max' => 100, 'percentage' => '78%', 'grade' => 'Merit', 'credits' => '-'],
+            ['code' => 'M02', 'title' => 'Data Types and Variables — Data Structures Assignment', 'type' => 'Assignment', 'score' => 82, 'max' => 100, 'percentage' => '82%', 'grade' => 'Merit', 'credits' => '-'],
+            ['code' => 'M03', 'title' => 'Control Flow — Python Basics Quiz', 'type' => 'Practice', 'score' => 65, 'max' => 100, 'percentage' => '65%', 'grade' => 'Credit', 'credits' => '-'],
         ],
     ],
 ];
@@ -534,7 +531,7 @@ $demo_enrollments = $enrollments ?? [
           <td class="text-center font-bold">{{ $item['score'] ?? '85' }}</td>
           <td class="text-center">{{ $item['max'] ?? '100' }}</td>
           <td class="text-center">{{ $item['percentage'] ?? '85%' }}</td>
-          <td class="text-center {{ $item['grade'] === '-' ? '' : 'grade-' . ($item['grade'][0] ?? 'B') }}">{{ $item['grade'] ?? 'B+' }}</td>
+          <td class="text-center {{ $item['grade'] === '-' ? '' : 'grade-' . strtolower($item['grade']) }}">{{ $item['grade'] ?? '-' }}</td>
           <td class="text-center">{{ $item['credits'] ?? '-' }}</td>
         </tr>
         @endforeach
@@ -551,23 +548,17 @@ $demo_enrollments = $enrollments ?? [
         <span class="final" style="color: var(--gray);">{{ $enrollment['status'] }} ({{ $enrollment['final_score'] }})</span>
         @endif
       </div>
-      @if(!empty($enrollment['classification']) && $enrollment['status'] === 'Completed' && strcasecmp($enrollment['classification'], 'Pass') !== 0)
-      <div class="classification">{{ $enrollment['classification'] }}</div>
-      @endif
     </div>
   </div>
   @endforeach
 
   <!-- GRADING SCALE -->
   <div class="scale-box">
-    <h4>Grading Scale</h4>
+    <h4>Grading Scale (TEVETA)</h4>
     <div class="scale-grid">
-      <div class="scale-item"><div class="grade">A</div><div>90-100%</div><div>Distinction</div></div>
-      <div class="scale-item"><div class="grade">B+</div><div>80-89%</div><div>Merit</div></div>
-      <div class="scale-item"><div class="grade">B</div><div>70-79%</div><div>Merit</div></div>
-      <div class="scale-item"><div class="grade">C+</div><div>60-69%</div><div>Credit</div></div>
-      <div class="scale-item"><div class="grade">C</div><div>50-59%</div><div>Pass</div></div>
-      <div class="scale-item"><div class="grade">D</div><div>Below 50%</div><div>Fail</div></div>
+      @foreach(\App\Support\TevetaGrade::scale() as [$band, $range])
+      <div class="scale-item"><div class="grade">{{ $band }}</div><div>{{ $range }}</div></div>
+      @endforeach
     </div>
   </div>
 

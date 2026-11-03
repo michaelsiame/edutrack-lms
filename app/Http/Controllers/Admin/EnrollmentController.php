@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\AcceptanceLetterService;
 use App\Services\CertificateService;
 use App\Services\StudentNumberService;
+use App\Support\TevetaGrade;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -212,6 +213,13 @@ class EnrollmentController extends Controller
 
         if ($enrollment->enrollment_status === 'Dropped') {
             return back()->with('error', 'This student dropped the course. Change the status under Edit first if they did finish.');
+        }
+
+        // Check the mark before marking the course completed: a fail gets no certificate.
+        app(\App\Services\GradeAggregationService::class)->recalculateFinalGrade($enrollment);
+        $enrollment->refresh();
+        if ($enrollment->final_grade !== null && !TevetaGrade::passed((float) $enrollment->final_grade)) {
+            return back()->with('error', "{$enrollment->user?->full_name} has {$enrollment->final_grade}%, below the TEVETA pass mark of " . TevetaGrade::PASS_MARK . '%. No certificate is issued for a fail.');
         }
 
         $service = new CertificateService();
