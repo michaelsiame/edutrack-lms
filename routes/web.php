@@ -154,6 +154,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::resource('users', App\Http\Controllers\Admin\UserController::class);
     Route::resource('payments', App\Http\Controllers\Admin\PaymentController::class);
     Route::get('/certificates', [App\Http\Controllers\Admin\CertificateController::class, 'index'])->name('certificates.index');
+    Route::post('/certificates/issue-date', [App\Http\Controllers\Admin\CertificateController::class, 'setIssueDate'])->name('certificates.issue-date');
 
     // Announcements
     Route::resource('announcements', App\Http\Controllers\Admin\AnnouncementController::class)->except(['show']);

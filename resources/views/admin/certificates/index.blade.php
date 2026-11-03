@@ -9,6 +9,32 @@
         <div class="mb-4 p-4 od-toast-success">{{ session('success') }}</div>
     @endif
 
+    <!-- Common issue date -->
+    <div class="od-card p-4 mb-6">
+        <form action="{{ route('admin.certificates.issue-date') }}" method="POST" class="flex flex-wrap items-end gap-4">
+            @csrf
+            <div>
+                <label for="issue_date" class="od-form-label">Issue date for new certificates</label>
+                <input type="date" id="issue_date" name="issue_date" min="{{ today()->toDateString() }}"
+                    value="{{ old('issue_date', $commonIssueDate?->toDateString()) }}" class="od-input">
+            </div>
+            <button type="submit" class="od-btn od-btn-primary od-btn-sm">Set date</button>
+            @if($commonIssueDate)
+                <button type="submit" name="clear" value="1" class="od-btn od-btn-secondary od-btn-sm" formnovalidate>Use the day each is issued</button>
+            @endif
+            <p class="text-sm od-meta w-full" style="margin: 0;">
+                @if($commonIssueDate)
+                    Certificates issued from now on are dated <strong>{{ $commonIssueDate->format('j F Y') }}</strong>. Certificates already issued keep their date.
+                @else
+                    Each certificate is dated the day it is issued. Set a date to give a class the same date; it cannot be in the past.
+                @endif
+            </p>
+            @error('issue_date')
+                <p class="text-sm w-full" style="margin: 0; color: var(--od-red, #c53030);">{{ $message }}</p>
+            @enderror
+        </form>
+    </div>
+
     <!-- Filters -->
     <div class="od-card p-4 mb-6">
         <form action="{{ route('admin.certificates.index') }}" method="GET" class="flex flex-wrap items-end gap-4">

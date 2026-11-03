@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Certificate;
 use App\Models\Enrollment;
+use App\Models\SystemSetting;
 use App\Support\TevetaGrade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -68,6 +69,32 @@ class CertificateService
         return Str::random(32);
     }
 
+    /** The SystemSetting holding the common issue date set by an admin (Y-m-d). */
+    public const COMMON_ISSUE_DATE = 'certificate_issue_date';
+
+    /**
+     * The date a certificate issued now carries: the admin's common issue date
+     * while it is today or later, otherwise today. A certificate is never
+     * dated earlier than the day it comes out.
+     */
+    public function issueDate(): \Carbon\Carbon
+    {
+        $today = now()->startOfDay();
+        $common = SystemSetting::get(self::COMMON_ISSUE_DATE);
+        if ($common) {
+            try {
+                $date = \Carbon\Carbon::parse($common)->startOfDay();
+                if ($date->gte($today)) {
+                    return $date;
+                }
+            } catch (\Throwable) {
+                // an unreadable setting falls back to today
+            }
+        }
+
+        return $today;
+    }
+
     /**
      * Issue a certificate for an enrollment.
      * Wrapped in a database transaction with row locking to prevent duplicates.
@@ -110,7 +137,7 @@ class CertificateService
                 'course_id' => $lockedEnrollment->course_id,
                 'enrollment_id' => $lockedEnrollment->id,
                 'certificate_number' => $this->generateCertificateNumber($lockedEnrollment->user, $lockedEnrollment->course_id),
-                'issued_date' => now(),
+                'issued_date' => $this->issueDate(),
                 'verification_code' => $this->generateVerificationCode(),
                 'final_score' => $lockedEnrollment->final_grade ?? 0,
                 'issued_at' => now(),
@@ -278,23 +305,24 @@ class CertificateService
             $this->centeredAtBaseline($pdf, 169.7, 'With ' . $classification);
         }
 
-        // Date lines: the day the certificate is issued (the template's static text was removed with
-        // the fills because the day/month/year sit inline)
-        $this->centeredSegments($pdf, 195.3, [
-            ['Ceremony held on the ', 'serif', 16.6, 0],
+        // Date lines: the day the certificate is issued (the template's old
+        // "Was admitted ... at a Graduation" line was removed from the artwork)
+        $this->centeredSegments($pdf, 189.5, [
+            ['Issued on the ', 'serif', 16.6, 0],
             [($data['graduation_day'] ?? ''), 'script', 19.8, 0],
             [($data['graduation_suffix'] ?? ''), 'script', 9.9, 3.5],
             [' day of ', 'serif', 16.6, 0],
             [($data['graduation_month'] ?? ''), 'script', 19.8, 0],
         ]);
 
-        $this->centeredSegments($pdf, 204.6, [
+        $this->centeredSegments($pdf, 198.8, [
             ['in the year ', 'serif', 16.6, 0],
             [($data['graduation_year'] ?? ''), 'script', 19.8, 0],
         ]);
 
-        // The Principal's signature, above the template's Principal rule
+        // The Principal's and Director's signatures, above the template's rules
         $this->placeSignature($pdf, 'principal', 50.5, 231.5);
+        $this->placeSignature($pdf, 'director', 159.5, 231.5);
 
         // Graduate's ID No. — filled with the student number, like the old
         // template did (the signature line stays blank for handwriting)
@@ -306,7 +334,7 @@ class CertificateService
         // Bottom row
         $this->certFont($pdf, 'serif', 14.8);
         $this->leftAtBaseline($pdf, 29, 270.2, $data['national_id'] ?? '');
-        $this->rightAtBaseline($pdf, 184, 270.2, $data['certificate_number'] ?? '');
+        $this->centeredLabel($pdf, 135.3, 179.1, 270.2, $data['certificate_number'] ?? ''); // centred on its rule
 
         // Verification QR (bottom-centre)
         $this->drawVerifyQr($pdf, $data);
@@ -583,27 +611,23 @@ class CertificateService
             $pdf->Polygon([105, 174.5, 106, 175.5, 105, 176.5, 104, 175.5], 'F', [], self::ORANGE);
         }
 
-        // Element 10: "Was admitted to the certificate at a Graduation"
-        $this->certFont($pdf, 'serif', 16.6);
-        $this->centeredAtBaseline($pdf, 187.0, 'Was admitted to the certificate at a Graduation');
-
-        // Element 11: mixed line
-        $this->centeredSegments($pdf, 195.3, [
-            ['Ceremony held on the ', 'serif', 16.6, 0],
+        // Elements 10-11: the issue date
+        $this->centeredSegments($pdf, 189.5, [
+            ['Issued on the ', 'serif', 16.6, 0],
             [($data['graduation_day'] ?? ''), 'script', 19.8, 0],
             [($data['graduation_suffix'] ?? ''), 'script', 9.9, 3.5],
             [' day of ', 'serif', 16.6, 0],
             [($data['graduation_month'] ?? ''), 'script', 19.8, 0],
         ]);
 
-        // Element 12: mixed line
-        $this->centeredSegments($pdf, 204.6, [
+        $this->centeredSegments($pdf, 198.8, [
             ['in the year ', 'serif', 16.6, 0],
             [($data['graduation_year'] ?? ''), 'script', 19.8, 0],
         ]);
 
-        // --- Signature block (the Principal's signature is printed; the Director signs by hand) ---
+        // --- Signature block (both signatures are printed) ---
         $this->placeSignature($pdf, 'principal', 50.5, 231.5);
+        $this->placeSignature($pdf, 'director', 159.5, 231.5);
         $pdf->SetLineStyle(['width' => 0.4, 'color' => self::ORANGE]);
 
         // Top row rules
@@ -631,7 +655,7 @@ class CertificateService
         // --- Bottom row ---
         $this->certFont($pdf, 'serif', 14.8);
         $this->leftAtBaseline($pdf, 29, 270.2, $data['national_id'] ?? '');
-        $this->rightAtBaseline($pdf, 184, 270.2, $data['certificate_number'] ?? '');
+        $this->centeredLabel($pdf, 135.3, 179.1, 270.2, $data['certificate_number'] ?? ''); // centred on its rule
 
         // Bottom underlines
         $pdf->SetLineStyle(['width' => 0.3, 'color' => self::ORANGE]);

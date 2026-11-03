@@ -190,7 +190,7 @@ class BatchGenerate2026Certificates extends Command
 
         // A certificate is dated the day it is issued, never backdated to the
         // ceremony; one already issued keeps its date.
-        $certificate->issued_date ??= now();
+        $certificate->issued_date ??= app(CertificateService::class)->issueDate();
         foreach ([
             'classification' => $classification,
             'final_score' => $score,

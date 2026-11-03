@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\CourseCategory;
 use App\Models\Enrollment;
 use App\Models\Student;
+use App\Models\SystemSetting;
 use App\Models\User;
 use App\Services\CertificateService;
 use App\Support\TevetaGrade;
@@ -73,6 +74,35 @@ class CertificateGradingTest extends TestCase
             $data['graduation_day'], $data['graduation_suffix'], $data['graduation_month'], $data['graduation_year'],
         ]);
         $this->assertSame('Distinction', $data['classification']);
+    }
+
+    public function test_a_common_issue_date_dates_new_certificates_but_never_backdates(): void
+    {
+        $this->travelTo('2026-11-03 09:00');
+        $service = new CertificateService();
+
+        SystemSetting::set(CertificateService::COMMON_ISSUE_DATE, '2026-11-20');
+        $this->assertSame('2026-11-20', $service->issueCertificate($this->completedEnrollment(75))->issued_date->toDateString());
+
+        // Once that day has passed, a new certificate is dated the day it is issued.
+        $this->travelTo('2026-11-25 09:00');
+        $this->assertSame('2026-11-25', $service->issueCertificate($this->completedEnrollment(75))->issued_date->toDateString());
+    }
+
+    public function test_an_admin_cannot_set_a_past_issue_date(): void
+    {
+        $this->travelTo('2026-11-03 09:00');
+        $this->withoutMiddleware();
+
+        $this->post(route('admin.certificates.issue-date'), ['issue_date' => '2026-11-02'])
+            ->assertSessionHasErrors('issue_date');
+        $this->flushSession();
+        $this->post(route('admin.certificates.issue-date'), ['issue_date' => '2026-11-03'])
+            ->assertSessionHasNoErrors();
+        $this->assertSame('2026-11-03', SystemSetting::get(CertificateService::COMMON_ISSUE_DATE));
+
+        $this->post(route('admin.certificates.issue-date'), ['clear' => 1]);
+        $this->assertNull(SystemSetting::get(CertificateService::COMMON_ISSUE_DATE));
     }
 
     private function completedEnrollment(float $grade): Enrollment

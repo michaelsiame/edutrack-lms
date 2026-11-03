@@ -463,7 +463,7 @@
     </div>
 
     <p class="date-text">
-      Was admitted to the certificate at a Graduation Ceremony held on the
+      Issued on the
       {{ $graduation_day ?? '1' }}<span class="ordinal">{{ $graduation_suffix ?? 'st' }}</span> day of {{ $graduation_month ?? 'January' }}<br>in the year <span class="year">{{ $graduation_year ?? date('Y') }}</span>
     </p>
 
