@@ -137,7 +137,9 @@ class CertificateService
                 'course_id' => $lockedEnrollment->course_id,
                 'enrollment_id' => $lockedEnrollment->id,
                 'certificate_number' => $this->generateCertificateNumber($lockedEnrollment->user, $lockedEnrollment->course_id),
-                'issued_date' => $this->issueDate(),
+                // The date set on the enrollment beside the grade, when there
+                // is one; otherwise the common issue date or today.
+                'issued_date' => $lockedEnrollment->certificate_date ?? $this->issueDate(),
                 'verification_code' => $this->generateVerificationCode(),
                 'final_score' => $lockedEnrollment->final_grade ?? 0,
                 'issued_at' => now(),

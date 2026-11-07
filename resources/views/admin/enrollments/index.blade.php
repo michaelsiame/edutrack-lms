@@ -217,6 +217,13 @@
  class="od-input w-24">
  @endif
  </div>
+ <div>
+ <label class="od-form-label" for="certificate-date-{{ $enrollment->id }}">Certificate date</label>
+ <input type="date" id="certificate-date-{{ $enrollment->id }}" name="certificate_date"
+ value="{{ ($enrollment->certificate_date ?? $enrollment->certificate?->issued_date)?->toDateString() }}"
+ title="The date printed on the certificate, e.g. the graduation day" class="od-input">
+ <span class="block text-xs text-gray-500 mt-1">Printed on the certificate</span>
+ </div>
  <label class="flex items-center text-sm text-gray-700 dark:text-gray-300 pb-2">
  <input type="checkbox" name="certificate_blocked" value="1" {{ $enrollment->certificate_blocked ?'checked' :'' }}
  class="w-4 h-4 text-primary-600 mr-2 accent-primary-600">

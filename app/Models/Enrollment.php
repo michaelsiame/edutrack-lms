@@ -22,6 +22,7 @@ class Enrollment extends Model
         'payment_status',
         'amount_paid',
         'completion_date',
+        'certificate_date',
         'certificate_issued',
         'certificate_blocked',
         'last_accessed',
@@ -34,6 +35,7 @@ class Enrollment extends Model
     ];
 
     protected $casts = [
+        'certificate_date' => 'date',
         'enrolled_at' => 'date',
         'start_date' => 'date',
         'completion_date' => 'date',

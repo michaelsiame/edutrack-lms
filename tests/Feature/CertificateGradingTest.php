@@ -105,6 +105,42 @@ class CertificateGradingTest extends TestCase
         $this->assertNull(SystemSetting::get(CertificateService::COMMON_ISSUE_DATE));
     }
 
+    /**
+     * The date set on the enrollment beside the grade is the date on the
+     * certificate: used when it is issued, and changing it afterwards changes
+     * the certificate, so the next print carries it.
+     */
+    public function test_the_certificate_carries_the_date_set_on_the_enrollment(): void
+    {
+        $this->travelTo('2026-11-07 09:00');
+        // Only the sign-in and admin checks: the route still has to load the
+        // enrollment from its id, which withoutMiddleware() would also skip.
+        $this->withoutMiddleware([\App\Http\Middleware\Authenticate::class, \Illuminate\Auth\Middleware\Authenticate::class, \App\Http\Middleware\AdminMiddleware::class, \App\Http\Middleware\VerifyCsrfToken::class]);
+        $service = new CertificateService();
+        $enrollment = $this->completedEnrollment(78);
+
+        $form = fn (string $date) => [
+            'enrollment_status' => 'Completed', 'mode' => 'in_person', 'funding_source' => 'self',
+            'final_grade' => 78, 'certificate_date' => $date,
+        ];
+
+        // Set before issuing: a graduation day that has already passed.
+        $this->put(route('admin.enrollments.update', $enrollment), $form('2026-10-24'))
+            ->assertRedirect()->assertSessionHasNoErrors();
+        $certificate = $service->issueCertificate($enrollment->fresh());
+        $this->assertSame('2026-10-24', $certificate->issued_date->toDateString());
+
+        // Changed after issuing: the certificate follows, and so does the print.
+        $this->put(route('admin.enrollments.update', $enrollment), $form('2026-11-14'))
+            ->assertRedirect()->assertSessionHasNoErrors();
+        $certificate->refresh();
+        $this->assertSame('2026-11-14', $certificate->issued_date->toDateString());
+        $data = $service->getCertificateData($certificate);
+        $this->assertSame(['14', 'th', 'November', '2026'], [
+            $data['graduation_day'], $data['graduation_suffix'], $data['graduation_month'], $data['graduation_year'],
+        ]);
+    }
+
     private function completedEnrollment(float $grade): Enrollment
     {
         $user = User::create([

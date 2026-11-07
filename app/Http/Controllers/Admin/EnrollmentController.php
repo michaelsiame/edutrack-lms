@@ -79,7 +79,7 @@ class EnrollmentController extends Controller
         $fundingData = [
             'funding_source' => $validated['funding_source'],
             'cdf_constituency' => $validated['funding_source'] === 'cdf' ? $validated['cdf_constituency'] : null,
-            'sponsor_reference' => $validated['sponsor_reference'] ?: null,
+            'sponsor_reference' => ($validated['sponsor_reference'] ?? null) ?: null,
         ];
 
         DB::transaction(function () use ($user, $course, $intake, $validated, $price, $isFree, $fundingData) {
@@ -165,6 +165,8 @@ class EnrollmentController extends Controller
             'cdf_constituency' => 'nullable|string|max:255',
             'sponsor_reference' => 'nullable|string|max:255',
             'final_grade' => 'nullable|numeric|min:0|max:100',
+            // The date printed on the certificate, e.g. the graduation day.
+            'certificate_date' => 'nullable|date|after_or_equal:2000-01-01|before_or_equal:' . now()->addYear()->toDateString(),
         ]);
 
         $grades = app(\App\Services\GradeAggregationService::class);
@@ -176,7 +178,8 @@ class EnrollmentController extends Controller
             'mode' => $validated['mode'],
             'funding_source' => $validated['funding_source'],
             'cdf_constituency' => $validated['funding_source'] === 'cdf' ? $validated['cdf_constituency'] : null,
-            'sponsor_reference' => $validated['sponsor_reference'] ?: null,
+            'sponsor_reference' => ($validated['sponsor_reference'] ?? null) ?: null,
+            'certificate_date' => $validated['certificate_date'] ?? null,
         ]);
 
         // final_grade is computed from recorded assessments, so a hand-set value
@@ -188,8 +191,13 @@ class EnrollmentController extends Controller
             $enrollment->update(['final_grade' => $validated['final_grade']]);
         }
 
-        // An issued certificate shows the score on its public check page
-        $enrollment->certificate?->update(['final_score' => $enrollment->final_grade ?? 0]);
+        // An issued certificate shows the score on its public check page, and
+        // carries the date set here: the PDF is drawn from the certificate
+        // each time it is opened, so a reprint shows the new date.
+        $enrollment->certificate?->update(array_filter([
+            'final_score' => $enrollment->final_grade ?? 0,
+            'issued_date' => $enrollment->certificate_date,
+        ], fn ($v) => $v !== null));
 
         return back()->with('success', 'Enrollment updated successfully.');
     }
