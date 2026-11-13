@@ -28,6 +28,9 @@ class User extends Authenticatable
         'avatar_url',
         'status',
         'email_verified',
+        // Set by registration and "resend"; without these the verification link never matches.
+        'email_verification_token',
+        'email_verification_expires',
     ];
 
     /**
