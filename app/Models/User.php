@@ -126,12 +126,12 @@ class User extends Authenticatable
         return $this->hasMany(Enrollment::class);
     }
 
+    // Payments belong to the student record (payments.student_id = students.id), not to the user.
+    // The old hasMany keyed payments.student_id on users.id, which matched nothing whenever the
+    // two ids differ (for every student), so "My Payments" and the dashboard showed K0 paid.
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'student_id')
-            ->whereIn('student_id', function ($query) {
-                $query->select('id')->from('students')->where('user_id', $this->id);
-            });
+        return $this->hasManyThrough(Payment::class, Student::class, 'user_id', 'student_id');
     }
 
     public function certificates()

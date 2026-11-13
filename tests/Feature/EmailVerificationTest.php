@@ -18,6 +18,8 @@ class EmailVerificationTest extends TestCase
     private function register(): User
     {
         $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
+        // The test schema starts with no roles; registration gives every new user the Student role
+        \Illuminate\Support\Facades\DB::table('roles')->insertOrIgnore(['id' => \App\Models\Role::STUDENT, 'role_name' => 'Student']);
         $this->post('/register', [
             'first_name' => 'Test', 'last_name' => 'Student', 'username' => 'verifytest'.uniqid(),
             'email' => 'verify-'.uniqid().'@example.com', 'phone' => '0970000000',

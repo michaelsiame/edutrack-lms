@@ -30,7 +30,7 @@ class DashboardController extends Controller
         $payments = auth()->user()->payments()
             ->with('course')
             ->where('payment_status', 'Completed')
-            ->latest()
+            ->latest('payments.created_at')
             ->take(4)
             ->get();
 
@@ -85,7 +85,7 @@ class DashboardController extends Controller
     {
         $payments = auth()->user()->payments()
             ->with('course')
-            ->latest()
+            ->latest('payments.created_at')
             ->paginate(10);
 
         $totalPaid = auth()->user()->payments()
