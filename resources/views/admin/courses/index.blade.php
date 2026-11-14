@@ -28,7 +28,7 @@
  <a href="{{ route('admin.courses.show', $course) }}" class="font-medium hover:underline" style="color: var(--od-fg);" title="Open course — manage, preview, gradebook">{{ $course->title }}</a>
  </td>
  <td class="od-meta">{{ $course->category?->name ??'N/A' }}</td>
- <td class="od-meta">{{ $course->instructor?->user?->name ??'N/A' }}</td>
+ <td class="od-meta">{{ $course->instructor?->user?->full_name ?? 'N/A' }}</td>
  <td>
  @php
  $statusClass = match($course->status) {

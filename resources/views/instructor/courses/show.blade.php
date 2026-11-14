@@ -460,11 +460,9 @@
  <select name="linked_quiz_id"
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
  <option value="">-- Select a quiz --</option>
- @php
- $linkedQuiz = $lesson->quizzes->first();
- @endphp
- @foreach($unlinkedQuizzes->merge($lesson->quizzes)->unique('id') as $q)
- <option value="{{ $q->id }}" {{ $linkedQuiz && $linkedQuiz->id == $q->id ? 'selected' : '' }}>{{ $q->title }}</option>
+ {{-- A new lesson: only quizzes not yet linked to a lesson. --}}
+ @foreach($unlinkedQuizzes as $q)
+ <option value="{{ $q->id }}">{{ $q->title }}</option>
  @endforeach
  </select>
  <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Only quizzes not already linked to a lesson are shown.</p>
@@ -476,11 +474,9 @@
  <select name="linked_assignment_id"
  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
  <option value="">-- Select an assignment --</option>
- @php
- $linkedAssignment = $lesson->assignments->first();
- @endphp
- @foreach($unlinkedAssignments->merge($lesson->assignments)->unique('id') as $a)
- <option value="{{ $a->id }}" {{ $linkedAssignment && $linkedAssignment->id == $a->id ? 'selected' : '' }}>{{ $a->title }}</option>
+ {{-- A new lesson: only assignments not yet linked to a lesson. --}}
+ @foreach($unlinkedAssignments as $a)
+ <option value="{{ $a->id }}">{{ $a->title }}</option>
  @endforeach
  </select>
  <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Only assignments not already linked to a lesson are shown.</p>
