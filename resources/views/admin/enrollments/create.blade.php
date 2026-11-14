@@ -110,8 +110,11 @@
                         </template>
                     </select>
                 </template>
-                <template x-if="!selectedCourse || !filteredIntakes.length">
-                    <input type="text" class="od-input" value="Select a course to see intakes" disabled>
+                <template x-if="!selectedCourse">
+                    <input type="text" class="od-input" value="Choose a course first" disabled>
+                </template>
+                <template x-if="selectedCourse && !filteredIntakes.length">
+                    <p class="od-input bg-gray-50 dark:bg-gray-800 text-sm text-gray-600 dark:text-gray-300">This course has no intakes yet. The student joins its Open Enrollment intake.</p>
                 </template>
             </div>
 

@@ -128,6 +128,24 @@ class Course extends Model
         return $this->hasOne(Intake::class)->where('is_default', true);
     }
 
+    /**
+     * The default open intake of a single-intake course, made the first time someone enrols.
+     * Used by students enrolling themselves and by admins enrolling someone.
+     */
+    public function openIntake(): Intake
+    {
+        return Intake::firstOrCreate(
+            ['course_id' => $this->id, 'is_default' => true],
+            [
+                'name' => 'Open Enrollment',
+                'status' => 'open',
+                'max_students' => (int) ($this->max_students ?? 0),
+                'enrollment_count' => 0,
+                'display_order' => 0,
+            ]
+        );
+    }
+
     public function hasMultipleIntakes(): bool
     {
         return $this->intakes()->where('is_default', false)->exists();

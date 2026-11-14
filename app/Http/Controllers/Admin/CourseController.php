@@ -25,7 +25,7 @@ class CourseController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:courses',
+            'slug' => 'nullable|string|max:255|alpha_dash|unique:courses',
             'description' => 'nullable|string',
             'category_id' => 'required|exists:course_categories,id',
             'instructor_id' => 'required|exists:instructors,id',
@@ -35,9 +35,19 @@ class CourseController extends Controller
             'status' => 'required|in:draft,published,archived,under_review',
         ]);
 
-        Course::create($validated);
+        // The web address comes from the title unless one was given: "Microsoft Office" becomes microsoft-office
+        if (empty($validated['slug'])) {
+            $base = \Illuminate\Support\Str::slug($validated['title']) ?: 'course';
+            $slug = $base;
+            for ($n = 2; Course::where('slug', $slug)->exists(); $n++) {
+                $slug = $base.'-'.$n;
+            }
+            $validated['slug'] = $slug;
+        }
 
-        return redirect()->route('admin.courses.index')->with('success', 'Course created successfully.');
+        $course = Course::create($validated);
+
+        return redirect()->route('admin.courses.show', $course)->with('success', 'Course created. Its instructor adds the modules and lessons in the course builder.');
     }
 
     public function show(Course $course)

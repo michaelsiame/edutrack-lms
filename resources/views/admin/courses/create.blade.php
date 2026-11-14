@@ -30,10 +30,10 @@
  class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primary-500 focus:ring-primary-500 text-sm">
  </div>
  <div>
- <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Slug <span class="text-red-500">*</span></label>
- <input type="text" name="slug" value="{{ old('slug') }}" required maxlength="255"
+ <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Web address <span class="text-gray-400 font-normal">(optional)</span></label>
+ <input type="text" name="slug" value="{{ old('slug') }}" maxlength="255"
  class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primary-500 focus:ring-primary-500 text-sm"
- placeholder="e.g. web-development-basics">
+ placeholder="Made from the title if left empty">
  </div>
  </div>
 

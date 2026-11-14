@@ -196,15 +196,6 @@ class EnrollmentController extends Controller
      */
     protected function ensureDefaultIntake(Course $course): Intake
     {
-        return Intake::firstOrCreate(
-            ['course_id' => $course->id, 'is_default' => true],
-            [
-                'name' => 'Open Enrollment',
-                'status' => 'open',
-                'max_students' => (int) ($course->max_students ?? 0),
-                'enrollment_count' => 0,
-                'display_order' => 0,
-            ]
-        );
+        return $course->openIntake();
     }
 }

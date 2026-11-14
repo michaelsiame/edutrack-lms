@@ -4,6 +4,11 @@
 @section('page_title','Course Management')
 
 @section('content')
+<div class="flex justify-end mb-4">
+ <a href="{{ route('admin.courses.create') }}" class="od-btn od-btn-primary od-btn-sm">
+ <i class="fas fa-plus mr-1"></i> New course
+ </a>
+</div>
 <div class="od-card" style="padding: 0; overflow: hidden;">
  <div class="od-card-header">
  <h3 class="od-h3">All Courses</h3>

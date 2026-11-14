@@ -64,13 +64,17 @@ class EnrollmentController extends Controller
             return back()->withInput()->with('error', 'This student is already enrolled in that course (use the enrolment list to edit it).');
         }
 
-        // Resolve intake: explicit choice, else the course default.
+        // Resolve intake: the one chosen, else the course default. A course with no intakes yet gets its
+        // "Open Enrollment" intake, the same as when a student enrols themselves.
         $intake = !empty($validated['intake_id'])
             ? Intake::find($validated['intake_id'])
-            : $course->defaultIntake;
+            : ($course->defaultIntake ?? ($course->intakes()->exists() ? null : $course->openIntake()));
 
-        if (!$intake || $intake->course_id !== $course->id) {
-            return back()->withInput()->with('error', 'Please choose a valid intake for this course.');
+        if (!$intake) {
+            return back()->withInput()->with('error', 'Choose which intake of '.$course->title.' this student joins.');
+        }
+        if ($intake->course_id !== $course->id) {
+            return back()->withInput()->with('error', 'That intake belongs to another course. Choose one of '.$course->title.'\'s intakes.');
         }
 
         $price = $intake->effective_price ?? $course->discount_price ?? $course->price ?? 0;
