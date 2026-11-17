@@ -45,7 +45,7 @@
                         </div>
 
                         @php
-                            $firstLesson = $enrollment->course->modules->flatMap->lessons->first();
+                            $firstLesson = $enrollment->resumeLesson();   // where the student stopped (the first lesson for a new student)
                         @endphp
                         @if($firstLesson)
                             <a href="{{ route('student.learning.show', [$enrollment->course, $firstLesson]) }}"

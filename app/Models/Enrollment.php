@@ -191,7 +191,9 @@ class Enrollment extends Model
     {
         $this->loadMissing('course.modules.lessons');
 
-        $allLessons = $this->course?->modules?->flatMap->lessons->sortBy('display_order');
+        // Module order first, then lesson order inside the module (lesson display_order restarts in each module)
+        $allLessons = $this->course?->modules?->sortBy('display_order')
+            ->flatMap(fn ($module) => $module->lessons->sortBy('display_order'))->values();
 
         if (!$allLessons || $allLessons->isEmpty()) {
             return null;
@@ -200,9 +202,10 @@ class Enrollment extends Model
         $completedIds = $this->lessonProgress()
             ->where('status', 'Completed')
             ->pluck('lesson_id')
+            ->map(fn ($id) => (int) $id)
             ->all();
 
-        $next = $allLessons->first(fn ($lesson) => !in_array($lesson->id, $completedIds, true));
+        $next = $allLessons->first(fn ($lesson) => !in_array((int) $lesson->id, $completedIds, true));
 
         return $next ?? $allLessons->last();
     }

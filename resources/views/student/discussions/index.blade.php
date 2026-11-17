@@ -12,7 +12,7 @@
     <div class="max-w-4xl mx-auto">
         <x-back-link route="enrollments.show" :routeParams="[$course]" label="Back to Course" class="mb-4" variant="od" />
 
-        <x-page-header title="Discussions" :subtitle="$course->title" actionHref="#" actionText="New Topic" actionIcon="fa-plus" variant="od" />
+        <x-page-header title="Discussions" :subtitle="$course->title" actionHref="#new-discussion-form" actionText="New Topic" actionIcon="fa-plus" variant="od" />
 
         <!-- New Discussion Form -->
         <div id="new-discussion-form" class="hidden mb-6">
@@ -111,8 +111,12 @@
 </div>
 
 <script>
+// "New Topic" in the page header opens the form (it was a dead "#" link)
 function toggleNewDiscussion() {
-    document.getElementById('new-discussion-form').classList.toggle('hidden');
+    const form = document.getElementById('new-discussion-form');
+    form.classList.toggle('hidden');
+    if (!form.classList.contains('hidden')) form.querySelector('input[name=title]').focus();
 }
+document.querySelectorAll('a[href="#new-discussion-form"]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); toggleNewDiscussion(); }));
 </script>
 @endsection
