@@ -15,7 +15,7 @@
         <x-page-header title="Live Sessions" :subtitle="$course->title" variant="od" />
 
         <!-- Live Now Banner -->
-        @php $liveSession = $sessions->firstWhere('status','live'); @endphp
+        @php $liveSession = $sessions->first(fn ($s) => $s->isLive()); @endphp
         @if($liveSession)
             <div class="od-card mb-6" style="background: color-mix(in oklch, var(--od-danger) 5%, transparent); border-color: color-mix(in oklch, var(--od-danger) 20%, transparent);">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

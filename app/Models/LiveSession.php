@@ -69,8 +69,17 @@ class LiveSession extends Model
         return $this->status === 'scheduled' && $this->scheduled_start_time > now();
     }
 
+    // Live while its time is on. Nothing sets status to 'live' when a scheduled class starts, so a
+    // scheduled session counts as live between its start and end (as the join page already decides).
     public function isLive(): bool
     {
-        return $this->status === 'live';
+        $now = now();
+        if ($this->status === 'live') {
+            return ! $this->scheduled_end_time || $this->scheduled_end_time >= $now;
+        }
+
+        return $this->status === 'scheduled'
+            && $this->scheduled_start_time && $this->scheduled_start_time <= $now
+            && $this->scheduled_end_time && $this->scheduled_end_time >= $now;
     }
 }
